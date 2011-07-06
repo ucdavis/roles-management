@@ -43,26 +43,47 @@
 				<h1><%= image_tag "ucd.png", :alt => "UC Davis (logo)", :style => "margin-bottom: -1px;" %>&nbsp;&nbsp;&nbsp;<a href="#">DSS IT</a></h1>
 				
 				<ul id="nav">
-					<li class="active"><%= link_to "Overview", :controller => "site", :action => "index" %></li>
-					<li><%= link_to "Users", people_path %>
+					
+					<% if current_controller?( :controller => "site", :action => "index" ) %>
+						<li class="active"><%= link_to "Overview", :controller => "site", :action => "index" %></li>
+					<% elsif %>
+						<li><%= link_to "Overview", :controller => "site", :action => "index" %></li>
+					<% end %>
+					<% if current_controller?( :controller => "people" ) %>
+						<li class="active"><%= link_to "Users", people_path %>
+					<% elsif %>
+						<li><%= link_to "Users", people_path %>
+					<% end %>
 						<ul>
 							<li><a href="#">View All</a></li>
 							<li><a href="#">Create New User</a></li>
 						</ul>
 					</li>
-					<li><%= link_to "Groups", groups_path %>
+					<% if current_controller?( :controller => "groups" ) %>
+						<li class="active"><%= link_to "Groups", groups_path %>
+					<% elsif %>
+						<li><%= link_to "Groups", groups_path %>
+					<% end %>
 						<ul>
 							<li><a href="#">View All</a></li>
 							<li><a href="#">Create New Group</a></li>
 						</ul>
 					</li>
-					<li><%= link_to "Applications", applications_path %>
+					<% if current_controller?( :controller => "applications" ) %>
+						<li class="active"><%= link_to "Applications", applications_path %>
+					<% elsif %>
+						<li><%= link_to "Applications", applications_path %>
+					<% end %>
 						<ul>
 							<li><a href="#">View All</a></li>
 							<li><a href="#">Register New Application</a></li>
 						</ul>
 					</li>
-					<li><%= link_to "Databases", databases_path %>
+					<% if current_controller?( :controller => "databases" ) %>
+						<li class="active"><%= link_to "Databases", databases_path %>
+					<% elsif %>
+						<li><%= link_to "Databases", databases_path %>
+					<% end %>
 						<ul>
 							<li><a href="#">LDAP</a></li>
 						</ul>
