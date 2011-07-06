@@ -40,41 +40,36 @@
 				<div class="hdrl"></div>
 				<div class="hdrr"></div>
 				
-				<h1><img src="images/ucd.png" alt="UC Davis (logo)" style="margin-bottom: -1px;" />&nbsp;&nbsp;&nbsp;<a href="#">DSS IT</a></h1>
+				<h1><%= image_tag "ucd.png", :alt => "UC Davis (logo)", :style => "margin-bottom: -1px;" %>&nbsp;&nbsp;&nbsp;<a href="#">DSS IT</a></h1>
 				
 				<ul id="nav">
-					<li><a href="#">Dashboard</a></li>
-					<li class="active"><a href="#">Pages</a>
+					<li class="active"><%= link_to "Overview", :controller => "site", :action => "index" %></li>
+					<li><%= link_to "Users", people_path %>
 						<ul>
-							<li><a href="#">List pages</a></li>
-							<li><a href="#">Add page</a></li>
-							<li><a href="#">More actions</a>
-								<ul>
-									<li><a href="#">Some action</a></li>
-									<li><a href="#">Some action</a></li>
-									<li><a href="#">Some action</a>
-										<ul>
-											<li><a href="#">Some action</a></li>
-											<li><a href="#">Some action</a></li>
-											<li><a href="#">Some action</a></li>
-										</ul>
-									</li>
-								</ul>
-							</li>
+							<li><a href="#">View All</a></li>
+							<li><a href="#">Create New User</a></li>
 						</ul>
 					</li>
-					<li><a href="#">Posts</a></li>
-					<li><a href="#">Media</a>
+					<li><%= link_to "Groups", groups_path %>
 						<ul>
-							<li><a href="#">List media</a></li>
-							<li><a href="#">Add media</a></li>
-							<li><a href="#">Something else</a></li>
+							<li><a href="#">View All</a></li>
+							<li><a href="#">Create New Group</a></li>
 						</ul>
 					</li>
-					<li><a href="#">Users</a></li>
+					<li><%= link_to "Applications", applications_path %>
+						<ul>
+							<li><a href="#">View All</a></li>
+							<li><a href="#">Register New Application</a></li>
+						</ul>
+					</li>
+					<li><%= link_to "Databases", databases_path %>
+						<ul>
+							<li><a href="#">LDAP</a></li>
+						</ul>
+					</li>
 				</ul>
 				
-				<p class="user">Hello, <a href="#">John</a> | <a href="index.html">Logout</a></p>
+				<p class="user">Hello, <a href="#">CAS User</a> | <a href="#">Logout</a></p>
 			</div> <!-- #header -->
 			
 			<%= yield %>

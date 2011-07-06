@@ -1,4 +1,8 @@
 DSSRM::Application.routes.draw do
+  get "databases/index"
+
+  get "databases/ldap"
+
   get "site/index"
 
   get "site/contact"
@@ -12,6 +16,8 @@ DSSRM::Application.routes.draw do
   resources :groups
 
   resources :people
+  
+  resources :databases
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
