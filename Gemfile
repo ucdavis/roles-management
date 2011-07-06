@@ -29,3 +29,5 @@ gem 'sqlite3'
 # group :development, :test do
 #   gem 'webrat'
 # end
+
+gem 'vestal_versions', :git => 'git://github.com/adamcooper/vestal_versions'

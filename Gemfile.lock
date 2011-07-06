@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/adamcooper/vestal_versions
+  revision: 6273df533f85014062e346cb1807b0531a809ee2
+  specs:
+    vestal_versions (1.2.2)
+      activerecord (>= 3.0.0)
+      activesupport (>= 3.0.0)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -71,3 +79,4 @@ PLATFORMS
 DEPENDENCIES
   rails (= 3.0.7)
   sqlite3
+  vestal_versions!
