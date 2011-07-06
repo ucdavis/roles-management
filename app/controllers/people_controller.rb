@@ -13,7 +13,7 @@ class PeopleController < ApplicationController
   # GET /people/1
   # GET /people/1.xml
   def show
-    @person = Person.find(params[:id])
+    @person = Person.find_by_loginid(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb

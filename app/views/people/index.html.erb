@@ -1,37 +1,50 @@
-<h1>Listing people</h1>
+<div class="block">
+	<div class="block_head">
+		<div class="bheadl"></div>
+		<div class="bheadr"></div>
+		
+		<h2>People</h2>
+	</div> <!-- .block_head -->
+	
+	<div class="block_content">
+		
+		<table>
+		  <tr>
+		    <th>Name</th>
+		    <th>Email</th>
+		    <th>Phone</th>
+		    <th>Address</th>
+		    <th>Login</th>
+		    <th>Status</th>
+		    <th></th>
+		    <th></th>
+		  </tr>
 
-<table>
-  <tr>
-    <th>First</th>
-    <th>Last</th>
-    <th>Email</th>
-    <th>Loginid</th>
-    <th>Preferred name</th>
-    <th>Status</th>
-    <th>Phone</th>
-    <th>Address</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+		<% @people.each do |person| %>
+		  <tr>
+		    <td><%= link_to person.preferred_name, edit_person_path(person) %></td>
+		    <td><%= mail_to person.email, person.email, :encode => "javascript" %></td>
+		    <td><%= number_to_phone person.phone, :area_code => true %></td>
+		    <td><%= person.address %></td>
+		    <td><%= person.loginid %></td>
+		    <td><% if person.status == true %>
+					Active
+				<% elsif %>
+					Inactive
+				<% end %>
+			</td>
+		    <td><%= link_to 'Show', person %></td>
+		    <td><%= link_to 'Destroy', person, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		<% end %>
+		</table>
 
-<% @people.each do |person| %>
-  <tr>
-    <td><%= person.first %></td>
-    <td><%= person.last %></td>
-    <td><%= person.email %></td>
-    <td><%= person.loginid %></td>
-    <td><%= person.preferred_name %></td>
-    <td><%= person.status %></td>
-    <td><%= person.phone %></td>
-    <td><%= person.address %></td>
-    <td><%= link_to 'Show', person %></td>
-    <td><%= link_to 'Edit', edit_person_path(person) %></td>
-    <td><%= link_to 'Destroy', person, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
+		<br />
 
-<br />
-
-<%= link_to 'New Person', new_person_path %>
+		<%= link_to 'New Person', new_person_path %>
+		
+	</div> <!-- .block_content -->
+	
+	<div class="bendl"></div>
+	<div class="bendr"></div>
+</div> <!-- .block -->
