@@ -21,7 +21,7 @@
 
 		<p>
 		  <b>Email:</b>
-		  <%= @person.email %>
+		  <%= mail_to @person.email, @person.email, :encode => "javascript" %>
 		</p>
 
 		<p>
@@ -31,7 +31,11 @@
 
 		<p>
 		  <b>Status:</b>
-		  <%= @person.status %>
+		  <% if @person.status %>
+		    Active
+		  <% else %>
+		    Inactive
+		  <% end %>
 		</p>
 
 		<p>

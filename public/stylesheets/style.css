@@ -1001,3 +1001,8 @@ a:hover {
 	float: right;
 	text-align: right;
 	}
+	
+/* Helpers */
+.hidden {
+	display: none;
+}

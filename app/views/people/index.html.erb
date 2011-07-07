@@ -1,3 +1,5 @@
+<%= javascript_include_tag "jquery.googlemaps.pack.1.01.js" %>
+
 <div class="block">
 	<div class="block_head">
 		<div class="bheadl"></div>
@@ -12,31 +14,20 @@
 		  <tr>
 		    <th>Name</th>
 		    <th>Email</th>
-		    <th>Phone</th>
+		    <th style="min-width: 9em;">Phone</th>
 		    <th>Address</th>
 		    <th>Login</th>
-		    <th>Status</th>
-		    <th></th>
-		    <th></th>
 		  </tr>
 		<% @people.each do |person| %>
 		  <tr>
-		    <td><%= link_to person.preferred_name, edit_person_path(person) %></td>
+		    <td><%= link_to person.preferred_name, person %></td>
 		    <td><%= mail_to person.email, person.email, :encode => "javascript" %></td>
 		    <td><% if person.phone != nil and person.phone.length > 0 %>
 				<%= number_to_phone person.phone, :area_code => true %>
 				<% end %>
 			</td>
-		    <td><%= person.address %></td>
+		    <td><a href="#map_popup" rel="facebox"><%= person.address %></a></td>
 		    <td><%= person.loginid %></td>
-		    <td><% if person.status == true %>
-					Active
-				<% elsif %>
-					Inactive
-				<% end %>
-			</td>
-		    <td><%= link_to 'Show', person %></td>
-		    <td><%= link_to 'Destroy', person, :confirm => 'Are you sure?', :method => :delete %></td>
 		  </tr>
 		<% end %>
 		</table>
@@ -50,3 +41,14 @@
 	<div class="bendl"></div>
 	<div class="bendr"></div>
 </div> <!-- .block -->
+
+<div id="map_popup" class="hidden">
+	<div id="map_canvas" style="width: 300px; height: 250px;"></div>
+	<script type="text/javascript">
+		$(document).ready(function() { 
+			$('div#map_canvas').googleMaps({
+				geocode: '320 - 507 West Broadway Vancouver, BC V5Z 0B4'
+			}); 
+		});
+	</script>
+</div> <!-- map_popup -->
