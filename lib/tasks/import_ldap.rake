@@ -7,7 +7,6 @@ task :import_ldap => :environment do
 
   # Set up some manual data - would go in UcdLookups.rb but UcdLookups is auto-generated w/o this info
   basePeople = 'ou=People,dc=ucdavis,dc=edu'
-  baseListings = 'ou=Listings,dc=ucdavis,dc=edu'
   manualIncludes=['jeremy','aeguyer','millerlm','djmoglen','mebalvin','mckinney','ssantam','tmheath','rnanakul','olichney','sukkim','jpokorny','bgrunewa','rabronst','kbaynes','szneena','pcmundy','wjarrold','julieluu','steichho','chuff','cmachado','alamsyah','schuang','clare186','ladyd252','aheusser','pkubitz','kshap','bbrelles','blmiss','pjdegenn','cdaniels','jyiwang','anschnei','eaisham','ralatif','cwbishop','fddiaz']
   deptTranslations = {
       'AFRICAN AMERICAN AFRICAN STDS' => 'HISTORY',
@@ -39,8 +38,7 @@ task :import_ldap => :environment do
       'TEMPORARY EMPLOYMENT SERVICES (TES)' => 'TEMPORARY EMPLOYMENT SERVICES',
       'MICROBIOLOGY' => 'DSS IT SERVICE CENTER'
   }
-  attributes = ['uid','givenName','sn','mail','telephoneNumber','street','ou','title','ucdPersonAffiliation','displayName','ucdStudentMajor','ucdAppointmentDepartmentCode']
-  header=['uid','givenName','sn','mail','telephoneNumber','street','ou','title','ucdPersonAffiliation','displayName','company','manager']
+  attributes = ['uid','givenName','sn','mail','telephoneNumber','street','ou','title','ucdPersonAffiliation','displayName','ucdStudentMajor','ucdAppointmentDepartmentCode','company','manager','ucdAppointmentTitleCode','principal_name','title_code','dept_code']
 
   # Retrieve LDAP passwords from config/database.yml
   ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ldap']
@@ -93,6 +91,9 @@ task :import_ldap => :environment do
         person["ou"] = entry.get_values('ou').to_s[2..-3]
         person["title"] = entry.get_values('title').to_s[2..-3]
         person["ucdPersonAffiliation"] = entry.get_values('ucdPersonAffiliation').to_s[2..-3]
+        person["title_code"] = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
+        person["dept_code"] = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
+        person["principal_name"] = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
 
         people << person
       end
@@ -114,11 +115,14 @@ task :import_ldap => :environment do
         person["ou"] = entry.get_values('ou').to_s[2..-3]
         person["title"] = entry.get_values('title').to_s[2..-3]
         person["ucdPersonAffiliation"] = entry.get_values('ucdPersonAffiliation').to_s[2..-3]
+        person["title_code"] = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
+        person["dept_code"] = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
+        person["principal_name"] = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
 
         people << person
       end
   end
-
+  
   # Filter to only have unique individuals
   uniquePeople = []
   uuids = []
@@ -134,11 +138,11 @@ task :import_ldap => :environment do
   finalPeople = []
   for p in uniquePeople
       person = {}
-      for h in header
-          if p[h]
-              person[h] = p[h]
+      for a in attributes
+          if p[a]
+              person[a] = p[a]
           elsif
-              person[h] = ''
+              person[a] = ''
           end
       end
 
@@ -188,7 +192,8 @@ task :import_ldap => :environment do
   # Add people to database
   for f in finalPeople
     person = Person.new
-    person.loginid = f["uid"]
+    puts f
+    person.loginid = f["principal_name"].slice(0, f["principal_name"].index("@"))
     person.first = f["givenName"]
     person.last = f["sn"]
     person.email = f["mail"]
@@ -196,11 +201,16 @@ task :import_ldap => :environment do
     person.address = f["street"]
     
     # Add them to their ou group, creating it if necessary
+    if(f["ou"].length > 0)
+      f["ou"] = "Unnamed"
+    end
     group = Group.find_by_name(f["ou"])
     if(group == nil)
       # Doesn't exist, create it
       group = Group.new
       group.name = f["ou"]
+      # Assume dept codes match name strings
+      group.code = f["dept_code"]
       group.save
     end
     
@@ -212,6 +222,8 @@ task :import_ldap => :environment do
       # Doesn't exist, create it
       title = Title.new
       title.name = f["title"]
+      # Assume title codes match title strings
+      title.code = f["title_code"]
       title.save
     end
     person.title = title
