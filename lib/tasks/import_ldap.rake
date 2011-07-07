@@ -192,7 +192,7 @@ task :import_ldap => :environment do
   # Add people to database
   for f in finalPeople
     person = Person.new
-    puts f
+
     person.loginid = f["principal_name"].slice(0, f["principal_name"].index("@"))
     person.first = f["givenName"]
     person.last = f["sn"]
@@ -201,7 +201,7 @@ task :import_ldap => :environment do
     person.address = f["street"]
     
     # Add them to their ou group, creating it if necessary
-    if(f["ou"].length > 0)
+    if(f["ou"].length == 0)
       f["ou"] = "Unnamed"
     end
     group = Group.find_by_name(f["ou"])
