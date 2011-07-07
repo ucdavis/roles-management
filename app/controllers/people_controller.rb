@@ -13,7 +13,7 @@ class PeopleController < ApplicationController
   # GET /people/1
   # GET /people/1.xml
   def show
-    @person = Person.find(params[:id])
+    @person = Person.find_by_loginid(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -34,7 +34,7 @@ class PeopleController < ApplicationController
 
   # GET /people/1/edit
   def edit
-    @person = Person.find(params[:id])
+    @person = Person.find_by_loginid(params[:id])
   end
 
   # POST /people
@@ -56,7 +56,7 @@ class PeopleController < ApplicationController
   # PUT /people/1
   # PUT /people/1.xml
   def update
-    @person = Person.find(params[:id])
+    @person = Person.find_by_loginid(params[:id])
 
     respond_to do |format|
       if @person.update_attributes(params[:person])
@@ -72,7 +72,7 @@ class PeopleController < ApplicationController
   # DELETE /people/1
   # DELETE /people/1.xml
   def destroy
-    @person = Person.find(params[:id])
+    @person = Person.find_by_loginid(params[:id])
     @person.destroy
 
     respond_to do |format|

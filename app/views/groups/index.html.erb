@@ -1,23 +1,35 @@
-<h1>Listing groups</h1>
+<div class="block">
+	<div class="block_head">
+		<div class="bheadl"></div>
+		<div class="bheadr"></div>
+		
+		<h2>Groups</h2>
+	</div> <!-- .block_head -->
+	
+	<div class="block_content">
+		<table>
+		  <tr>
+		    <th>Name</th>
+		    <th></th>
+		    <th></th>
+		    <th></th>
+		  </tr>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
+		<% @groups.each do |group| %>
+		  <tr>
+		    <td><%= group.name %></td>
+		    <td><%= link_to 'Show', group %></td>
+		    <td><%= link_to 'Edit', edit_group_path(group) %></td>
+		    <td><%= link_to 'Destroy', group, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		<% end %>
+		</table>
 
-<% @groups.each do |group| %>
-  <tr>
-    <td><%= group.name %></td>
-    <td><%= link_to 'Show', group %></td>
-    <td><%= link_to 'Edit', edit_group_path(group) %></td>
-    <td><%= link_to 'Destroy', group, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
+		<br />
 
-<br />
-
-<%= link_to 'New Group', new_group_path %>
+		<%= link_to 'New Group', new_group_path %>
+	</div> <!-- .block_content -->
+	
+	<div class="bendl"></div>
+	<div class="bendr"></div>
+</div> <!-- .block -->

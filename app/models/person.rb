@@ -7,6 +7,10 @@ class Person < ActiveRecord::Base
   
   validates_presence_of :first, :last, :loginid
   
+  def to_param  # overridden
+    loginid
+  end
+  
   def name
       "#{first} #{last}"
   end
