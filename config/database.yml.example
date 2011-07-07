@@ -1,3 +1,6 @@
+# README: Move this file to database.yml (remove the .example)
+#         and set the values correctly for your environment.
+
 # SQLite version 3.x
 #   gem install sqlite3
 development:
@@ -20,3 +23,7 @@ production:
   database: db/production.sqlite3
   pool: 5
   timeout: 5000
+
+ldap:
+  base_dn: dn
+  base_pw: pw

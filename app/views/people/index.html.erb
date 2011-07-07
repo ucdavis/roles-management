@@ -19,12 +19,14 @@
 		    <th></th>
 		    <th></th>
 		  </tr>
-
 		<% @people.each do |person| %>
 		  <tr>
 		    <td><%= link_to person.preferred_name, edit_person_path(person) %></td>
 		    <td><%= mail_to person.email, person.email, :encode => "javascript" %></td>
-		    <td><%= number_to_phone person.phone, :area_code => true %></td>
+		    <td><% if person.phone != nil and person.phone.length > 0 %>
+				<%= number_to_phone person.phone, :area_code => true %>
+				<% end %>
+			</td>
 		    <td><%= person.address %></td>
 		    <td><%= person.loginid %></td>
 		    <td><% if person.status == true %>
