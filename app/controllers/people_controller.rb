@@ -80,4 +80,8 @@ class PeopleController < ApplicationController
       format.xml  { head :ok }
     end
   end
+  
+  def new_from_ldap
+    
+  end
 end

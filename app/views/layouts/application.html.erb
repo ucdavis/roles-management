@@ -55,9 +55,9 @@
 						<li><%= link_to "Users", people_path %>
 					<% end %>
 						<ul>
-							<li><a href="#">View All</a></li>
-							<li><a href="#">Create New User</a></li>
-							<li><a href="#">Import From LDAP</a></li>
+							<li><%= link_to "View All", people_path %></li>
+							<li><%= link_to 'Create New User', new_person_path %></li>
+							<li><%= link_to "Import From LDAP", :controller => "people", :action => "new_from_ldap" %></li>
 						</ul>
 					</li>
 					<% if current_controller?( :controller => "groups" ) %>
@@ -66,8 +66,8 @@
 						<li><%= link_to "Groups", groups_path %>
 					<% end %>
 						<ul>
-							<li><a href="#">View All</a></li>
-							<li><a href="#">Create New Group</a></li>
+							<li><%= link_to "View All", groups_path %></li>
+							<li><%= link_to 'Create New Group', new_group_path %></li>
 						</ul>
 					</li>
 					<% if current_controller?( :controller => "applications" ) %>
@@ -76,8 +76,8 @@
 						<li><%= link_to "Applications", applications_path %>
 					<% end %>
 						<ul>
-							<li><a href="#">View All</a></li>
-							<li><a href="#">Register New Application</a></li>
+							<li><%= link_to "View All", applications_path %></li>
+							<li><%= link_to 'Register New Application', new_application_path %></li>
 						</ul>
 					</li>
 				</ul>

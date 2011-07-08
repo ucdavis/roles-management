@@ -15,7 +15,11 @@ DSSRM::Application.routes.draw do
 
   resources :groups
 
-  resources :people
+  resources :people do
+    collection do
+      get 'new_from_ldap'
+    end
+  end
   
   resources :databases
 
