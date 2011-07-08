@@ -1,7 +1,20 @@
 == DSS Rights Management
 
-Rights Management is a people, roles and application management web application
+Rights Management (RM) is a people, roles and application management web application
 and service developed by the UC Davis Division of Social Science.
+
+== Deployment
+
+RM is designed to be re-deployable in any organization, though there are a few matters
+of configuration that need to be attended to:
+
+config/database.yml.example
+	Move this file to config/database.yml and set the appropriate values.
+
+config/environment.rb
+	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If you
+	decide to remove CAS, also remove the before_filter in
+	app/controllers/application_controller.rb.
 
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
