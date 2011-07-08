@@ -45,7 +45,9 @@
 
 		<p>
 		  <b>Phone:</b>
-		  <%= number_to_phone @person.phone, :area_code => true %>
+		  <% if @person.phone != nil and @person.phone.length > 0 %>
+		    <%= number_to_phone @person.phone, :area_code => true %>
+		  <% end %>
 		</p>
 
 		<p>
