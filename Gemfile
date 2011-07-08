@@ -32,3 +32,4 @@ gem 'sqlite3'
 
 gem 'vestal_versions', :git => 'git://github.com/adamcooper/vestal_versions'
 gem 'ruby-ldap'
+gem 'rubycas-client'
