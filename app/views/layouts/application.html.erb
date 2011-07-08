@@ -80,15 +80,6 @@
 							<li><a href="#">Register New Application</a></li>
 						</ul>
 					</li>
-					<% if current_controller?( :controller => "databases" ) %>
-						<li class="active"><%= link_to "Databases", databases_path %>
-					<% elsif %>
-						<li><%= link_to "Databases", databases_path %>
-					<% end %>
-						<ul>
-							<li><a href="#">LDAP</a></li>
-						</ul>
-					</li>
 				</ul>
 				
 				<p class="user">Hello, <a href="#">CAS User</a> | <a href="#">Logout</a></p>
