@@ -17,7 +17,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @group }
+      format.xml  { render :xml => @group.to_xml( :include => { :people => { :only => [:first, :last, :loginid, :title_id, :status, :preferred_name, :email] } }) }
     end
   end
 
