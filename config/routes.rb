@@ -6,6 +6,8 @@ DSSRM::Application.routes.draw do
   get "site/index"
 
   get "site/contact"
+  
+  get "site/logout"
 
   resources :applications
 

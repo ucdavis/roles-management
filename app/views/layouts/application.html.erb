@@ -82,7 +82,7 @@
 					</li>
 				</ul>
 				
-				<p class="user">Hello, <a href="#">CAS User</a> | <a href="#">Logout</a></p>
+				<p class="user">Hello, <a href="#">CAS User</a> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
 			</div> <!-- #header -->
 			
 			<%= yield %>

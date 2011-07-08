@@ -4,5 +4,8 @@ class SiteController < ApplicationController
 
   def contact
   end
-
+  
+  def logout
+    CASClient::Frameworks::Rails::Filter.logout(self)
+  end
 end
