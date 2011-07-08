@@ -17,7 +17,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @person }
+      format.xml  { render :xml => @person.to_xml( :include => { :groups => { :only => [:name, :code] }, :title => { :only => [:name] } }) }
     end
   end
 
