@@ -5,6 +5,8 @@ class Person < ActiveRecord::Base
   belongs_to :title
   belongs_to :affiliation
   
+  belongs_to :assignment, :as => :assignable
+  
   validates_presence_of :first, :last, :loginid
   
   def to_param  # overridden

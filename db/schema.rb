@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110707224858) do
+ActiveRecord::Schema.define(:version => 20110713191029) do
 
   create_table "affiliations", :force => true do |t|
     t.string   "name"
@@ -23,6 +23,14 @@ ActiveRecord::Schema.define(:version => 20110707224858) do
     t.string   "api_key"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "assignments", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "assignment_id"
+    t.integer  "assignable_id"
+    t.string   "assignable_type"
   end
 
   create_table "groups", :force => true do |t|
@@ -56,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20110707224858) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "title"
   end
 
   create_table "titles", :force => true do |t|
