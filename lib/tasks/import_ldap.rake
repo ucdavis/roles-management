@@ -94,6 +94,7 @@ task :import_ldap => :environment do
         person["title_code"] = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
         person["dept_code"] = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
         person["principal_name"] = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
+        person["ucdStudentMajor"] = entry.get_values('ucdStudentMajor').to_s[2..-3]
 
         people << person
       end
@@ -118,6 +119,7 @@ task :import_ldap => :environment do
         person["title_code"] = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
         person["dept_code"] = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
         person["principal_name"] = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
+        person["ucdStudentMajor"] = entry.get_values('ucdStudentMajor').to_s[2..-3]
 
         people << person
       end
@@ -204,11 +206,15 @@ task :import_ldap => :environment do
     if(f["ou"].length == 0)
       f["ou"] = "Unnamed"
     end
-    group = Group.find_by_name(f["ou"])
-    if(group == nil)
-      # Doesn't exist, create it
-      group = Group.new
-      group.name = f["ou"]
+    
+    if( f["ucdPersonAffiliation"] == "student:graduate" )
+      # Graduate student 'ou's are determined not by the ou entry but by the 
+      group = Group.find(:first, :conditions => [ "lower(name) = ?", f["ucdStudentMajor"].downcase ]) || Group.create(:name => f["ucdStudentMajor"])
+      # The dept code won't be set here but should get updated once a faculty/staff comes along for that dept
+      group.save
+    else
+      # Not a graduate student: ou entry is reliable
+      group = Group.find(:first, :conditions => [ "lower(name) = ?", f["ou"].downcase ]) || Group.create(:name => f["ou"])
       # Assume dept codes match name strings
       group.code = f["dept_code"]
       group.save
@@ -217,25 +223,14 @@ task :import_ldap => :environment do
     person.groups << group
     
     # Assign their title, creating it if necessary (titles are a 1:n relationship)
-    title = Title.find_by_name(f["title"])
-    if(title == nil)
-      # Doesn't exist, create it
-      title = Title.new
-      title.name = f["title"]
-      # Assume title codes match title strings
-      title.code = f["title_code"]
-      title.save
-    end
+    title = Title.find(:first, :conditions => [ "lower(name) = ?", f["title"].downcase ]) || Title.create(:name => f["title"])
+    # Assume title codes match title strings
+    title.code = f["title_code"]
+    title.save
     person.title = title
     
     # Assign their affiliation, creating it if necessary (affiliations are a 1:n relationship)
-    affiliation = Affiliation.find_by_name(f["ucdPersonAffiliation"])
-    if(affiliation == nil)
-      # Doesn't exist, create it
-      affiliation = Affiliation.new
-      affiliation.name = f["ucdPersonAffiliation"]
-      affiliation.save
-    end
+    affiliation = Affiliation.find(:first, :conditions => [ "lower(name) = ?", f["ucdPersonAffiliation"].downcase ]) || Affiliation.create(:name => f["ucdPersonAffiliation"])
     person.affiliation = affiliation
     
     person.status = true
