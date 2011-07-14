@@ -1,38 +1,77 @@
-<div class="block small left">
-	<div class="block_head">
-		<div class="bheadl"></div>
-		<div class="bheadr"></div>
+<div class="block small left" style="background-color: inherit; border-bottom: none; background: none;">
+	<div class="block">
+		<div class="block_head">
+			<div class="bheadl"></div>
+			<div class="bheadr"></div>
 
-		<h2>Assignments</h2>
-	</div>		<!-- .block_head ends -->
-	<div class="block_content">
-		<div id="group_whatever">
-			<center><h2>Group Whatever</h2></center>
-			<table cellpadding="0" cellspacing="0" width="100%">
-				<thead>
-					<tr>
-						<th>Name</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><a href="#">Aorem ipsum dolor</a></td>
-					</tr>
-					<tr>
-						<td><a href="#">Zn ac libero nunc, vel congue neque</a></td>
-					</tr>
-					<tr>
-						<td><a href="#">Borem ipsum dolor</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div> <!-- group_whatever -->
-	</div>		<!-- .block_content ends -->
+			<h2>Managements</h2>
+		</div>		<!-- .block_head ends -->
+		<div class="block_content">
+		
+			<% for group in @user.managements %>
+		
+				<div id="group_whatever">
+					<center><h2><%= group.name %></h2></center>
+					<table cellpadding="0" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for person in group.people %>
+							<tr>
+								<td><a href="#"><%= person.name %></a></td>
+							</tr>
+							<% end %>
+						</tbody>
+					</table>
+				</div> <!-- group_whatever -->
+		
+			<% end %>
+		</div>		<!-- .block_content ends -->
 
-	<div class="bendl"></div>
-	<div class="bendr"></div>
-</div>		<!-- .block.small.left ends -->
+		<div class="bendl"></div>
+		<div class="bendr"></div>
+	</div>		<!-- .block.small.left ends -->
+	
+	<div class="block">
+		<div class="block_head">
+			<div class="bheadl"></div>
+			<div class="bheadr"></div>
 
+			<h2>Assignments</h2>
+		</div>		<!-- .block_head ends -->
+		<div class="block_content">
+		
+			<% for group in @user.groups %>
+		
+				<div id="group_whatever">
+					<center><h2><%= group.name %></h2></center>
+					<table cellpadding="0" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% for person in group.people %>
+							<tr>
+								<td><a href="#"><%= person.name %></a></td>
+							</tr>
+							<% end %>
+						</tbody>
+					</table>
+				</div> <!-- group_whatever -->
+		
+			<% end %>
+		</div>		<!-- .block_content ends -->
+
+		<div class="bendl"></div>
+		<div class="bendr"></div>
+	</div>		<!-- .block.small.left ends -->
+
+</div>
 
 <div class="block small right">
 
@@ -46,26 +85,34 @@
 
 
 	<div class="block_content">
-
-		<h2>Headline</h2>
-		<p>Quisque felis nunc, <a href="demo" rel="facebox">open modal</a> lacinia at, viverra sit amet ligula. Praesent justo risus, suscipit eget volutpat ac, fermentum ac massa. Sed at justo velit. Maecenas dapibus sem nec quam cursus.</p>
-
-
-		<h3>Headline</h3>
-		<ul>
-			<li>Proin volutpat</li>
-			<li>Praesent justo risus, suscipit eget</li>
-			<li>Morbi facilisis felis ac sapien</li>
-		</ul>
-
-
-		<h4>Headline</h4>
-		<ol>
-			<li>Proin volutpat</li>
-			<li>Praesent justo risus, suscipit eget</li>
-			<li>Morbi facilisis felis ac sapien</li>
-		</ol>
-
+		<h2>Positions</h2>
+		<table cellpadding="0" cellspacing="0" width="100%">
+			<thead>
+				<tr>
+					<th>Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><a href="#">Something</a></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<h2>People</h2>
+		<table cellpadding="0" cellspacing="0" width="100%">
+			<thead>
+				<tr>
+					<th>Name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><a href="#">Something</a></td>
+				</tr>
+			</tbody>
+		</table>
+		
 	</div>		<!-- .block_content ends -->
 
 	<div class="bendl"></div>
