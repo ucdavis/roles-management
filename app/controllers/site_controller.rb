@@ -4,7 +4,7 @@ class SiteController < ApplicationController
   def index
     @user = current_user
     
-    
+    @people = Person.includes(:groups).where("groups.id in (?)", @user.groups)
   end
 
   def contact

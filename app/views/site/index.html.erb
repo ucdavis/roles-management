@@ -107,9 +107,11 @@
 				</tr>
 			</thead>
 			<tbody>
+				<% for person in @people %>
 				<tr>
-					<td><a href="#">Something</a></td>
+					<td><a href="#"><%= person.name %></a></td>
 				</tr>
+				<% end %>
 			</tbody>
 		</table>
 		
