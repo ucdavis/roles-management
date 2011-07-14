@@ -193,14 +193,23 @@ task :import_ldap => :environment do
 
   # Add people to database
   for f in finalPeople
-    person = Person.new
+    person = Person.find_by_loginid(f["principal_name"].slice(0, f["principal_name"].index("@"))) || Person.create(:loginid => f["principal_name"].slice(0, f["principal_name"].index("@")))
 
-    person.loginid = f["principal_name"].slice(0, f["principal_name"].index("@"))
-    person.first = f["givenName"]
-    person.last = f["sn"]
-    person.email = f["mail"]
-    person.phone = f["telephoneNumber"]
-    person.address = f["street"]
+    unless not person.first.nil?
+      person.first = f["givenName"]
+    end
+    unless not person.last.nil?
+      person.last = f["sn"]
+    end
+    unless not person.email.nil?
+      person.email = f["mail"]
+    end
+    unless not person.phone.nil?
+      person.phone = f["telephoneNumber"]
+    end
+    unless not person.address.nil?
+      person.address = f["street"]
+    end
     
     # Add them to their ou group, creating it if necessary
     if(f["ou"].length == 0)
@@ -210,13 +219,22 @@ task :import_ldap => :environment do
     if( f["ucdPersonAffiliation"] == "student:graduate" )
       # Graduate student 'ou's are determined not by the ou entry but by the 
       group = Group.find(:first, :conditions => [ "lower(name) = ?", f["ucdStudentMajor"].downcase ]) || Group.create(:name => f["ucdStudentMajor"])
-      # The dept code won't be set here but should get updated once a faculty/staff comes along for that dept
+      # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
       group.save
     else
       # Not a graduate student: ou entry is reliable
       group = Group.find(:first, :conditions => [ "lower(name) = ?", f["ou"].downcase ]) || Group.create(:name => f["ou"])
       # Assume dept codes match name strings
       group.code = f["dept_code"]
+      
+      unless UcdLookups::DEPT_CODES[f["dept_code"]].nil?
+        manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[f["dept_code"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[f["dept_code"]]["manager"])
+        group.manager = manager
+      else
+        # Dept code doesn't exist
+        puts "Could not find a dept_code for " + f["dept_code"]
+      end
+      
       group.save
     end
     

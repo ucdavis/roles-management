@@ -3,6 +3,8 @@ class Group < ActiveRecord::Base
   
   has_many :assignments, :as => :assignable
   
+  belongs_to :manager, :class_name => "Person"
+  
   def to_param  # overridden
     name.gsub("/", "_").gsub("&", "_").gsub(".", "_")
   end
