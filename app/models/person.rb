@@ -6,6 +6,7 @@ class Person < ActiveRecord::Base
   belongs_to :affiliation
   
   has_many :managements, :class_name => "Group", :foreign_key => "manager_id"
+  has_many :heads, :class_name => "Group", :foreign_key => "head_id"
   
   #belongs_to :assignment, :as => :assignable
   

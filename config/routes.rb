@@ -20,6 +20,7 @@ DSSRM::Application.routes.draw do
   resources :people do
     collection do
       get 'new_from_ldap'
+      post 'new_from_ldap'
     end
   end
   

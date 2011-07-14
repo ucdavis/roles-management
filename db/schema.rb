@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110713224114) do
+ActiveRecord::Schema.define(:version => 20110714175452) do
 
   create_table "affiliations", :force => true do |t|
     t.string   "name"
@@ -39,6 +39,9 @@ ActiveRecord::Schema.define(:version => 20110713224114) do
     t.datetime "updated_at"
     t.integer  "code"
     t.integer  "manager_id"
+    t.integer  "min_size"
+    t.integer  "max_size"
+    t.integer  "head_id"
   end
 
   create_table "groups_people", :id => false, :force => true do |t|

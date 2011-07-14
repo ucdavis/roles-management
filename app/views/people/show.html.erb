@@ -68,7 +68,11 @@
 		<h3>Group Memberships</h3>
 		<ul>
 		<% for g in @person.groups %>
-			<li><%= link_to g.name, g %></li>
+			<li><%= link_to g.name, g %>
+				<% if g.manager_id == @person.id %>
+					(Manager)
+				<% end %>
+			</li>
 		<% end %>
 		</ul>
 		

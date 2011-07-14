@@ -1,5 +1,8 @@
 class SiteController < ApplicationController
+  include ApplicationHelper
+  
   def index
+    @user = current_user
   end
 
   def contact
