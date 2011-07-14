@@ -1,4 +1,6 @@
 DSSRM::Application.routes.draw do
+  resources :templates
+
   get "databases/index"
 
   get "databases/ldap"

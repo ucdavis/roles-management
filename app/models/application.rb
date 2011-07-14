@@ -1,3 +1,3 @@
 class Application < ActiveRecord::Base
-  has_many :people
+  has_many :templates
 end
