@@ -3,4 +3,7 @@ class Role < ActiveRecord::Base
                           :join_table => "roles_roles",
                           :foreign_key => "role_id",
                           :association_foreign_key => "subrole_id"
+  
+  has_many :groups
+  has_many :people
 end
