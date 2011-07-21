@@ -1,4 +1,6 @@
 class ApplicationsController < ApplicationController
+  require 'digest/md5'
+  
   # GET /applications
   # GET /applications.xml
   def index
@@ -79,5 +81,11 @@ class ApplicationsController < ApplicationController
       format.html { redirect_to(applications_url) }
       format.xml  { head :ok }
     end
+  end
+  
+  private
+  
+  def generate_api_key
+    #Digest::MD5.hexdigest("DSS IT-20010-1")
   end
 end
