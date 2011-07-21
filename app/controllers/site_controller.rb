@@ -5,6 +5,8 @@ class SiteController < ApplicationController
     @user = current_user
     
     @people = Person.includes(:groups).where("groups.id in (?)", @user.groups)
+    
+    @roles = Role.find(:all)
   end
 
   def contact
