@@ -5,9 +5,9 @@ DSSRM::Application.routes.draw do
   
   get "site/logout"
 
-  resources :applications
-
-  resources :roles
+  resources :applications do
+    resources :roles
+  end
 
   resources :groups
 
