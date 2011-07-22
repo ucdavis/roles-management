@@ -10,13 +10,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110721204228) do
+ActiveRecord::Schema.define(:version => 20110722204634) do
 
   create_table "applications", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "group_group", :id => false, :force => true do |t|
+    t.integer "group_id"
+    t.integer "subgroup_id"
   end
 
   create_table "groups", :force => true do |t|
@@ -34,6 +39,12 @@ ActiveRecord::Schema.define(:version => 20110721204228) do
   create_table "groups_people", :id => false, :force => true do |t|
     t.integer "group_id"
     t.integer "person_id"
+  end
+
+  create_table "ous", :force => true do |t|
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "people", :force => true do |t|
