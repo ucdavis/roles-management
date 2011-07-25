@@ -7,7 +7,12 @@
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
 		
-		<h2><%= @group.name %></h2>
+		<h2>Group: <%= @group.name %></h2>
+		
+		<ul class="tabs">
+			<li><a href="#">Overview</a></li>
+			<li><%= link_to 'Edit', edit_group_path(@group) %></li>
+		</ul>
 	</div> <!-- .block_head -->
 	
 	<div class="block_content">
@@ -16,15 +21,15 @@
 		  <%= @group.name %>
 		</p>
 		
-		<h3>Members</h3>
+		<h2>Members</h2>
 		<ul>
 			<% for p in @group.people %>
 				<li><%= link_to p.name, p %></li>
 			<% end %>
+			<% if @group.people.length == 0 %>
+				<li><i>No members assigned</i></li>
+			<% end %>
 		</ul>
-		
-		<%= link_to 'Edit', edit_group_path(@group) %> |
-		<%= link_to 'Back', groups_path %>
 	</div> <!-- .block_content -->
 	
 	<div class="bendl"></div>
