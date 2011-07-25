@@ -4,9 +4,9 @@ class Role < ActiveRecord::Base
   #                        :foreign_key => "role_id",
   #                        :association_foreign_key => "subrole_id"
   
-  #has_many :groups
   has_many :role_assignments
   has_many :people, :through => :role_assignments
+  has_many :groups, :through => :role_assignments
   
   belongs_to :application
 end

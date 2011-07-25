@@ -5,7 +5,9 @@ class Group < ActiveRecord::Base
                           :association_foreign_key => "subgroup_id"
   
   has_and_belongs_to_many :people
-  belongs_to :roles
+  
+  has_many :role_assignments
+  has_many :roles, :through => :role_assignments
   
   attr_accessible :name, :people_tokens, :people_ids
   attr_reader :people_tokens
