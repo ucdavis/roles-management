@@ -12,6 +12,7 @@
 		<ul class="tabs">
 			<li><a href="#overview_tab">Overview</a></li>
 			<li><a href="#revisions_tab">Revisions</a></li>
+			<li><%= link_to 'Edit', edit_person_path(@person) %></li>
 		</ul>
 	</div> <!-- .block_head -->
 	
@@ -72,9 +73,6 @@
 			</li>
 		<% end %>
 		</ul>
-		
-		<%= link_to 'Edit', edit_person_path(@person) %> |
-		<%= link_to 'Back', people_path %>
 	</div> <!-- .block_content -->
 
 	<div class="block_content tab_content" id="revisions_tab">
