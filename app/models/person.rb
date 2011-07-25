@@ -13,4 +13,8 @@ class Person < ActiveRecord::Base
   def name
       "#{first} #{last}"
   end
+  
+  def as_json(options={}) 
+      { :id => self.id, :name => self.first + " " + self.last } 
+  end
 end

@@ -16,6 +16,13 @@
     	<%= f.label :name %><br />
     	<%= f.text_field :name, :class => "text" %>
 	</p>
+	<p>
+		<h2>Members</h2>
+		<p>
+		  <%= f.label :people_tokens, "People" %><br />
+		  <%= f.text_field :people_tokens, "data-pre" => @group.people.to_json %>
+		</p>
+	</p>
   </div>
   <div class="actions">
 	<p>

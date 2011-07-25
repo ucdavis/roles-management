@@ -1006,3 +1006,21 @@ a:hover {
 .hidden {
 	display: none;
 }
+
+/* Compatibility fixes where our CSS interferes with a plugin's CSS */
+ul.token-input-list-facebook {
+	padding-left: 0px !important;
+	padding-bottom: 0px !important;
+}
+
+li.token-input-token-facebook {
+	padding-left: 0px !important;
+	margin-bottom: 0px !important;
+	background: none !important;
+}
+
+li.token-input-input-token-facebook {
+	padding-left: 0px !important;
+	margin-bottom: 0px !important;
+	background: none !important;
+}

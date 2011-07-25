@@ -2,11 +2,14 @@ class PeopleController < ApplicationController
   # GET /people
   # GET /people.xml
   def index
-    @people = Person.all
+    @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
+
+    @people.map()
 
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @people }
+      format.json { render :json => @people }
     end
   end
 

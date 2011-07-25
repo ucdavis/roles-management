@@ -2,11 +2,12 @@ class GroupsController < ApplicationController
   # GET /groups
   # GET /groups.xml
   def index
-    @groups = Group.all
+    @groups = Group.where("name like ?", "%#{params[:q]}%")
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html
       format.xml  { render :xml => @groups }
+      format.json { render :json => @groups.map(&:attributes) }
     end
   end
 
