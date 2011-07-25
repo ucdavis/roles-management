@@ -2,7 +2,7 @@
 <div class="message success"><p><%= notice %></p></div>
 <% end %>
 
-<div class="block">
+<div class="block withsidebar">
 	<div class="block_head">
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
@@ -17,62 +17,76 @@
 	</div> <!-- .block_head -->
 	
 	<div class="block_content tab_content" id="overview_tab">
-		<p>
-		  <b>First:</b>
-		  <%= @person.first %>
-		</p>
-
-		<p>
-		  <b>Last:</b>
-		  <%= @person.last %>
-		</p>
-
-		<p>
-		  <b>Email:</b>
-		  <%= mail_to @person.email, @person.email, :encode => "javascript" %>
-		</p>
-
-		<p>
-		  <b>Kerberos ID:</b>
-		  <%= @person.loginid %>
-		</p>
-
-		<p>
-		  <b>Status:</b>
-		  <% if @person.status %>
-		    Active
-		  <% else %>
-		    Inactive
-		  <% end %>
-		</p>
-
-		<p>
-		  <b>Phone:</b>
-		  <% if @person.phone != nil and @person.phone.length > 0 %>
-		    <%= number_to_phone @person.phone, :area_code => true %>
-		  <% end %>
-		</p>
-
-		<p>
-		  <b>Address:</b>
-		  <%= @person.address %>
-		</p>
-		
-		<h2>Roles</h2>
-		<ul>
+		<div class="sidebar">
+			<ul class="sidemenu">
+				<li><a href="#sb1">Basics</a></li>
+				<li><a href="#sb2">Roles</a></li>
+				<li><a href="#sb3">Groups</a></li>
+			</ul>
 			
-		</ul>
+			<p><strong>Some notification text.</strong> Donec hendrerit porttitor felis, id semper eros lobortis sed. Class aptent taciti sociosqu ad litora.</p>
+		</div>		<!-- .sidebar ends -->
 		
-		<h2>Group Memberships</h2>
-		<ul>
-		<% for g in @person.groups %>
-			<li><%= link_to g.name, g %>
-				<% if g.manager_id == @person.id %>
-					(Manager)
-				<% end %>
-			</li>
-		<% end %>
-		</ul>
+		<div class="sidebar_content" id="sb1">
+			<div class="right">
+				<%= image_tag "no_photo.gif" %>
+			</div>
+			
+			<p>
+			  <b>First:</b>
+			  <%= @person.first %>
+			</p>
+
+			<p>
+			  <b>Last:</b>
+			  <%= @person.last %>
+			</p>
+
+			<p>
+			  <b>Email:</b>
+			  <%= mail_to @person.email, @person.email, :encode => "javascript" %>
+			</p>
+
+			<p>
+			  <b>Kerberos ID:</b>
+			  <%= @person.loginid %>
+			</p>
+
+			<p>
+			  <b>Status:</b>
+			  <% if @person.status %>
+			    Active
+			  <% else %>
+			    Inactive
+			  <% end %>
+			</p>
+
+			<p>
+			  <b>Phone:</b>
+			  <% if @person.phone != nil and @person.phone.length > 0 %>
+			    <%= number_to_phone @person.phone, :area_code => true %>
+			  <% end %>
+			</p>
+
+			<p>
+			  <b>Address:</b>
+			  <%= @person.address %>
+			</p>
+		</div> <!-- #sb1 -->
+		
+		<div class="sidebar_content" id="sb2">
+			<h2>Roles</h2>
+			<ul>
+			
+			</ul>
+		</div> <!-- sb2 -->
+		
+		<div class="sidebar_content" id="sb3">
+			<h2>Group Memberships</h2>
+			<ul>
+				<li></li>
+			</ul>
+		</div> <!-- #sb3 -->
 	</div> <!-- .block_content -->
 
 	<div class="block_content tab_content" id="revisions_tab">

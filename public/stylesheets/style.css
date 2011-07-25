@@ -1007,6 +1007,14 @@ a:hover {
 	display: none;
 }
 
+.right {
+	float: right;
+}
+
+.left {
+	float: left;
+}
+
 /* Compatibility fixes where our CSS interferes with a plugin's CSS */
 ul.token-input-list-facebook {
 	padding-left: 0px !important;
