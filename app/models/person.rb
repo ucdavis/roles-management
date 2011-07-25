@@ -2,7 +2,8 @@ class Person < ActiveRecord::Base
   versioned
   
   has_and_belongs_to_many :groups
-  belongs_to :roles
+  has_many :role_assignments
+  has_many :roles, :through => :role_assignments
   
   validates_presence_of :first, :last, :loginid
   

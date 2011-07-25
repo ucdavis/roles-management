@@ -6,6 +6,11 @@
 		<div class="bheadr"></div>
 		
 		<h2><%= @application.name %></h2>
+		
+		<ul class="tabs">
+			<li><a href="#">Overview</a></li>
+			<li><%= link_to 'Edit', edit_application_path(@application) %></li>
+		</ul>
 	</div> <!-- .block_head -->
 	
 	<div class="block_content">
@@ -13,15 +18,14 @@
 		  <b>Name:</b>
 		  <%= @application.name %>
 		</p>
-
 		<p>
-		  <b>Api key:</b>
+		  <b>Hostname:</b>
+		  <%= @application.hostname %>
+		</p>
+		<p>
+		  <b>API Key:</b>
 		  <%= @application.api_key %>
 		</p>
-
-
-		<%= link_to 'Edit', edit_application_path(@application) %> |
-		<%= link_to 'Back', applications_path %>
 	</div> <!-- .block_content -->
 	
 	<div class="bendl"></div>

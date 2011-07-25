@@ -23,9 +23,16 @@
     <%= f.text_field :hostname, :class => "text" %>
 	</p>
   </div>
+  <div class="field">
+	<p>
+    <%= f.label :api_key, "API Key (Not editable but can be reset below)" %><br />
+    <%= f.text_field :api_key, :class => "text", :disabled => true %>
+	</p>
+  </div>
   <div class="actions">
 	<p>
     <%= f.submit "Submit", :class => "submit mid" %>
+	<%= f.submit "Reset API Key", :class => "submit mid", :confirm => "Are you sure you want to reset the API key?" %>
 	</p>
   </div>
 <% end %>

@@ -1,6 +1,22 @@
-<h1>Editing application</h1>
+<p id="notice"><%= notice %></p>
 
-<%= render 'form' %>
-
-<%= link_to 'Show', @application %> |
-<%= link_to 'Back', applications_path %>
+<div class="block">
+	<div class="block_head">
+		<div class="bheadl"></div>
+		<div class="bheadr"></div>
+		
+		<h2>Editing: <%= @application.name %></h2>
+		
+		<ul class="tabs">
+			<li><%= link_to "Overview", @application %></li>
+			<li><a href="#">Edit</a></li>
+		</ul>
+	</div> <!-- .block_head -->
+	
+	<div class="block_content">
+		<%= render 'form' %>
+	</div> <!-- .block_content -->
+	
+	<div class="bendl"></div>
+	<div class="bendr"></div>
+</div> <!-- .block -->
