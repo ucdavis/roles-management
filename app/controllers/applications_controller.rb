@@ -43,6 +43,8 @@ class ApplicationsController < ApplicationController
   # POST /applications.xml
   def create
     @application = Application.new(params[:application])
+    
+    @application.api_key = generate_api_key(@application)
 
     respond_to do |format|
       if @application.save
@@ -85,7 +87,9 @@ class ApplicationsController < ApplicationController
   
   private
   
-  def generate_api_key
-    #Digest::MD5.hexdigest("DSS IT-20010-1")
+  def generate_api_key(application)
+    api_key_settings = YAML.load_file("#{Rails.root.to_s}/config/api_keys.yml")['development']
+    
+    Digest::MD5.hexdigest(application.name + application.hostname + api_key_settings['key']) # last string should be unique to 
   end
 end

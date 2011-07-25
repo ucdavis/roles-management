@@ -12,14 +12,20 @@
   <% end %>
 
   <div class="field">
+	<p>
     <%= f.label :name %><br />
-    <%= f.text_field :name %>
+    <%= f.text_field :name, :class => "text" %>
+	</p>
   </div>
   <div class="field">
-    <%= f.label :api_key %><br />
-    <%= f.text_field :api_key %>
+	<p>
+    <%= f.label :hostname, "Hostname (e.g. my.dss.ucdavis.edu)" %><br />
+    <%= f.text_field :hostname, :class => "text" %>
+	</p>
   </div>
   <div class="actions">
-    <%= f.submit %>
+	<p>
+    <%= f.submit "Submit", :class => "submit mid" %>
+	</p>
   </div>
 <% end %>
