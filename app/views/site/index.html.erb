@@ -16,18 +16,12 @@
 		</div>		<!-- .block_head ends -->
 		<div class="block_content">
 		
-			<% for group in @user.managements %>
-		
-				<div id="group_whatever">
-					<center><h2><%= group.name %></h2></center>
-					<ul>
-					<% for person in group.people %>
-						<li><a href="#"><%= person.name %></a></li>
-					<% end %>
-					</ul>
-				</div> <!-- group_whatever -->
-		
-			<% end %>
+			<div id="group_whatever">
+				<center><h2>Group Name</h2></center>
+				<ul>
+					<li><a href="#">Person Name</a></li>
+				</ul>
+			</div> <!-- group_whatever -->
 		</div>		<!-- .block_content ends -->
 
 		<div class="bendl"></div>

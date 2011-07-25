@@ -1,4 +1,6 @@
-<p id="notice"><%= notice %></p>
+<% if notice %>
+<div class="message success"><p><%= notice %></p></div>
+<% end %>
 
 <div class="block">
 	<div class="block_head">
@@ -12,11 +14,6 @@
 		<p>
 		  <b>Name:</b>
 		  <%= @group.name %>
-		</p>
-		
-		<p>
-			<b>Manager:</b>
-			<%= link_to @group.manager.name, @group.manager %>
 		</p>
 		
 		<h3>Members</h3>
