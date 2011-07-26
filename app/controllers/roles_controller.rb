@@ -25,7 +25,8 @@ class RolesController < ApplicationController
   # GET /roles/new
   # GET /roles/new.xml
   def new
-    @role = Role.new
+    @application = Application.find_by_id(params[:application_id])
+    @role = @application.roles.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -41,11 +42,12 @@ class RolesController < ApplicationController
   # POST /roles
   # POST /roles.xml
   def create
-    @role = Role.new(params[:role])
+    @application = Application.find_by_id(params[:application_id])
+    @role = @application.roles.build(params[:role])
 
     respond_to do |format|
       if @role.save
-        format.html { redirect_to(@role, :notice => 'Role was successfully created.') }
+        format.html { redirect_to @application, :notice => 'Role was successfully created.' }
         format.xml  { render :xml => @role, :status => :created, :location => @role }
       else
         format.html { render :action => "new" }
