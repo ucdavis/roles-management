@@ -2,7 +2,8 @@ class RolesController < ApplicationController
   # GET /roles
   # GET /roles.xml
   def index
-    @roles = Role.all
+    @application = Application.find_by_id(params[:application_id])
+    @roles = @application.roles
 
     respond_to do |format|
       format.html # index.html.erb
