@@ -19,8 +19,8 @@ class PeopleController < ApplicationController
     @person = Person.find_by_loginid(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @person.to_xml( :include => { :groups => { :only => [:name, :code] }, :title => { :only => [:name] } }) }
+      format.html
+      format.xml  { render :xml => @person}#.to_xml( :include => { :groups => { :only => [:name, :code] }, :title => { :only => [:name] } }) }
     end
   end
 
