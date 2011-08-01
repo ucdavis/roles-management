@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   
+  # Only the API namespace should respond to XML. Be mindful of this!
   before_filter CASClient::Frameworks::Rails::GatewayFilter, :unless => :requested_xml?
   before_filter :login_required, :unless => :requested_xml?
   
@@ -14,11 +15,11 @@ class ApplicationController < ActionController::Base
         flash[:warning] = 'You have authenticated but are not allowed access.'
         @@user = nil
       end
-    #else
-    #  flash[:warning] = 'You must authenticate with CAS to continue.'
+    else
+      flash[:warning] = 'You must authenticate with CAS to continue.'
     end
   
-    #session[:return_to] = request.request_uri
+    session[:return_to] = request.request_uri
   
     redirect_to CASClient::Frameworks::Rails::Filter.login_url(self)
   
@@ -28,7 +29,6 @@ class ApplicationController < ActionController::Base
   protected
   
   def requested_xml?
-    #%w(PeopleController).include? params[:controller]
     not params[:format].nil? and params[:format] == "xml"
   end
 end

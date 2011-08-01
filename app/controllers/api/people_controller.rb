@@ -1,5 +1,4 @@
 class Api::PeopleController < Api::BaseController
-  # GET /people
   # GET /people.xml
   def index
     @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
@@ -12,7 +11,6 @@ class Api::PeopleController < Api::BaseController
     end
   end
 
-  # GET /people/1
   # GET /people/1.xml
   def show
     @person = Person.find_by_loginid(params[:id])
@@ -22,7 +20,6 @@ class Api::PeopleController < Api::BaseController
     end
   end
 
-  # GET /people/new
   # GET /people/new.xml
   def new
     @person = Person.new
@@ -37,7 +34,6 @@ class Api::PeopleController < Api::BaseController
     @person = Person.find_by_loginid(params[:id])
   end
 
-  # POST /people
   # POST /people.xml
   def create
     @person = Person.new(params[:person])
@@ -51,7 +47,6 @@ class Api::PeopleController < Api::BaseController
     end
   end
 
-  # PUT /people/1
   # PUT /people/1.xml
   def update
     @person = Person.find_by_loginid(params[:id])
@@ -65,7 +60,6 @@ class Api::PeopleController < Api::BaseController
     end
   end
 
-  # DELETE /people/1
   # DELETE /people/1.xml
   def destroy
     @person = Person.find_by_loginid(params[:id])
