@@ -1,7 +1,4 @@
-class Api::PeopleController < ApplicationController
-  skip_before_filter CASClient::Frameworks::Rails::GatewayFilter
-  skip_before_filter :login_required
-  
+class Api::PeopleController < Api::BaseController
   # GET /people
   # GET /people.xml
   def index
