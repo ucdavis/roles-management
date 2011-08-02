@@ -12,7 +12,7 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/1
   def show
-    @application = Application.find(params[:id])
+    @application = Application.find_by_name(params[:id])
 
     respond_to do |format|
       format.html
@@ -30,7 +30,7 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/1/edit
   def edit
-    @application = Application.find(params[:id])
+    @application = Application.find_by_name(params[:id])
   end
 
   # POST /applications
@@ -50,8 +50,12 @@ class ApplicationsController < ApplicationController
 
   # PUT /applications/1
   def update
-    @application = Application.find(params[:id])
+    @application = Application.find_by_name(params[:id])
 
+    if params[:commit] == "reset"
+      @application.api_key = generate_api_key(@application)
+    end
+    
     respond_to do |format|
       if @application.update_attributes(params[:application])
         format.html { redirect_to(@application, :notice => 'Application was successfully updated.') }
