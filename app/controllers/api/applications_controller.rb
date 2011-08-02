@@ -12,10 +12,10 @@ class Api::ApplicationsController < Api::BaseController
 
   # GET /applications/1
   def show
-    @application = Application.find(params[:id])
+    @application = Application.find_by_name(params[:id])
 
     respond_to do |format|
-      format.html
+      format.xml { render :text => @application.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
     end
   end
 

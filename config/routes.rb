@@ -21,9 +21,9 @@ DSSRM::Application.routes.draw do
   root :to => "site#index"
 
   namespace "api" do
-    resources :people, :groups, :applications
+    resources :people, :groups
+    resources :applications do
+      resources :roles
+    end
   end
-
-  # See how all your routes lay out with "rake routes"
-
 end
