@@ -12,25 +12,25 @@
   <% end %>
 
   <div class="field">
-	<p>
+	<p style="clear: none;">
     <%= f.label :name %><br />
     <%= f.text_field :name, :class => "text" %>
 	</p>
   </div>
   <div class="field">
-	<p>
+	<p style="clear: none;">
     <%= f.label :hostname, "Hostname (e.g. my.dss.ucdavis.edu)" %><br />
     <%= f.text_field :hostname, :class => "text" %>
 	</p>
   </div>
   <div class="field">
-	<p>
+	<p style="clear: none;">
     <%= f.label :api_key, "API Key (Not editable but can be reset below)" %><br />
     <%= f.text_field :api_key, :class => "text", :disabled => true %>
 	</p>
   </div>
   <div class="actions">
-	<p>
+	<p style="clear: none;">
     <%= f.submit "Submit", :class => "submit mid", :value => "submit" %>
 	<%= f.submit "Reset API Key", :class => "submit mid", :confirm => "Are you sure you want to reset the API key?", :value => "reset" %>
 	</p>
