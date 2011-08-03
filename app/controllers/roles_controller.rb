@@ -11,7 +11,8 @@ class RolesController < ApplicationController
 
   # GET /roles/1
   def show
-    @role = Role.find(params[:id])
+    @application = Application.find_by_name(params[:application_id])
+    @role = @application.roles.find_by_id(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -30,7 +31,8 @@ class RolesController < ApplicationController
 
   # GET /roles/1/edit
   def edit
-    @role = Role.find_by_name(params[:application_id])
+    @application = Application.find_by_name(params[:application_id])
+    @role = @application.roles.find_by_id(params[:id])
   end
 
   # POST /roles

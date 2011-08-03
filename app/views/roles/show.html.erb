@@ -1,9 +1,32 @@
-<p id="notice"><%= notice %></p>
+<% if notice %>
+<div class="message success"><p><%= notice %></p></div>
+<% end %>
 
-<p>
-  <b>Name:</b>
-  <%= @role.name %>
-</p>
-
-<%= link_to 'Edit', edit_application_role_path(@role) %> |
-<%= link_to 'Back', application_roles_path %>
+<div class="block">
+	<div class="block_head">
+		<div class="bheadl"></div>
+		<div class="bheadr"></div>
+		
+		<h2>Role <em><%= @role.name %></em> for <em><%= @application.name %></em></h2>
+		
+		<ul class="tabs">
+			<li><a href="#">Overview</a></li>
+			<li><%= link_to 'Edit', edit_application_role_path(@application, @role) %></li>
+		</ul>
+	</div> <!-- .block_head -->
+	
+	<div class="block_content">
+		<p>
+		  <b>Name:</b>
+		  <%= @role.name %>
+		</p>
+		
+		<h2>Members</h2>
+		<p>
+			N/A
+		</p>
+	</div> <!-- .block_content -->
+	
+	<div class="bendl"></div>
+	<div class="bendr"></div>
+</div> <!-- .block -->

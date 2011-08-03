@@ -330,6 +330,10 @@ a:hover {
 	float: left;
 	}
 	
+.block .block_head h2 em {
+	color: #008ee8;
+}
+	
 .block .block_head ul {
 	float: right;
 	text-transform: uppercase;
