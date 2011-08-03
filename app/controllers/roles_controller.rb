@@ -51,11 +51,12 @@ class RolesController < ApplicationController
 
   # PUT /roles/1
   def update
-    @role = Role.find(params[:id])
+    @application = Application.find_by_name(params[:application_id])
+    @role = @application.roles.find_by_id(params[:id])
 
     respond_to do |format|
       if @role.update_attributes(params[:role])
-        format.html { redirect_to(@role, :notice => 'Role was successfully updated.') }
+        format.html { redirect_to([@application, @role], :notice => 'Role was successfully updated.') }
       else
         format.html { render :action => "edit" }
       end

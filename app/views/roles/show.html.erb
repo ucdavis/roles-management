@@ -23,7 +23,11 @@
 		
 		<h2>Members</h2>
 		<p>
-			N/A
+			<ul>
+				<% @role.people.each do |person| %>
+					<li><%= link_to person.name, person %></li>
+				<% end %>
+			</ul>
 		</p>
 	</div> <!-- .block_content -->
 	

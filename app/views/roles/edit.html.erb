@@ -10,7 +10,7 @@
 		<h2>Editing Role <em><%= @role.name %></em> for <em><%= @application.name %></em></h2>
 		
 		<ul class="tabs">
-			<li><a href="#">Overview</a></li>
+			<li><%= link_to 'Overview', application_role_path(@application, @role) %></li>
 			<li><%= link_to 'Edit', edit_application_role_path(@application, @role) %></li>
 		</ul>
 	</div> <!-- .block_head -->

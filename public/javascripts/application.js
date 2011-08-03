@@ -6,4 +6,10 @@ $(function() {
     prePopulate: $("#group_people_tokens").data("pre"),
     theme: "facebook"
   });
+
+	$("#role_people_tokens").tokenInput("/people.json", {
+    crossDomain: false,
+    prePopulate: $("#role_people_tokens").data("pre"),
+    theme: "facebook"
+  });
 });
