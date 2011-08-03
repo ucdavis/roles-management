@@ -21,7 +21,10 @@ DSSRM::Application.routes.draw do
   root :to => "site#index"
 
   namespace "api" do
-    resources :people, :groups
+    resources :people do
+      resources :applications
+    end
+    resources :groups
     resources :applications do
       resources :roles
     end
