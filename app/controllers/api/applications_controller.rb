@@ -14,8 +14,16 @@ class Api::ApplicationsController < Api::BaseController
   def show
     @application = Application.find_by_name(params[:id])
 
-    respond_to do |format|
-      format.xml { render :text => @application.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
+    if(params[:person_id].nil? == false)
+      @person = Person.find_by_loginid(params[:person_id])
+      
+      respond_to do |format|
+        format.xml { render :text => @person.to_xml( :include => [ :role_assignments ] ) }
+      end
+    else
+      respond_to do |format|
+        format.xml { render :text => @application.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
+      end
     end
   end
 
