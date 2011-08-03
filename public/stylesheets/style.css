@@ -889,6 +889,12 @@ a:hover {
 	border: 0;
 	}
 
+.block.withsidebar .block_content .sidebar ul.sidemenu li.inactive a,
+.block.withsidebar .block_content .sidebar ul.sidemenu li.inactive a:hover {
+	border-right: 1px solid #ccc;
+	background: 0;
+}
+
 .block.withsidebar .block_content .sidebar_content {
 	padding: 15px 20px 15px 210px;
 	}

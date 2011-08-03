@@ -1,7 +1,7 @@
 class RolesController < ApplicationController
   # GET /roles
   def index
-    @application = Application.find_by_id(params[:application_id])
+    @application = Application.find_by_name(params[:application_id])
     @roles = @application.roles
 
     respond_to do |format|
@@ -20,7 +20,7 @@ class RolesController < ApplicationController
 
   # GET /roles/new
   def new
-    @application = Application.find_by_id(params[:application_id])
+    @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.build
 
     respond_to do |format|
@@ -30,12 +30,12 @@ class RolesController < ApplicationController
 
   # GET /roles/1/edit
   def edit
-    @role = Role.find(params[:id])
+    @role = Role.find_by_name(params[:application_id])
   end
 
   # POST /roles
   def create
-    @application = Application.find_by_id(params[:application_id])
+    @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.build(params[:role])
 
     respond_to do |format|
