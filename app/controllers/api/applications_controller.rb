@@ -1,7 +1,6 @@
 class Api::ApplicationsController < Api::BaseController
   require 'digest/md5'
   
-  # GET /applications
   def index
     @applications = Application.all
 
@@ -10,7 +9,6 @@ class Api::ApplicationsController < Api::BaseController
     end
   end
 
-  # GET /applications/1
   def show
     @application = Application.find_by_name(params[:id])
 
@@ -27,21 +25,18 @@ class Api::ApplicationsController < Api::BaseController
     end
   end
 
-  # GET /applications/new
   def new
     @application = Application.new
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
     end
   end
 
-  # GET /applications/1/edit
   def edit
     @application = Application.find(params[:id])
   end
 
-  # POST /applications
   def create
     @application = Application.new(params[:application])
     
@@ -56,7 +51,6 @@ class Api::ApplicationsController < Api::BaseController
     end
   end
 
-  # PUT /applications/1
   def update
     @application = Application.find(params[:id])
 
@@ -69,7 +63,6 @@ class Api::ApplicationsController < Api::BaseController
     end
   end
 
-  # DELETE /applications/1
   def destroy
     @application = Application.find(params[:id])
     @application.destroy
