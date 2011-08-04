@@ -33,8 +33,6 @@ class RolesController < ApplicationController
   def edit
     @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.find_by_id(params[:id])
-    
-    debugger
   end
 
   # POST /roles
