@@ -33,6 +33,8 @@ class RolesController < ApplicationController
   def edit
     @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.find_by_id(params[:id])
+    
+    debugger
   end
 
   # POST /roles
@@ -42,7 +44,7 @@ class RolesController < ApplicationController
 
     respond_to do |format|
       if @role.save
-        format.html { redirect_to @application, :notice => 'Role was successfully created.' }
+        format.html { redirect_to application_roles_path(@application), :notice => 'Role was successfully created.' }
       else
         format.html { render :action => "new" }
       end
@@ -65,11 +67,12 @@ class RolesController < ApplicationController
 
   # DELETE /roles/1
   def destroy
-    @role = Role.find(params[:id])
+    @application = Application.find_by_name(params[:application_id])
+    @role = @application.roles.find_by_id(params[:id])
     @role.destroy
 
     respond_to do |format|
-      format.html { redirect_to(roles_url) }
+      format.html { redirect_to([@application, @role], :notice => 'Role was successfully destroyed.') }
     end
   end
 end
