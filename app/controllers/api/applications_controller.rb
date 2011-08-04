@@ -18,7 +18,7 @@ class Api::ApplicationsController < Api::BaseController
       @person = Person.find_by_loginid(params[:person_id])
       
       respond_to do |format|
-        format.xml { render :text => @person.to_xml( :include => { :roles => { :include => :application } }, :except => [:created_at, :id, :updated_at, :phone, :affiliation_id, :address, :title_id, :person_id] ) }
+        format.xml { render :text => @person.to_xml( :include => { :roles => { :include => :application } }, :except => [:created_at, :id, :updated_at, :phone, :affiliation_id, :address, :title_id, :person_id, :api_key] ) }
       end
     else
       respond_to do |format|
