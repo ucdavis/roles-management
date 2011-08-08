@@ -40,6 +40,10 @@ task :import_ldap => :environment do
   }
   attributes = ['uid','givenName','sn','mail','telephoneNumber','street','ou','title','ucdPersonAffiliation','displayName','ucdStudentMajor','ucdAppointmentDepartmentCode','company','manager','ucdAppointmentTitleCode','principal_name','title_code','dept_code']
 
+  #
+  # STEP ONE: Connect to LDAP. Query needed data.
+  #
+
   # Retrieve LDAP passwords from config/database.yml
   ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ldap']
 
@@ -125,6 +129,10 @@ task :import_ldap => :environment do
       end
   end
   
+  #
+  # STEP TWO: Filter received LDAP data down to only what's necessary.
+  #
+  
   # Filter to only have unique individuals
   uniquePeople = []
   uuids = []
@@ -190,6 +198,10 @@ task :import_ldap => :environment do
 
   # Disconnect
   conn.unbind
+  
+  #
+  # STEP THREE: Add people, groups, etc. to local database
+  #
 
   # Add people to database
   for f in finalPeople
