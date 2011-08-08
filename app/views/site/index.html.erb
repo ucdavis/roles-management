@@ -37,18 +37,6 @@
 		</div>		<!-- .block_head ends -->
 		<div class="block_content">
 		
-			<% for group in @user.groups %>
-		
-				<div id="group_whatever">
-					<center><h2><%= group.name %></h2></center>
-					<ul>
-					<% for person in group.people %>
-						<li><a href="#"><%= person.name %></a></li>
-					<% end %>
-					</ul>
-				</div> <!-- group_whatever -->
-		
-			<% end %>
 		</div>		<!-- .block_content ends -->
 
 		<div class="bendl"></div>
@@ -71,16 +59,10 @@
 	<div class="block_content">
 		<h2>Positions</h2>
 		<ul id="sortable1" class="connectedSortable">
-			<% for role in @roles %>
-			<li class="ui-state-default"><a href="#"><%= role.name %></a></li>
-			<% end %>
 		</ul>
 		
 		<h2>People</h2>
 		<ul id="sortable2" class="connectedSortable">
-			<% for person in @people %>
-				<li class="ui-state-default"><a href="#"><%= person.name %></a></li>
-			<% end %>
 		</ul>
 	</div>		<!-- .block_content ends -->
 

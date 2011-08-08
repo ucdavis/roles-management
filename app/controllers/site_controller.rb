@@ -4,9 +4,7 @@ class SiteController < ApplicationController
   def index
     @user = current_user
     
-    @people = Person.includes(:groups).where("groups.id in (?)", @user.groups)
-    
-    @roles = Role.find(:all)
+    raise "User could not be found" unless @user.nil? == false
   end
 
   def contact
