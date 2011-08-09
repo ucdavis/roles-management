@@ -17,11 +17,10 @@ class ApplicationController < ActionController::Base
       end
     else
       flash[:warning] = 'You must authenticate with CAS to continue.'
+      redirect_to CASClient::Frameworks::Rails::Filter.login_url(self)
     end
   
     session[:return_to] = request.request_uri
-  
-    redirect_to CASClient::Frameworks::Rails::Filter.login_url(self)
   
     return false
   end
