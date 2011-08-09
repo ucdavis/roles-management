@@ -1,4 +1,4 @@
-set :application, "my.dss.ucdavis.edu_roles"
+set :application, "my.dss.ucdavis.edu"
 
 set :repository,  "git://github.com/cthielen/dss-rm.git"
 set :scm, :git
@@ -9,7 +9,7 @@ role :app, application
 role :db,  application, :primary => true
 
 set :user, "deploy"
-set :deploy_to, "/var/www/apps/#{application}"
+set :deploy_to, "/var/www/apps/dss-rm"
 set :deploy_via, :remote_cache
 set :use_sudo, false
 
@@ -33,3 +33,6 @@ namespace :deploy do
 end
 
 after 'deploy:update_code', 'deploy:symlink_shared'
+
+# INSTALLME: Modify this action if you use Capistrano with your own SSH keys
+ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa-deploy")]

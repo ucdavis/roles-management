@@ -11,10 +11,20 @@ of configuration that need to be attended to:
 config/database.yml.example
 	Move this file to config/database.yml and set the appropriate values.
 
+config/api_keys.yml.example
+	Move this file to config/api_keys.yml and set the appropriate values.
+
 config/environment.rb
 	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If you
 	decide to remove CAS, also remove the before_filter in
 	app/controllers/application_controller.rb.
+
+config/deploy.rb
+	You'll likely want to set this to your own Capistrano setup or delete it
+	if you do not use Capistrano.
+
+You can also search the code for "INSTALLME" (case-sensitive) in case this README
+is out of date.
 
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
