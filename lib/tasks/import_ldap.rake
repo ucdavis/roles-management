@@ -254,12 +254,10 @@ task :import_ldap => :environment do
     
     person.groups << group
     
-    # Assign their title, creating it if necessary (titles are a 1:n relationship)
-    #title = Title.find(:first, :conditions => [ "lower(name) = ?", f["title"].downcase ]) || Title.create(:name => f["title"])
-    # Assume title codes match title strings
-    #title.code = f["title_code"]
-    #title.save
-    #person.title = title
+    # Add to group based on title, creating it if necessary
+    group = Group.find(:first, :conditions => [ "lower(name) = ?", f["title"].downcase ]) || Group.create(:name => f["title"])
+    group.save
+    person.groups << group
     
     # Assign their affiliation, creating it if necessary (affiliations are a 1:n relationship)
     #affiliation = Affiliation.find(:first, :conditions => [ "lower(name) = ?", f["ucdPersonAffiliation"].downcase ]) || Affiliation.create(:name => f["ucdPersonAffiliation"])

@@ -5,6 +5,9 @@ class Person < ActiveRecord::Base
   has_many :role_assignments
   has_many :roles, :through => :role_assignments
   
+  has_many :ous, :through => :ou_assignments
+  has_many :ou_assignments
+  
   validates_presence_of :first, :last, :loginid
   
   def to_param  # overridden
