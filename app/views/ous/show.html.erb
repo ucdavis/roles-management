@@ -1,0 +1,38 @@
+<% if notice %>
+<div class="message success"><p><%= notice %></p></div>
+<% end %>
+
+<div class="block">
+	<div class="block_head">
+		<div class="bheadl"></div>
+		<div class="bheadr"></div>
+		
+		<h2>Organization: <%= @ou.name %></h2>
+		
+		<ul class="tabs">
+			<li><a href="#">Overview</a></li>
+			<li><%= link_to 'Edit', edit_ou_path(@ou) %></li>
+		</ul>
+	</div> <!-- .block_head -->
+	
+	<div class="block_content">
+		<p>
+		  <b>Name:</b>
+		  <%= @ou.name %>
+		</p>
+		
+		<% unless @ou.manager.nil? %>
+		<p>
+		  <b>Manager:</b>
+		  <%= @ou.manager.name %>
+		</p>
+		<% end %>
+		
+		<h2>Members</h2>
+		<ul>
+		</ul>
+	</div> <!-- .block_content -->
+	
+	<div class="bendl"></div>
+	<div class="bendr"></div>
+</div> <!-- .block -->

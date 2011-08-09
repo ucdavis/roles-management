@@ -1,0 +1,25 @@
+<%= form_for(@ou) do |f| %>
+  <% if @ou.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ou.errors.count, "error") %> prohibited this organization from being saved:</h2>
+
+      <ul>
+      <% @ou.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+	<p>
+    	<%= f.label :name %><br />
+    	<%= f.text_field :name, :class => "text" %>
+	</p>
+  </div>
+  <div class="actions">
+	<p>
+    	<%= f.submit "Save Changes", :class => "submit mid" %>
+	</p>
+  </div>
+<% end %>

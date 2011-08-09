@@ -74,6 +74,16 @@
 							<li><%= link_to 'Create New Group', new_group_path %></li>
 						</ul>
 					</li>
+					<% if current_controller?( :controller => "ous" ) %>
+						<li class="active"><%= link_to "Organizations", ous_path %>
+					<% elsif %>
+						<li><%= link_to "Organizations", ous_path %>
+					<% end %>
+						<ul>
+							<li><%= link_to "View All", ous_path %></li>
+							<li><%= link_to 'Create New Organization', new_ou_path %></li>
+						</ul>
+					</li>
 					<% if current_controller?( :controller => "applications" ) %>
 						<li class="active"><%= link_to "Applications", applications_path %>
 					<% elsif %>

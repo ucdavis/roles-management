@@ -10,6 +10,7 @@ DSSRM::Application.routes.draw do
   end
 
   resources :groups
+  resources :ous
 
   resources :people do
     collection do
