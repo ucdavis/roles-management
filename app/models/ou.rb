@@ -1,5 +1,6 @@
 class Ou < ActiveRecord::Base
-  belongs_to :manager, :class_name => "Person"
+  has_many :managers, :class_name => "Person", :through => :ou_manager_assignments
+  has_many :ou_manager_assignments
   
   has_many :ous
 

@@ -7,6 +7,9 @@ class Person < ActiveRecord::Base
   
   has_many :ous, :through => :ou_assignments
   has_many :ou_assignments
+
+  has_many :ou_manager_assignments
+  has_many :managements, :through => :ou_manager_assignments, :source => :ou, :primary_key => "manager_id"
   
   validates_presence_of :first, :last, :loginid
   
