@@ -205,8 +205,10 @@ task :import_ldap => :environment do
 
   # Add people to database
   for f in finalPeople
+    # Find or create the individual
     person = Person.find_by_loginid(f["principal_name"].slice(0, f["principal_name"].index("@"))) || Person.create(:loginid => f["principal_name"].slice(0, f["principal_name"].index("@")))
 
+    # Only set to attributes found in LDAP if the attributes aren't already set (i.e. blank)
     unless not person.first.nil?
       person.first = f["givenName"]
     end
@@ -241,7 +243,7 @@ task :import_ldap => :environment do
       
       unless UcdLookups::DEPT_CODES[f["dept_code"]].nil?
         manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[f["dept_code"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[f["dept_code"]]["manager"])
-        group.manager = manager
+        #group.manager = manager
       else
         # Dept code doesn't exist
         puts "Could not find a dept_code for " + f["dept_code"]
@@ -253,15 +255,15 @@ task :import_ldap => :environment do
     person.groups << group
     
     # Assign their title, creating it if necessary (titles are a 1:n relationship)
-    title = Title.find(:first, :conditions => [ "lower(name) = ?", f["title"].downcase ]) || Title.create(:name => f["title"])
+    #title = Title.find(:first, :conditions => [ "lower(name) = ?", f["title"].downcase ]) || Title.create(:name => f["title"])
     # Assume title codes match title strings
-    title.code = f["title_code"]
-    title.save
-    person.title = title
+    #title.code = f["title_code"]
+    #title.save
+    #person.title = title
     
     # Assign their affiliation, creating it if necessary (affiliations are a 1:n relationship)
-    affiliation = Affiliation.find(:first, :conditions => [ "lower(name) = ?", f["ucdPersonAffiliation"].downcase ]) || Affiliation.create(:name => f["ucdPersonAffiliation"])
-    person.affiliation = affiliation
+    #affiliation = Affiliation.find(:first, :conditions => [ "lower(name) = ?", f["ucdPersonAffiliation"].downcase ]) || Affiliation.create(:name => f["ucdPersonAffiliation"])
+    #person.affiliation = affiliation
     
     person.status = true
     person.preferred_name = "#{person.first} #{person.last}"
