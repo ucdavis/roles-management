@@ -232,27 +232,31 @@ task :import_ldap => :environment do
     
     if( f["ucdPersonAffiliation"] == "student:graduate" )
       # Graduate student 'ou's are determined not by the ou entry but by the 
-      group = Group.find(:first, :conditions => [ "lower(name) = ?", f["ucdStudentMajor"].downcase ]) || Group.create(:name => f["ucdStudentMajor"])
+      ou = Ou.find(:first, :conditions => [ "lower(name) = ?", f["ucdStudentMajor"].downcase ]) || Ou.create(:name => f["ucdStudentMajor"])
       # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
-      group.save
+      ou.save
     else
-      # Not a graduate student: ou entry is reliable
-      group = Group.find(:first, :conditions => [ "lower(name) = ?", f["ou"].downcase ]) || Group.create(:name => f["ou"])
+      # Not a graduate student: f["ou"] entry is reliable
+      ou = Ou.find(:first, :conditions => [ "lower(name) = ?", f["ou"].downcase ]) || Ou.create(:name => f["ou"])
       # Assume dept codes match name strings
-      group.code = f["dept_code"]
+      ou.code = f["dept_code"]
       
       unless UcdLookups::DEPT_CODES[f["dept_code"]].nil?
         manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[f["dept_code"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[f["dept_code"]]["manager"])
-        #group.manager = manager
+        ou.manager = manager
       else
         # Dept code doesn't exist
         puts "Could not find a dept_code for " + f["dept_code"]
       end
       
-      group.save
+      ou.save
     end
     
-    person.groups << group
+    person.ous << ou
+    
+    if(f["title"].length == 0)
+      f["title"] = "Unnamed"
+    end
     
     # Add to group based on title, creating it if necessary
     group = Group.find(:first, :conditions => [ "lower(name) = ?", f["title"].downcase ]) || Group.create(:name => f["title"])
