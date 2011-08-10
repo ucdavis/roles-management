@@ -1,6 +1,8 @@
 class ApplicationsController < ApplicationController
   require 'digest/md5'
   
+  filter_resource_access
+  
   # GET /applications
   def index
     @applications = Application.all

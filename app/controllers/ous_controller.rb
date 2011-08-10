@@ -1,4 +1,6 @@
 class OusController < ApplicationController
+  filter_resource_access
+
   # GET /ous
   def index
     @ous = Ou.find(:all)

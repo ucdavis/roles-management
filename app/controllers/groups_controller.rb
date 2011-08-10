@@ -1,4 +1,6 @@
 class GroupsController < ApplicationController
+  filter_resource_access
+
   # GET /groups
   def index
     @groups = Group.where("name like ?", "%#{params[:q]}%")

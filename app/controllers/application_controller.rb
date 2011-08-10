@@ -5,6 +5,16 @@ class ApplicationController < ActionController::Base
   before_filter CASClient::Frameworks::Rails::GatewayFilter, :unless => :requested_xml?
   before_filter :login_required, :unless => :requested_xml?
   
+  before_filter :set_current_user, :unless => :requested_xml?
+
+  def set_current_user
+    Authorization.current_user = @@user
+  end
+  
+  def current_user
+    @@user
+  end
+
   def login_required
     if session[:cas_user]
       begin
@@ -29,5 +39,10 @@ class ApplicationController < ActionController::Base
   
   def requested_xml?
     not params[:format].nil? and params[:format] == "xml"
+  end
+  
+  def permission_denied
+    flash[:error] = "Sorry, you are not allowed to access that page."
+    redirect_to root_url
   end
 end

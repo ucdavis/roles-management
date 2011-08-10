@@ -1,4 +1,6 @@
 class PeopleController < ApplicationController
+  filter_resource_access
+  
   # GET /people
   def index
     @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")

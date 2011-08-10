@@ -1,4 +1,6 @@
 class RolesController < ApplicationController
+  filter_resource_access
+
   # GET /roles
   def index
     @application = Application.find_by_name(params[:application_id])
