@@ -270,9 +270,11 @@ task :import_ldap => :environment do
     person.status = true
     person.preferred_name = "#{person.first} #{person.last}"
     
-    if person.save! == false
+    if person.valid? == false
       puts "Unable to save individual:"
       pp person
+    else
+      person.save
     end
   end
   
