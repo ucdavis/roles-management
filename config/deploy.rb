@@ -25,6 +25,9 @@ namespace :deploy do
       run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
       run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"
       run "ln -nfs #{shared_path}/assets #{release_path}/public/assets"
+      
+      # Not sure why we keep having to do this every time ... No way to install system-wide?
+      run "ln -nfs #{shared_path}/vestal_versions #{release_path}/vestal_versions"
     end
 
     desc "Sync the public/assets directory."
