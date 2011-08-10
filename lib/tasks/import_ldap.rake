@@ -243,7 +243,7 @@ task :import_ldap => :environment do
       
       unless UcdLookups::DEPT_CODES[f["dept_code"]].nil?
         manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[f["dept_code"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[f["dept_code"]]["manager"])
-        ou.manager = manager
+        ou.managers << manager
       else
         # Dept code doesn't exist
         puts "Could not find a dept_code for " + f["dept_code"]
