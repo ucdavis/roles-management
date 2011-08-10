@@ -24,4 +24,9 @@ class Person < ActiveRecord::Base
   def as_json(options={}) 
       { :id => self.id, :name => self.first + " " + self.last } 
   end
+  
+  # ACL symbols
+  def role_symbols
+    []
+  end
 end

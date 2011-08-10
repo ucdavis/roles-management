@@ -53,47 +53,55 @@
 					<% elsif %>
 						<li><%= link_to "Overview", :controller => "site", :action => "index" %></li>
 					<% end %>
-					<% if current_controller?( :controller => "people" ) %>
-						<li class="active"><%= link_to "Users", people_path %>
-					<% elsif %>
-						<li><%= link_to "Users", people_path %>
+					<% if permitted_to? :index, :people %>
+						<% if current_controller?( :controller => "people" ) %>
+							<li class="active"><%= link_to "Users", people_path %>
+						<% elsif %>
+							<li><%= link_to "Users", people_path %>
+						<% end %>
+							<ul>
+								<li><%= link_to "View All", people_path %></li>
+								<li><%= link_to 'Create New User', new_person_path %></li>
+								<li><%= link_to "Import From LDAP", :controller => "people", :action => "new_from_ldap" %></li>
+							</ul>
+						</li>
 					<% end %>
-						<ul>
-							<li><%= link_to "View All", people_path %></li>
-							<li><%= link_to 'Create New User', new_person_path %></li>
-							<li><%= link_to "Import From LDAP", :controller => "people", :action => "new_from_ldap" %></li>
-						</ul>
-					</li>
-					<% if current_controller?( :controller => "groups" ) %>
-						<li class="active"><%= link_to "Groups", groups_path %>
-					<% elsif %>
-						<li><%= link_to "Groups", groups_path %>
+					<% if permitted_to? :index, :groups %>
+						<% if current_controller?( :controller => "groups" ) %>
+							<li class="active"><%= link_to "Groups", groups_path %>
+						<% elsif %>
+							<li><%= link_to "Groups", groups_path %>
+						<% end %>
+							<ul>
+								<li><%= link_to "View All", groups_path %></li>
+								<li><%= link_to 'Create New Group', new_group_path %></li>
+							</ul>
+						</li>
 					<% end %>
-						<ul>
-							<li><%= link_to "View All", groups_path %></li>
-							<li><%= link_to 'Create New Group', new_group_path %></li>
-						</ul>
-					</li>
-					<% if current_controller?( :controller => "ous" ) %>
-						<li class="active"><%= link_to "Organizations", ous_path %>
-					<% elsif %>
-						<li><%= link_to "Organizations", ous_path %>
+					<% if permitted_to? :index, :ous %>
+						<% if current_controller?( :controller => "ous" ) %>
+							<li class="active"><%= link_to "Organizations", ous_path %>
+						<% elsif %>
+							<li><%= link_to "Organizations", ous_path %>
+						<% end %>
+							<ul>
+								<li><%= link_to "View All", ous_path %></li>
+								<li><%= link_to 'Create New Organization', new_ou_path %></li>
+							</ul>
+						</li>
 					<% end %>
-						<ul>
-							<li><%= link_to "View All", ous_path %></li>
-							<li><%= link_to 'Create New Organization', new_ou_path %></li>
-						</ul>
-					</li>
-					<% if current_controller?( :controller => "applications" ) %>
-						<li class="active"><%= link_to "Applications", applications_path %>
-					<% elsif %>
-						<li><%= link_to "Applications", applications_path %>
+					<% if permitted_to? :index, :applications %>
+						<% if current_controller?( :controller => "applications" ) %>
+							<li class="active"><%= link_to "Applications", applications_path %>
+						<% elsif %>
+							<li><%= link_to "Applications", applications_path %>
+						<% end %>
+							<ul>
+								<li><%= link_to "View All", applications_path %></li>
+								<li><%= link_to 'Register New Application', new_application_path %></li>
+							</ul>
+						</li>
 					<% end %>
-						<ul>
-							<li><%= link_to "View All", applications_path %></li>
-							<li><%= link_to 'Register New Application', new_application_path %></li>
-						</ul>
-					</li>
 				</ul>
 				
 				<p class="user">Hello, <a href="#"><%= current_user.first %></a> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>

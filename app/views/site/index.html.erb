@@ -12,14 +12,16 @@
 			<div class="bheadl"></div>
 			<div class="bheadr"></div>
 
-			<h2>Managements</h2>
+			<h2>Profile</h2>
 		</div>		<!-- .block_head ends -->
 		<div class="block_content">
 		
 			<div id="group_whatever">
-				<center><h2>Group Name</h2></center>
+				<h2><%= current_user.first %> <%= current_user.last %></h2>
 				<ul>
-					<li><a href="#">Person Name</a></li>
+					<li>E-Mail: <%= current_user.email %> <small>[<a href="#">Change</a>]</small></li>
+					<li>Phone: <%= number_to_phone(current_user.phone) %> <small>[<a href="#">Change</a>]</small></li>
+					<li>Address: <%= current_user.address %> <small>[<a href="#">Change</a>]</small></li>
 				</ul>
 			</div> <!-- group_whatever -->
 		</div>		<!-- .block_content ends -->
@@ -28,20 +30,20 @@
 		<div class="bendr"></div>
 	</div>		<!-- .block.small.left ends -->
 	
-	<div class="block">
+	<!--<div class="block">
 		<div class="block_head">
 			<div class="bheadl"></div>
 			<div class="bheadr"></div>
 
 			<h2>Assignments</h2>
-		</div>		<!-- .block_head ends -->
-		<div class="block_content">
+		</div>-->		<!-- .block_head ends -->
+		<!--<div class="block_content">
 		
-		</div>		<!-- .block_content ends -->
+		</div>-->		<!-- .block_content ends -->
 
-		<div class="bendl"></div>
+		<!--<div class="bendl"></div>
 		<div class="bendr"></div>
-	</div>		<!-- .block.small.left ends -->
+	</div>-->		<!-- .block.small.left ends -->
 
 </div>
 
@@ -51,18 +53,18 @@
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
 
-		<h2>Assignables</h2>
+		<h2>Applications</h2>
 	</div>		<!-- .block_head ends -->
-
-
-
 	<div class="block_content">
-		<h2>Positions</h2>
+		<h2>Available</h2>
 		<ul id="sortable1" class="connectedSortable">
+			
 		</ul>
 		
-		<h2>People</h2>
+		<h2>Unavailable</h2>
 		<ul id="sortable2" class="connectedSortable">
+			<li>eVote <small>[<a href="#">Request</a>]</small></li>
+			<li>Roles Management <small>[<a href="#">Request</a>]</small></li>
 		</ul>
 	</div>		<!-- .block_content ends -->
 
