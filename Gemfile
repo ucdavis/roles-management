@@ -36,3 +36,4 @@ gem 'rubycas-client'
 gem 'dynamic_form'
 
 gem 'jquery-rails'
+gem 'mysql2'
