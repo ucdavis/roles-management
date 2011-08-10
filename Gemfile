@@ -30,7 +30,7 @@ gem 'ruby-debug19', :require => 'ruby-debug'
 #   gem 'webrat'
 # end
 
-gem 'vestal_versions' #, :git => 'git://github.com/adamcooper/vestal_versions'
+gem 'vestal_versions', :git => 'git://github.com/adamcooper/vestal_versions'
 gem 'ruby-ldap'
 gem 'rubycas-client'
 gem 'dynamic_form'
