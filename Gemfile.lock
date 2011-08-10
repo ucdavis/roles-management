@@ -1,3 +1,17 @@
+GIT
+  remote: git://github.com/adamcooper/vestal_versions
+  revision: 6273df533f85014062e346cb1807b0531a809ee2
+  specs:
+    vestal_versions (1.2.2)
+      activerecord (>= 3.0.0)
+      activesupport (>= 3.0.0)
+
+GIT
+  remote: git://github.com/stffn/declarative_authorization.git
+  revision: 792b1558dd79c5305dadade72e9eb458073de190
+  specs:
+    declarative_authorization (0.5.3)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -54,6 +68,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.16)
+    mysql (2.8.1)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-sftp (2.0.5)
@@ -99,19 +114,19 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.26)
-    vestal_versions (1.0.2)
-      activerecord (>= 2.1.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   capistrano
+  declarative_authorization!
   dynamic_form
   jquery-rails
+  mysql
   rails (= 3.0.7)
   ruby-debug19
   ruby-ldap
   rubycas-client
   sqlite3
-  vestal_versions
+  vestal_versions!
