@@ -16,7 +16,12 @@ class Api::PeopleController < Api::BaseController
     @person = Person.find_by_loginid(params[:id])
 
     respond_to do |format|
-      format.xml  { render :xml => @person}#.to_xml( :include => { :groups => { :only => [:name, :code] }, :title => { :only => [:name] } }) }
+      format.xml#  { render :xml =>
+                 #   @person.to_xml( :include => {
+                  #                               :groups => {
+                   #                                  :only => [:name, :code]
+                    #                                        },
+                     #                            :roles => { :only => [:name, :application_id] } }) }
     end
   end
 
