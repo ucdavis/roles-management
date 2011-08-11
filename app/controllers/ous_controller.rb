@@ -1,4 +1,5 @@
 class OusController < ApplicationController
+  before_filter :load_ou, :only => [:show]
   filter_resource_access
 
   # GET /ous
@@ -66,6 +67,14 @@ class OusController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to(ous_url) }
+    end
+  end
+  
+  protected
+  
+  def load_ou
+    if permitted_to? :show, :ous
+      @ou = Ou.find_by_name(params[:id])
     end
   end
 end

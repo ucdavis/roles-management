@@ -21,10 +21,10 @@
 		  <%= @ou.name %>
 		</p>
 		
-		<% unless @ou.manager.nil? %>
+		<% @ou.managers.each do |manager| %>
 		<p>
 		  <b>Manager:</b>
-		  <%= @ou.manager.name %>
+		  <%= manager.name %>
 		</p>
 		<% end %>
 		

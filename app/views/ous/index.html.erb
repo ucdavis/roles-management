@@ -20,10 +20,8 @@
 		<% @ous.each do |ou| %>
 		  <tr>
 		    <td><%= link_to ou.name, ou %></td>
-			<% unless ou.manager.nil? %>
-				<td><%= link_to ou.manager.name, ou.manager %></td>
-			<% else %>
-				<td></td>
+			<% ou.managers.each do |manager| %>
+				<td><%= link_to manager.name, manager %></td>
 			<% end %>
 		  </tr>
 		<% end %>
