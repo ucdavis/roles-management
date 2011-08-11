@@ -3,6 +3,7 @@ xml.instruct!
 xml.person do
   xml.first @person.first
   xml.last @person.last
+  xml.preferred @person.preferred_name
   xml.email @person.email
   xml.phone @person.phone
   xml.address @person.address
@@ -15,7 +16,7 @@ xml.person do
     @person.roles.each do |role|
       xml.role do
         xml.name role.name
-        xml.app role.application.name
+        xml.tag! 'app-name', role.application.name
         apps << [role.application.name, role.application.hostname]
       end
     end
