@@ -1,6 +1,8 @@
 class ApplicationsController < ApplicationController
   require 'digest/md5'
   
+  before_filter :load_application, :only => [:show]
+  
   filter_resource_access
   
   # GET /applications
@@ -14,7 +16,7 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/1
   def show
-    @application = Application.find_by_name(params[:id])
+    
 
     respond_to do |format|
       format.html
@@ -74,6 +76,14 @@ class ApplicationsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to(applications_url) }
+    end
+  end
+  
+  protected
+  
+  def load_application
+    if permitted_to? :show, :applications
+      @application = Application.find_by_name(params[:id])
     end
   end
   
