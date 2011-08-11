@@ -1,4 +1,5 @@
 class PeopleController < ApplicationController
+  before_filter :load_person, :only => [:show]
   filter_resource_access
   
   # GET /people
@@ -75,5 +76,13 @@ class PeopleController < ApplicationController
   
   def new_from_ldap
     
+  end
+  
+  protected
+  
+  def load_person
+    if permitted_to? :show, :people
+      @person = Person.find_by_loginid(params[:id])
+    end
   end
 end

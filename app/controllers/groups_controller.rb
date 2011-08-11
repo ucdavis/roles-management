@@ -1,4 +1,5 @@
 class GroupsController < ApplicationController
+  before_filter :load_group, :only => [:show]
   filter_resource_access
 
   # GET /groups
@@ -68,6 +69,14 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to(groups_url) }
+    end
+  end
+  
+  protected
+  
+  def load_group
+    if permitted_to? :show, :groups
+      @group = Group.find_by_name(params[:id])
     end
   end
 end
