@@ -36,6 +36,8 @@
 	<%= javascript_include_tag "jquery.pngfix.js" %>
 	<%= javascript_include_tag "custom.js" %>
 	<%= javascript_include_tag "jquery-ui-1.8.14.custom.min.js" %>
+	
+	<%= javascript_include_tag "application_production_specific.js" if Rails.env == "production" %>
 </head>
 <body>
 	<div id="hld">
