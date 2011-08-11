@@ -48,7 +48,7 @@
 				
 				<ul id="nav">
 					
-					<% if current_controller?( :controller => "site", :action => "index" ) %>
+					<% if current_controller?( :controller => "site" ) %>
 						<li class="active"><%= link_to "Overview", :controller => "site", :action => "index" %></li>
 					<% elsif %>
 						<li><%= link_to "Overview", :controller => "site", :action => "index" %></li>
@@ -114,5 +114,7 @@
 			</div>
 		</div> <!-- wrapper -->
 	</div> <!-- #hld -->
+	
+	<%= @controller.controller_name %>
 </body>
 </html>
