@@ -1,5 +1,5 @@
 namespace :ldap do
-  desc 'Runs the LDAP import. Takes approx. 10-15 mins.'
+  desc 'Runs the LDAP import. Takes approx. 5-10 mins.'
   task :import => :environment do
     require 'ldap'
 
@@ -244,7 +244,10 @@ namespace :ldap do
       
         unless UcdLookups::DEPT_CODES[f["dept_code"]].nil?
           manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[f["dept_code"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[f["dept_code"]]["manager"])
-          ou.managers << manager
+          # Avoid duplicate managers
+          unless ou.managers.exists? manager
+            ou.managers << manager
+          end
         else
           # Dept code doesn't exist
           puts "Could not find a dept_code for " + f["dept_code"]
@@ -279,5 +282,12 @@ namespace :ldap do
       end
     end
   
+  end
+  
+  desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'
+  task :erase => :environment do
+    Person.destroy_all
+    Group.destroy_all
+    Ou.destroy_all
   end
 end
