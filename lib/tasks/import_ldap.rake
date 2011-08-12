@@ -286,8 +286,10 @@ namespace :ldap do
   
   desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'
   task :erase => :environment do
-    Person.destroy_all
-    Group.destroy_all
-    Ou.destroy_all
+    if Rails.env != "production"
+      Person.destroy_all
+      Group.destroy_all
+      Ou.destroy_all
+    end
   end
 end
