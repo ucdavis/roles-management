@@ -20,9 +20,11 @@
 		<% @ous.each do |ou| %>
 		  <tr>
 		    <td><%= link_to ou.name, ou %></td>
+			<td>
 			<% ou.managers.each do |manager| %>
-				<td><%= link_to manager.name, manager %></td>
+				<%= link_to manager.name, manager %><%= raw("&nbsp;" * 4) %>
 			<% end %>
+			</td>
 		  </tr>
 		<% end %>
 		</table>
