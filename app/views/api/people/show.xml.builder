@@ -16,8 +16,8 @@ xml.person do
     @person.roles.each do |role|
       xml.role do
         xml.name role.name
-        xml.tag! 'app-name', role.application.name
-        apps << [role.application.name, role.application.hostname]
+        xml.app role.application.name
+        apps << [role.application.name, role.application.hostname, role.application.display_name]
       end
     end
   end
@@ -26,6 +26,7 @@ xml.person do
       xml.app do
         xml.name app[0]
         xml.url app[1]
+        xml.tag! "display_name", app[2]
       end
     end
   end
