@@ -29,16 +29,16 @@
 			<% if @roles.length > 0 %>
 				<table>
 				  <tr>
+				    <th>Default</th>
 				    <th>Name</th>
-				    <th></th>
 				    <th></th>
 				  </tr>
 
 				<% @roles.each do |role| %>
 				  <tr>
-				    <td><%= role.name %></td>
-				    <td><%= link_to 'Details', application_role_path(@application, role) %></td>
-					<td><%= link_to 'Destroy', [@application, role], :confirm => 'Are you sure?', :method => :delete %></td>
+				    <td><center><%= check_box("role", "default", :disabled => true, :checked => role.default) %></center></td>
+				    <td><%= link_to role.name, application_role_path(@application, role) %></td>
+					  <td><%= link_to 'Destroy', [@application, role], :confirm => 'Are you sure?', :method => :delete %></td>
 				  </tr>
 				<% end %>
 				</table>

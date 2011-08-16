@@ -19,6 +19,13 @@
   </div>
   <div class="field">
 	<p>
+    <%= f.label :default %><br />
+    &nbsp;<%= f.radio_button :default, true %> Enabled
+    &nbsp;<%= f.radio_button :default, false %> Disabled
+	</p>
+  </div>
+  <div class="field">
+	<p>
 		<h2>Members</h2>
 		<p>
 		  <%= f.label :people_tokens, "People" %><br />

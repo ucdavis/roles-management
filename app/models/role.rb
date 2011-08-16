@@ -5,7 +5,7 @@ class Role < ActiveRecord::Base
   
   belongs_to :application
   
-  attr_accessible :name, :people_tokens, :people_ids
+  attr_accessible :name, :people_tokens, :people_ids, :default
   attr_reader :people_tokens
   
   def people_tokens=(ids)
