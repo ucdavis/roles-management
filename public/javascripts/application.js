@@ -10,9 +10,15 @@ $(function() {
     theme: "facebook"
   });
 
-	$("#role_people_tokens").tokenInput(base_uri + "/people.json", {
+  $("#role_people_tokens").tokenInput(base_uri + "/people.json", {
     crossDomain: false,
     prePopulate: $("#role_people_tokens").data("pre"),
+    theme: "facebook"
+  });
+
+  $("#application_ou_tokens").tokenInput(base_uri + "/ous.json", {
+    crossDomain: false,
+    prePopulate: $("#application_ou_tokens").data("pre"),
     theme: "facebook"
   });
 });

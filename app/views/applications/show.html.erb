@@ -42,6 +42,17 @@
 			  <b>API Key:</b>
 			  <%= @application.api_key %>
 			</p>
+			<p>
+			  <b>Organizational Scoping <small><i>(who can access)</i></small>:</b>
+			  <ul>
+			  <% @application.ous.each do |ou| %>
+			  	<li><%= link_to ou.name, ou %></li>
+			  <% end %>
+			  <% if @application.ous.count == 0 %>
+			    <li>Everybody</li>
+			  <% end %>
+			  </ul>
+			</p>
 		</div> <!-- sb1 -->
 		<div class="sidebar_content" id="sb2">
 		</div> <!-- sb2 -->

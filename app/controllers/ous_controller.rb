@@ -4,10 +4,11 @@ class OusController < ApplicationController
 
   # GET /ous
   def index
-    @ous = Ou.find(:all)
+    @ous = Ou.where("name like ?", "%#{params[:q]}%")
 
     respond_to do |format|
       format.html
+      format.json { render :json => @ous.map(&:attributes) }
     end
   end
 
