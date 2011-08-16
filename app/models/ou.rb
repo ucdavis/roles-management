@@ -6,6 +6,9 @@ class Ou < ActiveRecord::Base
   
   has_many :application_ou_assignments
   has_many :applications, :through => :application_ou_assignments
+  
+  has_many :members, :through => :ou_assignments, :source => :person
+  has_many :ou_assignments
 
   def to_param  # overridden
     name.gsub("/", "_").gsub("&", "_").gsub(".", "_")

@@ -43,7 +43,7 @@
 			  <%= @application.api_key %>
 			</p>
 			<p>
-			  <b>Organizational Scoping <small><i>(who can access)</i></small>:</b>
+			  <b>Organizational Scoping <small><i>(who has access)</i></small>:</b>
 			  <ul>
 			  <% @application.ous.each do |ou| %>
 			  	<li><%= link_to ou.name, ou %></li>
