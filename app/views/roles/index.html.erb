@@ -38,7 +38,7 @@
 				  <tr>
 				    <td><center><%= check_box("role", "default", :disabled => true, :checked => role.default) %></center></td>
 				    <td><%= link_to role.name, application_role_path(@application, role) %></td>
-					  <td><%= link_to 'Destroy', [@application, role], :confirm => 'Are you sure?', :method => :delete %></td>
+					  <td><%= link_to 'Delete', [@application, role], :confirm => 'Are you sure?', :method => :delete %></td>
 				  </tr>
 				<% end %>
 				</table>
