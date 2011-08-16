@@ -30,6 +30,9 @@
 		
 		<h2>Members</h2>
 		<ul>
+		  <% @ou.members.each do |member| %>
+		    <li><%= link_to member.name, member %></li>
+		  <% end %>
 		</ul>
 	</div> <!-- .block_content -->
 	
