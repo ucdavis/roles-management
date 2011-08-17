@@ -7,7 +7,7 @@
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
 		
-		<h2>Editing Role <em><%= @role.name %></em> for <em><%= @application.name %></em></h2>
+		<h2>Editing Role <em><%= @role.name %></em> for <em><%= link_to @application.name, @pplication %></em></h2>
 		
 		<ul class="tabs">
 			<li><%= link_to 'Overview', application_role_path(@application, @role) %></li>
