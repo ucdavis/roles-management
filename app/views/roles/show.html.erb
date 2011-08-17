@@ -21,6 +21,15 @@
 		  <%= @role.name %>
 		</p>
 		
+		<p>
+		  <b>Enabled by Default? :</b>
+		  <% if @role.default %>
+		    Yes
+		  <% else %>
+		    No
+		  <% end %>
+		</p>
+		
 		<h2>Members</h2>
 		<p>
 			<ul>
