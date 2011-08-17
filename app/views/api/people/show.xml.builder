@@ -54,9 +54,19 @@ xml.person do
       requestable_apps << [application.name, application.hostname, application.display_name, application.id]
     end
   end
+  # Add to that the list of applications available to their OUs but to which they have no roles
+  @person.ous.each do |ou|
+    ou.applications.each do |application|
+      application.roles.where(:default => false).each do |role|
+        unless apps.include? [application.name, application.hostname, application.display_name, application.id]
+          requestable_apps << [application.name, application.hostname, application.display_name, application.id]
+        end
+      end
+    end
+  end
 
   # Output the results
-  xml.roles do
+  xml.roles("type"=>"array") do
     roles.each do |role|
       xml.role do
         xml.name role[0]
@@ -64,7 +74,7 @@ xml.person do
       end
     end
   end
-  xml.apps do
+  xml.apps("type"=>"array") do
     apps.each do |app|
       xml.app do
         xml.name app[0]
@@ -74,12 +84,14 @@ xml.person do
     end
   end
   
-  xml.requestable_apps do
-    requestable_apps.each do |app|
-      xml.requestable_app do
-        xml.name app[0]
-        xml.url app[1]
-        xml.tag! "display_name", app[2]
+  if requestable_apps.length > 0
+    xml.requestable_apps("type" => "array") do
+      requestable_apps.each do |app|
+        xml.requestable_app do
+          xml.name app[0]
+          xml.url app[1]
+          xml.tag! "display_name", app[2]
+        end
       end
     end
   end
