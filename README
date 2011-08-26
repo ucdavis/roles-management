@@ -28,3 +28,6 @@ is out of date.
 
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
+
+== TODO
+* Implement a unit test to ensure non-api namespace does not respond to XML or JSON (security vulnerability)

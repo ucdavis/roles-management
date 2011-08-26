@@ -1,4 +1,4 @@
-# TODO: There's an awful lot of controller logic in this view
+# TODO: There's some controller logic in this view
 
 xml.instruct!
 

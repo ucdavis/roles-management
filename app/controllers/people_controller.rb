@@ -9,8 +9,7 @@ class PeopleController < ApplicationController
     @people.map()
 
     respond_to do |format|
-      format.html # index.html.erb
-      format.json { render :json => @people }
+      format.html
     end
   end
 
@@ -20,7 +19,6 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       format.html
-      #format.xml  { render :xml => @person}#.to_xml( :include => { :groups => { :only => [:name, :code] }, :title => { :only => [:name] } }) }
     end
   end
 
@@ -29,7 +27,7 @@ class PeopleController < ApplicationController
     @person = Person.new
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
     end
   end
 
