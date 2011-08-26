@@ -8,13 +8,13 @@ class Api::CustomController < Api::BaseController
     @everything = []
     
     @people.each do |person|
-      @everything << ['p', person.id, person.first + ' ' + person.last]
+      @everything << {:type => 'p', :id => person.id, :name => person.first + ' ' + person.last}
     end
     @groups.each do |group|
-      @everything << ['g', group.id, group.name]
+      @everything << {:type => 'g', :id => group.id, :name => group.name}
     end
     @ous.each do |ou|
-      @everything << ['o', ou.id, ou.name]
+      @everything << {:type => 'o', :id => ou.id, :name => ou.name}
     end
 
     @everything.map()
