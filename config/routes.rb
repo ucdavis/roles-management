@@ -25,9 +25,14 @@ DSSRM::Application.routes.draw do
     resources :people do
       resources :applications
     end
+    
     resources :groups
+    resources :ous
+    
     resources :applications do
       resources :roles
     end
+    
+    get "search", :controller => "custom"
   end
 end

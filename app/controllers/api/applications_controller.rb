@@ -14,9 +14,10 @@ class Api::ApplicationsController < Api::BaseController
 
     if(params[:person_id].nil? == false)
       @person = Person.find_by_loginid(params[:person_id])
+      @roles = Role.includes(:role_assignments, :people).where( :people => { :loginid => @person.loginid }, :application_id => Application.find_by_name(@application.name) )
       
       respond_to do |format|
-        format.xml { render :text => @person.to_xml( :include => { :roles => { :include => :application } }, :except => [:created_at, :id, :updated_at, :phone, :affiliation_id, :address, :title_id, :person_id, :api_key] ) }
+        format.xml
       end
     else
       respond_to do |format|

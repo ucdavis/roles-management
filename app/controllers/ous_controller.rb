@@ -8,7 +8,6 @@ class OusController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.json { render :json => @ous.map(&:attributes) }
     end
   end
 
