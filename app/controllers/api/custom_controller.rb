@@ -8,20 +8,20 @@ class Api::CustomController < Api::BaseController
     @everything = []
     
     @people.each do |person|
-      @everything << {:type => 'p', :id => person.id, :name => person.first + ' ' + person.last}
+      @everything << {:id => person.id, :name => person.first + ' ' + person.last, :type => 'p'}
     end
     @groups.each do |group|
-      @everything << {:type => 'g', :id => group.id, :name => group.name}
+      @everything << {:id => group.id, :name => group.name, :type => 'g' }
     end
     @ous.each do |ou|
-      @everything << {:type => 'o', :id => ou.id, :name => ou.name}
+      @everything << {:id => ou.id, :name => ou.name, :type => 'o'}
     end
 
     @everything.map()
 
     respond_to do |format|
       format.xml
-      format.json { render :json => @everything }
+      format.json { render :json => @everything, :callback => params[:callback] }
     end
   end
 end
