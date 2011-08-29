@@ -1,4 +1,4 @@
-class Api::CustomController < Api::BaseController
+class Api::ApiController < Api::BaseController
   def search
     @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
     @groups = Group.where("name like ?", "%#{params[:q]}%")
