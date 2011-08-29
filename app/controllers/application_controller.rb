@@ -4,7 +4,6 @@ class ApplicationController < ActionController::Base
   # Only the API namespace should respond to XML. Be mindful of this!
   before_filter CASClient::Frameworks::Rails::GatewayFilter, :unless => :requested_xml_or_json?
   before_filter :login_required, :unless => :requested_xml_or_json?
-  
   before_filter :set_current_user, :unless => :requested_xml_or_json?
 
   def set_current_user
