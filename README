@@ -26,6 +26,18 @@ config/deploy.rb
 You can also search the code for "INSTALLME" (case-sensitive) in case this README
 is out of date.
 
+== Technical Notes
+=== Universal ID Convention
+There's a terrible important convention regarding the polymorphism of people, groups,
+and OUs. For various reasons, we need a global ID for these objects, but the schema
+doesn't provide for one. The convention is very simple: a leading digit is placed
+in front of the actual ID (regardless of whether it's a person, group, or OU) to
+indicate which it is: 1 for person, 2 for group, and 3 for OU.
+
+You almost never need to know this if you properly query against the RESTful API,
+e.g., /api/search.json will return IDs in this convention, and /api/resolve.json will
+accept them and work just fine.
+
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
 

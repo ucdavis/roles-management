@@ -33,6 +33,7 @@ DSSRM::Application.routes.draw do
       resources :roles
     end
     
-    get "search", :controller => "api"
+    get "search", :controller => "custom"
+    get "resolve", :controller => "custom"
   end
 end
