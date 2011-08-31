@@ -3,6 +3,7 @@
 xml.instruct!
 
 xml.person do
+  xml.id '1' + @person.id.to_s
   xml.first @person.first
   xml.last @person.last
   xml.preferred @person.preferred_name

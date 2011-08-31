@@ -38,6 +38,8 @@ You almost never need to know this if you properly query against the RESTful API
 e.g., /api/search.json will return IDs in this convention, and /api/resolve.json will
 accept them and work just fine.
 
+If you are adding anything to /api, be sure to follow this convention for all output.
+
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
 

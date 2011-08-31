@@ -1,5 +1,5 @@
 class Api::PeopleController < Api::BaseController
-  # GET /people.xml
+  # GET /api/people.xml
   def index
     @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
 
@@ -11,16 +11,24 @@ class Api::PeopleController < Api::BaseController
     end
   end
 
-  # GET /people/1.xml
+  # GET /api/people/1.xml or /api/people/cthielen.xml
   def show
-    @person = Person.find_by_loginid(params[:id])
+    if params[:id].to_i.to_s == params[:id]
+      # Numeric only, assume id
+      # Convert universal ID to person ID
+      id = params[:id][1..-1]
+      @person = Person.find_by_id(id)
+    else
+      # Not numeric only, assume loginid
+      @person = Person.find_by_loginid(params[:id])
+    end
 
     respond_to do |format|
       format.xml
     end
   end
 
-  # GET /people/new.xml
+  # GET /api/people/new.xml
   def new
     @person = Person.new
 
@@ -29,12 +37,12 @@ class Api::PeopleController < Api::BaseController
     end
   end
 
-  # GET /people/1/edit
+  # GET /api/people/1/edit
   def edit
     @person = Person.find_by_loginid(params[:id])
   end
 
-  # POST /people.xml
+  # POST /api/people.xml
   def create
     @person = Person.new(params[:person])
 
@@ -47,7 +55,7 @@ class Api::PeopleController < Api::BaseController
     end
   end
 
-  # PUT /people/1.xml
+  # PUT /api/people/1.xml
   def update
     @person = Person.find_by_loginid(params[:id])
 
@@ -60,7 +68,7 @@ class Api::PeopleController < Api::BaseController
     end
   end
 
-  # DELETE /people/1.xml
+  # DELETE /api/people/1.xml
   def destroy
     @person = Person.find_by_loginid(params[:id])
     @person.destroy

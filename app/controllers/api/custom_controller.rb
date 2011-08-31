@@ -36,20 +36,13 @@ class Api::CustomController < Api::BaseController
       case id.first.to_i
       when 1
         p = Person.find_by_id(stripped_id)
-        @everything << {:email => p.email, :name => p.first + ' ' + p.last}
+        @everything << {:name => p.first + ' ' + p.last, :id => id}
       when 2
         g = Group.find_by_id(stripped_id)
-        g.people.each do |p|
-          @everything << {:email => p.email, :name => p.first + ' ' + p.last}
-        end
+        @everything << {:name => g.name, :id => id}
       when 3
         o = Ou.find_by_id(stripped_id)
-        o.members.each do |p|
-          @everything << {:email => p.email, :name => p.first + ' ' + p.last}
-        end
-        o.managers.each do |p|
-          @everything << {:email => p.email, :name => p.first + ' ' + p.last}
-        end
+        @everything << {:name => o.name, :id => id}
       end
     end
     
