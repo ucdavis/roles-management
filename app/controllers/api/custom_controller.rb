@@ -25,9 +25,16 @@ class Api::CustomController < Api::BaseController
     end
   end
 
-  # Use resolve sparingly - it's not optimized for speed currently (FIXME, TESTME)
+  # Use resolve sparingly - it's not optimized for speed currently (FIXME, TESTME, CLEANME)
+  # Add &email to receive email addresses - implies &flatten as groups and OUs have no emails
+  # Add &flatten to flatten groups and OUs into their people
   def resolve
     ids = params[:ids].split(",")
+    include_email = params.has_key? :email
+    flatten = params.has_key? :flatten
+    
+    # Include e-mail implies flatten as OUs and groups don't have specific e-mail addresses
+    if include_email then flatten = true end
     
     @everything = []
     
@@ -36,13 +43,37 @@ class Api::CustomController < Api::BaseController
       case id.first.to_i
       when 1
         p = Person.find_by_id(stripped_id)
-        @everything << {:name => p.first + ' ' + p.last, :id => id}
+        if include_email
+          @everything << {:name => p.first + ' ' + p.last, :id => id, :email => p.email}
+        else
+          @everything << {:name => p.first + ' ' + p.last, :id => id}
+        end
       when 2
         g = Group.find_by_id(stripped_id)
-        @everything << {:name => g.name, :id => id}
+        if flatten
+          g.people.each do |person|
+            if include_email
+              @everything << {:name => person.first + ' ' + person.last, :id => person.id, :email => person.email}
+            else
+              @everything << {:name => person.first + ' ' + person.last, :id => person.id}
+            end
+          end
+        else
+          @everything << {:name => g.name, :id => id}
+        end
       when 3
         o = Ou.find_by_id(stripped_id)
-        @everything << {:name => o.name, :id => id}
+        if flatten
+          o.members.each do |person|
+            if include_email
+              @everything << {:name => person.first + ' ' + person.last, :id => person.id, :email => person.email}
+            else
+              @everything << {:name => person.first + ' ' + person.last, :id => person.id}
+            end
+          end
+        else
+          @everything << {:name => o.name, :id => id}
+        end
       end
     end
     
