@@ -3,6 +3,10 @@
 Rights Management (RM) is a people, roles and application management web application
 and service developed by the UC Davis Division of Social Science.
 
+== Requirements
+
+RM was written for Ruby 1.9 and Rails 3.1 and was tested using MySQL and Phusion Passenger.
+
 == Deployment
 
 RM is designed to be re-deployable in any organization, though there are a few matters
