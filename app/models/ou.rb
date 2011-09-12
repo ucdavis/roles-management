@@ -28,4 +28,8 @@ class Ou < ActiveRecord::Base
   def as_json(options={}) 
     { :id => self.id, :name => self.name } 
   end
+  
+  def self.top_level
+    self.all.reject{ |c| c.parents.empty? == false }
+  end
 end
