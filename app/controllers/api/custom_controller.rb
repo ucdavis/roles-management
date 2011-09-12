@@ -81,4 +81,8 @@ class Api::CustomController < Api::BaseController
       format.json { render :json => @everything, :callback => params[:callback] }
     end
   end
+  
+  def org_chart
+    
+  end
 end

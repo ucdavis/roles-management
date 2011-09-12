@@ -35,5 +35,6 @@ DSSRM::Application.routes.draw do
     
     get "search", :controller => "custom"
     get "resolve", :controller => "custom"
+    get "org_chart", :controller => "custom"
   end
 end
