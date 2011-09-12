@@ -83,6 +83,6 @@ class Api::CustomController < Api::BaseController
   end
   
   def org_chart
-    
+    @roots = Ou.top_level
   end
 end

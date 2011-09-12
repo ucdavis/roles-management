@@ -21,6 +21,15 @@
 		  <%= @ou.name %>
 		</p>
 		
+		<p>
+		  <b>Parent Organization:</b>
+		  <% if @ou.parents.length %>
+		    <%= @ou.parents[0].name %>
+		  <% else %>
+		    None
+		  <% end %>
+		</p>
+		
 		<% @ou.managers.each do |manager| %>
 		<p>
 		  <b>Manager:</b>

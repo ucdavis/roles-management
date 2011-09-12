@@ -11,15 +11,15 @@
     </div>
   <% end %>
 
-  <div class="field">
 	<p>
     	<%= f.label :name %><br />
     	<%= f.text_field :name, :class => "text" %>
 	</p>
-  </div>
-  <div class="actions">
 	<p>
-    	<%= f.submit "Save Changes", :class => "submit mid" %>
+    	<%= f.label :parents, "Parent Organization" %><br />
+    	<%= f.text_field :parent_tokens, "data-pre" => @ou.parents.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
 	</p>
-  </div>
+  <p>
+    	<%= f.submit "Save Changes", :class => "submit mid" %>
+  </p>
 <% end %>

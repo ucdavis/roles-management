@@ -23,6 +23,12 @@ $(function() {
     theme: "facebook"
   });
   
+  $("#ou_parent_tokens").tokenInput($("#ou_parent_tokens").attr("method") + ".json", {
+    crossDomain: false,
+    prePopulate: $("#ou_parent_tokens").data("pre"),
+    theme: "facebook"
+  });
+  
   // Preload images
 	$.preloadCssImages();
 	

@@ -4,7 +4,7 @@ class OusController < ApplicationController
 
   # GET /ous
   def index
-    @ous = Ou.where("name like ?", "%#{params[:q]}%")
+    @ous = Ou.top_level
 
     respond_to do |format|
       format.html

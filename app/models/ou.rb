@@ -21,6 +21,9 @@ class Ou < ActiveRecord::Base
   has_many :members, :through => :ou_assignments, :source => :person
   has_many :ou_assignments
 
+  attr_accessible :name, :parent_tokens, :parent_ids
+  attr_reader :parent_tokens
+
   def to_param
     name.gsub("/", "_").gsub("&", "_").gsub(".", "_")
   end
@@ -31,5 +34,9 @@ class Ou < ActiveRecord::Base
   
   def self.top_level
     self.all.reject{ |c| c.parents.empty? == false }
+  end
+  
+  def parent_tokens=(ids)
+      self.parent_ids = ids.split(",")
   end
 end
