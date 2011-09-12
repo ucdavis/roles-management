@@ -4,41 +4,15 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=7" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>DSS Rights Management</title>
+
+  <%= stylesheet_link_tag "application" %>
 	
-	<% #stylesheet_link_tag "scaffold.css" %>
-	<%= stylesheet_link_tag "style.css" %>
-	<%= stylesheet_link_tag "date_input.css" %>
-	<%= stylesheet_link_tag "visualize.css" %>
-	<%= stylesheet_link_tag "facebox.css" %>
-	<%= stylesheet_link_tag "jquery.wysiwyg.css" %>
-	<%= stylesheet_link_tag "wysiwyg.css" %>
-	<%= stylesheet_link_tag "redmond/jquery-ui-1.8.14.custom.css" %>
-	<%= stylesheet_link_tag "token-input-facebook" %>
-	
-	<%= javascript_include_tag :defaults %>
 	<%= csrf_meta_tag %>
 	
-	<!--[if lt IE 8]><%= stylesheet_link_tag "ie.css" %><![endif]-->
-	<!--[if IE]><%= javascript_include_tag "excanvas.js" %><![endif]-->
-	
-	<%= javascript_include_tag "jquery.js" %>
-	<%= javascript_include_tag "jquery.tokeninput" %>
-	<%= javascript_include_tag "excanvas.js" %>
-	<%= javascript_include_tag "jquery.img.preload.js" %>
-	<%= javascript_include_tag "jquery.filestyle.mini.js" %>
-	<%= javascript_include_tag "jquery.wysiwyg.js" %>
-	<%= javascript_include_tag "jquery.date_input.pack.js" %>
-	<%= javascript_include_tag "facebox.js" %>
-	<%= javascript_include_tag "jquery.visualize.js" %>
-	<%= javascript_include_tag "jquery.visualize.tooltip.js" %>
-	<%= javascript_include_tag "jquery.select_skin.js" %>
-	<%= javascript_include_tag "jquery.tablesorter.min.js" %>
-	<%= javascript_include_tag "ajaxupload.js" %>
-	<%= javascript_include_tag "jquery.pngfix.js" %>
-	<%= javascript_include_tag "custom.js" %>
-	<%= javascript_include_tag "jquery-ui-1.8.14.custom.min.js" %>
-	
-	<%= javascript_include_tag "application_production_specific.js" if Rails.env == "production" %>
+	<!--[if lt IE 8]><%= stylesheet_link_tag "ie/ie.css" %><![endif]-->
+	<!--[if IE]><%= javascript_include_tag "ie/excanvas.js" %><![endif]-->
+
+  <%= javascript_include_tag "application" %>
 </head>
 <body>
 	<div id="hld">

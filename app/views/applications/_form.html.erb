@@ -41,7 +41,7 @@
   		<h2>Organizational Scoping</h2>
   		<p>
   		  <%= f.label :ou_tokens, "OUs" %><br />
-  		  <%= f.text_field :ou_tokens, "data-pre" => @application.ous.to_json %>
+  		  <%= f.text_field :ou_tokens, "data-pre" => @application.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
   		</p>
   	</p>
   </div>

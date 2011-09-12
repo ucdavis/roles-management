@@ -6,3 +6,4 @@ tmp/
 public/.DS_Store
 config/database.yml
 config/api_keys.yml
+.sass-cache/
