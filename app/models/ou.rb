@@ -1,4 +1,6 @@
 class Ou < ActiveRecord::Base
+  validates :parent_ids, :length => { :maximum => 1, :message => "Cannot have more than one parent." }
+  
   # Manager (a person) relationship
   has_many :managers, :class_name => "Person", :through => :ou_manager_assignments
   has_many :ou_manager_assignments
