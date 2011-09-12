@@ -3,9 +3,6 @@
 *= require_tree ./common
 */
 
-/*<!--[if lt IE 8]><%= stylesheet_link_tag "ie/ie.css" %><![endif]-->
-<!--[if IE]><%= javascript_include_tag "ie/excanvas.js" %><![endif]-->*/
-
 /*	
 Template Name: Adminus
 Description: Beautiful admin panel interface
