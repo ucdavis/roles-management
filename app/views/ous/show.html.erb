@@ -23,7 +23,7 @@
 		
 		<p>
 		  <b>Parent Organization:</b>
-		  <% if @ou.parents.length %>
+		  <% if @ou.parents.length > 0 %>
 		    <%= @ou.parents[0].name %>
 		  <% else %>
 		    None
