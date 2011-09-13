@@ -5,6 +5,7 @@
 //= require_tree ./common
 
 $(function() {
+  // Set up the token inputs
   $("#group_people_tokens").tokenInput($("#group_people_tokens").attr("method") + ".json", {
     crossDomain: false,
     prePopulate: $("#group_people_tokens").data("pre"),
@@ -28,6 +29,13 @@ $(function() {
     prePopulate: $("#ou_parent_tokens").data("pre"),
     theme: "facebook"
   });
+
+  $("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
+    crossDomain: false,
+    prePopulate: $("#person_ou_tokens").data("pre"),
+    theme: "facebook"
+  });
+
   
   // Preload images
 	$.preloadCssImages();

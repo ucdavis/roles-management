@@ -33,29 +33,15 @@
 		</div> <!-- #sb1 -->
 		
 		<div class="sidebar_content" id="roles">
-			<h2>Roles</h2>
-			<ul>
-			  <% @person.roles.each do |role| %>
-			    <li><%= role.name %> for <%= link_to role.application.name, role.application %></li>
-			  <% end %>
-			</ul>
+		  <%= render 'roles_form' %>
 		</div> <!-- sb2 -->
 		
 		<div class="sidebar_content" id="groups">
-			<h2>Group Memberships</h2>
-			<ul>
-			  <% @person.groups.each do |group| %>
-				  <li><%= link_to group.name, group %></li>
-				<% end %>
-			</ul>
+		  <%= render 'groups_form' %>
 		</div> <!-- #sb3 -->
+
 		<div class="sidebar_content" id="ous">
-			<h2>Organization Memberships</h2>
-			<ul>
-			  <% @person.ous.each do |ou| %>
-				  <li><%= link_to ou.name, ou %></li>
-				<% end %>
-			</ul>
+		  <%= render 'ous_form' %>
 		</div> <!-- #sb4 -->
 	</div> <!-- .block_content -->
 

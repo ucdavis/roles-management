@@ -11,7 +11,10 @@ class Person < ActiveRecord::Base
   has_many :ou_manager_assignments
   has_many :managements, :through => :ou_manager_assignments, :source => :ou, :primary_key => "manager_id"
   
-  validates_presence_of :loginid #:first, :last
+  validates_presence_of :loginid
+  
+  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids
+  attr_reader :ou_tokens
   
   def to_param  # overridden
     loginid
@@ -38,5 +41,9 @@ class Person < ActiveRecord::Base
     end
     
     syms
+  end
+  
+  def ou_tokens=(ids)
+      self.ou_ids = ids.split(",")
   end
 end
