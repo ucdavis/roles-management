@@ -53,6 +53,7 @@ end
 #end
 
 after 'deploy:update_code', 'deploy:symlink_shared'
+after 'deploy:update_code', 'deploy:precompile_assets'
 #after 'deploy:update_code', 'rvm:trust_rvmrc'
 
 # INSTALLME: Modify this action if you use Capistrano with your own SSH keys
