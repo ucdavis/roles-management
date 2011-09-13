@@ -1,0 +1,709 @@
+have_header: checking for ldap.h... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib     -lruby.1.9.1-static  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: int main() {return 0;}
+/* end */
+
+"/usr/bin/gcc-4.2 -E -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <ldap.h>
+/* end */
+
+--------------------
+
+have_header: checking for lber.h... -------------------- yes
+
+"/usr/bin/gcc-4.2 -E -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <lber.h>
+/* end */
+
+--------------------
+
+have_header: checking for ldap_ssl.h... -------------------- no
+
+"/usr/bin/gcc-4.2 -E -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe  conftest.c -o conftest.i"
+conftest.c:3:22: error: ldap_ssl.h: No such file or directory
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <ldap_ssl.h>
+/* end */
+
+--------------------
+
+have_header: checking for openssl/ssl.h... -------------------- yes
+
+"/usr/bin/gcc-4.2 -E -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <openssl/ssl.h>
+/* end */
+
+--------------------
+
+have_header: checking for openssl/crypto.h... -------------------- yes
+
+"/usr/bin/gcc-4.2 -E -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <openssl/crypto.h>
+/* end */
+
+--------------------
+
+have_library: checking for main() in -lcrypto... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib     -lruby.1.9.1-static -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+have_library: checking for main() in -lssl... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lcrypto  -lruby.1.9.1-static -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+have_library: checking for main() in -lnsl... -------------------- no
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lssl -lcrypto  -lruby.1.9.1-static -lnsl -lssl -lcrypto  -lpthread -ldl -lobjc "
+ld: library not found for -lnsl
+collect2: ld returned 1 exit status
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lssl -lcrypto  -lruby.1.9.1-static -lnsl -lssl -lcrypto  -lpthread -ldl -lobjc "
+ld: library not found for -lnsl
+collect2: ld returned 1 exit status
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { main(); return 0; }
+/* end */
+
+--------------------
+
+have_library: checking for main() in -lpthread... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lssl -lcrypto  -lruby.1.9.1-static -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+have_library: checking for main() in -lresolv... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+have_library: checking for main() in -llber... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+have_library: checking for main() in -lldap_r... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+have_library: checking for main() in -lldap... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_init()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_init’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_init; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_init(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_set_option()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_set_option’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_set_option; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_set_option(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_get_option()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_get_option’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_get_option; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_get_option(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_start_tls_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_start_tls_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_start_tls_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_start_tls_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_memfree()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_memfree’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_memfree; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_memfree(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_perror()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_perror’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_perror; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_perror(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_sort_entries()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_sort_entries’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_sort_entries; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_sort_entries(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldapssl_init()... -------------------- no
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldapssl_init’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldapssl_init; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+Undefined symbols for architecture x86_64:
+  "_ldapssl_init", referenced from:
+      _t in cciLWYih.o
+ld: symbol(s) not found for architecture x86_64
+collect2: ld returned 1 exit status
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldapssl_init(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_sslinit()... -------------------- no
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_sslinit’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_sslinit; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+Undefined symbols for architecture x86_64:
+  "_ldap_sslinit", referenced from:
+      _t in ccC1Tsam.o
+ld: symbol(s) not found for architecture x86_64
+collect2: ld returned 1 exit status
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_sslinit(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_sasl_bind_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_sasl_bind_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_sasl_bind_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_sasl_bind_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_compare_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_compare_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_compare_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_compare_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_add_ext_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_add_ext_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_add_ext_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_add_ext_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_compare_ext_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_compare_ext_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_compare_ext_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_compare_ext_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_delete_ext_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_delete_ext_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_delete_ext_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_delete_ext_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_modify_ext_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_modify_ext_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_modify_ext_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_modify_ext_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_search_ext_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_search_ext_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_search_ext_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_search_ext_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_unbind_ext_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_unbind_ext_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_unbind_ext_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_unbind_ext_s(); return 0; }
+/* end */
+
+--------------------
+
+have_func: checking for ldap_sasl_interactive_bind_s()... -------------------- yes
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+conftest.c: In function ‘t’:
+conftest.c:5: error: ‘ldap_sasl_interactive_bind_s’ undeclared (first use in this function)
+conftest.c:5: error: (Each undeclared identifier is reported only once
+conftest.c:5: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))ldap_sasl_interactive_bind_s; return 0; }
+/* end */
+
+"/usr/bin/gcc-4.2 -o conftest -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/x86_64-darwin11.0.0 -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1/ruby/backward -I/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/include/ruby-1.9.1 -I. -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE    -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wpointer-arith -Wwrite-strings -Wno-missing-field-initializers -Wshorten-64-to-32 -Wno-long-long  -fno-common -pipe conftest.c  -L. -L/Users/chmthielen/.rvm/rubies/ruby-1.9.2-p290/lib -L. -L/usr/local/lib    -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lruby.1.9.1-static -lldap -lldap_r -llber -lresolv -lpthread -lssl -lcrypto  -lpthread -ldl -lobjc "
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { ldap_sasl_interactive_bind_s(); return 0; }
+/* end */
+
+--------------------
+
