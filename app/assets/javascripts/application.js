@@ -140,17 +140,20 @@ $(function() {
   $($(".block").find(".tabs li.active").find("a").attr("href")).show();
 
 	$("ul.tabs li").click(function() {
-		$(this).parent().find('li').removeClass("active");
-		$(this).addClass("active");
-		$(this).parents('.block').find(".tab_content").hide();
+	  // Only switch tabs if the link is to an anchor
+	  if($(this).find("a").attr("href")[0] == "#") {
+  		$(this).parent().find('li').removeClass("active");
+  		$(this).addClass("active");
+  		$(this).parents('.block').find(".tab_content").hide();
 			
-		var activeTab = $(this).find("a").attr("href");
-		$(activeTab).show();
+  		var activeTab = $(this).find("a").attr("href");
+  		$(activeTab).show();
 		
-		// refresh visualize for IE
-		$(activeTab).find('.visualize').trigger('visualizeRefresh');
+  		// refresh visualize for IE
+  		$(activeTab).find('.visualize').trigger('visualizeRefresh');
 		
-		return false;
+  		return false;
+	  }
 	});
 	
 	
