@@ -73,7 +73,12 @@ class OusController < ApplicationController
         @ou = Ou.find_by_name(params[:id])
       else
         # Name-based URLs means we can't have / in the name. Try replacing any _ with / and search again
-        @ou = Ou.find_by_name(params[:id].gsub("_", "/"))
+        if Ou.find_by_name(params[:id].gsub("_", "/"))
+          @ou = Ou.find_by_name(params[:id].gsub("_", "/"))
+        else
+          # Last, try assuming the _ is an &
+          @ou = Ou.find_by_name(params[:id].gsub("_", "&"))
+        end
       end
     end
   end
