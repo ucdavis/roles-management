@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
       redirect_to CASClient::Frameworks::Rails::Filter.login_url(self)
     end
   
-    session[:return_to] = request.request_uri
+    session[:return_to] = request.fullpath
   
     return false
   end
