@@ -13,8 +13,8 @@ class Person < ActiveRecord::Base
   
   validates_presence_of :loginid
   
-  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids
-  attr_reader :ou_tokens
+  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids
+  attr_reader :ou_tokens, :group_tokens
   
   def to_param  # overridden
     loginid
@@ -45,5 +45,9 @@ class Person < ActiveRecord::Base
   
   def ou_tokens=(ids)
       self.ou_ids = ids.split(",")
+  end
+
+  def group_tokens=(ids)
+      self.group_ids = ids.split(",")
   end
 end

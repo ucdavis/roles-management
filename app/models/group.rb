@@ -19,4 +19,8 @@ class Group < ActiveRecord::Base
   def to_param  # overridden
     name.gsub("/", "_").gsub("&", "_").gsub(".", "_")
   end
+  
+  def as_json(options={}) 
+    { :id => self.id, :name => self.name } 
+  end
 end

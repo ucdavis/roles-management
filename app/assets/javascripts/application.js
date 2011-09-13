@@ -36,6 +36,12 @@ $(function() {
     theme: "facebook"
   });
 
+  $("#person_group_tokens").tokenInput($("#person_group_tokens").attr("method") + ".json", {
+    crossDomain: false,
+    prePopulate: $("#person_group_tokens").data("pre"),
+    theme: "facebook"
+  });
+
   
   // Preload images
 	$.preloadCssImages();
