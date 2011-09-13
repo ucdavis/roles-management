@@ -8,3 +8,4 @@ config/database.yml
 config/api_keys.yml
 .sass-cache/
 public/assets/
+.rvmrc
