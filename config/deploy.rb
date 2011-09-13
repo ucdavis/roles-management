@@ -36,7 +36,15 @@ namespace :deploy do
     end
 end
 
+namespace :rvm do
+  desc 'Trust rvmrc file'
+  task :trust_rvmrc do
+    run "rvm rvmrc trust #{current_release}"
+  end
+end
+
 after 'deploy:update_code', 'deploy:symlink_shared'
+after 'deploy:update_code', 'rvm:trust_rvmrc'
 
 # INSTALLME: Modify this action if you use Capistrano with your own SSH keys
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa-deploy")]
