@@ -27,4 +27,4 @@ gem 'dynamic_form'
 gem 'jquery-rails'
 gem 'mysql'
 
-gem 'declarative_authorization', :git => 'git://github.com/stffn/declarative_authorization.git'
+gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'

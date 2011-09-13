@@ -7,17 +7,17 @@ GIT
       activesupport (>= 3.0.0)
 
 GIT
-  remote: git://github.com/stffn/declarative_authorization.git
-  revision: bba5e16b858f3b6a9d4abb0621bea70da0cfdf31
-  specs:
-    declarative_authorization (0.5.3)
-
-GIT
   remote: https://github.com/rubycas/rubycas-client.git
   revision: 3a5b5e7faf6f53d3e9f2d2a7305c53663119917a
   specs:
     rubycas-client (2.1.0)
       activesupport
+
+GIT
+  remote: https://github.com/stffn/declarative_authorization.git
+  revision: bba5e16b858f3b6a9d4abb0621bea70da0cfdf31
+  specs:
+    declarative_authorization (0.5.3)
 
 GEM
   remote: http://rubygems.org/
