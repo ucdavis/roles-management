@@ -38,6 +38,18 @@
 		<% end %>
 		
 		<p>
+  		<h2>Sub-Organizations</h2>
+  		<ul>
+		  <% @ou.children.each do |ou| %>
+		    <li><%= link_to ou.name, ou %></li>
+		  <% end %>
+		  <% if @ou.children.length == 0 %>
+		    <li>None</li>
+		  <% end %>
+  		</ul>
+		</p>
+		
+		<p>
   		<h2>Applications</h2>
   		<small><i>(Only applications specific to this OU appear here. Public applications are implied.)</i></small><br />
   		<br />
