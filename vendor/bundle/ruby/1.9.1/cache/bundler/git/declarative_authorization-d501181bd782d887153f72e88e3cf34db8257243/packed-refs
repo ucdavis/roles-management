@@ -1,0 +1,13 @@
+# pack-refs with: peeled 
+2d641b2fd1d7a8a4334418b28af3720ca6efd717 refs/tags/rel_0_5_1
+0cc0ace0bce3da402c33a4ceeb79402f377a736f refs/tags/rel_0_5
+^30fefc4b2263271bbe294569678ac501ad002c67
+f0b07b886e502941fe8be70803bb57167ad55545 refs/tags/rel_0_4
+^ae95c8a87ec2914872da728d403ef4ab0e93d2fb
+0f44a3a48b5932d05576f00d9bbbc060b583894c refs/tags/rel_0_3
+a5e9fc85faf2ae85edeff4d818aed63df32393ae refs/tags/rel_0_2
+^035c94fad90102674b207f52b8c7107e289c2a32
+97d8bc94bc54ed576bbdea4599a77a71b4f65595 refs/tags/rel_0_1
+^292e73f940cc1b9f6a89b8accfac656848ed9f04
+e1aeb3b113f71752bf68add6c8f5d89adfd90d5c refs/heads/with-abstract-reader
+bba5e16b858f3b6a9d4abb0621bea70da0cfdf31 refs/heads/master
