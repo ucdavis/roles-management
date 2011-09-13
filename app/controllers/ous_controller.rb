@@ -46,11 +46,18 @@ class OusController < ApplicationController
 
   # PUT /ous/1
   def update
-    respond_to do |format|
-      if @ou.update_attributes(params[:ou])
-        format.html { redirect_to(@ou, :notice => 'Organization was successfully updated.') }
-      else
-        format.html { render :action => "edit" }
+    if params[:delete]
+      @ou.destroy
+      respond_to do |format|
+        format.html { redirect_to(ous_url, :notice => 'Organization was successfully deleted.') }
+      end
+    else
+      respond_to do |format|
+        if @ou.update_attributes(params[:ou])
+          format.html { redirect_to(@ou, :notice => 'Organization was successfully updated.') }
+        else
+          format.html { render :action => "edit" }
+        end
       end
     end
   end

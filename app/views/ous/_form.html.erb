@@ -20,6 +20,6 @@
     	<%= f.text_field :parent_tokens, "data-pre" => @ou.parents.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
 	</p>
   <p>
-    	<%= f.submit "Save Changes", :class => "submit mid" %>
+    	<%= f.submit "Save Changes", :class => "submit long", :name => "submit" %> <% if action_name != "new" %><%= f.submit "Delete OU", :class => "submit long alert", :name => "delete" %><% end %>
   </p>
 <% end %>

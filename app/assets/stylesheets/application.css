@@ -813,6 +813,8 @@ a:hover {
 .block form input.submit.long { width: 165px; background: url("../images/btnb.gif") top center no-repeat; }
 .block form input.submit.long:hover { background: url("../images/btnb_.gif") top center no-repeat; }
 
+.block form input.submit.long.alert { width: 165px; background: url("../images/btnr.png") top center no-repeat; }
+.block form input.submit.long.alert:hover { background: url("../images/btnb_.gif") top center no-repeat; }
 
 /* Small blocks */
 
