@@ -620,6 +620,10 @@ a:hover {
 
 /* Forms */
 
+.block form {
+  display: inline-block;
+}
+
 .block form p {
 	overflow: hidden;
 	clear: both;

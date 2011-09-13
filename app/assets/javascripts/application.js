@@ -131,8 +131,13 @@ $(function() {
 	
 	// Tabs
 	$(".tab_content").hide();
-	$("ul.tabs li:first-child").addClass("active").show();
-	$(".block").find(".tab_content:first").show();
+	
+	// Activate the first tab if 'active' is not set already
+	if($("ul.tabs").find(".active").length == 0) {
+	  $("ul.tabs li:first-child").addClass("active").show(); // activate the first tab
+  }
+  // Activate whatever tab is active, not necessarily going to be the first
+  $($(".block").find(".tabs li.active").find("a").attr("href")).show();
 
 	$("ul.tabs li").click(function() {
 		$(this).parent().find('li').removeClass("active");

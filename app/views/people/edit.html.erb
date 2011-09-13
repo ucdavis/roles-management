@@ -1,4 +1,8 @@
-<div class="block">
+<% if notice %>
+<div class="message success"><p><%= notice %></p></div>
+<% end %>
+
+<div class="block withsidebar">
 	<div class="block_head">
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
@@ -6,14 +10,57 @@
 		<h2>Editing <%= @person.preferred_name %></h2>
 		
 		<ul class="tabs">
-			<li><%= link_to 'Overview', @person %></li>
-			<li><%= link_to 'Revisions', person_path(@person, :anchor => "revisions_tab") %></li>
-			<li><a href="#">Edit</a></li>
+			<li><%= link_to 'Overview', person_path(@person) %></li>
+			<li><a href="#revisions_tab">Revisions</a></li>
+			<li class="active"><a href="#edit_tab">Edit</a></li>
 		</ul>
 	</div> <!-- .block_head -->
 	
-	<div class="block_content">
-		<%= render 'form' %>
+	<div class="block_content tab_content" id="edit_tab">
+		<div class="sidebar">
+			<ul class="sidemenu">
+				<li><a href="#basics">Basics</a></li>
+				<li><a href="#roles">Roles</a></li>
+				<li><a href="#groups">Groups</a></li>
+				<li><a href="#ous">Organizations</a></li>
+			</ul>
+			
+			<p><strong>Some notification text.</strong> Donec hendrerit porttitor felis, id semper eros lobortis sed. Class aptent taciti sociosqu ad litora.</p>
+		</div>		<!-- .sidebar ends -->
+		
+		<div class="sidebar_content" id="basics">
+		  <%= render 'form' %>
+		</div> <!-- #sb1 -->
+		
+		<div class="sidebar_content" id="roles">
+			<h2>Roles</h2>
+			<ul>
+			  <% @person.roles.each do |role| %>
+			    <li><%= role.name %> for <%= link_to role.application.name, role.application %></li>
+			  <% end %>
+			</ul>
+		</div> <!-- sb2 -->
+		
+		<div class="sidebar_content" id="groups">
+			<h2>Group Memberships</h2>
+			<ul>
+			  <% @person.groups.each do |group| %>
+				  <li><%= link_to group.name, group %></li>
+				<% end %>
+			</ul>
+		</div> <!-- #sb3 -->
+		<div class="sidebar_content" id="ous">
+			<h2>Organization Memberships</h2>
+			<ul>
+			  <% @person.ous.each do |ou| %>
+				  <li><%= link_to ou.name, ou %></li>
+				<% end %>
+			</ul>
+		</div> <!-- #sb4 -->
+	</div> <!-- .block_content -->
+
+	<div class="block_content tab_content" id="revisions_tab">
+
 	</div> <!-- .block_content -->
 	
 	<div class="bendl"></div>
