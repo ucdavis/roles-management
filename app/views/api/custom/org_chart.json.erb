@@ -1,20 +1,20 @@
 {
-  id: "Clusters",
-  name: "Clusters",
-  data: {},
-  children: [
+  "id": "Clusters",
+  "name": "Clusters",
+  "data": {},
+  "children": [
   <% @roots.each do |root| %>
   {
-    id: "<%= root.id %>",
-    name: "<%= root.name %>",
-    data: {},
-    children: [
+    "id": "<%= root.id %>",
+    "name": "<%= root.name %>",
+    "data": {},
+    "children": [
       <% root.children.each do |department| %>
         {
-          id: "<%= department.id %>",
-          name: "<%= department.name %>",
-          data: {},
-          children: []
+          "id": "<%= department.id %>",
+          "name": "<%= department.name %>",
+          "data": {},
+          "children": []
         }<% unless department == root.children.last %>,<% end %>
       <% end %>
     ]
