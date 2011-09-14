@@ -7,9 +7,14 @@
 	</div> <!-- .block_head -->
 	
 	<div class="block_content">
-		<%= render 'form' %>
-
-		<%= link_to 'Back', people_path %>
+	  <h3>Fetch Details from LDAP</h3>
+	  <form>
+  	  <p>
+  	    <input type="text" class="text" /> <input type="submit" class="submit mid" value="Fetch" />
+  	  </p>
+	  </form>
+	  <hr />
+		<%= render 'basics_form' %>
 	</div> <!-- .block_content -->
 	
 	<div class="bendl"></div>

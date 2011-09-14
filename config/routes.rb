@@ -14,11 +14,10 @@ DSSRM::Application.routes.draw do
 
   resources :people do
     collection do
-      get 'new_from_ldap'
-      post 'new_from_ldap'
+      match "new/:loginid", :action => "new"
     end
   end
-
+  
   root :to => "site#index"
 
   namespace "api" do

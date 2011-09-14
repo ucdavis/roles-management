@@ -1,4 +1,6 @@
 class PeopleController < ApplicationController
+  require 'ldap'
+  
   before_filter :load_person, :only => [:show]
   filter_resource_access
   
@@ -25,6 +27,33 @@ class PeopleController < ApplicationController
   # GET /people/new
   def new
     @person = Person.new
+
+    if params[:loginid]
+      @person.loginid = params[:loginid]
+      
+      # Search via LDAP
+      # Retrieve LDAP passwords from config/database.yml
+      ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ldap']
+
+      # Connect to LDAP
+      conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )
+      conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
+      conn.bind(dn = ldap_settings['base_dn'], password = ldap_settings['base_pw'] )
+      
+      # Search!
+      conn.search('ou=People,dc=ucdavis,dc=edu', LDAP::LDAP_SCOPE_SUBTREE, '(uid=' + params[:loginid] + ')') do |entry|
+        @person.first = entry.get_values('givenName').to_s[2..-3]
+        @person.last = entry.get_values('sn').to_s[2..-3]
+        @person.email = entry.get_values('mail').to_s[2..-3]
+        @person.phone = entry.get_values('telephoneNumber').to_s[2..-3]
+        if @person.phone != nil
+          @person.phone = @person.phone.sub("+1 ", "").gsub(" ", "") # clean up number
+        end
+        @person.address = entry.get_values('street').to_s[2..-3]
+        @person.preferred_name = @person.first + " " + @person.last
+      end
+      
+    end
 
     respond_to do |format|
       format.html
@@ -71,11 +100,7 @@ class PeopleController < ApplicationController
       format.html { redirect_to(people_url) }
     end
   end
-  
-  def new_from_ldap
-    
-  end
-  
+
   protected
   
   def load_person
