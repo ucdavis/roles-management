@@ -30,6 +30,12 @@ $(function() {
     theme: "facebook"
   });
 
+  $("#ou_manager_tokens").tokenInput($("#ou_manager_tokens").attr("method") + ".json", {
+    crossDomain: false,
+    prePopulate: $("#ou_manager_tokens").data("pre"),
+    theme: "facebook"
+  });
+
   $("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
     crossDomain: false,
     prePopulate: $("#person_ou_tokens").data("pre"),

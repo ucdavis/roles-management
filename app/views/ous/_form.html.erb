@@ -16,6 +16,10 @@
     	<%= f.text_field :name, :class => "text" %>
 	</p>
 	<p>
+    	<%= f.label :managers %><br />
+    	<%= f.text_field :manager_tokens, "data-pre" => @ou.managers.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
+	</p>
+	<p>
     	<%= f.label :parents, "Parent Organization" %><br />
     	<%= f.text_field :parent_tokens, "data-pre" => @ou.parents.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
 	</p>

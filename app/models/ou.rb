@@ -21,8 +21,8 @@ class Ou < ActiveRecord::Base
   has_many :members, :through => :ou_assignments, :source => :person
   has_many :ou_assignments
 
-  attr_accessible :name, :parent_tokens, :parent_ids
-  attr_reader :parent_tokens
+  attr_accessible :name, :parent_tokens, :parent_ids, :manager_tokens, :manager_ids
+  attr_reader :parent_tokens, :manager_tokens
 
   def to_param
     name.gsub("/", "_").gsub("&", "_").gsub(".", "_")
@@ -38,5 +38,9 @@ class Ou < ActiveRecord::Base
   
   def parent_tokens=(ids)
       self.parent_ids = ids.split(",")
+  end
+
+  def manager_tokens=(ids)
+      self.manager_ids = ids.split(",")
   end
 end
