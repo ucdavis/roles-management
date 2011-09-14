@@ -74,6 +74,7 @@ class OusController < ApplicationController
   
   protected
   
+  # FIXME: This is really ugly code.
   def load_ou
     if permitted_to? :show, :ous
       if Ou.find_by_name(params[:id])
@@ -83,8 +84,13 @@ class OusController < ApplicationController
         if Ou.find_by_name(params[:id].gsub("_", "/"))
           @ou = Ou.find_by_name(params[:id].gsub("_", "/"))
         else
-          # Last, try assuming the _ is an &
-          @ou = Ou.find_by_name(params[:id].gsub("_", "&"))
+          # Maybe assume the _ is an &
+          if Ou.find_by_name(params[:id].gsub("_", "&"))
+            @ou = Ou.find_by_name(params[:id].gsub("_", "&"))
+          else
+            # Give up if it's not this
+            @ou = Ou.find_by_name(params[:id].gsub("_", "."))
+          end
         end
       end
     end
