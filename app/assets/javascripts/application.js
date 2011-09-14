@@ -41,6 +41,12 @@ $(function() {
     prePopulate: $("#person_group_tokens").data("pre"),
     theme: "facebook"
   });
+  
+  // /people/new/:loginid specific
+  $("input[name=fetch_ldap_details]").click(function() {
+    var loginid = $("input[name=fetch_ldap_details_field]").val();
+    document.location.href = document.location.href + "/" + loginid;
+  });
 
   
   // Preload images

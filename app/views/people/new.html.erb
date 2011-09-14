@@ -10,7 +10,7 @@
 	  <h3>Fetch Details from LDAP</h3>
 	  <form>
   	  <p>
-  	    <input type="text" class="text" /> <input type="submit" class="submit mid" value="Fetch" />
+  	    <input type="text" class="text" name="fetch_ldap_details_field" value="<% if params[:loginid] %><%= params[:loginid] %><% end %>" /> <input type="button" class="submit mid" value="Fetch" name="fetch_ldap_details" />
   	  </p>
 	  </form>
 	  <hr />
