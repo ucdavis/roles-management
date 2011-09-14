@@ -8,7 +8,7 @@ namespace :ldap do
 
     # Set up some manual data - would go in UcdLookups.rb but UcdLookups is auto-generated w/o this info
     basePeople = 'ou=People,dc=ucdavis,dc=edu'
-    manualIncludes=['jeremy','aeguyer','millerlm','djmoglen','mebalvin','mckinney','ssantam','tmheath','rnanakul','olichney','sukkim','jpokorny','bgrunewa','rabronst','kbaynes','szneena','pcmundy','wjarrold','julieluu','steichho','chuff','cmachado','alamsyah','schuang','clare186','ladyd252','aheusser','pkubitz','kshap','bbrelles','blmiss','pjdegenn','cdaniels','jyiwang','anschnei','eaisham','ralatif','cwbishop','fddiaz']
+    manualIncludes=['aeguyer','millerlm','djmoglen','mebalvin','mckinney','ssantam','tmheath','rnanakul','olichney','sukkim','jpokorny','bgrunewa','rabronst','kbaynes','szneena','pcmundy','wjarrold','julieluu','steichho','chuff','cmachado','alamsyah','schuang','clare186','ladyd252','aheusser','pkubitz','kshap','bbrelles','blmiss','pjdegenn','cdaniels','jyiwang','anschnei','eaisham','ralatif','cwbishop','fddiaz','jinchen','ajkou','sphan127','ndelie','weidner']
     deptTranslations = {
         'AFRICAN AMERICAN AFRICAN STDS' => 'HISTORY',
         'ASIAN AMERICAN' => 'HISTORY',
