@@ -84,5 +84,10 @@ class Api::CustomController < Api::BaseController
   
   def org_chart
     @roots = Ou.top_level
+
+    respond_to do |format|
+      format.xml
+      format.json
+    end
   end
 end
