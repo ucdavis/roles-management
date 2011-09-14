@@ -193,7 +193,7 @@
       st.onClick(st.root);
   }
 
-  $.getJSON('/api/org_chart.json', function(data) {
+  $.getJSON('<%= url_for(:controller => "api/custom", :action => "org_chart") %>.json', function(data) {
     json = data;
     
     init();
