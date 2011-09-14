@@ -290,6 +290,9 @@ namespace :ldap do
       Person.destroy_all
       Group.destroy_all
       Ou.destroy_all
+      RoleAssignment.destroy_all
+      OuAssignment.destroy_all
+      ApplicationOuAssignment.destroy_all
     end
   end
 end

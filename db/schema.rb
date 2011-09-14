@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110912221137) do
+ActiveRecord::Schema.define(:version => 20110914180827) do
 
   create_table "application_ou_assignments", :force => true do |t|
     t.datetime "created_at"
@@ -112,11 +112,6 @@ ActiveRecord::Schema.define(:version => 20110912221137) do
     t.datetime "updated_at"
     t.integer  "application_id"
     t.boolean  "default",        :default => false
-  end
-
-  create_table "roles_roles", :id => false, :force => true do |t|
-    t.integer "role_id"
-    t.integer "subrole_id"
   end
 
   create_table "versions", :force => true do |t|
