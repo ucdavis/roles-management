@@ -173,22 +173,11 @@ namespace :ldap do
       # Find or create the individual
       person = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
 
-      # Only set to attributes found in LDAP if the attributes aren't already set (i.e. blank)
-      unless not person.first.nil?
-        person.first = f["givenName"]
-      end
-      unless not person.last.nil?
-        person.last = f["sn"]
-      end
-      unless not person.email.nil?
-        person.email = f["mail"]
-      end
-      unless not person.phone.nil?
-        person.phone = f["telephoneNumber"]
-      end
-      unless not person.address.nil?
-        person.address = f["street"]
-      end
+      person.first = p["givenName"]
+      person.last = p["sn"]
+      person.email = p["mail"]
+      person.phone = p["telephoneNumber"]
+      person.address = p["street"]
     
       if( p["ucdPersonAffiliation"] == "student:graduate" )
         # Graduate student 'ou's are determined not by the ou entry but by the 
