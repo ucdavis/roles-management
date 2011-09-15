@@ -85,7 +85,7 @@ namespace :ldap do
 
     people = {}
     # Run the actual LDAP query
-    for f in [staffFilter,facultyFilter,studentFilter,manualFilter]
+    for f in [staffFilter,facultyFilter,studentFilter] + manualFilter
         conn.search(basePeople, LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
           person = {}
           
@@ -157,15 +157,21 @@ namespace :ldap do
 
     # Disconnect
     conn.unbind
-  
+    
     #
     # STEP TWO: Add people, groups, etc. to local database
     #
 
     # Add people to database
-    for p in people
+    for e in people
+      p = e[1]
+      
+      puts "-------------------"
+      puts p
+      
+      loginid = p["eduPersonPrincipalName"].slice(0, p["eduPersonPrincipalName"].index("@"))
       # Find or create the individual
-      person = Person.find_by_loginid(p["eduPersonPrincipalName"].slice(0, p["eduPersonPrincipalName"].index("@"))) || Person.create(:loginid => p["eduPersonPrincipalName"].slice(0, p["eduPersonPrincipalName"].index("@")))
+      person = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
 
       # Only set to attributes found in LDAP if the attributes aren't already set (i.e. blank)
       unless not person.first.nil?
@@ -190,10 +196,12 @@ namespace :ldap do
         # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
         ou.save
       else
-        # Not a graduate student: p["ou"] entry is reliable
-        ou = Ou.find(:first, :conditions => [ "lower(name) = ?", p["ou"].downcase ]) || Ou.create(:name => p["ou"])
-        # Assume dept codes match name strings
-        ou.code = p["ucdAppointmentDepartmentCode"]
+        unless p["ou"].nil?
+          # Not a graduate student: p["ou"] entry is reliable
+          ou = Ou.find(:first, :conditions => [ "lower(name) = ?", p["ou"].downcase ]) || Ou.create(:name => p["ou"])
+          # Assume dept codes match name strings
+          ou.code = p["ucdAppointmentDepartmentCode"]
+        end
       
         unless UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]].nil?
           manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"])
@@ -203,7 +211,9 @@ namespace :ldap do
           end
         else
           # Dept code doesn't exist
-          puts "Could not find a dept_code for " + p["ucdAppointmentDepartmentCode"]
+          unless p["ucdAppointmentDepartmentCode"].nil?
+            puts "Could not find a dept_code for " + p["ucdAppointmentDepartmentCode"]
+          end
         end
       
         ou.save
@@ -212,9 +222,11 @@ namespace :ldap do
       person.ous << ou
     
       # Add to group based on title, creating it if necessary
-      group = Group.find(:first, :conditions => [ "lower(name) = ?", p["title"].downcase ]) || Group.create(:name => p["title"])
-      group.save
-      person.groups << group
+      unless p["title"].nil?
+        group = Group.find(:first, :conditions => [ "lower(name) = ?", p["title"].downcase ]) || Group.create(:name => p["title"])
+        group.save
+        person.groups << group
+      end
     
       person.status = true
       person.preferred_name = "#{person.first} #{person.last}"
