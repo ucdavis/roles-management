@@ -1,9 +1,8 @@
 DSSRM::Application.routes.draw do
   get "site/index"
-
-  get "site/contact"
-  
+  get "site/contact"  
   get "site/logout"
+  get "site/access_denied"
 
   resources :applications do
     resources :roles

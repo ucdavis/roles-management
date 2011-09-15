@@ -39,7 +39,6 @@ namespace :ldap do
         'TEMPORARY EMPLOYMENT SERVICES (TES)' => 'TEMPORARY EMPLOYMENT SERVICES',
         'MICROBIOLOGY' => 'DSS IT SERVICE CENTER'
     }
-    attributes = ['uid','givenName','sn','mail','telephoneNumber','street','ou','title','ucdPersonAffiliation','displayName','ucdStudentMajor','ucdAppointmentDepartmentCode','company','manager','ucdAppointmentTitleCode','principal_name','title_code','dept_code']
 
     #
     # STEP ONE: Connect to LDAP. Query needed data.
@@ -77,12 +76,19 @@ namespace :ldap do
          studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
     end
     studentFilter = studentFilter + '))'
+    
+    # Build the manual filter
+    manualFilter = []
+    for m in manualIncludes
+      manualFilter << '(uid=' + m + ')'
+    end
 
-    people = []
+    people = {}
     # Run the actual LDAP query
-    for f in [staffFilter,facultyFilter,studentFilter]
+    for f in [staffFilter,facultyFilter,studentFilter,manualFilter]
         conn.search(basePeople, LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
           person = {}
+          
           person["uid"] = entry.get_values('uid').to_s[2..-3]
           person["givenName"] = entry.get_values('givenName').to_s[2..-3]
           person["sn"] = entry.get_values('sn').to_s[2..-3]
@@ -93,121 +99,73 @@ namespace :ldap do
             person["telephoneNumber"] = person["telephoneNumber"].sub("+1 ", "").gsub(" ", "") # clean up number
           end
           person["street"] = entry.get_values('street').to_s[2..-3]
-          person["ou"] = entry.get_values('ou').to_s[2..-3]
           person["title"] = entry.get_values('title').to_s[2..-3]
           person["ucdPersonAffiliation"] = entry.get_values('ucdPersonAffiliation').to_s[2..-3]
-          person["title_code"] = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
-          person["dept_code"] = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
-          person["principal_name"] = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
+          person["ucdAppointmentTitleCode"] = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
+          person["ucdAppointmentDepartmentCode"] = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
+          person["eduPersonPrincipalName"] = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
           person["ucdStudentMajor"] = entry.get_values('ucdStudentMajor').to_s[2..-3]
-
-          people << person
-        end
-    end
-
-    # Additional query for manual includes
-    for u in manualIncludes
-        conn.search(basePeople, LDAP::LDAP_SCOPE_SUBTREE, '(uid=' + u + ')') do |entry|
-          person = {}
-          person["uid"] = entry.get_values('uid').to_s[2..-3]
-          person["givenName"] = entry.get_values('givenName').to_s[2..-3]
-          person["sn"] = entry.get_values('sn').to_s[2..-3]
-          person["mail"] = entry.get_values('mail').to_s[2..-3]
-          person["telephoneNumber"] = entry.get_values('telephoneNumber').to_s[2..-3]
-          if person["telephoneNumber"] != nil
-            person["telephoneNumber"] = person["telephoneNumber"].sub("+1 ", "").gsub(" ", "") # clean up number
+          
+          if person["uid"].nil?
+            next # Skip those with no UIDs
           end
-          person["street"] = entry.get_values('street').to_s[2..-3]
-          person["ou"] = entry.get_values('ou').to_s[2..-3]
-          person["title"] = entry.get_values('title').to_s[2..-3]
-          person["ucdPersonAffiliation"] = entry.get_values('ucdPersonAffiliation').to_s[2..-3]
-          person["title_code"] = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
-          person["dept_code"] = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
-          person["principal_name"] = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
-          person["ucdStudentMajor"] = entry.get_values('ucdStudentMajor').to_s[2..-3]
 
-          people << person
-        end
-    end
-  
-    #
-    # STEP TWO: Filter received LDAP data down to only what's necessary.
-    #
-  
-    # Filter to only have unique individuals
-    uniquePeople = []
-    uuids = []
-    for p in people
-        if p["uid"]
-          if ! uuids.include? p["uid"]
-              uuids << p["uid"]
-              uniquePeople << p
+          if people[person["uid"]].nil? == false
+            if people[person["uid"]].to_s != person.to_s
+              puts "-------------------------------------------"
+              puts "Non-matching duplicate found! OLD data:"
+              puts people[person["uid"]]
+              puts " ---> NEW data:"
+              puts person
+              puts "-------------------------------------------"
+            end
           end
-        end
-    end
+          
+          # Use the look up tables to clean up the data
+          if person["ucdAppointmentDepartmentCode"]
+              if UcdLookups::DEPT_CODES.keys().include? person["ucdAppointmentDepartmentCode"]
+                  person['ou'] = UcdLookups::DEPT_CODES[person["ucdAppointmentDepartmentCode"]]['name']
+                  person['company'] = UcdLookups::DEPT_CODES[UcdLookups::DEPT_CODES[person["ucdAppointmentDepartmentCode"]]['company']]['name']
+                  person['manager'] = UcdLookups::DEPT_CODES[person["ucdAppointmentDepartmentCode"]]['manager']
+              elsif person["ucdStudentMajor"]
+                  if UcdLookups::MAJORS.keys().include? person["ucdStudentMajor"]
+                      majorDept = UcdLookups::MAJORS[person["ucdStudentMajor"]]
+                      person['ou'] = UcdLookups::DEPT_CODES[majorDept]['name']
+                      person['company'] = UcdLookups::DEPT_CODES[UcdLookups::DEPT_CODES[majorDept]['company']]['name']
+                      person['manager'] = UcdLookups::DEPT_CODES[majorDept]['manager']
+                  end
+              end
+          elsif person["ucdStudentMajor"]
+              if UcdLookups::MAJORS.keys().include? person["ucdStudentMajor"]
+                      majorDept = UcdLookups::MAJORS[person["ucdStudentMajor"]]
+                      person['ou'] = UcdLookups::DEPT_CODES[majorDept]['name']
+                      person['company'] = UcdLookups::DEPT_CODES[UcdLookups::DEPT_CODES[majorDept]['company']]['name']
+                      person['manager'] = UcdLookups::DEPT_CODES[majorDept]['manager']
+              end
+          end
 
-    finalPeople = []
-    for p in uniquePeople
-        person = {}
-        for a in attributes
-            if p[a]
-                person[a] = p[a]
-            elsif
-                person[a] = ''
-            end
+          if UcdLookups::TITLE_CODES[person["ucdAppointmentTitleCode"]]
+              person['title'] = UcdLookups::TITLE_CODES[person["ucdAppointmentTitleCode"]]['title']
+          end
+          if deptTranslations.keys().include? person['ou']
+              person['ou'] = deptTranslations[person['ou']]
+          end
+            
+          people[person["uid"]] = person
         end
-
-        if p["ucdAppointmentDepartmentCode"]
-            if UcdLookups::DEPT_CODES.keys().include? p["ucdAppointmentDepartmentCode"]
-                person['ou'] = UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]['name']
-                person['company'] = UcdLookups::DEPT_CODES[UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]['company']]['name']
-                person['manager'] = UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]['manager']
-            elsif p["ucdStudentMajor"]
-                if UcdLookups::MAJORS.keys().include? p["ucdStudentMajor"]
-                    majorDept = UcdLookups::MAJORS[p["ucdStudentMajor"]]
-                    person['ou'] = UcdLookups::DEPT_CODES[majorDept]['name']
-                    person['company'] = UcdLookups::DEPT_CODES[UcdLookups::DEPT_CODES[majorDept]['company']]['name']
-                    person['manager'] = UcdLookups::DEPT_CODES[majorDept]['manager']
-                end
-            end
-        elsif p["ucdStudentMajor"]
-            if UcdLookups::MAJORS.keys().include? p["ucdStudentMajor"]
-                    majorDept = UcdLookups::MAJORS[p["ucdStudentMajor"]]
-                    person['ou'] = UcdLookups::DEPT_CODES[majorDept]['name']
-                    person['company'] = UcdLookups::DEPT_CODES[UcdLookups::DEPT_CODES[majorDept]['company']]['name']
-                    person['manager'] = UcdLookups::DEPT_CODES[majorDept]['manager']
-            end
-        end
-
-        if p["ucdAppointmentTitleCode"]
-            #print p["ucdAppointmentTitleCode"]
-            #print UcdLookups::TITLE_CODES[p["ucdAppointmentTitleCode"]]['title']
-            person['title'] = UcdLookups::TITLE_CODES[p["ucdAppointmentTitleCode"]]['title']
-        end
-        if deptTranslations.keys().include? person['ou']
-            person['ou'] = deptTranslations[person['ou']]
-        end
-        if not person['company']
-            person['company'] = ''
-        end
-        if not person['manager']
-            person['manager'] = ''
-        end
-
-        finalPeople << person
     end
 
     # Disconnect
     conn.unbind
   
     #
-    # STEP THREE: Add people, groups, etc. to local database
+    # STEP TWO: Add people, groups, etc. to local database
     #
 
     # Add people to database
-    for f in finalPeople
+    for p in people
       # Find or create the individual
-      person = Person.find_by_loginid(f["principal_name"].slice(0, f["principal_name"].index("@"))) || Person.create(:loginid => f["principal_name"].slice(0, f["principal_name"].index("@")))
+      person = Person.find_by_loginid(p["eduPersonPrincipalName"].slice(0, p["eduPersonPrincipalName"].index("@"))) || Person.create(:loginid => p["eduPersonPrincipalName"].slice(0, p["eduPersonPrincipalName"].index("@")))
 
       # Only set to attributes found in LDAP if the attributes aren't already set (i.e. blank)
       unless not person.first.nil?
@@ -226,31 +184,26 @@ namespace :ldap do
         person.address = f["street"]
       end
     
-      # Add them to their ou group, creating it if necessary
-      if(f["ou"].length == 0)
-        f["ou"] = "Unnamed"
-      end
-    
-      if( f["ucdPersonAffiliation"] == "student:graduate" )
+      if( p["ucdPersonAffiliation"] == "student:graduate" )
         # Graduate student 'ou's are determined not by the ou entry but by the 
-        ou = Ou.find(:first, :conditions => [ "lower(name) = ?", f["ucdStudentMajor"].downcase ]) || Ou.create(:name => f["ucdStudentMajor"])
+        ou = Ou.find(:first, :conditions => [ "lower(name) = ?", p["ucdStudentMajor"].downcase ]) || Ou.create(:name => p["ucdStudentMajor"])
         # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
         ou.save
       else
-        # Not a graduate student: f["ou"] entry is reliable
-        ou = Ou.find(:first, :conditions => [ "lower(name) = ?", f["ou"].downcase ]) || Ou.create(:name => f["ou"])
+        # Not a graduate student: p["ou"] entry is reliable
+        ou = Ou.find(:first, :conditions => [ "lower(name) = ?", p["ou"].downcase ]) || Ou.create(:name => p["ou"])
         # Assume dept codes match name strings
-        ou.code = f["dept_code"]
+        ou.code = p["ucdAppointmentDepartmentCode"]
       
-        unless UcdLookups::DEPT_CODES[f["dept_code"]].nil?
-          manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[f["dept_code"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[f["dept_code"]]["manager"])
+        unless UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]].nil?
+          manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"])
           # Avoid duplicate managers
           unless ou.managers.exists? manager
             ou.managers << manager
           end
         else
           # Dept code doesn't exist
-          puts "Could not find a dept_code for " + f["dept_code"]
+          puts "Could not find a dept_code for " + p["ucdAppointmentDepartmentCode"]
         end
       
         ou.save
@@ -258,18 +211,10 @@ namespace :ldap do
     
       person.ous << ou
     
-      if(f["title"].length == 0)
-        f["title"] = "Unnamed"
-      end
-    
       # Add to group based on title, creating it if necessary
-      group = Group.find(:first, :conditions => [ "lower(name) = ?", f["title"].downcase ]) || Group.create(:name => f["title"])
+      group = Group.find(:first, :conditions => [ "lower(name) = ?", p["title"].downcase ]) || Group.create(:name => p["title"])
       group.save
       person.groups << group
-    
-      # Assign their affiliation, creating it if necessary (affiliations are a 1:n relationship)
-      #affiliation = Affiliation.find(:first, :conditions => [ "lower(name) = ?", f["ucdPersonAffiliation"].downcase ]) || Affiliation.create(:name => f["ucdPersonAffiliation"])
-      #person.affiliation = affiliation
     
       person.status = true
       person.preferred_name = "#{person.first} #{person.last}"
@@ -281,7 +226,6 @@ namespace :ldap do
         person.save
       end
     end
-  
   end
   
   desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'

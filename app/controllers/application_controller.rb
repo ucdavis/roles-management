@@ -5,9 +5,15 @@ class ApplicationController < ActionController::Base
   before_filter CASClient::Frameworks::Rails::GatewayFilter, :unless => :requested_xml_or_json?
   before_filter :login_required, :unless => :requested_xml_or_json?
   before_filter :set_current_user, :unless => :requested_xml_or_json?
+  skip_before_filter :set_current_user, :only => [:access_denied]
 
   def set_current_user
     Authorization.current_user = @@user
+    
+    # Redirect to access denied if the user isn't in our database
+    if @@user.nil?
+      redirect_to :controller => "site", :action => "access_denied"
+    end
   end
   
   def current_user
