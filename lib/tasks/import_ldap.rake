@@ -220,6 +220,12 @@ namespace :ldap do
         title = Title.find_or_create_by_title(p["title"])
         person.title = title
       end
+      
+      unless p["ucdPersonAffiliation"].nil?
+        # Set the affiliation, creating it if necessary
+        affiliation = Affiliation.find_or_create_by_title(p["ucdPersonAffiliation"])
+        person.affiliation = affiliation
+      end
     
       person.status = true
       person.preferred_name = "#{person.first} #{person.last}"
@@ -242,6 +248,7 @@ namespace :ldap do
       RoleAssignment.destroy_all
       OuAssignment.destroy_all
       ApplicationOuAssignment.destroy_all
+      puts "Be sure to assign roles if you re-import the directory."
     end
   end
 end
