@@ -223,7 +223,7 @@ namespace :ldap do
       
       unless p["ucdPersonAffiliation"].nil?
         # Set the affiliation, creating it if necessary
-        affiliation = Affiliation.find_or_create_by_title(p["ucdPersonAffiliation"])
+        affiliation = Affiliation.find_or_create_by_name(p["ucdPersonAffiliation"])
         person.affiliation = affiliation
       end
     
