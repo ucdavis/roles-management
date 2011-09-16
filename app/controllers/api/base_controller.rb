@@ -1,8 +1,4 @@
 class Api::BaseController < ApplicationController
-  #skip_before_filter CASClient::Frameworks::Rails::GatewayFilter <-- this doesn't work, so applicationController has a skip_xml?
-  # and all controllers avoid offering XML except those in the API namespace
-  skip_before_filter :login_required
-  
   before_filter :api_authenticate
 
   protected

@@ -2,9 +2,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   
   # Only the API namespace should respond to XML. Be mindful of this!
-  before_filter CASClient::Frameworks::Rails::GatewayFilter, :unless => :requested_xml_or_json?
-  before_filter :login_required, :unless => :requested_xml_or_json?
-  before_filter :set_current_user, :unless => :requested_xml_or_json?
+  before_filter CASClient::Frameworks::Rails::GatewayFilter, :unless => :requested_api?
+  before_filter :login_required, :unless => :requested_api?
+  before_filter :set_current_user, :unless => :requested_api?
   skip_before_filter :set_current_user, :only => [:access_denied]
 
   def set_current_user
@@ -42,8 +42,9 @@ class ApplicationController < ActionController::Base
   
   protected
   
-  def requested_xml_or_json?
-    not params[:format].nil? and (params[:format] == "xml" || params[:format] == "json")
+  def requested_api?
+    controller_path[0..3] == "api/"
+    #not params[:format].nil? and (params[:format] == "xml" || params[:format] == "json")
   end
   
   def permission_denied

@@ -83,11 +83,16 @@ class Api::CustomController < Api::BaseController
   end
   
   def org_chart
-    @roots = Ou.top_level
+    if params[:format] == "csv"
+      @people = Person.all
+    else
+      @roots = Ou.top_level
+    end
 
     respond_to do |format|
       format.xml
       format.json
+      format.csv { render :csv => @roots }
     end
   end
 end

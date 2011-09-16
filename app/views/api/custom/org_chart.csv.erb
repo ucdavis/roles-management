@@ -1,0 +1,4 @@
+uid,givenName,sn,mail,telephoneNumber,street,ou,title,ucdPersonAffiliation,Disabled
+<% @people.each do |person| %>
+<%= person.loginid %>, <%= person.first %>, <%= person.last %>, <%= person.email %>, <%= person.phone %>, <%= person.address %>, <%= person.title.title %>, <%= person.title.title %>, N/A, No
+<% end %>

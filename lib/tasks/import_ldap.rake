@@ -210,11 +210,15 @@ namespace :ldap do
     
       person.ous << ou
     
-      # Add to group based on title, creating it if necessary
       unless p["title"].nil?
+        # Add to group based on title, creating it if necessary
         group = Group.find(:first, :conditions => [ "lower(name) = ?", p["title"].downcase ]) || Group.create(:name => p["title"])
         group.save
         person.groups << group
+        
+        # Set title, creating it if necessary
+        title = Title.find_or_create_by_title(p["title"])
+        person.title = title
       end
     
       person.status = true

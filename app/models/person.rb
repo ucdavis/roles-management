@@ -1,6 +1,8 @@
 class Person < ActiveRecord::Base
   versioned
   
+  belongs_to :title
+  
   has_and_belongs_to_many :groups
   has_many :role_assignments
   has_many :roles, :through => :role_assignments
