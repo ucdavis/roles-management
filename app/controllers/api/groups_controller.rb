@@ -14,6 +14,7 @@ class Api::GroupsController < Api::BaseController
 
     respond_to do |format|
       format.xml
+      format.text
     end
   end
 end
