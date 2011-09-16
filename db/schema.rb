@@ -14,7 +14,7 @@
 ActiveRecord::Schema.define(:version => 20110916222102) do
 
   create_table "affiliations", :force => true do |t|
-    t.string "RecreateAffiliationTable"
+    t.string "name"
   end
 
   create_table "application_ou_assignments", :force => true do |t|
