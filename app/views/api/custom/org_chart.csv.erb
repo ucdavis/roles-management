@@ -1,4 +1,16 @@
 uid,givenName,sn,mail,telephoneNumber,street,ou,title,ucdPersonAffiliation,Disabled
-<% @people.each do |person| %>
-<%= person.loginid %>, <%= person.first %>, <%= person.last %>, <%= person.email %>, <%= person.phone %>, <%= person.address %>, <%= person.title.title %>, <%= person.title.title %>, N/A, No
+<% @people.each do |person| 
+	if person.ous.length > 0
+		ou = person.ous[0].name
+	else
+		ou = ""
+	end
+	
+	if person.title
+		title = person.title.title
+	else
+		title = ""
+	end
+%>
+<%= person.loginid %>, <%= person.first %>, <%= person.last %>, <%= person.email %>, <%= person.phone %>, <%= person.address %>, <%= ou %>, <%= title %>, <%= person.affiliation.name %>, No
 <% end %>
