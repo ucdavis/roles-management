@@ -13,9 +13,8 @@
 
 ActiveRecord::Schema.define(:version => 20110916231520) do
 
-  create_table "affiliations", :id => false, :force => true do |t|
-    t.integer "id"
-    t.string  "name"
+  create_table "affiliations", :force => true do |t|
+    t.string "name"
   end
 
   create_table "application_ou_assignments", :force => true do |t|

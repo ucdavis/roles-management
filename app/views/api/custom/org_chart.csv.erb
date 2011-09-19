@@ -1,7 +1,13 @@
-uid,givenName,sn,mail,telephoneNumber,street,ou,title,ucdPersonAffiliation,Disabled
+"uid","givenName","sn","mail","telephoneNumber","street","ou","title","ucdPersonAffiliation","Disabled"
 <% @people.each do |person| 
 	if person.ous.length > 0
-		ou = person.ous[0].name
+	  ou = ""
+	  person.ous.each do |o|
+	    ou = ou + o.name
+	    unless o == person.ous.last
+	      ou = ou + ","
+      end
+    end
 	else
 		ou = ""
 	end
@@ -11,6 +17,30 @@ uid,givenName,sn,mail,telephoneNumber,street,ou,title,ucdPersonAffiliation,Disab
 	else
 		title = ""
 	end
+	
+	if person.affiliation
+	  affiliation = person.affiliation.name
+  else
+    affiliation = ""
+  end
+  
+  if person.phone
+    phone = person.phone
+  else
+    phone = ""
+  end
+  
+  if person.address
+    address = person.address
+  else
+    address = ""
+  end
+
+  if person.email
+    email = person.email
+  else
+    email = ""
+  end
 %>
-<%= person.loginid %>, <%= person.first %>, <%= person.last %>, <%= person.email %>, <%= person.phone %>, <%= person.address %>, <%= ou %>, <%= title %>, <%= person.affiliation.name %>, No
+"<%= person.loginid.gsub(/\"/, "\\\"") %>","<%= person.first.gsub(/\"/, "\\\"") %>","<%= person.last.gsub(/\"/, "\\\"") %>","<%= email.gsub(/\"/, "\\\"") %>","<%= phone.gsub(/\"/, "\\\"") %>","<%= address.gsub(/\"/, "\\\"") %>","<%= ou.gsub(/\"/, "\\\"") %>","<%= title.gsub(/\"/, "\\\"") %>","<%= affiliation.gsub(/\"/, "\\\"") %>","No"
 <% end %>
