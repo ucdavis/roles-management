@@ -76,23 +76,6 @@ class OusController < ApplicationController
   
   # FIXME: This is really ugly code.
   def load_ou
-    if permitted_to? :show, :ous
-      if Ou.find_by_name(params[:id])
-        @ou = Ou.find_by_name(params[:id])
-      else
-        # Name-based URLs means we can't have / in the name. Try replacing any _ with / and search again
-        if Ou.find_by_name(params[:id].gsub("_", "/"))
-          @ou = Ou.find_by_name(params[:id].gsub("_", "/"))
-        else
-          # Maybe assume the _ is an &
-          if Ou.find_by_name(params[:id].gsub("_", "&"))
-            @ou = Ou.find_by_name(params[:id].gsub("_", "&"))
-          else
-            # Give up if it's not this
-            @ou = Ou.find_by_name(params[:id].gsub("_", "."))
-          end
-        end
-      end
-    end
+    @ou = Ou.includes([:ou_manager_assignments]).where("name LIKE ?", "%#{params[:id]}%").first
   end
 end

@@ -78,7 +78,6 @@ $(function() {
 		
 		var chart_width = ($(this).parent('.block_content').width()) - 60;
 		
-		
 		if(statsType == 'line' || statsType == 'pie') {		
 			$(this).hide().visualize({
 				type: statsType,	// 'bar', 'area', 'pie', 'line'
@@ -119,7 +118,6 @@ $(function() {
 	$('.block table tr th.header').css('cursor', 'pointer');
 		
 	
-	
 	// Check / uncheck all checkboxes
 	$('.check_all').click(function() {
 		$(this).parents('form').find('input:checkbox').attr('checked', $(this).is(':checked'));   
@@ -158,10 +156,25 @@ $(function() {
 	// Tabs
 	$(".tab_content").hide();
 	
-	// Activate the first tab if 'active' is not set already
-	if($("ul.tabs").find(".active").length == 0) {
-	  $("ul.tabs li:first-child").addClass("active").show(); // activate the first tab
+	// Set .active if URL anchor matches any tab
+	if(window.location.hash) {
+	  // Anchor-based navigation
+	  $("ul.tabs li").find("a").each(function(index, value) {
+	    p = value.toString().indexOf("#");
+	    
+	    if(value.toString().substr(p) == window.location.hash) {
+	      // found it, add .active
+	      $($("ul.tabs li")[index]).addClass("active");
+	      return; // stop
+	    }
+	  });
+	}
+	
+  // Activate the first tab if 'active' is not set already
+  if($("ul.tabs").find(".active").length == 0) {
+    $("ul.tabs li:first-child").addClass("active").show(); // activate the first tab
   }
+
   // Activate whatever tab is active, not necessarily going to be the first
   $($(".block").find(".tabs li.active").find("a").attr("href")).show();
 
@@ -183,12 +196,10 @@ $(function() {
 	});
 	
 	
-	
 	// Sidebar Tabs
 	$(".sidebar_content").hide();
 	
 	if(window.location.hash && window.location.hash.match('sb')) {
-	
 		$("ul.sidemenu li a[href="+window.location.hash+"]").parent().addClass("active").show();
 		$(".block .sidebar_content#"+window.location.hash).show();
 	} else {
@@ -207,13 +218,11 @@ $(function() {
 		$(this).parents('.block').find(".sidebar_content").hide();			
 		$(activeTab).show();
 		return false;
-	});	
-	
+	});
 	
 	
 	// Block search
 	$('.block .block_head form .text').bind('click', function() { $(this).attr('value', ''); });
-	
 	
 	
 	// Image actions menu
@@ -221,7 +230,6 @@ $(function() {
 		function() { $(this).find('ul').css('display', 'none').fadeIn('fast').css('display', 'block'); },
 		function() { $(this).find('ul').fadeOut(100); }
 	);
-	
 	
 		
 	// Image delete confirmation
@@ -232,7 +240,6 @@ $(function() {
 			return false;
 		}
 	});
-	
 	
 	
 	// Style file input
