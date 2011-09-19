@@ -2,7 +2,8 @@ class Person < ActiveRecord::Base
   versioned
   
   belongs_to :title
-  belongs_to :affiliation
+  has_many :affiliation_assignments
+  has_many :affiliations, :through => :affiliation_assignments
   
   has_and_belongs_to_many :groups
   has_many :role_assignments

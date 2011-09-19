@@ -18,10 +18,16 @@
 		title = ""
 	end
 	
-	if person.affiliation
-	  affiliation = person.affiliation.name
+	if person.affiliations.length > 0
+	  affiliations = ""
+	  person.affiliations.each do |a|
+	    affiliations = affiliations + a.name
+	    unless a == person.affiliations.last
+	      affiliations = affiliations + ","
+      end
+    end
   else
-    affiliation = ""
+    affiliations = ""
   end
   
   if person.phone
@@ -42,5 +48,5 @@
     email = ""
   end
 %>
-"<%= person.loginid.gsub(/\"/, "\\\"") %>","<%= person.first.gsub(/\"/, "\\\"") %>","<%= person.last.gsub(/\"/, "\\\"") %>","<%= email.gsub(/\"/, "\\\"") %>","<%= phone.gsub(/\"/, "\\\"") %>","<%= address.gsub(/\"/, "\\\"") %>","<%= ou.gsub(/\"/, "\\\"") %>","<%= title.gsub(/\"/, "\\\"") %>","<%= affiliation.gsub(/\"/, "\\\"") %>","No"
+"<%= person.loginid.gsub(/\"/, "\\\"") %>","<%= person.first.gsub(/\"/, "\\\"") %>","<%= person.last.gsub(/\"/, "\\\"") %>","<%= email.gsub(/\"/, "\\\"") %>","<%= phone.gsub(/\"/, "\\\"") %>","<%= address.gsub(/\"/, "\\\"") %>","<%= ou.gsub(/\"/, "\\\"") %>","<%= title.gsub(/\"/, "\\\"") %>","<%= affiliations.gsub(/\"/, "\\\"") %>","No"
 <% end %>
