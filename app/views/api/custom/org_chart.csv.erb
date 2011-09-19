@@ -48,5 +48,5 @@
     email = ""
   end
 %>
-"<%= person.loginid.gsub(/\"/, "\\\"") %>","<%= person.first.gsub(/\"/, "\\\"") %>","<%= person.last.gsub(/\"/, "\\\"") %>","<%= email.gsub(/\"/, "\\\"") %>","<%= phone.gsub(/\"/, "\\\"") %>","<%= address.gsub(/\"/, "\\\"") %>","<%= ou.gsub(/\"/, "\\\"") %>","<%= title.gsub(/\"/, "\\\"") %>","<%= affiliations.gsub(/\"/, "\\\"") %>","No"
+"<%= person.loginid.gsub(/\"/, "\\\"").html_safe %>","<%= person.first.gsub(/\"/, "\\\"").html_safe %>","<%= person.last.gsub(/\"/, "\\\"").html_safe %>","<%= email.gsub(/\"/, "\\\"").html_safe %>","<%= phone.gsub(/\"/, "\\\"").html_safe %>","<%= address.gsub(/\"/, "\\\"").html_safe %>","<%= ou.gsub(/\"/, "\\\"").html_safe %>","<%= title.gsub(/\"/, "\\\"").html_safe %>","<%= affiliations.gsub(/\"/, "\\\"").html_safe %>","No"
 <% end %>
