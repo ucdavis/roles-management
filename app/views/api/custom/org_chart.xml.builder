@@ -16,7 +16,7 @@ xml.clusters("type"=>"array") do
                   xml.name person.name
                   xml.loginid person.loginid
                   xml.affiliations("type"=>"array") do
-                    person.groups.each do |affiliation|
+                    person.affiliations.each do |affiliation|
                       xml.affiliation do
                         xml.name affiliation.name
                       end
