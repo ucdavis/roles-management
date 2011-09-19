@@ -77,7 +77,7 @@
 				</ul>
 				
 				<% if current_user %>
-				  <p class="user">Hello, <a href="#"><%= current_user.first %></a> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
+				  <p class="user">Hello, <%= current_user.first %> (<%= link_to "Logout", :controller => "site", :action => "logout" %>)</p>
 				<% end %>
 			</div> <!-- #header -->
 			
