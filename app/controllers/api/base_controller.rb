@@ -21,5 +21,4 @@ class Api::BaseController < ApplicationController
       end
     end
   end
-
 end

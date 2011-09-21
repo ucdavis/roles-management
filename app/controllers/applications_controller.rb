@@ -90,8 +90,6 @@ class ApplicationsController < ApplicationController
   private
   
   def generate_api_key(application)
-    api_key_settings = YAML.load_file("#{Rails.root.to_s}/config/api_keys.yml")['keys']
-    
-    Digest::MD5.hexdigest(application.name + application.hostname + api_key_settings['key']) # last string should be unique to 
+    Digest::MD5.hexdigest(application.name + application.hostname + Time.now.to_i)
   end
 end

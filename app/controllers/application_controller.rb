@@ -44,7 +44,6 @@ class ApplicationController < ActionController::Base
   
   def requested_api?
     controller_path[0..3] == "api/"
-    #not params[:format].nil? and (params[:format] == "xml" || params[:format] == "json")
   end
   
   def permission_denied
