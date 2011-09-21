@@ -90,6 +90,6 @@ class ApplicationsController < ApplicationController
   private
   
   def generate_api_key(application)
-    Digest::MD5.hexdigest(application.name + application.hostname + Time.now.to_i)
+    Digest::MD5.hexdigest(application.name + application.hostname + Time.now.to_i.to_s)
   end
 end
