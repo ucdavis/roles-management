@@ -19,15 +19,32 @@ xml.clusters("type"=>"array") do
                     person.affiliations.each do |affiliation|
                       xml.affiliation do
                         xml.name affiliation.name
-                      end
+                      end # affiliation
                     end
-                  end
-                end
+                  end # affiliations 
+                end # person
               end
-            end
-          end
+            end # people
+          end # department
         end
-      end
+      end # departments
+      
+      xml.people("type" => "array") do
+        root.members.each do |person|
+          xml.person do
+            xml.name person.name
+            xml.loginid person.loginid
+            xml.affiliations("type"=>"array") do
+              person.affiliations.each do |affiliation|
+                xml.affiliation do
+                  xml.name affiliation.name
+                end # affiliation
+              end
+            end # affiliations 
+          end # person          
+        end
+      end # people
+      
     end
   end
 end

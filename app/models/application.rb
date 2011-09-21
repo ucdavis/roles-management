@@ -6,7 +6,7 @@ class Application < ActiveRecord::Base
   attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name
   attr_reader :ou_tokens
   
-  def to_param  # overridden
+  def to_param
     name
   end
   
