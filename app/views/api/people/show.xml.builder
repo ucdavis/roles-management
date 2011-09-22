@@ -85,6 +85,24 @@ xml.person do
     end
   end
   
+  xml.groups("type" => "array") do
+    @person.groups.each do |group|
+      xml.group do
+        xml.id "2" + group.id.to_s # leading digit of 2 is UID for type group, see README
+        xml.name group.name
+      end
+    end
+  end
+  
+  xml.ous("type" => "array") do
+    @person.ous.each do |ou|
+      xml.ou do
+        xml.id "3" + ou.id.to_s # leading digit of 3 is UID for type OU, see README
+        xml.name ou.name
+      end
+    end
+  end
+  
   if requestable_apps.length > 0
     xml.requestable_apps("type" => "array") do
       requestable_apps.each do |app|
