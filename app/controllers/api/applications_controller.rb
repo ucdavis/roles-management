@@ -14,7 +14,19 @@ class Api::ApplicationsController < Api::BaseController
 
     if(params[:person_id].nil? == false)
       @person = Person.find_by_loginid(params[:person_id])
-      @roles = Role.includes(:role_assignments, :people).where( :people => { :loginid => @person.loginid }, :application_id => Application.find_by_name(@application.name) )
+      
+      @roles = []
+      
+      # Search for roles specific to this person
+      r = Role.includes(:role_assignments, :people).where( :people => { :loginid => @person.loginid }, :application_id => Application.find_by_name(@application.name) )
+      unless r.length == 0
+        @roles = @roles + r.flatten
+      end
+      # Add in any applicable default roles
+      r << Role.where(:default => true, :application_id => @application.id)
+      unless r.length == 0
+        @roles = @roles + r.flatten
+      end
       
       respond_to do |format|
         format.xml
