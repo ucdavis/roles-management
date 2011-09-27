@@ -11,11 +11,13 @@
 		  <tr>
 		    <th>Name</th>
 		    <th></th>
+		    <th></th>
 		  </tr>
 
 		<% @groups.each do |group| %>
 		  <tr>
 		    <td><%= link_to group.name, group %></td>
+		    <td><%= group.people.length %> members</td>
 		    <td><%= link_to 'Destroy', group, :confirm => 'Are you sure?', :method => :delete %></td>
 		  </tr>
 		<% end %>
