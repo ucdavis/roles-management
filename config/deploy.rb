@@ -2,6 +2,9 @@ $:.unshift(File.expand_path('./lib', ENV['rvm_path']))
 require 'rvm/capistrano'
 require 'bundler/capistrano'
 
+set :whenever_command, "bundle exec whenever"
+require 'whenever/capistrano'
+
 set :application, "my.dss.ucdavis.edu"
 
 set :repository,  "git://github.com/cthielen/dss-rm.git"
