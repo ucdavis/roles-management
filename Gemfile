@@ -28,3 +28,6 @@ gem 'jquery-rails'
 gem 'mysql'
 
 gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
+
+# For scheduled tasks
+gem 'whenever', :require => false
