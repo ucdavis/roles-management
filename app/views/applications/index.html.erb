@@ -9,6 +9,7 @@
 	<div class="block_content">
 		<table>
 		  <tr>
+		    <th></th>
 		    <th>Name</th>
 		    <th>Api key</th>
 		    <th></th>
@@ -16,6 +17,7 @@
 
 		<% @applications.each do |application| %>
 		  <tr>
+		    <td style="text-align: center;"><% if application.icon.exists? %><%= image_tag application.icon.url(:tiny) %><% end %></td>
 		    <td><%= link_to application.name, application %></td>
 		    <td><%= application.api_key %></td>
 		    <td><%= link_to 'Destroy', application, :confirm => 'Are you sure?', :method => :delete %></td>

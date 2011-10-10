@@ -25,7 +25,7 @@
 		
 		<div class="sidebar_content" id="sb1">
 		  <p style="float: right;">
-		    <%= image_tag @application.icon.url %>
+		    <% if @application.icon.exists? %><%= image_tag @application.icon.url %><% end %>
 		  </p>
 			<p>
 			  <b>Name:</b>
