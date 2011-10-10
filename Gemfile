@@ -31,3 +31,5 @@ gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_a
 
 # For scheduled tasks
 gem 'whenever', :require => false
+
+gem 'paperclip', "~> 2.4"

@@ -9,3 +9,4 @@ config/api_keys.yml
 .sass-cache/
 public/assets/
 .rvmrc
+public/system
