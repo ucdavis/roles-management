@@ -20,7 +20,7 @@ xml.person do
   # Build the explicit person roles (roles assigned directly to them)
   @person.roles.each do |role|
     roles << [role.name, role.application.name]
-    apps << [role.application.name, role.application.hostname, role.application.display_name, role.application.id, "direct"]
+    apps << [role.application.name, role.application.hostname, role.application.display_name, role.application.id, "direct", role.application.icon.url(:normal), role.application.icon.url(:tiny)]
   end
   # Add the roles assigned to them via OU defaults
   @person.ous.each do |ou|
@@ -31,7 +31,7 @@ xml.person do
           roles << [role.name, role.application.name]
         end
         unless apps.include? [role.application.name, role.application.hostname, role.application.display_name, role.application.id]
-          apps << [role.application.name, role.application.hostname, role.application.display_name, role.application.id, "ou"]
+          apps << [role.application.name, role.application.hostname, role.application.display_name, role.application.id, "ou", role.application.icon.url(:normal), role.application.icon.url(:tiny)]
         end
       end
     end
@@ -43,7 +43,7 @@ xml.person do
       roles << [role.name, role.application.name]
     end
     unless apps.include? [role.application.name, role.application.hostname, role.application.display_name, role.application.id]
-      apps << [role.application.name, role.application.hostname, role.application.display_name, role.application.id, "public"]
+      apps << [role.application.name, role.application.hostname, role.application.display_name, role.application.id, "public", role.application.icon.url(:normal), role.application.icon.url(:tiny)]
     end
   end
   
@@ -52,7 +52,7 @@ xml.person do
   Application.includes(:application_ou_assignments).where( :application_ou_assignments => { :application_id => nil } ).each do |application|
     unless apps.include? [application.name, application.hostname, application.display_name, application.id]
       # App is publicly available and not already in their list
-      requestable_apps << [application.name, application.hostname, application.display_name, application.id, "public"]
+      requestable_apps << [application.name, application.hostname, application.display_name, application.id, "public", application.icon.url(:normal), application.icon.url(:tiny)]
     end
   end
   # Add to that the list of applications available to their OUs but to which they have no roles
@@ -60,7 +60,7 @@ xml.person do
     ou.applications.each do |application|
       application.roles.where(:default => false).each do |role|
         unless apps.include? [application.name, application.hostname, application.display_name, application.id]
-          requestable_apps << [application.name, application.hostname, application.display_name, application.id, "ou"]
+          requestable_apps << [application.name, application.hostname, application.display_name, application.id, "ou", application.icon.url(:normal), application.icon.url(:tiny)]
         end
       end
     end
@@ -82,6 +82,8 @@ xml.person do
         xml.url app[1]
         xml.tag! "display_name", app[2]
         xml.access app[4]
+        xml.icon app[5]
+        xml.tiny_icon app[6]
       end
     end
   end
@@ -112,6 +114,8 @@ xml.person do
           xml.url app[1]
           xml.tag! "display_name", app[2]
           xml.access app[4]
+          xml.icon app[5]
+          xml.tiny_icon app[6]
         end
       end
     end
