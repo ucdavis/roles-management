@@ -9,6 +9,8 @@ class Group < ActiveRecord::Base
   has_many :role_assignments
   has_many :roles, :through => :role_assignments
   
+  belongs_to :owner, :class_name => "Person"
+  
   attr_accessible :name, :people_tokens, :people_ids
   attr_reader :people_tokens
   
