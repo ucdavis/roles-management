@@ -20,6 +20,15 @@
 		  <b>Name:</b>
 		  <%= @group.name %>
 		</p>
+
+		<p>
+		  <b>Description:</b>
+		  <% if @group.description.nil? %>
+		    <i>None</i>
+		  <% else %>
+		    <%= @group.description %>
+		  <% end %>
+		</p>
 		
 		<h2>Members</h2>
 		<ul>

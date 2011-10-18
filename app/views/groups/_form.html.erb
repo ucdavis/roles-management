@@ -17,6 +17,10 @@
     	<%= f.text_field :name, :class => "text" %>
 	</p>
 	<p>
+    	<%= f.label :description %><br />
+    	<%= f.text_area :description, :class => "wysiwyg" %>
+	</p>
+	<p>
 		<h2>Members</h2>
 		<p>
 		  <%= f.label :people_tokens, "People" %><br />

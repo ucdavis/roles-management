@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111017180505) do
+ActiveRecord::Schema.define(:version => 20111018185439) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(:version => 20111017180505) do
     t.integer  "min_size"
     t.integer  "max_size"
     t.integer  "owner_id"
+    t.text     "description"
   end
 
   create_table "groups_people", :id => false, :force => true do |t|

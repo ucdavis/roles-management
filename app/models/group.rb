@@ -11,7 +11,7 @@ class Group < ActiveRecord::Base
   
   belongs_to :owner, :class_name => "Person"
   
-  attr_accessible :name, :people_tokens, :people_ids
+  attr_accessible :name, :people_tokens, :people_ids, :description
   attr_reader :people_tokens
   
   def people_tokens=(ids)
