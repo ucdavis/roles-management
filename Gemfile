@@ -33,3 +33,6 @@ gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_a
 gem 'whenever', :require => false
 
 gem 'paperclip', "~> 2.4"
+
+# For MS Active Directory support
+gem "active_directory", "~> 1.5.4"
