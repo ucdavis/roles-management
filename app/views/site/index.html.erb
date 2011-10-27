@@ -1,60 +1,46 @@
-<div class="block" style="background-color: inherit; border-bottom: none; background: none;">
+<div style="float: right; clear: both; margin: 0.5em; margin-top: -1em;">
+  <select class="styled">
+  	<optgroup label="Group 1">
+  		<option>View As ...</option>
+  		<option>Employee One</option>
+  		<option>Employee Two</option>
+  	</optgroup>
+  </select>
+</div> <!-- block -->
+
+<div style="clear: both;"></div>
+
+<div class="block span-80 left">
 	<div class="block_head">
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
 
 		<h2>Manage</h2>
-		
-		<ul class="tabs">
-			<li><a href="#tab1">By Group</a></li>
-			<li><a href="#tab2">By Person</a></li>
-		</ul>
 	</div>		<!-- .block_head ends -->
+	
+	<div class="block_content">
+    
+	</div>		<!-- .block_content ends -->
+	
+	<div class="bendl"></div>
+	<div class="bendr"></div>
 </div>
 
-<div class="block small left">
-		<div class="block_head">
-			<div class="bheadl"></div>
-			<div class="bheadr"></div>
-
-			<h2>Profile</h2>
-		</div>		<!-- .block_head ends -->
-		<div class="block_content">
-		
-			<div id="group_whatever">
-				<h2><%= current_user.first %> <%= current_user.last %></h2>
-				<ul>
-					<li>E-Mail: <%= current_user.email %> <small>[<a href="#">Change</a>]</small></li>
-					<li>Phone: <%= number_to_phone(current_user.phone) %> <small>[<a href="#">Change</a>]</small></li>
-					<li>Address: <%= current_user.address %> <small>[<a href="#">Change</a>]</small></li>
-				</ul>
-			</div> <!-- group_whatever -->
-		</div>		<!-- .block_content ends -->
-
-		<div class="bendl"></div>
-		<div class="bendr"></div>
-</div>
-
-<div class="block small right">
+<div class="block span-20 right">
 	<div class="block_head">
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
 
-		<h2>Applications</h2>
+		<ul class="tabs">
+			<li><a href="#groups">Groups</a></li>
+			<li><a href="#people">People</a></li>
+		</ul>
 	</div>		<!-- .block_head ends -->
+	
 	<div class="block_content">
-		<h2>Available</h2>
-		<ul id="sortable1" class="connectedSortable">
-			
-		</ul>
-		
-		<h2>Unavailable</h2>
-		<ul id="sortable2" class="connectedSortable">
-			<li>eVote <small>[<a href="#">Request</a>]</small></li>
-			<li>Roles Management <small>[<a href="#">Request</a>]</small></li>
-		</ul>
+	  
 	</div>		<!-- .block_content ends -->
-
+	
 	<div class="bendl"></div>
 	<div class="bendr"></div>
-</div>		<!-- .block.small.right ends -->
+</div>
