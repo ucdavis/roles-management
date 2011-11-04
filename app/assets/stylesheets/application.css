@@ -1096,3 +1096,134 @@ li.token-input-input-token-facebook {
 	margin-bottom: 0px !important;
 	background: none !important;
 }
+
+/* Pin lists */
+.block .block_content ul.pins {
+  padding: 0;
+}
+
+.block .block_content ul.pins li {
+  width: 180px;
+  height: 25px;
+  background: url("../images/btnb.gif") no-repeat;
+  background-size: 180px 25px;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  padding-left: 0.75em;
+  margin-bottom: 0.5em;
+  padding-top: 3px;
+}
+
+/* Cards */
+.card {
+	margin-bottom: 25px;
+	background: #fff url("../images/bnd.gif") bottom center repeat-x;
+	width: 45%;
+	float: left;
+}
+
+.card .bendl {
+	width: 5px;
+	height: 5px;
+	background: url("../images/bendl.gif") bottom left no-repeat;
+	float: left;
+}
+
+.card .bendr {
+	width: 5px;
+	height: 5px;
+	background: url("../images/bendr.gif") bottom left no-repeat;
+	float: right;
+}	
+
+/* Card head */
+.card .card_head {
+	height: 34px;
+	line-height: 34px;
+	background: url("../images/bhead.gif") 0 0 repeat-x;
+	overflow: hidden;
+}
+
+.card .card_head .bheadl {
+	width: 20px;
+	height: 54px;
+	float: left;
+	background: url("../images/bheadl.gif") top left no-repeat;
+	}
+
+.card .card_head .bheadr {
+	width: 20px;
+	height: 54px;
+	float: right;
+	background: url("../images/bheadr.gif") top right no-repeat;
+}
+
+.card .card_head h2 {
+	font-family: "Titillium999", "Trebuchet MS", Arial, sans-serif;
+	font-size: 16px;
+	font-weight: normal;
+	text-transform: uppercase;
+	color: #555;
+	text-shadow: 1px 1px 0 #fff;
+	float: left;
+}
+	
+.card .card_head h2 em {
+	color: #008ee8;
+}
+	
+/* Card content */
+.card .card_content {
+	overflow: hidden;
+	background: #fff;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	padding: 5px 20px 0;
+}
+
+.card .card_content h1,
+.card .card_content h2 {
+	font-family: "Titillium999", "Trebuchet MS", Arial, sans-serif;
+	font-size: 18px;
+	font-weight: normal;
+	color: #454545;
+	margin-bottom: 10px;
+}
+
+.card .card_content h3 {
+	font-family: "Lucida Grande", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #666;
+	margin-bottom: 5px;
+}
+
+.card .card_content h4 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+	color: #666;
+	margin-bottom: 5px;
+}
+
+.card .card_content ul {
+	padding-left: 15px;
+	padding-bottom: 15px;
+}
+
+.card .card_content ol {
+	padding-left: 15px;
+	padding-bottom: 15px;
+	list-style-position: inside;
+}
+
+.card .card_content ul li {
+	margin-bottom: 5px;
+	padding-left: 15px;
+	background: url("../images/li.gif") 0 7px no-repeat;
+}
+
+.card .card_content ol li {
+	margin-bottom: 5px;
+}
