@@ -1113,6 +1113,7 @@ li.token-input-input-token-facebook {
   padding-left: 0.75em;
   margin-bottom: 0.5em;
   padding-top: 3px;
+  cursor: move;
 }
 
 /* Cards */
@@ -1239,4 +1240,19 @@ ol li.placeholder {
   border: 1px #aaa dashed;
   font-style: italic;
   color: #666;
+}
+
+li.ui-draggable-dragging {
+  width: 180px;
+  height: 25px;
+  background: url("../images/btnb_dragging.gif") no-repeat;
+  background-size: 180px 25px;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  padding-left: 0.75em;
+  margin-bottom: 0.5em;
+  padding-top: 3px;
+  list-style-type: none;
+  cursor: move;
 }
