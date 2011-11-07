@@ -1,3 +1,5 @@
+<%= javascript_include_tag params[:controller] %>
+
 <div style="float: right; clear: both; margin: 0.5em; margin-top: -1em;">
   <select class="styled">
   	<optgroup label="Group 1">
@@ -27,7 +29,14 @@
     		
 	      <h2>eVote</h2>
 	    </div>
-	    <div class="card_content">something something a space odyssey</div>
+	    <div class="card_content">
+	      <p>
+	        <i>“Create public and private voting ballots, set deadlines, and view the results.”</i>
+	      </p>
+	      <ol class="pins">
+          <li class="placeholder">Drag people or groups here to assign permissions</li>
+        </ol>
+	    </div> <!-- card_content -->
     	<div class="bendl"></div>
     	<div class="bendr"></div>
 	  </div> <!-- card -->

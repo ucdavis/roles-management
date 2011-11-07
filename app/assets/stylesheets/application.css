@@ -1224,6 +1224,19 @@ li.token-input-input-token-facebook {
 	background: url("../images/li.gif") 0 7px no-repeat;
 }
 
+.card .card_content ol {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
 .card .card_content ol li {
-	margin-bottom: 5px;
+	margin: 0;
+	padding: 0 0 0 0.5em;
+}
+
+ol li.placeholder {
+  border: 1px #aaa dashed;
+  font-style: italic;
+  color: #666;
 }
