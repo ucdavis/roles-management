@@ -1236,10 +1236,24 @@ li.token-input-input-token-facebook {
 	padding: 0 0 0 0.5em;
 }
 
-ol li.placeholder {
+.card .card_content ol li.pin {
+  width: 180px;
+  height: 25px;
+  background: url("../images/btnb.gif") no-repeat;
+  background-size: 180px 25px;
+  margin: 0 0 5px 0;
+  padding: 3px 0 0 9px;
+  color: #fff;
+  list-style-type: none;
+  cursor: move;
+}
+
+.card .card_content ol li.placeholder {
   border: 1px #aaa dashed;
   font-style: italic;
   color: #666;
+  background: none;
+  width: 350px;
 }
 
 li.ui-draggable-dragging {

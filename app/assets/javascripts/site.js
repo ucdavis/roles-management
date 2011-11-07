@@ -12,7 +12,7 @@ $(function() {
   	accept: ":not(.ui-sortable-helper)",
   	drop: function( event, ui ) {
   		$( this ).find( ".placeholder" ).remove();
-  		$( "<li></li>" ).text( ui.draggable.text() ).appendTo( this );
+  		$( "<li></li>" ).text( ui.draggable.text() ).addClass("pin").appendTo( this );
   	}
   }).sortable({
   	items: "li:not(.placeholder)",
