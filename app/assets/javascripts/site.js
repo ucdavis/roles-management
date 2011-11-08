@@ -14,7 +14,8 @@ $(function() {
   	  // Construct the dropped element
   		$( this ).find( ".placeholder" ).remove();
   		var el = $( "<li></li>" ).addClass("pin").appendTo( this );
-  		$(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" />" + ui.draggable.text());
+  		$(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" />" + ui.draggable.text() + "<select id=\"s1\" multiple=\"multiple\"><option>Low</option><option>Medium</option></select>");
+  		$("select#s1").dropdownchecklist();
   	}
   }).sortable({
   	items: "li:not(.placeholder)",

@@ -1271,3 +1271,13 @@ li.ui-draggable-dragging {
   list-style-type: none;
   cursor: move;
 }
+
+.ui-dropdownchecklist {
+  width: 135px;
+  height: 19px;
+  margin-right: 1.25em;
+  float: right;
+  background: url("../images/srch_nog.png") no-repeat;
+  background-size: 135px 19px;
+  color: #000;
+}
