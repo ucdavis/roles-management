@@ -1238,10 +1238,10 @@ li.token-input-input-token-facebook {
 }
 
 .card .card_content ol li.pin {
-  width: 180px;
+  width: 350px;
   height: 25px;
   background: url("../images/btnb.gif") no-repeat;
-  background-size: 180px 25px;
+  background-size: 350px 25px;
   margin: 0 0 5px 0;
   padding: 3px 0 0 9px;
   color: #fff;
