@@ -11,8 +11,10 @@ $(function() {
   	hoverClass: "ui-state-hover",
   	accept: ":not(.ui-sortable-helper)",
   	drop: function( event, ui ) {
+  	  // Construct the dropped element
   		$( this ).find( ".placeholder" ).remove();
-  		$( "<li></li>" ).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"$(this).parent().remove();\" />" + ui.draggable.text() ).addClass("pin").appendTo( this );
+  		var el = $( "<li></li>" ).addClass("pin").appendTo( this );
+  		$(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" />" + ui.draggable.text());
   	}
   }).sortable({
   	items: "li:not(.placeholder)",
@@ -23,3 +25,14 @@ $(function() {
   	}
   });
 });
+
+// Remove a dropped pin from the app list
+function remove_pin(el) {
+  var ol = $(el).parent().parent();
+  
+  $(el).parent().remove();
+  if(ol.children().length == 0) {
+    // Emptied out the last pin. Re-insert the default placerholder text so the 'ol' doesn't disappear entirely
+    ol.append("<li class=\"placeholder\">Drag people or groups here to assign permissions</li>");
+  }
+}
