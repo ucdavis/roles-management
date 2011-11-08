@@ -12,7 +12,7 @@ $(function() {
   	accept: ":not(.ui-sortable-helper)",
   	drop: function( event, ui ) {
   		$( this ).find( ".placeholder" ).remove();
-  		$( "<li></li>" ).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: left; cursor: pointer;\" />" + ui.draggable.text() ).addClass("pin").appendTo( this );
+  		$( "<li></li>" ).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"$(this).parent().remove();\" />" + ui.draggable.text() ).addClass("pin").appendTo( this );
   	}
   }).sortable({
   	items: "li:not(.placeholder)",
