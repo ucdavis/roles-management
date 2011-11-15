@@ -1250,9 +1250,9 @@ li.token-input-input-token-facebook {
 }
 
 .card .card_content ol li.placeholder {
-  border: 1px #aaa dashed;
+  border: 1px #ccc solid;
   font-style: italic;
-  color: #666;
+  color: #999;
   background: none;
   width: 350px;
 }
