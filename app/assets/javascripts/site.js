@@ -14,7 +14,7 @@ $(function() {
   	  // Construct the dropped element
   		$( this ).find( ".placeholder" ).remove();
   		var el = $( "<li></li>" ).addClass("pin").appendTo( this );
-  		$(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" />" + ui.draggable.text() + "<select id=\"s1\" multiple=\"multiple\"><option>Low</option><option>Medium</option></select>");
+  		$(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" />" + ui.draggable.text());
   		$("select#s1").dropdownchecklist();
   	}
   }).sortable({
@@ -34,6 +34,6 @@ function remove_pin(el) {
   $(el).parent().remove();
   if(ol.children().length == 0) {
     // Emptied out the last pin. Re-insert the default placerholder text so the 'ol' doesn't disappear entirely
-    ol.append("<li class=\"placeholder\">Drag people or groups here to assign permissions</li>");
+    ol.append("<li class=\"placeholder\"><img src=\"/assets/add.png\" alt=\"\" /></li>");
   }
 }

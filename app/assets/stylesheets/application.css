@@ -881,6 +881,12 @@ div.cmf-skinned-text {
 	margin: 0 auto;
 }
 
+.block .span-50 {
+  width: 50%;
+  display: inline-block;
+  float: left;
+}
+
 
 
 /* Login block */
@@ -1118,11 +1124,11 @@ li.token-input-input-token-facebook {
 
 /* Cards */
 .card {
-	margin-bottom: 25px;
+  width: 98%;
 	background: #fff url("../images/bnd.gif") bottom center repeat-x;
-	width: 45%;
 	float: left;
-	margin-right: 2em;
+	margin: 0.5em;
+	margin-bottom: 25px;
 }
 
 .card .bendl {
@@ -1280,4 +1286,8 @@ li.ui-draggable-dragging {
   background: url("../images/srch_nog.png") no-repeat;
   background-size: 135px 19px;
   color: #000;
+}
+
+.card .card_content div.pin-content {
+  display: none;
 }
