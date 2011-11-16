@@ -1122,6 +1122,24 @@ li.token-input-input-token-facebook {
   cursor: move;
 }
 
+.block .block_content div.pins div.pin {
+  width: 100%;
+  height: 25px;
+  background: url("../images/btnb.gif") no-repeat;
+  background-size: 100% 25px;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  margin-bottom: 0.5em;
+  padding-top: 3px;
+  cursor: move;
+}
+
+.block .block_content div.pins div.pin a {
+  padding-left: 0.75em;
+  color: #fff;
+}
+
 /* Cards */
 .card {
   width: 98%;
