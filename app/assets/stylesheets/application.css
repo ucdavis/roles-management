@@ -1124,7 +1124,7 @@ li.token-input-input-token-facebook {
 
 .block .block_content div.pins div.pin {
   width: 100%;
-  height: 25px;
+  min-height: 25px;
   background: url("../images/btnb.gif") no-repeat;
   background-size: 100% 25px;
   margin: 0;
@@ -1138,6 +1138,19 @@ li.token-input-input-token-facebook {
 .block .block_content div.pins div.pin a {
   padding-left: 0.75em;
   color: #fff;
+  display: inline-block;
+  min-height: 21px;
+}
+
+.block .block_content div.pins div.pin div.pin-content {
+  color: #000;
+  min-height: 50px;
+  border-bottom: 1px solid #bbb;
+  border-left: 1px solid #bbb;
+  border-right: 1px solid #bbb;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 5px;
 }
 
 /* Cards */
@@ -1308,4 +1321,12 @@ li.ui-draggable-dragging {
 
 .card .card_content div.pin-content {
   display: none;
+}
+
+.card .card_content div.pin-content span.permission {
+  border: 1px solid #ccc;
+  background-color: #eee;
+  border-radius: 4px;
+  display: block;
+  padding-left: 4px;
 }

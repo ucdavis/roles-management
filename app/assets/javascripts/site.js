@@ -1,7 +1,7 @@
 // Not a site-wide JS file - for use in the 'Site' controller
 
-// Set up the drag-and-drop
 $(function() {
+  // Set up the drag-and-drop
   $( "ul.pins li" ).draggable({
     appendTo: "body",
     helper: "clone"
@@ -15,8 +15,12 @@ $(function() {
       $( this ).find( ".placeholder" ).remove();
       
       var el = $( "<div></div>" ).addClass("pin").appendTo( this );
-      $(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" /> <a href=\"#\">" + ui.draggable.text() + "</a><div class=\"pin-content\"><p>something</p></div>");
-      $("select#s1").dropdownchecklist();
+      $(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" /> <a href=\"#\">" + ui.draggable.text() + "</a><div class=\"pin-content\"><span class=\"permission\"><input type=\"checkbox\" /> (<b>Access</b>) Allows the user to access this application</span></div>");
+      
+      $(el).children("a").click(function() {
+        $(this).parent().children("div.pin-content").slideToggle('slow');
+        return false;
+      });
     }
   }).sortable({
     items: "li:not(.placeholder)",
