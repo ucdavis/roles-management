@@ -91,6 +91,7 @@ namespace :ldap do
           
           person["uid"] = entry.get_values('uid').to_s[2..-3]
           person["givenName"] = entry.get_values('givenName').to_s[2..-3]
+          person["displayName"] = entry.get_values('displayName').to_s[2..-3]
           person["sn"] = entry.get_values('sn').to_s[2..-3]
           person["mail"] = entry.get_values('mail').to_s[2..-3]
         
@@ -228,7 +229,7 @@ namespace :ldap do
       end
     
       person.status = true
-      person.preferred_name = "#{person.first} #{person.last}"
+      person.preferred_name = p["displayName"]
     
       if person.valid? == false
         puts "Unable to save individual:"
