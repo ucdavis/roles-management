@@ -6,6 +6,8 @@ class OusController < ApplicationController
   def index
     @ous = Ou.top_level
 
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded OU index page."
+
     respond_to do |format|
       format.html
     end
@@ -13,6 +15,8 @@ class OusController < ApplicationController
 
   # GET /ous/1
   def show
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded details page for OU #{params[:id]}."
+    
     respond_to do |format|
       format.html
     end
@@ -29,6 +33,7 @@ class OusController < ApplicationController
 
   # GET /ous/1/edit
   def edit
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded edit page for OU #{params[:id]}."
   end
 
   # POST /ous
@@ -36,7 +41,8 @@ class OusController < ApplicationController
     @ou = Ou.new(params[:ou])
 
     respond_to do |format|
-      if @ou.save
+      if @ou.save!
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created OU #{params[:ou]}."
         format.html { redirect_to(@ou, :notice => 'Organization was successfully created.') }
       else
         format.html { render :action => "new" }
@@ -49,11 +55,13 @@ class OusController < ApplicationController
     if params[:delete]
       @ou.destroy
       respond_to do |format|
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted OU #{params[:ou]}."
         format.html { redirect_to(ous_url, :notice => 'Organization was successfully deleted.') }
       end
     else
       respond_to do |format|
         if @ou.update_attributes(params[:ou])
+          logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated OU #{params[:ou]}."
           format.html { redirect_to(@ou, :notice => 'Organization was successfully updated.') }
         else
           format.html { render :action => "edit" }
@@ -66,6 +74,8 @@ class OusController < ApplicationController
   def destroy
     @ou = Ou.find_by_name(params[:id])
     @ou.destroy
+    
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted OU #{params[:id]}."
 
     respond_to do |format|
       format.html { redirect_to(ous_url) }

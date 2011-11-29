@@ -6,6 +6,8 @@ class GroupsController < ApplicationController
   def index
     @groups = Group.where("name like ?", "%#{params[:q]}%")
 
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group index."
+
     respond_to do |format|
       format.html
     end
@@ -14,6 +16,8 @@ class GroupsController < ApplicationController
   # GET /groups/1
   def show
     @group = Group.find_by_name(params[:id])
+
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
 
     respond_to do |format|
       format.html
@@ -39,7 +43,8 @@ class GroupsController < ApplicationController
     @group = Group.new(params[:group])
 
     respond_to do |format|
-      if @group.save
+      if @group.save!
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created group #{params[:group]}."
         format.html { redirect_to(@group, :notice => 'Group was successfully created.') }
       else
         format.html { render :action => "new" }
@@ -50,6 +55,8 @@ class GroupsController < ApplicationController
   # PUT /groups/1
   def update
     @group = Group.find_by_name(params[:id])
+    
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated group #{params[:id]}."
 
     respond_to do |format|
       if @group.update_attributes(params[:group])
@@ -63,7 +70,9 @@ class GroupsController < ApplicationController
   # DELETE /groups/1
   def destroy
     @group = Group.find_by_name(params[:id])
-    @group.destroy
+    @group.destroy!
+    
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted group #{params[:id]}."
 
     respond_to do |format|
       format.html { redirect_to(groups_url) }

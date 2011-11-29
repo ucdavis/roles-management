@@ -10,6 +10,8 @@ class PeopleController < ApplicationController
 
     @people.map()
 
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded people index page."
+
     respond_to do |format|
       format.html
     end
@@ -18,6 +20,8 @@ class PeopleController < ApplicationController
   # GET /people/1
   def show
     @person = Person.find_by_loginid(params[:id])
+
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded person page for #{params[:id]}."
 
     respond_to do |format|
       format.html
@@ -63,6 +67,8 @@ class PeopleController < ApplicationController
   # GET /people/1/edit
   def edit
     @person = Person.find_by_loginid(params[:id])
+    
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded edit page for #{params[:id]}."
   end
 
   # POST /people
@@ -71,6 +77,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if @person.save
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new person, #{params[:person]}."
         format.html { redirect_to(@person, :notice => 'Person was successfully created.') }
       else
         format.html { render :action => "new" }
@@ -84,6 +91,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if @person.update_attributes(params[:person])
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated person #{params[:person]}."
         format.html { redirect_to(@person, :notice => 'Person was successfully updated.') }
       else
         format.html { render :action => "edit" }
@@ -94,7 +102,9 @@ class PeopleController < ApplicationController
   # DELETE /people/1
   def destroy
     @person = Person.find_by_loginid(params[:id])
-    @person.destroy
+    @person.destroy!
+    
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted person #{params[:id]}."
 
     respond_to do |format|
       format.html { redirect_to(people_url) }
