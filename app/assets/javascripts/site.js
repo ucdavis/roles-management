@@ -15,7 +15,7 @@ $(function() {
       $( this ).find( ".placeholder" ).remove();
       
       var el = $( "<div></div>" ).addClass("pin").appendTo( this );
-      $(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" /> <a href=\"#\">" + ui.draggable.text() + "</a><div class=\"pin-content\"><span class=\"permission\"><input type=\"checkbox\" /> (<b>Access</b>) Allows the user to access this application</span></div>");
+      $(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"remove_pin($(this));\" /> <a href=\"#\">" + ui.draggable.text() + "</a><img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"person_details(" + ui.draggable.attr("data-person-id") + ");\" /><div class=\"pin-content\"><span class=\"permission\"><input type=\"checkbox\" /> (<b>Access</b>) Allows the user to access this application</span></div>");
       
       $(el).children("a").click(function() {
         $(this).parent().children("div.pin-content").slideToggle('slow');
@@ -41,4 +41,15 @@ function remove_pin(el) {
     // Emptied out the last pin. Re-insert the default placerholder text so the 'ol' doesn't disappear entirely
     ol.append("<div class=\"placeholder\"><img src=\"/assets/add.png\" alt=\"\" /></div>");
   }
+}
+
+function person_details(person_id) {
+  $.fancybox({
+		//'orig'			: $(this),
+		'padding'		: 0,
+		'href'			: 'http://google.com',
+		'title'   		: 'Lorem ipsum dolor sit amet',
+		'transitionIn'	: 'elastic',
+		'transitionOut'	: 'elastic'
+  });
 }
