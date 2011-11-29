@@ -163,79 +163,81 @@ namespace :ldap do
     # STEP TWO: Add people, groups, etc. to local database
     #
 
-    # Add people to database
-    for e in people
-      p = e[1]
+    Person.transaction do
+      # Add people to database
+      for e in people
+        p = e[1]
       
-      puts "-------------------"
-      puts p
+        puts "-------------------"
+        puts p
       
-      loginid = p["eduPersonPrincipalName"].slice(0, p["eduPersonPrincipalName"].index("@"))
-      # Find or create the individual
-      person = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
+        loginid = p["eduPersonPrincipalName"].slice(0, p["eduPersonPrincipalName"].index("@"))
+        # Find or create the individual
+        person = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
 
-      person.first = p["givenName"]
-      person.last = p["sn"]
-      person.email = p["mail"]
-      person.phone = p["telephoneNumber"]
-      person.address = p["street"]
+        person.first = p["givenName"]
+        person.last = p["sn"]
+        person.email = p["mail"]
+        person.phone = p["telephoneNumber"]
+        person.address = p["street"]
     
-      if( p["ucdPersonAffiliation"] == "student:graduate" )
-        # Graduate student 'ou's are determined not by the ou entry but by the 
-        ou = Ou.find(:first, :conditions => [ "lower(name) = ?", p["ucdStudentMajor"].downcase ]) || Ou.create(:name => p["ucdStudentMajor"])
-        # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
-        ou.save
-      else
-        unless p["ou"].nil?
-          # Not a graduate student: p["ou"] entry is reliable
-          ou = Ou.find(:first, :conditions => [ "lower(name) = ?", p["ou"].downcase ]) || Ou.create(:name => p["ou"])
-          # Assume dept codes match name strings
-          ou.code = p["ucdAppointmentDepartmentCode"]
-        end
-      
-        unless UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]].nil?
-          manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"])
-          # Avoid duplicate managers
-          unless ou.managers.exists? manager
-            ou.managers << manager
-          end
+        if( p["ucdPersonAffiliation"] == "student:graduate" )
+          # Graduate student 'ou's are determined not by the ou entry but by the 
+          ou = Ou.find(:first, :conditions => [ "lower(name) = ?", p["ucdStudentMajor"].downcase ]) || Ou.create(:name => p["ucdStudentMajor"])
+          # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
+          ou.save!
         else
-          # Dept code doesn't exist
-          unless p["ucdAppointmentDepartmentCode"].nil?
-            puts "Could not find a dept_code for " + p["ucdAppointmentDepartmentCode"]
+          unless p["ou"].nil?
+            # Not a graduate student: p["ou"] entry is reliable
+            ou = Ou.find(:first, :conditions => [ "lower(name) = ?", p["ou"].downcase ]) || Ou.create(:name => p["ou"])
+            # Assume dept codes match name strings
+            ou.code = p["ucdAppointmentDepartmentCode"]
           end
+      
+          unless UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]].nil?
+            manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"])
+            # Avoid duplicate managers
+            unless ou.managers.exists? manager
+              ou.managers << manager
+            end
+          else
+            # Dept code doesn't exist
+            unless p["ucdAppointmentDepartmentCode"].nil?
+              puts "Could not find a dept_code for " + p["ucdAppointmentDepartmentCode"]
+            end
+          end
+      
+          ou.save!
+        end
+    
+        person.ous << ou
+    
+        unless p["title"].nil?
+          # Add to group based on title, creating it if necessary
+          group = Group.find(:first, :conditions => [ "lower(name) = ?", p["title"].downcase ]) || Group.create(:name => p["title"])
+          group.save!
+          person.groups << group
+        
+          # Set title, creating it if necessary
+          title = Title.find_or_create_by_title(p["title"])
+          person.title = title
         end
       
-        ou.save
-      end
+        unless p["ucdPersonAffiliation"].nil?
+          # Set the affiliation, creating it if necessary
+          affiliation = Affiliation.find_or_create_by_name(p["ucdPersonAffiliation"])
+          person.affiliations << affiliation
+        end
     
-      person.ous << ou
+        person.status = true
+        person.preferred_name = p["displayName"]
     
-      unless p["title"].nil?
-        # Add to group based on title, creating it if necessary
-        group = Group.find(:first, :conditions => [ "lower(name) = ?", p["title"].downcase ]) || Group.create(:name => p["title"])
-        group.save
-        person.groups << group
-        
-        # Set title, creating it if necessary
-        title = Title.find_or_create_by_title(p["title"])
-        person.title = title
-      end
-      
-      unless p["ucdPersonAffiliation"].nil?
-        # Set the affiliation, creating it if necessary
-        affiliation = Affiliation.find_or_create_by_name(p["ucdPersonAffiliation"])
-        person.affiliations << affiliation
-      end
-    
-      person.status = true
-      person.preferred_name = p["displayName"]
-    
-      if person.valid? == false
-        puts "Unable to save individual:"
-        pp person
-      else
-        person.save
+        if person.valid? == false
+          puts "Unable to save individual:"
+          pp person
+        else
+          person.save!
+        end
       end
     end
   end
@@ -249,6 +251,10 @@ namespace :ldap do
       RoleAssignment.destroy_all
       OuAssignment.destroy_all
       ApplicationOuAssignment.destroy_all
+      Affiliation.destroy_all
+      OuManagerAssignment.destroy_all
+      AffiliationAssignment.destroy_all
+      Title.destroy_all
       puts "Be sure to assign roles if you re-import the directory."
     end
   end
