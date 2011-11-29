@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111018185439) do
+ActiveRecord::Schema.define(:version => 20111129200108) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -47,6 +47,13 @@ ActiveRecord::Schema.define(:version => 20111018185439) do
   create_table "group_group", :id => false, :force => true do |t|
     t.integer "group_id"
     t.integer "subgroup_id"
+  end
+
+  create_table "group_owner_assignments", :force => true do |t|
+    t.integer  "group_id"
+    t.integer  "owner_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "groups", :force => true do |t|

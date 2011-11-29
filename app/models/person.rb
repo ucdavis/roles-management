@@ -14,6 +14,9 @@ class Person < ActiveRecord::Base
 
   has_many :ou_manager_assignments
   has_many :managements, :through => :ou_manager_assignments, :source => :ou, :primary_key => "manager_id"
+
+  has_many :group_manager_assignments
+  has_many :ownerships, :through => :group_manager_assignments, :source => :group, :primary_key => "owner_id"
   
   validates_presence_of :loginid
   
