@@ -73,6 +73,18 @@
 			  <b>Address:</b>
 			  <%= @person.address %>
 			</p>
+
+			<p>
+			  <b>Classifications:</b>
+			  <ul>
+			    <% @person.classifications.each do |classification| %>
+			      <li><%= classification.name %></li>
+			    <% end %>
+			    <% if @person.classifications.length == 0 %>
+			      <li><i>None</i></li>
+			    <% end %>
+			  </ul>
+			</p>
 		</div> <!-- #sb1 -->
 		
 		<div class="sidebar_content" id="roles">
