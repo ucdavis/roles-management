@@ -47,6 +47,12 @@ $(function() {
     prePopulate: $("#person_group_tokens").data("pre"),
     theme: "facebook"
   });
+
+  $("#classification_title_tokens").tokenInput($("#classification_title_tokens").attr("method") + ".json", {
+    crossDomain: false,
+    prePopulate: $("#classification_title_tokens").data("pre"),
+    theme: "facebook"
+  });
   
   // /people/new/:loginid specific
   $("input[name=fetch_ldap_details]").click(function() {

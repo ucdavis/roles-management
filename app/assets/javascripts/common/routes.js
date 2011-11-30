@@ -123,6 +123,22 @@
   };
 
   window.Routes = {
+// classifications => /classifications(.:format)
+  classifications_path: function(options) {
+  return Utils.build_path(0, ["/classifications"], ["format"], arguments)
+  },
+// new_classification => /classifications/new(.:format)
+  new_classification_path: function(options) {
+  return Utils.build_path(0, ["/classifications/new"], ["format"], arguments)
+  },
+// edit_classification => /classifications/:id/edit(.:format)
+  edit_classification_path: function(_id, options) {
+  return Utils.build_path(1, ["/classifications/", "/edit"], ["format"], arguments)
+  },
+// classification => /classifications/:id(.:format)
+  classification_path: function(_id, options) {
+  return Utils.build_path(1, ["/classifications/"], ["format"], arguments)
+  },
 // site_index => /site/index(.:format)
   site_index_path: function(options) {
   return Utils.build_path(0, ["/site/index"], ["format"], arguments)
@@ -286,6 +302,38 @@
 // api_ou => /api/ous/:id(.:format)
   api_ou_path: function(_id, options) {
   return Utils.build_path(1, ["/api/ous/"], ["format"], arguments)
+  },
+// api_classifications => /api/classifications(.:format)
+  api_classifications_path: function(options) {
+  return Utils.build_path(0, ["/api/classifications"], ["format"], arguments)
+  },
+// new_api_classification => /api/classifications/new(.:format)
+  new_api_classification_path: function(options) {
+  return Utils.build_path(0, ["/api/classifications/new"], ["format"], arguments)
+  },
+// edit_api_classification => /api/classifications/:id/edit(.:format)
+  edit_api_classification_path: function(_id, options) {
+  return Utils.build_path(1, ["/api/classifications/", "/edit"], ["format"], arguments)
+  },
+// api_classification => /api/classifications/:id(.:format)
+  api_classification_path: function(_id, options) {
+  return Utils.build_path(1, ["/api/classifications/"], ["format"], arguments)
+  },
+// api_titles => /api/titles(.:format)
+  api_titles_path: function(options) {
+  return Utils.build_path(0, ["/api/titles"], ["format"], arguments)
+  },
+// new_api_title => /api/titles/new(.:format)
+  new_api_title_path: function(options) {
+  return Utils.build_path(0, ["/api/titles/new"], ["format"], arguments)
+  },
+// edit_api_title => /api/titles/:id/edit(.:format)
+  edit_api_title_path: function(_id, options) {
+  return Utils.build_path(1, ["/api/titles/", "/edit"], ["format"], arguments)
+  },
+// api_title => /api/titles/:id(.:format)
+  api_title_path: function(_id, options) {
+  return Utils.build_path(1, ["/api/titles/"], ["format"], arguments)
   },
 // api_application_roles => /api/applications/:application_id/roles(.:format)
   api_application_roles_path: function(_application_id, options) {

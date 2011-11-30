@@ -62,6 +62,18 @@
 							</ul>
 						</li>
 					<% end %>
+					<% if permitted_to? :index, :classifications %>
+						<% if current_controller?( :controller => "classifications" ) %>
+							<li class="active"><%= link_to "Classifications", classifications_path %>
+						<% elsif %>
+							<li><%= link_to "Classifications", classifications_path %>
+						<% end %>
+							<ul>
+								<li><%= link_to "View All", classifications_path %></li>
+								<li><%= link_to 'Create New Classification', new_classification_path %></li>
+							</ul>
+						</li>
+					<% end %>
 					<% if permitted_to? :index, :applications %>
 						<% if current_controller?( :controller => "applications" ) %>
 							<li class="active"><%= link_to "Applications", applications_path %>

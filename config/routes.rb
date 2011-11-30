@@ -1,4 +1,6 @@
 DSSRM::Application.routes.draw do
+  resources :classifications
+
   get "site/index"
   get "site/contact"  
   get "site/logout"
@@ -26,6 +28,8 @@ DSSRM::Application.routes.draw do
     
     resources :groups
     resources :ous
+    resources :classifications
+    resources :titles
     
     resources :applications do
       resources :roles
