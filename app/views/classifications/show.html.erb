@@ -21,6 +21,15 @@
 		  <%= @classification.name %>
 		</p>
 		
+		<p>
+		  <b>Titles:</b>
+  		<ul>
+		    <% @classification.titles.each do |title| %>
+		      <li><%= title.name %></li>
+		    <% end %>
+  		</ul>
+		</p>
+		
 	</div> <!-- .block_content -->
 	
 	<div class="bendl"></div>
