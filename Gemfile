@@ -36,3 +36,5 @@ gem 'paperclip', "~> 2.4"
 
 # For MS Active Directory support
 gem "active_directory", "~> 1.5.4"
+
+gem "js-routes"
