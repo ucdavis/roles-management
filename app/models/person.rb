@@ -5,8 +5,6 @@ class Person < ActiveRecord::Base
   has_many :affiliation_assignments
   has_many :affiliations, :through => :affiliation_assignments
   
-  has_and_belongs_to_many :classifications
-  
   has_and_belongs_to_many :groups
   has_many :role_assignments
   has_many :roles, :through => :role_assignments
@@ -31,6 +29,11 @@ class Person < ActiveRecord::Base
   
   def name
       "#{first} #{last}"
+  end
+  
+  # Compute their classifications based on their title
+  def classifications
+    title.classifications
   end
   
   def as_json(options={}) 
