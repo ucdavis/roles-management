@@ -12,6 +12,8 @@ class Group < ActiveRecord::Base
   has_many :owners, :class_name => "Person", :through => :group_owner_assignments
   has_many :group_owner_assignments
   
+  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule"
+  
   attr_accessible :name, :people_tokens, :people_ids, :description
   attr_reader :people_tokens
   
