@@ -17,6 +17,12 @@ class Group < ActiveRecord::Base
   attr_accessible :name, :people_tokens, :people_ids, :description
   attr_reader :people_tokens
   
+  # Calculates all members (people and groups), including those defined via rules.
+  # Uses UID ID numbers (see README)
+  def members
+    
+  end
+  
   def people_tokens=(ids)
       self.person_ids = ids.split(",")
   end

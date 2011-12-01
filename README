@@ -36,7 +36,13 @@ There's a terrible important convention regarding the polymorphism of people, gr
 and OUs. For various reasons, we need a global ID for these objects, but the schema
 doesn't provide for one. The convention is very simple: a leading digit is placed
 in front of the actual ID (regardless of whether it's a person, group, or OU) to
-indicate which it is: 1 for person, 2 for group, and 3 for OU.
+indicate which it is:
+
+  Leading digit
+  -------------
+  1 = person
+  2 = group
+  3 = OU
 
 You almost never need to know this if you properly query against the RESTful API,
 e.g., /api/search.json will return IDs in this convention, and /api/resolve.json will
