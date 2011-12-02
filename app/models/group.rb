@@ -20,7 +20,25 @@ class Group < ActiveRecord::Base
   # Calculates all members (people and groups), including those defined via rules.
   # Uses UID ID numbers (see README)
   def members
+    members = []
     
+    # Include all people
+    people.each do |p|
+      members << {:id => ('1' + p.id.to_s).to_i, :name => p.name }
+    end
+    
+    # Include all groups
+    groups.each do |g|
+      members << {:id => ('2' + g.id.to_s).to_i, :name => g.name }
+    end
+    
+    # Include members via rules
+    rules.each do |r|
+      u = r.resolve
+      members << {:id => u.id, :name => u.name}
+    end
+    
+    members
   end
   
   def people_tokens=(ids)
