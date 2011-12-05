@@ -20,13 +20,22 @@ class GroupRule < ActiveRecord::Base
       when "may be"
         u = u + uids
       when "may not be"
-        
+        puts " -- 'classification may not be' is unsupported"
       else
         # unsupported
         puts "Unsupported condition for classification in group rule."
       end
     when "loginid"
-      
+      uids = Person.where(:loginid => value).collect{|x| ["1" + x.id.to_s, x.name]}
+      case condition
+      when "may be"
+        u = u + uids
+      when "may not be"
+        puts " -- 'loginid may not be' is unsupported"
+      else
+        # unsupported
+        puts "Unsupported condition for loginid in group rule."
+      end
     else
       # Undefined column
       puts " -- unknown rule type (#{column})"

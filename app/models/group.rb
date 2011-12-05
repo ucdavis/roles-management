@@ -29,7 +29,7 @@ class Group < ActiveRecord::Base
     
     # Include all groups
     groups.each do |g|
-      members << {:id => ('2' + g.id.to_s).to_i, :name => g.name }
+      members += [['2' + g.id.to_s, g.name ]]
     end
     
     # Include members via rules
