@@ -8,7 +8,16 @@ class GroupRule < ActiveRecord::Base
     
     case column
     when "title"
-      
+      uids = Person.where(:title_id => Title.find_by_name(value)).collect{|x| ["1" + x.id.to_s, x.name]}
+      case condition
+      when "may be"
+        u = u + uids
+      when "may not be"
+        puts " -- 'title may not be' is unsupported"
+      else
+        # unsupported
+        puts "Unsupported condition for title in group rule."
+      end
     when "major"
       
     when "affiliation"
