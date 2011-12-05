@@ -4,9 +4,9 @@ class GroupRule < ActiveRecord::Base
   
   # Discern the rule and return a UID and name for the person
   def resolve
-    u = {}
+    u = []
     
-    case :column
+    case column
     when "title"
       
     when "major"
@@ -14,18 +14,22 @@ class GroupRule < ActiveRecord::Base
     when "affiliation"
       
     when "classification"
-      case :condition
+      title_ids = Title.where(:id => Classification.find_by_name(value).title_ids)
+      uids = Person.where(:title_id => title_ids).collect{|x| ["1" + x.id.to_s, x.name]}
+      case condition
       when "may be"
-        
+        u = u + uids
       when "may not be"
         
       else
         # unsupported
+        puts "Unsupported condition for classification in group rule."
       end
     when "loginid"
       
     else
       # Undefined column
+      puts " -- unknown rule type (#{column})"
     end
     
     u

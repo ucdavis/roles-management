@@ -24,7 +24,7 @@ class Group < ActiveRecord::Base
     
     # Include all people
     people.each do |p|
-      members << {:id => ('1' + p.id.to_s).to_i, :name => p.name }
+      members += [['1' + p.id.to_s, p.name ]]
     end
     
     # Include all groups
@@ -34,8 +34,7 @@ class Group < ActiveRecord::Base
     
     # Include members via rules
     rules.each do |r|
-      u = r.resolve
-      members << {:id => u.id, :name => u.name}
+      members += r.resolve
     end
     
     members
