@@ -19,9 +19,18 @@ class GroupRule < ActiveRecord::Base
         puts "Unsupported condition for title in group rule."
       end
     when "major"
-      
+      puts "Any condition involving 'major' is currently unsupported."
     when "affiliation"
-      
+      uids = Affiliation.find_by_name(value).people.collect{|x| ["1" + x.id.to_s, x.name]}
+      case condition
+      when "may be"
+        u = u + uids
+      when "may not be"
+        puts " -- 'affiliation may not be' is unsupported"
+      else
+        # unsupported
+        puts "Unsupported condition for affiliation in group rule."
+      end
     when "classification"
       title_ids = Title.where(:id => Classification.find_by_name(value).title_ids)
       uids = Person.where(:title_id => title_ids).collect{|x| ["1" + x.id.to_s, x.name]}
