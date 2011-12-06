@@ -30,21 +30,12 @@
 		</p>
 	</p>
 	
+	<h2>Rules</h2>
 	<p>
-		<h2>Rules</h2>
-		<table>
-		  <thead>
-		    <tr>
-		      <td>Field</td>
-		      <td>Condition</td>
-		      <td>Value</td>
-		    </tr>
-		  </thead>
-		  <tbody>
-		    
-		  </tbody>
-		</table>
-	</p>
+	  <%= f.fields_for :rules do |builder| %>
+      <%= render "rule_fields", :f => builder %>
+    <% end %>
+  </p>
 	</div>
   
   <div class="actions">

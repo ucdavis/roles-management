@@ -28,6 +28,10 @@ class GroupsController < ApplicationController
   def new
     @group = Group.new
 
+    3.times do
+      @group.rules.build
+    end
+
     respond_to do |format|
       format.html
     end

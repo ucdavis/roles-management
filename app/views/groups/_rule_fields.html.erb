@@ -1,0 +1,3 @@
+<span>
+  <%= select_tag "column", "<option value=\"loginid\">Login ID</option> <option value=\"title\">Title</option> <option value=\"major\">Major</option> <option value=\"affiliation\">Affiliation</option> <option value=\"classification\">Classification</option>".html_safe %> <%= select_tag "condition", "<option value=\"may be\">may be</option> <option value=\"may not be\">may not be</option>".html_safe %> <%= f.text_field :value %> <%= f.check_box :_destroy %> <%= f.label :_destroy, "Remove Question" %><br />
+</span>
