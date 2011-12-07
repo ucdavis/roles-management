@@ -14,7 +14,7 @@ class Group < ActiveRecord::Base
   
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule"
   
-  attr_accessible :name, :people_tokens, :people_ids, :description
+  attr_accessible :name, :people_tokens, :people_ids, :description, :rules_attributes
   attr_reader :people_tokens
   
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true

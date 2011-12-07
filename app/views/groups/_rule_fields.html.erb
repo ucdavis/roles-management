@@ -1,5 +1,5 @@
 <div class="fields">
   <p>
-    <%= select_tag "column", "<option value=\"loginid\">Login ID</option> <option value=\"title\">Title</option> <option value=\"major\">Major</option> <option value=\"affiliation\">Affiliation</option> <option value=\"classification\">Classification</option>".html_safe %> <%= select_tag "condition", "<option value=\"may be\">may be</option> <option value=\"may not be\">may not be</option>".html_safe %> <%= f.text_field :value %> <%= link_to_remove_fields "Remove", f %>
+    <%= f.select :column, options_for_select([['Login ID', "loginid"], ['Title', "title"], ['Major', "major"], ['Affiliation', "affiliation"], ['Classification', "classification"]], 5) %> <%= f.select :condition, options_for_select([['may be', "may be"], ['may not be', "may not be"]], 2) %> <%= f.text_field :value %> <%= link_to_remove_fields "Remove", f %>
   </p>
 </div>
