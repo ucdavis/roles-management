@@ -1,5 +1,5 @@
 <div class="fields">
   <p>
-    <%= f.select :column, options_for_select([['Login ID', "loginid"], ['Title', "title"], ['Major', "major"], ['Affiliation', "affiliation"], ['Classification', "classification"]], 5) %> <%= f.select :condition, options_for_select([['may be', "may be"], ['may not be', "may not be"]], 2) %> <%= f.text_field :value %> <%= link_to_remove_fields "Remove", f %>
+    <%= f.select :column, [['Login ID', "loginid"], ['Title', "title"], ['Major', "major"], ['Affiliation', "affiliation"], ['Classification', "classification"]] %> <%= f.select :condition, [['may be', "may be"], ['may not be', "may not be"]] %> <%= f.text_field :value %> <%= link_to_remove_fields "Remove", f %>
   </p>
 </div>
