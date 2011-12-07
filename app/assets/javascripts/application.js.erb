@@ -4,6 +4,18 @@
 //= require_self
 //= require_tree ./common
 
+// For dynamic, nested attribute add/remove
+function remove_fields(link) {
+  $(link).prev("input[type=hidden]").val("1");
+  $(link).closest(".fields").hide();
+}
+
+function add_fields(link, association, content) {
+  var new_id = new Date().getTime();
+  var regexp = new RegExp("new_" + association, "g")
+  $(link).parent().before(content.replace(regexp, new_id));
+}
+
 $(function() {
   // Set up the token inputs
   $("#group_people_tokens").tokenInput($("#group_people_tokens").attr("method") + ".json", {
@@ -281,7 +293,7 @@ $(function() {
 	// Date picker
 	$('input.date_picker').datepicker();
 	
-
+	
 
 	// Navigation dropdown fix for IE6
 	if(jQuery.browser.version.substr(0,1) < 7) {

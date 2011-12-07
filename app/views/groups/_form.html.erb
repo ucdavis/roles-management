@@ -11,7 +11,6 @@
     </div>
   <% end %>
 
-  <div class="field">
 	<p>
     	<%= f.label :name %><br />
     	<%= f.text_field :name, :class => "text" %>
@@ -31,12 +30,12 @@
 	</p>
 	
 	<h2>Rules</h2>
-	<p>
-	  <%= f.fields_for :rules do |builder| %>
-      <%= render "rule_fields", :f => builder %>
-    <% end %>
-  </p>
-	</div>
+	
+  <%= f.fields_for :rules do |builder| %>
+    <%= render "rule_fields", :f => builder %>
+  <% end %>  
+  
+  <p><%= link_to_add_fields "Add Rule", f, :rules %></p>
   
   <div class="actions">
 	<p>
