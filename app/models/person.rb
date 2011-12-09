@@ -105,7 +105,7 @@ class Person < ActiveRecord::Base
     Application.includes(:application_ou_assignments).where( :application_ou_assignments => { :application_id => nil } ).each do |application|
       unless applications.include? application
         # App is publicly available and not already in their list
-        apps << application.name
+        apps << application
       end
     end
     
