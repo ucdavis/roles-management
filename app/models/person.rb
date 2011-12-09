@@ -97,8 +97,30 @@ class Person < ActiveRecord::Base
     apps
   end
   
-  def as_json(options={}) 
-      { :id => self.id, :name => self.first + " " + self.last } 
+  # List all available apps person does not have
+  def requestable_applications
+    apps = []
+    
+    # Query all applications with an empty '.ous', implying public availability (some apps are for specific OUs only)
+    Application.includes(:application_ou_assignments).where( :application_ou_assignments => { :application_id => nil } ).each do |application|
+      unless applications.include? application
+        # App is publicly available and not already in their list
+        apps << application.name
+      end
+    end
+    
+    # Add applications available to their OUs but to which they have no roles
+    ous.each do |ou|
+      ou.applications.each do |application|
+        application.roles.where(:default => false).each do |role|
+          unless applications.include? application
+            apps << application
+          end
+        end
+      end
+    end
+    
+    apps
   end
   
   # ACL symbols
@@ -117,7 +139,11 @@ class Person < ActiveRecord::Base
     
     syms
   end
-  
+
+  def as_json(options={}) 
+      { :id => self.id, :name => self.first + " " + self.last } 
+  end
+
   def ou_tokens=(ids)
       self.ou_ids = ids.split(",")
   end
