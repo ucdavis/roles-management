@@ -123,6 +123,16 @@ class Person < ActiveRecord::Base
     apps
   end
   
+  # Returns all people managed by this person (see 'owns' for groups)
+  def manages
+    
+  end
+  
+  # Returns all groups owned by this person (see 'manages' for people)
+  def owns
+    
+  end
+  
   # ACL symbols
   def role_symbols
     # Get this app's API key

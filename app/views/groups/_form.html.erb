@@ -20,6 +20,14 @@
     	<%= f.label :description %><br />
     	<%= f.text_area :description, :class => "wysiwyg" %>
 	</p>
+
+	<p>
+		<h2>Owners</h2>
+		<p>
+		  <%= f.label :owner_tokens, "Owners" %><br />
+		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
+		</p>
+	</p>
 	
 	<p>
 		<h2>Members</h2>
