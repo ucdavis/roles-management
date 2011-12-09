@@ -1154,7 +1154,7 @@ li.token-input-input-token-facebook {
 
 /* Cards */
 .card {
-  width: 98%;
+  width: 48%;
 	background: #fff url("../images/bnd.gif") bottom center repeat-x;
 	float: left;
 	margin: 0.5em;
