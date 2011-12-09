@@ -7,7 +7,6 @@ class Person < ActiveRecord::Base
   
   has_and_belongs_to_many :groups
   has_many :role_assignments
-  has_many :roles, :through => :role_assignments
   
   has_many :ous, :through => :ou_assignments
   has_many :ou_assignments
@@ -34,6 +33,38 @@ class Person < ActiveRecord::Base
   # Compute their classifications based on their title
   def classifications
     title.classifications
+  end
+  
+  # Compute roles
+  def roles
+    roles = []
+    
+    # Add roles explicitly assigned
+    role_assignments.each do |assignment|
+      roles << assignment.role
+    end
+    
+    # Add roles via OU defaults
+    ous.each do |ou|
+      ou.applications.each do |application|
+        application.roles.where(:default => true).each do |role|
+          # Ensure there are no duplicates
+          unless roles.include? role
+            roles << role
+          end
+        end
+      end
+    end
+
+    # Add roles via public defaults
+    Role.includes(:application).where( :default => true ).each do |role|
+      # Avoid duplicates
+      unless roles.include? role
+        roles << role
+      end
+    end
+    
+    roles
   end
   
   # Compute accessible applications
