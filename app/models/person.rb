@@ -109,8 +109,10 @@ class Person < ActiveRecord::Base
     syms = []
     
     # Query for permissions of user via API key, converting them into declarative_authentication's needed symbols
-    roles.includes("application").where(:applications => {:api_key => api_key}).each do |role|
-      syms << role.name.underscore.to_sym
+    roles.each do |role|
+      if role.application.api_key == api_key
+        syms << role.name.underscore.to_sym
+      end
     end
     
     syms
