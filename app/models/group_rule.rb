@@ -34,16 +34,21 @@ class GroupRule < ActiveRecord::Base
         puts "Unsupported condition for affiliation in group rule."
       end
     when "classification"
-      title_ids = Title.where(:id => Classification.find_by_name(value).title_ids)
-      uids = Person.where(:title_id => title_ids).collect{|x| ["1" + x.id.to_s, x.name]}
-      case condition
-      when "may be"
-        u = u + uids
-      when "may not be"
-        puts " -- 'classification may not be' is unsupported"
+      classification = Classification.find_by_name(value)
+      unless classification == nil
+        title_ids = Title.where(:id => classification.title_ids)
+        uids = Person.where(:title_id => title_ids).collect{|x| ["1" + x.id.to_s, x.name]}
+        case condition
+        when "may be"
+          u = u + uids
+        when "may not be"
+          puts " -- 'classification may not be' is unsupported"
+        else
+          # unsupported
+          puts "Unsupported condition for classification in group rule."
+        end
       else
-        # unsupported
-        puts "Unsupported condition for classification in group rule."
+        puts "Classification not found"
       end
     when "loginid"
       uids = Person.where(:loginid => value).collect{|x| ["1" + x.id.to_s, x.name]}
