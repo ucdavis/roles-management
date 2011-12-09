@@ -32,10 +32,10 @@
 		
 		<h2>Members</h2>
 		<ul>
-			<% for p in @group.people %>
+			<% for p in @group.members %>
 				<li><%= link_to p.name, p %></li>
 			<% end %>
-			<% if @group.people.length == 0 %>
+			<% if @group.members.length == 0 %>
 				<li><i>No members assigned</i></li>
 			<% end %>
 		</ul>

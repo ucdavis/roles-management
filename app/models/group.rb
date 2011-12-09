@@ -26,12 +26,14 @@ class Group < ActiveRecord::Base
     
     # Include all people
     people.each do |p|
-      members += [['1' + p.id.to_s, p.name ]]
+      members << p
+      #members += [['1' + p.id.to_s, p.name ]]
     end
     
     # Include all groups
     groups.each do |g|
-      members += [['2' + g.id.to_s, g.name ]]
+      members << g
+      #members += [['2' + g.id.to_s, g.name ]]
     end
     
     # Include members via rules

@@ -6,14 +6,14 @@ class GroupRule < ActiveRecord::Base
   
   # Discern the rule and return a UID and name for the person
   def resolve
-    u = []
+    p = []
     
     case column
     when "title"
-      uids = Person.where(:title_id => Title.find_by_name(value)).collect{|x| ["1" + x.id.to_s, x.name]}
+      ps = Person.where(:title_id => Title.find_by_name(value)) #.collect{|x| ["1" + x.id.to_s, x.name]}
       case condition
       when "may be"
-        u = u + uids
+        p = p + ps
       when "may not be"
         puts " -- 'title may not be' is unsupported"
       else
@@ -23,10 +23,10 @@ class GroupRule < ActiveRecord::Base
     when "major"
       puts "Any condition involving 'major' is currently unsupported."
     when "affiliation"
-      uids = Affiliation.find_by_name(value).people.collect{|x| ["1" + x.id.to_s, x.name]}
+      ps = Affiliation.find_by_name(value).people #.collect{|x| ["1" + x.id.to_s, x.name]}
       case condition
       when "may be"
-        u = u + uids
+        p = p + ps
       when "may not be"
         puts " -- 'affiliation may not be' is unsupported"
       else
@@ -37,10 +37,10 @@ class GroupRule < ActiveRecord::Base
       classification = Classification.find_by_name(value)
       unless classification == nil
         title_ids = Title.where(:id => classification.title_ids)
-        uids = Person.where(:title_id => title_ids).collect{|x| ["1" + x.id.to_s, x.name]}
+        ps = Person.where(:title_id => title_ids) #.collect{|x| ["1" + x.id.to_s, x.name]}
         case condition
         when "may be"
-          u = u + uids
+          p = p + ps
         when "may not be"
           puts " -- 'classification may not be' is unsupported"
         else
@@ -51,10 +51,10 @@ class GroupRule < ActiveRecord::Base
         puts "Classification not found"
       end
     when "loginid"
-      uids = Person.where(:loginid => value).collect{|x| ["1" + x.id.to_s, x.name]}
+      ps = Person.where(:loginid => value) #.collect{|x| ["1" + x.id.to_s, x.name]}
       case condition
       when "may be"
-        u = u + uids
+        p = p + ps
       when "may not be"
         puts " -- 'loginid may not be' is unsupported"
       else
@@ -66,6 +66,6 @@ class GroupRule < ActiveRecord::Base
       puts " -- unknown rule type (#{column})"
     end
     
-    u
+    p
   end
 end
