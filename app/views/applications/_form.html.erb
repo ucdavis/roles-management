@@ -26,6 +26,12 @@
   </div>
   <div class="field">
   	<p style="clear: none;">
+      <%= f.label :description %><br />
+      <%= f.text_area :description, :class => "text" %>
+  	</p>
+  </div>
+  <div class="field">
+  	<p style="clear: none;">
       <%= f.label :hostname, "Hostname (e.g. my.dss.ucdavis.edu)" %><br />
       <%= f.text_field :hostname, :class => "text" %>
   	</p>
