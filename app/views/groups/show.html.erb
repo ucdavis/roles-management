@@ -29,7 +29,17 @@
 		    <%= @group.description %>
 		  <% end %>
 		</p>
-		
+
+		<h2>Owners</h2>
+		<ul>
+			<% for p in @group.owners %>
+				<li><%= link_to p.name, p %></li>
+			<% end %>
+			<% if @group.owners.length == 0 %>
+				<li><i>No owners assigned</i></li>
+			<% end %>
+		</ul>
+
 		<h2>Members</h2>
 		<ul>
 			<% for p in @group.members %>
