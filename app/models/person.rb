@@ -130,7 +130,13 @@ class Person < ActiveRecord::Base
   
   # Returns all groups owned by this person (see 'manages' for people)
   def owns
+    groups = []
     
+    GroupOwnerAssignment.includes(:group).where(:owner_id => id).each do |ownership|
+      groups << ownership.group
+    end
+    
+    groups
   end
   
   # ACL symbols

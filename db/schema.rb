@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111209233227) do
+ActiveRecord::Schema.define(:version => 20111209235922) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -84,7 +84,6 @@ ActiveRecord::Schema.define(:version => 20111209233227) do
     t.datetime "updated_at"
     t.integer  "min_size"
     t.integer  "max_size"
-    t.integer  "owner_id"
     t.text     "description"
   end
 
