@@ -8,21 +8,24 @@ class Person < ActiveRecord::Base
   has_and_belongs_to_many :groups
   has_many :role_assignments
   
+  has_many :person_manager_assignments
+  has_many :managers, :through => :person_manager_assignments
+  
   has_many :ous, :through => :ou_assignments
   has_many :ou_assignments
 
   has_many :ou_manager_assignments
-  has_many :managements, :through => :ou_manager_assignments, :source => :ou, :primary_key => "manager_id"
+  #has_many :managements, :through => :ou_manager_assignments, :source => :ou, :primary_key => "manager_id"
 
   has_many :group_manager_assignments
-  has_many :ownerships, :through => :group_manager_assignments, :source => :group, :primary_key => "owner_id"
+  #has_many :ownerships, :through => :group_manager_assignments, :source => :group, :primary_key => "owner_id"
   
   validates_presence_of :loginid
   
   attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids
   attr_reader :ou_tokens, :group_tokens
   
-  def to_param  # overridden
+  def to_param
     loginid
   end
   
@@ -124,8 +127,14 @@ class Person < ActiveRecord::Base
   end
   
   # Returns all people managed by this person (see 'owns' for groups)
-  def manages
+  def subordinates
+    people = []
     
+    PersonManagerAssignment.includes(:person).where(:manager_id => id).each do |p|
+      people << p.person
+    end
+    
+    people
   end
   
   # Returns all groups owned by this person (see 'manages' for people)
