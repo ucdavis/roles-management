@@ -20,9 +20,8 @@ ActiveRecord::Schema.define(:version => 20111210000838) do
     t.datetime "updated_at"
   end
 
-  create_table "affiliations", :id => false, :force => true do |t|
-    t.integer "id"
-    t.string  "name"
+  create_table "affiliations", :force => true do |t|
+    t.string "name"
   end
 
   create_table "application_ou_assignments", :force => true do |t|

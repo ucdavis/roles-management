@@ -2,10 +2,11 @@
 
 <div style="float: right; clear: both; margin: 0.5em; margin-top: -1em;">
   <select class="styled">
-  	<optgroup label="Group 1">
+  	<optgroup label="Subordinates">
   		<option>View As ...</option>
-  		<option>Employee One</option>
-  		<option>Employee Two</option>
+  		<% current_user.subordinates.each do |person| %>
+	      <option><%= person.name %></option>
+	    <% end %>
   	</optgroup>
   </select>
 </div> <!-- block -->
@@ -61,16 +62,27 @@
 		</ul>
 	</div>		<!-- .block_head ends -->
 	
-	<div class="block_content">
+	<div class="block_content tab_content" id="groups">
 	  <ul class="pins">
-	    <li data-person-id="cthielen">Christopher Thielen</li>
-	    <li>Scott Dyer</li>
-	    <li>Jeremy Phillips</li>
-	    <li>Carol McMasters-Stone</li>
-	    <li>Jeff Trask</li>
-	    <li>Jarold Wong</li>
+	    <% current_user.owns.each do |group| %>
+	      <li><%= group.name %></li>
+	    <% end %>
+	    <% if current_user.owns.count == 0 %>
+	      <li>You have no groups.</li>
+	    <% end %>
 	  </ul>
-	</div>		<!-- .block_content ends -->
+	</div>		<!-- .block_content .tab_content ends -->
+
+	<div class="block_content tab_content" id="people">
+	  <ul class="pins">
+	    <% current_user.subordinates.each do |person| %>
+	      <li><%= person.name %></li>
+	    <% end %>
+	    <% if current_user.subordinates.count == 0 %>
+	      <li>You have no subordinates.</li>
+	    <% end %>
+	  </ul>
+	</div>		<!-- .block_content .tab_content ends -->
 	
 	<div class="bendl"></div>
 	<div class="bendr"></div>
