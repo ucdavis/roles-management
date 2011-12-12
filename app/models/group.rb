@@ -58,6 +58,6 @@ class Group < ActiveRecord::Base
   end
   
   def as_json(options={}) 
-    { :id => self.id, :name => self.name } 
+    { :id => ('2' + self.id.to_s).to_i, :name => self.name } 
   end
 end
