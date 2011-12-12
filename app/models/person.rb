@@ -165,8 +165,9 @@ class Person < ActiveRecord::Base
     syms
   end
 
+  # Exports UIDs
   def as_json(options={}) 
-      { :id => self.id, :name => self.first + " " + self.last } 
+      { :id => ('1' + self.id.to_s).to_i, :name => self.first + " " + self.last } 
   end
 
   def ou_tokens=(ids)
