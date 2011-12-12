@@ -65,7 +65,7 @@
 	<div class="block_content tab_content" id="groups">
 	  <ul class="pins">
 	    <% current_user.owns.each do |group| %>
-	      <li><%= group.name %></li>
+	      <li data-pin-type="group" data-pin-value="<%= group.id %>"><%= group.name %></li>
 	    <% end %>
 	    <% if current_user.owns.count == 0 %>
 	      <li>You have no groups.</li>
@@ -76,7 +76,7 @@
 	<div class="block_content tab_content" id="people">
 	  <ul class="pins">
 	    <% current_user.subordinates.each do |person| %>
-	      <li><%= person.name %></li>
+	      <li data-pin-type="person" data-pin-value="<%= person.id %>"><%= person.name %></li>
 	    <% end %>
 	    <% if current_user.subordinates.count == 0 %>
 	      <li>You have no subordinates.</li>

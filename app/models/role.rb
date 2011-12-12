@@ -5,10 +5,13 @@ class Role < ActiveRecord::Base
   
   belongs_to :application
   
-  attr_accessible :name, :people_tokens, :people_ids, :default
-  attr_reader :people_tokens
+  attr_accessible :name, :people_tokens, :people_ids, :default, :group_tokens
+  attr_reader :people_tokens, :group_tokens
   
   def people_tokens=(ids)
       self.person_ids = ids.split(",")
+  end
+  def group_tokens=(ids)
+      self.group_ids = ids.split(",")
   end
 end

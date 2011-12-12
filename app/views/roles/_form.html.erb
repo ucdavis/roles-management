@@ -31,6 +31,10 @@
 		  <%= f.label :people_tokens, "People" %><br />
 		  <%= f.text_field :people_tokens, "data-pre" => @role.people.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
 		</p>
+		<p>
+		  <%= f.label :group_tokens, "Groups" %><br />
+		  <%= f.text_field :group_tokens, "data-pre" => @role.groups.to_json, "method" => url_for(:controller => "api/groups", :action => "index") %>
+		</p>
 	</p>
   </div>
   <div class="actions">

@@ -30,6 +30,12 @@ $(function() {
     theme: "facebook"
   });
 
+  $("#role_group_tokens").tokenInput($("#role_group_tokens").attr("method") + ".json", {
+    crossDomain: false,
+    prePopulate: $("#role_group_tokens").data("pre"),
+    theme: "facebook"
+  });
+
   $("#application_ou_tokens").tokenInput($("#application_ou_tokens").attr("method") + ".json", {
     crossDomain: false,
     prePopulate: $("#application_ou_tokens").data("pre"),
