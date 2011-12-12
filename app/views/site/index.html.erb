@@ -87,3 +87,21 @@
 	<div class="bendl"></div>
 	<div class="bendr"></div>
 </div>
+
+<script type="text/javascript">
+  // Construct the initial pin layout
+  
+  // Groups
+  <% current_user.owns.each do |group| %>
+    <% group.roles.each do |role| %>
+      add_pin( <%= role.application.id %>, <%= group.to_json.html_safe %> )
+    <% end %>
+  <% end %>
+
+  // People
+  <% current_user.subordinates.each do |person| %>
+    <% person.roles.each do |role| %>
+      add_pin( <%= role.application.id %>, <%= person.to_json.html_safe %> )
+    <% end %>
+  <% end %>
+</script>

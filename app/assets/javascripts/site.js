@@ -43,6 +43,10 @@ function remove_pin(el) {
   }
 }
 
+function add_pin(app_id, pin) {
+  
+}
+
 function person_details(person_id) {
   $.fancybox({
 		'orig'			: $(this),
