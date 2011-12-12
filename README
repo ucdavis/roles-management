@@ -50,6 +50,10 @@ accept them and work just fine.
 
 If you are adding anything to /api, be sure to follow this convention for all output.
 
+To keep things clear, these UIDs are presumed to be the ID given unless you're working
+directly in the model's class. If you are unsure if a function uses the UID correctly,
+simply look the individual or group up in the database and see if a prefix has been added.
+
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
 
