@@ -67,21 +67,21 @@
 	    <% current_user.owns.each do |group| %>
 	      <li data-pin-type="group" data-pin-value="<%= group.id %>"><%= group.name %></li>
 	    <% end %>
-	    <% if current_user.owns.count == 0 %>
-	      <li>You have no groups.</li>
-	    <% end %>
-	  </ul>
+		</ul>
+    <% if current_user.owns.count == 0 %>
+    <li>You have no groups.</li>
+    <% end %>
 	</div>		<!-- .block_content .tab_content ends -->
 
 	<div class="block_content tab_content" id="people">
 	  <ul class="pins">
 	    <% current_user.subordinates.each do |person| %>
-	      <li data-pin-type="person" data-pin-value="<%= person.id %>"><%= person.name %></li>
-	    <% end %>
-	    <% if current_user.subordinates.count == 0 %>
-	      <li>You have no subordinates.</li>
-	    <% end %>
-	  </ul>
+      <li data-pin-type="person" data-pin-value="<%= person.id %>"><%= person.name %></li>
+      <% end %>
+    </ul>
+    <% if current_user.subordinates.count == 0 %>
+    <i>You have no subordinates.</i>
+    <% end %>
 	</div>		<!-- .block_content .tab_content ends -->
 	
 	<div class="bendl"></div>

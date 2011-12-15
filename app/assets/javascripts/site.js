@@ -43,8 +43,19 @@ function remove_pin(el) {
   }
 }
 
+// Used to set up initial page view (existing permissions)
 function add_pin(app_id, pin) {
-  
+	console.log(app_id);
+	console.log(pin);
+	
+	// Determine pin type (person or group), based on leading digit (see UID explanation in README)
+	if(String(id)[0] == 1) {
+		// person
+		
+	} else {
+		// group
+		
+	}
 }
 
 function person_details(person_id) {
