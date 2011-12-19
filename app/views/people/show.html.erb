@@ -91,7 +91,7 @@
 			<h2>Roles</h2>
 			<ul>
 			  <% @person.roles.each do |role| %>
-			    <li><%= role.name %> for <%= link_to role.application.name, role.application %></li>
+			    <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
 			  <% end %>
 			</ul>
 		</div> <!-- sb2 -->
