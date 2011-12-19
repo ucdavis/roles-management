@@ -7,7 +7,7 @@
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
 		
-		<h2>Role <em><%= @role.name %></em> for <em><%= link_to @application.name, @application %></em></h2>
+		<h2>Role <em><%= @role.token %></em> for <em><%= link_to @application.name, @application %></em></h2>
 		
 		<ul class="tabs">
 			<li><a href="#">Overview</a></li>
@@ -17,8 +17,13 @@
 	
 	<div class="block_content">
 		<p>
-		  <b>Name:</b>
-		  <%= @role.name %>
+		  <b>Token:</b>
+		  <%= @role.token %>
+		</p>
+
+		<p>
+		  <b>Descriptor:</b>
+		  <%= @role.descriptor %>
 		</p>
 		
 		<p>

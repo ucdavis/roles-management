@@ -7,7 +7,7 @@ class RolesController < ApplicationController
     @roles = @application.roles
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html
     end
   end
 
@@ -17,7 +17,7 @@ class RolesController < ApplicationController
     @role = @application.roles.find_by_id(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html
     end
   end
 
@@ -27,7 +27,7 @@ class RolesController < ApplicationController
     @role = @application.roles.build
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
     end
   end
 

@@ -5,13 +5,13 @@ class Role < ActiveRecord::Base
   
   belongs_to :application
   
-  attr_accessible :name, :people_tokens, :people_ids, :default, :group_tokens
+  attr_accessible :token, :people_tokens, :people_ids, :default, :group_tokens, :descriptor
   attr_reader :people_tokens, :group_tokens
   
   def people_tokens=(ids)
-      self.person_ids = ids.split(",")
+      self.person_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
   end
   def group_tokens=(ids)
-      self.group_ids = ids.split(",")
+      self.group_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
   end
 end

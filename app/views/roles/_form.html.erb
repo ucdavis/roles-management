@@ -13,8 +13,14 @@
 
   <div class="field">
 	<p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name, :class => "text" %>
+		<%= f.label :token, "Token <small>(e.g. \"admin\", \"update\")</small>".html_safe %><br />
+    <%= f.text_field :token, :class => "text" %>
+	</p>
+  </div>
+  <div class="field">
+	<p>
+		<%= f.label :descriptor, "Descriptor <small>(user visible, e.g. \"Allow access\", \"Read messages\")</small>".html_safe %><br />
+    <%= f.text_field :descriptor, :class => "text" %>
 	</p>
   </div>
   <div class="field">

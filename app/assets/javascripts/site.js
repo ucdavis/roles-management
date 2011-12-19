@@ -49,7 +49,7 @@ function add_pin(app_id, pin) {
 	console.log(pin);
 	
 	// Determine pin type (person or group), based on leading digit (see UID explanation in README)
-	if(String(id)[0] == 1) {
+	if(String(pin.id)[0] == 1) {
 		// person
 		
 	} else {
