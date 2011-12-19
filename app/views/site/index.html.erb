@@ -24,7 +24,7 @@
 	<div class="block_content">
 	  
 	  <% current_user.applications.each do |app| %>
-	    <div class="card">
+	    <div class="card" data-represents-application="<%= app.id %>">
   	    <div class="card_head">
   	      <div class="bheadl"></div>
       		<div class="bheadr"></div>
@@ -94,14 +94,14 @@
   // Groups
   <% current_user.owns.each do |group| %>
     <% group.roles.each do |role| %>
-      add_pin( <%= role.application.id %>, <%= group.to_json.html_safe %> )
+      add_pin( <%= role.to_json.html_safe %>, <%= group.to_json.html_safe %> )
     <% end %>
   <% end %>
 
   // People
   <% current_user.subordinates.each do |person| %>
     <% person.roles.each do |role| %>
-      add_pin( <%= role.application.id %>, <%= person.to_json.html_safe %> )
+      add_pin( <%= role.to_json.html_safe %>, <%= person.to_json.html_safe %> )
     <% end %>
   <% end %>
 </script>
