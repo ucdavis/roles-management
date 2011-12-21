@@ -66,6 +66,9 @@ $(function() {
       $(pin_list).find( ".placeholder" ).remove();
     }
     
+    // Check the box representing this permission
+    $("div.pin div.pin-content span.permission input[type=checkbox][data-app-id=" + role.application_id + "][data-role-id=" + role.id + "]").prop("checked", true);
+    
     return true;
   }
   
