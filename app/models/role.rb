@@ -14,4 +14,8 @@ class Role < ActiveRecord::Base
   def group_tokens=(ids)
       self.group_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
   end
+  
+  def as_json(options={}) 
+      { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id } 
+  end
 end
