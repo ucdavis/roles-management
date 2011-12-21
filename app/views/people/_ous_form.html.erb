@@ -1,8 +1,0 @@
-<%= form_for(@person) do |f| %>
-<p>
-  	<%= f.label :ous, "Organization Membership" %><br />
-  	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
-</p>
-
-<%= f.submit "Update", :class => "submit mid" %>
-<% end %>

@@ -1,8 +1,0 @@
-<%= form_for(@person) do |f| %>
-<p>
-  	<%= f.label :groups, "Group Memberships" %><br />
-  	<%= f.text_field :group_tokens, "data-pre" => @person.groups.to_json, "method" => url_for(:controller => "api/groups", :action => "index") %>
-</p>
-
-<%= f.submit "Update", :class => "submit mid" %>
-<% end %>

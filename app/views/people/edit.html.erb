@@ -2,7 +2,7 @@
 <div class="message success"><p><%= notice %></p></div>
 <% end %>
 
-<div class="block withsidebar">
+<div class="block">
 	<div class="block_head">
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
@@ -17,32 +17,64 @@
 	</div> <!-- .block_head -->
 	
 	<div class="block_content tab_content" id="edit_tab">
-		<div class="sidebar">
-			<ul class="sidemenu">
-				<li><a href="#basics">Basics</a></li>
-				<li><a href="#roles">Roles</a></li>
-				<li><a href="#groups">Groups</a></li>
-				<li><a href="#ous">Organizations</a></li>
-			</ul>
-			
-			<p><strong>Some notification text.</strong> Donec hendrerit porttitor felis, id semper eros lobortis sed. Class aptent taciti sociosqu ad litora.</p>
-		</div>		<!-- .sidebar ends -->
-		
-		<div class="sidebar_content" id="basics">
-		  <%= render 'basics_form' %>
-		</div> <!-- #sb1 -->
-		
-		<div class="sidebar_content" id="roles">
-		  <%= render 'roles_form' %>
-		</div> <!-- sb2 -->
-		
-		<div class="sidebar_content" id="groups">
-		  <%= render 'groups_form' %>
-		</div> <!-- #sb3 -->
+    <%= form_for(@person) do |f| %>
+      <% if @person.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@person.errors.count, "error") %> prohibited this person from being saved:</h2>
 
-		<div class="sidebar_content" id="ous">
-		  <%= render 'ous_form' %>
-		</div> <!-- #sb4 -->
+          <ul>
+          <% @person.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+    	<p>
+        <%= f.label :first %><br />
+        <%= f.text_field :first, :class => "text" %>
+    	</p>
+    	<p>
+        <%= f.label :last %><br />
+        <%= f.text_field :last, :class => "text" %>
+    	</p>
+    	<p>
+        <%= f.label :email %><br />
+        <%= f.text_field :email, :class => "text" %>
+    	</p>
+    	<p>
+        <%= f.label :loginid %><br />
+        <%= f.text_field :loginid, :class => "text" %>
+    	</p>
+    	<p>
+        <%= f.label :preferred_name %><br />
+        <%= f.text_field :preferred_name, :class => "text" %>
+    	</p>
+    	<p>
+        <%= f.label :status %><br />
+        <%= f.check_box :status, :class => "checkbox" %>
+    	</p>
+    	<p>
+        <%= f.label :phone %><br />
+        <%= f.text_field :phone, :class => "text" %>
+    	</p>
+    	<p>
+        <%= f.label :address %><br />
+        <%= f.text_field :address, :class => "text" %>
+    	</p>
+    
+      <p>
+        	<%= f.label :groups, "Group Memberships" %><br />
+        	<%= f.text_field :group_tokens, "data-pre" => @person.groups.to_json, "method" => url_for(:controller => "api/groups", :action => "index") %>
+      </p>
+
+      <p>
+        	<%= f.label :ous, "Organization Membership" %><br />
+        	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
+      </p>
+    
+      <%= f.submit "Update", :class => "submit mid" %>
+    <% end %>
 	</div> <!-- .block_content -->
 
 	<div class="block_content tab_content" id="revisions_tab">
