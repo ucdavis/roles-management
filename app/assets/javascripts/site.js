@@ -18,15 +18,7 @@ $(function() {
       var app_id = $(this).parent().parent().attr("data-represents-application");
       
       var el = site.construct_pin(ui.draggable.text(), app_id);
-      $(el).trigger('click', function() {
-        person_details(ui.draggable.attr("data-person-id"));
-      });
       $(el).appendTo( this );
-      
-      $(el).children("a").click(function() {
-        $(this).parent().children("div.pin-content").slideToggle('slow');
-        return false;
-      });
     }
   }).sortable({
     items: "li:not(.placeholder)",
@@ -52,9 +44,19 @@ $(function() {
     $(el).html( el_html );
     
     // Add the necessary permissions
-    for(var role in site.applications[app_id].roles) {
-      $(el).children("div.pin-content").append("<span class=\"permission\"><input type=\"checkbox\" data-app-id=\"" + app_id + "\" data-role-id=\"" + role.id + "\" /> (<b>" + role.token + "</b>) Allows the user to access this application</span>");
+    for(var i = 0; i < site.applications[app_id].roles.length; i++) {
+      var role = site.applications[app_id].roles[i];
+      $(el).children("div.pin-content").append("<span class=\"permission\"><input type=\"checkbox\" data-app-id=\"" + app_id + "\" data-role-id=\"" + role.id + "\" /> (<b>" + role.descriptor + "</b>) " + role.description + "</span>");
     }
+    
+    $(el).trigger('click', function() {
+      person_details(ui.draggable.attr("data-person-id"));
+    });
+    
+    $(el).children("a").click(function() {
+      $(this).parent().children("div.pin-content").slideToggle('slow');
+      return false;
+    });
     
     return el;
   }
@@ -72,20 +74,20 @@ $(function() {
 
   // Used to set up initial page view (existing permissions)
   site.add_pin = function (role, entity) {
-  	console.log(role);
-  	console.log(entity);
-	
   	// Fetch the app "card" element
   	var app_card = $("div.card[data-represents-application=" + role.application_id + "]");
-	
+	  var el;
+  
   	// Determine pin type (person or group), based on leading digit (see UID explanation in README)
   	if(String(entity.id)[0] == 1) {
   		// entity is a person
-		
+		  el = site.construct_pin(entity.name, role.application_id);
   	} else {
   		// entity is a group
-		
+		  el = site.construct_pin(entity.name, role.application_id);
   	}
+    
+    $(app_card).children("div.card_content").children("div.pins").append(el);
   }
 
   site.person_details = function (person_id) {

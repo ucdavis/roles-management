@@ -31,7 +31,7 @@
 				  <tr>
 				    <th>Default</th>
 				    <th>Token</th>
-					<th>Descriptor</th>
+					  <th>Descriptor</th>
 				    <th></th>
 				  </tr>
 
@@ -39,8 +39,8 @@
 				  <tr>
 				    <td><center><%= check_box("role", "default", :disabled => true, :checked => role.default) %></center></td>
 				    <td><%= link_to role.token, application_role_path(@application, role) %></td>
-					<td><%= link_to role.descriptor, application_role_path(@application, role) %></td>
-					<td><%= link_to 'Delete', [@application, role], :confirm => 'Are you sure?', :method => :delete %></td>
+					  <td><%= link_to role.descriptor, application_role_path(@application, role) %></td>
+					  <td><%= link_to 'Delete', [@application, role], :confirm => 'Are you sure?', :method => :delete %></td>
 				  </tr>
 				<% end %>
 				</table>
