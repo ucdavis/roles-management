@@ -29,7 +29,7 @@ class Ou < ActiveRecord::Base
   end
   
   def as_json(options={}) 
-    { :id => self.id, :name => self.name } 
+    { :id => ('3' + self.id.to_s).to_i, :name => self.name } 
   end
   
   def self.top_level

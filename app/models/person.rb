@@ -23,7 +23,7 @@ class Person < ActiveRecord::Base
   validates_presence_of :loginid
   
   attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids
-  attr_reader :ou_tokens, :group_tokens
+  attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
   
   def to_param
     loginid
@@ -171,10 +171,10 @@ class Person < ActiveRecord::Base
   end
 
   def ou_tokens=(ids)
-      self.ou_ids = ids.split(",")
+      self.ou_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
   end
 
   def group_tokens=(ids)
-      self.group_ids = ids.split(",")
+      self.group_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
   end
 end

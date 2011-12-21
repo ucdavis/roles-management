@@ -51,7 +51,7 @@
         <%= f.text_field :preferred_name, :class => "text" %>
     	</p>
     	<p>
-        <%= f.label :status %><br />
+        <%= f.label :status, "Active" %><br />
         <%= f.check_box :status, :class => "checkbox" %>
     	</p>
     	<p>
@@ -72,9 +72,15 @@
         	<%= f.label :ous, "Organization Membership" %><br />
         	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
       </p>
+
+      <p>
+        	<%= f.label :subordinates, "Subordinates" %><br />
+        	<%= f.text_field :subordinate_tokens, "data-pre" => @person.subordinates.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
+      </p>
     
       <%= f.submit "Update", :class => "submit mid" %>
     <% end %>
+    <br /><br />
 	</div> <!-- .block_content -->
 
 	<div class="block_content tab_content" id="revisions_tab">

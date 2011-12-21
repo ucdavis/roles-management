@@ -66,6 +66,12 @@ $(function() {
     theme: "facebook"
   });
 
+  $("#person_subordinate_tokens").tokenInput($("#person_subordinate_tokens").attr("method") + ".json", {
+    crossDomain: false,
+    prePopulate: $("#person_subordinate_tokens").data("pre"),
+    theme: "facebook"
+  });
+
   $("#classification_title_tokens").tokenInput($("#classification_title_tokens").attr("method") + ".json", {
     crossDomain: false,
     prePopulate: $("#classification_title_tokens").data("pre"),
