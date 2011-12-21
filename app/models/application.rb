@@ -15,4 +15,8 @@ class Application < ActiveRecord::Base
   def ou_tokens=(ids)
       self.ou_ids = ids.split(",")
   end
+  
+  def as_json(options={}) 
+    { :id => self.id, :name => self.name, :roles => self.roles } 
+  end
 end

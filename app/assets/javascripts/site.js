@@ -14,7 +14,10 @@ $(function() {
       // Drop the element
       $( this ).find( ".placeholder" ).remove();
       
-      var el = site.construct_pin(ui.draggable.text());
+      // Get the app ID for this card based on where they dropped the pin
+      var app_id = $(this).parent().parent().attr("data-represents-application");
+      
+      var el = site.construct_pin(ui.draggable.text(), app_id);
       $(el).trigger('click', function() {
         person_details(ui.draggable.attr("data-person-id"));
       });
@@ -36,9 +39,22 @@ $(function() {
 });
 
 (function (site, $, undefined) {
-  site.construct_pin = function(label) {
+  // Application and role relationship (filled in by index.html.erb)
+  site.applications = [];
+  
+  site.construct_pin = function(label, app_id) {
     var el = $( "<div></div>" ).addClass("pin");
-    $(el).html( "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: left; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + label + "</a><img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" /><div class=\"pin-content\"><span class=\"permission\"><input type=\"checkbox\" /> (<b>Access</b>) Allows the user to access this application</span></div>");
+    var el_html = "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: left; cursor: pointer;\" \
+                   onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + label + "</a> \
+                   <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" /> \
+                   <div class=\"pin-content\"></div>";
+    
+    $(el).html( el_html );
+    
+    // Add the necessary permissions
+    for(var role in site.applications[app_id].roles) {
+      $(el).children("div.pin-content").append("<span class=\"permission\"><input type=\"checkbox\" data-app-id=\"" + app_id + "\" data-role-id=\"" + role.id + "\" /> (<b>" + role.token + "</b>) Allows the user to access this application</span>");
+    }
     
     return el;
   }

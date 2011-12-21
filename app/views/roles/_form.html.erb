@@ -25,6 +25,12 @@
   </div>
   <div class="field">
 	<p>
+		<%= f.label :description, "Description <small>(user visible, e.g. \"Enables the creation of new ballots\")</small>".html_safe %><br />
+    <%= f.text_field :description, :class => "text" %>
+	</p>
+  </div>
+  <div class="field">
+	<p>
     <%= f.label :default %><br />
     &nbsp;<%= f.radio_button :default, true %> Enabled
     &nbsp;<%= f.radio_button :default, false %> Disabled

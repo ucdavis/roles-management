@@ -5,7 +5,7 @@ class Role < ActiveRecord::Base
   
   belongs_to :application
   
-  attr_accessible :token, :people_tokens, :people_ids, :default, :group_tokens, :descriptor
+  attr_accessible :token, :people_tokens, :people_ids, :default, :group_tokens, :descriptor, :description
   attr_reader :people_tokens, :group_tokens
   
   def people_tokens=(ids)
@@ -16,6 +16,6 @@ class Role < ActiveRecord::Base
   end
   
   def as_json(options={}) 
-      { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id } 
+      { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description } 
   end
 end

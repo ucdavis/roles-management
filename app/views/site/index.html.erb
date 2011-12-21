@@ -24,6 +24,9 @@
 	<div class="block_content">
 	  
 	  <% current_user.applications.each do |app| %>
+      <script type="text/javascript">
+      site.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
+      </script>
 	    <div class="card" data-represents-application="<%= app.id %>">
   	    <div class="card_head">
   	      <div class="bheadl"></div>
