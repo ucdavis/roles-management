@@ -14,7 +14,7 @@ $(function() {
       // Get the app ID for this card based on where they dropped the pin
       var app_id = $(this).parent().parent().attr("data-represents-application");
       
-      var el = site.construct_pin(ui.draggable.text(), app_id);
+      var el = site.register_role(ui.draggable.text());
       $(el).appendTo( this );
     }
   }).sortable({
@@ -33,6 +33,10 @@ $(function() {
   
   // Updates or creates pins to represent the roles it's given. Can be called multiple times for the same app/role
   site.register_role = function(entity, role) {
+    role = typeof(role) != 'undefined' ? role : null; // default parameter syntax
+    
+    // TODO: if role is null, assign the default roles
+    
     // If the pin doesn't exist, create it.
     if($("div.pin[data-application-id=" + role.application_id + "]").length == 0) {
       var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\"></div>" );
@@ -54,7 +58,7 @@ $(function() {
       });
     
       $(el).children("a").click(function() {
-        $(this).parent().children("div.pin-content").slideToggle('slow');
+        $(this).parent().children("div.pin-content").slideToggle('fast');
         return false;
       });
       

@@ -16,8 +16,6 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/1
   def show
-    
-
     respond_to do |format|
       format.html
     end
@@ -28,7 +26,7 @@ class ApplicationsController < ApplicationController
     @application = Application.new
 
     respond_to do |format|
-      format.html # new.html.erb
+      format.html
     end
   end
 
@@ -45,6 +43,14 @@ class ApplicationsController < ApplicationController
 
     respond_to do |format|
       if @application.save
+        # Also create the mandatory, default "access" role
+        r = Role.new
+        r.token = "access"
+        r.default = false
+        r.mandatory = true
+        r.descriptor = "Access"
+        r.description = "Allow access to this application"
+        @application.roles << r
         format.html { redirect_to(@application, :notice => 'Application was successfully created.') }
       else
         format.html { render :action => "new" }
