@@ -54,6 +54,20 @@ To keep things clear, these UIDs are presumed to be the ID given unless you're w
 directly in the model's class. If you are unsure if a function uses the UID correctly,
 simply look the individual or group up in the database and see if a prefix has been added.
 
+=== Mandatory vs Default Roles
+A role (permission template) has both a default and mandatory boolean.
+
+If a role is default, that implies any person or group assigned to that application or
+belonging to an OU or group assigned to that application will take that permission
+automatically. This behavior is reversed when default is turned off.
+
+If a role is mandatory, it will _not_ appear to the user, and _must_ be assigned. This
+is only used for the "access" role, representing the implied role a person or group
+gains when they are dragged into that application.
+
+If this does not make sense, ignore mandatory. It is set and utilized by the code and
+does not need to be turned on or off by an administration. It is purely internal.
+
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
 

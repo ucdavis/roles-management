@@ -51,6 +51,7 @@ class ApplicationsController < ApplicationController
         r.descriptor = "Access"
         r.description = "Allow access to this application"
         @application.roles << r
+        
         format.html { redirect_to(@application, :notice => 'Application was successfully created.') }
       else
         format.html { render :action => "new" }
