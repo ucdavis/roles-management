@@ -16,6 +16,6 @@ class Role < ActiveRecord::Base
   end
   
   def as_json(options={}) 
-      { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description } 
+      { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default } 
   end
 end

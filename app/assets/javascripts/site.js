@@ -12,10 +12,16 @@ $(function() {
     accept: ":not(.ui-sortable-helper)",
     drop: function( event, ui ) {
       // Get the app ID for this card based on where they dropped the pin
-      var app_id = $(this).parent().parent().attr("data-represents-application");
-      
-      var el = site.register_role(ui.draggable.text());
-      $(el).appendTo( this );
+      var app = $.parseJSON($(this).parent().parent().attr("data-application"));
+      var entity = $.parseJSON($(ui.draggable).attr("data-pin-entity"));
+	  
+	  
+	    // Determine the default and mandatory roles for this application and pass them all along
+	    for(var i = 0; i < app.roles.length; i++) { 
+        if(app.roles[i].default == true || app.roles[i].mandatory == true) {
+	  	    site.register_role(entity, app.roles[i]);
+        }
+	    }
     }
   }).sortable({
     items: "li:not(.placeholder)",
@@ -33,15 +39,10 @@ $(function() {
   
   // Updates or creates pins to represent the roles it's given. Can be called multiple times for the same app/role
   site.register_role = function(entity, role) {
-    role = typeof(role) != 'undefined' ? role : null; // default parameter syntax
-    
-    // TODO: if role is null, assign the default roles
-    
     // If the pin doesn't exist, create it.
     if($("div.pin[data-application-id=" + role.application_id + "]").length == 0) {
       var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\"></div>" );
-      var el_html = "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: left; cursor: pointer;\" \
-                     onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
+      var el_html = "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
                      <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" /> \
                      <div class=\"pin-content\"></div>";
     
@@ -62,7 +63,7 @@ $(function() {
         return false;
       });
       
-      var pin_list = $("div.card[data-represents-application=" + role.application_id + "]").children("div.card_content").children("div.pins");
+      var pin_list = $("div.card[data-application-id=" + role.application_id + "]").children("div.card_content").children("div.pins");
       
       $(pin_list).append(el);
       
