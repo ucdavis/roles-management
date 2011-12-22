@@ -15,14 +15,12 @@ class Person < ActiveRecord::Base
   has_many :ou_assignments
 
   has_many :ou_manager_assignments
-  #has_many :managements, :through => :ou_manager_assignments, :source => :ou, :primary_key => "manager_id"
 
   has_many :group_manager_assignments
-  #has_many :ownerships, :through => :group_manager_assignments, :source => :group, :primary_key => "owner_id"
   
   validates_presence_of :loginid
   
-  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids
+  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens
   attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
   
   def to_param
@@ -136,7 +134,7 @@ class Person < ActiveRecord::Base
     
     people
   end
-  
+    
   # Returns all groups owned by this person (see 'manages' for people)
   def owns
     groups = []
@@ -167,14 +165,25 @@ class Person < ActiveRecord::Base
 
   # Exports UIDs
   def as_json(options={}) 
-      { :id => ('1' + self.id.to_s).to_i, :name => self.first + " " + self.last } 
+    { :id => ('1' + self.id.to_s).to_i, :name => self.first + " " + self.last } 
   end
 
   def ou_tokens=(ids)
-      self.ou_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+    self.ou_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
   end
 
   def group_tokens=(ids)
-      self.group_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+    self.group_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+  end
+  
+  def subordinate_tokens=(ids)
+    ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+    
+    ids.each do |id|
+      p = Person.find_by_id(id)
+      if (p.managers.include? self == false)
+        p.managers << self
+      end
+    end
   end
 end
