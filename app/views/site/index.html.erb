@@ -23,7 +23,8 @@
 	
 	<div class="block_content">
 	  
-	  <% current_user.applications.each do |app| %>
+    <div style="width: 50%; float: left;">
+      <% current_user.applications.each_with_index do |app, i| %>
       <script type="text/javascript">
       site.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
       </script>
@@ -40,14 +41,20 @@
   	      </p>
 
           <div class="pins">
-            <div class="placeholder"><img src="/assets/add.png" alt="" /></div>
+            <div class="placeholder">Drag people and groups here</div>
           </div>
   	    </div> <!-- card_content -->
       	<div class="bendl"></div>
       	<div class="bendr"></div>
   	  </div> <!-- card -->
+      
+      <% if i >= (current_user.applications.length / 2) - 1 %>
+        </div>
+        <div style="width: 50%; float: left;">
+      <% end %>
 	  <% end %>
-  
+    </div>
+    
 	</div>		<!-- .block_content ends -->
 	
 	<div class="bendl"></div>
