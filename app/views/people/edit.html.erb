@@ -74,7 +74,7 @@
       </p>
 
       <p>
-        	<%= f.label :subordinates, "Subordinates" %><br />
+        	<%= f.label :subordinates, "Subordinates <small>(Only subordinates not via group ownership)</small>".html_safe %><br />
         	<%= f.text_field :subordinate_tokens, "data-pre" => @person.subordinates.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
       </p>
     

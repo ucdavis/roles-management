@@ -179,10 +179,24 @@ class Person < ActiveRecord::Base
   def subordinate_tokens=(ids)
     ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
     
+    # Remove any unmentioned IDs
+    subordinates.each do |s|
+      if (ids.include? s.id) == false
+        puts "removing old subordinate with id " + s.id.to_s
+        s.managers.delete self
+      end
+    end
+    
+    # Add the rest
     ids.each do |id|
       p = Person.find_by_id(id)
-      if (p.managers.include? self == false)
+      puts "checking to add subordinate with id " + id
+      if (p.managers.include? self) == false
+        puts "adding"
         p.managers << self
+        p.save
+      else
+        puts "don't need to add"
       end
     end
   end
