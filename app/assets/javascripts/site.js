@@ -43,7 +43,7 @@ $(function() {
     if($("div.pin[data-application-id=" + role.application_id + "]").length == 0) {
       var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\"></div>" );
       var el_html = "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
-                     <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" /> \
+                     <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"person_details\" /> \
                      <div class=\"pin-content\"></div>";
     
       $(el).html( el_html );
@@ -54,8 +54,8 @@ $(function() {
         $(el).children("div.pin-content").append("<span class=\"permission\"><input type=\"checkbox\" data-app-id=\"" + role.application_id + "\" data-role-id=\"" + r.id + "\" /> (<b>" + r.descriptor + "</b>) " + r.description + "</span>");
       }
     
-      $(el).trigger('click', function() {
-        person_details(ui.draggable.attr("data-person-id"));
+      $(el).children("img#person_details").click(function() {
+        site.person_details(entity.id);
       });
     
       $(el).children("a").click(function() {
@@ -93,11 +93,10 @@ $(function() {
   		'orig'			: $(this),
   		'href'      : Routes.people_path() + "/" + person_id,
   		'padding'		: 0,
-  		'transitionIn'	: 'elastic',
-  		'transitionOut'	: 'elastic',
+  		'transitionIn'	: 'fade',
+  		'transitionOut'	: 'fade',
   		'ajax' : {
-      		    type	: "GET",
-      		    data	: ''
+      		    type	: "GET"
       		}
     });
   }
