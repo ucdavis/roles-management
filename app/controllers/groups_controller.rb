@@ -34,6 +34,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       format.html
+      format.json { render json: @group }
     end
   end
 
@@ -50,8 +51,10 @@ class GroupsController < ApplicationController
       if @group.save!
         logger.info "#{current_user.loginid}@#{request.remote_ip}: Created group #{params[:group]}."
         format.html { redirect_to(@group, :notice => 'Group was successfully created.') }
+        format.json { render json: @group, status: :created, location: @group }
       else
         format.html { render :action => "new" }
+        format.json { render json: @group.errors, status: :unprocessable_entity }
       end
     end
   end

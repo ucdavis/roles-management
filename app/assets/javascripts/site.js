@@ -107,27 +107,26 @@ $(function() {
   site.create_group = function (name) {
     console.log("TODO: create a group with name " + name);
     
-    var entity = {};
-    entity.id = 9999;
-    entity.name = name;
-    
-    return entity;
+    $.get(Routes.new_group_path() + ".json", function(group) {
+      group.name = name;
+      $.post(Routes.groups_path() + ".json", {group: group}, function (data, status) {
+        // Remove the blank 'New Group' entity
+        $("div#groups ul.pins li.new").remove();
+        
+        // Create a new group pin with the entity and reset the blank 'New Group' one
+        $("div#groups ul.pins").append("<li data-pin-type=\"group\" data-pin-entity=\"" + $.toJSON(group) + "\">" + group.name + "</li>");
+        
+        $("div#groups ul.pins").append("<li class=\"new\" data-pin-type=\"group\" data-pin-entity=\"0\">Create New Group</li>");
+        $("ul.pins li.new").click(site.new_group_pin_click);
+      });      
+    });
   }
   
   site.new_group_pin_click = function() {
     $(this).html("<input type=\"text\" style=\"border: 0; background: none; font-size: 12px;\" />");
     $(this).children("input").keypress(function(event) {
       if ( event.which == 13 ) {
-        var entity = site.create_group($(this).val());
-        
-        // Remove the blank 'New Group' entity
-        $("div#groups ul.pins li.new").remove();
-        
-        // Create a new group pin with the entity and reset the blank 'New Group' one
-        $("div#groups ul.pins").append("<li data-pin-type=\"group\" data-pin-entity=\"" + entity + "\">" + entity.name + "</li>");
-        
-        $("div#groups ul.pins").append("<li class=\"new\" data-pin-type=\"group\" data-pin-entity=\"0\">Create New Group</li>");
-        $("ul.pins li.new").click(site.new_group_pin_click);
+        site.create_group($(this).val());
         
         event.preventDefault();
       }
