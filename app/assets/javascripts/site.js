@@ -14,8 +14,7 @@ $(function() {
       // Get the app ID for this card based on where they dropped the pin
       var app = $.parseJSON($(this).parent().parent().attr("data-application"));
       var entity = $.parseJSON($(ui.draggable).attr("data-pin-entity"));
-	  
-	  
+	    
 	    // Determine the default and mandatory roles for this application and pass them all along
 	    for(var i = 0; i < app.roles.length; i++) { 
         if(app.roles[i].default == true || app.roles[i].mandatory == true) {
@@ -84,7 +83,7 @@ $(function() {
     $(el).parent().remove();
     if(ol.children().length == 0) {
       // Emptied out the last pin. Re-insert the default placerholder text so the 'ol' doesn't disappear entirely
-      ol.append("<div class=\"placeholder\"><img src=\"/assets/add.png\" alt=\"\" /></div>");
+      ol.append("<div class=\"placeholder\">Drag people and groups here</div>");
     }
   }
 
