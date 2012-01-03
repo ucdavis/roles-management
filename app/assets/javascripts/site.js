@@ -1,4 +1,4 @@
-// Not a site-wide JS file - for use in the 'Site' controller
+// Not a site-wide JS file - the name implies use for the 'Site' controller
 
 $(function() {
   // Set up the drag-and-drop
@@ -30,6 +30,9 @@ $(function() {
       $( this ).removeClass( "ui-state-default" );
     }
   });
+  
+  // Set up the new group button functionality
+  $("ul.pins li.new").click(site.new_group_pin_click);
 });
 
 (function (site, $, undefined) {
@@ -98,5 +101,37 @@ $(function() {
       		    type	: "GET"
       		}
     });
+  }
+  
+  // Creates a group for the current user named 'name' and returns the group entity
+  site.create_group = function (name) {
+    console.log("TODO: create a group with name " + name);
+    
+    var entity = {};
+    entity.id = 9999;
+    entity.name = name;
+    
+    return entity;
+  }
+  
+  site.new_group_pin_click = function() {
+    $(this).html("<input type=\"text\" style=\"border: 0; background: none; font-size: 12px;\" />");
+    $(this).children("input").keypress(function(event) {
+      if ( event.which == 13 ) {
+        var entity = site.create_group($(this).val());
+        
+        // Remove the blank 'New Group' entity
+        $("div#groups ul.pins li.new").remove();
+        
+        // Create a new group pin with the entity and reset the blank 'New Group' one
+        $("div#groups ul.pins").append("<li data-pin-type=\"group\" data-pin-entity=\"" + entity + "\">" + entity.name + "</li>");
+        
+        $("div#groups ul.pins").append("<li class=\"new\" data-pin-type=\"group\" data-pin-entity=\"0\">Create New Group</li>");
+        $("ul.pins li.new").click(site.new_group_pin_click);
+        
+        event.preventDefault();
+      }
+    });
+    $(this).children("input").focus();
   }
 } (window.site = window.site || {}, jQuery));

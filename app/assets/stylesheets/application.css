@@ -1126,6 +1126,7 @@ li.token-input-input-token-facebook {
   background: url("../images/btnb_grey.gif") no-repeat;
   color: #666;
   text-shadow: white 1px 1px 1px;
+  cursor: text;
 }
 
 .block .block_content div.pins div.pin {
