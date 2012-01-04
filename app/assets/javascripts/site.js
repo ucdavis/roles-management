@@ -38,6 +38,7 @@ $(function() {
 (function (site, $, undefined) {
   // Application and role relationship (filled in by index.html.erb)
   site.applications = [];
+  site.current_user_id = null;
   
   // Updates or creates pins to represent the roles it's given. Can be called multiple times for the same app/role
   site.register_role = function(entity, role) {
@@ -109,6 +110,7 @@ $(function() {
     
     $.get(Routes.new_group_path() + ".json", function(group) {
       group.name = name;
+      group.owner_tokens = site.current_user_id;
       $.post(Routes.groups_path() + ".json", {group: group}, function (data, status) {
         // Remove the blank 'New Group' entity
         $("div#groups ul.pins li.new").remove();
