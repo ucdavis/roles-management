@@ -74,6 +74,9 @@ $(function() {
       $(pin_list).find( ".placeholder" ).remove();
     }
     
+    // Save this permission
+    
+    
     // Check the box representing this permission
     $("div.pin div.pin-content span.permission input[type=checkbox][data-app-id=" + role.application_id + "][data-role-id=" + role.id + "]").prop("checked", true);
     
@@ -116,7 +119,12 @@ $(function() {
         $("div#groups ul.pins li.new").remove();
         
         // Create a new group pin with the entity and reset the blank 'New Group' one
-        $("div#groups ul.pins").append("<li data-pin-type=\"group\" data-pin-entity=\"" + $.toJSON(group) + "\">" + group.name + "</li>");
+        $("div#groups ul.pins").append("<li data-pin-type=\"group\">" + group.name + "</li>");
+        $("div#groups ul.pins li:last").attr("data-pin-entity", $.toJSON(group));
+        $("div#groups ul.pins li:last").draggable({
+          appendTo: "body",
+          helper: "clone"
+        });
         
         $("div#groups ul.pins").append("<li class=\"new\" data-pin-type=\"group\" data-pin-entity=\"0\">Create New Group</li>");
         $("ul.pins li.new").click(site.new_group_pin_click);
