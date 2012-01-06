@@ -33,23 +33,6 @@ $(function() {
   
   // Set up the new group button functionality
   $("ul.pins li.new").click(site.new_group_pin_click);
-  
-  // Set up tool tips
-  $("[data-tooltip]").each(
-    function() {
-      $(this).qtip({
-        content: $(this).attr("data-tooltip"),
-        show: 'mouseover',
-        hide: 'mouseout',
-        position: {
-          corner: {
-            target: 'bottomMiddle',
-            tooltip: 'topMiddle'
-          }
-        }
-      });
-    }
-  );
 });
 
 (function (site, $, undefined) {

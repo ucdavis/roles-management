@@ -330,4 +330,21 @@ $(function() {
       xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
     }
   });
+  
+  // Set up tool tips
+  $("[data-tooltip]").each(
+    function() {
+      $(this).qtip({
+        content: $(this).attr("data-tooltip"),
+        show: 'mouseover',
+        hide: 'mouseout',
+        position: {
+          corner: {
+            target: 'bottomMiddle',
+            tooltip: 'topMiddle'
+          }
+        }
+      });
+    }
+  );
 });
