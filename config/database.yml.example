@@ -27,3 +27,15 @@ production:
 ldap:
   base_dn: dn
   base_pw: pw
+
+ad_people:
+  host: ad.domain.com
+  user: cn=admin,dc=ad,dc=domain,dc=com
+  pass: secret
+  base: ou=people,dc=ad,dc=domain,dc=com
+  
+ad_groups:
+  host: ad.domain.com
+  user: cn=admin,dc=ad,dc=domain,dc=com
+  pass: secret
+  base: ou=groups,dc=ad,dc=domain,dc=com
