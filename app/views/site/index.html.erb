@@ -1,7 +1,7 @@
 <%= javascript_include_tag params[:controller] %>
 
 <div style="float: right; clear: both; margin: 0.5em; margin-top: -1em;">
-  <select class="styled">
+  <select class="styled" data-tooltip="View and edit permissions of another individual">
   	<optgroup label="Subordinates">
   		<option>View As ...</option>
   		<% current_user.subordinates.each do |person| %>
@@ -42,7 +42,7 @@
   	      </p>
 
           <div class="pins">
-            <div class="placeholder">Drag people and groups here</div>
+            <div class="placeholder" data-tooltip="Drag people and groups from the right column onto this space to make assignments.">Drag people and groups here</div>
           </div>
   	    </div> <!-- card_content -->
       	<div class="bendl"></div>
