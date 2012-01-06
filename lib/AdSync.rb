@@ -3,6 +3,7 @@ module AdSync
   AD_PEOPLE_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ad_people']
   AD_GROUPS_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ad_groups']
   
+  # Takes loginid as a string (e.g. 'jsmith') and returns an ActiveDirectory::User object
   def AdSync.fetch_user(loginid)
     settings = {
         :host => AD_PEOPLE_SETTINGS['host'],
@@ -20,6 +21,7 @@ module AdSync
     ActiveDirectory::User.find(:first, :samaccountname => loginid)
   end
   
+  # Takes user as an ActiveDirectory::User object and group as a string (e.g. 'SOME-GROUP') and returns boolean
   def AdSync.add_to_group(user, group)
     settings = {
         :host => AD_GROUPS_SETTINGS['host'],
