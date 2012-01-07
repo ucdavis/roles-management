@@ -7,7 +7,7 @@ DSSRM::Application.routes.draw do
   get "site/access_denied"
 
   resources :applications do
-    resources :roles
+    resources :applications
   end
 
   resources :groups
@@ -39,4 +39,8 @@ DSSRM::Application.routes.draw do
     get "resolve", :controller => "custom"
     get "org_chart", :controller => "custom"
   end
+  
+  # For AJAX on the CAO interface (checking and unchecking permission boxes)
+  post "/roles/assign", :controller => "role_assignments", :action => "create"
+  delete "/roles/unassign", :controller => "role_assignments", :action => "destroy"
 end

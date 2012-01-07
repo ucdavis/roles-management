@@ -155,21 +155,21 @@
   site_access_denied_path: function(options) {
   return Utils.build_path(0, ["/site/access_denied"], ["format"], arguments)
   },
-// application_roles => /applications/:application_id/roles(.:format)
-  application_roles_path: function(_application_id, options) {
-  return Utils.build_path(1, ["/applications/", "/roles"], ["format"], arguments)
+// application_applications => /applications/:application_id/applications(.:format)
+  application_applications_path: function(_application_id, options) {
+  return Utils.build_path(1, ["/applications/", "/applications"], ["format"], arguments)
   },
-// new_application_role => /applications/:application_id/roles/new(.:format)
-  new_application_role_path: function(_application_id, options) {
-  return Utils.build_path(1, ["/applications/", "/roles/new"], ["format"], arguments)
+// new_application_application => /applications/:application_id/applications/new(.:format)
+  new_application_application_path: function(_application_id, options) {
+  return Utils.build_path(1, ["/applications/", "/applications/new"], ["format"], arguments)
   },
-// edit_application_role => /applications/:application_id/roles/:id/edit(.:format)
-  edit_application_role_path: function(_application_id, _id, options) {
-  return Utils.build_path(2, ["/applications/", "/roles/", "/edit"], ["format"], arguments)
+// edit_application_application => /applications/:application_id/applications/:id/edit(.:format)
+  edit_application_application_path: function(_application_id, _id, options) {
+  return Utils.build_path(2, ["/applications/", "/applications/", "/edit"], ["format"], arguments)
   },
-// application_role => /applications/:application_id/roles/:id(.:format)
-  application_role_path: function(_application_id, _id, options) {
-  return Utils.build_path(2, ["/applications/", "/roles/"], ["format"], arguments)
+// application_application => /applications/:application_id/applications/:id(.:format)
+  application_application_path: function(_application_id, _id, options) {
+  return Utils.build_path(2, ["/applications/", "/applications/"], ["format"], arguments)
   },
 // applications => /applications(.:format)
   applications_path: function(options) {
@@ -378,6 +378,14 @@
 // api_org_chart => /api/org_chart(.:format)
   api_org_chart_path: function(options) {
   return Utils.build_path(0, ["/api/org_chart"], ["format"], arguments)
+  },
+// roles_assign => /roles/assign(.:format)
+  roles_assign_path: function(options) {
+  return Utils.build_path(0, ["/roles/assign"], ["format"], arguments)
+  },
+// roles_unassign => /roles/unassign(.:format)
+  roles_unassign_path: function(options) {
+  return Utils.build_path(0, ["/roles/unassign"], ["format"], arguments)
   },
 // graph_authorization_rules => /authorization_rules/graph(.:format)
   graph_authorization_rules_path: function(options) {
