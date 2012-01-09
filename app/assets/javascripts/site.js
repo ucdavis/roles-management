@@ -33,6 +33,17 @@ $(function() {
   
   // Set up the new group button functionality
   $("ul.pins li.new").click(site.new_group_pin_click);
+  
+  $("ul.pins li").hover(
+    function() {
+      // mouse enter
+      $(this).children("img").css("display", "block");
+    },
+    function() {
+      // mouse leave
+      $(this).children("img").css("display", "none");
+    }
+  )
 });
 
 (function (site, $, undefined) {
@@ -45,7 +56,7 @@ $(function() {
     // If the pin doesn't exist, create it.
     if($("div.pin[data-application-id=" + role.application_id + "]").length == 0) {
       var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\"></div>" );
-      var el_html = "<img src=\"/images/cancel.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
+      var el_html = "<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
                      <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"person_details\" /> \
                      <div class=\"pin-content\"></div>";
     

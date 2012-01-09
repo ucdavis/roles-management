@@ -76,7 +76,7 @@
 	<div class="block_content tab_content" id="groups">
 	  <ul class="pins">
 	    <% current_user.owns.each do |group| %>
-	      <li data-tooltip="Drag these over to the desired applications on the left." data-pin-type="group" data-pin-entity="<%= group.to_json %>"><%= group.name %></li>
+	      <li data-tooltip="Drag these over to the desired applications on the left." data-pin-type="group" data-pin-entity="<%= group.to_json %>"><img src="/images/remove.png" style="margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;" onClick="javascript:site.delete_group($(this));" /><%= group.name %></li>
 	    <% end %>
         <li class="new" data-pin-type="group" data-pin-entity="0">Create New Group</li>
 		</ul>
