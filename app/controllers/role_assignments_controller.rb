@@ -14,23 +14,24 @@ class RoleAssignmentsController < ApplicationController
         format.json { render json: @assignment.errors, status: :unprocessable_entity }
       end
     end
-    
   end
   
+  #$.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'})
   def destroy
     # Destroying a person-based or group-based role assignment?
     if params[:assignment][:group_id].nil?
       # Person
-      @assignment = RoleAssignment.find_by_role_id_and_person_id(params[:assignment])
+      @assignment = RoleAssignment.find_by_role_id_and_person_id(params[:assignment][:role_id], params[:assignment][:person_id])
     else
       # Group
-      @assignment = RoleAssignment.find_by_role_id_and_group_id(params[:assignment])
+      @assignment = RoleAssignment.find_by_role_id_and_group_id(params[:assignment][:role_id], params[:assignment][:group_id])
     end
-    @assignment.destroy!
+    
+    @assignment.destroy
     
     #TODO: Ensure logged in user controls this application and person
     
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Destroyed role assignment #{params[:id]}."
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Destroyed role assignment #{params[:assignment][:id]}."
 
     respond_to do |format|
       format.json { head :ok }
