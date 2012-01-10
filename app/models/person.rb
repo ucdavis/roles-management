@@ -200,4 +200,20 @@ class Person < ActiveRecord::Base
       end
     end
   end
+  
+  def can_administer_application?(app_id)
+    applications.collect{ |x| x.id }.include? app_id
+  end
+
+  def can_administer_person?(person_id)
+    subordinates.collect{ |x| x.id }.include? person_id
+  end
+
+  def can_administer_group?(group_id)
+    groups.collect{ |x| x.id }.include? person_id
+  end
+
+  def can_administer_role?(role_id)
+    applications.collect{|x| x.role_ids}.flatten.include? role_id
+  end
 end
