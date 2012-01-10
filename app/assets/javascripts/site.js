@@ -154,4 +154,8 @@ $(function() {
     });
     $(this).children("input").focus();
   }
+  
+  site.delete_group = function (group_pin) {
+    console.log(group_pin);
+  }
 } (window.site = window.site || {}, jQuery));
