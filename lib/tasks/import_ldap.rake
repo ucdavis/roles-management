@@ -6,6 +6,8 @@ namespace :ldap do
     # Include the large lot of UCD info (dept codes, title codes, etc.)
     load 'UcdLookups.rb'
 
+    Rails.logger.info "Beginning LDAP import."
+
     # Set up some manual data - would go in UcdLookups.rb but UcdLookups is auto-generated w/o this info
     basePeople = 'ou=People,dc=ucdavis,dc=edu'
     manualIncludes=['aeguyer','millerlm','djmoglen','mebalvin','mckinney','ssantam','tmheath','rnanakul','olichney','sukkim','jpokorny','bgrunewa','rabronst','kbaynes','szneena','pcmundy','wjarrold','julieluu','steichho','chuff','cmachado','alamsyah','schuang','clare186','ladyd252','aheusser','pkubitz','kshap','bbrelles','blmiss','pjdegenn','cdaniels','jyiwang','anschnei','eaisham','ralatif','cwbishop','fddiaz','jinchen','ajkou','sphan127','ndelie','weidner']
@@ -159,6 +161,8 @@ namespace :ldap do
     # Disconnect
     conn.unbind
     
+    Rails.logger.info "Completed LDAP queries. Processing ..."
+    
     #
     # STEP TWO: Add people, groups, etc. to local database
     #
@@ -233,13 +237,15 @@ namespace :ldap do
         person.preferred_name = p["displayName"]
     
         if person.valid? == false
-          puts "Unable to save individual:"
-          pp person
+          Rails.logger.info "Unable to create or update persion with ID #{person.id}"
         else
+          Rails.logger.info "Creating or updated persion with ID #{person.id}"
           person.save!
         end
       end
     end
+    
+    Rails.logger.info "Finished LDAP import."
   end
   
   desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'
