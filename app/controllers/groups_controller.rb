@@ -15,7 +15,7 @@ class GroupsController < ApplicationController
 
   # GET /groups/1
   def show
-    @group = Group.find_by_name(params[:id])
+    @group = Group.find_by_id(params[:id])
 
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
 
@@ -40,7 +40,7 @@ class GroupsController < ApplicationController
 
   # GET /groups/1/edit
   def edit
-    @group = Group.find_by_name(params[:id])
+    @group = Group.find_by_id(params[:id])
   end
 
   # POST /groups
@@ -61,7 +61,7 @@ class GroupsController < ApplicationController
 
   # PUT /groups/1
   def update
-    @group = Group.find_by_name(params[:id])
+    @group = Group.find_by_id(params[:id])
     
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated group #{params[:id]}."
 
@@ -76,10 +76,14 @@ class GroupsController < ApplicationController
 
   # DELETE /groups/1
   def destroy
-    @group = Group.find_by_name(params[:id])
-    @group.destroy!
+    unless current_user.can_administer_group? params[:id] == false
+      @group = Group.find_by_id(params[:id])
+      @group.destroy!
     
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted group #{params[:id]}."
+      logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted group #{params[:id]}."
+    else
+      logger.info "#{current_user.loginid}@#{request.remote_ip}: Attempted to delete group #{params[:id]} but does not have permission."
+    end
 
     respond_to do |format|
       format.html { redirect_to(groups_url) }
@@ -90,7 +94,7 @@ class GroupsController < ApplicationController
   
   def load_group
     if permitted_to? :show, :groups
-      @group = Group.find_by_name(params[:id])
+      @group = Group.find_by_id(params[:id])
     end
   end
 end

@@ -177,6 +177,11 @@ $(function() {
   
   site.delete_group = function (group_pin) {
     var group_id = $.parseJSON(group_pin).id.toString().substr(1);
-    console.log(group_id);
+    
+    // Delete the group
+    $.ajax({ url: Routes.group_path(group_id) + ".json", data: {}, type: 'DELETE', success: function() {
+      // Remove the pin
+      console.log("group removed");
+    }});
   }
 } (window.site = window.site || {}, jQuery));

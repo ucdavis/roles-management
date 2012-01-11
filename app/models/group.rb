@@ -53,10 +53,6 @@ class Group < ActiveRecord::Base
     self.person_ids = ids.split(",")
   end
   
-  def to_param
-    name.gsub("/", "_").gsub("&", "_").gsub(".", "_")
-  end
-  
   def as_json(options={}) 
     { :id => ('2' + self.id.to_s).to_i, :name => self.name } 
   end
