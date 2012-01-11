@@ -179,9 +179,12 @@ $(function() {
     var group_id = $.parseJSON(group_pin).id.toString().substr(1);
     
     // Delete the group
-    $.ajax({ url: Routes.group_path(group_id) + ".json", data: {}, type: 'DELETE', success: function() {
-      // Remove the pin
-      console.log("group removed");
+    $.ajax({ url: Routes.group_path(group_id) + ".json", data: {}, type: 'DELETE', complete: function(data, status) {
+      // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
+      var el = $("ul.pins li[data-group-id=" + group_id + "]");
+      el.fadeOut('fast', function() {
+        $(el).remove();
+      }); // fade out from the DOM
     }});
   }
 } (window.site = window.site || {}, jQuery));

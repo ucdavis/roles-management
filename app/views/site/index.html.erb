@@ -76,7 +76,7 @@
 	<div class="block_content tab_content" id="groups">
 	  <ul class="pins">
 	    <% current_user.owns.each do |group| %>
-	      <li data-tooltip="Drag these over to the desired applications on the left." data-pin-type="group" data-pin-entity="<%= group.to_json %>"><img src="/images/remove.png" style="margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;" onClick="javascript:site.delete_group($(this).parent().attr('data-pin-entity'));" /><%= group.name %></li>
+      <li data-tooltip="Drag these over to the desired applications on the left." data-pin-type="group" data-pin-entity="<%= group.to_json %>" data-group-id="<%= group.id %>"><img src="/images/remove.png" style="margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;" onClick="javascript:site.delete_group($(this).parent().attr('data-pin-entity'));" /><%= group.name %></li>
 	    <% end %>
         <li class="new" data-pin-type="group" data-pin-entity="0">Create New Group</li>
 		</ul>
@@ -85,7 +85,7 @@
 	<div class="block_content tab_content" id="people">
 	  <ul class="pins">
 	    <% current_user.subordinates.each do |person| %>
-      <li data-pin-type="person" data-pin-entity="<%= person.to_json %>"><%= person.name %></li>
+      <li data-tooltip="Drag these over to the desired applications on the left." data-pin-type="person" data-pin-entity="<%= person.to_json %>" data-person-id="<%= person.id %>"><%= person.name %></li>
       <% end %>
     </ul>
     <% if current_user.subordinates.count == 0 %>
