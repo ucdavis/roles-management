@@ -55,7 +55,7 @@ $(function() {
   site.register_role = function(entity, role) {
     // If the pin doesn't exist, create it.
     if($("div.pin[data-application-id=" + role.application_id + "]").length == 0) {
-      var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\"></div>" );
+      var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
       var el_html = "<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
                      <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"person_details\" /> \
                      <div class=\"pin-content\"></div>";
@@ -67,6 +67,23 @@ $(function() {
         var r = site.applications[role.application_id].roles[i];
         $(el).children("div.pin-content").append("<span class=\"permission\"><input type=\"checkbox\" data-app-id=\"" + role.application_id + "\" data-role-id=\"" + r.id + "\" /> (<b>" + r.descriptor + "</b>) " + r.description + "</span>");
       }
+      
+      // Register the checkbox callbacks (to set/unset permissions via AJAX)
+      $(el).find("div.pin-content span.permission input[type=checkbox]").change(function() {
+        var assignment = {};
+        
+        assignment.role_id = $(this).attr("data-role-id");
+        assignment.entity_id = $(this).parent().parent().parent().attr("data-entity-id");
+        
+        // Turning the permission on or off?
+        if($(this).attr("checked") == undefined) {
+          // off
+          $.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'});
+        } else {
+          // on
+          $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: assignment}, type: 'POST'});
+        }
+      });
     
       $(el).children("img#person_details").click(function() {
         site.person_details(entity.id);
@@ -85,7 +102,7 @@ $(function() {
       $(pin_list).find( ".placeholder" ).remove();
     }
     
-    // Save this permission
+    // Save this permission assignment
     
     
     // Check the box representing this permission
@@ -120,8 +137,6 @@ $(function() {
   
   // Creates a group for the current user named 'name' and returns the group entity
   site.create_group = function (name) {
-    console.log("TODO: create a group with name " + name);
-    
     $.get(Routes.new_group_path() + ".json", function(group) {
       group.name = name;
       group.owner_tokens = site.current_user_id;

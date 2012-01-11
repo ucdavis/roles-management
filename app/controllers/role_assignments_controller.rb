@@ -1,8 +1,15 @@
 # Used for AJAX calls from the CAO interface
 class RoleAssignmentsController < ApplicationController
   def create
-    # assignment = { :person_id (or :group_id), :role_id }
-    @assignment = RoleAssignment.new(params[:assignment])
+    @assignment = RoleAssignment.new
+    
+    @assignment.role_id = params[:assignment][:role_id]
+    # Person or group?
+    if params[:assignment][:entity_id][0] == '1'
+      @assignment.person_id = params[:assignment][:entity_id][1..-1].to_i
+    else
+      @assignment.group_id = params[:assignment][:entity_id][1..-1].to_i
+    end
 
     #TODO: Ensure logged in user controls that application and person
 
@@ -16,25 +23,27 @@ class RoleAssignmentsController < ApplicationController
     end
   end
   
-  #$.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'})
   def destroy
-    #TODO: Ensure logged in user controls this person
     unless current_user.can_administer_role? params[:assignment][:role_id] == false    
       # Destroying a person-based or group-based role assignment?
-      if params[:assignment][:group_id].nil?
+      if params[:assignment][:entity_id][0] == '1'
         # Person
-        unless current_user.can_administer_person? params[:assignment][:person_id] == false
-          @assignment = RoleAssignment.find_by_role_id_and_person_id(params[:assignment][:role_id], params[:assignment][:person_id])
+        person_id = params[:assignment][:entity_id][1..-1].to_i # strip off the UID indicator
+        unless current_user.can_administer_person? person_id == false
+          @assignment = RoleAssignment.find_by_role_id_and_person_id(params[:assignment][:role_id], person_id)
         end
       else
         # Group
-        unless current_user.can_administer_group? params[:assignment][:group_id] == false
-          @assignment = RoleAssignment.find_by_role_id_and_group_id(params[:assignment][:role_id], params[:assignment][:group_id])
+        group_id = params[:assignment][:entity_id][1..-1].to_i # strip off the UID indicator
+        unless current_user.can_administer_group? group_id == false
+          @assignment = RoleAssignment.find_by_role_id_and_group_id(params[:assignment][:role_id], group_id)
         end
       end
     
-      unless @assignment.nil? @assignment.destroy
-    
+      unless @assignment.nil?
+        @assignment.destroy
+      end
+      
       logger.info "#{current_user.loginid}@#{request.remote_ip}: Destroyed role assignment #{params[:assignment][:id]}."
     end
 
