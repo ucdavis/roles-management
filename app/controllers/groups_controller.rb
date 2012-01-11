@@ -78,7 +78,7 @@ class GroupsController < ApplicationController
   def destroy
     unless current_user.can_administer_group? params[:id] == false
       @group = Group.find_by_id(params[:id])
-      @group.destroy!
+      @group.destroy
     
       logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted group #{params[:id]}."
     else
@@ -87,6 +87,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to(groups_url) }
+      format.json { head :ok }
     end
   end
   

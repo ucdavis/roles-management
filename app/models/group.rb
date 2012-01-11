@@ -10,7 +10,7 @@ class Group < ActiveRecord::Base
   has_many :roles, :through => :role_assignments
   
   has_many :owners, :class_name => "Person", :through => :group_owner_assignments
-  has_many :group_owner_assignments
+  has_many :group_owner_assignments, :dependent => :destroy
   
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule"
   
