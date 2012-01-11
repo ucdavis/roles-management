@@ -52,7 +52,10 @@ $(function() {
   site.current_user_id = null;
   
   // Updates or creates pins to represent the roles it's given. Can be called multiple times for the same app/role
-  site.register_role = function(entity, role) {
+  // dom_only = don't make the AJAX call to actually save the permission. Useful when merely constructing the existing list
+  site.register_role = function(entity, role, dom_only) {
+    if(dom_only == undefined) { dom_only = false; }
+    
     // If the pin doesn't exist, create it.
     if($("div.pin[data-application-id=" + role.application_id + "]").length == 0) {
       var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
@@ -103,7 +106,9 @@ $(function() {
     }
     
     // Save this permission assignment
-    $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: {role_id: role.id, entity_id: entity.id}}, type: 'POST'});
+    if( dom_only == false) {
+      $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: {role_id: role.id, entity_id: entity.id}}, type: 'POST'});
+    }
     
     // Check the box representing this permission
     $("div.pin div.pin-content span.permission input[type=checkbox][data-app-id=" + role.application_id + "][data-role-id=" + role.id + "]").prop("checked", true);

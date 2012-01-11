@@ -103,14 +103,14 @@
   // Groups
   <% current_user.owns.each do |group| %>
     <% group.roles.each do |role| %>
-      site.register_role( <%= group.to_json.html_safe %>, <%= role.to_json.html_safe %> )
+      site.register_role( <%= group.to_json.html_safe %>, <%= role.to_json.html_safe %>, true )
     <% end %>
   <% end %>
 
   // People
   <% current_user.subordinates.each do |person| %>
     <% person.roles.each do |role| %>
-      site.register_role( <%= person.to_json.html_safe %>, <%= role.to_json.html_safe %> )
+      site.register_role( <%= person.to_json.html_safe %>, <%= role.to_json.html_safe %>, true )
     <% end %>
   <% end %>
 </script>
