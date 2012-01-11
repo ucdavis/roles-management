@@ -176,6 +176,7 @@ $(function() {
   }
   
   site.delete_group = function (group_pin) {
-    console.log(group_pin);
+    var group_id = $.parseJSON(group_pin).id.toString().substr(1);
+    console.log(group_id);
   }
 } (window.site = window.site || {}, jQuery));
