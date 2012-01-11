@@ -1,17 +1,22 @@
-# Used for AJAX calls from the CAO interface
+# Useful with AJAX calls from the CAO interface
 class RoleAssignmentsController < ApplicationController
   def create
-    @assignment = RoleAssignment.new
-    
-    @assignment.role_id = params[:assignment][:role_id]
-    # Person or group?
-    if params[:assignment][:entity_id][0] == '1'
-      @assignment.person_id = params[:assignment][:entity_id][1..-1].to_i
-    else
-      @assignment.group_id = params[:assignment][:entity_id][1..-1].to_i
+    unless current_user.can_administer_role? params[:assignment][:role_id] == false    
+      @assignment = RoleAssignment.new
+      @assignment.role_id = params[:assignment][:role_id]
+      # Person or group?
+      if params[:assignment][:entity_id][0] == '1'
+        person_id = params[:assignment][:entity_id][1..-1].to_i
+        unless current_user.can_administer_person? person_id == false
+          @assignment.person_id = person_id
+        end
+      else
+        group_id = params[:assignment][:entity_id][1..-1].to_i
+        unless current_user.can_administer_group? group_id == false
+          @assignment.group_id = group_id
+        end
+      end
     end
-
-    #TODO: Ensure logged in user controls that application and person
 
     respond_to do |format|
       if @assignment.save!
@@ -42,9 +47,10 @@ class RoleAssignmentsController < ApplicationController
     
       unless @assignment.nil?
         @assignment.destroy
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Destroyed role assignment of role #{params[:assignment][:role_id]} for entity #{params[:assignment][:entity_id]}."
+      else
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Failed to destroy role assignment of role #{params[:assignment][:role_id]} for entity #{params[:assignment][:entity_id]}."
       end
-      
-      logger.info "#{current_user.loginid}@#{request.remote_ip}: Destroyed role assignment #{params[:assignment][:id]}."
     end
 
     respond_to do |format|

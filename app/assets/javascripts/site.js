@@ -103,7 +103,7 @@ $(function() {
     }
     
     // Save this permission assignment
-    
+    $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: {role_id: role.id, entity_id: entity.id}}, type: 'POST'});
     
     // Check the box representing this permission
     $("div.pin div.pin-content span.permission input[type=checkbox][data-app-id=" + role.application_id + "][data-role-id=" + role.id + "]").prop("checked", true);

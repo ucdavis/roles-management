@@ -210,7 +210,7 @@ class Person < ActiveRecord::Base
   end
 
   def can_administer_group?(group_id)
-    groups.collect{ |x| x.id }.include? person_id
+    groups.collect{ |x| x.id }.include? group_id
   end
 
   def can_administer_role?(role_id)
