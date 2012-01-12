@@ -49,13 +49,13 @@
       	<div class="bendr"></div>
   	  </div> <!-- card -->
       
-      <% if i >= (current_user.applications.length / 2) - 1 %>
+      <% if (i >= (current_user.applications.length / 2)) && (@wrapped_already != true) %>
+      <% @wrapped_already = true %>
         </div>
         <div style="width: 50%; float: left;">
       <% end %>
 	  <% end %>
     </div>
-    
 	</div>		<!-- .block_content ends -->
 	
 	<div class="bendl"></div>

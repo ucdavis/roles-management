@@ -42,7 +42,7 @@ $(function() {
     if(dom_only == undefined) { dom_only = false; }
     
     // If the pin doesn't exist, create it.
-    if($("div.pin[data-application-id=" + role.application_id + "]").length == 0) {
+    if($("div.pin[data-entity-id=" + entity.id + "]").length == 0) {
       var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
       var el_html = "<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
                      <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"person_details\" /> \
