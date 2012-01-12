@@ -2,10 +2,6 @@
 
 $(function() {
   // Set up the drag-and-drop
-  $( "ul.pins li" ).draggable({
-    appendTo: "body",
-    helper: "clone"
-  });
   $( "div.pins" ).droppable({
     activeClass: "ui-state-default",
     hoverClass: "ui-state-hover",
@@ -13,7 +9,7 @@ $(function() {
     drop: function( event, ui ) {
       // Get the app ID for this card based on where they dropped the pin
       var app = $.parseJSON($(this).parent().parent().attr("data-application"));
-      var entity = $.parseJSON($(ui.draggable).attr("data-pin-entity"));
+      var entity = $(ui.draggable).data("pin-entity");
 	    
 	    // Determine the default and mandatory roles for this application and pass them all along
 	    for(var i = 0; i < app.roles.length; i++) { 
@@ -33,17 +29,6 @@ $(function() {
   
   // Set up the new group button functionality
   $("ul.pins li.new").click(site.new_group_pin_click);
-  
-  $("ul.pins li").hover(
-    function() {
-      // mouse enter
-      $(this).children("img").css("display", "block");
-    },
-    function() {
-      // mouse leave
-      $(this).children("img").css("display", "none");
-    }
-  )
 });
 
 (function (site, $, undefined) {
@@ -146,19 +131,13 @@ $(function() {
       group.name = name;
       group.owner_tokens = site.current_user_id;
       $.post(Routes.groups_path() + ".json", {group: group}, function (data, status) {
-        // Remove the blank 'New Group' entity
+        // Reset the 'New Group' entity
         $("div#groups ul.pins li.new").remove();
-        
-        // Create a new group pin with the entity and reset the blank 'New Group' one
-        $("div#groups ul.pins").append("<li data-pin-type=\"group\">" + group.name + "</li>");
-        $("div#groups ul.pins li:last").attr("data-pin-entity", $.toJSON(group));
-        $("div#groups ul.pins li:last").draggable({
-          appendTo: "body",
-          helper: "clone"
-        });
-        
         $("div#groups ul.pins").append("<li class=\"new\" data-pin-type=\"group\" data-pin-entity=\"0\">Create New Group</li>");
         $("ul.pins li.new").click(site.new_group_pin_click);
+        
+        // Create a new group pin with the entity and reset the blank 'New Group' one
+        site.add_to_available_list(data);
       });      
     });
   }
@@ -186,5 +165,47 @@ $(function() {
         $(el).remove();
       }); // fade out from the DOM
     }});
+  }
+  
+  site.add_to_available_list = function (entity) {
+    // Person or group entity?
+    var type = entity.id.toString()[0];
+    
+    var el = $("<li data-tooltip=\"Drag these over to the desired applications on the left.\">" + entity.name + "</li>");
+    $(el).data("pin-entity", entity);
+    
+    // Make it draggable
+    $(el).draggable({
+      appendTo: "body",
+      helper: "clone"
+    });
+    
+    // Delete button on hover
+    $(el).hover(
+      function() {
+        // mouse enter
+        $(this).children("img").css("display", "block");
+      },
+      function() {
+        // mouse leave
+        $(this).children("img").css("display", "none");
+      }
+    );
+    
+    if(type == '1') {
+      // Person
+      $(el).attr("data-pin-type", "person");
+      $(el).attr("data-person-id", entity.id);
+      $("div#people ul.pins").append(el);
+    } else if (type == '2') {
+      // Group
+      $(el).attr("data-pin-type", "group");
+      $(el).attr("data-person-id", entity.id);
+      $(el).html("<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" />" + entity.name);
+      $("div#groups ul.pins li.new").before(el);
+    } else {
+      // Unknown
+      console.log("Cannot add entity to availability list, unknown type.");
+    }
   }
 } (window.site = window.site || {}, jQuery));
