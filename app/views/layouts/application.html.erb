@@ -19,85 +19,36 @@
 				<h1><%= image_tag "../images/ucd.png", :alt => "UC Davis (logo)", :style => "margin-bottom: -1px;" %>&nbsp;&nbsp;&nbsp;<a href="#">DSS IT</a></h1>
 				
 				<ul id="nav">
-					
 					<% if current_controller?( :controller => "site" ) %>
-						<li class="active"><%= link_to "Overview", :controller => "site", :action => "index" %></li>
+          <li class="active"><%= link_to "Manage", root_url %></li>
 					<% elsif %>
-						<li><%= link_to "Overview", :controller => "site", :action => "index" %></li>
+						<li><%= link_to "Manage", root_url %></li>
 					<% end %>
-					<% if permitted_to? :index, :people %>
-						<% if current_controller?( :controller => "people" ) %>
-							<li class="active"><%= link_to "Users", people_path %>
-						<% elsif %>
-							<li><%= link_to "Users", people_path %>
-						<% end %>
-							<ul>
-								<li><%= link_to "View All", people_path %></li>
-								<li><%= link_to 'Add New User', new_person_path %></li>
-							</ul>
-						</li>
-					<% end %>
-					<% if permitted_to? :index, :groups %>
-						<% if current_controller?( :controller => "groups" ) %>
-							<li class="active"><%= link_to "Groups", groups_path %>
-						<% elsif %>
-							<li><%= link_to "Groups", groups_path %>
-						<% end %>
-							<ul>
-								<li><%= link_to "View All", groups_path %></li>
-								<li><%= link_to 'Create New Group', new_group_path %></li>
-							</ul>
-						</li>
-					<% end %>
-					<% if permitted_to? :index, :ous %>
-						<% if current_controller?( :controller => "ous" ) %>
-							<li class="active"><%= link_to "Organizations", ous_path %>
-						<% elsif %>
-							<li><%= link_to "Organizations", ous_path %>
-						<% end %>
-							<ul>
-								<li><%= link_to "View All As Graph", ous_path %></li>
-								<li><%= link_to 'View All As List', ous_path(:anchor => "table_tab") %></li>
-								<li><%= link_to 'Create New Organization', new_ou_path %></li>
-							</ul>
-						</li>
-					<% end %>
-					<% if permitted_to? :index, :classifications %>
-						<% if current_controller?( :controller => "classifications" ) %>
-							<li class="active"><%= link_to "Classifications", classifications_path %>
-						<% elsif %>
-							<li><%= link_to "Classifications", classifications_path %>
-						<% end %>
-							<ul>
-								<li><%= link_to "View All", classifications_path %></li>
-								<li><%= link_to 'Create New Classification', new_classification_path %></li>
-							</ul>
-						</li>
-					<% end %>
+          
 					<% if permitted_to? :index, :applications %>
 						<% if current_controller?( :controller => "applications" ) %>
-							<li class="active"><%= link_to "Applications", applications_path %>
+              <li class="active"><%= link_to "Administrate", applications_path %>
 						<% elsif %>
-							<li><%= link_to "Applications", applications_path %>
+							<li><%= link_to "Administrate", applications_path %>
 						<% end %>
-							<ul>
+							<!--<ul>
 								<li><%= link_to "View All", applications_path %></li>
 								<li><%= link_to 'Register New Application', new_application_path %></li>
 							</ul>
-						</li>
+						</li>-->
 					<% end %>
 				</ul>
 				
 				<% if current_user %>
-				  <p class="user">Hello, <%= current_user.first %> (<%= link_to "Logout", :controller => "site", :action => "logout" %>)</p>
+				  <p class="user"><%= current_user.first %> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
 				<% end %>
 			</div> <!-- #header -->
 			
 			<%= yield %>
 			
-			<div id="footer">
+			<!--<div id="footer">
 				<p class="left"><a href="http://it.dss.ucdavis.edu/">Division of Social Science IT</a></p>
-			</div>
+			</div>-->
 		</div> <!-- wrapper -->
 	</div> <!-- #hld -->
 </body>
