@@ -5,6 +5,10 @@ class SiteController < ApplicationController
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded front page."
   end
 
+  def administrate
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded administrate page."
+  end
+
   def contact
   end
   

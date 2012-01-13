@@ -3,6 +3,10 @@ module ApplicationHelper
       options[:controller] == controller_name
   end
   
+  def current_action?(options)
+      options[:action] == action_name
+  end
+  
   def current_user
     Person.find_by_loginid(session[:cas_user])
   end

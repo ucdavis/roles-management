@@ -2,6 +2,7 @@ DSSRM::Application.routes.draw do
   resources :classifications
 
   get "site/index"
+  get "site/administrate"
   get "site/contact"  
   get "site/logout"
   get "site/access_denied"

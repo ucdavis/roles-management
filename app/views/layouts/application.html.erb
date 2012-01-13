@@ -19,23 +19,18 @@
 				<h1><%= image_tag "../images/ucd.png", :alt => "UC Davis (logo)", :style => "margin-bottom: -1px;" %>&nbsp;&nbsp;&nbsp;<a href="#">DSS IT</a></h1>
 				
 				<ul id="nav">
-					<% if current_controller?( :controller => "site" ) %>
+					<% if current_controller?( :controller => "site" ) and current_action?( :action => "index" ) %>
           <li class="active"><%= link_to "Manage", root_url %></li>
 					<% elsif %>
 						<li><%= link_to "Manage", root_url %></li>
 					<% end %>
           
 					<% if permitted_to? :index, :applications %>
-						<% if current_controller?( :controller => "applications" ) %>
-              <li class="active"><%= link_to "Administrate", applications_path %>
+          <% if current_controller?( :controller => "site" ) and current_action?( :action => "administrate") %>
+              <li class="active"><%= link_to "Administrate", {:controller => "site", :action => "administrate"} %>
 						<% elsif %>
-							<li><%= link_to "Administrate", applications_path %>
+							<li><%= link_to "Administrate", {:controller => "site", :action => "administrate"} %>
 						<% end %>
-							<!--<ul>
-								<li><%= link_to "View All", applications_path %></li>
-								<li><%= link_to 'Register New Application', new_application_path %></li>
-							</ul>
-						</li>-->
 					<% end %>
 				</ul>
 				
