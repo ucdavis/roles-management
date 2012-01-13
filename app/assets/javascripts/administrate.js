@@ -3,9 +3,11 @@ $(function() {
     autoHeight: false,
   	navigation: true
   });
-  $( "#accordion_1" ).accordion({
-    autoHeight: false,
-  	navigation: true
+  $( "div#accordion_1" ).each(function(i) {
+    $(this).accordion({
+        autoHeight: false,
+      	navigation: true
+      });
   });
   
 
