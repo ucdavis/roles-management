@@ -19,12 +19,12 @@ class PeopleController < ApplicationController
 
   # GET /people/1
   def show
-    @person = Person.find_by_loginid(params[:id])
+    @person = Person.find_by_id(params[:id])
 
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded person page for #{params[:id]}."
 
     respond_to do |format|
-      format.html
+      format.html { render :partial => "details" }
     end
   end
 
@@ -66,7 +66,7 @@ class PeopleController < ApplicationController
 
   # GET /people/1/edit
   def edit
-    @person = Person.find_by_loginid(params[:id])
+    @person = Person.find_by_id(params[:id])
     
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded edit page for #{params[:id]}."
   end
@@ -87,7 +87,7 @@ class PeopleController < ApplicationController
 
   # PUT /people/1
   def update
-    @person = Person.find_by_loginid(params[:id])
+    @person = Person.find_by_id(params[:id])
 
     respond_to do |format|
       if @person.update_attributes(params[:person])
@@ -101,7 +101,7 @@ class PeopleController < ApplicationController
 
   # DELETE /people/1
   def destroy
-    @person = Person.find_by_loginid(params[:id])
+    @person = Person.find_by_id(params[:id])
     @person.destroy!
     
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted person #{params[:id]}."
@@ -115,7 +115,7 @@ class PeopleController < ApplicationController
   
   def load_person
     if permitted_to? :show, :people
-      @person = Person.find_by_loginid(params[:id])
+      @person = Person.find_by_id(params[:id])
     end
   end
 end

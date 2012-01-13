@@ -113,15 +113,14 @@ $(function() {
   }
 
   site.person_details = function (person_id) {
+    person_id = person_id.toString().substr(1);
+    
     $.fancybox({
-  		'orig'			: $(this),
+      'type'      : 'ajax',
   		'href'      : Routes.people_path() + "/" + person_id,
   		'padding'		: 0,
   		'transitionIn'	: 'fade',
-  		'transitionOut'	: 'fade',
-  		'ajax' : {
-      		    type	: "GET"
-      		}
+  		'transitionOut'	: 'fade'
     });
   }
   

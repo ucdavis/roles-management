@@ -1,0 +1,75 @@
+      <h2>Basics</h2>
+			
+			<p>
+			  <b>First:</b>
+			  <%= @person.first %>
+			</p>
+
+			<p>
+			  <b>Last:</b>
+			  <%= @person.last %>
+			</p>
+
+			<p>
+			  <b>Email:</b>
+			  <%= mail_to @person.email, @person.email, :encode => "javascript" %>
+			</p>
+
+			<p>
+			  <b>Kerberos ID:</b>
+			  <%= @person.loginid %>
+			</p>
+
+			<p>
+			  <b>Status:</b>
+			  <% if @person.status %>
+			    Active
+			  <% else %>
+			    Inactive
+			  <% end %>
+			</p>
+
+			<p>
+			  <b>Phone:</b>
+			  <% if @person.phone != nil and @person.phone.length > 0 %>
+			    <%= number_to_phone @person.phone, :area_code => true %>
+			  <% end %>
+			</p>
+
+			<p>
+			  <b>Address:</b>
+			  <%= @person.address %>
+			</p>
+
+			<p>
+			  <b>Classifications:</b>
+			  <ul>
+			    <% @person.classifications.each do |classification| %>
+			      <li><%= classification.name %></li>
+			    <% end %>
+			    <% if @person.classifications.length == 0 %>
+			      <li><i>None</i></li>
+			    <% end %>
+			  </ul>
+			</p>
+      
+			<h2>Roles</h2>
+			<ul>
+			  <% @person.roles.each do |role| %>
+			    <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
+			  <% end %>
+			</ul>
+			
+      <h2>Group Memberships</h2>
+			<ul>
+			  <% @person.groups.each do |group| %>
+				  <li><%= link_to group.name, group %></li>
+				<% end %>
+			</ul>
+			
+      <h2>Organization Memberships</h2>
+			<ul>
+			  <% @person.ous.each do |ou| %>
+				  <li><%= link_to ou.name, ou %></li>
+				<% end %>
+			</ul>

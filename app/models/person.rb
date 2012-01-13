@@ -23,10 +23,6 @@ class Person < ActiveRecord::Base
   attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens
   attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
   
-  def to_param
-    loginid
-  end
-  
   def name
       "#{first} #{last}"
   end
