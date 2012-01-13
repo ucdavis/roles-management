@@ -12,11 +12,11 @@
 	  
     <div id="accordion_0">
   		<% @ous.each do |ou| %>
-        <h3><a href="#"><%= ou.name %></a></h3>
+        <h4><a href="#"><%= ou.name %></a></h4>
         <div>
           <div id="accordion_1">
         		<% ou.children.each do |o| %>
-              <h4><a href="#"><%= o.name %></a></h4>
+              <h5><a href="#"><%= o.name %></a></h5>
               <div>Second content</div>
         		<% end %>
           </div>
