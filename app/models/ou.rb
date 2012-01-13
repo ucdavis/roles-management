@@ -36,7 +36,8 @@ class Ou < ActiveRecord::Base
       self.parent_ids = ids.split(",")
   end
 
+  # Takes UID
   def manager_tokens=(ids)
-      self.manager_ids = ids.split(",")
+      self.manager_ids = ids.split(",").collect { |x| x[1..-1] } # convert from UID
   end
 end

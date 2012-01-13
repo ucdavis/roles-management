@@ -10,11 +10,19 @@
 	
 	<div class="block_content">
 	  
-    <div id="accordion">
-        <h3><a href="#">First header</a></h3>
-        <div>First content</div>
-        <h3><a href="#">Second header</a></h3>
-        <div>Second content</div>
+    <div id="accordion_0">
+  		<% @ous.each do |ou| %>
+        <h3><a href="#"><%= ou.name %></a></h3>
+        <div>
+          <div id="accordion_1">
+        		<% ou.children.each do |o| %>
+              <h4><a href="#"><%= o.name %></a></h4>
+              <div>Second content</div>
+        		<% end %>
+          </div>
+          
+        </div>        
+  		<% end %>
     </div>
     
     

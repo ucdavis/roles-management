@@ -6,6 +6,8 @@ class SiteController < ApplicationController
   end
 
   def administrate
+    @ous = Ou.top_level
+
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded administrate page."
   end
 
