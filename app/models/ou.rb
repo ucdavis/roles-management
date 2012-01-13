@@ -24,10 +24,6 @@ class Ou < ActiveRecord::Base
   attr_accessible :name, :parent_tokens, :parent_ids, :manager_tokens, :manager_ids
   attr_reader :parent_tokens, :manager_tokens
 
-  def to_param
-    name.gsub("/", "_").gsub("&", "_").gsub(".", "_")
-  end
-  
   def as_json(options={}) 
     { :id => ('3' + self.id.to_s).to_i, :name => self.name } 
   end

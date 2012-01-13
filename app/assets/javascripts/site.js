@@ -45,7 +45,7 @@ $(function() {
     if($("div.pin[data-entity-id=" + entity.id + "]").length == 0) {
       var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
       var el_html = "<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
-                     <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"person_details\" /> \
+                     <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"entity_details\" /> \
                      <div class=\"pin-content\"></div>";
     
       $(el).html( el_html );
@@ -73,8 +73,8 @@ $(function() {
         }
       });
     
-      $(el).children("img#person_details").click(function() {
-        site.person_details(entity.id);
+      $(el).children("img#entity_details").click(function() {
+        site.entity_details(entity.id);
       });
     
       $(el).children("a").click(function() {
@@ -112,10 +112,20 @@ $(function() {
     }
   }
 
-  site.person_details = function (person_id) {
-    person_id = person_id.toString().substr(1);
+  site.entity_details = function (entity_id) {
+    var entity_type = entity_id.toString()[0];
+    var entity_id = entity_id.toString().substr(1);
+    var details_url = null;
     
-    $.get(Routes.people_path() + "/" + person_id, function(data) {
+    if(entity_type == '1') {
+      // person
+      details_url = Routes.people_path() + "/" + entity_id;
+    } else {
+      // group
+      details_url = Routes.groups_path() + "/" + entity_id;
+    }
+    
+    $.get(details_url, function(data) {
       apprise(data);
     });
   }
