@@ -103,13 +103,23 @@ $(function() {
   
   // Remove a dropped pin from the app list
   site.remove_pin = function (el) {
-    var ol = $(el).parent().parent();
-  
-    $(el).parent().remove();
-    if(ol.children().length == 0) {
-      // Emptied out the last pin. Re-insert the default placerholder text so the 'ol' doesn't disappear entirely
-      ol.append("<div class=\"placeholder\">Drag people and groups here</div>");
-    }
+    // Since this implies removing all permissions, prompt them first on this
+    if (apprise("This action will remove all permissions from the entity. Continue?",
+    {'verify': true, 'textYes': "Remove All Permissions", 'textNo': "Cancel"}, function(r) {
+      if(r) {
+        // Unassign any checked permissions
+        
+        
+        // Remove the element
+        var ol = $(el).parent().parent();
+        $(el).parent().remove();
+        
+        // If there are no more pins, insert the placerholder text
+        if(ol.children().length == 0) {
+          ol.append("<div class=\"placeholder\">Drag people and groups here</div>");
+        }
+      }
+    }));
   }
 
   site.entity_details = function (entity_id) {

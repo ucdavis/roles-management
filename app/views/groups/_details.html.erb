@@ -1,33 +1,27 @@
-		<p>
-		  <b>Name:</b>
-		  <%= @group.name %>
-		</p>
+<h1><%= @group.name %></h1>
 
-		<p>
-		  <b>Description:</b>
-		  <% if @group.description.nil? %>
-		    <i>None</i>
-		  <% else %>
-		    <%= @group.description %>
-		  <% end %>
-		</p>
+<p>
+<% if @group.description.nil? %>
+  <i>No description given</i>
+<% else %>
+  <%= @group.description %>
+<% end %><br />
+</p>
 
-		<h2>Owners</h2>
-		<ul>
-			<% for p in @group.owners %>
-				<li><%= link_to p.name, p %></li>
-			<% end %>
-			<% if @group.owners.length == 0 %>
-				<li><i>No owners assigned</i></li>
-			<% end %>
-		</ul>
+<p>
+<h3>Owners</h3>
+<% for p in @group.owners %>
+	<%= link_to p.name, p %>
+  <% unless p == @group.owners.last %>, <% end %>
+<% end %>
+</p>
 
-		<h2>Members</h2>
-		<ul>
-			<% for p in @group.members %>
-				<li><%= link_to p.name, p %></li>
-			<% end %>
-			<% if @group.members.length == 0 %>
-				<li><i>No members assigned</i></li>
-			<% end %>
-		</ul>
+<p>
+<h3>Members</h3>
+<i><% for p in @group.members %>
+	<%= link_to p.name, p %>
+<% end %>
+<% if @group.members.length == 0 %>
+	No members assigned
+<% end %></i>
+</p>
