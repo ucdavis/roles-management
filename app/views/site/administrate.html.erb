@@ -13,15 +13,17 @@
     <div id="accordion_0">
   		<% @ous.each do |ou| %>
         <h4><a href="#"><%= ou.name %></a></h4>
-        <div>
-          <div id="accordion_1">
-        		<% ou.children.each do |o| %>
-              <h5><a href="#"><%= o.name %></a></h5>
-              <div>Second content</div>
-        		<% end %>
+          <div id="accordion_1" class="alt-jui-theme">
+          		<% ou.children.each do |o| %>
+                <h5><a href="#" style="color: #fff;"><%= o.name %></a></h5>
+                <div id="accordion_2">
+                  <% o.members.sort_by { |x| x.last }.each do |person| %>
+                    <h5><a href="#"><%= person.name %></a></h5>
+                    <div>content</div>
+                  <% end %>
+                </div>
+          		<% end %>
           </div>
-          
-        </div>        
   		<% end %>
     </div>
     

@@ -9,6 +9,12 @@ $(function() {
       	navigation: true
       });
   });
+  $( "div#accordion_2" ).each(function(i) {
+    $(this).accordion({
+        autoHeight: false,
+      	navigation: true
+      });
+  });
   
 
 });
