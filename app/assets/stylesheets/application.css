@@ -1,5 +1,7 @@
 /*
 *= require_self
+*= require_tree ./jui-custom
+*= require_tree ./jui-alt
 *= require_tree ./common
 */
 

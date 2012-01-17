@@ -6,6 +6,19 @@ div#accordion h3 {
   width: auto;
 }
 
+.ui-accordion .ui-accordion-header {
+  margin-top: 4px;
+}
+
+.ui-accordion .ui-accordion-header a {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.ui-accordion .ui-accordion-content {
+  padding: 1em 2.2em;
+}
+
 .alt-jui-theme .ui-accordion {
   width: auto;
 }
