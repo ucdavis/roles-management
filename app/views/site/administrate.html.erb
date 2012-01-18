@@ -15,7 +15,7 @@
         <h4><a href="#"><%= ou.name %></a></h4>
           <div id="accordion_1">
           		<% ou.children.each do |o| %>
-                <h5><a href="#" style="color: #fff;"><%= o.name %></a></h5>
+                <h5><a href="#"><%= o.name %></a></h5>
                 <div id="accordion_2" class="alt-jui-theme">
                   <% o.members.sort_by { |x| x.last }.each do |person| %>
                     <h5><a href="#"><%= person.name %></a></h5>

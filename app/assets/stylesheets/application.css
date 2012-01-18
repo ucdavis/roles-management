@@ -1,11 +1,10 @@
 /*
 *= require_self
-*= require_tree ./jui-custom
-*= require_tree ./jui-alt
+*= require_tree ./jui-smoothness
 *= require_tree ./common
 */
 
-/*	
+/*
 Template Name: Adminus
 Description: Beautiful admin panel interface
 Version: 1.4.3
