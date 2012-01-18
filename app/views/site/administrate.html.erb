@@ -19,7 +19,7 @@
                 <div id="accordion_2" class="alt-jui-theme">
                   <% o.members.sort_by { |x| x.last }.each do |person| %>
                     <h5><a href="#"><%= person.name %></a></h5>
-                    <div>content</div>
+                    <div data-entity-id="<%= person.id %>"></div>
                   <% end %>
                 </div>
           		<% end %>

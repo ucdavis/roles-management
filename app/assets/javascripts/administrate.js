@@ -20,8 +20,12 @@ $(function() {
       	navigation: true,
         collapsible: true,
         changestart: function(event, ui) {
-          console.log(event);
-          console.log(ui);
+            var entity_id = ui.newHeader.next().attr("data-entity-id");
+            var details_url = Routes.people_path() + "/" + entity_id;
+            
+            $.get(details_url, function(data) {
+              $(ui.newContent).html(data);
+            });
         }
       });
   });
