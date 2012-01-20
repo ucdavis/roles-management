@@ -137,7 +137,7 @@ $(function() {
     
     $.get(details_url, function(data) {
       apprise(data);
-      template.setup_sidebar($("div.appriseOuter"));
+      template.setup_sidebar($("div#person_details"));
     });
   }
   

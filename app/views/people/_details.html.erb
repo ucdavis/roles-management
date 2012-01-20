@@ -1,90 +1,67 @@
-<div class="block withsidebar popup_block">
-	<div class="block_head">
-		<div class="bheadl"></div>
-		<div class="bheadr"></div>
+<div id="person_details">
+  <div class="block withsidebar popup_block">
+  	<div class="block_head">
+  		<div class="bheadl"></div>
+  		<div class="bheadr"></div>
 					
-		<h2><%= @person.first %> <%= @person.last %></h2>
-	</div>		<!-- .block_head ends -->
-	<div class="block_content">
-		<div class="sidebar">
-			<ul class="sidemenu">
-				<li><a href="#sb1">Summary</a></li>
-				<li><a href="#sb2">Roles</a></li>
-				<li><a href="#sb3">Applications</a></li>
-				<li><a href="#sb4">Ownerships</a></li>
-			</ul>
-						
-			<p><strong>Some notification text.</strong> Donec hendrerit porttitor felis, id semper eros lobortis sed. Class aptent taciti sociosqu ad litora.</p>
-		</div>		<!-- .sidebar ends -->
+  		<h2><%= @person.first %> <%= @person.last %></h2>
+  	</div>		<!-- .block_head ends -->
+  	<div class="block_content">
+  		<div class="sidebar">
+  			<ul class="sidemenu">
+  				<li><a href="#summary">Summary</a></li>
+  				<li><a href="#roles">Roles</a></li>
+  				<li><a href="#applications">Applications</a></li>
+  				<li><a href="#ownerships">Ownerships</a></li>
+          <li><a href="#memberships">Memberships</a></li>
+  			</ul>
+				
+  			<p><strong><a href="mailto:<%= @person.email %>">E-Mail This Person</a></strong><br />
+        <strong><a href="#">View Their Tickets</a></strong><br />
+        <strong><a href="#">Call Them via Lync</a></strong></p>
+  		</div>		<!-- .sidebar ends -->
 					
-		<div class="sidebar_content" id="sb1">
-      <p>
-        <i><% @person.classifications.each do |classification| %>
-          <%= classification.name %>
-        <% end %></i><br />
-        <%= mail_to @person.email, @person.email %><br />
+  		<div class="sidebar_content" id="summary">
+        <p>
+          <i><% @person.classifications.each do |classification| %>
+            <%= classification.name %>
+          <% end %></i><br />
+          <%= mail_to @person.email, @person.email %><br />
+          <br />
+          <% if @person.phone != nil and @person.phone.length > 0 %>
+            <%= number_to_phone @person.phone, :area_code => true %><br />
+          <% end %>
+          <%= @person.address %><br />
+        </p>
+      </div>
+  		<div class="sidebar_content" id="roles">
+        <ul>
+          <% @person.roles.each do |role| %>
+            <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
+          <% end %>
+        </ul>
+      </div>
+  		<div class="sidebar_content" id="applications">
+        applications
+      </div>
+  		<div class="sidebar_content" id="ownerships">
+        ownerships
+      </div>
+  		<div class="sidebar_content" id="memberships">
+        <b>Groups:</b><br />
+        <ul>
+          <% @person.groups.each do |group| %>
+        	  <li><%= link_to group.name, group %></li>
+        	<% end %>
+        </ul>
         <br />
-        <% if @person.phone != nil and @person.phone.length > 0 %>
-          <%= number_to_phone @person.phone, :area_code => true %><br />
-        <% end %>
-        <%= @person.address %><br />
-      </p>
-    </div>
-		<div class="sidebar_content" id="sb2">
-      roles
-    </div>
-		<div class="sidebar_content" id="sb3">
-      applications
-    </div>
-		<div class="sidebar_content" id="sb4">
-      ownerships
-    </div>
-  </div> <!-- .block_content ends -->
-</div> <!-- .block ends -->
-
-
-<!--<div class="left">
-  <h1><%= @person.first %> <%= @person.last %></h1>
-
-  <p>
-    <i><% @person.classifications.each do |classification| %>
-      <%= classification.name %>
-    <% end %></i><br />
-    <%= mail_to @person.email, @person.email %><br />
-    <br />
-    <% if @person.phone != nil and @person.phone.length > 0 %>
-      <%= number_to_phone @person.phone, :area_code => true %><br />
-    <% end %>
-    <%= @person.address %><br />
-  </p>
-</div>
-<div class="right" id="people_details_operations">
-  <button class="tiny">Roles</button><br />
-  <button class="tiny">Memberships</button><br />
-  <button class="tiny">Applications</button><br />
-  <button class="tiny">Ownerships</button>
-</div>
-<div style="clear: both;"></div>-->
-
-<!--
-<h2>Roles</h2>
-<ul>
-  <% @person.roles.each do |role| %>
-    <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
-  <% end %>
-</ul>
-			
-<h2>Group Memberships</h2>
-<ul>
-  <% @person.groups.each do |group| %>
-	  <li><%= link_to group.name, group %></li>
-	<% end %>
-</ul>
-			
-<h2>Organization Memberships</h2>
-<ul>
-  <% @person.ous.each do |ou| %>
-	  <li><%= link_to ou.name, ou %></li>
-	<% end %>
-</ul>
--->
+        <b>Organizational Units:</b><br />
+        <ul>
+          <% @person.ous.each do |ou| %>
+        	  <li><%= link_to ou.name, ou %></li>
+        	<% end %>
+        </ul>
+      </div>
+    </div> <!-- .block_content ends -->
+  </div> <!-- .block ends -->
+</div> <!-- .person_details -->
