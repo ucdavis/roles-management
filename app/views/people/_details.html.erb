@@ -1,16 +1,71 @@
-<h1><%= @person.first %> <%= @person.last %></h1>
+<div class="block withsidebar popup_block">
+	<div class="block_head">
+		<div class="bheadl"></div>
+		<div class="bheadr"></div>
+					
+		<h2><%= @person.first %> <%= @person.last %></h2>
+	</div>		<!-- .block_head ends -->
+	<div class="block_content">
+		<div class="sidebar">
+			<ul class="sidemenu">
+				<li><a href="#sb1">Summary</a></li>
+				<li><a href="#sb2">Roles</a></li>
+				<li><a href="#sb3">Applications</a></li>
+				<li><a href="#sb4">Ownerships</a></li>
+			</ul>
+						
+			<p><strong>Some notification text.</strong> Donec hendrerit porttitor felis, id semper eros lobortis sed. Class aptent taciti sociosqu ad litora.</p>
+		</div>		<!-- .sidebar ends -->
+					
+		<div class="sidebar_content" id="sb1">
+      <p>
+        <i><% @person.classifications.each do |classification| %>
+          <%= classification.name %>
+        <% end %></i><br />
+        <%= mail_to @person.email, @person.email %><br />
+        <br />
+        <% if @person.phone != nil and @person.phone.length > 0 %>
+          <%= number_to_phone @person.phone, :area_code => true %><br />
+        <% end %>
+        <%= @person.address %><br />
+      </p>
+    </div>
+		<div class="sidebar_content" id="sb2">
+      roles
+    </div>
+		<div class="sidebar_content" id="sb3">
+      applications
+    </div>
+		<div class="sidebar_content" id="sb4">
+      ownerships
+    </div>
+  </div> <!-- .block_content ends -->
+</div> <!-- .block ends -->
 
-<p>
-  <i><% @person.classifications.each do |classification| %>
-    <%= classification.name %>
-  <% end %></i><br />
-  <%= mail_to @person.email, @person.email %><br />
-  <br />
-  <% if @person.phone != nil and @person.phone.length > 0 %>
-    <%= number_to_phone @person.phone, :area_code => true %><br />
-  <% end %>
-  <%= @person.address %><br />
-</p>
+
+<!--<div class="left">
+  <h1><%= @person.first %> <%= @person.last %></h1>
+
+  <p>
+    <i><% @person.classifications.each do |classification| %>
+      <%= classification.name %>
+    <% end %></i><br />
+    <%= mail_to @person.email, @person.email %><br />
+    <br />
+    <% if @person.phone != nil and @person.phone.length > 0 %>
+      <%= number_to_phone @person.phone, :area_code => true %><br />
+    <% end %>
+    <%= @person.address %><br />
+  </p>
+</div>
+<div class="right" id="people_details_operations">
+  <button class="tiny">Roles</button><br />
+  <button class="tiny">Memberships</button><br />
+  <button class="tiny">Applications</button><br />
+  <button class="tiny">Ownerships</button>
+</div>
+<div style="clear: both;"></div>-->
+
 <!--
 <h2>Roles</h2>
 <ul>

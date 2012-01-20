@@ -792,18 +792,25 @@ div.cmf-skinned-text {
 	text-shadow: 1px 1px 0 #b55f10;
 	}
 
-.block form input.submit.tiny {
+div#people_details_operations button.tiny {
 	width: 105px;
 	height: 20px;
 	line-height: 20px;
-	padding-bottom: 2px;
+  padding: 0 0 2px 0;
 	vertical-align: middle;
 	font-family: "Lucida Grande", Arial, Helvetica, sans-serif;
 	font-size: 10px;
-	font-weight: bold;
+	font-weight: normal;
 	text-transform: none;
 	background: url("../images/tiny.gif") top center no-repeat;
-	}
+  color: #fff;
+  text-shadow: none;
+  border-radius: default;
+  margin-bottom: 3px;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  border: 0;
+}
 	
 .block form input.submit.tiny:hover { background: url("../images/tiny_.gif") top center no-repeat; }
 	
@@ -1347,4 +1354,8 @@ li.ui-draggable-dragging {
   display: block;
   padding-left: 4px;
   margin-bottom: 4px;
+}
+
+.popup_block {
+  min-width: 550px;
 }
