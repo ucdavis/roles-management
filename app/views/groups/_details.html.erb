@@ -1,27 +1,50 @@
-<h1><%= @group.name %></h1>
+<div id="person_details">
+  <div class="block withsidebar popup_block">
+  	<div class="block_head">
+  		<div class="bheadl"></div>
+  		<div class="bheadr"></div>
+					
+  		<h2><%= @group.name %></h2>
+  	</div>		<!-- .block_head ends -->
+  	<div class="block_content">
+  		<div class="sidebar">
+  			<ul class="sidemenu">
+  				<li><a href="#summary">Summary</a></li>
+  				<li><a href="#roles">Roles</a></li>
+  			</ul>
+  		</div>		<!-- .sidebar ends -->
+					
+  		<div class="sidebar_content" id="summary">
+        <p>
+        <% if @group.description.nil? %>
+          <i>No description given</i>
+        <% else %>
+          <%= @group.description %>
+        <% end %><br />
+        </p>
 
-<p>
-<% if @group.description.nil? %>
-  <i>No description given</i>
-<% else %>
-  <%= @group.description %>
-<% end %><br />
-</p>
+        <p>
+        <h3>Owners</h3>
+        <% for p in @group.owners %>
+        	<%= link_to p.name, p %>
+          <% unless p == @group.owners.last %>, <% end %>
+        <% end %>
+        </p>
 
-<p>
-<h3>Owners</h3>
-<% for p in @group.owners %>
-	<%= link_to p.name, p %>
-  <% unless p == @group.owners.last %>, <% end %>
-<% end %>
-</p>
-
-<p>
-<h3>Members</h3>
-<i><% for p in @group.members %>
-	<%= link_to p.name, p %>
-<% end %>
-<% if @group.members.length == 0 %>
-	No members assigned
-<% end %></i>
-</p>
+        <p>
+        <h3>Members</h3>
+        <% for p in @group.members %>
+        	<%= link_to p.name, p %>
+          <% unless p == @group.members.last %>, <% end %>
+        <% end %>
+        <% if @group.members.length == 0 %>
+        	No members assigned
+        <% end %>
+        </p>
+      </div>
+  		<div class="sidebar_content" id="roles">
+        roles
+      </div>
+    </div> <!-- .block_content ends -->
+  </div> <!-- .block ends -->
+</div> <!-- .person_details -->
