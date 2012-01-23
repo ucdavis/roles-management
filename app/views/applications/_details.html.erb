@@ -1,9 +1,11 @@
 <div id="application_details">
-  <div class="block withsidebar">
+  <div class="block withsidebar popup_block">
   	<div class="block_head">
   		<div class="bheadl"></div>
   		<div class="bheadr"></div>
-		
+		  
+      <button class="right" style="margin-top: 14px;" id="edit">Edit</button>
+      
   		<h2><%= @application.name %></h2>
   	</div> <!-- .block_head -->
 	
@@ -53,10 +55,13 @@
   			</p>
   		</div> <!-- summary -->
   		<div class="sidebar_content" id="roles">
-      
+        
   		</div> <!-- roles -->
   		<div class="sidebar_content" id="ad">
-      
+        <h3>Group Name</h3>
+        <p>
+          Not set
+        </p>
   		</div> <!-- ad -->
   	</div> <!-- .block_content -->
 	
@@ -64,3 +69,29 @@
   	<div class="bendr"></div>
   </div> <!-- .block -->
 </div> <!-- #application_details -->
+
+<script type="text/javascript">
+// setup JS specific to person view
+$("button#edit").click(function() {
+  // Button is a toggle. Are we turning the editing controls on or off?
+  if($(this).html() == "Edit") {
+    // turning them on
+    $(this).html("Done").css("color", "#db6c67");
+  } else {
+    // turning them off
+    $(this).html("Edit").css("color", "#000");
+  }
+}).hover(
+  // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
+  function() {
+    $(this).css("color", "#db6c67");
+  },
+  function() {
+    if($(this).html() == "Edit") {
+      $(this).css("color", "#000");
+    } else {
+      $(this).css("color", "#1eaaeb");
+    }
+  }
+);
+</script>

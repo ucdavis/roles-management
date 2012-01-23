@@ -1357,7 +1357,7 @@ li.ui-draggable-dragging {
 }
 
 .popup_block {
-  min-width: 550px;
+  width: 600px;
 }
 
 .status_bar {
