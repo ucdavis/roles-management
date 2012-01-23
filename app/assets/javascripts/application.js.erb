@@ -34,6 +34,14 @@
   	});
   }
   
+  template.status_text = function(message) {
+    $("div.status_bar").show().html(message);
+  }
+  
+  template.hide_status = function() {
+    $("div.status_bar").hide();
+  }
+  
 } (window.template = window.template || {}, jQuery));
 
 // For dynamic, nested attribute add/remove
@@ -122,18 +130,13 @@ $(function() {
     document.location.href = document.location.href + "/" + loginid;
   });
 
-  
   // Preload images
 	$.preloadCssImages();
-	
-	
 	
 	// CSS tweaks
 	$('#header #nav li:last').addClass('nobg');
 	$('.block_head ul').each(function() { $('li:first', this).addClass('nobg'); });
 	$('.block form input[type=file]').addClass('file');
-			
-			
 	
 	// Web stats
 	$('table.stats').each(function() {
@@ -175,8 +178,6 @@ $(function() {
 		}
 	});
 	
-	
-	
 	// Sort table
 	$("table.sortable").tablesorter({
 		headers: { 0: { sorter: false}, 5: {sorter: false} },		// Disabled on the 1st and 6th columns
@@ -190,18 +191,12 @@ $(function() {
 	$('.check_all').click(function() {
 		$(this).parents('form').find('input:checkbox').attr('checked', $(this).is(':checked'));   
 	});
-		
-	
 	
 	// Set WYSIWYG editor
 	$('.wysiwyg').wysiwyg({css: "<%= asset_path "wysiwyg/wysiwyg.css" %>" });
 	
-	
-	
 	// Modal boxes - to all links with rel="facebox"
 	$('a[rel*=facebox]').facebox()
-	
-	
 	
 	// Messages
 	$('.block .message').hide().append('<span class="close" title="Dismiss"></span>').fadeIn('slow');
