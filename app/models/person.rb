@@ -1,5 +1,5 @@
 class Person < ActiveRecord::Base
-  versioned
+  #versioned
   
   belongs_to :title
   has_many :affiliation_assignments
