@@ -1,0 +1,66 @@
+<div id="application_details">
+  <div class="block withsidebar">
+  	<div class="block_head">
+  		<div class="bheadl"></div>
+  		<div class="bheadr"></div>
+		
+  		<h2><%= @application.name %></h2>
+  	</div> <!-- .block_head -->
+	
+  	<div class="block_content">
+  		<div class="sidebar">
+  			<ul class="sidemenu">
+  				<li><a href="#summary">Summary</a></li>
+          <li><a href="#roles">Roles</a></li>
+          <li><a href="#ad">Active Directory</a></li>
+  			</ul>
+  		</div>		<!-- .sidebar ends -->
+		
+  		<div class="sidebar_content" id="summary">
+  		  <p style="float: right;">
+  		    <% if @application.icon.exists? %><%= image_tag @application.icon.url %><% end %>
+  		  </p>
+  			<p>
+  			  <b>Name:</b>
+  			  <%= @application.name %>
+  			</p>
+  			<p>
+  			  <b>Display Name:</b>
+  			  <%= @application.display_name %>
+  			</p>
+  			<p>
+  			  <b>Description:</b>
+  			  <%= @application.description %>
+  			</p>
+  			<p>
+  			  <b>Hostname:</b>
+  			  <%= @application.hostname %>
+  			</p>
+  			<p>
+  			  <b>API Key:</b>
+  			  <%= @application.api_key %>
+  			</p>
+  			<p>
+  			  <b>Organizational Scoping <small><i>(who has access)</i></small>:</b>
+  			  <ul>
+  			  <% @application.ous.each do |ou| %>
+  			  	<li><%= link_to ou.name, ou %></li>
+  			  <% end %>
+  			  <% if @application.ous.count == 0 %>
+  			    <li>Everybody</li>
+  			  <% end %>
+  			  </ul>
+  			</p>
+  		</div> <!-- summary -->
+  		<div class="sidebar_content" id="roles">
+      
+  		</div> <!-- roles -->
+  		<div class="sidebar_content" id="ad">
+      
+  		</div> <!-- ad -->
+  	</div> <!-- .block_content -->
+	
+  	<div class="bendl"></div>
+  	<div class="bendr"></div>
+  </div> <!-- .block -->
+</div> <!-- #application_details -->

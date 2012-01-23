@@ -8,10 +8,6 @@ class Application < ActiveRecord::Base
   attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name, :icon, :description
   attr_reader :ou_tokens
   
-  def to_param
-    name
-  end
-  
   def ou_tokens=(ids)
       self.ou_ids = ids.split(",")
   end

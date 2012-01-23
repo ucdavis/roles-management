@@ -17,7 +17,7 @@ class ApplicationsController < ApplicationController
   # GET /applications/1
   def show
     respond_to do |format|
-      format.html
+      format.html { render :partial => "details", :layout => false }
     end
   end
 
@@ -32,7 +32,7 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/1/edit
   def edit
-    @application = Application.find_by_name(params[:id])
+    @application = Application.find(params[:id])
   end
 
   # POST /applications
@@ -61,7 +61,7 @@ class ApplicationsController < ApplicationController
 
   # PUT /applications/1
   def update
-    @application = Application.find_by_name(params[:id])
+    @application = Application.find(params[:id])
 
     if params[:commit] == "reset"
       @application.api_key = generate_api_key(@application)
@@ -90,7 +90,7 @@ class ApplicationsController < ApplicationController
   
   def load_application
     if permitted_to? :show, :applications
-      @application = Application.find_by_name(params[:id])
+      @application = Application.find(params[:id])
     end
   end
   
