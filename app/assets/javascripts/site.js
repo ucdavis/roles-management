@@ -29,12 +29,33 @@ $(function() {
   
   // Set up the new group button functionality
   $("ul.pins li.new").click(site.new_group_pin_click);
+  
+  // Set up the virtual application preferences
+  $("div.card div.card_head").hover(
+    function() {
+      // hover in
+      $(this).children("img").css("display", "block");
+    },
+    function() {
+      // hover out
+      $(this).children("img").css("display", "none");
+    }
+  );
 });
 
 (function (site, $, undefined) {
   // Application and role relationship (filled in by index.html.erb)
   site.applications = [];
   site.current_user_id = null;
+  
+  // Displays the virtual application preferences for administrators
+  site.prefs = function(app_id) {
+    details_url = Routes.applications_path() + "/" + app_id;
+    
+    $.get(details_url, function(data) {
+      apprise(data);
+    });
+  }
   
   // Updates or creates pins to represent the roles it's given. Can be called multiple times for the same app/role
   // dom_only = don't make the AJAX call to actually save the permission. Useful when merely constructing the existing list
