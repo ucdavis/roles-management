@@ -52,7 +52,10 @@ $(function() {
   site.prefs = function(app_id) {
     details_url = Routes.applications_path() + "/" + app_id;
     
+    template.status_text("Fetching details...");
+    
     $.get(details_url, function(data) {
+      template.hide_status();
       apprise(data);
       template.setup_sidebar($("div#application_details"));
     });
@@ -88,10 +91,20 @@ $(function() {
         // Turning the permission on or off?
         if($(this).attr("checked") == undefined) {
           // off
-          $.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'});
+          template.status_text("Saving...");
+          $.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'}).always(
+            function() {
+              template.hide_status();
+            }
+          );
         } else {
           // on
-          $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: assignment}, type: 'POST'});
+          template.status_text("Saving...");
+          $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: assignment}, type: 'POST'}).always(
+            function() {
+              template.hide_status();
+            }
+          );
         }
       });
     
@@ -114,7 +127,12 @@ $(function() {
     
     // Save this permission assignment
     if( dom_only == false) {
-      $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: {role_id: role.id, entity_id: entity.id}}, type: 'POST'});
+      template.status_text("Saving...");
+      $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: {role_id: role.id, entity_id: entity.id}}, type: 'POST'}).always(
+        function() {
+          template.hide_status();
+        }
+      );
     }
     
     // Check the box representing this permission
@@ -157,7 +175,10 @@ $(function() {
       details_url = Routes.groups_path() + "/" + entity_id;
     }
     
+    template.status_text("Fetching details...");
+    
     $.get(details_url, function(data) {
+      template.hide_status();
       apprise(data);
       template.setup_sidebar($("div#person_details"));
     });
@@ -168,7 +189,11 @@ $(function() {
     $.get(Routes.new_group_path() + ".json", function(group) {
       group.name = name;
       group.owner_tokens = site.current_user_id;
+      
+      template.status_text("Creating group...");
+      
       $.post(Routes.groups_path() + ".json", {group: group}, function (data, status) {
+        template.hide_status();
         // Reset the 'New Group' entity
         $("div#groups ul.pins li.new").remove();
         $("div#groups ul.pins").append("<li class=\"new\" data-pin-type=\"group\" data-pin-entity=\"0\">Create New Group</li>");
