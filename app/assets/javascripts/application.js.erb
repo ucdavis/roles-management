@@ -210,12 +210,8 @@ $(function() {
 		$(this).parent().fadeOut('slow', function() { $(this).remove(); });
 	});
 	
-	
-	
 	// Form select styling
 	$("select.styled").select_skin();
-	
-	
 	
 	// Tabs
 	$(".tab_content").hide();
@@ -264,13 +260,11 @@ $(function() {
 	// Block search
 	$('.block .block_head form .text').bind('click', function() { $(this).attr('value', ''); });
 	
-	
 	// Image actions menu
 	$('ul.imglist li').hover(
 		function() { $(this).find('ul').css('display', 'none').fadeIn('fast').css('display', 'block'); },
 		function() { $(this).find('ul').fadeOut(100); }
 	);
-	
 		
 	// Image delete confirmation
 	$('ul.imglist .delete a').click(function() {
@@ -281,7 +275,6 @@ $(function() {
 		}
 	});
 	
-	
 	// Style file input
 	$("input[type=file]").filestyle({ 
 	    image: "images/upload.gif",
@@ -289,8 +282,6 @@ $(function() {
 	    imagewidth : 80,
 	    width : 250
 	});
-	
-	
 	
 	// File upload
 	if ($('#fileupload').length) {
@@ -309,13 +300,9 @@ $(function() {
 				}	
 		});
 	}
-		
-		
 	
 	// Date picker
 	$('input.date_picker').datepicker();
-	
-	
 
 	// Navigation dropdown fix for IE6
 	if(jQuery.browser.version.substr(0,1) < 7) {

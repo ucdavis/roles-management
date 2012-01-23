@@ -3,7 +3,9 @@
   	<div class="block_head">
   		<div class="bheadl"></div>
   		<div class="bheadr"></div>
-					
+			
+      <button class="right" style="margin-top: 14px;" id="edit">Edit</button>
+      
   		<h2><%= @person.first %> <%= @person.last %></h2>
   	</div>		<!-- .block_head ends -->
   	<div class="block_content">
@@ -65,3 +67,29 @@
     </div> <!-- .block_content ends -->
   </div> <!-- .block ends -->
 </div> <!-- .person_details -->
+
+<script type="text/javascript">
+// setup JS specific to person view
+$("button#edit").click(function() {
+  // Button is a toggle. Are we turning the editing controls on or off?
+  if($(this).html() == "Edit") {
+    // turning them on
+    $(this).html("Done").css("color", "#db6c67");
+  } else {
+    // turning them off
+    $(this).html("Edit").css("color", "#000");
+  }
+}).hover(
+  // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
+  function() {
+    $(this).css("color", "#db6c67");
+  },
+  function() {
+    if($(this).html() == "Edit") {
+      $(this).css("color", "#000");
+    } else {
+      $(this).css("color", "#1eaaeb");
+    }
+  }
+);
+</script>

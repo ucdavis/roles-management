@@ -230,8 +230,11 @@ $(function() {
   site.delete_group = function (group_pin) {
     var group_id = group_pin.id.toString().substr(1);
     
+    template.status_text("Deleting group...");
+    
     // Delete the group
     $.ajax({ url: Routes.group_path(group_id) + ".json", data: {}, type: 'DELETE', complete: function(data, status) {
+      template.hide_status();
       // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
       var el = $("ul.pins li[data-group-id=" + group_pin.id + "]");
       el.fadeOut('fast', function() {
@@ -269,6 +272,7 @@ $(function() {
       // Person
       $(el).attr("data-pin-type", "person");
       $(el).attr("data-person-id", entity.id);
+      $(el).html("<img src=\"/images/help.png\" style=\"margin: 1px 0 0 0; padding: 1px 15px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
       $("div#people ul.pins").append(el);
     } else if (type == '2') {
       // Group
