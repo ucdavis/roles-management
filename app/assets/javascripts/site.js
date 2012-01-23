@@ -69,11 +69,21 @@ $(function() {
     // If the pin doesn't exist, create it.
     if($("div.pin[data-entity-id=" + entity.id + "]").length == 0) {
       var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
-      var el_html = "<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
-                     <img src=\"/images/help.png\" style=\"margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"entity_details\" /> \
+      var el_html = "<img src=\"/images/remove.png\" style=\"display: none; margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
+                     <img src=\"/images/help.png\" style=\"display: none; margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"entity_details\" /> \
                      <div class=\"pin-content\"></div>";
     
       $(el).html( el_html );
+      $(el).hover(
+        function() {
+          // hover in
+          $(this).children("img").css("display", "block");
+        },
+        function() {
+          // hover out
+          $(this).children("img").css("display", "none");
+        }
+      );
     
       // Add the permissions list
       for(var i = 0; i < site.applications[role.application_id].roles.length; i++) {
@@ -264,7 +274,7 @@ $(function() {
       // Group
       $(el).attr("data-pin-type", "group");
       $(el).attr("data-group-id", entity.id);
-      $(el).html("<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" />" + entity.name);
+      $(el).html("<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"/images/help.png\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
       $("div#groups ul.pins li.new").before(el);
     } else {
       // Unknown
