@@ -9,61 +9,122 @@
   		<h2><%= @person.first %> <%= @person.last %></h2>
   	</div>		<!-- .block_head ends -->
   	<div class="block_content">
-  		<div class="sidebar">
-  			<ul class="sidemenu">
-  				<li><a href="#summary">Summary</a></li>
-  				<li><a href="#roles">Roles</a></li>
-  				<li><a href="#applications">Applications</a></li>
-  				<li><a href="#ownerships">Ownerships</a></li>
-          <li><a href="#memberships">Memberships</a></li>
-  			</ul>
+      <div id="person_show_view">
+    		<div class="sidebar">
+    			<ul class="sidemenu">
+    				<li><a href="#show_summary">Summary</a></li>
+    				<li><a href="#show_roles">Roles</a></li>
+    				<li><a href="#show_applications">Applications</a></li>
+    				<li><a href="#show_ownerships">Ownerships</a></li>
+            <li><a href="#show_memberships">Memberships</a></li>
+    			</ul>
 				
-  			<p><strong><a href="mailto:<%= @person.email %>">E-Mail This Person</a></strong><br />
-        <strong><a href="#">View Their Tickets</a></strong><br />
-        <strong><a href="#">Call Them via Lync</a></strong></p>
-  		</div>		<!-- .sidebar ends -->
-					
-  		<div class="sidebar_content" id="summary">
-        <p>
-          <i><% @person.classifications.each do |classification| %>
-            <%= classification.name %>
-          <% end %></i><br />
-          <%= mail_to @person.email, @person.email %><br />
+    			<p><strong><a href="mailto:<%= @person.email %>">E-Mail This Person</a></strong><br />
+          <strong><a href="#">View Their Tickets</a></strong><br />
+          <strong><a href="#">Call Them via Lync</a></strong></p>
+    		</div>		<!-- .sidebar ends -->
+			
+    		<div class="sidebar_content" id="show_summary">
+          <p>
+            <i><% @person.classifications.each do |classification| %>
+              <%= classification.name %>
+            <% end %></i><br />
+            <%= mail_to @person.email, @person.email %><br />
+            <br />
+            <% if @person.phone != nil and @person.phone.length > 0 %>
+              <%= number_to_phone @person.phone, :area_code => true %><br />
+            <% end %>
+            <%= @person.address %><br />
+          </p>
+        </div>
+    		<div class="sidebar_content" id="show_roles">
+          <ul>
+            <% @person.roles.each do |role| %>
+              <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
+            <% end %>
+          </ul>
+        </div>
+    		<div class="sidebar_content" id="show_applications">
+          applications
+        </div>
+    		<div class="sidebar_content" id="show_ownerships">
+          ownerships
+        </div>
+    		<div class="sidebar_content" id="memberships">
+          <b>Groups:</b><br />
+          <ul>
+            <% @person.groups.each do |group| %>
+          	  <li><%= link_to group.name, group %></li>
+          	<% end %>
+          </ul>
           <br />
-          <% if @person.phone != nil and @person.phone.length > 0 %>
-            <%= number_to_phone @person.phone, :area_code => true %><br />
-          <% end %>
-          <%= @person.address %><br />
-        </p>
-      </div>
-  		<div class="sidebar_content" id="roles">
-        <ul>
-          <% @person.roles.each do |role| %>
-            <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
-          <% end %>
-        </ul>
-      </div>
-  		<div class="sidebar_content" id="applications">
-        applications
-      </div>
-  		<div class="sidebar_content" id="ownerships">
-        ownerships
-      </div>
-  		<div class="sidebar_content" id="memberships">
-        <b>Groups:</b><br />
-        <ul>
-          <% @person.groups.each do |group| %>
-        	  <li><%= link_to group.name, group %></li>
-        	<% end %>
-        </ul>
-        <br />
-        <b>Organizational Units:</b><br />
-        <ul>
-          <% @person.ous.each do |ou| %>
-        	  <li><%= link_to ou.name, ou %></li>
-        	<% end %>
-        </ul>
-      </div>
+          <b>Organizational Units:</b><br />
+          <ul>
+            <% @person.ous.each do |ou| %>
+          	  <li><%= link_to ou.name, ou %></li>
+          	<% end %>
+          </ul>
+        </div>
+      </div> <!-- #person_show_view -->
+
+      <div id="person_edit_view" style="display: none;">
+    		<div class="sidebar">
+    			<ul class="sidemenu">
+    				<li><a href="#edit_summary">Summary</a></li>
+    				<li><a href="#edit_roles">Roles</a></li>
+    				<li><a href="#edit_applications">Applications</a></li>
+    				<li><a href="#edit_ownerships">Ownerships</a></li>
+            <li><a href="#edit_memberships">Memberships</a></li>
+    			</ul>
+				  
+    			<p><strong><a href="mailto:<%= @person.email %>">E-Mail This Person</a></strong><br />
+          <strong><a href="#">View Their Tickets</a></strong><br />
+          <strong><a href="#">Call Them via Lync</a></strong></p>
+    		</div>		<!-- .sidebar ends -->
+        
+    		<div class="sidebar_content" id="edit_summary">
+          <p>edit mode
+            <i><% @person.classifications.each do |classification| %>
+              <%= classification.name %>
+            <% end %></i><br />
+            <%= mail_to @person.email, @person.email %><br />
+            <br />
+            <% if @person.phone != nil and @person.phone.length > 0 %>
+              <%= number_to_phone @person.phone, :area_code => true %><br />
+            <% end %>
+            <%= @person.address %><br />
+          </p>
+        </div>
+    		<div class="sidebar_content" id="edit_roles">
+          <ul>edit mode
+            <% @person.roles.each do |role| %>
+              <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
+            <% end %>
+          </ul>
+        </div>
+    		<div class="sidebar_content" id="edit_applications">
+          applications edit mode
+        </div>
+    		<div class="sidebar_content" id="edit_ownerships">
+          ownerships edit mode
+        </div>
+    		<div class="sidebar_content" id="edit_memberships">
+          <b>Groups:</b><br /> edit mode
+          <ul>
+            <% @person.groups.each do |group| %>
+          	  <li><%= link_to group.name, group %></li>
+          	<% end %>
+          </ul>
+          <br />
+          <b>Organizational Units:</b><br />
+          <ul>
+            <% @person.ous.each do |ou| %>
+          	  <li><%= link_to ou.name, ou %></li>
+          	<% end %>
+          </ul>
+        </div>
+      </div> <!-- #person_edit_view -->
+      
     </div> <!-- .block_content ends -->
   </div> <!-- .block ends -->
 </div> <!-- .person_details -->
@@ -73,11 +134,24 @@
 $("button#edit").click(function() {
   // Button is a toggle. Are we turning the editing controls on or off?
   if($(this).html() == "Edit") {
-    // turning them on
+    // turning editing on
     $(this).html("Done").css("color", "#db6c67");
+    console.log($(this).parent().parent().find("div#person_edit_view"));
+    $(this).parent().parent().find("div#person_show_view").hide();
+    $(this).parent().parent().find("div#person_edit_view").show();
+    
+    // simulate a click on the matching sidebar tab
+    var tab_hash = $("div#person_show_view ul.sidemenu li.active").children("a").attr("href");
+    $("div#person_edit_view ul.sidemenu li a[href=#edit_" + tab_hash.substr(6) + "]").parent().click();
   } else {
-    // turning them off
+    // turning editing off
     $(this).html("Edit").css("color", "#000");
+    $(this).parent().parent().find("div#person_edit_view").hide();
+    $(this).parent().parent().find("div#person_show_view").show();
+
+    // simulate a click on the matching sidebar tab
+    var tab_hash = $("div#person_edit_view ul.sidemenu li.active").children("a").attr("href");
+    $("div#person_show_view ul.sidemenu li a[href=#show_" + tab_hash.substr(6) + "]").parent().click();
   }
 }).hover(
   // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
