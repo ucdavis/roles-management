@@ -59,12 +59,6 @@ function add_fields(link, association, content) {
 
 $(function() {
   // Set up the token inputs
-  $("#group_people_tokens").tokenInput($("#group_people_tokens").attr("method") + ".json", {
-    crossDomain: false,
-    prePopulate: $("#group_people_tokens").data("pre"),
-    theme: "facebook"
-  });
-
   $("#role_people_tokens").tokenInput($("#role_people_tokens").attr("method") + ".json", {
     crossDomain: false,
     prePopulate: $("#role_people_tokens").data("pre"),
@@ -98,12 +92,6 @@ $(function() {
   $("#classification_title_tokens").tokenInput($("#classification_title_tokens").attr("method") + ".json", {
     crossDomain: false,
     prePopulate: $("#classification_title_tokens").data("pre"),
-    theme: "facebook"
-  });
-
-  $("#group_owner_tokens").tokenInput($("#group_owner_tokens").attr("method") + ".json", {
-    crossDomain: false,
-    prePopulate: $("#group_owner_tokens").data("pre"),
     theme: "facebook"
   });
   
