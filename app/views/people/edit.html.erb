@@ -1,21 +1,3 @@
-<% if notice %>
-<div class="message success"><p><%= notice %></p></div>
-<% end %>
-
-<div class="block">
-	<div class="block_head">
-		<div class="bheadl"></div>
-		<div class="bheadr"></div>
-		
-		<h2>Editing <%= @person.preferred_name %></h2>
-		
-		<ul class="tabs">
-			<li><%= link_to 'Overview', person_path(@person) %></li>
-			<li><a href="#revisions_tab">Revisions</a></li>
-			<li class="active"><a href="#edit_tab">Edit</a></li>
-		</ul>
-	</div> <!-- .block_head -->
-	
 	<div class="block_content tab_content" id="edit_tab">
     <%= form_for(@person) do |f| %>
       <% if @person.errors.any? %>
@@ -30,49 +12,6 @@
         </div>
       <% end %>
 
-    	<p>
-        <%= f.label :first %><br />
-        <%= f.text_field :first, :class => "text" %>
-    	</p>
-    	<p>
-        <%= f.label :last %><br />
-        <%= f.text_field :last, :class => "text" %>
-    	</p>
-    	<p>
-        <%= f.label :email %><br />
-        <%= f.text_field :email, :class => "text" %>
-    	</p>
-    	<p>
-        <%= f.label :loginid %><br />
-        <%= f.text_field :loginid, :class => "text" %>
-    	</p>
-    	<p>
-        <%= f.label :preferred_name %><br />
-        <%= f.text_field :preferred_name, :class => "text" %>
-    	</p>
-    	<p>
-        <%= f.label :status, "Active" %><br />
-        <%= f.check_box :status, :class => "checkbox" %>
-    	</p>
-    	<p>
-        <%= f.label :phone %><br />
-        <%= f.text_field :phone, :class => "text" %>
-    	</p>
-    	<p>
-        <%= f.label :address %><br />
-        <%= f.text_field :address, :class => "text" %>
-    	</p>
-    
-      <p>
-        	<%= f.label :groups, "Group Memberships" %><br />
-        	<%= f.text_field :group_tokens, "data-pre" => @person.groups.to_json, "method" => url_for(:controller => "api/groups", :action => "index") %>
-      </p>
-
-      <p>
-        	<%= f.label :ous, "Organization Membership" %><br />
-        	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
-      </p>
-
       <p>
         	<%= f.label :subordinates, "Subordinates <small>(Only subordinates not via group ownership)</small>".html_safe %><br />
         	<%= f.text_field :subordinate_tokens, "data-pre" => @person.subordinates.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
@@ -82,11 +21,3 @@
     <% end %>
     <br /><br />
 	</div> <!-- .block_content -->
-
-	<div class="block_content tab_content" id="revisions_tab">
-
-	</div> <!-- .block_content -->
-	
-	<div class="bendl"></div>
-	<div class="bendr"></div>
-</div> <!-- .block -->

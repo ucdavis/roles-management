@@ -83,17 +83,36 @@
     		</div>		<!-- .sidebar ends -->
         
     		<div class="sidebar_content" id="edit_summary">
-          <p>edit mode
-            <i><% @person.classifications.each do |classification| %>
-              <%= classification.name %>
-            <% end %></i><br />
-            <%= mail_to @person.email, @person.email %><br />
-            <br />
-            <% if @person.phone != nil and @person.phone.length > 0 %>
-              <%= number_to_phone @person.phone, :area_code => true %><br />
-            <% end %>
-            <%= @person.address %><br />
-          </p>
+          <%= form_for(@person) do |f| %>
+        	<p>
+            <%= f.label :first %><br />
+            <%= f.text_field :first, :class => "text" %>
+        	</p>
+        	<p>
+            <%= f.label :last %><br />
+            <%= f.text_field :last, :class => "text" %>
+        	</p>
+        	<p>
+            <%= f.label :email %><br />
+            <%= f.text_field :email, :class => "text" %>
+        	</p>
+        	<p>
+            <%= f.label :loginid %><br />
+            <%= f.text_field :loginid, :class => "text" %>
+        	</p>
+        	<p>
+            <%= f.label :preferred_name %><br />
+            <%= f.text_field :preferred_name, :class => "text" %>
+        	</p>
+        	<p>
+            <%= f.label :phone %><br />
+            <%= f.text_field :phone, :class => "text" %>
+        	</p>
+        	<p>
+            <%= f.label :address %><br />
+            <%= f.text_field :address, :class => "text" %>
+        	</p>
+          <% end %>
         </div>
     		<div class="sidebar_content" id="edit_roles">
           <ul>edit mode
@@ -109,19 +128,17 @@
           ownerships edit mode
         </div>
     		<div class="sidebar_content" id="edit_memberships">
-          <b>Groups:</b><br /> edit mode
-          <ul>
-            <% @person.groups.each do |group| %>
-          	  <li><%= link_to group.name, group %></li>
-          	<% end %>
-          </ul>
-          <br />
+          <%= form_for(@person) do |f| %>
+          <b>Groups:</b><br />
+          <p>
+            	<%= f.text_field :group_tokens, "data-pre" => @person.groups.to_json, "method" => url_for(:controller => "api/groups", :action => "index") %>
+          </p>
+
           <b>Organizational Units:</b><br />
-          <ul>
-            <% @person.ous.each do |ou| %>
-          	  <li><%= link_to ou.name, ou %></li>
-          	<% end %>
-          </ul>
+          <p>
+            	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
+          </p>
+          <% end %>
         </div>
       </div> <!-- #person_edit_view -->
       
@@ -166,4 +183,17 @@ $("button#edit").click(function() {
     }
   }
 );
+
+$("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
+  crossDomain: false,
+  prePopulate: $("#person_ou_tokens").data("pre"),
+  theme: "facebook"
+});
+
+$("#person_group_tokens").tokenInput($("#person_group_tokens").attr("method") + ".json", {
+  crossDomain: false,
+  prePopulate: $("#person_group_tokens").data("pre"),
+  theme: "facebook"
+});
+
 </script>
