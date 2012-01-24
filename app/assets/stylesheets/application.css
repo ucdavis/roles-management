@@ -1100,8 +1100,7 @@ ul.token-input-list-facebook {
 }
 
 li.token-input-token-facebook {
-	padding-left: 0px !important;
-	margin-bottom: 0px !important;
+	padding-left: 5px !important;
 	background: none !important;
 }
 
