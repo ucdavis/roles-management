@@ -25,7 +25,7 @@ $(function() {
             
             $.get(details_url, function(data) {
               $(ui.newContent).html(data);
-              template.setup_sidebar($("div#person_details"));
+              template.setup_sidebar($("div#entity_details"));
             });
         }
       });

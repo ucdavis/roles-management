@@ -1,4 +1,4 @@
-<div id="person_details">
+<div id="entity_details">
   <div class="block withsidebar popup_block">
   	<div class="block_head">
   		<div class="bheadl"></div>
@@ -86,8 +86,8 @@
         	<p>
         		<h2>Members</h2>
         		<p>
-        		  <%= f.label :people_tokens, "People" %><br />
-        		  <%= f.text_field :people_tokens, "data-pre" => @group.people.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
+        		  <%= f.label :member_tokens, "People" %><br />
+        		  <%= f.text_field :member_tokens, "data-pre" => @group.members.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
         		</p>
         	</p>
           <% end %>
@@ -108,7 +108,7 @@
       
     </div> <!-- .block_content ends -->
   </div> <!-- .block ends -->
-</div> <!-- .person_details -->
+</div> <!-- .entity_details -->
 
 <script type="text/javascript">
 // setup JS specific to group view
@@ -149,10 +149,16 @@ $("button#edit").click(function() {
   }
 );
 
-$("#group_people_tokens").tokenInput($("#group_people_tokens").attr("method") + ".json", {
+$("#group_member_tokens").tokenInput($("#group_member_tokens").attr("method") + ".json", {
   crossDomain: false,
-  prePopulate: $("#group_people_tokens").data("pre"),
-  theme: "facebook"
+  prePopulate: $("#group_member_tokens").data("pre"),
+  theme: "facebook",
+  onAdd: function (item) {
+    console.log("Added " + item);
+  },
+  onDelete: function (item) {
+    console.log("Deleted " + item);
+  }
 });
 
 $("#group_owner_tokens").tokenInput($("#group_owner_tokens").attr("method") + ".json", {

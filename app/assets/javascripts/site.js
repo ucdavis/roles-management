@@ -190,7 +190,7 @@ $(function() {
     $.get(details_url, function(data) {
       template.hide_status();
       apprise(data);
-      template.setup_sidebar($("div#person_details"));
+      template.setup_sidebar($("div#entity_details"));
     });
   }
   

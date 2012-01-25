@@ -53,6 +53,10 @@ class Group < ActiveRecord::Base
     self.person_ids = ids.split(",")
   end
   
+  def member_tokens
+    members.map{ |x| { :id => ('1' + x.id.to_s).to_i, :name => x.name } }
+  end
+  
   def as_json(options={}) 
     { :id => ('2' + self.id.to_s).to_i, :name => self.name } 
   end
