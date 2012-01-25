@@ -666,7 +666,7 @@ select {
 
 .block form textarea {
 	width: 90%;
-	height: 75px;
+	height: 55px;
 	padding: 5px;
 	background: #fefefe;
 	border: 1px solid #bbb;
@@ -1353,7 +1353,7 @@ li.ui-draggable-dragging {
 }
 
 .popup_block {
-  width: 600px;
+  width: 720px;
 }
 
 .status_bar {

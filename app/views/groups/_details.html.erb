@@ -88,7 +88,6 @@
         	<p>
         		<h2>Owners</h2>
         		<p>
-        		  <%= f.label :owner_tokens, "Owners" %><br />
         		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
         		</p>
         	</p>
@@ -96,7 +95,6 @@
         	<p>
         		<h2>Members</h2>
         		<p>
-        		  <%= f.label :member_tokens, "People" %><br />
         		  <%= f.text_field :member_tokens, "data-pre" => @group.members.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
         		</p>
         	</p>
