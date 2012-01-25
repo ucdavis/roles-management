@@ -47,10 +47,20 @@
           </p>
         </div>
     		<div class="sidebar_content" id="show_rules">
-          rules
+          <% @group.rules.each do |r| %>
+          <div class="fields">
+            <p>
+              <%= r.print_formatted %>
+            </p>
+          </div>
+          <% end %>
         </div>
     		<div class="sidebar_content" id="show_roles">
-          roles
+          <ul>
+            <% @group.roles.each do |role| %>
+              <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
+            <% end %>
+          </ul>
         </div>
       </div> <!-- #group_show_view -->
       
@@ -102,7 +112,7 @@
           <% end %>
         </div>
     		<div class="sidebar_content" id="edit_roles">
-          roles edit
+          You can edit this group's roles by dragging and dropping its name in the main interface.
         </div>
       </div> <!-- #group_edit_view -->
       

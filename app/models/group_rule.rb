@@ -68,4 +68,30 @@ class GroupRule < ActiveRecord::Base
     
     p
   end
+  
+  def print_formatted
+    case column
+    when 'title'
+      str = "<b>Title</b> "
+    when 'loginid'
+      str = "<b>Login ID</b> "
+    when 'major'
+      str = "<b>Major</b> "
+    when 'affiliation'
+      str = "<b>Affiliation</b> "
+    when 'classification'
+      str = "<b>Classification</b> "
+    end
+    
+    case condition
+    when 'may be'
+      str = str + "may be "
+    when 'may not be'
+      str = str + "may not be "
+    end
+    
+    str = str + "<b>" + value + "</b>"
+    
+    str.html_safe
+  end
 end

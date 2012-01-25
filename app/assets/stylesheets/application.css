@@ -967,7 +967,7 @@ div#people_details_operations button.tiny {
 
 .block.withsidebar .block_content .sidebar_content {
 	padding: 15px 20px 15px 210px;
-	}
+}
 
 /* Image list */
 
@@ -976,11 +976,11 @@ div#people_details_operations button.tiny {
 	margin: 0;
 	padding: 0;
 	padding-bottom: 10px;
-	}
+}
 
 .block .block_content .imglist ul {
 	padding: 0;
-	}
+}
 
 .block .block_content .imglist li {
 	padding: 0;
@@ -997,7 +997,7 @@ div#people_details_operations button.tiny {
 	box-shadow: 0 0 3px #ccc;
 	-moz-box-shadow: 0 0 3px #ccc;
 	-webkit-box-shadow: 0 0 3px #ccc;
-	}
+}
 	
 .block .block_content .imglist li img {
 	position: absolute;
@@ -1015,7 +1015,7 @@ div#people_details_operations button.tiny {
 	left: 19px;
 	top: 21px;
 	display: none;
-	}
+}
 	
 .block .block_content .imglist li:hover ul { display: block; }
 
@@ -1030,7 +1030,7 @@ div#people_details_operations button.tiny {
 	box-shadow: none;
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
-	}
+}
 
 .block .block_content .imglist li ul li a {
 	display: block;
@@ -1042,14 +1042,13 @@ div#people_details_operations button.tiny {
 	line-height: 29px;
 	text-shadow: 0 0 2px #000;
 	outline: none;
-	}
+}
 	
 .block .block_content .imglist li ul li.view a:hover { background: url("../images/imgt.gif") bottom center no-repeat; }
 .block .block_content .imglist li ul li.delete a:hover { background: url("../images/imgb.gif") top center no-repeat; }
 
 
 /* Footer */
-
 #footer {
 	background: url("../images/ft.gif") 0 0 repeat-x;
 	padding: 10px 0 50px;
@@ -1057,26 +1056,26 @@ div#people_details_operations button.tiny {
 	color: #757575;
 	clear: both;
 	overflow: hidden;
-	}
+}
 	
 #footer a {
 	color: #757575;
 	text-decoration: underline;
-	}
+}
 
 #footer a:hover {
 	color: #666;
 	text-decoration: none;
-	}
+}
 	
 #footer .left {
 	float: left;
-	}
+}
 	
 #footer .right {
 	float: right;
 	text-align: right;
-	}
+}
 	
 /* Helpers */
 .hidden {
