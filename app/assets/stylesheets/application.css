@@ -654,6 +654,7 @@ select {
 	vertical-align: middle;
 }
 
+.block form input.text.small { width: 155px; }
 .block form input.text.medium { width: 600px; }
 .block form input.text.big { width: 98%; }
 
@@ -1103,7 +1104,7 @@ li.token-input-token-facebook {
 
 li.token-input-input-token-facebook {
 	padding-left: 0px !important;
-	margin-bottom: 0px !important;
+  margin: 4px;
 	background: none !important;
 }
 

@@ -28,7 +28,7 @@
           <p>
             <i><% @person.classifications.each do |classification| %>
               <%= classification.name %>
-            <% end %></i><br />
+            <% end %></i><% if @person.classifications.length > 0 %><br /><% end %>
             <%= mail_to @person.email, @person.email %><br />
             <br />
             <% if @person.phone != nil and @person.phone.length > 0 %>
@@ -85,24 +85,16 @@
     		<div class="sidebar_content" id="edit_summary">
           <%= form_for(@person) do |f| %>
         	<p>
-            <%= f.label :first %><br />
-            <%= f.text_field :first, :class => "text" %>
+            <%= f.label :first, "Name" %><br />
+            <%= f.text_field :first, :class => "text small" %> <%= f.text_field :last, :class => "text small" %>
         	</p>
         	<p>
-            <%= f.label :last %><br />
-            <%= f.text_field :last, :class => "text" %>
-        	</p>
-        	<p>
-            <%= f.label :email %><br />
-            <%= f.text_field :email, :class => "text" %>
-        	</p>
-        	<p>
-            <%= f.label :loginid %><br />
-            <%= f.text_field :loginid, :class => "text" %>
-        	</p>
-        	<p>
-            <%= f.label :preferred_name %><br />
+            <%= f.label :preferred_name, "Preferred Name" %><br />
             <%= f.text_field :preferred_name, :class => "text" %>
+        	</p>
+        	<p>
+            <%= f.label :email %> <%= f.label :loginid, "Login ID", :style => "padding-left: 127px;" %><br />
+            <%= f.text_field :email, :class => "text small" %> <%= f.text_field :loginid, :class => "text small" %>
         	</p>
         	<p>
             <%= f.label :phone %><br />
@@ -115,7 +107,13 @@
           <% end %>
         </div>
     		<div class="sidebar_content" id="edit_roles">
-          <ul>edit mode
+          <p>
+            An audit of this person's roles are displayed below.
+          </p>
+          <p>
+            <b>To add roles, or remove roles</b> which you have given this person, use the main interface.
+          </p>
+          <ul>
             <% @person.roles.each do |role| %>
               <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
             <% end %>

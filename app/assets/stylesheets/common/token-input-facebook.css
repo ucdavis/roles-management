@@ -65,7 +65,7 @@ li.token-input-selected-token-facebook {
 
 li.token-input-input-token-facebook {
     float: left;
-    margin: 0;
+    /*margin: 0;*/
     padding: 0;
     list-style-type: none;
 }
