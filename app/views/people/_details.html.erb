@@ -9,72 +9,14 @@
   		<h2><%= @person.first %> <%= @person.last %></h2>
   	</div>		<!-- .block_head ends -->
   	<div class="block_content">
-      <div id="person_show_view">
+      <div id="person_view">
     		<div class="sidebar">
     			<ul class="sidemenu">
-    				<li><a href="#show_summary">Summary</a></li>
-    				<li><a href="#show_roles">Roles</a></li>
-    				<li><a href="#show_applications">Applications</a></li>
-    				<li><a href="#show_subordinates">Subordinates</a></li>
-            <li><a href="#show_memberships">Memberships</a></li>
-    			</ul>
-				
-    			<p><strong><a href="mailto:<%= @person.email %>">E-Mail This Person</a></strong><br />
-          <strong><a href="#">View Their Tickets</a></strong><br />
-          <strong><a href="#">Call Them via Lync</a></strong></p>
-    		</div>		<!-- .sidebar ends -->
-			
-    		<div class="sidebar_content" id="show_summary">
-          <p>
-            <i><% @person.classifications.each do |classification| %>
-              <%= classification.name %>
-            <% end %></i><% if @person.classifications.length > 0 %><br /><% end %>
-            <%= mail_to @person.email, @person.email %><br />
-            <br />
-            <% if @person.phone != nil and @person.phone.length > 0 %>
-              <%= number_to_phone @person.phone, :area_code => true %><br />
-            <% end %>
-            <%= @person.address %><br />
-          </p>
-        </div>
-    		<div class="sidebar_content" id="show_roles">
-          <ul>
-            <% @person.roles.each do |role| %>
-              <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
-            <% end %>
-          </ul>
-        </div>
-    		<div class="sidebar_content" id="show_applications">
-          applications
-        </div>
-    		<div class="sidebar_content" id="show_subordinates">
-          subordinates
-        </div>
-    		<div class="sidebar_content" id="show_memberships">
-          <b>Groups:</b><br />
-          <ul>
-            <% @person.groups.each do |group| %>
-          	  <li><%= link_to group.name, group %></li>
-          	<% end %>
-          </ul>
-          <br />
-          <b>Organizational Units:</b><br />
-          <ul>
-            <% @person.ous.each do |ou| %>
-          	  <li><%= link_to ou.name, ou %></li>
-          	<% end %>
-          </ul>
-        </div>
-      </div> <!-- #person_show_view -->
-
-      <div id="person_edit_view" style="display: none;">
-    		<div class="sidebar">
-    			<ul class="sidemenu">
-    				<li><a href="#edit_summary">Summary</a></li>
-    				<li><a href="#edit_roles">Roles</a></li>
-    				<li><a href="#edit_applications">Applications</a></li>
-    				<li><a href="#edit_subordinates">Subordinates</a></li>
-            <li><a href="#edit_memberships">Memberships</a></li>
+    				<li><a href="#summary">Summary</a></li>
+    				<li><a href="#roles">Roles</a></li>
+    				<li><a href="#applications">Applications</a></li>
+    				<li><a href="#subordinates">Subordinates</a></li>
+            <li><a href="#memberships">Memberships</a></li>
     			</ul>
 				  
     			<p><strong><a href="mailto:<%= @person.email %>">E-Mail This Person</a></strong><br />
@@ -82,7 +24,7 @@
           <strong><a href="#">Call Them via Lync</a></strong></p>
     		</div>		<!-- .sidebar ends -->
         
-    		<div class="sidebar_content" id="edit_summary">
+    		<div class="sidebar_content" id="summary">
           <%= form_for(@person) do |f| %>
         	<p>
             <%= f.label :first, "Name" %><br />
@@ -106,7 +48,7 @@
         	</p>
           <% end %>
         </div>
-    		<div class="sidebar_content" id="edit_roles">
+    		<div class="sidebar_content" id="roles">
           <p>
             An audit of this person's roles are displayed below.
           </p>
@@ -119,10 +61,10 @@
             <% end %>
           </ul>
         </div>
-    		<div class="sidebar_content" id="edit_applications">
+    		<div class="sidebar_content" id="applications">
           applications edit mode
         </div>
-    		<div class="sidebar_content" id="edit_subordinates">
+    		<div class="sidebar_content" id="subordinates">
           <%= form_for(@person) do |f| %>
           <p>
             	<%= f.label :subordinates, "Subordinates <small>(Only subordinates not via group ownership)</small>".html_safe %><br />
@@ -130,7 +72,7 @@
           </p>
           <% end %>
         </div>
-    		<div class="sidebar_content" id="edit_memberships">
+    		<div class="sidebar_content" id="memberships">
           <%= form_for(@person) do |f| %>
           <b>Groups:</b><br />
           <p>
@@ -149,61 +91,4 @@
   </div> <!-- .block ends -->
 </div> <!-- .entity_details -->
 
-<script type="text/javascript">
-// setup JS specific to person view
-$("button#edit").click(function() {
-  // Button is a toggle. Are we turning the editing controls on or off?
-  if($(this).html() == "Edit") {
-    // turning editing on
-    $(this).html("Done").css("color", "#db6c67");
-    
-    $(this).parent().parent().find("div#person_show_view").hide();
-    $(this).parent().parent().find("div#person_edit_view").show();
-    
-    // simulate a click on the matching sidebar tab
-    var tab_hash = $("div#person_show_view ul.sidemenu li.active").children("a").attr("href");
-    $("div#person_edit_view ul.sidemenu li a[href=#edit_" + tab_hash.substr(6) + "]").parent().click();
-  } else {
-    // turning editing off
-    $(this).html("Edit").css("color", "#000");
-    
-    $(this).parent().parent().find("div#person_edit_view").hide();
-    $(this).parent().parent().find("div#person_show_view").show();
-
-    // simulate a click on the matching sidebar tab
-    var tab_hash = $("div#person_edit_view ul.sidemenu li.active").children("a").attr("href");
-    $("div#person_show_view ul.sidemenu li a[href=#show_" + tab_hash.substr(6) + "]").parent().click();
-  }
-}).hover(
-  // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
-  function() {
-    $(this).css("color", "#db6c67");
-  },
-  function() {
-    if($(this).html() == "Edit") {
-      $(this).css("color", "#000");
-    } else {
-      $(this).css("color", "#1eaaeb");
-    }
-  }
-);
-
-$("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
-  crossDomain: false,
-  prePopulate: $("#person_ou_tokens").data("pre"),
-  theme: "facebook"
-});
-
-$("#person_group_tokens").tokenInput($("#person_group_tokens").attr("method") + ".json", {
-  crossDomain: false,
-  prePopulate: $("#person_group_tokens").data("pre"),
-  theme: "facebook"
-});
-
-$("#person_subordinate_tokens").tokenInput($("#person_subordinate_tokens").attr("method") + ".json", {
-  crossDomain: false,
-  prePopulate: $("#person_subordinate_tokens").data("pre"),
-  theme: "facebook"
-});
-
-</script>
+<script type="text/javascript" src="<%= asset_path "details_modal.js" %>"></script>
