@@ -1,5 +1,25 @@
 (function (details_modal, $, undefined) {
+  details_modal.EDIT_MODE = 0;
+  details_modal.VIEW_MODE = 1;
   
+  details_modal.switch_mode = function(mode) {
+    switch(mode) {
+      case details_modal.EDIT_MODE:
+      // Turn on inputs
+      $("div#person_view div.sidebar_content input")
+        .css("border", "1px solid #bbb")
+        .attr("readonly", false);
+      break;
+      case details_modal.VIEW_MODE:
+      // Turn off inputs
+      $("div#person_view div.sidebar_content input")
+        .css("border", "1px solid #fff")
+        .attr("readonly", true);
+      break;
+      default: break;
+    }
+  }
+    
 } (window.details_modal = window.details_modal || {}, jQuery));
 
 $(document).ready(function() {
@@ -26,11 +46,11 @@ $(document).ready(function() {
     if($(this).html() == "Edit") {
       // turning editing on
       $(this).html("Done").css("color", "#db6c67");
-      
+      details_modal.switch_mode(details_modal.EDIT_MODE);
     } else {
       // turning editing off
       $(this).html("Edit").css("color", "#000");
-      
+      details_modal.switch_mode(details_modal.VIEW_MODE);
     }
   }).hover(
     // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
@@ -45,4 +65,6 @@ $(document).ready(function() {
       }
     }
   );
+  
+  details_modal.switch_mode(details_modal.VIEW_MODE);
 });

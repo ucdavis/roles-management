@@ -24,7 +24,7 @@ body {
 	color: #666;
 	line-height: 20px;
 	-webkit-text-size-adjust: none;
-	}
+}
  
 :focus { -moz-outline-style: none; }
 	
@@ -37,25 +37,28 @@ a {
 	color: #008ee8;
 	text-decoration: none;
 	outline: none;
-	}
+}
 	
 a:hover {
 	color: #ec8526;
 	text-decoration: none;
-	}	
+}
+
+fieldset {
+  border: 0;
+}
 	
 #hld {
 	background: url("../images/hld.jpg") 0 0 repeat-x;
 	min-height: 402px;
-	}
+}
 	
 .wrapper {
 	width:90%;
 	min-width: 960px;
 	margin:0 auto;
 	padding-top: 20px;
-	}
-
+}
 
 /* Header */
 
@@ -66,26 +69,26 @@ a:hover {
 	color: #999;
 	font-weight: bold;
 	margin-bottom: 20px;
-	}
+}
 	
 #header .hdrl {
 	width: 20px;
 	height: 50px;
 	float: left;
 	background: url("../images/hdrl.gif") top left no-repeat;
-	}
+}
 
 #header .hdrr {
 	width: 20px;
 	height: 50px;
 	float: right;
 	background: url("../images/hdrr.gif") top right no-repeat;
-	}
+}
 	
 #header a {
 	color: #999;
 	text-decoration: none;
-	}
+}
 
 #header a:hover { color: #fff; }
 	
@@ -97,7 +100,7 @@ a:hover {
 	font-weight: normal;
 	text-transform: uppercase;
 	color: #fff;
-	}
+}
 
 #header h1 a { color: #fff; }
 #header h1 a:hover { color: #008ee8; }
@@ -115,7 +118,7 @@ a:hover {
 	height: 50px;
 	padding: 0;
 	float: left;
-	}
+}
 
 #header #nav li {
 	margin: 0;
@@ -129,7 +132,7 @@ a:hover {
 	padding: 0 10px;
 	background: url("../images/nsp.gif") center right no-repeat;
 	line-height: 50px;
-	}
+}
 	
 #header #nav li.nobg { background: none; }
 
@@ -904,7 +907,7 @@ div#people_details_operations button.tiny {
 	margin-top: 100px;
 	margin-bottom: 100px;
 	padding-bottom: 5px;
-	}
+}
 
 
 /* Block sidebar */
@@ -912,29 +915,29 @@ div#people_details_operations button.tiny {
 .block.withsidebar .bendl {
 	width: 191px;
 	background: url("../images/bendsb.gif") bottom left no-repeat;
-	}
+}
 
 .block.withsidebar .block_content {
 	overflow: hidden;
 	padding: 0;
 	background: url("../images/sidebar.gif") 0 0 repeat-y;
-	}
+}
 
 .block.withsidebar .block_content .sidebar {
 	width: 190px;
 	float: left;
 	font-size: 11px;
-	}
+}
 
 .block.withsidebar .block_content .sidebar p {
 	padding: 0 13px 15px;
 	line-height: 18px;
-	}
+}
 
 .block.withsidebar .block_content .sidebar ul.sidemenu {
 	padding: 0;
 	margin-bottom: 10px;
-	}
+}
 
 .block.withsidebar .block_content .sidebar ul.sidemenu li {
 	padding: 0;

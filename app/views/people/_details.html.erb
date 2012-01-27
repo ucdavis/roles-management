@@ -24,8 +24,8 @@
           <strong><a href="#">Call Them via Lync</a></strong></p>
     		</div>		<!-- .sidebar ends -->
         
-    		<div class="sidebar_content" id="summary">
-          <%= form_for(@person) do |f| %>
+        <%= form_for(@person) do |f| %>
+    		<fieldset class="sidebar_content" id="summary">
         	<p>
             <%= f.label :first, "Name" %><br />
             <%= f.text_field :first, :class => "text small" %> <%= f.text_field :last, :class => "text small" %>
@@ -46,9 +46,8 @@
             <%= f.label :address %><br />
             <%= f.text_field :address, :class => "text" %>
         	</p>
-          <% end %>
-        </div>
-    		<div class="sidebar_content" id="roles">
+        </fieldset>
+    		<fieldset class="sidebar_content" id="roles">
           <p>
             An audit of this person's roles are displayed below.
           </p>
@@ -60,20 +59,17 @@
               <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
             <% end %>
           </ul>
-        </div>
-    		<div class="sidebar_content" id="applications">
+        </fieldset>
+    		<fieldset class="sidebar_content" id="applications">
           applications edit mode
-        </div>
-    		<div class="sidebar_content" id="subordinates">
-          <%= form_for(@person) do |f| %>
+        </fieldset>
+    		<fieldset class="sidebar_content" id="subordinates">
           <p>
             	<%= f.label :subordinates, "Subordinates <small>(Only subordinates not via group ownership)</small>".html_safe %><br />
             	<%= f.text_field :subordinate_tokens, "data-pre" => @person.subordinates.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
           </p>
-          <% end %>
-        </div>
-    		<div class="sidebar_content" id="memberships">
-          <%= form_for(@person) do |f| %>
+        </fieldset>
+    		<fieldset class="sidebar_content" id="memberships">
           <b>Groups:</b><br />
           <p>
             	<%= f.text_field :group_tokens, "data-pre" => @person.groups.to_json, "method" => url_for(:controller => "api/groups", :action => "index") %>
@@ -83,10 +79,10 @@
           <p>
             	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index") %>
           </p>
-          <% end %>
-        </div>
+        </fieldset>
+        <% end %>
+        
       </div> <!-- #person_edit_view -->
-      
     </div> <!-- .block_content ends -->
   </div> <!-- .block ends -->
 </div> <!-- .entity_details -->
