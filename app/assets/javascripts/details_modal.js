@@ -6,13 +6,13 @@
     switch(mode) {
       case details_modal.EDIT_MODE:
       // Turn on inputs
-      $("div#person_view div.sidebar_content input")
+      $("div#person_view .sidebar_content input")
         .css("border", "1px solid #bbb")
         .attr("readonly", false);
       break;
       case details_modal.VIEW_MODE:
       // Turn off inputs
-      $("div#person_view div.sidebar_content input")
+      $("div#person_view .sidebar_content input")
         .css("border", "1px solid #fff")
         .attr("readonly", true);
       break;

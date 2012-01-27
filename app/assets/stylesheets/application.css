@@ -970,7 +970,7 @@ div#people_details_operations button.tiny {
 }
 
 .block.withsidebar .block_content .sidebar_content {
-	padding: 15px 20px 15px 210px;
+	padding: 15px 20px 15px 15px;
 }
 
 /* Image list */
