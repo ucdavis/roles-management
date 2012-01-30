@@ -19,6 +19,8 @@
         .attr("disabled", false);
       // Turn on any anchor-based controls
       $("a.edit_mode").show();
+      // Show unchecked boxes
+      $("input[type=checkbox]:not(:checked)").show();
       break;
       case details_modal.VIEW_MODE:
       // Turn off inputs
@@ -35,6 +37,8 @@
         .attr("disabled", true);
       // Turn off any anchor-based controls
       $("a.edit_mode").hide();
+      // Hide unchecked boxes
+      $("input[type=checkbox]:not(:checked)").hide();
       break;
       default: break;
     }
