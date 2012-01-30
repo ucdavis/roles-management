@@ -12,9 +12,9 @@
       break;
       case details_modal.VIEW_MODE:
       // Turn off inputs
-      $("div#person_view .sidebar_content input")
-        .css("border", "1px solid #fff")
-        .attr("readonly", true);
+      //$("div#person_view .sidebar_content input")
+        //.css("border", "1px solid #fff")
+        //.attr("readonly", true);
       break;
       default: break;
     }
