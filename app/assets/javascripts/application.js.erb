@@ -305,4 +305,21 @@ $(function() {
       });
     }
   );
+  
+  // Set up default text (FIXME)
+  $(document).on("focus", "input[data-default-text]", function(srcc) {
+      if ($(this).val() == $(this)[0].title) {
+          $(this).removeClass("default_text_active");
+          $(this).val("");
+      }
+  });
+  $(document).on("blur", "input[data-default-text]", function() {
+      if ($(this).val() == "") {
+          $(this).addClass("default_text_active");
+          $(this).val($(this)[0].title);
+      }
+  });
+  $("input[data-default-text]").live("create", function(){
+  	$(this).blur();
+  });
 });

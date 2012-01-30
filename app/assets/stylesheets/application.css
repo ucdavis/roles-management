@@ -688,6 +688,10 @@ select {
 	vertical-align: middle;
 }
 
+.default_text_active {
+  color: #a1a1a1; font-style: italic;
+}
+
 /* Custom form select element */
 select {
 	height: 22px;
