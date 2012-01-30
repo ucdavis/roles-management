@@ -973,6 +973,10 @@ div#people_details_operations button.tiny {
 	padding: 15px 20px 15px 15px;
 }
 
+fieldset.sidebar_content {
+  max-width: 490px;
+}
+
 /* Image list */
 
 .block .block_content .imglist {
