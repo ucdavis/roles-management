@@ -57,7 +57,9 @@ $(function() {
     $.get(details_url, function(data) {
       template.hide_status();
       apprise(data, {'animate': true, 'textOk': 'Dismiss'});
-      template.setup_sidebar($("div#entity_details"));
+      var scope = $("div#entity_details");
+      template.setup_sidebar(scope);
+      template.setup_default_text(scope);
     });
   }
   

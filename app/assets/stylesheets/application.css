@@ -689,7 +689,8 @@ select {
 }
 
 .default_text_active {
-  color: #a1a1a1; font-style: italic;
+  color: #a1a1a1 !important;
+  font-style: italic;
 }
 
 /* Custom form select element */
