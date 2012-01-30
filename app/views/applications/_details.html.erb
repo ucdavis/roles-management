@@ -18,7 +18,7 @@
   			</ul>
   		</div>		<!-- .sidebar ends -->
 		
-  		<div class="sidebar_content" id="summary">
+  		<fieldset class="sidebar_content" id="summary">
   		  <p style="float: right;">
   		    <% if @application.icon.exists? %><%= image_tag @application.icon.url %><% end %>
   		  </p>
@@ -53,16 +53,16 @@
   			  <% end %>
   			  </ul>
   			</p>
-  		</div> <!-- summary -->
-  		<div class="sidebar_content" id="roles">
+  		</fieldset> <!-- summary -->
+  		<fieldset class="sidebar_content" id="roles">
         
-  		</div> <!-- roles -->
-  		<div class="sidebar_content" id="ad">
+  		</fieldset> <!-- roles -->
+  		<fieldset class="sidebar_content" id="ad">
         <h3>Group Name</h3>
         <p>
           Not set
         </p>
-  		</div> <!-- ad -->
+  		</fieldset> <!-- ad -->
   	</div> <!-- .block_content -->
 	
   	<div class="bendl"></div>
@@ -70,28 +70,4 @@
   </div> <!-- .block -->
 </div> <!-- #application_details -->
 
-<script type="text/javascript">
-// setup JS specific to person view
-$("button#edit").click(function() {
-  // Button is a toggle. Are we turning the editing controls on or off?
-  if($(this).html() == "Edit") {
-    // turning them on
-    $(this).html("Done").css("color", "#db6c67");
-  } else {
-    // turning them off
-    $(this).html("Edit").css("color", "#000");
-  }
-}).hover(
-  // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
-  function() {
-    $(this).css("color", "#db6c67");
-  },
-  function() {
-    if($(this).html() == "Edit") {
-      $(this).css("color", "#000");
-    } else {
-      $(this).css("color", "#1eaaeb");
-    }
-  }
-);
-</script>
+<script type="text/javascript" src="<%= asset_path "details_modal.js" %>"></script>
