@@ -1115,6 +1115,14 @@ li.token-input-input-token-facebook {
 	background: none !important;
 }
 
+ul.token-input-disabled-facebook {
+  border: 1px #fff solid !important;
+}
+
+ul.token-input-disabled-facebook li.token-input-token-facebook span.token-input-delete-token-facebook {
+  color: #fff;
+}
+
 /* Pin lists */
 .block .block_content ul.pins {
   padding: 0;

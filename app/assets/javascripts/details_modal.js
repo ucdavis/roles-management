@@ -9,12 +9,20 @@
       $("div#person_view .sidebar_content input")
         .css("border", "1px solid #bbb")
         .attr("readonly", false);
+      // Turn on token inputs
+      $("#person_ou_tokens").tokenInput("toggleDisabled", {disable: false});
+      $("#person_group_tokens").tokenInput("toggleDisabled", {disable: false});
+      $("#person_subordinate_tokens").tokenInput("toggleDisabled", {disable: false});
       break;
       case details_modal.VIEW_MODE:
       // Turn off inputs
-      //$("div#person_view .sidebar_content input")
-        //.css("border", "1px solid #fff")
-        //.attr("readonly", true);
+      $("div#person_view .sidebar_content input")
+        .css("border", "1px solid #fff")
+        .attr("readonly", true);
+      // Turn off token inputs
+      $("#person_ou_tokens").tokenInput("toggleDisabled", {disable: true});
+      $("#person_group_tokens").tokenInput("toggleDisabled", {disable: true});
+      $("#person_subordinate_tokens").tokenInput("toggleDisabled", {disable: true});
       break;
       default: break;
     }
