@@ -49,19 +49,29 @@
         </fieldset>
     		<fieldset class="sidebar_content" id="roles">
           <p>
-            An audit of this person's roles are displayed below.
+            An audit of this person's roles is displayed below.
           </p>
           <p>
-            <b>To add roles, or remove roles</b> which you have given this person, use the main interface.
+            <b>To add or remove roles</b> which you have given this person, use the main interface.
           </p>
           <ul>
             <% @person.roles.each do |role| %>
-              <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
+            <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
             <% end %>
           </ul>
         </fieldset>
     		<fieldset class="sidebar_content" id="applications">
-          applications edit mode
+          <p>
+            An audit of this person's application access is displayed below.
+          </p>
+          <p>
+            <b>To add or remove applications</b> which you have given this person, use the main interface.
+          </p>
+          <ul>
+            <% @person.applications.each do |app| %>
+            <li><%= link_to app.name, app %></li>
+            <% end %>
+          </ul>
         </fieldset>
     		<fieldset class="sidebar_content" id="subordinates">
           <p>
