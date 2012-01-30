@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111222001235) do
+ActiveRecord::Schema.define(:version => 20120130211619) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(:version => 20111222001235) do
     t.integer  "icon_file_size"
     t.datetime "icon_updated_at"
     t.text     "description"
+    t.string   "ad_path"
   end
 
   create_table "classifications", :force => true do |t|

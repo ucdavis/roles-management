@@ -17,33 +17,32 @@
           <li><a href="#ad">Active Directory</a></li>
   			</ul>
   		</div>		<!-- .sidebar ends -->
-		
+		  
+      <%= form_for(@application) do |f| %>
   		<fieldset class="sidebar_content" id="summary">
-  		  <p style="float: right;">
-  		    <% if @application.icon.exists? %><%= image_tag @application.icon.url %><% end %>
-  		  </p>
+      	<p>
+          	<%= f.label :name %><br />
+          	<%= f.text_field :name, :class => "text medium" %>
+      	</p>
+      	<p>
+          	<%= f.label :display_name, "Display Name" %><br />
+          	<%= f.text_field :display_name, :class => "text medium" %>
+      	</p>
+      	<p>
+          	<%= f.label :description %><br />
+          	<%= f.text_field :description, :class => "text medium" %>
+      	</p>
+      	<p>
+          	<%= f.label :hostname %><br />
+          	<%= f.text_field :hostname, :class => "text medium" %>
+      	</p>
+      	<p>
+          	<%= f.label :api_key, "API Key" %><br />
+          	<%= f.text_field :api_key, :class => "text medium" %>
+      	</p>
+        <br />
   			<p>
-  			  <b>Name:</b>
-  			  <%= @application.name %>
-  			</p>
-  			<p>
-  			  <b>Display Name:</b>
-  			  <%= @application.display_name %>
-  			</p>
-  			<p>
-  			  <b>Description:</b>
-  			  <%= @application.description %>
-  			</p>
-  			<p>
-  			  <b>Hostname:</b>
-  			  <%= @application.hostname %>
-  			</p>
-  			<p>
-  			  <b>API Key:</b>
-  			  <%= @application.api_key %>
-  			</p>
-  			<p>
-  			  <b>Organizational Scoping <small><i>(who has access)</i></small>:</b>
+  			  <b>Organizational Scoping</b>
   			  <ul>
   			  <% @application.ous.each do |ou| %>
   			  	<li><%= link_to ou.name, ou %></li>
@@ -58,11 +57,15 @@
         
   		</fieldset> <!-- roles -->
   		<fieldset class="sidebar_content" id="ad">
-        <h3>Group Name</h3>
+      	<p>
+          	<%= f.label :ad_path, "Active Directory Group Name" %><br />
+          	<%= f.text_field :ad_path, :class => "text medium" %>
+      	</p>
         <p>
-          Not set
+          <small>The group name is appended after the base AD path configured by the administrator.</small>
         </p>
   		</fieldset> <!-- ad -->
+      <% end %>
   	</div> <!-- .block_content -->
 	
   	<div class="bendl"></div>
