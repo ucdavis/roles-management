@@ -6,23 +6,35 @@
     switch(mode) {
       case details_modal.EDIT_MODE:
       // Turn on inputs
-      $("div#person_view .sidebar_content input")
+      $("div#details_view .sidebar_content input,textarea")
         .css("border", "1px solid #bbb")
         .attr("readonly", false);
       // Turn on token inputs
-      $("#person_ou_tokens").tokenInput("toggleDisabled", {disable: false});
-      $("#person_group_tokens").tokenInput("toggleDisabled", {disable: false});
-      $("#person_subordinate_tokens").tokenInput("toggleDisabled", {disable: false});
+      $(".token_input").each(function() {
+        $(this).tokenInput("toggleDisabled", {disable: false});
+      });
+      // Turn on dropdowns
+      $("select")
+        .removeClass("disabled")
+        .attr("disabled", false);
+      // Turn on any anchor-based controls
+      $("a.edit_mode").show();
       break;
       case details_modal.VIEW_MODE:
       // Turn off inputs
-      $("div#person_view .sidebar_content input")
+      $("div#details_view .sidebar_content input,textarea")
         .css("border", "1px solid #fff")
         .attr("readonly", true);
       // Turn off token inputs
-      $("#person_ou_tokens").tokenInput("toggleDisabled", {disable: true});
-      $("#person_group_tokens").tokenInput("toggleDisabled", {disable: true});
-      $("#person_subordinate_tokens").tokenInput("toggleDisabled", {disable: true});
+      $(".token_input").each(function() {
+        $(this).tokenInput("toggleDisabled", {disable: true});
+      });
+      // Turn off dropdowns
+      $("select")
+        .addClass("disabled")
+        .attr("disabled", true);
+      // Turn off any anchor-based controls
+      $("a.edit_mode").hide();
       break;
       default: break;
     }
@@ -31,23 +43,47 @@
 } (window.details_modal = window.details_modal || {}, jQuery));
 
 $(document).ready(function() {
-  $("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
-    crossDomain: false,
-    prePopulate: $("#person_ou_tokens").data("pre"),
-    theme: "facebook"
-  });
+  if($("#person_ou_tokens").length > 0) {
+    // Person details modal
+    $("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
+      crossDomain: false,
+      prePopulate: $("#person_ou_tokens").data("pre"),
+      theme: "facebook"
+    });
 
-  $("#person_group_tokens").tokenInput($("#person_group_tokens").attr("method") + ".json", {
-    crossDomain: false,
-    prePopulate: $("#person_group_tokens").data("pre"),
-    theme: "facebook"
-  });
+    $("#person_group_tokens").tokenInput($("#person_group_tokens").attr("method") + ".json", {
+      crossDomain: false,
+      prePopulate: $("#person_group_tokens").data("pre"),
+      theme: "facebook"
+    });
 
-  $("#person_subordinate_tokens").tokenInput($("#person_subordinate_tokens").attr("method") + ".json", {
-    crossDomain: false,
-    prePopulate: $("#person_subordinate_tokens").data("pre"),
-    theme: "facebook"
-  });
+    $("#person_subordinate_tokens").tokenInput($("#person_subordinate_tokens").attr("method") + ".json", {
+      crossDomain: false,
+      prePopulate: $("#person_subordinate_tokens").data("pre"),
+      theme: "facebook"
+    });
+  }
+  
+  if($("#group_member_tokens").length > 0) {
+    // Group details modal
+    $("#group_member_tokens").tokenInput($("#group_member_tokens").attr("method") + ".json", {
+      crossDomain: false,
+      prePopulate: $("#group_member_tokens").data("pre"),
+      theme: "facebook",
+      onAdd: function (item) {
+        console.log("Added " + item);
+      },
+      onDelete: function (item) {
+        console.log("Deleted " + item);
+      }
+    });
+
+    $("#group_owner_tokens").tokenInput($("#group_owner_tokens").attr("method") + ".json", {
+      crossDomain: false,
+      prePopulate: $("#group_owner_tokens").data("pre"),
+      theme: "facebook"
+    });
+  }
   
   $("button#edit").click(function() {
     // Button toggles edit mode

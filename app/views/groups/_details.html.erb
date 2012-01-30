@@ -9,170 +9,55 @@
   		<h2><%= @group.name %></h2>
   	</div>		<!-- .block_head ends -->
   	<div class="block_content">
-      <div id="group_show_view">
+      <div id="details_view">
     		<div class="sidebar">
     			<ul class="sidemenu">
-    				<li><a href="#show_summary">Summary</a></li>
-            <li><a href="#show_rules">Rules</a></li>
-    				<li><a href="#show_roles">Roles</a></li>
+    				<li><a href="#summary">Summary</a></li>
+            <li><a href="#rules">Rules</a></li>
+    				<li><a href="#roles">Roles</a></li>
     			</ul>
     		</div>		<!-- .sidebar ends -->
 					
-    		<div class="sidebar_content" id="show_summary">
-          <p>
-          <% if @group.description.nil? %>
-            <i>No description given</i>
-          <% else %>
-            <%= @group.description %>
-          <% end %><br />
-          </p>
-
-          <p>
-          <h3>Owners</h3>
-          <% for p in @group.owners %>
-          	<%= link_to p.name, p %>
-            <% unless p == @group.owners.last %>, <% end %>
-          <% end %>
-          </p>
-
-          <p>
-          <h3>Members</h3>
-          <% for p in @group.members %>
-          	<%= link_to p.name, p %>
-            <% unless p == @group.members.last %>, <% end %>
-          <% end %>
-          <% if @group.members.length == 0 %>
-          	No members assigned
-          <% end %>
-          </p>
-        </div>
-    		<div class="sidebar_content" id="show_rules">
-          <% @group.rules.each do |r| %>
-          <div class="fields">
-            <p>
-              <%= r.print_formatted %>
-            </p>
-          </div>
-          <% end %>
-        </div>
-    		<div class="sidebar_content" id="show_roles">
-          <ul>
-            <% @group.roles.each do |role| %>
-              <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
-            <% end %>
-          </ul>
-        </div>
-      </div> <!-- #group_show_view -->
-      
-      <div id="group_edit_view" style="display: none;">
-    		<div class="sidebar">
-    			<ul class="sidemenu">
-    				<li><a href="#edit_summary">Summary</a></li>
-            <li><a href="#edit_rules">Rules</a></li>
-    				<li><a href="#edit_roles">Roles</a></li>
-    			</ul>
-    		</div>		<!-- .sidebar ends -->
-					
-    		<div class="sidebar_content" id="edit_summary">
-          <%= form_for(@group) do |f| %>
+        <%= form_for(@group) do |f| %>
+    		<fieldset class="sidebar_content" id="summary">
         	<p>
             	<%= f.label :name %><br />
-            	<%= f.text_field :name, :class => "text" %>
+            	<%= f.text_field :name, :class => "text small" %>
         	</p>
 	
         	<p>
             	<%= f.label :description %><br />
-            	<%= f.text_area :description, :class => "wysiwyg" %>
+            	<%= f.text_area :description, :class => "wysiwyg small" %>
         	</p>
 
         	<p>
         		<h2>Owners</h2>
         		<p>
-        		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
+        		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
         		</p>
         	</p>
 	
         	<p>
         		<h2>Members</h2>
         		<p>
-        		  <%= f.text_field :member_tokens, "data-pre" => @group.members.to_json, "method" => url_for(:controller => "api/people", :action => "index") %>
+        		  <%= f.text_field :member_tokens, "data-pre" => @group.members.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
         		</p>
         	</p>
-          <% end %>
-        </div>
-    		<div class="sidebar_content" id="edit_rules">
-          <%= form_for(@group) do |f| %>
+        </fieldset>
+    		<fieldset class="sidebar_content" id="rules">
           <%= f.fields_for :rules do |builder| %>
             <%= render "rule_fields", :f => builder %>
           <% end %>
   
           <p><%= link_to_add_fields "Add Rule", f, :rules %></p>
-          <% end %>
-        </div>
-    		<div class="sidebar_content" id="edit_roles">
-          You can edit this group's roles by dragging and dropping its name in the main interface.
-        </div>
-      </div> <!-- #group_edit_view -->
-      
+        </fieldset>
+    		<fieldset class="sidebar_content" id="roles">
+          <b>To add or remove roles</b> from this group, use the main interface.
+        </fieldset>
+        <% end %>
+      </div> <!-- #group_view -->
     </div> <!-- .block_content ends -->
   </div> <!-- .block ends -->
 </div> <!-- .entity_details -->
 
-<script type="text/javascript">
-// setup JS specific to group view
-$("button#edit").click(function() {
-  // Button is a toggle. Are we turning the editing controls on or off?
-  if($(this).html() == "Edit") {
-    // turning them on
-    $(this).html("Done").css("color", "#db6c67");
-    
-    $(this).parent().parent().find("div#group_show_view").hide();
-    $(this).parent().parent().find("div#group_edit_view").show();
-    
-    // simulate a click on the matching sidebar tab
-    var tab_hash = $("div#group_show_view ul.sidemenu li.active").children("a").attr("href");
-    $("div#group_edit_view ul.sidemenu li a[href=#edit_" + tab_hash.substr(6) + "]").parent().click();
-  } else {
-    // turning them off
-    $(this).html("Edit").css("color", "#000");
-    
-    $(this).parent().parent().find("div#group_edit_view").hide();
-    $(this).parent().parent().find("div#group_show_view").show();
-
-    // simulate a click on the matching sidebar tab
-    var tab_hash = $("div#group_edit_view ul.sidemenu li.active").children("a").attr("href");
-    $("div#group_show_view ul.sidemenu li a[href=#show_" + tab_hash.substr(6) + "]").parent().click();
-  }
-}).hover(
-  // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
-  function() {
-    $(this).css("color", "#db6c67");
-  },
-  function() {
-    if($(this).html() == "Edit") {
-      $(this).css("color", "#000");
-    } else {
-      $(this).css("color", "#1eaaeb");
-    }
-  }
-);
-
-$("#group_member_tokens").tokenInput($("#group_member_tokens").attr("method") + ".json", {
-  crossDomain: false,
-  prePopulate: $("#group_member_tokens").data("pre"),
-  theme: "facebook",
-  onAdd: function (item) {
-    console.log("Added " + item);
-  },
-  onDelete: function (item) {
-    console.log("Deleted " + item);
-  }
-});
-
-$("#group_owner_tokens").tokenInput($("#group_owner_tokens").attr("method") + ".json", {
-  crossDomain: false,
-  prePopulate: $("#group_owner_tokens").data("pre"),
-  theme: "facebook"
-});
-
-</script>
+<script type="text/javascript" src="<%= asset_path "details_modal.js" %>"></script>

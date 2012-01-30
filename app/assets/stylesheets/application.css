@@ -393,7 +393,7 @@ fieldset {
 
 select {
 	text-transform: none;
-	}
+}
 
 /* Block content */
 
@@ -666,7 +666,7 @@ select {
 	padding-right: 36px;
 	cursor: pointer;
 	background: url("../images/cal.jpg") center right no-repeat;
-	}
+}
 
 .block form textarea {
 	width: 90%;
@@ -675,28 +675,37 @@ select {
 	background: #fefefe;
 	border: 1px solid #bbb;
 	font-family: "Lucida Grande", Verdana, sans-serif;
-	font-size: 14px;
+	font-size: 12px;
 	color: #333;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	outline: none;
-	}
+}
 	
 .block form input.radio,
 .block form input.checkbox {
 	vertical-align: middle;
-	}
-
+}
 
 /* Custom form select element */
-
-select.styled {
-	width: 245px;
-	height: 18px;
-	margin-right: 20px;
+select {
+	height: 22px;
+	margin-right: 8px;
 	cursor: pointer;
-	}
+  border-radius: 2px;
+  border-color: #bbb;
+}
+
+select.disabled {
+  border: 0;
+  background: none;
+  -webkit-appearance: none;
+  padding-left: 8px;
+  padding-right: 24px;
+  color: #000;
+  cursor: default;
+}
 	
 .cmf-skinned-select {
 	padding: 7px;
@@ -707,25 +716,24 @@ select.styled {
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	background: url("../images/sdd.jpg") center right no-repeat;
-	}
+}
 
 .cmf-skinned-select:hover {
 	background: url("../images/sdd_.jpg") center right no-repeat;
-	}
+}
 
 div.cmf-skinned-text {
 	padding: 5px 7px;
 	font-family: "Lucida Grande", Verdana, sans-serif;
 	font-size: 14px;
 	color: #333;
-	}
-	
+}	
 	
 /* Custom file input */
 
 .block form .fileupload {
 	position: relative;
-	}
+}
 
 .block form .fileupload #uploadmsg {
 	display: block;
@@ -736,13 +744,13 @@ div.cmf-skinned-text {
 	line-height: 30px;
 	margin-left: 5px;
 	font-size: 11px;
-	}
+}
 
 .block form .fileupload #uploadmsg.loading {
 	background: url("../images/ajax-loader.gif") center left no-repeat;
 	width: 30px;
 	padding-left: 20px;
-	}
+}
 	
 .block form input.file {
 	width: 250px;
@@ -760,7 +768,7 @@ div.cmf-skinned-text {
 	border-top-left-radius: 3px;
 	border-bottom-left-radius: 3px;
 	outline: none;
-	}
+}
 
 .block form .note {
 	padding-left: 10px;
@@ -768,7 +776,7 @@ div.cmf-skinned-text {
 	font-weight: bold;
 	color: #757575;
 	vertical-align: middle;
-	}
+}
 
 .block form .note.error { color: #e3302c; }
 			
@@ -787,12 +795,12 @@ div.cmf-skinned-text {
 	cursor: pointer;
 	margin-right: 10px;
 	vertical-align: middle;
-	}
+}
 	
 .block form input.submit:hover {
 	background: url(../images/btns_.gif) top center no-repeat;
 	text-shadow: 1px 1px 0 #b55f10;
-	}
+}
 
 div#people_details_operations button.tiny {
 	width: 105px;
@@ -831,7 +839,7 @@ div#people_details_operations button.tiny {
 	width: 49%;
 	background: #fff url("../images/bnd.gif") bottom center repeat-x;
 	padding-bottom: 0;
-  }
+}
 
 .block.small.left { float: left; clear: none; }
 .block.small.right { float: right; clear: none; }
@@ -845,7 +853,7 @@ div#people_details_operations button.tiny {
 .block.small.center {
 	float: none;
 	margin: 0 auto;
-  }
+}
 
 /* 20% blocks */
 
