@@ -1,5 +1,6 @@
-<div class="fields">
-  <p>
-    <%= f.text_field :token, :size => 20 %> <%= f.check_box :default %> <%= f.text_field :descriptor, :size => 15 %> <%= link_to_remove_fields "Remove", f %>
-  </p>
-</div>
+<tr class="fields">
+  <td><%= f.text_field :token, :size => 20 %></td>
+  <td><%= f.check_box :default %></td>
+  <td><%= f.text_field :descriptor, :size => 15 %></td>
+  <td><%= link_to_remove_fields "Remove", f %></td>
+</tr>

@@ -53,8 +53,9 @@ function remove_fields(link) {
 
 function add_fields(link, association, content) {
   var new_id = new Date().getTime();
-  var regexp = new RegExp("new_" + association, "g")
-  $(link).parent().before(content.replace(regexp, new_id));
+  var regexp = new RegExp("new_" + association, "g");
+  $(link).parent().prev().children("tbody").append(content.replace(regexp, new_id));
+  //$(link).parent().before(content.replace(regexp, new_id));
 }
 
 $(function() {
@@ -156,7 +157,6 @@ $(function() {
 	});
 	
 	$('.block table tr th.header').css('cursor', 'pointer');
-		
 	
 	// Check / uncheck all checkboxes
 	$('.check_all').click(function() {
@@ -179,9 +179,6 @@ $(function() {
 	$('.block .message .close').click(function() {
 		$(this).parent().fadeOut('slow', function() { $(this).remove(); });
 	});
-	
-	// Form select styling
-	$("select.styled").select_skin();
 	
 	// Tabs
 	$(".tab_content").hide();
