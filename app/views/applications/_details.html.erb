@@ -54,7 +54,11 @@
   			</p>
   		</fieldset> <!-- summary -->
   		<fieldset class="sidebar_content" id="roles">
-        
+        <%= f.fields_for :roles do |builder| %>
+          <%= render "role_fields", :f => builder %>
+        <% end %>
+  
+        <p><%= link_to_add_fields "Add Role", f, :roles %></p>
   		</fieldset> <!-- roles -->
   		<fieldset class="sidebar_content" id="ad">
       	<p>
