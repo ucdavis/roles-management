@@ -51,18 +51,21 @@ $(document).ready(function() {
     // Person details modal
     $("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
       crossDomain: false,
+      defaultText: "No organizations",
       prePopulate: $("#person_ou_tokens").data("pre"),
       theme: "facebook"
     });
 
     $("#person_group_tokens").tokenInput($("#person_group_tokens").attr("method") + ".json", {
       crossDomain: false,
+      defaultText: "No groups",
       prePopulate: $("#person_group_tokens").data("pre"),
       theme: "facebook"
     });
 
     $("#person_subordinate_tokens").tokenInput($("#person_subordinate_tokens").attr("method") + ".json", {
       crossDomain: false,
+      defaultText: "No subordinates",
       prePopulate: $("#person_subordinate_tokens").data("pre"),
       theme: "facebook"
     });
@@ -74,6 +77,7 @@ $(document).ready(function() {
       crossDomain: false,
       prePopulate: $("#group_member_tokens").data("pre"),
       theme: "facebook",
+      defaultText: "No members",
       onAdd: function (item) {
         console.log("Added " + item);
       },
@@ -84,6 +88,7 @@ $(document).ready(function() {
 
     $("#group_owner_tokens").tokenInput($("#group_owner_tokens").attr("method") + ".json", {
       crossDomain: false,
+      defaultText: "No owners",
       prePopulate: $("#group_owner_tokens").data("pre"),
       theme: "facebook"
     });

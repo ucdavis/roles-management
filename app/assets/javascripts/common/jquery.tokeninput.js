@@ -299,10 +299,6 @@
             }
         });
         
-        if(settings.defaultText) {
-          input_box.val(settings.defaultText);
-        }
-
         // Keep a reference to the original input box
         var hidden_input = $(input)
                            .hide()
@@ -388,6 +384,10 @@
                 insert_token(value);
                 checkTokenLimit();
             });
+        }
+        
+        if(token_count == 0 && settings.defaultText) {
+          input_box.val(settings.defaultText);
         }
 
         // Check if widget should initialize as disabled
