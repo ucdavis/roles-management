@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem "rails", "3.2.0"
+gem 'rails', '3.2.1'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -24,7 +24,7 @@ gem 'ruby-ldap'
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 gem 'dynamic_form'
 
-gem 'jquery-rails'
+gem 'jquery-rails', '>= 1.0.12'
 gem 'mysql'
 
 gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
