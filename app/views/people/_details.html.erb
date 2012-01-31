@@ -24,7 +24,7 @@
           <strong><a href="#">Call Them via Lync</a></strong></p>
     		</div>		<!-- .sidebar ends -->
         
-        <%= form_for(@person) do |f| %>
+        <%= form_for @person, :remote => true do |f| %>
     		<fieldset class="sidebar_content" id="summary">
         	<p>
             <%= f.label :first, "Name" %><br />

@@ -73,6 +73,7 @@ $(document).ready(function() {
   
   if($("#group_member_tokens").length > 0) {
     // Group details modal
+    // Token inputs
     $("#group_member_tokens").tokenInput($("#group_member_tokens").attr("method") + ".json", {
       crossDomain: false,
       prePopulate: $("#group_member_tokens").data("pre"),
@@ -91,6 +92,11 @@ $(document).ready(function() {
       defaultText: "No owners",
       prePopulate: $("#group_owner_tokens").data("pre"),
       theme: "facebook"
+    });
+    
+    // Remote forms
+    $("form.edit_person").bind('ajax:success', function(){
+      console.log("Edit person form submit success.");
     });
   }
   
@@ -129,5 +135,6 @@ $(document).ready(function() {
     }
   );
   
+  // Assume view mode
   details_modal.switch_mode(details_modal.VIEW_MODE);
 });
