@@ -94,6 +94,16 @@ $(document).ready(function() {
     });
   }
   
+  if($("#application_ou_tokens").length > 0) {
+    // Application details modal
+    $("#application_ou_tokens").tokenInput($("#application_ou_tokens").attr("method") + ".json", {
+      crossDomain: false,
+      defaultText: "Everybody",
+      prePopulate: $("#application_ou_tokens").data("pre"),
+      theme: "facebook"
+    });
+  }
+  
   $("button#edit").click(function() {
     // Button toggles edit mode
     if($(this).html() == "Edit") {

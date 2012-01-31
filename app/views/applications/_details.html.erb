@@ -40,17 +40,9 @@
             	<%= f.label :api_key, "API Key" %><br />
             	<%= f.text_field :api_key, :class => "text medium" %>
         	</p>
-          <br />
     			<p>
-    			  <b>Organizational Scoping</b>
-    			  <ul>
-    			  <% @application.ous.each do |ou| %>
-    			  	<li><%= link_to ou.name, ou %></li>
-    			  <% end %>
-    			  <% if @application.ous.count == 0 %>
-    			    <li>Everybody</li>
-    			  <% end %>
-    			  </ul>
+    			  <%= f.label :ou_tokens, "Organizational Scoping" %><br />
+        	  <%= f.text_field :ou_tokens, "data-pre" => @application.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>
     			</p>
     		</fieldset> <!-- summary -->
     		<fieldset class="sidebar_content" id="roles">
