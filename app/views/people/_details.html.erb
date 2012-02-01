@@ -25,6 +25,7 @@
     		</div>		<!-- .sidebar ends -->
         
         <%= form_for @person, :remote => true do |f| %>
+        <%= hidden_field_tag 'entity_id', '1' + @person.id.to_s %>
     		<fieldset class="sidebar_content" id="summary">
         	<p>
             <%= f.label :first, "Name" %><br />

@@ -2,6 +2,11 @@
   details_modal.EDIT_MODE = 0;
   details_modal.VIEW_MODE = 1;
   
+  // Temporarily holds edits made via AJAX saves. Used to update the DOM to match later.
+  details_modal.person_edits = [];
+  details_modal.group_edits = [];
+  details_modal.application_edits = [];
+  
   details_modal.switch_mode = function(mode) {
     switch(mode) {
       case details_modal.EDIT_MODE:
@@ -50,10 +55,17 @@
     
     // Which modal is this? Person, Group, or Application?
     if($("#person_ou_tokens").length > 0) {
+      details_modal.person_edits['entity_id'] = $("form.edit_person input[name=entity_id]").val();
+      details_modal.person_edits['name'] = $("form.edit_person input#person_first").val() + " " + $("form.edit_person input#person_last").val();
       $("form.edit_person").trigger("submit.rails");
     } else if($("#group_member_tokens").length > 0) {
+      details_modal.group_edits['entity_id'] = $("form.edit_group input[name=entity_id]").val();
+      details_modal.group_edits['name'] = $("form.edit_group input#group_name").val();
       $("form.edit_group").trigger("submit.rails");
     } else if($("#application_ou_tokens").length > 0) {
+      details_modal.application_edits['app_id'] = $("form.edit_application input[name=app_id]").val();
+      details_modal.application_edits['display_name'] = $("form.edit_application input#application_display_name").val();
+      details_modal.application_edits['description'] = $("form.edit_application input#application_description").val();
       $("form.edit_application").trigger("submit.rails");
     }
   }
@@ -87,6 +99,12 @@ $(document).ready(function() {
     // Remote forms
     $("form.edit_person").bind('ajax:complete', function(){
       template.hide_status();
+      
+      // Update any pins
+      $("div.pin[data-entity-id=" + details_modal.person_edits['entity_id'] + "] a").each(function() {
+        $(this).html(details_modal.person_edits['name']);
+      });
+      details_modal.person_edits = [];
     });
   }
   
@@ -116,6 +134,12 @@ $(document).ready(function() {
     // Remote forms
     $("form.edit_group").bind('ajax:complete', function(){
       template.hide_status();
+      
+      // Update any pins
+      $("div.pin[data-entity-id=" + details_modal.group_edits['entity_id'] + "] a").each(function() {
+        $(this).html(details_modal.group_edits['name']);
+      });
+      details_modal.group_edits = [];
     });
   }
   
@@ -131,6 +155,16 @@ $(document).ready(function() {
     // Remote forms
     $("form.edit_application").bind('ajax:complete', function(){
       template.hide_status();
+      
+      // Update any pins
+      $("div.card[data-application-id=" + details_modal.application_edits['app_id'] + "] div.card_head h2").each(function() {
+        $(this).html(details_modal.application_edits['display_name']);
+      });
+      $("div.card[data-application-id=" + details_modal.application_edits['app_id'] + "] div.card_content p").each(function() {
+        $(this).html("<i>“" + details_modal.application_edits['description'] + "”</i>");
+      });
+      
+      details_modal.application_edits = [];
     });
   }
   
