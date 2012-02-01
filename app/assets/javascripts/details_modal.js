@@ -43,6 +43,16 @@
       default: break;
     }
   }
+  
+  // Save whatever's in the modal
+  details_modal.save = function() {
+    template.status_text("Saving changes...");
+    
+    // Which modal is this? Person, Group, or Application?
+    if($("#person_ou_tokens").length > 0) {
+      $("form.edit_person").trigger("submit.rails");
+    }
+  }
     
 } (window.details_modal = window.details_modal || {}, jQuery));
 
@@ -69,6 +79,18 @@ $(document).ready(function() {
       prePopulate: $("#person_subordinate_tokens").data("pre"),
       theme: "facebook"
     });
+    
+    // Remote forms
+    $("form.edit_person").bind('ajax:complete', function(){
+      console.log("Edit person form submit complete.");
+      template.hide_status();
+    })
+    .bind('ajax:beforeSend', function() {
+      console.log("before send");
+    })
+    .bind('ajax:error', function() {
+      console.log("ajax error");
+    });
   }
   
   if($("#group_member_tokens").length > 0) {
@@ -93,11 +115,6 @@ $(document).ready(function() {
       prePopulate: $("#group_owner_tokens").data("pre"),
       theme: "facebook"
     });
-    
-    // Remote forms
-    $("form.edit_person").bind('ajax:success', function(){
-      console.log("Edit person form submit success.");
-    });
   }
   
   if($("#application_ou_tokens").length > 0) {
@@ -113,13 +130,15 @@ $(document).ready(function() {
   $("button#edit").click(function() {
     // Button toggles edit mode
     if($(this).html() == "Edit") {
-      // turning editing on
+      // Turning editing on
       $(this).html("Done").css("color", "#db6c67");
       details_modal.switch_mode(details_modal.EDIT_MODE);
     } else {
-      // turning editing off
+      // Turning editing off
       $(this).html("Edit").css("color", "#000");
       details_modal.switch_mode(details_modal.VIEW_MODE);
+      // And save the form, of course
+      details_modal.save();
     }
   }).hover(
     // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?

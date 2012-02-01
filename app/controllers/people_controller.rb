@@ -93,8 +93,10 @@ class PeopleController < ApplicationController
       if @person.update_attributes(params[:person])
         logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated person #{params[:person]}."
         format.html { redirect_to(@person, :notice => 'Person was successfully updated.') }
+        format.js { head :ok }
       else
         format.html { render :action => "edit" }
+        format.js { render json: @person.errors, status: :unprocessable_entity }
       end
     end
   end

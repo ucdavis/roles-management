@@ -183,10 +183,10 @@ $(function() {
 	});
 	
 	// Set WYSIWYG editor
-	$('.wysiwyg').wysiwyg({css: "<%= asset_path "wysiwyg/wysiwyg.css" %>" });
+	//$('.wysiwyg').wysiwyg({css: "<%= asset_path "wysiwyg/wysiwyg.css" %>" });
 	
 	// Modal boxes - to all links with rel="facebox"
-	$('a[rel*=facebox]').facebox()
+	//$('a[rel*=facebox]').facebox()
 	
 	// Messages
 	$('.block .message').hide().append('<span class="close" title="Dismiss"></span>').fadeIn('slow');
@@ -263,12 +263,12 @@ $(function() {
 	});
 	
 	// Style file input
-	$("input[type=file]").filestyle({ 
-	    image: "images/upload.gif",
-	    imageheight : 30,
-	    imagewidth : 80,
-	    width : 250
-	});
+	//$("input[type=file]").filestyle({ 
+	//    image: "images/upload.gif",
+	//    imageheight : 30,
+	//    imagewidth : 80,
+	//    width : 250
+	//});
 	
 	// File upload
 	if ($('#fileupload').length) {
@@ -292,22 +292,22 @@ $(function() {
 	$('input.date_picker').datepicker();
 
 	// Navigation dropdown fix for IE6
-	if(jQuery.browser.version.substr(0,1) < 7) {
-		$('#header #nav li').hover(
-			function() { $(this).addClass('iehover'); },
-			function() { $(this).removeClass('iehover'); }
-		);
-	}
+	//if(jQuery.browser.version.substr(0,1) < 7) {
+	//	$('#header #nav li').hover(
+	//		function() { $(this).addClass('iehover'); },
+	//		function() { $(this).removeClass('iehover'); }
+	//	);
+	//}
 	
 	// IE6 PNG fix
-	$(document).pngFix();
+	//$(document).pngFix();
 
   // Fix AJAX headers
-  $.ajaxSetup({
-    beforeSend: function (xhr, settings) {
-      xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
-    }
-  });
+  //$.ajaxSetup({
+    //beforeSend: function (xhr, settings) {
+      //xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
+      //}
+  //});
   
   // Set up tool tips
   $("[data-tooltip]").each(
