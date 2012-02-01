@@ -177,9 +177,10 @@ $(document).ready(function() {
     } else {
       // Turning editing off
       $(this).html("Edit").css("color", "#000");
-      details_modal.switch_mode(details_modal.VIEW_MODE);
       // And save the form, of course
       details_modal.save();
+      // Switch back to 'view' _last_ - it disables elements that causes form elements not be to submitted
+      details_modal.switch_mode(details_modal.VIEW_MODE);
     }
   }).hover(
     // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
