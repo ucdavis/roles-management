@@ -5,7 +5,7 @@ class Application < ActiveRecord::Base
   
   has_attached_file :icon, :styles => { :normal => "64x64>", :tiny => "16x16>" }
   
-  attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name, :icon, :description
+  attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name, :icon, :description, :ad_path, :roles
   attr_reader :ou_tokens
   
   def ou_tokens=(ids)
