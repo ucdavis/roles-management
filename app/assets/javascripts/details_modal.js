@@ -51,6 +51,10 @@
     // Which modal is this? Person, Group, or Application?
     if($("#person_ou_tokens").length > 0) {
       $("form.edit_person").trigger("submit.rails");
+    } else if($("#group_member_tokens").length > 0) {
+      $("form.edit_group").trigger("submit.rails");
+    } else if($("#application_ou_tokens").length > 0) {
+      $("form.edit_application").trigger("submit.rails");
     }
   }
     
@@ -82,14 +86,7 @@ $(document).ready(function() {
     
     // Remote forms
     $("form.edit_person").bind('ajax:complete', function(){
-      console.log("Edit person form submit complete.");
       template.hide_status();
-    })
-    .bind('ajax:beforeSend', function() {
-      console.log("before send");
-    })
-    .bind('ajax:error', function() {
-      console.log("ajax error");
     });
   }
   
@@ -115,6 +112,11 @@ $(document).ready(function() {
       prePopulate: $("#group_owner_tokens").data("pre"),
       theme: "facebook"
     });
+    
+    // Remote forms
+    $("form.edit_group").bind('ajax:complete', function(){
+      template.hide_status();
+    });
   }
   
   if($("#application_ou_tokens").length > 0) {
@@ -124,6 +126,11 @@ $(document).ready(function() {
       defaultText: "Everybody",
       prePopulate: $("#application_ou_tokens").data("pre"),
       theme: "facebook"
+    });
+    
+    // Remote forms
+    $("form.edit_application").bind('ajax:complete', function(){
+      template.hide_status();
     });
   }
   

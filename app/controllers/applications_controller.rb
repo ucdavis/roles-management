@@ -70,8 +70,10 @@ class ApplicationsController < ApplicationController
     respond_to do |format|
       if @application.update_attributes(params[:application])
         format.html { redirect_to(@application, :notice => 'Application was successfully updated.') }
+        format.js { head :ok }
       else
         format.html { render :action => "edit" }
+        format.js { render json: @application.errors, status: :unprocessable_entity }
       end
     end
   end
