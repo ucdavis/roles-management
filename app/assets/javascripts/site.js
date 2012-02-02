@@ -157,10 +157,19 @@ $(function() {
   site.remove_pin = function (el) {
     // Since this implies removing all permissions, prompt them first on this
     if (apprise("This action will remove all permissions from the entity. Continue?",
-    {'verify': true, 'textYes': "Remove All Permissions", 'textNo': "Cancel"}, function(r) {
-      if(r) {
+    {'verify': true, 'textYes': "Remove All Permissions", 'textNo': "Cancel"}, function(confirm_remove) {
+      if(confirm_remove) {
         // Unassign any checked permissions
-        console.log("TODO");
+        template.status_text("Removing...");
+        $(el).parent().find("div.pin-content span.permission input[type=checkbox]").each(function() {
+          var assignment = {};
+          
+          assignment.role_id = $(this).attr("data-role-id");
+          assignment.entity_id = $(this).parent().parent().parent().attr("data-entity-id");
+          
+          $.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'});
+        });
+        template.hide_status();
         
         // Remove the element
         var ol = $(el).parent().parent();
