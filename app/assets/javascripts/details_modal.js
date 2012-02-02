@@ -15,17 +15,17 @@
         .css("border", "1px solid #bbb")
         .attr("readonly", false);
       // Turn on token inputs
-      $(".token_input").each(function() {
+      $("div#entity_details .token_input").each(function() {
         $(this).tokenInput("toggleDisabled", {disable: false});
       });
       // Turn on dropdowns
-      $("select")
+      $("div#entity_details select")
         .removeClass("disabled")
         .attr("disabled", false);
       // Turn on any anchor-based controls
-      $("a.edit_mode").show();
+      $("div#entity_details a.edit_mode").show();
       // Show unchecked boxes
-      $("input[type=checkbox]:not(:checked)").show();
+      $("div#entity_details input[type=checkbox]:not(:checked)").show();
       break;
       case details_modal.VIEW_MODE:
       // Turn off inputs
@@ -33,17 +33,17 @@
         .css("border", "1px solid #fff")
         .attr("readonly", true);
       // Turn off token inputs
-      $(".token_input").each(function() {
+      $("div#entity_details .token_input").each(function() {
         $(this).tokenInput("toggleDisabled", {disable: true});
       });
       // Turn off dropdowns
-      $("select")
+      $("div#entity_details select")
         .addClass("disabled")
         .attr("disabled", true);
       // Turn off any anchor-based controls
-      $("a.edit_mode").hide();
+      $("div#entity_details a.edit_mode").hide();
       // Hide unchecked boxes
-      $("input[type=checkbox]:not(:checked)").hide();
+      $("div#entity_details input[type=checkbox]:not(:checked)").hide();
       break;
       default: break;
     }
