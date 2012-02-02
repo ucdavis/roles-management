@@ -11,12 +11,15 @@ $(function() {
       var app = $.parseJSON($(this).parent().parent().attr("data-application"));
       var entity = $(ui.draggable).data("pin-entity");
 	    
-	    // Determine the default and mandatory roles for this application and pass them all along
-	    for(var i = 0; i < app.roles.length; i++) { 
-        if(app.roles[i].default == true || app.roles[i].mandatory == true) {
-	  	    site.register_role(entity, app.roles[i]);
-        }
-	    }
+      // Ensure this entity isn't already dragged onto this card
+      if($("div.card[data-application-id=" + app.id + "] div.pins div.pin[data-entity-id=" + entity.id + "]").length == 0) {
+        // Determine the default and mandatory roles for this application and pass them all along
+  	    for(var i = 0; i < app.roles.length; i++) { 
+          if(app.roles[i].default == true || app.roles[i].mandatory == true) {
+  	  	    site.register_role(entity, app.roles[i]);
+          }
+  	    }
+      }
     }
   }).sortable({
     items: "li:not(.placeholder)",

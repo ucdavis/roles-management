@@ -1172,7 +1172,7 @@ ul.token-input-disabled-facebook li.token-input-token-facebook span.token-input-
   color: #fff;
   margin-bottom: 0.5em;
   padding-top: 3px;
-  cursor: move;
+  /*cursor: move;*/
 }
 
 .block .block_content div.pins div.pin a {
