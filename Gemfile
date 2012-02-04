@@ -17,7 +17,7 @@ gem 'capistrano'
 
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'
-# gem 'ruby-debug19', :require => 'ruby-debug'
+gem 'ruby-debug19', :require => 'ruby-debug'
 
 #gem 'vestal_versions', :git => 'git://github.com/adamcooper/vestal_versions'
 gem 'ruby-ldap'
@@ -35,6 +35,6 @@ gem 'whenever', :require => false
 gem 'paperclip', "~> 2.4"
 
 # For MS Active Directory support
-gem "active_directory", "~> 1.5.4"
+gem "active_directory", :git => 'git://github.com/richardun/active_directory.git'
 
 gem "js-routes"

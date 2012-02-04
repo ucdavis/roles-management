@@ -1,6 +1,13 @@
 GIT
+  remote: git://github.com/richardun/active_directory.git
+  revision: 30a33e70a8a82151a5ce6b3c62d12500190421f0
+  specs:
+    active_directory (1.2.9)
+      net-ldap (>= 0.1.1)
+
+GIT
   remote: https://github.com/rubycas/rubycas-client.git
-  revision: b299dab10deb10d9058d0522d5e257379770b803
+  revision: dd9860fe182aeb81f3b42da41ee9032e671632a3
   specs:
     rubycas-client (2.3.8)
       activesupport
@@ -27,8 +34,6 @@ GEM
       rack-cache (~> 1.1)
       rack-test (~> 0.6.1)
       sprockets (~> 2.1.2)
-    active_directory (1.5.4)
-      net-ldap (>= 0.1.1)
     activemodel (3.2.1)
       activesupport (= 3.2.1)
       builder (~> 3.0.0)
@@ -43,6 +48,7 @@ GEM
     activesupport (3.2.1)
       i18n (~> 0.6)
       multi_json (~> 1.0)
+    archive-tar-minitar (0.5.2)
     arel (3.0.0)
     builder (3.0.0)
     capistrano (2.9.0)
@@ -51,7 +57,7 @@ GEM
       net-sftp (>= 2.0.0)
       net-ssh (>= 2.0.14)
       net-ssh-gateway (>= 1.1.0)
-    chronic (0.6.6)
+    chronic (0.6.7)
     cocaine (0.2.1)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
@@ -60,6 +66,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.2.0)
+    columnize (0.3.6)
     dynamic_form (1.1.4)
     erubis (2.7.0)
     execjs (1.3.0)
@@ -74,6 +81,8 @@ GEM
     js-routes (0.7.4)
       rails (>= 3.0)
     json (1.6.5)
+    linecache19 (0.5.13)
+      ruby_core_source (>= 0.1.4)
     mail (2.4.1)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -120,8 +129,18 @@ GEM
     rake (0.9.2.2)
     rdoc (3.12)
       json (~> 1.4)
+    ruby-debug-base19 (0.11.26)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
     ruby-ldap (0.9.12)
-    sass (3.1.12)
+    ruby_core_source (0.1.5)
+      archive-tar-minitar (>= 0.5.2)
+    sass (3.1.13)
     sass-rails (3.2.4)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -148,7 +167,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_directory (~> 1.5.4)
+  active_directory!
   capistrano
   coffee-rails (~> 3.2.1)
   declarative_authorization!
@@ -158,6 +177,7 @@ DEPENDENCIES
   mysql
   paperclip (~> 2.4)
   rails (= 3.2.1)
+  ruby-debug19
   ruby-ldap
   rubycas-client!
   sass-rails (~> 3.2.3)
