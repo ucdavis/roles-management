@@ -5,11 +5,14 @@
 		<div class="bheadl"></div>
 		<div class="bheadr"></div>
 
-		<h2>Administrate</h2>
+		<h2>Organizations &amp; People</h2>
+    
+    <form action="" method="post">
+      <input type="text" class="text" value="Search" />
+    </form>
 	</div>		<!-- .block_head ends -->
 	
 	<div class="block_content">
-	  
     <div id="accordion_0">
   		<% @ous.each do |ou| %>
         <h4><a href="#"><%= ou.name %></a></h4>
@@ -26,7 +29,25 @@
           </div>
   		<% end %>
     </div>
+	</div>		<!-- .block_content ends -->
+	
+	<div class="bendl"></div>
+	<div class="bendr"></div>
+</div>
+
+<div class="block span-100">
+	<div class="block_head">
+		<div class="bheadl"></div>
+		<div class="bheadr"></div>
+
+		<h2>Applications</h2>
     
+    <form action="" method="post">
+      <input type="text" class="text" value="Search" />
+    </form>
+	</div>		<!-- .block_head ends -->
+	
+	<div class="block_content">
     
 	</div>		<!-- .block_content ends -->
 	
