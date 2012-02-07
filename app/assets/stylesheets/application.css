@@ -54,9 +54,8 @@ fieldset {
 }
 	
 .wrapper {
-	width:90%;
-	min-width: 960px;
-	margin:0 auto;
+	width: 1090px;
+	margin: 0 auto;
 	padding-top: 20px;
 }
 
