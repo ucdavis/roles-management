@@ -26,6 +26,8 @@
       $("div#entity_details a.edit_mode").show();
       // Show unchecked boxes
       $("div#entity_details input[type=checkbox]:not(:checked)").show();
+      // Enable the other checkboxes
+      $("div#entity_details input[type=checkbox]:checked").removeAttr("disabled");
       break;
       case details_modal.VIEW_MODE:
       // Turn off inputs
@@ -44,6 +46,8 @@
       $("div#entity_details a.edit_mode").hide();
       // Hide unchecked boxes
       $("div#entity_details input[type=checkbox]:not(:checked)").hide();
+      // Disable remaining checkboxes
+      $("div#entity_details input[type=checkbox]:checked").attr("disabled", true);
       break;
       default: break;
     }
