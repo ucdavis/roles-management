@@ -35,6 +35,6 @@ gem 'whenever', :require => false
 gem 'paperclip', "~> 2.4"
 
 # For MS Active Directory support
-gem "active_directory", :git => 'git://github.com/richardun/active_directory.git'
+gem "active_directory"
 
 gem "js-routes"

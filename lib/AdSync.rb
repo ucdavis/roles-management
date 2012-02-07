@@ -20,9 +20,9 @@ module AdSync
     ActiveDirectory::Base.setup(settings)
     ActiveDirectory::User.find(:first, :samaccountname => loginid)
   end
-  
-  # Takes user as an ActiveDirectory::User object and group as a string (e.g. 'SOME-GROUP') and returns boolean
-  def AdSync.add_to_group(user, group)
+
+  # Takes name as a string (e.g. 'this-that') and returns an ActiveDirectory::Group object
+  def AdSync.fetch_group(group_name)
     settings = {
         :host => AD_GROUPS_SETTINGS['host'],
         :base => AD_GROUPS_SETTINGS['base'],
@@ -36,8 +36,45 @@ module AdSync
     }
 
     ActiveDirectory::Base.setup(settings)
-    g = ActiveDirectory::Group.find(:first, :cn => group)
+    ActiveDirectory::Group.find(:first, :cn => group_name)
+  end
+  
+  # Takes user as an ActiveDirectory::User object and group as a string (e.g. 'SOME-GROUP') and returns boolean
+  def AdSync.add_user_to_group(user, group_name)
+    settings = {
+        :host => AD_GROUPS_SETTINGS['host'],
+        :base => AD_GROUPS_SETTINGS['base'],
+        :port => 636,
+        :encryption => :simple_tls,
+        :auth => {
+          :method => :simple,
+          :username => AD_GROUPS_SETTINGS['user'],
+          :password => AD_GROUPS_SETTINGS['pass']
+        }
+    }
+
+    ActiveDirectory::Base.setup(settings)
+    g = ActiveDirectory::Group.find(:first, :cn => group_name)
 
     g.add user
+  end
+  
+  # Takes group as an ActiveDirectory::Group object and returns an array of users
+  def AdSync.list_group_members(group)
+    settings = {
+        :host => AD_PEOPLE_SETTINGS['host'],
+        :base => AD_PEOPLE_SETTINGS['base'],
+        :port => 636,
+        :encryption => :simple_tls,
+        :auth => {
+          :method => :simple,
+          :username => AD_PEOPLE_SETTINGS['user'],
+          :password => AD_PEOPLE_SETTINGS['pass']
+        }
+    }
+
+    ActiveDirectory::Base.setup(settings)
+    
+    group.member_users
   end
 end

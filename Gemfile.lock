@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.com/richardun/active_directory.git
-  revision: 30a33e70a8a82151a5ce6b3c62d12500190421f0
-  specs:
-    active_directory (1.2.9)
-      net-ldap (>= 0.1.1)
-
-GIT
   remote: https://github.com/rubycas/rubycas-client.git
   revision: dd9860fe182aeb81f3b42da41ee9032e671632a3
   specs:
@@ -34,6 +27,8 @@ GEM
       rack-cache (~> 1.1)
       rack-test (~> 0.6.1)
       sprockets (~> 2.1.2)
+    active_directory (1.5.4)
+      net-ldap (>= 0.1.1)
     activemodel (3.2.1)
       activesupport (= 3.2.1)
       builder (~> 3.0.0)
@@ -140,7 +135,7 @@ GEM
     ruby-ldap (0.9.12)
     ruby_core_source (0.1.5)
       archive-tar-minitar (>= 0.5.2)
-    sass (3.1.13)
+    sass (3.1.14)
     sass-rails (3.2.4)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -167,7 +162,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_directory!
+  active_directory
   capistrano
   coffee-rails (~> 3.2.1)
   declarative_authorization!
