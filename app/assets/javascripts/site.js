@@ -249,17 +249,22 @@ $(function() {
   site.delete_group = function (group_pin) {
     var group_id = group_pin.id.toString().substr(1);
     
-    template.status_text("Deleting group...");
+    if (apprise("Really delete this group?",
+    {'verify': true, 'textYes': "Delete Group", 'textNo': "Cancel"}, function(confirm_delete) {
+      if(confirm_delete) {
+        template.status_text("Deleting group...");
     
-    // Delete the group
-    $.ajax({ url: Routes.group_path(group_id) + ".json", data: {}, type: 'DELETE', complete: function(data, status) {
-      template.hide_status();
-      // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
-      var el = $("ul.pins li[data-group-id=" + group_pin.id + "]");
-      el.fadeOut('fast', function() {
-        $(el).remove();
-      }); // fade out from the DOM
-    }});
+        // Delete the group
+        $.ajax({ url: Routes.group_path(group_id) + ".json", data: {}, type: 'DELETE', complete: function(data, status) {
+          template.hide_status();
+          // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
+          var el = $("ul.pins li[data-group-id=" + group_pin.id + "]");
+          el.fadeOut('fast', function() {
+            $(el).remove();
+          }); // fade out from the DOM
+        }});
+      }
+    }));
   }
   
   site.add_to_available_list = function (entity) {
@@ -298,6 +303,7 @@ $(function() {
       $(el).attr("data-pin-type", "group");
       $(el).attr("data-group-id", entity.id);
       $(el).html("<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"/images/help.png\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
+      $(el).css("background-image", "url(images/btnb_dark.gif)");
       $("div#groups ul.pins li.new").before(el);
     } else {
       // Unknown
