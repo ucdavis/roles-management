@@ -303,11 +303,11 @@ $(function() {
 	//$(document).pngFix();
 
   // Fix AJAX headers
-  //$.ajaxSetup({
-    //beforeSend: function (xhr, settings) {
-      //xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
-      //}
-  //});
+  $.ajaxSetup({
+    beforeSend: function (xhr, settings) {
+      xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
+    }
+  });
   
   // Set up tool tips
   $("[data-tooltip]").each(

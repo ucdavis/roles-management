@@ -212,7 +212,7 @@ $(function() {
   site.create_group = function (name) {
     $.get(Routes.new_group_path() + ".json", function(group) {
       group.name = name;
-      group.owner_tokens = site.current_user_id;
+      group.owner_tokens = '1' + site.current_user_id;
       
       template.status_text("Creating group...");
       
