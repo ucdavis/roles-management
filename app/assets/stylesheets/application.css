@@ -1400,3 +1400,7 @@ li.ui-draggable-dragging {
   opacity: 0.7;
   filter: alpha(opacity = 70); /* IE8 and earlier */
 }
+
+div#details_view .sidebar_content input,textarea {
+  border: 1px solid #bbb;
+}
