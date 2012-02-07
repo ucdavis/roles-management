@@ -47,6 +47,12 @@
         </fieldset>
     		<fieldset class="sidebar_content" id="rules">
           <table>
+          <tr>
+            <th>Column</th>
+            <th>Condition</th>
+            <th>Value</th>
+            <th><!-- Actions --></th>
+          </tr>
           <%= f.fields_for :rules do |builder| %>
             <%= render "rule_fields", :f => builder %>
           <% end %>
