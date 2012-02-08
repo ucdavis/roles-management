@@ -1,21 +1,31 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-one:
-  first: MyString
-  last: MyString
-  email: MyString
-  loginid: MyString
-  preferred_name: MyString
-  status: false
-  phone: 1
-  address: MyString
+chris:
+  first: Christopher
+  last: Thielen
+  email: cthielen@test.edu
+  loginid: cthielen
+  preferred_name: Christopher Thielen
+  status: true
+  phone: 5305551212
+  address: 123 Test Dr
 
-two:
-  first: MyString
-  last: MyString
-  email: MyString
-  loginid: MyString
-  preferred_name: MyString
+scott:
+  first: Scott
+  last: Dyer
+  email: sdyer@test.edu
+  loginid: sdyer
+  preferred_name: Scotty Dyer
+  status: true
+  phone: 5305551313
+  address: 321 Test Ct
+
+ben:
+  first: Benjamin
+  last: Kenobi
+  email: bkenobi@test.edu
+  loginid: bkenobi
+  preferred_name: Obi-Wan Kenobi
   status: false
-  phone: 1
-  address: MyString
+  phone: 
+  address: 
