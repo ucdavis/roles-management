@@ -54,10 +54,17 @@ class Person < ActiveRecord::Base
     end
 
     # Add roles via public defaults
-    Role.includes(:application).where( :default => true ).each do |role|
+    #Role.includes(:application).where( :default => true ).each do |role|
       # Avoid duplicates
-      unless roles.include? role
-        roles << role
+      #unless roles.include? role
+        #roles << role
+        #end
+    #end
+    groups.each do |g|
+      g.roles.each do |role|
+        unless roles.include? role
+          roles << role
+        end
       end
     end
     

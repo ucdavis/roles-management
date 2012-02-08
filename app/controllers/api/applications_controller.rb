@@ -34,6 +34,7 @@ class Api::ApplicationsController < Api::BaseController
     else
       respond_to do |format|
         format.xml { render :text => @application.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
+        format.text
       end
     end
   end

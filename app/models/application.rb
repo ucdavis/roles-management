@@ -17,4 +17,18 @@ class Application < ActiveRecord::Base
   def as_json(options={}) 
     { :id => self.id, :name => self.name, :roles => self.roles } 
   end
+  
+  # Returns all people associated with any role of this app
+  def people
+    p = []
+    
+    # Include explicitly assigned
+    p += roles.collect{ |x| x.people }.flatten
+    # Include people via groups
+    roles.each{ |x| x.groups.each { |y| p += y.members } }
+    # Include people via OUs
+    
+    
+    p
+  end
 end
