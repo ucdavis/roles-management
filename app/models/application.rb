@@ -29,6 +29,7 @@ class Application < ActiveRecord::Base
     # Include people via OUs
     
     
-    p
+    # Return without duplicates
+    p.inject([]) { |result,h| result << h unless result.include?(h); result }
   end
 end
