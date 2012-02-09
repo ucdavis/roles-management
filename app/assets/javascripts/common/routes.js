@@ -399,30 +399,6 @@
 // roles_unassign => /roles/unassign(.:format)
   roles_unassign_path: function(options) {
   return Utils.build_path(0, ["/roles/unassign"], ["format"], arguments)
-  },
-// graph_authorization_rules => /authorization_rules/graph(.:format)
-  graph_authorization_rules_path: function(options) {
-  return Utils.build_path(0, ["/authorization_rules/graph"], ["format"], arguments)
-  },
-// change_authorization_rules => /authorization_rules/change(.:format)
-  change_authorization_rules_path: function(options) {
-  return Utils.build_path(0, ["/authorization_rules/change"], ["format"], arguments)
-  },
-// suggest_change_authorization_rules => /authorization_rules/suggest_change(.:format)
-  suggest_change_authorization_rules_path: function(options) {
-  return Utils.build_path(0, ["/authorization_rules/suggest_change"], ["format"], arguments)
-  },
-// authorization_rules => /authorization_rules(.:format)
-  authorization_rules_path: function(options) {
-  return Utils.build_path(0, ["/authorization_rules"], ["format"], arguments)
-  },
-// authorization_usages => /authorization_usages(.:format)
-  authorization_usages_path: function(options) {
-  return Utils.build_path(0, ["/authorization_usages"], ["format"], arguments)
-  },
-// rails_info_properties => /rails/info/properties(.:format)
-  rails_info_properties_path: function(options) {
-  return Utils.build_path(0, ["/rails/info/properties"], ["format"], arguments)
   }}
 ;
   window.Routes.options = defaults;
