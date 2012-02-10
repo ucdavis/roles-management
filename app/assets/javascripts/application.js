@@ -47,9 +47,11 @@
     scope = typeof(scope) != 'undefined' ? scope : $(document);
     
     scope.on("focus", "input[data-default-text]", function(srcc) {
-      if ($(this).val() == $($(this)[0]).attr("data-default-text")) {
-        $(this).removeClass("default_text_active");
-        $(this).val("");
+      if($(this).attr("readonly") != "readonly") {
+        if($(this).val() == $($(this)[0]).attr("data-default-text")) {
+          $(this).removeClass("default_text_active");
+          $(this).val("");
+        }
       }
     });
     scope.on("blur", "input[data-default-text]", function() {

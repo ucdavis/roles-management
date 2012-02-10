@@ -66,10 +66,9 @@
           <p><%= link_to_add_fields "Add Role", f, :roles %></p>
     		</fieldset> <!-- roles -->
     		<fieldset class="sidebar_content" id="ad">
-        	<p>
-            	<%= f.label :ad_path, "Active Directory Group Name" %><br />
-            	<%= f.text_field :ad_path, :class => "text medium", "data-default-text" => "Not set" %>
-        	</p>
+          <%= f.fields_for :roles do |builder| %>
+            <%= render "role_ad_fields", :f => builder %>
+          <% end %>
           <p>
             <small>The group name is appended after the base AD path configured by the administrator.</small>
           </p>
