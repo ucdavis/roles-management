@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include Authentication
+  helper :all
   protect_from_forgery
   
   # Only the API namespace should respond to XML. Be mindful of this!
@@ -7,39 +9,6 @@ class ApplicationController < ActionController::Base
   before_filter :set_current_user, :unless => :requested_api?
   skip_before_filter :set_current_user, :only => [:access_denied]
 
-  def set_current_user
-    Authorization.current_user = @@user
-    
-    # Redirect to access denied if the user isn't in our database
-    if @@user.nil?
-      redirect_to :controller => "site", :action => "access_denied"
-    end
-  end
-  
-  def current_user
-    @@user
-  end
-
-  def login_required
-    if session[:cas_user]
-      begin
-        @@user = Person.find_by_loginid(session[:cas_user])
-        return true
-      rescue Exception => e
-        # User not found
-        flash[:warning] = 'You have authenticated but are not allowed access.'
-        @@user = nil
-      end
-    else
-      flash[:warning] = 'You must authenticate with CAS to continue.'
-      redirect_to CASClient::Frameworks::Rails::Filter.login_url(self)
-    end
-  
-    session[:return_to] = request.fullpath
-  
-    return false
-  end
-  
   protected
   
   def requested_api?

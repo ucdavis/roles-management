@@ -172,6 +172,10 @@
   admin_dialogs_impersonate_path: function(options) {
   return Utils.build_path(0, ["/admin/dialogs/impersonate"], ["format"], arguments)
   },
+// admin => /admin/ops/impersonate/:loginid(.:format)
+  admin_path: function(_loginid, options) {
+  return Utils.build_path(1, ["/admin/ops/impersonate/"], ["format"], arguments)
+  },
 // application_applications => /applications/:application_id/applications(.:format)
   application_applications_path: function(_application_id, options) {
   return Utils.build_path(1, ["/applications/", "/applications"], ["format"], arguments)
