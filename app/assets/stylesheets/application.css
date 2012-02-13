@@ -1174,6 +1174,11 @@ ul.token-input-disabled-facebook li.token-input-token-facebook span.token-input-
   /*cursor: move;*/
 }
 
+.block .block_content div.pins div.pin.group {
+  background: url("../images/btnb_dark.gif") no-repeat;
+  background-size: 100% 25px;
+}
+
 .block .block_content div.pins div.pin a {
   padding-left: 0.75em;
   color: #fff;

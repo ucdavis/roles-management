@@ -134,7 +134,8 @@ $(function() {
       
       // Change the pin color if this is a group
       if(String(entity.id)[0] == '2') {
-        $(el).css("background-image", "url(images/btnb_dark.gif)");
+        //$(el).css("background-image", "url(images/btnb_dark.gif)");
+        $(el).addClass("group");
       }
       
       var pin_list = $("div.card[data-application-id=" + role.application_id + "]").children("div.card_content").children("div.pins");
@@ -303,7 +304,8 @@ $(function() {
       $(el).attr("data-pin-type", "group");
       $(el).attr("data-group-id", entity.id);
       $(el).html("<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"/images/help.png\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
-      $(el).css("background-image", "url(images/btnb_dark.gif)");
+      //$(el).css("background-image", "url(images/btnb_dark.gif)");
+      $(el).addClass("group");
       $("div#groups ul.pins li.new").before(el);
     } else {
       // Unknown
