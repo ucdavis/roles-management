@@ -176,6 +176,10 @@
   admin_path: function(_loginid, options) {
   return Utils.build_path(1, ["/admin/ops/impersonate/"], ["format"], arguments)
   },
+// admin_ops_unimpersonate => /admin/ops/unimpersonate(.:format)
+  admin_ops_unimpersonate_path: function(options) {
+  return Utils.build_path(0, ["/admin/ops/unimpersonate"], ["format"], arguments)
+  },
 // application_applications => /applications/:application_id/applications(.:format)
   application_applications_path: function(_application_id, options) {
   return Utils.build_path(1, ["/applications/", "/applications"], ["format"], arguments)

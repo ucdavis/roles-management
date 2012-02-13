@@ -324,7 +324,12 @@ $(function() {
     
     $.get(Routes.admin_dialogs_impersonate_path(), function(data) {
       template.hide_status();
-      apprise(data, {'animate': true, 'verify': true, 'textYes': 'Impersonate', 'textNo': 'Cancel'});
+      apprise(data, {'animate': true, 'verify': true, 'textYes': 'Impersonate', 'textNo': 'Cancel'}, function(impersonate) {
+        if(impersonate) {
+          // Redirect to impersonation URL
+          window.location.href = Routes.admin_path(site.impersonate_user);
+        }
+      });
     });
     
   }

@@ -11,4 +11,10 @@ class Admin::OpsController < Admin::BaseController
     
     redirect_to root_url
   end
+  
+  def unimpersonate
+    session.delete(:impersonate)
+    
+    redirect_to root_url
+  end
 end

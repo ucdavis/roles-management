@@ -10,6 +10,7 @@ DSSRM::Application.routes.draw do
   namespace "admin" do
     get "dialogs/impersonate"
     get "ops/impersonate/:loginid", :controller => "ops", :action => "impersonate"
+    get "ops/unimpersonate"
   end
 
   resources :applications do
