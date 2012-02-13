@@ -9,11 +9,31 @@
   	<div class="block_content">
       <form>
         <b>Login ID to Impersonate</b><br />
-        <input type="text" class="text medium" /><br />
+        <input type="text" class="text medium" id="loginid" /> <span id="loginid_status"></span><br />
         <br />
       </form>
     </div> <!-- .block_content ends -->
   </div> <!-- .block ends -->
 </div> <!-- .entity_details -->
 
-<!--<script type="text/javascript" src="<%= asset_path "details_modal.js" %>"></script>-->
+<script type="text/javascript">
+$(document).ready(function() {
+  $("div#impersonate_dialog div.block_content input#loginid").on('keyup', function(el) {
+    var loginid = $(this).val();
+    
+    $.get(Routes.api_person_exists_path(loginid), function(exists) {
+      if(exists) {
+        // Write 'Ok' and enable the impersonate button
+        $("div#impersonate_dialog div.block_content span#loginid_status").html("<span style='color: #00aa00;'>Ok</span>");
+        $("div.appriseInner div.aButtons button[value=ok]").attr("disabled", false).css("color", "#232D3D");
+        site.impersonate_user = loginid;
+      } else {
+        // Write 'Not Found' and disable the impersonate button
+        $("div#impersonate_dialog div.block_content span#loginid_status").html("<span style='color: #aa0000;'>Not found</span>");
+        $("div.appriseInner div.aButtons button[value=ok]").attr("disabled", true).css("color", "#aaa");
+        site.impersonate_user = null;
+      }
+    });
+  });
+});
+</script>

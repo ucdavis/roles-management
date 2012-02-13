@@ -55,6 +55,7 @@ $(function() {
   // Application and role relationship (filled in by index.html.erb)
   site.applications = [];
   site.current_user_id = null;
+  site.impersonate_user = null;
   
   // Displays the virtual application preferences for administrators
   site.prefs = function(app_id) {

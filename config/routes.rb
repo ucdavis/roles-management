@@ -29,6 +29,7 @@ DSSRM::Application.routes.draw do
   namespace "api" do
     resources :people do
       resources :applications
+      get "exists"
     end
     
     resources :groups

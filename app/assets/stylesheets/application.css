@@ -577,9 +577,17 @@ select {
 	padding: 0;
 	width: 93%;
 	float: left;
-	}
+}
+  
+.error {
+  background-image: url("../images/error.gif") 12px 12px no-repeat;
+}
+
+.success {
+  background-image: url("../images/success.gif") 12px 12px no-repeat;
+}
 	
-.message.errormsg {
+.message.error {
 	border: 1px solid #e9c59b;
 	background: #ffecce url("../images/error.gif") 12px 12px no-repeat;
 	color: #e3302c;

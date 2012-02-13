@@ -272,6 +272,10 @@
   api_person_application_path: function(_person_id, _id, options) {
   return Utils.build_path(2, ["/api/people/", "/applications/"], ["format"], arguments)
   },
+// api_person_exists => /api/people/:person_id/exists(.:format)
+  api_person_exists_path: function(_person_id, options) {
+  return Utils.build_path(1, ["/api/people/", "/exists"], ["format"], arguments)
+  },
 // api_people => /api/people(.:format)
   api_people_path: function(options) {
   return Utils.build_path(0, ["/api/people"], ["format"], arguments)

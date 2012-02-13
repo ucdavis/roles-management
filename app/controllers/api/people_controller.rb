@@ -77,4 +77,13 @@ class Api::PeopleController < Api::BaseController
       format.xml  { head :ok }
     end
   end
+  
+  # GET /api/people/[loginid]/exists
+  def exists
+    exists = (not Person.find_by_loginid(params[:person_id]).nil?)
+    
+    respond_to do |format|
+      format.json { render json: exists, status: :created }
+    end
+  end
 end
