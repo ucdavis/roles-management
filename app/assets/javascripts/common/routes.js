@@ -168,6 +168,10 @@
   site_access_denied_path: function(options) {
   return Utils.build_path(0, ["/site/access_denied"], ["format"], arguments)
   },
+// admin_dialogs_impersonate => /admin/dialogs/impersonate(.:format)
+  admin_dialogs_impersonate_path: function(options) {
+  return Utils.build_path(0, ["/admin/dialogs/impersonate"], ["format"], arguments)
+  },
 // application_applications => /applications/:application_id/applications(.:format)
   application_applications_path: function(_application_id, options) {
   return Utils.build_path(1, ["/applications/", "/applications"], ["format"], arguments)

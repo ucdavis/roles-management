@@ -44,6 +44,11 @@ $(function() {
       $(this).children("img").css("display", "none");
     }
   );
+  
+  // Set up the impersonate functionality
+  $("p.user a#impersonate_switch").click(function() {
+    site.impersonate_dialog();
+  });
 });
 
 (function (site, $, undefined) {
@@ -311,5 +316,15 @@ $(function() {
       // Unknown
       console.log("Cannot add entity to availability list, unknown type.");
     }
+  }
+  
+  site.impersonate_dialog = function() {
+    template.status_text("Loading...");
+    
+    $.get(Routes.admin_dialogs_impersonate_path(), function(data) {
+      template.hide_status();
+      apprise(data, {'animate': true, 'verify': true, 'textYes': 'Impersonate', 'textNo': 'Cancel'});
+    });
+    
   }
 } (window.site = window.site || {}, jQuery));

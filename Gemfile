@@ -38,3 +38,5 @@ gem 'paperclip', "~> 2.4"
 gem "active_directory"
 
 gem "js-routes"
+
+gem "ruby_parser"

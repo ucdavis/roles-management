@@ -35,7 +35,7 @@
 				</ul>
 				
 				<% if current_user %>
-				  <p class="user"><%= current_user.first %> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
+				  <p class="user">Accessing as <a href="#" id="impersonate_switch"><%= current_user.first %></a> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
 				<% end %>
 			</div> <!-- #header -->
 			
