@@ -1,6 +1,6 @@
 class GroupRule < ActiveRecord::Base
   validates_inclusion_of :condition, :in => %w( may\ be may\ not\ be  )
-  validates_inclusion_of :column, :in => %w( title major affiliation classification loginid  )
+  validates_inclusion_of :column, :in => %w( title major affiliation classification loginid ou )
   
   belongs_to :group
   
@@ -32,6 +32,22 @@ class GroupRule < ActiveRecord::Base
       else
         # unsupported
         puts "Unsupported condition for affiliation in group rule."
+      end
+    when "ou"
+      ou = Ou.find_by_name(value)
+      unless ou == nil
+        ps = ou.members
+        case condition
+        when "may be"
+          p = p + ps
+        when "may not be"
+          puts " -- 'OU may not be' is unsupported"
+        else
+          # unsupported
+          puts "Unsupported condition for OU in group rule."
+        end
+      else
+        puts "OU not found"
       end
     when "classification"
       classification = Classification.find_by_name(value)
