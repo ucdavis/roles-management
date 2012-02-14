@@ -199,11 +199,14 @@ namespace :ldap do
           end
       
           unless UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]].nil?
+            # Find or create the manager (if we see the rest of their data later, it will be updated accordingly)
             manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]]["manager"])
             # Avoid duplicate managers
             unless ou.managers.exists? manager
               ou.managers << manager
             end
+            
+            person.managers << manager
           else
             # Dept code doesn't exist
             unless p["ucdAppointmentDepartmentCode"].nil?
@@ -217,13 +220,13 @@ namespace :ldap do
         person.ous << ou
     
         unless p["title"].nil?
-          # Add to group based on title, creating it if necessary
-          #group = Group.find(:first, :conditions => [ "lower(name) = ?", p["title"].downcase ]) || Group.create(:name => p["title"])
-          #group.save!
-          #person.groups << group
-        
           # Set title, creating it if necessary
-          title = Title.find_or_create_by_title(p["title"])
+          title = Title.find_or_create_by_name(p["title"])
+          # Update the title code information, if necessary
+          if title.code.nil?
+            title.code = p["ucdAppointmentTitleCode"]
+            title.save
+          end
           person.title = title
         end
       
@@ -258,8 +261,13 @@ namespace :ldap do
       OuAssignment.destroy_all
       ApplicationOuAssignment.destroy_all
       Affiliation.destroy_all
+      GroupRule.delete_all
+      OuChildrenAssignment.destroy_all
       OuManagerAssignment.destroy_all
       AffiliationAssignment.destroy_all
+      PersonManagerAssignment.destroy_all
+      Classification.destroy_all
+      #ClassificationTitles.destroy_all
       Title.destroy_all
       puts "Be sure to assign roles if you re-import the directory."
     end

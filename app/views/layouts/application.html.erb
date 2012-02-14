@@ -35,7 +35,11 @@
 				</ul>
 				
 				<% if current_user %>
-				  <p class="user">Accessing as <a href="#" id="impersonate_switch"><%= current_user.first %></a> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
+          <% if permitted_to? :impersonate, :admin_dialogs %>
+            <p class="user">Accessing as <a href="#" id="impersonate_switch"><%= current_user.first %></a> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
+          <% else %>
+				    <p class="user">Accessing as <%= current_user.first %> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
+          <% end %>
 				<% end %>
 			</div> <!-- #header -->
 			

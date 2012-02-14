@@ -1,7 +1,7 @@
 class Application < ActiveRecord::Base
   has_many :roles
   has_many :application_ou_assignments
-  has_many :ous, :through => :application_ou_assignments # if empty, application is available to all
+  has_many :ous, :through => :application_ou_assignments
   
   has_attached_file :icon, :styles => { :normal => "64x64>", :tiny => "16x16>" }
   
