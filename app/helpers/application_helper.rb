@@ -18,4 +18,9 @@ module ApplicationHelper
     end
     link_to_function(name, "add_fields(this, '#{association}', '#{escape_javascript(fields)}')", :class => "edit_mode")
   end
+  
+  def permitted_to?(action, controller)
+    true
+    #permitted_to?(action, controller) unless impersonating?
+  end
 end

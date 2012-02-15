@@ -44,6 +44,11 @@ module Authentication
   def actual_user
     @@user
   end
+  
+  # Returns true if we're currently impersonating another user
+  def impersonating?
+    actual_user == current_user
+  end
 
   def login_required
     if session[:cas_user]
