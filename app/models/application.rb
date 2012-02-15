@@ -5,6 +5,7 @@ class Application < ActiveRecord::Base
   has_many :application_manager_assignments
   has_many :managers, :through => :application_manager_assignments
   before_save :ensure_access_role_exists
+  validate :has_at_least_one_role
   
   has_attached_file :icon, :styles => { :normal => "64x64>", :tiny => "16x16>" }
   
@@ -47,7 +48,16 @@ class Application < ActiveRecord::Base
       r.application = self
       r.descriptor = "Access"
       r.description = "Allow access to this application"
+      r.default = true
       r.save!
+    end
+  end
+  
+  def has_at_least_one_role
+    if roles.length > 0
+      true
+    else
+      false
     end
   end
 end
