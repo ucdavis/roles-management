@@ -77,79 +77,83 @@ $(function() {
   site.register_role = function(entity, role, dom_only) {
     if(dom_only == undefined) { dom_only = false; }
     
-    // If the pin doesn't exist, create it.
-    if($("div.card[data-application-id=" + role.application_id + "] div.pin[data-entity-id=" + entity.id + "]").length == 0) {
-      var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
-      var el_html = "<img src=\"/images/remove.png\" style=\"display: none; margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
-                     <img src=\"/images/help.png\" style=\"display: none; margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"entity_details\" /> \
-                     <div class=\"pin-content\"></div>";
+    // Update the DOM
+    // Only do this if the current user has management access to the app
+    if($("div.card[data-application-id=" + role.application_id + "]").length > 0) {
+      // If the pin doesn't exist, create it.
+      if($("div.card[data-application-id=" + role.application_id + "] div.pin[data-entity-id=" + entity.id + "]").length == 0) {
+        var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
+        var el_html = "<img src=\"/images/remove.png\" style=\"display: none; margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
+                       <img src=\"/images/help.png\" style=\"display: none; margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"entity_details\" /> \
+                       <div class=\"pin-content\"></div>";
     
-      $(el).html( el_html );
-      $(el).hover(
-        function() {
-          // hover in
-          $(this).children("img").css("display", "block");
-        },
-        function() {
-          // hover out
-          $(this).children("img").css("display", "none");
+        $(el).html( el_html );
+        $(el).hover(
+          function() {
+            // hover in
+            $(this).children("img").css("display", "block");
+          },
+          function() {
+            // hover out
+            $(this).children("img").css("display", "none");
+          }
+        );
+    
+        // Add the permissions list
+        for(var i = 0; i < site.applications[role.application_id].roles.length; i++) {
+          var r = site.applications[role.application_id].roles[i];
+          $(el).children("div.pin-content").append("<span class=\"permission\"><input type=\"checkbox\" data-app-id=\"" + role.application_id + "\" data-role-id=\"" + r.id + "\" /> (<b>" + r.descriptor + "</b>) " + r.description + "</span>");
         }
-      );
-    
-      // Add the permissions list
-      for(var i = 0; i < site.applications[role.application_id].roles.length; i++) {
-        var r = site.applications[role.application_id].roles[i];
-        $(el).children("div.pin-content").append("<span class=\"permission\"><input type=\"checkbox\" data-app-id=\"" + role.application_id + "\" data-role-id=\"" + r.id + "\" /> (<b>" + r.descriptor + "</b>) " + r.description + "</span>");
-      }
       
-      // Register the checkbox callbacks (to set/unset permissions via AJAX)
-      $(el).find("div.pin-content span.permission input[type=checkbox]").change(function() {
-        var assignment = {};
+        // Register the checkbox callbacks (to set/unset permissions via AJAX)
+        $(el).find("div.pin-content span.permission input[type=checkbox]").change(function() {
+          var assignment = {};
         
-        assignment.role_id = $(this).attr("data-role-id");
-        assignment.entity_id = $(this).parent().parent().parent().attr("data-entity-id");
+          assignment.role_id = $(this).attr("data-role-id");
+          assignment.entity_id = $(this).parent().parent().parent().attr("data-entity-id");
         
-        // Turning the permission on or off?
-        if($(this).attr("checked") == undefined) {
-          // off
-          template.status_text("Saving...");
-          $.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'}).always(
-            function() {
-              template.hide_status();
-            }
-          );
-        } else {
-          // on
-          template.status_text("Saving...");
-          $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: assignment}, type: 'POST'}).always(
-            function() {
-              template.hide_status();
-            }
-          );
+          // Turning the permission on or off?
+          if($(this).attr("checked") == undefined) {
+            // off
+            template.status_text("Saving...");
+            $.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'}).always(
+              function() {
+                template.hide_status();
+              }
+            );
+          } else {
+            // on
+            template.status_text("Saving...");
+            $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: assignment}, type: 'POST'}).always(
+              function() {
+                template.hide_status();
+              }
+            );
+          }
+        });
+    
+        $(el).children("img#entity_details").click(function() {
+          site.entity_details(entity.id);
+        });
+    
+        $(el).children("a").click(function() {
+          $(this).parent().children("div.pin-content").slideToggle('fast');
+          return false;
+        });
+      
+        // Change the pin color if this is a group
+        if(String(entity.id)[0] == '2') {
+          //$(el).css("background-image", "url(images/btnb_dark.gif)");
+          $(el).addClass("group");
         }
-      });
-    
-      $(el).children("img#entity_details").click(function() {
-        site.entity_details(entity.id);
-      });
-    
-      $(el).children("a").click(function() {
-        $(this).parent().children("div.pin-content").slideToggle('fast');
-        return false;
-      });
       
-      // Change the pin color if this is a group
-      if(String(entity.id)[0] == '2') {
-        //$(el).css("background-image", "url(images/btnb_dark.gif)");
-        $(el).addClass("group");
+        var pin_list = $("div.card[data-application-id=" + role.application_id + "]").children("div.card_content").children("div.pins");
+      
+        $(pin_list).append(el);
+      
+        // Remove the placeholder image (if it's still there)
+        $(pin_list).find( ".placeholder" ).remove();
       }
-      
-      var pin_list = $("div.card[data-application-id=" + role.application_id + "]").children("div.card_content").children("div.pins");
-      
-      $(pin_list).append(el);
-      
-      // Remove the placeholder image (if it's still there)
-      $(pin_list).find( ".placeholder" ).remove();
     }
     
     // Save this permission assignment

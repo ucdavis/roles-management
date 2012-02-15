@@ -74,6 +74,15 @@ class Person < ActiveRecord::Base
     roles
   end
   
+  # Compute applications they can assign subordinates to.
+  # These are applications they either explicitly own or
+  # applications made available on a global level.
+  def manageable_applications
+    apps = []
+    
+    apps
+  end
+  
   # Compute accessible applications
   def applications
     apps = []

@@ -12,9 +12,6 @@ class SiteController < ApplicationController
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded administrate page."
   end
 
-  def contact
-  end
-  
   def access_denied
     logger.info "#{request.remote_ip}: Loaded access denied page."
   end

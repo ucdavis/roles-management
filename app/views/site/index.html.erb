@@ -11,7 +11,7 @@
 	<div class="block_content">
 	  
     <div style="width: 50%; float: left;">
-      <% current_user.applications.each_with_index do |app, i| %>
+      <% current_user.manageable_applications.each_with_index do |app, i| %>
       <script type="text/javascript">
         site.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
         site.current_user_id = <%= current_user.id %>;
@@ -38,7 +38,7 @@
       	<div class="bendr"></div>
   	  </div> <!-- card -->
       
-      <% if (i >= (current_user.applications.length / 2)) && (@wrapped_already != true) %>
+      <% if (i >= (current_user.manageable_applications.length / 2)) && (@wrapped_already != true) %>
       <% @wrapped_already = true %>
         </div>
         <div style="width: 50%; float: left;">
