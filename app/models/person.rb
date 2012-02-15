@@ -12,7 +12,7 @@ class Person < ActiveRecord::Base
   has_many :managers, :through => :person_manager_assignments
   
   has_many :application_manager_assignments, :foreign_key => "manager_id"
-  has_many :application_ownerships, :through => :application_manager_assignments, :source => :manager
+  has_many :application_ownerships, :through => :application_manager_assignments, :source => :application
   
   has_many :ous, :through => :ou_assignments
   has_many :ou_assignments
@@ -79,6 +79,31 @@ class Person < ActiveRecord::Base
   # applications made available on a global level.
   def manageable_applications
     apps = []
+    
+    # Add apps where they are explicitly the owners
+    application_ownerships.each do |a|
+      apps << a
+    end
+    
+    # Add apps via OU defaults
+    ous.each do |ou|
+      ou.applications.each do |application|
+        application.roles.where(:default => true).each do |role|
+          # Ensure there are no duplicates
+          unless apps.include? role.application
+            apps << role.application
+          end
+        end
+      end
+    end
+    
+    # Add apps open to the public
+    Role.includes(:application).where( :default => true ).each do |role|
+      # Avoid duplicates
+      unless apps.include? role.application
+        apps << role.application
+      end
+    end
     
     apps
   end

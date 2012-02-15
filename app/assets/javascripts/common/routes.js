@@ -156,10 +156,6 @@
   site_administrate_path: function(options) {
   return Utils.build_path(0, ["/site/administrate"], ["format"], arguments)
   },
-// site_contact => /site/contact(.:format)
-  site_contact_path: function(options) {
-  return Utils.build_path(0, ["/site/contact"], ["format"], arguments)
-  },
 // site_logout => /site/logout(.:format)
   site_logout_path: function(options) {
   return Utils.build_path(0, ["/site/logout"], ["format"], arguments)
