@@ -307,12 +307,14 @@ $(function() {
       // Person
       $(el).attr("data-pin-type", "person");
       $(el).attr("data-person-id", entity.id);
+      $(el).attr("data-search-value", entity.name);
       $(el).html("<img src=\"/images/help.png\" style=\"margin: 1px 0 0 0; padding: 1px 15px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
       $("div#people ul.pins").append(el);
     } else if (type == '2') {
       // Group
       $(el).attr("data-pin-type", "group");
       $(el).attr("data-group-id", entity.id);
+      $(el).attr("data-search-value", entity.name);
       $(el).html("<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"/images/help.png\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
       //$(el).css("background-image", "url(images/btnb_dark.gif)");
       $(el).addClass("group");

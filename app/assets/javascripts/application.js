@@ -246,8 +246,26 @@ $(function() {
 	template.setup_sidebar();
   template.setup_default_text();
 	
-	// Block search
-	$('form.search .text').bind('click', function() { $(this).attr('value', ''); });
+	// Search
+	$('form.search .text').bind('click', function() { $(this).attr('value', ''); }).on('keyup', function(el) {
+    var value = $(this).val();
+    
+    // Show all first
+    $(this).parent().parent().children("ul.pins").children("li").show();
+    
+    // Hide whatever doesn't match the search term
+    if(value != "") {
+      $.each($(this).parent().parent().children("ul.pins").children("li"), function(el) {
+        // Don't filter the 'Create new group' pin
+        if($(this).attr("class") != "new") {
+          var regex = new RegExp("^" + value + ".*$", "i");
+          if($(this).attr("data-search-value").match(regex) == null) {
+            $(this).hide();
+          }
+        }
+      });
+    }
+  });
 	
 	// Image actions menu
 	$('ul.imglist li').hover(
