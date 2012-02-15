@@ -4,6 +4,7 @@ class Application < ActiveRecord::Base
   has_many :ous, :through => :application_ou_assignments
   has_many :application_manager_assignments
   has_many :managers, :through => :application_manager_assignments
+  before_save :ensure_access_role_exists
   
   has_attached_file :icon, :styles => { :normal => "64x64>", :tiny => "16x16>" }
   
@@ -33,5 +34,20 @@ class Application < ActiveRecord::Base
     
     # Return without duplicates
     p.inject([]) { |result,h| result << h unless result.include?(h); result }
+  end
+  
+  private
+  
+  # All applications must at least have the 'default' access role.
+  # If it doesn't exist, create it
+  def ensure_access_role_exists
+    if roles.find_by_token("access").nil?
+      r = Role.new
+      r.token = "access"
+      r.application = self
+      r.descriptor = "Access"
+      r.description = "Allow access to this application"
+      r.save!
+    end
   end
 end

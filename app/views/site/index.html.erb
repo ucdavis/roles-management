@@ -38,7 +38,7 @@
       	<div class="bendr"></div>
   	  </div> <!-- card -->
       
-      <% if (i >= (current_user.manageable_applications.length / 2)) && (@wrapped_already != true) %>
+      <% if (i >= (current_user.manageable_applications.length / 2) - 1) && (@wrapped_already != true) %>
       <% @wrapped_already = true %>
         </div>
         <div style="width: 50%; float: left;">
