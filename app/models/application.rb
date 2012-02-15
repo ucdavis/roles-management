@@ -9,13 +9,21 @@ class Application < ActiveRecord::Base
   
   has_attached_file :icon, :styles => { :normal => "64x64>", :tiny => "16x16>" }
   
-  attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name, :icon, :description, :ad_path, :roles, :roles_attributes
+  attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name, :icon, :description, :ad_path, :roles, :roles_attributes, :manager_tokens
   attr_reader :ou_tokens
   
   accepts_nested_attributes_for :roles, :reject_if => lambda { |a| a[:token].blank? || a[:descriptor].blank? }, :allow_destroy => true
   
   def ou_tokens=(ids)
       self.ou_ids = ids.split(",")
+  end
+
+  def manager_tokens
+      self.manager_ids
+  end
+
+  def manager_tokens=(ids)
+      self.manager_ids = ids.split(",").map{|x| x[1..-1]}
   end
   
   def as_json(options={}) 

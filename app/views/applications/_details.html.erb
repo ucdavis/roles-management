@@ -33,14 +33,18 @@
             	<%= f.label :description %><br />
             	<%= f.text_field :description, :class => "text medium" %>
         	</p>
-        	<p>
+        	<!--<p>
             	<%= f.label :hostname %><br />
             	<%= f.text_field :hostname, :class => "text medium" %>
         	</p>
         	<p>
             	<%= f.label :api_key, "API Key" %><br />
             	<%= f.text_field :api_key, :class => "text medium", :disabled => 'disabled' %>
-        	</p>
+        	</p>-->
+    			<p>
+    			  <%= f.label :manager_tokens, "Managers" %><br />
+        	  <%= f.text_field :manager_tokens, "data-pre" => @application.managers.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
+    			</p>
     			<p>
     			  <%= f.label :ou_tokens, "Organizational Scoping" %><br />
         	  <%= f.text_field :ou_tokens, "data-pre" => @application.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>

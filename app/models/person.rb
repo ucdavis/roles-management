@@ -98,12 +98,13 @@ class Person < ActiveRecord::Base
     end
     
     # Add apps open to the public
-    Role.includes(:application).where( :default => true ).each do |role|
+    # DON'T DO THIS - default role does not imply public access
+    #Role.includes(:application).where( :default => true ).each do |role|
       # Avoid duplicates
-      unless apps.include? role.application
-        apps << role.application
-      end
-    end
+      #unless apps.include? role.application
+        #apps << role.application
+        #end
+    #end
     
     apps
   end
@@ -128,12 +129,13 @@ class Person < ActiveRecord::Base
     end
     
     # Add apps via public defaults
-    Role.includes(:application).where( :default => true ).each do |role|
+    # DON'T DO THIS - default role does not imply public access
+    #Role.includes(:application).where( :default => true ).each do |role|
       # Avoid duplicates
-      unless apps.include? role.application
-        apps << role.application
-      end
-    end
+      #unless apps.include? role.application
+        #apps << role.application
+        #end
+    #end
 
     apps
   end

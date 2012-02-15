@@ -156,6 +156,13 @@ $(document).ready(function() {
       theme: "facebook"
     });
     
+    $("#application_manager_tokens").tokenInput($("#application_manager_tokens").attr("method") + ".json", {
+      crossDomain: false,
+      defaultText: "",
+      prePopulate: $("#application_manager_tokens").data("pre"),
+      theme: "facebook"
+    });
+    
     // Remote forms
     $("form.edit_application").bind('ajax:complete', function(){
       template.hide_status();
