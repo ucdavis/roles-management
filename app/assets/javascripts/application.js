@@ -247,7 +247,7 @@ $(function() {
   template.setup_default_text();
 	
 	// Block search
-	$('.block .block_head form .text').bind('click', function() { $(this).attr('value', ''); });
+	$('form.search .text').bind('click', function() { $(this).attr('value', ''); });
 	
 	// Image actions menu
 	$('ul.imglist li').hover(

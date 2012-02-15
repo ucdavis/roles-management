@@ -1151,7 +1151,7 @@ ul.token-input-disabled-facebook li.token-input-token-facebook span.token-input-
   width: 180px;
   height: 25px;
   background: url("../images/btnb.gif") no-repeat;
-  background-size: 180px 25px;
+  background-size: 95% 25px;
   margin: 0;
   padding: 0;
   color: #fff;
@@ -1188,7 +1188,7 @@ ul.token-input-disabled-facebook li.token-input-token-facebook span.token-input-
 
 .block .block_content ul.pins li.group {
   background: url("../images/btnb_dark.gif") no-repeat;
-  background-size: 100% 25px;
+  background-size: 95% 25px;
 }
 
 .block .block_content div.pins div.pin a {
