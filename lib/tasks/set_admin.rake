@@ -7,7 +7,10 @@ namespace :admin do
     
     args.each do |arg|
       puts "Setting #{arg[1]} as admin..."
-      Person.find_by_loginid(arg[1]).roles << Application.find_by_name("DSS Rights Management").roles[0]
+      ra = RoleAssignment.new
+      ra.role_id = Application.find_by_name("DSS Rights Management").roles[0].id
+      ra.person_id = Person.find_by_loginid(arg[1]).id
+      ra.save!
     end
   end
 end

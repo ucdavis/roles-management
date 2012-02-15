@@ -5,4 +5,7 @@ authorization do
     has_permission_on :admin_dialogs, :to => :impersonate
     has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate]
   end
+  role :user do
+    has_permission_on [:groups], :to => [:show, :new, :create, :edit, :update, :destroy]
+  end
 end
