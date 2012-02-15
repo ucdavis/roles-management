@@ -362,33 +362,32 @@ fieldset {
 	text-decoration: none;
 	color: #666;
 	outline: none;
-	}
+}
 
 .block .block_head ul li.active a { color: #888; }
 .block .block_head ul li a:hover { color: #008ee8; }
 
-.block .block_head form {
-	float: right;
-	padding: 15px 0;
-	height: 34px;
-	line-height: 24px;
-	}
+form.search {
+	padding: 6px 0 !important;
+	height: 34px !important;
+	line-height: 24px !important;
+}
 
-.block .block_head form .text {
-	width: 129px;
-	height: 15px;
-	padding: 5px 10px 5px 25px;
-	border: 0;
-	font-size: 11px;
-	color: #999;
-	margin: 0;
-	background: url("../images/srch.gif") left center no-repeat;
-	}
+form.search .text {
+	width: 129px !important;
+	height: 15px !important;
+	padding: 5px 10px 5px 25px !important;
+	border: 0 !important;
+	font-size: 11px !important;
+	color: #999 !important;
+	margin: 0 !important;
+	background: url("../images/srch.gif") left center no-repeat !important;
+}
 
-.block .block_head form .text:focus {
-	color: #666;
-	background: url("../images/srch_.gif") left center no-repeat;
-	}
+form.search .text:focus {
+	color: #666 !important;
+	background: url("../images/srch_.gif") left center no-repeat !important;
+}
 
 select {
 	text-transform: none;
@@ -402,7 +401,7 @@ select {
 	border-left: 1px solid #ccc;
 	border-right: 1px solid #ccc;
 	padding: 10px 20px 0;
-	}
+}
 
 .block .block_content h1,
 .block .block_content h2 {

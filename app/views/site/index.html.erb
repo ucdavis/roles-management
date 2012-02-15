@@ -63,12 +63,18 @@
 	</div>		<!-- .block_head ends -->
 	
 	<div class="block_content tab_content" id="groups">
+		<form class="search" action="">
+			<input type="text" class="text" value="Search" />
+		</form>
 	  <ul class="pins">
         <li class="new" data-pin-type="group" data-pin-entity="0">Create New Group</li>
 		</ul>
 	</div>		<!-- .block_content .tab_content ends -->
 
 	<div class="block_content tab_content" id="people">
+		<form class="search" action="">
+			<input type="text" class="text" value="Search" />
+		</form>
 	  <ul class="pins">
     </ul>
     <% if current_user.subordinates.count == 0 %>
