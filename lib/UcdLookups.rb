@@ -2,7 +2,40 @@ module UcdLookups
 	MAJORS = {}
 	DEPT_CODES = {}
 	TITLE_CODES = {}
-
+  
+  MANUAL_INCLUDES = ['aeguyer','millerlm','djmoglen','mebalvin','mckinney','ssantam','tmheath','rnanakul','olichney','sukkim','jpokorny','bgrunewa','rabronst','kbaynes','szneena','pcmundy','wjarrold','julieluu','steichho','chuff','cmachado','alamsyah','schuang','clare186','ladyd252','aheusser','pkubitz','kshap','bbrelles','blmiss','pjdegenn','cdaniels','jyiwang','anschnei','eaisham','ralatif','cwbishop','fddiaz','jinchen','ajkou','sphan127','ndelie','weidner']
+  
+  DEPT_TRANSLATIONS = {
+      'AFRICAN AMERICAN AFRICAN STDS' => 'HISTORY',
+      'ASIAN AMERICAN' => 'HISTORY',
+      'CALIFORNIA NATIONAL PRIMATE RESEARCH CENTER (CNPRC)' => 'PSYCHOLOGY',
+      'CENTER FOR MIND & BRAIN' => 'CENTER FOR MIND AND BRAIN',
+      'CENTER FOR NEUROSCIENCE' => 'PSYCHOLOGY',
+      'DSS IT SHARED SERVICE CENTER' => 'DSS IT SERVICE CENTER',
+      'History' => 'HISTORY',
+      'HISTORY PROJECT UCD' => 'HISTORY PROJECT',
+      'INTERCOLLEGIATE ATHLETICS (ICA)' => 'PHYSICAL EDUCATION PROGRAM',
+      'Middle East/South Asia Stds Prog' => 'MIDDLE EAST/SOUTH ASIA PROGRAM',
+      'PRIMATE CENTER' => 'PSYCHOLOGY',
+      'HUMAN AND COMMUNITY DEVELOPMENT' => 'CENTER FOR MIND AND BRAIN',
+      'HUMAN & COMMUNITY DEVELOPMENT' => 'CENTER FOR MIND AND BRAIN',
+      'UCDHS: NEUROLOGY, DEPARTMENT OF : MED' => 'CENTER FOR MIND AND BRAIN',
+      'UCDHS: NEUROLOGY, DEPARTMENT OF : MED' => 'CENTER FOR MIND AND BRAIN',
+      'UCDHS: PEDS CHILD DEVELOPMENT' => 'CENTER FOR MIND AND BRAIN',
+      'UCDHS: PSYCHIATRY AND BEHAVIORAL SCIENCES, DEPT OF' => 'CENTER FOR MIND AND BRAIN',
+      'MED:PSYCHIATRY & BEHAV SCI' => 'CENTER FOR MIND AND BRAIN',
+      'MED:PSYCHIATRY & BEHAV SCI' => 'CENTER FOR MIND AND BRAIN',
+      'MED:PSYCHIATRY & BEHAV SCI' => 'CENTER FOR MIND AND BRAIN',
+      'NEUROLOGY: MED' => 'CENTER FOR MIND AND BRAIN',
+      'EDUCATION - PH.D.' => 'CENTER FOR MIND AND BRAIN',
+      'EDUCATION, School of' => 'CENTER FOR MIND AND BRAIN',
+      'BIOMEDICAL ENGINEERING' => 'CENTER FOR MIND AND BRAIN',
+      'NEUROSCIENCE' => 'CENTER FOR MIND AND BRAIN',
+      'ENVIRONMENTAL TOXICOLOGY' => 'ANTHROPOLOGY',
+      'TEMPORARY EMPLOYMENT SERVICES (TES)' => 'TEMPORARY EMPLOYMENT SERVICES',
+      'MICROBIOLOGY' => 'DSS IT SERVICE CENTER'
+  }
+  
 	MAJORS["Anthropology"] = "040020"
 	MAJORS["Linguistics"] = "040210"
 	MAJORS["Philosophy"] = "040250"

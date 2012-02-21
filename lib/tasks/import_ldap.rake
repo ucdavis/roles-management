@@ -8,40 +8,6 @@ namespace :ldap do
 
     Rails.logger.info "Beginning LDAP import."
 
-    # Set up some manual data - would go in UcdLookups.rb but UcdLookups is auto-generated w/o this info
-    basePeople = 'ou=People,dc=ucdavis,dc=edu'
-    manualIncludes=['aeguyer','millerlm','djmoglen','mebalvin','mckinney','ssantam','tmheath','rnanakul','olichney','sukkim','jpokorny','bgrunewa','rabronst','kbaynes','szneena','pcmundy','wjarrold','julieluu','steichho','chuff','cmachado','alamsyah','schuang','clare186','ladyd252','aheusser','pkubitz','kshap','bbrelles','blmiss','pjdegenn','cdaniels','jyiwang','anschnei','eaisham','ralatif','cwbishop','fddiaz','jinchen','ajkou','sphan127','ndelie','weidner']
-    deptTranslations = {
-        'AFRICAN AMERICAN AFRICAN STDS' => 'HISTORY',
-        'ASIAN AMERICAN' => 'HISTORY',
-        'CALIFORNIA NATIONAL PRIMATE RESEARCH CENTER (CNPRC)' => 'PSYCHOLOGY',
-        'CENTER FOR MIND & BRAIN' => 'CENTER FOR MIND AND BRAIN',
-        'CENTER FOR NEUROSCIENCE' => 'PSYCHOLOGY',
-        'DSS IT SHARED SERVICE CENTER' => 'DSS IT SERVICE CENTER',
-        'History' => 'HISTORY',
-        'HISTORY PROJECT UCD' => 'HISTORY PROJECT',
-        'INTERCOLLEGIATE ATHLETICS (ICA)' => 'PHYSICAL EDUCATION PROGRAM',
-        'Middle East/South Asia Stds Prog' => 'MIDDLE EAST/SOUTH ASIA PROGRAM',
-        'PRIMATE CENTER' => 'PSYCHOLOGY',
-        'HUMAN AND COMMUNITY DEVELOPMENT' => 'CENTER FOR MIND AND BRAIN',
-        'HUMAN & COMMUNITY DEVELOPMENT' => 'CENTER FOR MIND AND BRAIN',
-        'UCDHS: NEUROLOGY, DEPARTMENT OF : MED' => 'CENTER FOR MIND AND BRAIN',
-        'UCDHS: NEUROLOGY, DEPARTMENT OF : MED' => 'CENTER FOR MIND AND BRAIN',
-        'UCDHS: PEDS CHILD DEVELOPMENT' => 'CENTER FOR MIND AND BRAIN',
-        'UCDHS: PSYCHIATRY AND BEHAVIORAL SCIENCES, DEPT OF' => 'CENTER FOR MIND AND BRAIN',
-        'MED:PSYCHIATRY & BEHAV SCI' => 'CENTER FOR MIND AND BRAIN',
-        'MED:PSYCHIATRY & BEHAV SCI' => 'CENTER FOR MIND AND BRAIN',
-        'MED:PSYCHIATRY & BEHAV SCI' => 'CENTER FOR MIND AND BRAIN',
-        'NEUROLOGY: MED' => 'CENTER FOR MIND AND BRAIN',
-        'EDUCATION - PH.D.' => 'CENTER FOR MIND AND BRAIN',
-        'EDUCATION, School of' => 'CENTER FOR MIND AND BRAIN',
-        'BIOMEDICAL ENGINEERING' => 'CENTER FOR MIND AND BRAIN',
-        'NEUROSCIENCE' => 'CENTER FOR MIND AND BRAIN',
-        'ENVIRONMENTAL TOXICOLOGY' => 'ANTHROPOLOGY',
-        'TEMPORARY EMPLOYMENT SERVICES (TES)' => 'TEMPORARY EMPLOYMENT SERVICES',
-        'MICROBIOLOGY' => 'DSS IT SERVICE CENTER'
-    }
-
     #
     # STEP ONE: Connect to LDAP. Query needed data.
     #
@@ -54,41 +20,38 @@ namespace :ldap do
     conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
     conn.bind(dn = ldap_settings['base_dn'], password = ldap_settings['base_pw'] )
 
-    # Build the LDAP filters
-    # Build the staff filter
-    staffFilterPre = '(ucdPersonAffiliation=staff*)'
-    staffFilter = '(&' + staffFilterPre + '(|'
+    # Build needed LDAP filters
+    # Staff filter
+    staffFilter = '(&(ucdPersonAffiliation=staff*)(|'
     for d in UcdLookups::DEPT_CODES.keys()
       staffFilter = staffFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
     end
-    staffFilter = staffFilter+'))'
+    staffFilter = staffFilter + '))'
 
-    # Build the faculty filter
-    facultyFilterPre = '(ucdPersonAffiliation=faculty*)'
-    facultyFilter = '(&' + facultyFilterPre + '(|'
+    # Faculty filter
+    facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
     for d in UcdLookups::DEPT_CODES.keys()
         facultyFilter = facultyFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
     end
     facultyFilter = facultyFilter + '))'
 
-    # Build the student filter
-    studentFilterPre = '(ucdPersonAffiliation=student:graduate)'
-    studentFilter = '(&' + studentFilterPre + '(|'
+    # Student filter
+    studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
     for m in UcdLookups::MAJORS.keys()
          studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
     end
     studentFilter = studentFilter + '))'
     
-    # Build the manual filter
+    # Manual filter
     manualFilter = []
-    for m in manualIncludes
+    for m in UcdLookups::MANUAL_INCLUDES
       manualFilter << '(uid=' + m + ')'
     end
 
     people = {}
-    # Run the actual LDAP query
+    # Query LDAP
     for f in [staffFilter,facultyFilter,studentFilter] + manualFilter
-        conn.search(basePeople, LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
+        conn.search(ldap_settings['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
           person = {}
           
           person["uid"] = entry.get_values('uid').to_s[2..-3]
@@ -150,8 +113,8 @@ namespace :ldap do
           if UcdLookups::TITLE_CODES[person["ucdAppointmentTitleCode"]]
               person['title'] = UcdLookups::TITLE_CODES[person["ucdAppointmentTitleCode"]]['title']
           end
-          if deptTranslations.keys().include? person['ou']
-              person['ou'] = deptTranslations[person['ou']]
+          if UcdLookups::DEPT_TRANSLATIONS.keys().include? person['ou']
+              person['ou'] = UcdLookups::DEPT_TRANSLATIONS[person['ou']]
           end
             
           people[person["uid"]] = person
