@@ -2,7 +2,8 @@ class PeopleController < ApplicationController
   require 'ldap'
   
   before_filter :load_person, :only => [:show]
-  filter_resource_access
+  #filter_resource_access
+  filter_access_to :all
   
   # GET /people
   def index

@@ -1,6 +1,7 @@
 class GroupsController < ApplicationController
   before_filter :load_group, :only => [:show]
-  filter_resource_access
+  #filter_resource_access
+  filter_access_to :all
 
   # GET /groups
   def index

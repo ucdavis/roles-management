@@ -3,7 +3,8 @@ class ApplicationsController < ApplicationController
   
   before_filter :load_application, :only => [:show]
   
-  filter_resource_access
+  #filter_resource_access
+  filter_access_to :all
   
   # GET /applications
   def index
