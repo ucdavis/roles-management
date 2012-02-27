@@ -145,6 +145,16 @@ $(document).ready(function() {
       });
       details_modal.group_edits = [];
     });
+    
+    // Auto-complete for group rules
+    // Set up auto-complete for existing dropdown default settings
+    $("form.edit_group table tbody tr.fields td:first-child select").each(function(i, el) {
+      
+    });
+    // Set up auto-complete for dropdowns which may not exist yet
+    $("form.edit_group table tbody").on("change", "tr.fields td:first-child select", function(event) {
+      console.log($(this).val());
+    });
   }
   
   if($("#application_ou_tokens").length > 0) {
