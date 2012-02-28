@@ -832,8 +832,21 @@ div#people_details_operations button.tiny {
   -webkit-box-shadow: none;
   border: 0;
 }
-	
-.block form input.submit.tiny:hover { background: url("../images/tiny_.gif") top center no-repeat; }
+
+input.submit.tiny {
+	width: 107px !important;
+	height: 25px !important;
+	line-height: 20px !important;
+	padding-bottom: 2px !important;
+	vertical-align: middle !important;
+	font-family: "Lucida Grande", Arial, Helvetica, sans-serif !important;
+	font-size: 10px !important;
+	font-weight: bold !important;
+	text-transform: none !important;
+	background: url(../images/tiny.gif) top center no-repeat !important;
+}
+
+input.submit.tiny:hover { background: url("../images/tiny_.gif") top center no-repeat !important; }
 	
 .block form input.submit.mid { width: 115px; background: url("../images/btnm.gif") top center no-repeat; }
 .block form input.submit.mid:hover { background: url("../images/btnm_.gif") top center no-repeat; }

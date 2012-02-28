@@ -11,7 +11,7 @@
     switch(mode) {
       case details_modal.EDIT_MODE:
       // Turn on inputs
-      $("div#details_view .sidebar_content input,textarea")
+      $("div#details_view .sidebar_content input:not(.submit),textarea")
         .css("border", "1px solid #bbb")
         .attr("readonly", false);
       // Turn on token inputs
@@ -24,6 +24,8 @@
         .attr("disabled", false);
       // Turn on any anchor-based controls
       $("div#entity_details a.edit_mode").show();
+      // Turn on any 'JS submit' buttons
+      $("div#entity_details input.submit").show();
       // Show unchecked boxes
       $("div#entity_details input[type=checkbox]:not(:checked)").show();
       // Enable the other checkboxes
@@ -44,6 +46,8 @@
         .attr("disabled", true);
       // Turn off any anchor-based controls
       $("div#entity_details a.edit_mode").hide();
+      // Turn off any 'JS submit' buttons
+      $("div#entity_details input.submit").hide();
       // Hide unchecked boxes
       $("div#entity_details input[type=checkbox]:not(:checked)").hide();
       // Disable remaining checkboxes
@@ -72,6 +76,11 @@
       details_modal.application_edits['description'] = $("form.edit_application input#application_description").val();
       $("form.edit_application").trigger("submit.rails");
     }
+  }
+  
+  // Called whenever a group rule dropdown is changed in order to set up the look ahead field
+  details_modal.switch_group_rules_dropdown = function() {
+    console.log($(this).val());
   }
     
 } (window.details_modal = window.details_modal || {}, jQuery));
@@ -149,11 +158,12 @@ $(document).ready(function() {
     // Auto-complete for group rules
     // Set up auto-complete for existing dropdown default settings
     $("form.edit_group table tbody tr.fields td:first-child select").each(function(i, el) {
-      
+      $(this).change(details_modal.switch_group_rules_dropdown);
+      details_modal.switch_group_rules_dropdown(0);
     });
     // Set up auto-complete for dropdowns which may not exist yet
     $("form.edit_group table tbody").on("change", "tr.fields td:first-child select", function(event) {
-      console.log($(this).val());
+      $(this).change(details_modal.switch_group_rules_dropdown);
     });
   }
   
