@@ -22,6 +22,6 @@ module ApplicationHelper
   end
   
   def allowed_to?(action, controller)
-    permitted_to?(action, controller) unless impersonating?
+    permitted_to?(action, controller) #unless impersonating? == true
   end
 end

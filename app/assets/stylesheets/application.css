@@ -687,6 +687,7 @@ select {
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 	outline: none;
+  resize: none;
 }
 	
 .block form input.radio,
@@ -1433,4 +1434,5 @@ li.ui-draggable-dragging {
 
 div#details_view .sidebar_content input,textarea {
   border: 1px solid #bbb;
+  resize: none;
 }
