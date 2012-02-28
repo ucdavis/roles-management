@@ -92,7 +92,7 @@ class ApplicationsController < ApplicationController
   protected
   
   def load_application
-    if permitted_to? :show, :applications
+    if allowed_to? :show, :applications
       @application = Application.find(params[:id])
     end
   end

@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include Authentication
+  
   def current_controller?(options)
       options[:controller] == controller_name
   end
@@ -19,8 +21,7 @@ module ApplicationHelper
     button_to_function(name, "add_fields(this, '#{association}', '#{escape_javascript(fields)}')", :class => "edit_mode submit tiny")
   end
   
-  def permitted_to?(action, controller)
-    true
-    #permitted_to?(action, controller) unless impersonating?
+  def allowed_to?(action, controller)
+    permitted_to?(action, controller) unless impersonating?
   end
 end

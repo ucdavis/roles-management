@@ -80,6 +80,7 @@
   
   // Called whenever a group rule dropdown is changed in order to set up the look ahead field
   details_modal.switch_group_rules_dropdown = function() {
+    console.log("test");
     console.log($(this).val());
   }
     

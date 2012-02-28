@@ -1,4 +1,3 @@
-#
 # Note: This code modified from Ryan Bates' RailsCasts Episode #188
 #       http://railscasts.com/episodes/188-declarative-authorization
 #
@@ -15,8 +14,7 @@
 #   <% end %>
 module Authentication
   def self.included(controller)
-    controller.send :helper_method, :current_user, :logged_in?, :redirect_to_target_or_default
-    #controller.filter_parameter_logging :password
+    #controller.send :helper_method, :current_user, :logged_in?, :redirect_to_target_or_default
   end
   
   def set_current_user
@@ -49,7 +47,7 @@ module Authentication
   def impersonating?
     actual_user == current_user
   end
-
+  
   def login_required
     if session[:cas_user]
       begin

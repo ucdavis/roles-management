@@ -19,4 +19,8 @@ class ApplicationController < ActionController::Base
     flash[:error] = "Sorry, you are not allowed to access that page."
     redirect_to root_url
   end
+  
+  def allowed_to?(action, controller)
+    permitted_to?(action, controller) unless impersonating?
+  end
 end
