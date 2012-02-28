@@ -79,7 +79,7 @@
   }
   
   // Called whenever a group rule dropdown is changed in order to set up the look ahead field
-  details_modal.switch_group_rules_dropdown = function() {
+  details_modal.switch_group_rules_autocomplete = function() {
     console.log("test");
     console.log($(this).val());
   }
@@ -158,13 +158,13 @@ $(document).ready(function() {
     
     // Auto-complete for group rules
     // Set up auto-complete for existing dropdown default settings
-    $("form.edit_group table tbody tr.fields td:first-child select").each(function(i, el) {
-      $(this).change(details_modal.switch_group_rules_dropdown);
-      details_modal.switch_group_rules_dropdown(0);
+    $("form.edit_group table tbody tr.fields td:nth-child(3) input").each(function(i, el) {
+      $(this).focus(details_modal.switch_group_rules_autocomplete);
+      details_modal.switch_group_rules_autocomplete(0);
     });
     // Set up auto-complete for dropdowns which may not exist yet
-    $("form.edit_group table tbody").on("change", "tr.fields td:first-child select", function(event) {
-      $(this).change(details_modal.switch_group_rules_dropdown);
+    $("form.edit_group table tbody").on("focus", "tr.fields td:nth-child(3) input", function(event) {
+      $(this).change(details_modal.switch_group_rules_autocomplete);
     });
   }
   

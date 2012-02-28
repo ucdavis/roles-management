@@ -21,6 +21,6 @@ class ApplicationController < ActionController::Base
   end
   
   def allowed_to?(action, controller)
-    permitted_to?(action, controller) unless impersonating?
+    view_context.allowed_to?(action, controller)
   end
 end

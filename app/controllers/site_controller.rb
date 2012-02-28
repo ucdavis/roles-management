@@ -1,6 +1,4 @@
 class SiteController < ApplicationController
-  #include ApplicationHelper
-  
   def index
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded front page."
   end
