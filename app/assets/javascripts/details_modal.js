@@ -91,26 +91,21 @@
       $(this).autocomplete({
       			source: function( request, response ) {
       				$.ajax({
-      					url: Routes.api_people_path() + ".json",
+      					url: Routes.api_loginid_path() + ".json",
       					data: {
       						q: request.term
       					},
       					success: function( data, status, xmlhttp ) {
       						response( $.map( data, function( item ) {
       							return {
-      								label: item.name,
-      								value: item.name
+      								label: item,
+      								value: item
       							}
       						}));
       					}
       				});
       			},
       			minLength: 2,
-      			select: function( event, ui ) {
-      				console.log( ui.item ?
-      					"Selected: " + ui.item.label :
-      					"Nothing selected, input was " + this.value);
-      			},
       			open: function() {
       				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
       			},

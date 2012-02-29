@@ -68,7 +68,7 @@
         return "";
       }
       if (typeof(object) == "object") {
-        return (object.to_param || object.id || object).toString();
+        return ((typeof(object.to_param) == "function" && object.to_param()) || object.to_param || object.id || object).toString();
       } else {
         return object.toString();
       }
@@ -403,6 +403,18 @@
 // api_org_chart => /api/org_chart(.:format)
   api_org_chart_path: function(options) {
   return Utils.build_path(0, ["/api/org_chart"], ["format"], arguments)
+  },
+// api_loginid => /api/loginid(.:format)
+  api_loginid_path: function(options) {
+  return Utils.build_path(0, ["/api/loginid"], ["format"], arguments)
+  },
+// api_major => /api/major(.:format)
+  api_major_path: function(options) {
+  return Utils.build_path(0, ["/api/major"], ["format"], arguments)
+  },
+// api_affiliation => /api/affiliation(.:format)
+  api_affiliation_path: function(options) {
+  return Utils.build_path(0, ["/api/affiliation"], ["format"], arguments)
   },
 // roles_assign => /roles/assign(.:format)
   roles_assign_path: function(options) {

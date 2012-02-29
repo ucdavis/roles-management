@@ -45,6 +45,14 @@ DSSRM::Application.routes.draw do
     get "search", :controller => "custom"
     get "resolve", :controller => "custom"
     get "org_chart", :controller => "custom"
+    
+    # Used on the site/index details modal group rule constructor, possibly elsewhere
+    get "loginid", :controller => "custom"
+    get "title", :controller => "custom"
+    get "major", :controller => "custom"
+    get "affiliation", :controller => "custom"
+    get "classification", :controller => "custom"
+    get "ou", :controller => "custom"
   end
   
   # For AJAX on the CAO interface (checking and unchecking permission boxes)

@@ -95,4 +95,39 @@ class Api::CustomController < Api::BaseController
       format.csv { render :csv => @roots }
     end
   end
+  
+  # Returns JSON against param 'q' to search against loginids
+  def loginid
+    @people = Person.where("loginid like ?", "%#{params[:q]}%")
+    @loginids = @people.map{ |x| x.loginid }
+    
+    respond_to do |format|
+      format.json { render :json => @loginids }
+    end
+  end
+  
+  # Returns JSON against param 'q' to search against titles
+  def title
+    
+  end
+  
+  # Returns JSON against param 'q' to search against majors
+  def major
+    
+  end
+  
+  # Returns JSON against param 'q' to search against affiliations
+  def affiliation
+    
+  end
+  
+  # Returns JSON against param 'q' to search against classifications
+  def classification
+    
+  end
+  
+  # Returns JSON against param 'q' to search against ous
+  def ou
+    
+  end
 end
