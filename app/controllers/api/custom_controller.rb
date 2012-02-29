@@ -108,26 +108,48 @@ class Api::CustomController < Api::BaseController
   
   # Returns JSON against param 'q' to search against titles
   def title
+    @ts = Title.where("name like ?", "%#{params[:q]}%")
+    @titles = @ts.map{ |x| x.name }
     
+    respond_to do |format|
+      format.json { render :json => @titles }
+    end
   end
   
   # Returns JSON against param 'q' to search against majors
   def major
-    
+    respond_to do |format|
+      format.json { render :json => [] }
+    end
   end
   
   # Returns JSON against param 'q' to search against affiliations
   def affiliation
+    @as = Affiliation.where("name like ?", "%#{params[:q]}%")
+    @affiliations = @as.map{ |x| x.name }
     
+    respond_to do |format|
+      format.json { render :json => @affiliations }
+    end
   end
   
   # Returns JSON against param 'q' to search against classifications
   def classification
+    @cs = Classification.where("name like ?", "%#{params[:q]}%")
+    @classifications = @cs.map{ |x| x.name }
     
+    respond_to do |format|
+      format.json { render :json => @classifications }
+    end
   end
   
   # Returns JSON against param 'q' to search against ous
   def ou
+    @os = Ou.where("name like ?", "%#{params[:q]}%")
+    @ous = @os.map{ |x| x.name }
     
+    respond_to do |format|
+      format.json { render :json => @ous }
+    end
   end
 end
