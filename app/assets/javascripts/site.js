@@ -66,6 +66,7 @@ $(function() {
     $.get(details_url, function(data) {
       template.hide_status();
       apprise(data, {'animate': true, 'textOk': 'Dismiss'});
+      details_modal.init();
       var scope = $("div#entity_details");
       template.setup_sidebar(scope);
       template.setup_default_text(scope);
@@ -220,6 +221,7 @@ $(function() {
     $.get(details_url, function(data) {
       template.hide_status();
       apprise(data, {'animate': true, 'textOk': 'Dismiss'});
+      details_modal.init();
       template.setup_sidebar($("div#entity_details"));
     });
   }
