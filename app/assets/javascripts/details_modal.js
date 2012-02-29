@@ -115,16 +115,88 @@
       		});
         break;
       case 'title':
-        
+      $(this).autocomplete({
+      			source: function( request, response ) {
+      				$.ajax({
+      					url: Routes.api_titles_path() + ".json",
+      					data: {
+      						q: request.term
+      					},
+      					success: function( data, status, xmlhttp ) {
+      						response( $.map( data, function( item ) {
+      							return {
+      								label: item.name,
+      								value: item.name
+      							}
+      						}));
+      					}
+      				});
+      			},
+      			minLength: 2,
+      			open: function() {
+      				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+      			},
+      			close: function() {
+      				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+      			}
+      		});
         break;
       case 'major':
         
         break;
       case 'affiliation':
-        
+      $(this).autocomplete({
+      			source: function( request, response ) {
+      				$.ajax({
+      					url: Routes.api_affiliation_path() + ".json",
+      					data: {
+      						q: request.term
+      					},
+      					success: function( data, status, xmlhttp ) {
+      						response( $.map( data, function( item ) {
+      							return {
+      								label: item,
+      								value: item
+      							}
+      						}));
+      					}
+      				});
+      			},
+      			minLength: 2,
+      			open: function() {
+      				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+      			},
+      			close: function() {
+      				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+      			}
+      		});
         break;
       case 'classification':
-        
+      $(this).autocomplete({
+      			source: function( request, response ) {
+      				$.ajax({
+      					url: Routes.api_classifications_path() + ".json",
+      					data: {
+      						q: request.term
+      					},
+      					success: function( data, status, xmlhttp ) {
+      						response( $.map( data, function( item ) {
+      							return {
+      								label: item.name,
+      								value: item.name
+      							}
+      						}));
+      					}
+      				});
+      			},
+      			minLength: 2,
+      			open: function() {
+      				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+      			},
+      			close: function() {
+      				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+      			}
+      		});
         break;
       case 'ou':
         

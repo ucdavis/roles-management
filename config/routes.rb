@@ -48,10 +48,8 @@ DSSRM::Application.routes.draw do
     
     # Used on the site/index details modal group rule constructor, possibly elsewhere
     get "loginid", :controller => "custom"
-    get "title", :controller => "custom"
     get "major", :controller => "custom"
     get "affiliation", :controller => "custom"
-    get "classification", :controller => "custom"
     get "ou", :controller => "custom"
   end
   
