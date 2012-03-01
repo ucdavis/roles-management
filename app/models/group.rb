@@ -41,6 +41,34 @@ class Group < ActiveRecord::Base
     members
   end
   
+  # Returns tokenized members, including 'via' parameter to differentiate explicitly-assigned
+  # vs. rule-resolved members
+  def member_tokens
+    result = []
+    explicit_members = []
+    resolved_members = []
+    
+    # Include all people
+    people.each do |p|
+      explicit_members << p
+    end
+    
+    # Include all groups
+    groups.each do |g|
+      explicit_members << g
+    end
+    
+    # Include members via rules
+    rules.each do |r|
+      resolved_members += r.resolve
+    end
+    
+    result = explicit_members.map{ |x| { :id => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'explicit' } }
+    result += resolved_members.map{ |x| { :id => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'resolved' } }
+    
+    result
+  end
+  
   def owner_tokens
     owner_ids
   end
@@ -54,9 +82,9 @@ class Group < ActiveRecord::Base
     self.person_ids = ids.split(",")
   end
   
-  def member_tokens
-    members.map{ |x| { :id => ('1' + x.id.to_s).to_i, :name => x.name } }
-  end
+  #def member_tokens
+  #  members.map{ |x| { :id => ('1' + x.id.to_s).to_i, :name => x.name } }
+  #end
   
   # Takes UIDs
   def member_tokens=(ids)

@@ -389,6 +389,20 @@ form.search .text:focus {
 	background: url("../images/srch_.gif") left center no-repeat !important;
 }
 
+div.block_head form.search {
+  float: right;
+  margin-top: 11px;
+  width: 375px;
+  background: url("../images/srch_long.gif") left center no-repeat !important;
+  padding: 0 !important;
+}
+
+div.block_head form.search input.text {
+  background: none !important;
+  width: 335px !important;
+  padding-top: 9px !important;
+}
+
 select {
 	text-transform: none;
 }
