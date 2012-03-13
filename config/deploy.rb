@@ -37,27 +37,16 @@ namespace :deploy do
       run "ln -nfs #{shared_path}/vestal_versions #{release_path}/vestal_versions"
     end
 
-    #desc "Sync the public/assets directory."
-    #task :assets do
-    #  system "rsync -vr --exclude='.DS_Store' public/assets #{user}@#{application}:#{shared_path}/"
-    #end
     desc "Pre-compile the assets."
     task :precompile_assets do #, :roles => :web, :except => { :no_release => true } do
-      run "cd #{current_path}; rm -rf public/assets/*"
+      run "cd #{current_path}; rm -rf public/assets"
       run "cd #{current_path}; RAILS_ENV=production bundle exec rake assets:precompile"
     end
 end
 
-#namespace :rvm do
-#  desc 'Trust rvmrc file'
-#  task :trust_rvmrc do
-#    run "rvm rvmrc trust #{current_release}"
-#  end
-#end
-
 after 'deploy:update_code', 'deploy:symlink_shared'
 after 'deploy:update_code', 'deploy:precompile_assets'
-#after 'deploy:update_code', 'rvm:trust_rvmrc'
+after 'deploy', 'deploy:migrate'
 
 # INSTALLME: Modify this action if you use Capistrano with your own SSH keys
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa-deploy")]
