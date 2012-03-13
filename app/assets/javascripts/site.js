@@ -49,6 +49,8 @@ $(function() {
   $("p.user a#impersonate_switch").click(function() {
     site.impersonate_dialog();
   });
+  
+  site.initialize();
 });
 
 (function (site, $, undefined) {
@@ -56,6 +58,39 @@ $(function() {
   site.applications = [];
   site.current_user_id = null;
   site.impersonate_user = null;
+  
+  // Constructor of sorts
+  site.initialize = function() {
+    // Set up search bar across top
+    $("form.search input#card_search").keyup(function() {
+      var value = $(this).val();
+      
+      if(value.length > 0) {
+        var re = new RegExp(value, "i");
+      
+        // Search the card titles
+        var matched_cards = $("div.card").map(function(o, i) {
+          var card_title = $(this).find("div.card_head h2:first").html();
+        
+          if(card_title.search(re) != -1) {
+            return $(this);
+          }
+        
+          return null;
+        });
+      
+        // Show only the matching cards
+        $("div.card").hide();
+        $(matched_cards).each(function() {
+          $(this).show();
+        });
+        
+        console.log(matched_cards);
+      } else {
+        $("div.card").show();
+      }
+    });
+  }
   
   // Displays the virtual application preferences for administrators
   site.prefs = function(app_id) {
