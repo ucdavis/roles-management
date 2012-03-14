@@ -1464,3 +1464,8 @@ li.token-input-selected-token-facebook {
   background-color: transparent !important;
   color: black !important;
 }
+
+form.edit_group p#members {
+  max-height: 150px;
+  overflow-y: scroll;
+}

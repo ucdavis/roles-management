@@ -84,8 +84,6 @@ $(function() {
         $(matched_cards).each(function() {
           $(this).show();
         });
-        
-        console.log(matched_cards);
       } else {
         $("div.card").show();
       }

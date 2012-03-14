@@ -4,7 +4,7 @@ class Application < ActiveRecord::Base
   has_many :ous, :through => :application_ou_assignments
   has_many :application_manager_assignments
   has_many :managers, :through => :application_manager_assignments
-  before_save :ensure_access_role_exists
+  after_save :ensure_access_role_exists
   validate :has_at_least_one_role
   
   has_attached_file :icon, :styles => { :normal => "64x64>", :tiny => "16x16>" }
@@ -53,11 +53,11 @@ class Application < ActiveRecord::Base
     if roles.find_by_token("access").nil?
       r = Role.new
       r.token = "access"
-      r.application = self
       r.descriptor = "Access"
       r.description = "Allow access to this application"
       r.default = true
       r.save!
+      self.roles << r
     end
   end
   
