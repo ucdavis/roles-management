@@ -1,8 +1,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
+//= require_tree .
 //= require_self
-//= require_tree ./common
 
 // Template-wide Javascript (setting up tabs, buttons, common callbacks, etc.)
 (function (template, $, undefined) {
@@ -266,84 +266,10 @@ $(function() {
     }
   });
 	
-	// Image actions menu
-	$('ul.imglist li').hover(
-		function() { $(this).find('ul').css('display', 'none').fadeIn('fast').css('display', 'block'); },
-		function() { $(this).find('ul').fadeOut(100); }
-	);
-		
-	// Image delete confirmation
-	$('ul.imglist .delete a').click(function() {
-		if (confirm("Are you sure you want to delete this image?")) {
-			return true;
-		} else {
-			return false;
-		}
-	});
-	
-	// Style file input
-	//$("input[type=file]").filestyle({ 
-	//    image: "images/upload.gif",
-	//    imageheight : 30,
-	//    imagewidth : 80,
-	//    width : 250
-	//});
-	
-	// File upload
-	if ($('#fileupload').length) {
-		new AjaxUpload('fileupload', {
-			action: 'upload-handler.php',
-			autoSubmit: true,
-			name: 'userfile',
-			responseType: 'text/html',
-			onSubmit : function(file , ext) {
-					$('.fileupload #uploadmsg').addClass('loading').text('Uploading...');
-					this.disable();	
-				},
-			onComplete : function(file, response) {
-					$('.fileupload #uploadmsg').removeClass('loading').text(response);
-					this.enable();
-				}	
-		});
-	}
-	
-	// Date picker
-	$('input.date_picker').datepicker();
-
-	// Navigation dropdown fix for IE6
-	//if(jQuery.browser.version.substr(0,1) < 7) {
-	//	$('#header #nav li').hover(
-	//		function() { $(this).addClass('iehover'); },
-	//		function() { $(this).removeClass('iehover'); }
-	//	);
-	//}
-	
-	// IE6 PNG fix
-	//$(document).pngFix();
-
   // Fix AJAX headers
   $.ajaxSetup({
     beforeSend: function (xhr, settings) {
       xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
     }
   });
-  
-  // Set up tool tips
-  $("[data-tooltip]").each(
-    function() {
-      $(this).qtip({
-        content: $(this).attr("data-tooltip"),
-        show: 'mouseover',
-        hide: 'mouseout',
-        position: {
-          corner: {
-            target: 'bottomMiddle',
-            tooltip: 'topMiddle'
-          }
-        }
-      });
-    }
-  );
-  
-  
 });
