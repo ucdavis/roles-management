@@ -493,6 +493,11 @@
             this_token = $(this_token)
           .addClass(settings.classes.token)
           .insertBefore(input_token);
+          
+            // Add a CSS class to the token (PATCHED)
+            if(item.token_class != undefined) {
+              $(this_token).addClass(item.token_class);
+            }
 
             // The 'delete token' button
             var disableDelete = /^true$/i.test(item[settings.disableDeleteProperty]);

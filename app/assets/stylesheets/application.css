@@ -1450,3 +1450,17 @@ div#details_view .sidebar_content input,textarea {
   border: 1px solid #bbb;
   resize: none;
 }
+
+li.token-resolved {
+  background-color: #d5deee !important;
+}
+
+li.token-resolved span.token-input-delete-token-facebook {
+  display: none;
+}
+
+li.token-input-selected-token-facebook {
+  border: 1px solid #CCD5E4 !important;
+  background-color: transparent !important;
+  color: black !important;
+}
