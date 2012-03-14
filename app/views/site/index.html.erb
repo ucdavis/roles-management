@@ -1,20 +1,5 @@
-<%= javascript_include_tag params[:controller] %>
-<%= javascript_include_tag "details_modal" %>
-
-<div class="block span-80 left">
-	<div class="block_head">
-		<div class="bheadl"></div>
-		<div class="bheadr"></div>
-
-		<h2>Manage</h2>
-    
-		<form class="search" action="">
-			<input id="card_search" type="text" class="text" value="Search" />
-		</form>
-	</div>		<!-- .block_head ends -->
-	
-	<div class="block_content">
-	  
+<div class="row-fluid">
+  <div class="span8">
     <div style="width: 50%; float: left;">
       <% current_user.manageable_applications.each_with_index do |app, i| %>
       <script type="text/javascript">
@@ -26,7 +11,7 @@
   	      <div class="bheadl"></div>
       		<div class="bheadr"></div>
           
-          <img src="/assets/common/prefs.png" style="margin: 0; padding: 9px 0px 0 0; float: right; cursor: pointer; display: none;" onClick="site.prefs($(this).parent().parent().attr('data-application-id'));" />
+          <img src="" style="margin: 0; padding: 9px 0px 0 0; float: right; cursor: pointer; display: none;" onClick="site.prefs($(this).parent().parent().attr('data-application-id'));" />
 
   	      <h2><%= app.display_name %></h2>
   	    </div>
@@ -50,46 +35,35 @@
       <% end %>
 	  <% end %>
     </div>
-	</div>		<!-- .block_content ends -->
-	
-	<div class="bendl"></div>
-	<div class="bendr"></div>
-</div>
-
-<div class="block span-20 right" style="min-width: 220px;">
-	<div class="block_head">
-		<div class="bheadl"></div>
-		<div class="bheadr"></div>
-
+    
+  </div> <!-- /.span8 -->
+  <div class="span4">
 		<ul class="tabs" style="float: none; margin-left: 35px;">
 			<li><a href="#groups">Groups</a></li>
 			<li><a href="#people">People</a></li>
 		</ul>
-	</div>		<!-- .block_head ends -->
-	
-	<div class="block_content tab_content" id="groups">
+
 		<form class="search" action="">
 			<input type="text" class="text" value="Search" />
 		</form>
 	  <ul class="pins">
         <li class="new" data-pin-type="group" data-pin-entity="0">Create New Group</li>
 		</ul>
-	</div>		<!-- .block_content .tab_content ends -->
 
-	<div class="block_content tab_content" id="people">
-		<form class="search" action="">
-			<input type="text" class="text" value="Search" />
-		</form>
-	  <ul class="pins">
-    </ul>
-    <% if current_user.subordinates.count == 0 %>
-    <i>You have no subordinates.</i>
-    <% end %>
-	</div>		<!-- .block_content .tab_content ends -->
-	
-	<div class="bendl"></div>
-	<div class="bendr"></div>
+  	<div class="block_content tab_content" id="people">
+  		<form class="search" action="">
+  			<input type="text" class="text" value="Search" />
+  		</form>
+  	  <ul class="pins"></ul>
+      <% if current_user.subordinates.count == 0 %>
+      <i>You have no subordinates.</i>
+      <% end %>
+  	</div> <!-- /.block_content .tab_content -->
+  </div> <!-- /.span4 -->
 </div>
+
+<%= javascript_include_tag params[:controller] %>
+<%= javascript_include_tag "details_modal" %>
 
 <script type="text/javascript">
 // Construction availbility list

@@ -117,8 +117,8 @@ $(function() {
       // If the pin doesn't exist, create it.
       if($("div.card[data-application-id=" + role.application_id + "] div.pin[data-entity-id=" + entity.id + "]").length == 0) {
         var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
-        var el_html = "<img src=\"/images/remove.png\" style=\"display: none; margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
-                       <img src=\"/images/help.png\" style=\"display: none; margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"entity_details\" /> \
+        var el_html = "<img src=\"\" style=\"display: none; margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
+                       <img src=\"\" style=\"display: none; margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"entity_details\" /> \
                        <div class=\"pin-content\"></div>";
     
         $(el).html( el_html );
@@ -343,14 +343,14 @@ $(function() {
       $(el).attr("data-pin-type", "person");
       $(el).attr("data-person-id", entity.id);
       $(el).attr("data-search-value", entity.name);
-      $(el).html("<img src=\"/images/help.png\" style=\"margin: 1px 0 0 0; padding: 1px 15px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
+      $(el).html("<img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 15px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
       $("div#people ul.pins").append(el);
     } else if (type == '2') {
       // Group
       $(el).attr("data-pin-type", "group");
       $(el).attr("data-group-id", entity.id);
       $(el).attr("data-search-value", entity.name);
-      $(el).html("<img src=\"/images/remove.png\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"/images/help.png\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
+      $(el).html("<img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
       //$(el).css("background-image", "url(images/btnb_dark.gif)");
       $(el).addClass("group");
       $("div#groups ul.pins li.new").before(el);

@@ -1,56 +1,33 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=7" />
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>DSS Rights Management</title>
+  <meta charset="UTF-8" />
+	<title>Rights Management</title>
 
   <%= stylesheet_link_tag "application" %>	
-	<%= csrf_meta_tag %>
   <%= javascript_include_tag "application" %>
+	<%= csrf_meta_tag %>
 </head>
 <body>
-	<div id="hld">
-		<div class="wrapper">
-			<div id="header">
-				<div class="hdrl"></div>
-				<div class="hdrr"></div>
-				
-				<h1><%= image_tag "../images/ucd.png", :alt => "UC Davis (logo)", :style => "margin-bottom: -1px;" %>&nbsp;&nbsp;&nbsp;<a href="#">DSS IT</a></h1>
-				
-				<ul id="nav">
-					<% if current_controller?( :controller => "site" ) and current_action?( :action => "index" ) %>
-          <li class="active"><%= link_to "Manage", root_url %></li>
-					<% elsif %>
-						<li><%= link_to "Manage", root_url %></li>
-					<% end %>
-          
-					<% if allowed_to? :index, :applications %>
-          <% if current_controller?( :controller => "site" ) and current_action?( :action => "administrate") %>
-              <li class="active"><%= link_to "Administrate", {:controller => "site", :action => "administrate"} %>
-						<% elsif %>
-							<li><%= link_to "Administrate", {:controller => "site", :action => "administrate"} %>
-						<% end %>
-					<% end %>
-				</ul>
-				
-				<% if current_user %>
-          <% if allowed_to? :impersonate, :admin_dialogs %>
-            <p class="user">Accessing as <a href="#" id="impersonate_switch"><%= current_user.first %></a> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
-          <% else %>
-				    <p class="user">Accessing as <%= current_user.first %> | <%= link_to "Logout", :controller => "site", :action => "logout" %></p>
-          <% end %>
-				<% end %>
-			</div> <!-- #header -->
-			
-			<%= yield %>
-			
-			<!--<div id="footer">
-				<p class="left"><a href="http://it.dss.ucdavis.edu/">Division of Social Science IT</a></p>
-			</div>-->
-		</div> <!-- wrapper -->
-	</div> <!-- #hld -->
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="container">
+        <%= link_to "Rights Management", root_url, :class => "brand" %>
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li class="active"><a href="#">Manage</a></li>
+            <li><a href="#">Templates</a></li>
+            <li><a href="#">Settings</a></li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div><!-- /navbar -->
   
+  <div class="container-fluid">
+	  <%= yield %>
+  </div><!-- /.container -->
+	
   <div class="status_bar"></div>
 </body>
 </html>
