@@ -1,65 +1,32 @@
 <div class="row-fluid">
-  <div class="span8">
-    <div style="width: 50%; float: left;">
-      <% current_user.manageable_applications.each_with_index do |app, i| %>
-      <script type="text/javascript">
-        site.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
-        site.current_user_id = <%= current_user.id %>;
-      </script>
-	    <div class="card" data-application="<%= app.to_json %>" data-application-id="<%= app.id %>">
-  	    <div class="card_head">
-  	      <div class="bheadl"></div>
-      		<div class="bheadr"></div>
-          
-          <img src="" style="margin: 0; padding: 9px 0px 0 0; float: right; cursor: pointer; display: none;" onClick="site.prefs($(this).parent().parent().attr('data-application-id'));" />
-
-  	      <h2><%= app.display_name %></h2>
-  	    </div>
-  	    <div class="card_content">
-  	      <p>
-  	        <i>“<%= app.description %>”</i>
-  	      </p>
-
-          <div class="pins">
-            <div class="placeholder" data-tooltip="Drag people and groups from the right column onto this space to make assignments.">Drag people and groups here</div>
-          </div>
-  	    </div> <!-- card_content -->
-      	<div class="bendl"></div>
-      	<div class="bendr"></div>
-  	  </div> <!-- card -->
-      
-      <% if ((i + 1) >= (Float(current_user.manageable_applications.length) / 2.0).ceil) && (@wrapped_already != true) %>
-      <% @wrapped_already = true %>
-        </div>
-        <div style="width: 50%; float: left;">
-      <% end %>
-	  <% end %>
-    </div>
+  <div class="span9">
     
-  </div> <!-- /.span8 -->
-  <div class="span4">
-		<ul class="tabs" style="float: none; margin-left: 35px;">
-			<li><a href="#groups">Groups</a></li>
-			<li><a href="#people">People</a></li>
-		</ul>
-
-		<form class="search" action="">
-			<input type="text" class="text" value="Search" />
-		</form>
-	  <ul class="pins">
-        <li class="new" data-pin-type="group" data-pin-entity="0">Create New Group</li>
-		</ul>
-
-  	<div class="block_content tab_content" id="people">
-  		<form class="search" action="">
-  			<input type="text" class="text" value="Search" />
-  		</form>
-  	  <ul class="pins"></ul>
-      <% if current_user.subordinates.count == 0 %>
-      <i>You have no subordinates.</i>
-      <% end %>
-  	</div> <!-- /.block_content .tab_content -->
-  </div> <!-- /.span4 -->
+    <form class="form-search">
+      <input placeholder="Search applications…" type="text" class="input-xxlarge search-query">
+    </form>
+    
+    <% current_user.manageable_applications.each_with_index do |app, i| %>
+    <script type="text/javascript">
+      site.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
+      site.current_user_id = <%= current_user.id %>;
+    </script>
+    <div class="card" data-application="<%= app.to_json %>" data-application-id="<%= app.id %>">
+      <h3 class="card-title"><%= app.display_name %></h3>
+      <div class="card-content">
+        <div class="pins"></div>
+      </div>
+	  </div> <!-- card -->
+  <% end %>
+    
+  </div> <!-- /.span9 -->
+  <div class="span3">
+    
+    <form class="form-search">
+      <input placeholder="Search people and groups…" type="text" class="input-large search-query">
+    </form>
+    
+	  <ul class="pins"><li class="new" data-pin-type="group" data-pin-entity="0">Create New Group</li></ul>
+  </div> <!-- /.span3 -->
 </div>
 
 <%= javascript_include_tag params[:controller] %>

@@ -5,6 +5,7 @@ class Application < ActiveRecord::Base
   has_many :application_manager_assignments
   has_many :managers, :through => :application_manager_assignments
   after_save :ensure_access_role_exists
+  before_save :ensure_api_key_exists, :set_default_properties
   validate :has_at_least_one_role
   
   #has_attached_file :icon, :styles => { :normal => "64x64>", :tiny => "16x16>" }
@@ -59,6 +60,34 @@ class Application < ActiveRecord::Base
       r.save!
       self.roles << r
     end
+  end
+  
+  # Set an API key if one doesn't exist
+  def ensure_api_key_exists
+    unless self.api_key
+      self.api_key = generate_api_key
+    end
+  end
+  
+  # Set a few default properties if they're unset
+  def set_default_properties
+    unless self.display_name
+      self.display_name = self.name
+    end
+    unless self.description
+      self.description = "No description given"
+    end
+  end
+  
+  # Generates (but does not set) an API key
+  # Name and optionally hostname must be set
+  def generate_api_key
+    if self.hostname.nil?
+      hn = ""
+    else
+      hn = self.hostname
+    end
+    Digest::MD5.hexdigest(self.name + hn + Time.now.to_i.to_s)
   end
   
   def has_at_least_one_role

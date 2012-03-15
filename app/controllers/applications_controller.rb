@@ -96,10 +96,4 @@ class ApplicationsController < ApplicationController
       @application = Application.find(params[:id])
     end
   end
-  
-  private
-  
-  def generate_api_key(application)
-    Digest::MD5.hexdigest(application.name + application.hostname + Time.now.to_i.to_s)
-  end
 end

@@ -88,6 +88,9 @@ $(function() {
         $("div.card").show();
       }
     });
+    
+    // Only allow 12 pins in the right-most column at once
+    $("ul.pins li:gt(12)").hide();
   }
   
   // Displays the virtual application preferences for administrators
@@ -344,7 +347,7 @@ $(function() {
       $(el).attr("data-person-id", entity.id);
       $(el).attr("data-search-value", entity.name);
       $(el).html("<img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 15px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
-      $("div#people ul.pins").append(el);
+      $("ul.pins").append(el);
     } else if (type == '2') {
       // Group
       $(el).attr("data-pin-type", "group");
@@ -353,7 +356,7 @@ $(function() {
       $(el).html("<img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
       //$(el).css("background-image", "url(images/btnb_dark.gif)");
       $(el).addClass("group");
-      $("div#groups ul.pins li.new").before(el);
+      $("ul.pins li.new").before(el);
     } else {
       // Unknown
       console.log("Cannot add entity to availability list, unknown type.");
