@@ -6,6 +6,10 @@ $(function() {
     activeClass: "ui-state-default",
     hoverClass: "ui-state-hover",
     accept: ":not(.ui-sortable-helper)",
+    activate: function( event, ui ) {
+      // Ensure draggable is the correct width
+      $(ui.helper).width($("ul.pins").width());
+    },
     drop: function( event, ui ) {
       // Get the app ID for this card based on where they dropped the pin
       var app = $.parseJSON($(this).parent().parent().attr("data-application"));
@@ -354,9 +358,8 @@ $(function() {
       $(el).attr("data-group-id", entity.id);
       $(el).attr("data-search-value", entity.name);
       $(el).html("<img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
-      //$(el).css("background-image", "url(images/btnb_dark.gif)");
       $(el).addClass("group");
-      $("ul.pins li.new").before(el);
+      $("ul.pins").append(el);
     } else {
       // Unknown
       console.log("Cannot add entity to availability list, unknown type.");
