@@ -188,8 +188,8 @@ $(function() {
           $(el).addClass("group");
         }
       
-        var pin_list = $("div.card[data-application-id=" + role.application_id + "]").children("div.card_content").children("div.pins");
-      
+        var pin_list = $("div.card[data-application-id=" + role.application_id + "]").children("div.card-content").children("div.pins");
+        
         $(pin_list).append(el);
       
         // Remove the placeholder image (if it's still there)

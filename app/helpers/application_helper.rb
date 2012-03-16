@@ -2,11 +2,15 @@ module ApplicationHelper
   include Authentication
   
   def current_controller?(options)
-      options[:controller] == controller_name
+    options[:controller] == controller_name
   end
   
   def current_action?(options)
-      options[:action] == action_name
+    options[:action] == action_name
+  end
+  
+  def current_page?(options)
+    options[:controller] == controller_name and options[:action] == action_name
   end
   
   def link_to_remove_fields(name, f)

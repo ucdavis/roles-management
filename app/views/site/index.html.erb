@@ -1,3 +1,6 @@
+<%= javascript_include_tag params[:controller] %>
+<%= javascript_include_tag "details_modal" %>
+
 <div class="row-fluid">
   <div class="span9">
     
@@ -22,15 +25,12 @@
   <div class="span3">
     
     <form class="form-search">
-      <input placeholder="Search people and groups…" type="text" class="input-large search-query">
+      <input id="search_people_groups" placeholder="Search people and groups…" type="text" class="input-large search-query">
     </form>
     
 	  <ul class="pins"></ul>
   </div> <!-- /.span3 -->
 </div>
-
-<%= javascript_include_tag params[:controller] %>
-<%= javascript_include_tag "details_modal" %>
 
 <script type="text/javascript">
 // Construction availbility list
