@@ -15,21 +15,9 @@
         <%= link_to "Rights Management", root_url, :class => "brand" %>
         <div class="nav-collapse">
           <ul class="nav">
-            <% if current_page?({:controller => 'site', :action => 'index'}) %>
-              <li class="active"><a href="#">Manage</a></li>
-            <% else %>
-              <li><a href="#">Manage</a></li>
-            <% end %>
-            <% if current_page?({:controller => 'site', :action => 'templates'}) %>
-              <li class="active"><a href="#">Templates</a></li>
-            <% else %>
-              <li><a href="#">Templates</a></li>
-            <% end %>
-            <% if current_page?({:controller => 'site', :action => 'settings'}) %>
-              <li class="active"><a href="#">Settings</a></li>
-            <% else %>
-              <li><a href="#">Settings</a></li>
-            <% end %>
+            <%= li_link_with_class({:title => 'Manage', :controller => 'site', :action => 'index'}) %>
+            <%= li_link_with_class({:title => 'Templates', :controller => 'site', :action => 'templates'}) %>
+            <%= li_link_with_class({:title => 'Settings', :controller => 'site', :action => 'settings'}) %>
           </ul>
         </div><!-- /.nav-collapse -->
       </div>
