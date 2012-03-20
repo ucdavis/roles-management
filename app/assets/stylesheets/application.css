@@ -108,3 +108,7 @@ div.pin div.pin-content {
 input#search_people_groups {
   width: 87%;
 }
+
+#main-body {
+  margin-top: 55px;
+}
