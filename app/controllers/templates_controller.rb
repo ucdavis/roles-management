@@ -5,6 +5,8 @@ class TemplatesController < ApplicationController
   # GET /templates.json
   def index
     @templates = Template.all
+    @people = Person.all
+    @groups = Group.all
 
     respond_to do |format|
       format.html

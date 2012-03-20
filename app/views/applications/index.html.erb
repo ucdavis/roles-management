@@ -13,7 +13,7 @@
       site.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
       site.current_user_id = <%= current_user.id %>;
     </script>
-    <div class="card" data-application="<%= app.to_json %>" data-application-id="<%= app.id %>">
+    <div class="card span4" data-application="<%= app.to_json %>" data-application-id="<%= app.id %>">
       <h3 class="card-title"><%= app.display_name %></h3>
       <div class="card-content">
         <div class="pins"></div>
