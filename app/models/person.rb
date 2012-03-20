@@ -10,6 +10,8 @@ class Person < ActiveRecord::Base
   
   has_many :person_manager_assignments
   has_many :managers, :through => :person_manager_assignments
+  has_many :subordinate_relationships, :class_name => "PersonManagerAssignment", :foreign_key => "manager_id"
+  has_many :subordinates, :through => :subordinate_relationships, :source => :subordinate
   
   has_many :application_manager_assignments, :foreign_key => "manager_id"
   has_many :application_ownerships, :through => :application_manager_assignments, :source => :application
@@ -166,17 +168,6 @@ class Person < ActiveRecord::Base
     apps
   end
   
-  # Returns all people managed by this person (see 'owns' for groups)
-  def subordinates
-    people = []
-    
-    PersonManagerAssignment.includes(:person).where(:manager_id => id).each do |p|
-      people << p.person
-    end
-    
-    people
-  end
-    
   # Returns all groups owned by this person (see 'manages' for people)
   def owns
     groups = []

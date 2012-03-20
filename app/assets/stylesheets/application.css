@@ -47,6 +47,7 @@ ul.pins li {
   border-radius: 3px;
   background-color: #D9EDF7;
   margin: 3px;
+  cursor: move;
 }
 
 div.pins {
@@ -83,6 +84,7 @@ li.ui-draggable-dragging {
   background-color: #D9EDF7;
   margin: 3px;
   list-style-type: none;
+  cursor: move;
 }
 
 div.pin {
@@ -95,7 +97,7 @@ div.pin {
   -moz-border-radius: 3px;
   border-radius: 3px;
   background-color: #D9EDF7;
-  margin: 3px;
+  margin: 3px 3px 5px;
   list-style-type: none;
 }
 
