@@ -272,6 +272,22 @@
   ou_path: function(_id, options) {
   return Utils.build_path(["id"], [2,[2,[2,[2,[7,"/",false],[6,"ous",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
   },
+// templates => /templates(.:format)
+  templates_path: function(options) {
+  return Utils.build_path([], [2,[2,[7,"/",false],[6,"templates",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
+// new_template => /templates/new(.:format)
+  new_template_path: function(options) {
+  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
+// edit_template => /templates/:id/edit(.:format)
+  edit_template_path: function(_id, options) {
+  return Utils.build_path(["id"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
+// template => /templates/:id(.:format)
+  template_path: function(_id, options) {
+  return Utils.build_path(["id"], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
 // people => /people(.:format)
   people_path: function(options) {
   return Utils.build_path([], [2,[2,[7,"/",false],[6,"people",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
