@@ -215,7 +215,6 @@ class Person < ActiveRecord::Base
     # Remove any unmentioned IDs
     subordinates.each do |s|
       if (ids.include? s.id) == false
-        puts "removing old subordinate with id " + s.id.to_s
         s.managers.delete self
       end
     end
@@ -223,13 +222,9 @@ class Person < ActiveRecord::Base
     # Add the rest
     ids.each do |id|
       p = Person.find_by_id(id)
-      puts "checking to add subordinate with id " + id
       if (p.managers.include? self) == false
-        puts "adding"
         p.managers << self
         p.save
-      else
-        puts "don't need to add"
       end
     end
   end
