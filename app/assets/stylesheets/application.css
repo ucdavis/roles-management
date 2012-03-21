@@ -119,3 +119,20 @@ input#search_people_groups {
 #main-body {
   margin-top: 55px;
 }
+
+.status_bar {
+  width: 13%;
+  height: 20px;
+  position: fixed;
+  bottom: 14px;
+  left: 14px;
+  z-index: 100000;
+  box-shadow: 0px 0px 3px #7f7f7f;
+  -webkit-box-shadow: 0px 0px 3px #7f7f7f;
+  -moz-box-shadow: 0px 0px 3px #7f7f7f;
+  display: none;
+  padding-left: 24px;
+  background: #fff 3px 2px url('/assets/loading.gif') no-repeat;
+  opacity: 0.7;
+  filter: alpha(opacity = 70); /* IE8 and earlier */
+}
