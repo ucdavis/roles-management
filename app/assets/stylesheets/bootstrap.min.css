@@ -493,7 +493,7 @@ button.btn.btn-mini,input[type="submit"].btn.btn-mini{*padding-top:1px;*padding-
 .tabs-stacked .open>a:hover{border-color:#999999;}
 .tabbable{*zoom:1;}.tabbable:before,.tabbable:after{display:table;content:"";}
 .tabbable:after{clear:both;}
-.tab-content{display:table;width:100%;}
+.tab-content{display:block;}
 .tabs-below .nav-tabs,.tabs-right .nav-tabs,.tabs-left .nav-tabs{border-bottom:0;}
 .tab-content>.tab-pane,.pill-content>.pill-pane{display:none;}
 .tab-content>.active,.pill-content>.active{display:block;}
