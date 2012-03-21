@@ -140,5 +140,10 @@ input#search_people_groups {
 /* Twitter Bootstrap modifications (check here for problems when upgrading) */
 /* TB assumes .tab-content>.tab-pane but we have .tab-content>form>.tab-pane in details modals */
 .tab-content .tab-pane {display: none;}
-
 .tab-content .active {display:block;}
+
+/* Modal dialog is too narrow for our uses */
+.modal {
+  width: 760px;
+  margin-left: -380px;
+}
