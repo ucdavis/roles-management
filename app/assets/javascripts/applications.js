@@ -260,7 +260,8 @@ $(function() {
     
     $.get(details_url, function(data) {
       template.hide_status();
-      apprise(data, {'animate': true, 'textOk': 'Dismiss'});
+      $(data).modal();
+      //apprise(data, {'animate': true, 'textOk': 'Dismiss'});
       details_modal.init();
       template.setup_sidebar($("div#entity_details"));
     });
