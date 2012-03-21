@@ -1,32 +1,46 @@
-<div class="modal" id="myModal">
+<div class="modal" id="person_modal">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
     <h3><%= @person.first %> <%= @person.last %></h3>
   </div>
   <div class="modal-body">
-    <%= form_for @person, :remote => true do |f| %>
+    
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#lA" data-toggle="tab">Summary</a></li>
+        <li><a href="#lB" data-toggle="tab">Roles</a></li>
+        <li><a href="#lC" data-toggle="tab">Applications</a></li>
+        <li><a href="#lC" data-toggle="tab">Subordinates</a></li>
+        <li><a href="#lC" data-toggle="tab">Memberships</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="lA">
+          <p>I'm in Section A.</p>
+        </div>
+        <div class="tab-pane" id="lB">
+          <p>Howdy, I'm in Section B.</p>
+        </div>
+        <div class="tab-pane" id="lC">
+          <p>What up girl, this is Section C.</p>
+        </div>
+      </div>
+    </div> <!-- /tabbable -->
+    
+    <!--<%= form_for @person, :remote => true do |f| %>
     <%= hidden_field_tag 'entity_id', '1' + @person.id.to_s %>
 		<fieldset class="sidebar_content" id="summary">
-    	<p>
-        <%= f.label :first, "Name" %><br />
+        <%= f.label :first, "Name" %>
         <%= f.text_field :first, :class => "text small" %> <%= f.text_field :last, :class => "text small" %>
-    	</p>
-    	<p>
-        <%= f.label :preferred_name, "Preferred Name" %><br />
+        <%= f.label :preferred_name, "Preferred Name" %>
         <%= f.text_field :preferred_name, :class => "text" %>
-    	</p>
-    	<p>
-        <%= f.label :email %> <%= f.label :loginid, "Login ID", :style => "padding-left: 127px;" %><br />
-        <%= f.text_field :email, :class => "text small" %> <%= f.text_field :loginid, :class => "text small" %>
-    	</p>
-    	<p>
-        <%= f.label :phone %><br />
+        <%= f.label :email %>
+        <%= f.text_field :email, :class => "text small" %>
+        <%= f.label :loginid, "Login ID" %>
+        <%= f.text_field :loginid, :class => "text small" %>
+        <%= f.label :phone %>
         <%= f.text_field :phone, :class => "text" %>
-    	</p>
-    	<p>
-        <%= f.label :address %><br />
+        <%= f.label :address %>
         <%= f.text_field :address, :class => "text" %>
-    	</p>
     </fieldset>
 		<fieldset class="sidebar_content" id="roles">
       <p>
@@ -56,7 +70,7 @@
     </fieldset>
 		<fieldset class="sidebar_content" id="subordinates">
       <p>
-        	<%= f.label :subordinates, "Subordinates <small>(Only subordinates not via group ownership)</small>".html_safe %><br />
+        	<%= f.label :subordinates, "Subordinates <small>(Only subordinates not via group ownership)</small>".html_safe %>
         	<%= f.text_field :subordinate_tokens, "data-pre" => @person.subordinates.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
       </p>
     </fieldset>
@@ -71,7 +85,7 @@
         	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>
       </p>
     </fieldset>
-    <% end %>
+    <% end %>-->
   </div>
   <div class="modal-footer">
     <a href="#" class="btn">Close</a>
@@ -79,19 +93,4 @@
   </div>
 </div>
 
-<!-- <div class="sidebar">
-	<ul class="sidemenu">
-		<li><a href="#summary">Summary</a></li>
-		<li><a href="#roles">Roles</a></li>
-		<li><a href="#applications">Applications</a></li>
-		<li><a href="#subordinates">Subordinates</a></li>
-    <li><a href="#memberships">Memberships</a></li>
-	</ul>
-				  
-	<p><strong><a href="mailto:<%= @person.email %>">E-Mail This Person</a></strong><br />
-  <strong><a href="#">View Their Tickets</a></strong><br />
-  <strong><a href="#">Call Them via Lync</a></strong></p>
-</div>
--->
-
-<script type="text/javascript" src="<%= asset_path "details_modal.js" %>"></script>
+<!--<script type="text/javascript" src="<%= asset_path "details_modal.js" %>"></script>-->

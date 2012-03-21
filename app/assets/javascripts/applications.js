@@ -258,12 +258,12 @@ $(function() {
     
     template.status_text("Fetching details...");
     
-    $.get(details_url, function(data) {
+    $.get(details_url, function(response) {
       template.hide_status();
-      $(data).modal();
-      //apprise(data, {'animate': true, 'textOk': 'Dismiss'});
+      $("#modal_container").empty();
+      $("#modal_container").append(response);
+      $("#person_modal").modal();
       details_modal.init();
-      template.setup_sidebar($("div#entity_details"));
     });
   }
   
