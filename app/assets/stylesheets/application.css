@@ -147,3 +147,12 @@ input#search_people_groups {
   width: 760px;
   margin-left: -380px;
 }
+
+/* UCD colors for the navbar */
+.navbar-inner {
+  background-image: -webkit-linear-gradient(bottom, #123764, #33537B);
+  background-image: -o-linear-gradient(bottom, #123764, #33537B);
+  background-image: linear-gradient(bottom, #123764, #33537B);
+}
+.navbar .nav>li>a {color: #EFEFEF;}
+.navbar .nav .active > a, .navbar .nav .active > a:hover {background-color: #183C68;}
