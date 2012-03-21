@@ -136,3 +136,9 @@ input#search_people_groups {
   opacity: 0.7;
   filter: alpha(opacity = 70); /* IE8 and earlier */
 }
+
+/* Twitter Bootstrap modifications (check here for problems when upgrading) */
+/* TB assumes .tab-content>.tab-pane but we have .tab-content>form>.tab-pane in details modals */
+.tab-content .tab-pane {display: none;}
+
+.tab-content .active {display:block;}

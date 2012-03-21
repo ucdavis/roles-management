@@ -7,85 +7,76 @@
     
     <div class="tabbable tabs-left">
       <ul class="nav nav-tabs">
-        <li class="active"><a href="#lA" data-toggle="tab">Summary</a></li>
-        <li><a href="#lB" data-toggle="tab">Roles</a></li>
-        <li><a href="#lC" data-toggle="tab">Applications</a></li>
-        <li><a href="#lC" data-toggle="tab">Subordinates</a></li>
-        <li><a href="#lC" data-toggle="tab">Memberships</a></li>
+        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#roles" data-toggle="tab">Roles</a></li>
+        <li><a href="#applications" data-toggle="tab">Applications</a></li>
+        <li><a href="#subordinates" data-toggle="tab">Subordinates</a></li>
+        <li><a href="#memberships" data-toggle="tab">Memberships</a></li>
       </ul>
       <div class="tab-content">
-        <div class="tab-pane active" id="lA">
-          <p>I'm in Section A.</p>
-        </div>
-        <div class="tab-pane" id="lB">
-          <p>Howdy, I'm in Section B.</p>
-        </div>
-        <div class="tab-pane" id="lC">
-          <p>What up girl, this is Section C.</p>
-        </div>
+        
+        <%= form_for @person, :remote => true do |f| %>
+        <%= hidden_field_tag 'entity_id', '1' + @person.id.to_s %>
+    		<fieldset class="tab-pane active" id="summary">
+            <%= f.label :first, "Name" %>
+            <%= f.text_field :first, :class => "text small" %> <%= f.text_field :last, :class => "text small" %>
+            <%= f.label :preferred_name, "Preferred Name" %>
+            <%= f.text_field :preferred_name, :class => "text" %>
+            <%= f.label :email %>
+            <%= f.text_field :email, :class => "text small" %>
+            <%= f.label :loginid, "Login ID" %>
+            <%= f.text_field :loginid, :class => "text small" %>
+            <%= f.label :phone %>
+            <%= f.text_field :phone, :class => "text" %>
+            <%= f.label :address %>
+            <%= f.text_field :address, :class => "text" %>
+        </fieldset>
+    		<fieldset class="tab-pane" id="roles">
+          <p>
+            An audit of this person's roles is displayed below.
+          </p>
+          <p>
+            <b>To add or remove roles</b> which you have given this person, use the main interface.
+          </p>
+          <ul>
+            <% @person.roles.each do |role| %>
+            <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
+            <% end %>
+          </ul>
+        </fieldset>
+    		<fieldset class="tab-pane" id="applications">
+          <p>
+            An audit of this person's application access is displayed below.
+          </p>
+          <p>
+            <b>To add or remove applications</b> which you have given this person, use the main interface.
+          </p>
+          <ul>
+            <% @person.applications.each do |app| %>
+            <li><%= link_to app.name, app %></li>
+            <% end %>
+          </ul>
+        </fieldset>
+    		<fieldset class="tab-pane" id="subordinates">
+          <p>
+            	<%= f.label :subordinates, "Subordinates <small>(Only subordinates not via group ownership)</small>".html_safe %>
+            	<%= f.text_field :subordinate_tokens, "data-pre" => @person.subordinates.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
+          </p>
+        </fieldset>
+    		<fieldset class="tab-pane" id="memberships">
+          <b>Groups:</b><br />
+          <p>
+            	<%= f.text_field :group_tokens, "data-pre" => @person.groups.to_json, "method" => url_for(:controller => "api/groups", :action => "index"), :class => "token_input" %>
+          </p>
+
+          <b>Organizational Units:</b><br />
+          <p>
+            	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>
+          </p>
+        </fieldset>
+        <% end %>
       </div>
     </div> <!-- /tabbable -->
-    
-    <!--<%= form_for @person, :remote => true do |f| %>
-    <%= hidden_field_tag 'entity_id', '1' + @person.id.to_s %>
-		<fieldset class="sidebar_content" id="summary">
-        <%= f.label :first, "Name" %>
-        <%= f.text_field :first, :class => "text small" %> <%= f.text_field :last, :class => "text small" %>
-        <%= f.label :preferred_name, "Preferred Name" %>
-        <%= f.text_field :preferred_name, :class => "text" %>
-        <%= f.label :email %>
-        <%= f.text_field :email, :class => "text small" %>
-        <%= f.label :loginid, "Login ID" %>
-        <%= f.text_field :loginid, :class => "text small" %>
-        <%= f.label :phone %>
-        <%= f.text_field :phone, :class => "text" %>
-        <%= f.label :address %>
-        <%= f.text_field :address, :class => "text" %>
-    </fieldset>
-		<fieldset class="sidebar_content" id="roles">
-      <p>
-        An audit of this person's roles is displayed below.
-      </p>
-      <p>
-        <b>To add or remove roles</b> which you have given this person, use the main interface.
-      </p>
-      <ul>
-        <% @person.roles.each do |role| %>
-        <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
-        <% end %>
-      </ul>
-    </fieldset>
-		<fieldset class="sidebar_content" id="applications">
-      <p>
-        An audit of this person's application access is displayed below.
-      </p>
-      <p>
-        <b>To add or remove applications</b> which you have given this person, use the main interface.
-      </p>
-      <ul>
-        <% @person.applications.each do |app| %>
-        <li><%= link_to app.name, app %></li>
-        <% end %>
-      </ul>
-    </fieldset>
-		<fieldset class="sidebar_content" id="subordinates">
-      <p>
-        	<%= f.label :subordinates, "Subordinates <small>(Only subordinates not via group ownership)</small>".html_safe %>
-        	<%= f.text_field :subordinate_tokens, "data-pre" => @person.subordinates.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
-      </p>
-    </fieldset>
-		<fieldset class="sidebar_content" id="memberships">
-      <b>Groups:</b><br />
-      <p>
-        	<%= f.text_field :group_tokens, "data-pre" => @person.groups.to_json, "method" => url_for(:controller => "api/groups", :action => "index"), :class => "token_input" %>
-      </p>
-
-      <b>Organizational Units:</b><br />
-      <p>
-        	<%= f.text_field :ou_tokens, "data-pre" => @person.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>
-      </p>
-    </fieldset>
-    <% end %>-->
   </div>
   <div class="modal-footer">
     <a href="#" class="btn">Close</a>
