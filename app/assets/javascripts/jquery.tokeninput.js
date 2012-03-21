@@ -696,7 +696,7 @@
                 top: $(token_list).offset().top + $(token_list).outerHeight(),
                 left: $(token_list).offset().left,
                 width: $(token_list).outerWidth() - 2,
-                'z-index': 999
+                'z-index': 9999
             })
             .show();
         }
