@@ -124,19 +124,19 @@ $(function() {
       // If the pin doesn't exist, create it.
       if($("div.card[data-application-id=" + role.application_id + "] div.pin[data-entity-id=" + entity.id + "]").length == 0) {
         var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
-        var el_html = "<img src=\"\" style=\"display: none; margin: 1px 0 0 0; padding: 0 7px 0 0; float: right; cursor: pointer;\" onClick=\"site.remove_pin($(this));\" /> <a href=\"#\">" + entity.name + "</a> \
-                       <img src=\"\" style=\"display: none; margin: 1px 0 0 5px; padding: 0 7px 0 0; float: right; cursor: pointer;\" id=\"entity_details\" /> \
+        var el_html = "<i class=\"icon-search\" id=\"entity_details\"></i><a href=\"#\">" + entity.name + "</a> \
+                       <i class=\"icon-remove\" onClick=\"site.remove_pin($(this));\"></i> \
                        <div class=\"pin-content\"></div>";
     
         $(el).html( el_html );
         $(el).hover(
           function() {
             // hover in
-            $(this).children("img").css("display", "block");
+            $(this).children("i").css("display", "block");
           },
           function() {
             // hover out
-            $(this).children("img").css("display", "none");
+            $(this).children("i").css("display", "none");
           }
         );
     
@@ -173,7 +173,7 @@ $(function() {
           }
         });
     
-        $(el).children("img#entity_details").click(function() {
+        $(el).children("#entity_details").click(function() {
           site.entity_details(entity.id);
         });
     
@@ -337,11 +337,11 @@ $(function() {
     $(el).hover(
       function() {
         // mouse enter
-        $(this).children("img").css("display", "block");
+        $(this).children("i").css("display", "block");
       },
       function() {
         // mouse leave
-        $(this).children("img").css("display", "none");
+        $(this).children("i").css("display", "none");
       }
     );
     

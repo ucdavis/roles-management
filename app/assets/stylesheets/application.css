@@ -100,6 +100,14 @@ div.pin {
   list-style-type: none;
 }
 
+div.pin i {
+  float: right;
+  display: none;
+  cursor: pointer;
+  margin-top: 2px;
+  margin-left: 6px;
+}
+
 div.pin div.pin-content {
   display: none;
 }
