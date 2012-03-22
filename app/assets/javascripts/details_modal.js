@@ -350,6 +350,6 @@
     );
   
     // Assume view mode
-    details_modal.switch_mode(details_modal.VIEW_MODE);
+    //details_modal.switch_mode(details_modal.VIEW_MODE);
   }
 } (window.details_modal = window.details_modal || {}, jQuery));

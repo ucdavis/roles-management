@@ -1,51 +1,33 @@
-<div id="entity_details">
-  <div class="block withsidebar popup_block">
-  	<div class="block_head">
-  		<div class="bheadl"></div>
-  		<div class="bheadr"></div>
-			
-      <button class="right" style="margin-top: 14px;" id="edit">Edit</button>
-      
-  		<h2><%= @group.name %></h2>
-  	</div>		<!-- .block_head ends -->
-  	<div class="block_content">
-      <div id="details_view">
-    		<div class="sidebar">
-    			<ul class="sidemenu">
-    				<li><a href="#summary">Summary</a></li>
-            <li><a href="#rules">Rules</a></li>
-    				<li><a href="#roles">Roles</a></li>
-    			</ul>
-    		</div>		<!-- .sidebar ends -->
-				
+<div class="modal" id="person_modal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3><%= @group.name %></h3>
+  </div>
+  <div class="modal-body">
+    
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#rules" data-toggle="tab">Rules</a></li>
+        <li><a href="#roles" data-toggle="tab">Roles</a></li>
+      </ul>
+      <div class="tab-content">
+        
         <%= form_for @group, :remote => true do |f| %>
         <%= hidden_field_tag 'entity_id', '2' + @group.id.to_s %>
-    		<fieldset class="sidebar_content" id="summary">
-        	<p>
-            	<%= f.label :name %><br />
-            	<%= f.text_field :name, :class => "text small" %>
-        	</p>
-	
-        	<p>
-            	<%= f.label :description %><br />
-            	<%= f.text_area :description, :class => "wysiwyg small" %>
-        	</p>
-
-        	<p>
-        		<h2>Owners</h2>
-        		<p>
-        		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
-        		</p>
-        	</p>
-	
-        	<p>
-        		<h2>Members</h2>
-        		<p id="members">
-        		  <%= f.text_field :member_tokens, "data-pre" => add_class_attr_to_group_json(@group.member_tokens.to_json), "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
-        		</p>
-        	</p>
+    		<fieldset class="tab-pane active" id="summary">
+        	<%= f.label :name %>
+        	<%= f.text_field :name %>
+        	<%= f.label :description, :class => "control-label" %>
+      	  <%= f.text_area :description, :class => "input-xlarge", :rows => 8 %>
+    		  <h4>Owners</h4>
+    		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
+    		  <h4>Members</h4>
+    		  <p id="members">
+    		    <%= f.text_field :member_tokens, "data-pre" => add_class_attr_to_group_json(@group.member_tokens.to_json), "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
+    		  </p>
         </fieldset>
-    		<fieldset class="sidebar_content" id="rules">
+    		<fieldset class="tab-pane" id="rules">
           <table>
           <tr>
             <th>Column</th>
@@ -60,13 +42,17 @@
   
           <p><%= link_to_add_fields "Add Rule", f, :rules %></p>
         </fieldset>
-    		<fieldset class="sidebar_content" id="roles">
+    		<fieldset class="tab-pane" id="roles">
           <b>To add or remove roles</b> from this group, use the main interface.
         </fieldset>
         <% end %>
-      </div> <!-- #group_view -->
-    </div> <!-- .block_content ends -->
-  </div> <!-- .block ends -->
-</div> <!-- .entity_details -->
+      </div>
+    </div> <!-- /tabbable -->
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn">Close</a>
+    <a href="#" class="btn btn-primary">Save changes</a>
+  </div>
+</div>
 
 <script type="text/javascript" src="<%= asset_path "details_modal.js" %>"></script>
