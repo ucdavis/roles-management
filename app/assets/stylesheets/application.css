@@ -156,3 +156,7 @@ input#search_people_groups {
 }
 .navbar .nav>li>a {color: #EFEFEF;}
 .navbar .nav .active > a, .navbar .nav .active > a:hover {background-color: #183C68;}
+
+.modal table tr td input,select {
+  width: auto;
+}
