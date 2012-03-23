@@ -49,6 +49,26 @@ ul.pins li {
   cursor: move;
 }
 
+ul.pins li i {
+  float: right;
+  display: none;
+  cursor: pointer;
+  margin-top: 2px;
+  margin-left: 6px;
+}
+
+ul.pins li.group {
+  background-color: #DFF0D8;
+  border-color: #D6E9C6;
+  color: #468847;
+}
+
+li.ui-draggable-dragging.group {
+  background-color: #DFF0D8;
+  border-color: #D6E9C6;
+  color: #468847;
+}
+
 div.pins {
   min-height: 25px;
   background-color: white;

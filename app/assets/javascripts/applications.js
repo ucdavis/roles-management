@@ -41,11 +41,11 @@ $(function() {
   $("div.card div.card_head").hover(
     function() {
       // hover in
-      $(this).children("img").css("display", "block");
+      $(this).children("i").css("display", "block");
     },
     function() {
       // hover out
-      $(this).children("img").css("display", "none");
+      $(this).children("i").css("display", "none");
     }
   );
   
@@ -216,9 +216,8 @@ $(function() {
   // Remove a dropped pin from the app list
   site.remove_pin = function (el) {
     // Since this implies removing all permissions, prompt them first on this
-    if (apprise("This action will remove all permissions from the entity. Continue?",
-    {'verify': true, 'textYes': "Remove All Permissions", 'textNo': "Cancel"}, function(confirm_remove) {
-      if(confirm_remove) {
+    bootbox.confirm("This action will remove all permissions from the entity. Continue?", function(confirmed) {
+      if(confirmed) {
         // Unassign any checked permissions
         template.status_text("Removing...");
         $(el).parent().find("div.pin-content span.permission input[type=checkbox]").each(function() {
@@ -240,7 +239,7 @@ $(function() {
           ol.append("<div class=\"placeholder\">Drag people and groups here</div>");
         }
       }
-    }));
+    });
   }
 
   site.entity_details = function (entity_id) {
@@ -351,14 +350,14 @@ $(function() {
       $(el).attr("data-pin-type", "person");
       $(el).attr("data-person-id", entity.id);
       $(el).attr("data-search-value", entity.name);
-      $(el).html("<img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 15px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
+      $(el).html("<i class=\"icon-search\" onClick=\"javascript:site.entity_details(" + entity.id + ");\"></i>" + entity.name);
       $("ul.pins").append(el);
     } else if (type == '2') {
       // Group
       $(el).attr("data-pin-type", "group");
       $(el).attr("data-group-id", entity.id);
       $(el).attr("data-search-value", entity.name);
-      $(el).html("<img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 14px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\" /> <img src=\"\" style=\"margin: 1px 0 0 0; padding: 1px 7px 0 0; float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\" />" + entity.name);
+      $(el).html("<i class=\"icon-remove\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\"></i> <i class=\"icon-search\" style=\"float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\"></i>" + entity.name);
       $(el).addClass("group");
       $("ul.pins").append(el);
     } else {
