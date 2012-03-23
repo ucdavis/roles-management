@@ -100,6 +100,15 @@ div.pin {
   list-style-type: none;
 }
 
+div.pin.group {
+  background-color: #DFF0D8;
+  border-color: #D6E9C6;
+}
+
+div.pin.group a {
+  color: #468847;
+}
+
 div.pin i {
   float: right;
   display: none;
