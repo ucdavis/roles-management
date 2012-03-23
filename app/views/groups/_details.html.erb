@@ -19,9 +19,9 @@
         	<%= f.text_field :name %>
         	<%= f.label :description, :class => "control-label" %>
       	  <%= f.text_area :description, :class => "input-xlarge", :rows => 8 %>
-    		  <h4>Owners</h4>
+    		  <%= f.label :owner_tokens, "Owners" %>
     		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
-    		  <h4>Members</h4>
+    		  <%= f.label :member_tokens, "Members" %>
     		  <p id="members">
     		    <%= f.text_field :member_tokens, "data-pre" => add_class_attr_to_group_json(@group.member_tokens.to_json), "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
     		  </p>
@@ -49,7 +49,7 @@
     </div> <!-- /tabbable -->
   </div>
   <div class="modal-footer">
-    <a href="#" class="btn">Close</a>
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
     <a href="#" class="btn btn-primary">Save changes</a>
   </div>
 </div>
