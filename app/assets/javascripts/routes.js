@@ -304,10 +304,6 @@
   person_path: function(_id, options) {
   return Utils.build_path(["id"], [2,[2,[2,[2,[7,"/",false],[6,"people",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
   },
-// root => /
-  root_path: function(options) {
-  return Utils.build_path([], [7,"/",false], arguments)
-  },
 // api_person_applications => /api/people/:person_id/applications(.:format)
   api_person_applications_path: function(_person_id, options) {
   return Utils.build_path(["person_id"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"people",false]],[7,"/",false]],[3,"person_id",false]],[7,"/",false]],[6,"applications",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
