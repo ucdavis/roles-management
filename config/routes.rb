@@ -26,7 +26,7 @@ DSSRM::Application.routes.draw do
     end
   end
   
-  match '/', :controller => "applications", :action => "index"
+  root :to => 'applications#index'
 
   namespace "api" do
     resources :people do
