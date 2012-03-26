@@ -1,13 +1,13 @@
 GIT
   remote: https://github.com/rubycas/rubycas-client.git
-  revision: 7558814bdb783fc9ef4c384c3afc6b421721def8
+  revision: 73b2f08011cb6365094f0eeaa8fe634d025d86bf
   specs:
-    rubycas-client (2.3.8)
+    rubycas-client (2.3.9.rc1)
       activesupport
 
 GIT
   remote: https://github.com/stffn/declarative_authorization.git
-  revision: 2a07f2a23062ce32ad52969e0559fd243ed48fdd
+  revision: 72f2f6dced18e05d7f17edf42eeed59ef4de016b
   specs:
     declarative_authorization (0.5.5)
 
@@ -72,12 +72,12 @@ GEM
       thor (~> 0.14)
     js-routes (0.8.0)
       rails (>= 3.2)
-    json (1.6.5)
+    json (1.6.6)
     mail (2.4.4)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    mime-types (1.17.2)
+    mime-types (1.18)
     multi_json (1.1.0)
     mysql (2.8.1)
     net-ldap (0.3.1)
@@ -118,7 +118,7 @@ GEM
     ruby_parser (2.3.1)
       sexp_processor (~> 3.0)
     sass (3.1.15)
-    sass-rails (3.2.4)
+    sass-rails (3.2.5)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
