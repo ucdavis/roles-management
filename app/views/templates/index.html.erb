@@ -5,7 +5,7 @@
   <div class="span9">
     
     <form class="form-search">
-      <input placeholder="Search templates…" type="text" class="input-xxlarge search-query">
+      <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_templates", :placeholder => "Search templates…", :data => { :provide => "typeahead", :items => 4, :source => @templates.map{ |x| x.name } } } %>
     </form>
     
     <% current_user.manageable_applications.each_with_index do |app, i| %>
@@ -34,7 +34,7 @@
   <div class="span3">
     
     <form class="form-search">
-      <input id="search_people_groups" placeholder="Search people and groups…" type="text" class="input-large search-query">
+      <input id="search_people_groups" placeholder="Search people and groups…" type="text" class="input-large search-query" id="search_people_groups">
     </form>
     
 	  <ul class="pins"></ul>
