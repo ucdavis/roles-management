@@ -1,5 +1,5 @@
 $(function() {
-  $("#search_templates").change(function() {
+  $("#search_templates").bind('change keyup', function() {
     var value = $(this).val();
     
     if(value == "") {
@@ -7,14 +7,23 @@ $(function() {
       return;
     }
     
-    // Hide all cards
-    $("div.card").hide();
+    var re = new RegExp(value, "i");
     
-    // Show only the matching templates
-    $("div.card").each(function(i, o) {
-      if($(o).children("h3").html() == value) {
-        $(o).show();
+    var matched_cards = $("div.card").map(function(o, i) {
+      var card_title = $(this).children("h3:first").html();
+      
+      if(card_title.search(re) != -1) {
+        return $(this);
       }
+      
+      return null;
+    });
+      
+    // Show only the matching cards
+    $("div.card").hide();
+
+    $(matched_cards).each(function() {
+      $(this).show();
     });
   });
 });
