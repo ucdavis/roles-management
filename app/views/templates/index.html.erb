@@ -1,6 +1,10 @@
 <%= javascript_include_tag params[:controller] %>
 <%= javascript_include_tag "details_modal" %>
 
+<script type="text/javascript">
+  templates.templates = $.parseJSON('<%= @templates.map{|x| x.name}.to_json.html_safe %>');
+</script>
+
 <div class="row-fluid">
   <div class="span9">
     
