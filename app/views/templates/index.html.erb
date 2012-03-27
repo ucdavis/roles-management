@@ -15,80 +15,20 @@
     </script>
     <% end %>
 
-    <div class="card span9" data-application="" data-application-id="">
-      <h3 class="card-title">Standard Academic Department</h3>
+    <% @templates.each do |template| %>
+    <%= content_tag :div, :class => "card span9" do -%>
+      <h3 class="card-title"><%= template.name %></h3>
       <div class="card-content">
         <div class="pins">
-          <div class="pin">
-            <a href="#">Owns Application <strong>eVote</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Owns Application <strong>Rights Management</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Owns Application <strong>Appointments</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Has Unique Group Named <strong>Faculty</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Has Unique Group Named <strong>Graduate Students</strong></a>
-          </div>
+          <% template.rules.each do |rule| %>
+            <div class="pin">
+              <a href="#"><%= rule.condition %> <strong><%= rule.value %></strong></a>
+            </div>
+          <% end %>
         </div>
       </div>
-	  </div> <!-- card -->
-
-    <div class="card span9" data-application="" data-application-id="">
-      <h3 class="card-title">Standard Research Department</h3>
-      <div class="card-content">
-        <div class="pins">
-          <div class="pin">
-            <a href="#">Owns Application <strong>eVote</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Owns Application <strong>Rights Management</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Has Unique Group Named <strong>Staff</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Has Unique Group Named <strong>Volunteers</strong></a>
-          </div>
-        </div>
-      </div>
-	  </div> <!-- card -->
-
-    <div class="card span9" data-application="" data-application-id="">
-      <h3 class="card-title">Research Lab</h3>
-      <div class="card-content">
-        <div class="pins">
-          <div class="pin">
-            <a href="#">Owns Unique Application <strong>Computer Lab</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Owns Unique Application <strong>File Share</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Has Unique Group Named <strong>Lab Users</strong></a>
-          </div>
-        </div>
-      </div>
-	  </div> <!-- card -->
-
-    <div class="card span9" data-application="" data-application-id="">
-      <h3 class="card-title">Faculty Search Template</h3>
-      <div class="card-content">
-        <div class="pins">
-          <div class="pin">
-            <a href="#">Owns Application <strong>Faculty Search</strong></a>
-          </div>
-          <div class="pin">
-            <a href="#">Has Unique Group Named <strong>Faculty</strong></a>
-          </div>
-        </div>
-      </div>
-	  </div> <!-- card -->
-
+    <% end -%>
+    <% end %>
   
   </div> <!-- /.span9 -->
   <div class="span3">
