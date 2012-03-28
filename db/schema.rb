@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120327172532) do
+ActiveRecord::Schema.define(:version => 20120328191703) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -168,6 +168,12 @@ ActiveRecord::Schema.define(:version => 20120327172532) do
     t.string   "description"
     t.boolean  "mandatory"
     t.string   "ad_path"
+  end
+
+  create_table "template_assignments", :force => true do |t|
+    t.integer "template_id"
+    t.integer "person_id"
+    t.integer "group_id"
   end
 
   create_table "template_rules", :force => true do |t|

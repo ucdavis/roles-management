@@ -30,7 +30,14 @@ $(function() {
   
   // Allow clicking on templates to trigger their adherents
   $("div.card").on('click', function() {
-    console.log("click");
+    // Unhighlight other cards
+    $("div.card").css("box-shadow", "");
+    
+    // Highlight this card
+    $(this).css("box-shadow", "#333 0 0 10px");
+    
+    // Re-sort the highlighted availability list based on who uses this template
+    
   });
 });
 
