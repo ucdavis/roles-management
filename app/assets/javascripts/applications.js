@@ -94,7 +94,7 @@ $(function() {
     });
     
     // Only allow 12 pins in the right-most column at once
-    $("ul.pins li:gt(12)").hide();
+    //$("ul.pins li:gt(12)").hide();
   }
   
   // Displays the virtual application preferences for administrators
@@ -351,7 +351,7 @@ $(function() {
       $(el).attr("data-person-id", entity.id);
       $(el).attr("data-search-value", entity.name);
       $(el).html("<i class=\"icon-search\" onClick=\"javascript:site.entity_details(" + entity.id + ");\"></i>" + entity.name);
-      $("ul.pins").append(el);
+      $("#master_list").append(el);
     } else if (type == '2') {
       // Group
       $(el).attr("data-pin-type", "group");
@@ -359,7 +359,7 @@ $(function() {
       $(el).attr("data-search-value", entity.name);
       $(el).html("<i class=\"icon-remove\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\"></i> <i class=\"icon-search\" style=\"float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\"></i>" + entity.name);
       $(el).addClass("group");
-      $("ul.pins").append(el);
+      $("#master_list").append(el);
     } else {
       // Unknown
       console.log("Cannot add entity to availability list, unknown type.");
@@ -378,6 +378,17 @@ $(function() {
         }
       });
     });
+  }
+  
+  // Graphically sorts the right-hand availability list based on terms in 'str'
+  site.search_availability = function(str) {
+    // Clear out the existing list (fade out li elements and destroy since they are clones)
+    
+    
+    // Generate a list of matching li elements
+    
+    
+    // Clone and animate the li elements moving into place
     
   }
 } (window.site = window.site || {}, jQuery));
