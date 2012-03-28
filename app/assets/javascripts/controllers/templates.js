@@ -38,9 +38,28 @@ $(function() {
     
     // Re-sort the highlighted availability list based on who uses this template
     site.sort_availability($(this).data("uids"));
+    
+    // Record it
+    templates.selected_template = $(this);
   });
+  
+  // Toggle template assignments on click
+  $("#master_list>li").click(function() {
+    if(templates.selected_template) {
+      var uid = $(this).data("id");
+      
+    }
+  });
+  $("#highlighted_results>li").click(function() {
+    if(templates.selected_template) {
+      var uid = $(this).data("id");
+      
+    }
+  });
+  
 });
 
 (function (templates, $, undefined) {
   templates.templates = null; // will be filled in using the view
+  templates.selected_template = null;
 } (window.templates = window.templates || {}, jQuery));
