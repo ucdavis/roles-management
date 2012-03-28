@@ -382,13 +382,55 @@ $(function() {
   
   // Graphically sorts the right-hand availability list based on terms in 'str'
   site.search_availability = function(str) {
-    // Clear out the existing list (fade out li elements and destroy since they are clones)
+    //// Clear out the existing list (fade out li elements and destroy since they are clones)
+    $("#highlighted_results>li").animate({
+      opacity: 0
+    }, 300, function() {
+      $(this).remove(); // it is a cloned element and safe to delete
+    });
     
+    //// Generate a list of matching li elements
+    var re = new RegExp(str, "i");
     
-    // Generate a list of matching li elements
+    // Search the card titles
+    var matched_lis = $("#master_list>li").map(function(o, i) {
+      var value = $(this).data("search-value");
+      
+      if(value.search(re) != -1) {
+        return $(this);
+      }
+      
+      return null;
+    });
     
+    // Calculate some values needed for animation (assumes at least two lis in #master_list)
+    var item_height = $("#master_list").find("li:nth-child(2)").offset().top - $("#master_list").find("li:nth-child(1)").offset().top;
+    var list_start_y = $("#highlighted_results").offset().top;
+    var item_offset_y = list_start_y;
     
-    // Clone and animate the li elements moving into place
+    // Begin moving #master_list out of the way
+    $("#master_list").css("width", $("#master_list").width()).css("position", "absolute").css("top", $("#master_list").offset().top).animate({
+      top: list_start_y + (item_height * $(matched_lis).length)
+    }, 900, function() {
+      $(this).css("position", "static");
+    });
     
+    // Clone and animate the matches
+    $(matched_lis).each(function() {
+      var old_coords = $(this).offset(); // remember the non-cloned position - this is where the animation starts
+      var new_li = $(this).clone().css("opacity", 0.35).css("position", "absolute");
+      $("#highlighted_results").append(new_li); // add it to the new list
+      $(new_li).css("top", old_coords.top).css("left", old_coords.left).css("z-index", 100);
+      
+      // Set it to animate
+      $(new_li).animate({
+        opacity: 1.0,
+        top: item_offset_y
+      }, 700, function() {
+        $(this).css("position", "static").css("z-index", "auto");
+      });
+      
+      item_offset_y += item_height;
+    });
   }
 } (window.site = window.site || {}, jQuery));
