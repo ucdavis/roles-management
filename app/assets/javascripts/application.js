@@ -1,7 +1,15 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery-ui
-//= require_tree .
+//= require bootstrap.min
+//= require bootbox.min
+//= require bootstrap-modal
+//= require bootstrap-transition
+//= require bootstrap-typeahead
+//= require jquery.tokeninput
+//= require routes
+//= require underscore-min
+//= require details_modal
 //= require_self
 
 // Template-wide Javascript (setting up tabs, buttons, common callbacks, etc.)

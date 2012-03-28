@@ -1,5 +1,4 @@
-<%= javascript_include_tag params[:controller] %>
-<%= javascript_include_tag "details_modal" %>
+<%= javascript_include_tag "controllers/" + params[:controller] %>
 
 <div class="row-fluid">
   <div class="span9">
@@ -28,7 +27,7 @@
       <input id="search_people_groups" placeholder="Search people and groups…" type="text" class="input-large search-query">
     </form>
     
-	  <ul class="pins"></ul>
+	  <ul class="pins" id="master_list"></ul>
   </div> <!-- /.span3 -->
 </div>
 

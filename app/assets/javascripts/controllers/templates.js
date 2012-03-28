@@ -1,4 +1,5 @@
 $(function() {
+  // Filter templates on keyword search
   $("#search_templates").bind('change keyup', function() {
     var value = $(this).val();
     
@@ -25,6 +26,11 @@ $(function() {
     $(matched_cards).each(function() {
       $(this).show();
     });
+  });
+  
+  // Allow clicking on templates to trigger their adherents
+  $("div.card").on('click', function() {
+    console.log("click");
   });
 });
 

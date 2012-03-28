@@ -189,3 +189,13 @@ input#search_people_groups {
 .modal table tr td input,select {
   width: auto;
 }
+
+#highlighted_results>li {
+  margin-bottom: 6px;
+}
+#highlighted_results>li[data-pin-type="group"] {
+  box-shadow: #468847 0px 0px 5px;
+}
+#highlighted_results>li[data-pin-type="person"] {
+  box-shadow: #3A87AD 0px 0px 5px;
+}

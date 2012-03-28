@@ -381,22 +381,19 @@ $(function() {
   }
   
   // Graphically sorts the right-hand availability list based on terms in 'str'
-  site.search_availability = function(str) {
-    //// Clear out the existing list (fade out li elements and destroy since they are clones)
+  site.sort_availability = function(ids) {
+    // Clear out the existing list (fade out li elements and destroy since they are clones)
     $("#highlighted_results>li").animate({
       opacity: 0
     }, 300, function() {
       $(this).remove(); // it is a cloned element and safe to delete
     });
     
-    //// Generate a list of matching li elements
-    var re = new RegExp(str, "i");
-    
-    // Search the card titles
+    // Generate a list of matching li elements
     var matched_lis = $("#master_list>li").map(function(o, i) {
-      var value = $(this).data("search-value");
+      var id = $(this).data("id");
       
-      if(value.search(re) != -1) {
+      if(_.include(ids, id)) {
         return $(this);
       }
       
@@ -410,7 +407,7 @@ $(function() {
     
     // Begin moving #master_list out of the way
     $("#master_list").css("width", $("#master_list").width()).css("position", "absolute").css("top", $("#master_list").offset().top).animate({
-      top: list_start_y + (item_height * $(matched_lis).length)
+      top: list_start_y + (item_height * $(matched_lis).length) + 2
     }, 900, function() {
       $(this).css("position", "static");
     });
@@ -418,7 +415,7 @@ $(function() {
     // Clone and animate the matches
     $(matched_lis).each(function() {
       var old_coords = $(this).offset(); // remember the non-cloned position - this is where the animation starts
-      var new_li = $(this).clone().css("opacity", 0.35).css("position", "absolute");
+      var new_li = $(this).clone().css("width", $(this).width()).css("opacity", 0).css("position", "absolute");
       $("#highlighted_results").append(new_li); // add it to the new list
       $(new_li).css("top", old_coords.top).css("left", old_coords.left).css("z-index", 100);
       
