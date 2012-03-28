@@ -37,7 +37,7 @@ $(function() {
     $(this).css("box-shadow", "#333 0 0 10px");
     
     // Re-sort the highlighted availability list based on who uses this template
-    
+    site.sort_availability($(this).data("uids"));
   });
 });
 

@@ -20,7 +20,7 @@
     <% end %>
 
     <% @templates.each do |template| %>
-    <%= content_tag :div, :class => "card span9" do -%>
+    <%= content_tag :div, :class => "card span9", :data => {:uids => template.assignment_uids} do -%>
       <h3 class="card-title"><%= template.name %></h3>
       <div class="card-content">
         <div class="pins">

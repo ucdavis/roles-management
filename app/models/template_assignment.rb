@@ -14,10 +14,10 @@ class TemplateAssignment < ActiveRecord::Base
     
     if person_id.nil?
       # Group-based
-      uid = '2' + group.id.to_s
+      uid = ('2' + group.id.to_s).to_i
     else
       # Person-based
-      uid = '1' + person.id.to_s
+      uid = ('1' + person.id.to_s).to_i
     end
     
     uid

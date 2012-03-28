@@ -389,6 +389,8 @@ $(function() {
       $(this).remove(); // it is a cloned element and safe to delete
     });
     
+    if(ids.length == 0) return;
+    
     // Generate a list of matching li elements
     var matched_lis = $("#master_list>li").map(function(o, i) {
       var id = $(this).data("id");
