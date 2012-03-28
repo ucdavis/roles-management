@@ -348,14 +348,14 @@ $(function() {
     if(type == '1') {
       // Person
       $(el).attr("data-pin-type", "person");
-      $(el).attr("data-person-id", entity.id);
+      $(el).attr("data-id", entity.id);
       $(el).attr("data-search-value", entity.name);
       $(el).html("<i class=\"icon-search\" onClick=\"javascript:site.entity_details(" + entity.id + ");\"></i>" + entity.name);
       $("#master_list").append(el);
     } else if (type == '2') {
       // Group
       $(el).attr("data-pin-type", "group");
-      $(el).attr("data-group-id", entity.id);
+      $(el).attr("data-id", entity.id);
       $(el).attr("data-search-value", entity.name);
       $(el).html("<i class=\"icon-remove\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\"></i> <i class=\"icon-search\" style=\"float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\"></i>" + entity.name);
       $(el).addClass("group");
