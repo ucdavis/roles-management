@@ -385,7 +385,7 @@ $(function() {
     // Clear out the existing list (fade out li elements and destroy since they are clones)
     $("#highlighted_results>li").animate({
       opacity: 0
-    }, 300, function() {
+    }, 200, function() {
       $(this).remove(); // it is a cloned element and safe to delete
     });
     

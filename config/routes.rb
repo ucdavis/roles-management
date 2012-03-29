@@ -57,4 +57,7 @@ DSSRM::Application.routes.draw do
   # For AJAX on the CAO interface (checking and unchecking permission boxes)
   post "/roles/assign", :controller => "role_assignments", :action => "create"
   delete "/roles/unassign", :controller => "role_assignments", :action => "destroy"
+  # For AJAX on the CAO interface (checking and unchecking permission boxes)
+  post "/templates/assign", :controller => "template_assignments", :action => "create"
+  delete "/templates/unassign", :controller => "template_assignments", :action => "destroy"
 end

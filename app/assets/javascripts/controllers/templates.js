@@ -31,10 +31,10 @@ $(function() {
   // Allow clicking on templates to trigger their adherents
   $("div.card").on('click', function() {
     // Unhighlight other cards
-    $("div.card").css("box-shadow", "");
+    $("div.card").css("box-shadow", "").css("border", "");
     
     // Highlight this card
-    $(this).css("box-shadow", "#333 0 0 10px");
+    $(this).css("box-shadow", "#333 0 0 10px").css("border", "1px solid #777");
     
     // Re-sort the highlighted availability list based on who uses this template
     site.sort_availability($(this).data("uids"));
@@ -47,12 +47,28 @@ $(function() {
   $("#master_list>li").click(function() {
     if(templates.selected_template) {
       var uid = $(this).data("id");
+      var template_id = $(templates.selected_template).data("template-id");
+      
+      // Save this assignment
+      $.ajax({ url: Routes.template_path(template_id) + ".json", data: {template: {assignment_ids: uid}}, type: 'PUT'}).always(
+        function() {
+          console.log("done saving");
+        }
+      );
+      
+      // Update UI
       
     }
   });
-  $("#highlighted_results>li").click(function() {
+  $("#highlighted_results").on("click", "li", function() {
     if(templates.selected_template) {
       var uid = $(this).data("id");
+      var template_id = $(templates.selected_template).data("id");
+      
+      // Delete this assignment
+      
+      
+      // Update UI
       
     }
   });
