@@ -16,7 +16,7 @@ class TemplateAssignmentsController < ApplicationController
 
   # DELETE /templates/unassign.json
   def destroy
-    @ta = TemplateAssignment.find(params[:template_assignment_id])
+    @ta = TemplateAssignment.find_by_person_id_and_template_id(params[:template_assignment][:person_id], params[:template_assignment][:template_id])
     @ta.destroy
 
     respond_to do |format|
