@@ -1,4 +1,4 @@
-class TemplateAssignmentController < ApplicationController
+class TemplateAssignmentsController < ApplicationController
   filter_access_to :all
   
   # POST /templates/assign.json
@@ -7,7 +7,7 @@ class TemplateAssignmentController < ApplicationController
 
     respond_to do |format|
       if @ta.save
-        format.json { render json: @ta, status: :created, location: @ta }
+        format.json { render json: @ta, status: :created }
       else
         format.json { render json: @ta.errors, status: :unprocessable_entity }
       end

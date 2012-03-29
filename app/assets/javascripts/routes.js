@@ -240,6 +240,14 @@
   application_path: function(_id, options) {
   return Utils.build_path(["id"], [2,[2,[2,[2,[7,"/",false],[6,"applications",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
   },
+// templates_assign => /templates/assign(.:format)
+  templates_assign_path: function(options) {
+  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[6,"assign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
+// templates_unassign => /templates/unassign(.:format)
+  templates_unassign_path: function(options) {
+  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[6,"unassign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
 // groups => /groups(.:format)
   groups_path: function(options) {
   return Utils.build_path([], [2,[2,[7,"/",false],[6,"groups",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)

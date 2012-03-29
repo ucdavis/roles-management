@@ -46,13 +46,13 @@ $(function() {
   // Toggle template assignments on click
   $("#master_list>li").click(function() {
     if(templates.selected_template) {
-      var uid = $(this).data("id");
+      var id = parseInt($(this).data("id").toString().substr(1)); // convert from UID (remove leading digit)
       var template_id = $(templates.selected_template).data("template-id");
       
       // Save this assignment
-      $.ajax({ url: Routes.template_path(template_id) + ".json", data: {template: {assignment_ids: uid}}, type: 'PUT'}).always(
+      $.ajax({ url: Routes.templates_assign_path() + ".json", data: {template_assignment: {person_id: id, template_id: template_id}}, type: 'POST'}).always(
         function() {
-          console.log("done saving");
+          //console.log("done saving");
         }
       );
       

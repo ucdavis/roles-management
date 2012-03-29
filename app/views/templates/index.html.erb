@@ -50,9 +50,6 @@
 
 <script type="text/javascript">
 // Construction availbility list
-<% @groups.each do |group| %>
-  site.add_to_available_list(<%= group.to_json.html_safe %>);
-<% end %>
 <% @people.each do |person| %>
   site.add_to_available_list(<%= person.to_json.html_safe %>);
 <% end %>
