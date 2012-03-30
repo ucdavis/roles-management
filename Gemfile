@@ -15,12 +15,14 @@ gem 'sqlite3'
 # Deploy with Capistrano
 gem 'capistrano'
 
+gem 'unicorn'
+
 gem 'ruby-ldap'
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 gem 'dynamic_form'
 
 gem 'jquery-rails', '>= 1.0.12'
-gem 'mysql'
+gem 'pg'
 
 gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
 
