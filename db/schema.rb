@@ -163,7 +163,7 @@ ActiveRecord::Schema.define(:version => 20120328191703) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "application_id"
-    t.integer  "default",        :default => false
+    t.boolean  "default",        :default => false
     t.string   "descriptor"
     t.string   "description"
     t.boolean  "mandatory"
