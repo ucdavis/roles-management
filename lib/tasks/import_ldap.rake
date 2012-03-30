@@ -179,8 +179,10 @@ namespace :ldap do
       
           ou.save!
         end
-    
-        person.ous << ou
+        
+        unless person.ous.include? ou
+          person.ous << ou
+        end
     
         unless p["title"].nil?
           # Set title, creating it if necessary
