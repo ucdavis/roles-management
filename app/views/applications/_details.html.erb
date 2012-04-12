@@ -15,38 +15,18 @@
         <%= form_for @application, :remote => true do |f| %>
         <%= hidden_field_tag 'app_id', @application.id.to_s %>
     		<fieldset class="tab-pane active" id="summary">
-        	<p>
-            	<%= f.label :name %><br />
-            	<%= f.text_field :name, :class => "text medium" %>
-        	</p>
-        	<p>
-            	<%= f.label :display_name, "Display Name" %><br />
-            	<%= f.text_field :display_name, :class => "text medium" %>
-        	</p>
-        	<p>
-            	<%= f.label :description %><br />
-            	<%= f.text_field :description, :class => "text medium" %>
-        	</p>
-        	<!--<p>
-            	<%= f.label :hostname %><br />
-            	<%= f.text_field :hostname, :class => "text medium" %>
-        	</p>
-        	<p>
-            	<%= f.label :api_key, "API Key" %><br />
-            	<%= f.text_field :api_key, :class => "text medium", :disabled => 'disabled' %>
-        	</p>-->
-    			<p>
-    			  <%= f.label :manager_tokens, "Managers" %><br />
-        	  <%= f.text_field :manager_tokens, "data-pre" => @application.managers.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
-    			</p>
-    			<p>
-    			  <%= f.label :ou_tokens, "Organizational Scoping" %><br />
-        	  <%= f.text_field :ou_tokens, "data-pre" => @application.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>
-    			</p>
-          <p>
-            <label>Sympa URL:</label><br />
-            <input type="text" class="text medium" value="<%= url_for( :controller => 'api/applications', :action => 'show', :id => @application.name, :only_path => false ) %>.txt" disabled />
-          </p>
+        	<%= f.label :name %>
+        	<%= f.text_field :name, :class => "text medium" %>
+        	<%= f.label :display_name, "Display Name" %>
+        	<%= f.text_field :display_name, :class => "text medium" %>
+        	<%= f.label :description %>
+        	<%= f.text_field :description, :class => "text medium" %>
+  			  <%= f.label :manager_tokens, "Managers" %>
+      	  <%= f.text_field :manager_tokens, "data-pre" => @application.managers.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
+  			  <%= f.label :ou_tokens, "Organizational Scoping" %>
+      	  <%= f.text_field :ou_tokens, "data-pre" => @application.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>
+          <label>Sympa URL:</label>
+          <input type="text" class="text medium" value="<%= url_for( :controller => 'api/applications', :action => 'show', :id => @application.name, :only_path => false ) %>.txt" disabled />
         </fieldset>
     		<fieldset class="tab-pane" id="roles">
           <table>

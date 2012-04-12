@@ -173,6 +173,10 @@ input#search_people_groups {
   filter: alpha(opacity = 70); /* IE8 and earlier */
 }
 
+ul.token-input-list-facebook {
+  margin-bottom: 9px;
+}
+
 /* Twitter Bootstrap modifications (check here for problems when upgrading) */
 /* TB assumes .tab-content>.tab-pane but we have .tab-content>form>.tab-pane in details modals */
 .tab-content .tab-pane {display: none;}
