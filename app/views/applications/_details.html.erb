@@ -1,26 +1,20 @@
-<div id="entity_details">
-  <div class="block withsidebar popup_block">
-  	<div class="block_head">
-  		<div class="bheadl"></div>
-  		<div class="bheadr"></div>
-		  
-      <button class="right" style="margin-top: 14px;" id="edit">Edit</button>
-      
-  		<h2><%= @application.name %></h2>
-  	</div> <!-- .block_head -->
-  	<div class="block_content">
-      <div id="details_view">
-    		<div class="sidebar">
-    			<ul class="sidemenu">
-    				<li><a href="#summary">Summary</a></li>
-            <li><a href="#roles">Roles</a></li>
-            <li><a href="#ad">Active Directory</a></li>
-    			</ul>
-    		</div>		<!-- .sidebar ends -->
-		  
+<div class="modal" id="person_modal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3><%= @application.name %></h3>
+  </div>
+  <div class="modal-body">
+
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#roles" data-toggle="tab">Roles</a></li>
+        <li><a href="#ad" data-toggle="tab">Active Directory</a></li>
+      </ul>
+      <div class="tab-content">
         <%= form_for @application, :remote => true do |f| %>
         <%= hidden_field_tag 'app_id', @application.id.to_s %>
-    		<fieldset class="sidebar_content" id="summary">
+    		<fieldset class="tab-pane active" id="summary">
         	<p>
             	<%= f.label :name %><br />
             	<%= f.text_field :name, :class => "text medium" %>
@@ -53,8 +47,8 @@
             <label>Sympa URL:</label><br />
             <input type="text" class="text medium" value="<%= url_for( :controller => 'api/applications', :action => 'show', :id => @application.name, :only_path => false ) %>.txt" disabled />
           </p>
-    		</fieldset> <!-- summary -->
-    		<fieldset class="sidebar_content" id="roles">
+        </fieldset>
+    		<fieldset class="tab-pane" id="roles">
           <table>
             <tr>
               <th>Token</th>
@@ -68,22 +62,23 @@
             <% end %>
           </table>
           <p><%= link_to_add_fields "Add Role", f, :roles %></p>
-    		</fieldset> <!-- roles -->
-    		<fieldset class="sidebar_content" id="ad">
+        </fieldset>
+    		<fieldset class="tab-pane" id="ad">
           <%= f.fields_for :roles do |builder| %>
             <%= render "role_ad_fields", :f => builder %>
           <% end %>
           <p>
             <small>The group name is appended after the base AD path configured by the administrator.</small>
           </p>
-    		</fieldset> <!-- ad -->
+        </fieldset>
         <% end %>
-      </div> <!-- #details_view -->
-  	</div> <!-- .block_content -->
-	
-  	<div class="bendl"></div>
-  	<div class="bendr"></div>
-  </div> <!-- .block -->
-</div> <!-- #application_details -->
+      </div>
+    </div> <!-- /tabbable -->
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+    <a href="#" class="btn btn-primary">Save changes</a>
+  </div>
+</div>
 
 <script type="text/javascript" src="<%= asset_path "details_modal.js" %>"></script>

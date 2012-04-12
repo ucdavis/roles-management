@@ -93,8 +93,21 @@ $(function() {
       }
     });
     
-    // Only allow 12 pins in the right-most column at once
-    //$("ul.pins li:gt(12)").hide();
+    // Establish hover for application details
+    $("div.card .card-title").hover(
+      function() {
+        // hover in
+        $(this).children("i").css("display", "block");
+      },
+      function() {
+        // hover out
+        $(this).children("i").css("display", "none");
+      }
+    );
+    $("div.card .card-title i").click(function() {
+      site.entity_details('4' + $(this).parent().parent().data("application-id"));
+    });
+    
   }
   
   // Displays the virtual application preferences for administrators
@@ -184,7 +197,6 @@ $(function() {
       
         // Change the pin color if this is a group
         if(String(entity.id)[0] == '2') {
-          //$(el).css("background-image", "url(images/btnb_dark.gif)");
           $(el).addClass("group");
         }
       
@@ -250,9 +262,12 @@ $(function() {
     if(entity_type == '1') {
       // person
       details_url = Routes.people_path() + "/" + entity_id;
-    } else {
+    } else if(entity_type == '2') {
       // group
       details_url = Routes.groups_path() + "/" + entity_id;
+    } else {
+      // application
+      details_url = Routes.applications_path() + "/" + entity_id;
     }
     
     template.status_text("Fetching details...");

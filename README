@@ -1,11 +1,11 @@
-== DSS Rights Management
+== DSS Roles Management
 
-Rights Management (RM) is a people, roles and application management web application
+Roles Management (RM) is a people, roles, and application management web application
 and service developed by the UC Davis Division of Social Science.
 
 == Requirements
 
-RM was written for Ruby 1.9 and Rails 3.1 and was tested using MySQL and Phusion Passenger.
+RM was written for Ruby 1.9 and Rails 3.2 and is deployed using Unicorn and PostgreSQL.
 
 == Deployment
 
@@ -32,7 +32,7 @@ is out of date.
 
 == Technical Notes
 === Universal ID Convention
-There's a terrible important convention regarding the polymorphism of people, groups,
+There's an important convention regarding the polymorphism of people, groups,
 and OUs. For various reasons, we need a global ID for these objects, but the schema
 doesn't provide for one. The convention is very simple: a leading digit is placed
 in front of the actual ID (regardless of whether it's a person, group, or OU) to
@@ -43,6 +43,7 @@ indicate which it is:
   1 = person
   2 = group
   3 = OU
+  4 = application (not usually exposed)
 
 You almost never need to know this if you properly query against the RESTful API,
 e.g., /api/search.json will return IDs in this convention, and /api/resolve.json will
@@ -70,6 +71,3 @@ does not need to be turned on or off by an administration. It is purely internal
 
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
-
-== TODO
-* Implement a unit test to ensure non-api namespace does not respond to XML or JSON (security vulnerability)

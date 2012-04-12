@@ -13,7 +13,7 @@
       site.current_user_id = <%= current_user.id %>;
     </script>
     <div class="card span4" data-application="<%= app.to_json %>" data-application-id="<%= app.id %>">
-      <h3 class="card-title"><%= app.display_name %></h3>
+      <div class="card-title"><h3><%= app.display_name %></h3><i class="icon-search" id="entity_details"></i></div>
       <div class="card-content">
         <div class="pins"></div>
       </div>

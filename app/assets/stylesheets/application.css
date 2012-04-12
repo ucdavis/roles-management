@@ -29,6 +29,13 @@
   text-align: center;
   font-size: 16px;
 }
+.card-title i {
+  float: right;
+  display: none;
+  cursor: pointer;
+  margin-top: -20px;
+  margin-right: 16px;
+}
 
 ul.pins {
   margin-left: 0px;
