@@ -177,6 +177,11 @@ ul.token-input-list-facebook {
   margin-bottom: 9px;
 }
 
+div#modal_container tr.fields button {
+  margin-top: -8px;
+  margin-left: 4px;
+}
+
 /* Twitter Bootstrap modifications (check here for problems when upgrading) */
 /* TB assumes .tab-content>.tab-pane but we have .tab-content>form>.tab-pane in details modals */
 .tab-content .tab-pane {display: none;}
