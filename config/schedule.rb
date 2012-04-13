@@ -24,7 +24,7 @@ every :day, :at => "3am" do
   rake "ldap:import"
 end
 
-every :day, :at => "4am" do
-  @person = Person.find_by_loginid("cthielen")
-  WheneverMailer.test_email(@person).deliver
-end
+#every :day, :at => "4am" do
+  #@person = Person.find_by_loginid("cthielen")
+  #WheneverMailer.test_email(@person).deliver
+  #end
