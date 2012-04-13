@@ -56,6 +56,10 @@ module AdSync
     ActiveDirectory::Base.setup(settings)
     g = ActiveDirectory::Group.find(:first, :cn => group_name)
 
+    if g.nil?
+      return false
+    end
+
     g.add user
   end
   
