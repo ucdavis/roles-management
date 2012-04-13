@@ -8,7 +8,7 @@ namespace :admin do
     args.each do |arg|
       puts "Setting #{arg[1]} as admin..."
       ra = RoleAssignment.new
-      ra.role_id = Application.find_by_name("DSS Rights Management").roles.find_by_token("admin").id
+      ra.role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
       ra.person_id = Person.find_by_loginid(arg[1]).id
       ra.save!
     end

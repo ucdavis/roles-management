@@ -2,6 +2,7 @@ namespace :ldap do
   desc 'Runs the LDAP import. Takes approx. 5-10 mins.'
   task :import, :loginid do |t, args|
     require 'ldap'
+    require 'pp'
     
     Rake::Task['environment'].invoke
 
@@ -73,32 +74,43 @@ namespace :ldap do
             # TODO: Instead of merely setting fields, check if they've changed!
             
             # First, determine their login ID from the principal name
-            eduPersonPrincipalName = entry.get_values('eduPersonPrincipalName')[0]
-            loginid = eduPersonPrincipalName.slice(0, eduPersonPrincipalName.index("@"))
+            eduPersonPrincipalName = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
+            if eduPersonPrincipalName.nil?
+              # If they don't have an eduPersonPrincipalName, we'll take the uid, else we'll just log this entry and skip it
+              unless entry.get_values('uid').to_s[2..-3].nil?
+                loginid = entry.get_values('uid').to_s[2..-3]
+              else
+                # Give up
+                Rails.logger.debug "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s
+                next
+              end
+            else
+              loginid = eduPersonPrincipalName.slice(0, eduPersonPrincipalName.index("@"))
+            end
             
             # Find or create the Person object
             p = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
 
             p.first = entry.get_values('givenName')[0]
             p.last = entry.get_values('sn')[0]
-            p.email = entry.get_values('mail')[0]
-            p.phone = entry.get_values('telephoneNumber')[0]
+            p.email = entry.get_values('mail').to_s[2..-3]
+            p.phone = entry.get_values('telephoneNumber').to_s[2..-3]
             unless p.phone.nil?
               p.phone = p.phone.sub("+1 ", "").gsub(" ", "") # clean up number
             end
-            p.address = entry.get_values('street')[0]
-            person.status = true
-            person.preferred_name = entry.get_values('displayName')[0]
+            p.address = entry.get_values('street').to_s[2..-3]
+            p.status = true
+            p.preferred_name = entry.get_values('displayName')[0]
             
             # A person may have multiple affiliations
             entry.get_values('ucdPersonAffiliation').each do |affiliation_name|
               affiliation = Affiliation.find_or_create_by_name(affiliation_name)
-              person.affiliations << affiliation
+              p.affiliations << affiliation
             end
             
             # Set title: take the original unless there is a translation from UcdLookups
-            title = entry.get_values('title')[0]
-            ucdAppointmentTitleCode = entry.get_values('ucdAppointmentTitleCode')[0]
+            title = entry.get_values('title').to_s[2..-3]
+            ucdAppointmentTitleCode = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
             if UcdLookups::TITLE_CODES[ucdAppointmentTitleCode]
               title = UcdLookups::TITLE_CODES[ucdAppointmentTitleCode]['title']
             end
@@ -108,10 +120,10 @@ namespace :ldap do
               title.code = ucdAppointmentTitleCode
               title.save
             end
-            person.title = title
+            p.title = title
             
-            ucdAppointmentDepartmentCode = entry.get_values('ucdAppointmentDepartmentCode')[0]
-            ucdStudentMajor = entry.get_values('ucdStudentMajor')[0]
+            ucdAppointmentDepartmentCode = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
+            ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
           
             # Use UcdLookups to clean up the data
             if ucdAppointmentDepartmentCode
@@ -140,7 +152,7 @@ namespace :ldap do
               ou = UcdLookups::DEPT_TRANSLATIONS[ou]
             end
             
-            if( ucdPersonAffiliation == "student:graduate" )
+            if( p.affiliations.collect { |x| x.name }.include? "student:graduate" )
               # Graduate student 'ou's are determined not by the ou entry but by the 
               ou = Ou.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Ou.create(:name => ucdStudentMajor)
               # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
@@ -150,10 +162,13 @@ namespace :ldap do
                 # Not a graduate student: p["ou"] entry is reliable
                 ou = Ou.find(:first, :conditions => [ "lower(name) = ?", ou.downcase ]) || Ou.create(:name => ou)
                 # Assume dept codes match name strings
-                ou.code = ucdAppointmentDepartmentCode
+                if ou.code.nil?
+                  ou.code = ucdAppointmentDepartmentCode
+                end
+                ou.save!
               end
       
-              unless UcdLookups::DEPT_CODES[p["ucdAppointmentDepartmentCode"]].nil?
+              unless UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode].nil?
                 # Find or create the manager (if we see the rest of their data later, it will be updated accordingly)
                 manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]["manager"])
                 # Avoid duplicate managers
@@ -161,26 +176,24 @@ namespace :ldap do
                   ou.managers << manager
                 end
             
-                person.managers << manager
+                p.managers << manager
               else
                 # Dept code doesn't exist
                 unless ucdAppointmentDepartmentCode.nil?
-                  puts "Could not find a dept_code for " + ucdAppointmentDepartmentCode
+                  puts "Could not find a deptartment code translation for " + ucdAppointmentDepartmentCode
                 end
               end
-      
-              ou.save!
             end
         
-            unless person.ous.include? ou
-              person.ous << ou
+            unless p.ous.include? ou or ou.nil?
+              p.ous << ou
             end
     
-            if person.valid? == false
-              Rails.logger.info "Unable to create or update persion with ID #{person.id}"
+            if p.valid? == false
+              Rails.logger.info "Unable to create or update persion with loginid #{p.loginid}"
             else
-              Rails.logger.info "Creating or updated persion with ID #{person.id}"
-              person.save!
+              Rails.logger.info "Creating or updated persion with loginid #{p.loginid}"
+              p.save!
             end
           end
         end
