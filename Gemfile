@@ -30,7 +30,7 @@ gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_a
 gem 'whenever', :require => false
 
 # For MS Active Directory support
-gem "active_directory"
+gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
 
 gem "js-routes"
 gem "ruby_parser"
