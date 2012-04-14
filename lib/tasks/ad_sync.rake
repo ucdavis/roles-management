@@ -17,9 +17,9 @@ namespace :ad do
       # Write them to all group (dss-us-auto-all)
       if AdSync.add_user_to_group(ad_user, "dss-us-auto-all") == false
         abort "Could not add #{p.loginid} to dss-us-auto-all"
+      else
+        puts "Added #{p.loginid} to dss-us-auto-all"
       end
-      
-      puts "Writing #{p.loginid} to dss-us-auto-all"
       
       p.affiliations.each do |affiliation|
         # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
@@ -27,9 +27,21 @@ namespace :ad do
           short_ou = ou_to_short(p.ous.first.name)
           flattened_affiliation = flatten_affiliation(affiliation.name)
           unless short_ou.nil? or flattened_affiliation.nil?
-            puts "Writing #{p.loginid} to dss-us-#{short_ou}-#{flattened_affiliation}"
+            # Write them to cluster-affiliation-all
+            caa = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
+            if AdSync.add_user_to_group(ad_user, caa) == false
+              abort "Could not add #{p.loginid} to #{caa}"
+            else
+              puts "Added #{p.loginid} to #{caa}"
+            end
+            
             # Write them to cluster-all (dss-us-#{ou_to_short}-all)
-            puts "Writing #{p.loginid} to dss-us-#{short_ou}-all"
+            ca = "dss-us-#{short_ou}-all".downcase
+            if AdSync.add_user_to_group(ad_user, ca) == false
+              abort "Could not add #{p.loginid} to #{ca}"
+            else
+              puts "Added #{p.loginid} to #{ca}"
+            end
           end
         end
       end
