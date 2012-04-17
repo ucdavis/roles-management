@@ -1,7 +1,7 @@
 class Application < ActiveRecord::Base
   has_many :roles
-  has_many :application_ou_assignments
-  has_many :ous, :through => :application_ou_assignments
+  #has_many :application_ou_assignments
+  #has_many :ous, :through => :application_ou_assignments
   has_many :application_manager_assignments
   has_many :managers, :through => :application_manager_assignments
   after_save :ensure_access_role_exists

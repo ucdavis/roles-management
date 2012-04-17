@@ -16,10 +16,9 @@ class Person < ActiveRecord::Base
   has_many :application_manager_assignments, :foreign_key => "manager_id"
   has_many :application_ownerships, :through => :application_manager_assignments, :source => :application
   
-  has_many :ous, :through => :ou_assignments
-  has_many :ou_assignments
-
-  has_many :ou_manager_assignments
+  #has_many :ous, :through => :ou_assignments
+  #has_many :ou_assignments
+  #has_many :ou_manager_assignments
 
   has_many :group_manager_assignments
   
