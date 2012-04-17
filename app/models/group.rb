@@ -1,8 +1,11 @@
 class Group < ActiveRecord::Base
-  has_and_belongs_to_many :groups,
-                          :join_table => "group_group",
-                          :foreign_key => "group_id",
-                          :association_foreign_key => "subgroup_id"
+  # Group-to-group relationships
+  ## Children
+  has_many :group_children_assignments
+  has_many :children, :through => :group_children_assignments
+  ## Parents
+  has_many :group_parent_assignment, :class_name => "GroupChildrenAssignment", :foreign_key => "child_id"
+  has_many :parents, :through => :group_parent_assignment, :source => :group
   
   has_and_belongs_to_many :people
   
@@ -28,8 +31,8 @@ class Group < ActiveRecord::Base
       members << p
     end
     
-    # Include all groups
-    groups.each do |g|
+    # Include all children
+    children.each do |g|
       members << g
     end
     
@@ -53,8 +56,8 @@ class Group < ActiveRecord::Base
       explicit_members << p
     end
     
-    # Include all groups
-    groups.each do |g|
+    # Include all children
+    children.each do |g|
       explicit_members << g
     end
     
