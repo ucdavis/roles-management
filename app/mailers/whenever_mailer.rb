@@ -15,4 +15,13 @@ class WheneverMailer < ActionMailer::Base
       mail(:to => admin.email, :subject => "DSS-RM: AD Sync Report for %s" % [Time.now.strftime("%A %B %d, %Y")])
     end
   end
+  
+  def ldap_report(log)
+    @log = log
+    # E-mail to each RM admin (anyone with 'admin' permission on this app)
+    admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+    Role.find_by_id(admin_role_id).people.each do |admin|
+      mail(:to => admin.email, :subject => "DSS-RM: LDAP Import Report for %s" % [Time.now.strftime("%A %B %d, %Y")])
+    end
+  end
 end

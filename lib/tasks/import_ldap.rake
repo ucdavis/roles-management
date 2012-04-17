@@ -2,14 +2,19 @@ namespace :ldap do
   desc 'Runs the LDAP import. Takes approx. 5-10 mins.'
   task :import, :loginid do |t, args|
     require 'ldap'
-    require 'pp'
+    require 'stringio'
     
     Rake::Task['environment'].invoke
+
+    # Keep a log to e-mail to the admins
+    log = StringIO.new
 
     # Include the large lot of UCD info (dept codes, title codes, etc.)
     load 'UcdLookups.rb'
 
-    Rails.logger.info "Beginning LDAP import."
+    timestamp_start = Time.now
+
+    log << "Beginning LDAP import\n\n"
 
     #
     # STEP ONE: Connect to LDAP. Query needed data.
@@ -23,7 +28,11 @@ namespace :ldap do
     conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
     conn.bind(dn = ldap_settings['base_dn'], password = ldap_settings['base_pw'] )
 
+    log << "Connected to ldap.ucdavis.edu on port 636, LDAP protocol version 3.\n\n"
+
     people = {}
+
+    log << "Using the following LDAP queries:\n"
     
     # If they specified a loginid, only import them, otherwise, do everybody
     unless args[:loginid].nil?
@@ -33,6 +42,9 @@ namespace :ldap do
       studentFilter = ''
       manualFilter = []
       manualFilter << '(uid=' + args[:loginid] + ')'
+      
+      log << "\t" + manualFilter + "\n"
+      log << "\t(only one loginid was requested for import)\n"
     else
       # Did not specify a loginid - import everyone
       
@@ -44,6 +56,8 @@ namespace :ldap do
       end
       staffFilter = staffFilter + '))'
 
+      log << "\t" + staffFilter + "\n"
+
       # Faculty filter
       facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
       for d in UcdLookups::DEPT_CODES.keys()
@@ -51,26 +65,33 @@ namespace :ldap do
       end
       facultyFilter = facultyFilter + '))'
 
+      log << "\t" + facultyFilter + "\n"
+
       # Student filter
       studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
       for m in UcdLookups::MAJORS.keys()
            studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
       end
       studentFilter = studentFilter + '))'
+      
+      log << "\t" + studentFilter + "\n"
     
       # Manual filter
       manualFilter = []
       for m in UcdLookups::MANUAL_INCLUDES
         manualFilter << '(uid=' + m + ')'
       end
+      
+      log << "\t" + manualFilter + "\n"
     end
+
+    log << "\n"
 
     # Query LDAP
     Person.transaction do
       for f in [staffFilter,facultyFilter,studentFilter] + manualFilter
         unless f.length == 0
           conn.search(ldap_settings['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
-            
             # TODO: Instead of merely setting fields, check if they've changed!
             
             # First, determine their login ID from the principal name
@@ -81,12 +102,14 @@ namespace :ldap do
                 loginid = entry.get_values('uid').to_s[2..-3]
               else
                 # Give up
-                Rails.logger.debug "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s
+                log << "Warning: Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s + "\n"
                 next
               end
             else
               loginid = eduPersonPrincipalName.slice(0, eduPersonPrincipalName.index("@"))
             end
+            
+            log << "Processing LDAP record for #{loginid}\n"
             
             # Find or create the Person object
             p = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
@@ -180,7 +203,7 @@ namespace :ldap do
               else
                 # Dept code doesn't exist
                 unless ucdAppointmentDepartmentCode.nil?
-                  puts "Could not find a deptartment code translation for " + ucdAppointmentDepartmentCode
+                  log << "\tWarning: Could not find a deptartment code translation for " + ucdAppointmentDepartmentCode + "\n"
                 end
               end
             end
@@ -190,9 +213,20 @@ namespace :ldap do
             end
     
             if p.valid? == false
-              Rails.logger.info "Unable to create or update persion with loginid #{p.loginid}"
+              log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
+              log << "\tReason(s):\n"
+              p.errors.messages.each do |field,reason|
+                log << "\t\tField #{field} #{reason}\n"
+              end
             else
-              Rails.logger.info "Creating or updated persion with loginid #{p.loginid}"
+              if p.changed? == false
+                log << "\tNo changes for #{p.loginid}\n"
+              else
+                log << "\tUpdating the following for #{p.loginid}:\n"
+                p.changes.each do |field,changes|
+                  log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
+                end
+              end
               p.save!
             end
           end
@@ -203,7 +237,14 @@ namespace :ldap do
     # Disconnect
     conn.unbind
     
-    Rails.logger.info "Finished LDAP import."
+    log << "Finished LDAP import.\n"
+    
+    timestamp_finish = Time.now
+    
+    log << "LDAP import took " + (timestamp_finish - timestamp_start).to_s + "s\n"
+    
+    # Email the log
+    WheneverMailer.ldap_report(log.string).deliver!
   end
   
   desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'
