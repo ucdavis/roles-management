@@ -39,8 +39,12 @@ module AdSync
     ActiveDirectory::Group.find(:first, :cn => group_name)
   end
   
-  # Takes user as an ActiveDirectory::User object and group as a string (e.g. 'SOME-GROUP') and returns boolean
-  def AdSync.add_user_to_group(user, group_name)
+  # Takes user as an ActiveDirectory::User object and group as a ActiveDirectory::Group object and returns boolean
+  def AdSync.add_user_to_group(user, group)
+    if group.nil?
+      return false
+    end
+    
     settings = {
         :host => AD_GROUPS_SETTINGS['host'],
         :base => AD_GROUPS_SETTINGS['base'],
@@ -54,13 +58,8 @@ module AdSync
     }
 
     ActiveDirectory::Base.setup(settings)
-    g = ActiveDirectory::Group.find(:first, :cn => group_name)
 
-    if g.nil?
-      return false
-    end
-
-    g.add user
+    group.add user
   end
   
   # Takes group as an ActiveDirectory::Group object and returns an array of users

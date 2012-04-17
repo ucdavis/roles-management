@@ -6,17 +6,31 @@ namespace :ad do
   task :sync do
     Rake::Task['environment'].invoke
     
+    # Cached groups list
+    groups = {}
+    
+    # Cache group 'dss-us-auto-all' because we always need it
+    groups["dss-us-auto-all"] = AdSync.fetch_group("dss-us-auto-all")
+    if groups["dss-us-auto-all"].nil?
+      abort "Could not load group dss-us-auto-all"
+    end
+    
+    i = 0
+    length = Person.all.length
     Person.all.each do |p|
+      puts "Syncing individual #{i} of #{length}"
+      i = i + 1
+      
       ad_user = AdSync.fetch_user(p.loginid)
       if ad_user.nil?
-        abort "Could not find user in AD #{p.loginid}"
+        puts "Could not find user in AD #{p.loginid}"
       else
         puts "Found user #{p.loginid} in AD"
       end
       
       # Write them to all group (dss-us-auto-all)
-      if AdSync.add_user_to_group(ad_user, "dss-us-auto-all") == false
-        abort "Could not add #{p.loginid} to dss-us-auto-all"
+      if AdSync.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
+        puts "Could not add #{p.loginid} to dss-us-auto-all"
       else
         puts "Added #{p.loginid} to dss-us-auto-all"
       end
@@ -29,16 +43,24 @@ namespace :ad do
           unless short_ou.nil? or flattened_affiliation.nil?
             # Write them to cluster-affiliation-all
             caa = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
-            if AdSync.add_user_to_group(ad_user, caa) == false
-              abort "Could not add #{p.loginid} to #{caa}"
+            # Cache group if necessary
+            if groups[caa].nil?
+              groups[caa] = AdSync.fetch_group(caa)
+            end
+            if AdSync.add_user_to_group(ad_user, groups[caa]) == false
+              puts "Could not add #{p.loginid} to #{caa}"
             else
               puts "Added #{p.loginid} to #{caa}"
             end
             
             # Write them to cluster-all (dss-us-#{ou_to_short}-all)
             ca = "dss-us-#{short_ou}-all".downcase
-            if AdSync.add_user_to_group(ad_user, ca) == false
-              abort "Could not add #{p.loginid} to #{ca}"
+            # Cache group if necessary
+            if groups[ca].nil?
+              groups[ca] = AdSync.fetch_group(ca)
+            end
+            if AdSync.add_user_to_group(ad_user, groups[ca]) == false
+              puts "Could not add #{p.loginid} to #{ca}"
             else
               puts "Added #{p.loginid} to #{ca}"
             end
