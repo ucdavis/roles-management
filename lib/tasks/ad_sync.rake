@@ -23,7 +23,7 @@ namespace :ad do
     
     i = 1
     length = Person.all.length
-    Person.first(10).each do |p|
+    Person.all.each do |p|
       changed = false # flag used to indicate whether we should print 'no changes' or not for each record
       
       log << "Syncing #{p.loginid} (#{i} of #{length})\n"
@@ -42,6 +42,8 @@ namespace :ad do
         else
           log << "\tAdded to dss-us-auto-all\n"
         end
+      else
+        log << "\tAlready in dss-us-auto-all\n"
       end
       
       p.affiliations.each do |affiliation|
@@ -63,6 +65,8 @@ namespace :ad do
               else
                 log << "\tAdded to #{caa}\n"
               end
+            else
+              log << "\tAlready in #{caa}\n"
             end
             
             # Write them to cluster-all (dss-us-#{ou_to_short}-all)
@@ -78,6 +82,8 @@ namespace :ad do
               else
                 log << "\tAdded to #{ca}\n"
               end
+            else
+              log << "\tAlready in #{ca}\n"
             end
           end
         end
