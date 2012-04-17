@@ -252,7 +252,6 @@ namespace :ldap do
       Person.destroy_all
       Group.destroy_all
       RoleAssignment.destroy_all
-      ApplicationOuAssignment.destroy_all
       Affiliation.destroy_all
       GroupRule.delete_all
       AffiliationAssignment.destroy_all
