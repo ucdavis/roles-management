@@ -19,12 +19,12 @@
 
 # Learn more: http://github.com/javan/whenever
 
-# Run LDAP import updater every 24 hours
-every :day, :at => "3am" do
+# Run LDAP import updater every 24 hours at 2am
+every :day, :at => "2am" do
   rake "ldap:import"
 end
 
-#every :day, :at => "4am" do
-  #@person = Person.find_by_loginid("cthielen")
-  #WheneverMailer.test_email(@person).deliver
-  #end
+# Sync with Active Directory every 24 hours at 2:15am (LDAP usually only takes 2-3 mins)
+every :day, :at => "2:15 am" do
+  rake "ad:sync"
+end

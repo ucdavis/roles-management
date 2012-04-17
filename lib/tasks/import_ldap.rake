@@ -222,9 +222,10 @@ namespace :ldap do
       AffiliationAssignment.destroy_all
       PersonManagerAssignment.destroy_all
       Classification.destroy_all
-      #ClassificationTitles.destroy_all
       Title.destroy_all
       puts "Be sure to assign roles if you re-import the directory."
+    else
+      puts "This task is purposefully disabled in production mode."
     end
   end
 end

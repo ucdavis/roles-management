@@ -21,7 +21,7 @@ namespace :ad do
     
     i = 1
     length = Person.all.length
-    Person.first(3).each do |p|
+    Person.all.each do |p|
       log << "Syncing individual #{i} of #{length}\n"
       i += 1
       
