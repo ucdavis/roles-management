@@ -13,30 +13,35 @@ namespace :ad do
     # Cached groups list
     groups = {}
     
+    timestamp_start = Time.now
+    
     # Cache group 'dss-us-auto-all' because we always need it
     groups["dss-us-auto-all"] = AdSync.fetch_group("dss-us-auto-all")
     if groups["dss-us-auto-all"].nil?
-      abort "Could not load group dss-us-auto-all"
+      log << "Error: Could not load group dss-us-auto-all\n"
     end
     
     i = 1
     length = Person.all.length
-    Person.all.each do |p|
-      log << "Syncing individual #{i} of #{length}\n"
+    Person.first(10).each do |p|
+      changed = false # flag used to indicate whether we should print 'no changes' or not for each record
+      
+      log << "Syncing #{p.loginid} (#{i} of #{length})\n"
       i += 1
       
       ad_user = AdSync.fetch_user(p.loginid)
       if ad_user.nil?
-        log << "Could not find user in AD #{p.loginid}\n"
-      else
-        log << "Found user #{p.loginid} in AD\n"
+        log << "\tCould not find user in AD\n"
       end
       
-      # Write them to all group (dss-us-auto-all)
-      if AdSync.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
-        log << "Could not add #{p.loginid} to dss-us-auto-all\n"
-      else
-        log << "Added #{p.loginid} to dss-us-auto-all\n"
+      # Write them to all group (dss-us-auto-all) if necessary
+      unless AdSync.in_group(ad_user, groups["dss-us-auto-all"])
+        changed = true
+        if AdSync.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
+          log << "\tWarning: Needed to add to dss-us-auto-all but operation failed\n"
+        else
+          log << "\tAdded to dss-us-auto-all\n"
+        end
       end
       
       p.affiliations.each do |affiliation|
@@ -51,10 +56,13 @@ namespace :ad do
             if groups[caa].nil?
               groups[caa] = AdSync.fetch_group(caa)
             end
-            if AdSync.add_user_to_group(ad_user, groups[caa]) == false
-              log << "Could not add #{p.loginid} to #{caa}\n"
-            else
-              log << "Added #{p.loginid} to #{caa}\n"
+            unless AdSync.in_group(ad_user, groups[caa])
+              changed = true
+              if AdSync.add_user_to_group(ad_user, groups[caa]) == false
+                log << "\tWarning: Needed to add to #{caa} but operation failed\n"
+              else
+                log << "\tAdded to #{caa}\n"
+              end
             end
             
             # Write them to cluster-all (dss-us-#{ou_to_short}-all)
@@ -63,15 +71,26 @@ namespace :ad do
             if groups[ca].nil?
               groups[ca] = AdSync.fetch_group(ca)
             end
-            if AdSync.add_user_to_group(ad_user, groups[ca]) == false
-              log << "Could not add #{p.loginid} to #{ca}\n"
-            else
-              log << "Added #{p.loginid} to #{ca}\n"
+            unless AdSync.in_group(ad_user, groups[caa])
+              changed = true
+              if AdSync.add_user_to_group(ad_user, groups[ca]) == false
+                log << "\tWarning: Needed to add to #{ca} but operation failed\n"
+              else
+                log << "\tAdded to #{ca}\n"
+              end
             end
           end
         end
       end
+      
+      unless changed
+        log << "\tUp to date.\n"
+      end
     end
+    
+    timestamp_finish = Time.now
+    
+    log << "\nAD Sync took " + (timestamp_finish - timestamp_start).to_s + "s\n"
     
     # Email the log
     WheneverMailer.adsync_report(log.string).deliver!
