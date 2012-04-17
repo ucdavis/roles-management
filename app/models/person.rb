@@ -1,6 +1,4 @@
 class Person < ActiveRecord::Base
-  #versioned
-  
   belongs_to :title
   has_many :affiliation_assignments
   has_many :affiliations, :through => :affiliation_assignments
@@ -30,6 +28,11 @@ class Person < ActiveRecord::Base
   # Compute their classifications based on their title
   def classifications
     title.classifications
+  end
+  
+  # An OU is a group with a (title) code
+  def ous
+    groups.where(Group.arel_table[:code].not_eq(nil))
   end
   
   # Compute roles

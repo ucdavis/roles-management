@@ -154,13 +154,13 @@ namespace :ldap do
             
             if( p.affiliations.collect { |x| x.name }.include? "student:graduate" )
               # Graduate student 'ou's are determined not by the ou entry but by the 
-              ou = Ou.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Ou.create(:name => ucdStudentMajor)
+              ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
               # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
               ou.save!
             else
               unless ou.nil?
                 # Not a graduate student: p["ou"] entry is reliable
-                ou = Ou.find(:first, :conditions => [ "lower(name) = ?", ou.downcase ]) || Ou.create(:name => ou)
+                ou = Group.find(:first, :conditions => [ "lower(name) = ?", ou.downcase ]) || Group.create(:name => ou)
                 # Assume dept codes match name strings
                 if ou.code.nil?
                   ou.code = ucdAppointmentDepartmentCode
@@ -172,8 +172,8 @@ namespace :ldap do
                 # Find or create the manager (if we see the rest of their data later, it will be updated accordingly)
                 manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]["manager"])
                 # Avoid duplicate managers
-                unless ou.managers.exists? manager
-                  ou.managers << manager
+                unless ou.owners.exists? manager
+                  ou.owners << manager
                 end
             
                 p.managers << manager
@@ -185,8 +185,8 @@ namespace :ldap do
               end
             end
         
-            unless p.ous.include? ou or ou.nil?
-              p.ous << ou
+            unless p.groups.include? ou or ou.nil?
+              p.groups << ou
             end
     
             if p.valid? == false
@@ -211,14 +211,10 @@ namespace :ldap do
     if Rails.env != "production"
       Person.destroy_all
       Group.destroy_all
-      Ou.destroy_all
       RoleAssignment.destroy_all
-      OuAssignment.destroy_all
       ApplicationOuAssignment.destroy_all
       Affiliation.destroy_all
       GroupRule.delete_all
-      OuChildrenAssignment.destroy_all
-      OuManagerAssignment.destroy_all
       AffiliationAssignment.destroy_all
       PersonManagerAssignment.destroy_all
       Classification.destroy_all
