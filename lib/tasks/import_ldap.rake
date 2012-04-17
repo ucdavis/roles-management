@@ -43,8 +43,7 @@ namespace :ldap do
       manualFilter = []
       manualFilter << '(uid=' + args[:loginid] + ')'
       
-      log << "\t" + manualFilter + "\n"
-      log << "\t(only one loginid was requested for import)\n"
+      log << "\t" + manualFilter.join(",") + "\n"
     else
       # Did not specify a loginid - import everyone
       
@@ -82,7 +81,7 @@ namespace :ldap do
         manualFilter << '(uid=' + m + ')'
       end
       
-      log << "\t" + manualFilter + "\n"
+      log << "\t" + manualFilter.join(",") + "\n"
     end
 
     log << "\n"
