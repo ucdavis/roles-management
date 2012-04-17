@@ -1,10 +1,14 @@
 require 'rake'
+require 'stringio'
 load 'AdSync.rb'
 
 namespace :ad do
   desc 'Sync the user database with Active Directory'
   task :sync do
     Rake::Task['environment'].invoke
+    
+    # Keep a log to e-mail to the admins
+    log = StringIO.new
     
     # Cached groups list
     groups = {}
@@ -15,24 +19,24 @@ namespace :ad do
       abort "Could not load group dss-us-auto-all"
     end
     
-    i = 0
+    i = 1
     length = Person.all.length
-    Person.all.each do |p|
-      puts "Syncing individual #{i} of #{length}"
-      i = i + 1
+    Person.first(3).each do |p|
+      log << "Syncing individual #{i} of #{length}\n"
+      i += 1
       
       ad_user = AdSync.fetch_user(p.loginid)
       if ad_user.nil?
-        puts "Could not find user in AD #{p.loginid}"
+        log << "Could not find user in AD #{p.loginid}\n"
       else
-        puts "Found user #{p.loginid} in AD"
+        log << "Found user #{p.loginid} in AD\n"
       end
       
       # Write them to all group (dss-us-auto-all)
       if AdSync.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
-        puts "Could not add #{p.loginid} to dss-us-auto-all"
+        log << "Could not add #{p.loginid} to dss-us-auto-all\n"
       else
-        puts "Added #{p.loginid} to dss-us-auto-all"
+        log << "Added #{p.loginid} to dss-us-auto-all\n"
       end
       
       p.affiliations.each do |affiliation|
@@ -48,9 +52,9 @@ namespace :ad do
               groups[caa] = AdSync.fetch_group(caa)
             end
             if AdSync.add_user_to_group(ad_user, groups[caa]) == false
-              puts "Could not add #{p.loginid} to #{caa}"
+              log << "Could not add #{p.loginid} to #{caa}\n"
             else
-              puts "Added #{p.loginid} to #{caa}"
+              log << "Added #{p.loginid} to #{caa}\n"
             end
             
             # Write them to cluster-all (dss-us-#{ou_to_short}-all)
@@ -60,14 +64,17 @@ namespace :ad do
               groups[ca] = AdSync.fetch_group(ca)
             end
             if AdSync.add_user_to_group(ad_user, groups[ca]) == false
-              puts "Could not add #{p.loginid} to #{ca}"
+              log << "Could not add #{p.loginid} to #{ca}\n"
             else
-              puts "Added #{p.loginid} to #{ca}"
+              log << "Added #{p.loginid} to #{ca}\n"
             end
           end
         end
       end
     end
+    
+    # Email the log
+    WheneverMailer.adsync_report(log).deliver!
   end
 end
 
