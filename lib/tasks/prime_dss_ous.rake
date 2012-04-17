@@ -15,11 +15,11 @@ namespace :ucd do
       {:code => "040210", :parent => "040390"}]
     
     ous.each do |o|
-      ou = Ou.find_by_code(o[:code])
-      parent = Ou.find_by_code(o[:parent])
+      ou = Group.find_by_code(o[:code])
+      parent = Group.find_by_code(o[:parent])
       
       unless ou.nil?
-        puts "Found OU with code #{o[:code]}"
+        puts "Found OU (group) with code #{o[:code]}"
         # Ensure 'ou' belongs to 'parent'
         unless ou.parents.include? parent
           puts "Adding parent with code #{o[:parent]}"
@@ -31,6 +31,5 @@ namespace :ucd do
         puts "Could not find OU with code #{o[:code]}"
       end
     end
-    
   end
 end
