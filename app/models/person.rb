@@ -16,10 +16,6 @@ class Person < ActiveRecord::Base
   has_many :application_manager_assignments, :foreign_key => "manager_id"
   has_many :application_ownerships, :through => :application_manager_assignments, :source => :application
   
-  #has_many :ous, :through => :ou_assignments
-  #has_many :ou_assignments
-  #has_many :ou_manager_assignments
-
   has_many :group_manager_assignments
   
   validates_presence_of :loginid
@@ -46,16 +42,16 @@ class Person < ActiveRecord::Base
     end
     
     # Add roles via OU defaults
-    ous.each do |ou|
-      ou.applications.each do |application|
-        application.roles.where(:default => true).each do |role|
-          # Ensure there are no duplicates
-          unless roles.include? role
-            roles << role
-          end
-        end
-      end
-    end
+    #ous.each do |ou|
+    #  ou.applications.each do |application|
+    #    application.roles.where(:default => true).each do |role|
+    #      # Ensure there are no duplicates
+    #      unless roles.include? role
+    #        roles << role
+    #      end
+    #    end
+    #  end
+    #end
 
     # Add roles via public defaults
     #Role.includes(:application).where( :default => true ).each do |role|
@@ -87,16 +83,16 @@ class Person < ActiveRecord::Base
     end
     
     # Add apps via OU defaults
-    ous.each do |ou|
-      ou.applications.each do |application|
-        application.roles.where(:default => true).each do |role|
-          # Ensure there are no duplicates
-          unless apps.include? role.application
-            apps << role.application
-          end
-        end
-      end
-    end
+    #ous.each do |ou|
+    #  ou.applications.each do |application|
+    #    application.roles.where(:default => true).each do |role|
+    #      # Ensure there are no duplicates
+    #      unless apps.include? role.application
+    #        apps << role.application
+    #      end
+    #    end
+    #  end
+    #end
     
     # Add apps open to the public
     # DON'T DO THIS - default role does not imply public access
