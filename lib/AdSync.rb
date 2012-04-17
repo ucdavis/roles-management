@@ -83,8 +83,10 @@ module AdSync
   
   # Returns true if 'user' is in 'group' (both objects should be queried using fetch_user and fetch_group)
   def AdSync.in_group(user, group)
-    if user.member_of? group
-      return true
+    unless user.nil? or group.nil?
+      if user.member_of? group
+        return true
+      end
     end
     
     return false
