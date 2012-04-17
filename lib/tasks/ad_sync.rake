@@ -74,7 +74,7 @@ namespace :ad do
     end
     
     # Email the log
-    WheneverMailer.adsync_report(log).deliver!
+    WheneverMailer.adsync_report(log.string).deliver!
   end
 end
 
