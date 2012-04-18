@@ -11,8 +11,8 @@ class Person < ActiveRecord::Base
   has_many :subordinate_relationships, :class_name => "PersonManagerAssignment", :foreign_key => "manager_id"
   has_many :subordinates, :through => :subordinate_relationships, :source => :subordinate
   
-  has_many :application_manager_assignments, :foreign_key => "manager_id"
-  has_many :application_ownerships, :through => :application_manager_assignments, :source => :application
+  has_many :application_owner_assignments, :foreign_key => "owner_id"
+  has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
   
   has_many :group_manager_assignments
   

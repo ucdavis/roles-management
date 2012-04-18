@@ -1,7 +1,7 @@
 class Application < ActiveRecord::Base
   has_many :roles
-  has_many :application_manager_assignments
-  has_many :managers, :through => :application_manager_assignments
+  has_many :application_owner_assignments
+  has_many :owners, :through => :application_owner_assignments
   after_save :ensure_access_role_exists
   before_save :ensure_api_key_exists, :set_default_properties
   validate :has_at_least_one_role
