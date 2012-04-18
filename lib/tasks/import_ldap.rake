@@ -127,7 +127,9 @@ namespace :ldap do
             # A person may have multiple affiliations
             entry.get_values('ucdPersonAffiliation').each do |affiliation_name|
               affiliation = Affiliation.find_or_create_by_name(affiliation_name)
-              p.affiliations << affiliation
+              unless p.affiliations.include? affiliation
+                p.affiliations << affiliation
+              end
             end
             
             # Set title: take the original unless there is a translation from UcdLookups
