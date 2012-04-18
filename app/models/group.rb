@@ -17,6 +17,8 @@ class Group < ActiveRecord::Base
   
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule"
   
+  validates :name, :presence => true
+  
   attr_accessible :name, :people_tokens, :people_ids, :description, :rules_attributes, :owner_tokens, :member_tokens
   attr_reader :people_tokens
   

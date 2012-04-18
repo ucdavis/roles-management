@@ -15,9 +15,15 @@
         <%= link_to "Rights Management", root_url, :class => "brand" %>
         <div class="nav-collapse">
           <ul class="nav">
-            <%= li_link_with_class({:title => 'Manage', :controller => 'applications', :action => 'index'}) %>
-            <%= li_link_with_class({:title => 'Templates', :controller => 'templates', :action => 'index'}) %>
-            <%= li_link_with_class({:title => 'Settings', :controller => 'site', :action => 'settings'}) %>
+            <% permitted_to? :index, :applications do %>
+              <%= li_link_with_class({:title => 'Manage', :controller => 'applications', :action => 'index'}) %>
+            <% end %>
+            <% permitted_to? :index, :templates do %>
+              <%= li_link_with_class({:title => 'Templates', :controller => 'templates', :action => 'index'}) %>
+            <% end %>
+            <% permitted_to? :index, :settings do %>
+              <%= li_link_with_class({:title => 'Settings', :controller => 'site', :action => 'settings'}) %>
+            <% end %>
           </ul>
         </div><!-- /.nav-collapse -->
       </div>

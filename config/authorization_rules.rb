@@ -6,6 +6,6 @@ authorization do
     has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate]
   end
   role :user do
-    has_permission_on [:groups], :to => [:show, :new, :create, :edit, :update, :destroy]
+    has_permission_on [:groups, :applications], :to => [:index, :show, :new, :create, :edit, :update, :destroy]
   end
 end

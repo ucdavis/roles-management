@@ -3,7 +3,7 @@ class Person < ActiveRecord::Base
   has_many :affiliation_assignments
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
   
-  has_and_belongs_to_many :groups
+  has_and_belongs_to_many :groups, :uniq => true
   has_many :role_assignments
   
   has_many :person_manager_assignments
@@ -16,7 +16,9 @@ class Person < ActiveRecord::Base
   
   has_many :group_manager_assignments
   
-  validates_presence_of :loginid
+  validates :loginid, :presence => true, :uniqueness => true
+  validates :first, :presence => true
+  validates :last, :presence => true
   
   attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens
   attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
@@ -190,6 +192,9 @@ class Person < ActiveRecord::Base
         syms << role.token.underscore.to_sym
       end
     end
+    
+    # All people in the database have the default role of 'user'
+    syms << "user".to_sym
     
     syms
   end
