@@ -131,6 +131,8 @@ $(function() {
   site.register_role = function(entity, role, dom_only) {
     if(dom_only == undefined) { dom_only = false; }
     
+    console.log("Register role called");
+    
     // Update the DOM
     // Only do this if the current user has management access to the app
     if($("div.card[data-application-id=" + role.application_id + "]").length > 0) {
