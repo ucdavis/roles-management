@@ -4,7 +4,7 @@
   <div class="span9">
     
     <form class="form-search">
-      <input placeholder="Search applications…" type="text" class="input-xxlarge search-query">
+      <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_applications", :placeholder => "Search applications…" } %>
     </form>
     
     <% current_user.manageable_applications.each_with_index do |app, i| %>

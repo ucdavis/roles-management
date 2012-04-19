@@ -289,19 +289,12 @@
       });
     }
   
-    if($("#application_ou_tokens").length > 0) {
+    if($("#application_owner_tokens").length > 0) {
       // Application details modal
-      $("#application_ou_tokens").tokenInput($("#application_ou_tokens").attr("method") + ".json", {
-        crossDomain: false,
-        defaultText: "Everybody",
-        prePopulate: $("#application_ou_tokens").data("pre"),
-        theme: "facebook"
-      });
-    
-      $("#application_manager_tokens").tokenInput($("#application_manager_tokens").attr("method") + ".json", {
+      $("#application_owner_tokens").tokenInput($("#application_owner_tokens").attr("method") + ".json", {
         crossDomain: false,
         defaultText: "",
-        prePopulate: $("#application_manager_tokens").data("pre"),
+        prePopulate: $("#application_owner_tokens").data("pre"),
         theme: "facebook"
       });
     
