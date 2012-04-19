@@ -21,13 +21,11 @@ namespace :ad do
       log << "Error: Could not load group dss-us-auto-all\n"
     end
     
-    i = 1
     length = Person.all.length
-    Person.all.each do |p|
+    Person.all.each_with_index do |p, i|
       changed = false # flag used to indicate whether we should print 'no changes' or not for each record
       
       log << "Syncing #{p.loginid} (#{i} of #{length})\n"
-      i += 1
       
       ad_user = AdSync.fetch_user(p.loginid)
       if ad_user.nil?
@@ -178,7 +176,7 @@ def ou_to_short(name)
   when "CENTER FOR INNOVATION STUDIES"
     "CSIS"
   else
-    puts "Missing OU: #{name}"
+    Rails.logger.info "AD Sync: Missing OU for translation to container name: #{name}"
   end
 end
 
@@ -207,6 +205,6 @@ def flatten_affiliation(affiliation)
   when "faculty"
     "faculty"
   else
-    puts "Missing affiliation: #{affiliation}"
+    Rails.logger.info "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
   end
 end

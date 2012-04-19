@@ -32,28 +32,3 @@
 </div>
 
 <div id="modal_container"></div>
-
-<script type="text/javascript">
-// Construction availbility list
-<% current_user.owns.each do |group| %>
-  //site.add_to_available_list(<%= group.to_json.html_safe %>);
-<% end %>
-<% current_user.subordinates.each do |person| %>
-  //site.add_to_available_list(<%= person.to_json.html_safe %>);
-<% end %>
-
-// Construct the initial pin layout
-// Groups
-<% current_user.owns.each do |group| %>
-  <% group.roles.each do |role| %>
-    //site.register_role( <%= group.to_json.html_safe %>, <%= role.to_json.html_safe %>, true )
-  <% end %>
-<% end %>
-
-// People
-<% current_user.subordinates.each do |person| %>
-  <% person.roles.each do |role| %>
-    //site.register_role( <%= person.to_json.html_safe %>, <%= role.to_json.html_safe %>, true )
-  <% end %>
-<% end %>
-</script>
