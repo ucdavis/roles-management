@@ -14,63 +14,12 @@
 
 // Template-wide Javascript (setting up tabs, buttons, common callbacks, etc.)
 (function (template, $, undefined) {
-  // 'scope' allows setup of a sidebar within a portion of the DOM. Optional.
-  template.setup_sidebar = function (scope) {
-    scope = typeof(scope) != 'undefined' ? scope : $(document);
-    
-    // Hide all sidebar content
-    scope.find(".sidebar_content").hide();
-    
-    // Open a specific tab based on anchors in the URL.
-  	if(window.location.hash && window.location.hash.match('sb')) {
-  		scope.find("ul.sidemenu li a[href="+window.location.hash+"]").parent().addClass("active").show();
-  		scope.find(".block .sidebar_content#"+window.location.hash).show();
-  	} else {
-  		scope.find("ul.sidemenu li:first-child").addClass("active").show();
-  		scope.find(".block .sidebar_content:first").show();
-  	}
-
-  	scope.find("ul.sidemenu li").click(function() {
-  		var activeTab = $(this).find("a").attr("href");
-  		window.location.hash = activeTab;
-	
-  		$(this).parent().find('li').removeClass("active");
-  		$(this).addClass("active");
-  		$(this).parents('.block').find(".sidebar_content").hide();			
-  		$(activeTab).show();
-      
-  		return false;
-  	});
-  }
-  
   template.status_text = function(message) {
     $("div.status_bar").show().html(message);
   }
   
   template.hide_status = function() {
     $("div.status_bar").hide();
-  }
-  
-  template.setup_default_text = function(scope) {
-    scope = typeof(scope) != 'undefined' ? scope : $(document);
-    
-    scope.on("focus", "input[data-default-text]", function(srcc) {
-      if($(this).attr("readonly") != "readonly") {
-        if($(this).val() == $($(this)[0]).attr("data-default-text")) {
-          $(this).removeClass("default_text_active");
-          $(this).val("");
-        }
-      }
-    });
-    scope.on("blur", "input[data-default-text]", function() {
-      if ($(this).val() == "") {
-        $(this).addClass("default_text_active");
-        $(this).val($($(this)[0]).attr("data-default-text"));
-      }
-    });
-    scope.find("input[data-default-text]").each(function() {
-    	$(this).blur();
-    });
   }
 } (window.template = window.template || {}, jQuery));
 
@@ -129,9 +78,6 @@ $(function() {
     var loginid = $("input[name=fetch_ldap_details_field]").val();
     document.location.href = document.location.href + "/" + loginid;
   });
-	
-	template.setup_sidebar();
-  template.setup_default_text();
 	
 	// Search
 	$('form.search .text').bind('click', function() { $(this).attr('value', ''); }).on('keyup', function(el) {
