@@ -83,6 +83,20 @@ module AdSync
   
   # Returns true if 'user' is in 'group' (both objects should be queried using fetch_user and fetch_group)
   def AdSync.in_group(user, group)
+    settings = {
+        :host => AD_GROUPS_SETTINGS['host'],
+        :base => AD_GROUPS_SETTINGS['base'],
+        :port => 636,
+        :encryption => :simple_tls,
+        :auth => {
+          :method => :simple,
+          :username => AD_GROUPS_SETTINGS['user'],
+          :password => AD_GROUPS_SETTINGS['pass']
+        }
+    }
+
+    ActiveDirectory::Base.setup(settings)
+    
     unless user.nil? or group.nil?
       if user.member_of? group
         return true
