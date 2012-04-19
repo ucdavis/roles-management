@@ -15,7 +15,11 @@
     <div class="card span4" data-application="<%= app.to_json %>" data-application-id="<%= app.id %>">
       <div class="card-title"><h3><%= app.display_name %></h3><i class="icon-search" id="entity_details"></i></div>
       <div class="card-content">
-        <div class="pins"></div>
+        <div class="pins">
+          <% app.roles.each do |role| %>
+          <div class="pin"><a href="#"><%= role.descriptor %></a></div>
+          <% end %>
+        </div>
       </div>
 	  </div> <!-- card -->
   <% end %>

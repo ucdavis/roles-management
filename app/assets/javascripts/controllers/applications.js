@@ -1,59 +1,6 @@
 // Not a site-wide JS file - the name implies use for the 'Site' controller
 
 $(function() {
-  // Set up the drag-and-drop
-  $( "div.pins" ).droppable({
-    activeClass: "ui-state-default",
-    hoverClass: "ui-state-hover",
-    accept: ":not(.ui-sortable-helper)",
-    activate: function( event, ui ) {
-      // Ensure draggable is the correct width
-      $(ui.helper).width($("ul.pins").width());
-    },
-    drop: function( event, ui ) {
-      // Get the app ID for this card based on where they dropped the pin
-      var app = $.parseJSON($(this).parent().parent().attr("data-application"));
-      var entity = $(ui.draggable).data("pin-entity");
-	    
-      // Ensure this entity isn't already dragged onto this card
-      if($("div.card[data-application-id=" + app.id + "] div.pins div.pin[data-entity-id=" + entity.id + "]").length == 0) {
-        // Determine the default and mandatory roles for this application and pass them all along
-  	    for(var i = 0; i < app.roles.length; i++) { 
-          if(app.roles[i].default == true || app.roles[i].mandatory == true) {
-  	  	    site.register_role(entity, app.roles[i]);
-          }
-  	    }
-      }
-    }
-  }).sortable({
-    items: "li:not(.placeholder)",
-    sort: function() {
-      // gets added unintentionally by droppable interacting with sortable
-      // using connectWithSortable fixes this, but doesn't allow you to customize active/hoverClass options
-      $( this ).removeClass( "ui-state-default" );
-    }
-  });
-  
-  // Set up the new group button functionality
-  $("ul.pins li.new").click(site.new_group_pin_click);
-  
-  // Set up the virtual application preferences
-  $("div.card div.card_head").hover(
-    function() {
-      // hover in
-      $(this).children("i").css("display", "block");
-    },
-    function() {
-      // hover out
-      $(this).children("i").css("display", "none");
-    }
-  );
-  
-  // Set up the impersonate functionality
-  $("p.user a#impersonate_switch").click(function() {
-    site.impersonate_dialog();
-  });
-  
   site.initialize();
 });
 
@@ -65,6 +12,59 @@ $(function() {
   
   // Constructor of sorts
   site.initialize = function() {
+    // Set up the drag-and-drop
+    $( "div.pins" ).droppable({
+      activeClass: "ui-state-default",
+      hoverClass: "ui-state-hover",
+      accept: ":not(.ui-sortable-helper)",
+      activate: function( event, ui ) {
+        // Ensure draggable is the correct width
+        $(ui.helper).width($("ul.pins").width());
+      },
+      drop: function( event, ui ) {
+        // Get the app ID for this card based on where they dropped the pin
+        var app = $.parseJSON($(this).parent().parent().attr("data-application"));
+        var entity = $(ui.draggable).data("pin-entity");
+	    
+        // Ensure this entity isn't already dragged onto this card
+        if($("div.card[data-application-id=" + app.id + "] div.pins div.pin[data-entity-id=" + entity.id + "]").length == 0) {
+          // Determine the default and mandatory roles for this application and pass them all along
+    	    for(var i = 0; i < app.roles.length; i++) { 
+            if(app.roles[i].default == true || app.roles[i].mandatory == true) {
+    	  	    site.register_role(entity, app.roles[i]);
+            }
+    	    }
+        }
+      }
+    }).sortable({
+      items: "li:not(.placeholder)",
+      sort: function() {
+        // gets added unintentionally by droppable interacting with sortable
+        // using connectWithSortable fixes this, but doesn't allow you to customize active/hoverClass options
+        $( this ).removeClass( "ui-state-default" );
+      }
+    });
+  
+    // Set up the new group button functionality
+    $("ul.pins li.new").click(site.new_group_pin_click);
+  
+    // Set up the virtual application preferences
+    $("div.card div.card_head").hover(
+      function() {
+        // hover in
+        $(this).children("i").css("display", "block");
+      },
+      function() {
+        // hover out
+        $(this).children("i").css("display", "none");
+      }
+    );
+  
+    // Set up the impersonate functionality
+    $("p.user a#impersonate_switch").click(function() {
+      site.impersonate_dialog();
+    });
+    
     // Set up search bar across top
     $("form.search input#card_search").keyup(function() {
       var value = $(this).val();
@@ -107,7 +107,6 @@ $(function() {
     $("div.card .card-title i").click(function() {
       site.entity_details('4' + $(this).parent().parent().data("application-id"));
     });
-    
   }
   
   // Displays the virtual application preferences for administrators
