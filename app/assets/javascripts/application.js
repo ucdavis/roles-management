@@ -55,18 +55,6 @@ $(function() {
     theme: "facebook"
   });
   
-  $("#ou_parent_tokens").tokenInput($("#ou_parent_tokens").attr("method") + ".json", {
-    crossDomain: false,
-    prePopulate: $("#ou_parent_tokens").data("pre"),
-    theme: "facebook"
-  });
-
-  $("#ou_manager_tokens").tokenInput($("#ou_manager_tokens").attr("method") + ".json", {
-    crossDomain: false,
-    prePopulate: $("#ou_manager_tokens").data("pre"),
-    theme: "facebook"
-  });
-
   $("#classification_title_tokens").tokenInput($("#classification_title_tokens").attr("method") + ".json", {
     crossDomain: false,
     prePopulate: $("#classification_title_tokens").data("pre"),
@@ -77,27 +65,6 @@ $(function() {
   $("input[name=fetch_ldap_details]").click(function() {
     var loginid = $("input[name=fetch_ldap_details_field]").val();
     document.location.href = document.location.href + "/" + loginid;
-  });
-	
-	// Search
-	$('form.search .text').bind('click', function() { $(this).attr('value', ''); }).on('keyup', function(el) {
-    var value = $(this).val();
-    
-    // Show all first
-    $(this).parent().parent().children("ul.pins").children("li").show();
-    
-    // Hide whatever doesn't match the search term
-    if(value != "") {
-      $.each($(this).parent().parent().children("ul.pins").children("li"), function(el) {
-        // Don't filter the 'Create new group' pin
-        if($(this).attr("class") != "new") {
-          var regex = new RegExp("^" + value + ".*$", "i");
-          if($(this).attr("data-search-value").match(regex) == null) {
-            $(this).hide();
-          }
-        }
-      });
-    }
   });
 	
   // Fix AJAX headers

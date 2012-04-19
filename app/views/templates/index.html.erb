@@ -1,5 +1,6 @@
 <%= javascript_include_tag "controllers/applications.js" %>
 <%= javascript_include_tag "controllers/" + params[:controller] %>
+<%= javascript_include_tag "cards" %>
 
 <script type="text/javascript">
   templates.templates = $.parseJSON('<%= @templates.map{|x| x.name}.to_json.html_safe %>');

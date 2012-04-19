@@ -28,21 +28,6 @@ $(function() {
     });
   });
   
-  // Allow clicking on templates to trigger their adherents
-  $("div.card").on('click', function() {
-    // Unhighlight other cards
-    $("div.card").css("box-shadow", "").css("border", "");
-    
-    // Highlight this card
-    $(this).css("box-shadow", "#333 0 0 10px").css("border", "1px solid #777");
-    
-    // Re-sort the highlighted availability list based on who uses this template
-    site.sort_availability($(this).data("uids"));
-    
-    // Record it
-    templates.selected_template = $(this);
-  });
-  
   // Toggle template assignments on click
   $("#master_list>li").click(function() {
     if(templates.selected_template) {
