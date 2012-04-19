@@ -119,16 +119,16 @@ class Person < ActiveRecord::Base
     roles.each { |role| apps << role.application }
 
     # Add apps via OU defaults
-    ous.each do |ou|
-      ou.applications.each do |application|
-        application.roles.where(:default => true).each do |role|
-          # Ensure there are no duplicates
-          unless apps.include? role.application
-            apps << role.application
-          end
-        end
-      end
-    end
+    #ous.each do |ou|
+    #  ou.applications.each do |application|
+    #    application.roles.where(:default => true).each do |role|
+    #      # Ensure there are no duplicates
+    #      unless apps.include? role.application
+    #        apps << role.application
+    #      end
+    #    end
+    #  end
+    #end
     
     # Add apps via public defaults
     # DON'T DO THIS - default role does not imply public access
