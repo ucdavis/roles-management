@@ -63,7 +63,6 @@ $(function() {
       // Update UI
       var uids = $(templates.selected_template).data("uids");
       uids = _.without(uids, $(this).data("id"));
-      console.log(uids);
       $(templates.selected_template).data("uids", uids);
       site.sort_availability(uids);
     }

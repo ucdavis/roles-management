@@ -367,7 +367,6 @@ $(function() {
     });
     
     if(typeof ids == "undefined") return;
-    if(ids.length == 0) return;
     
     // Generate a list of matching li elements
     var matched_lis = $("#master_list>li").map(function(o, i) {
