@@ -1,16 +1,17 @@
 == DSS Roles Management
 
-Roles Management (RM) is a people, roles, and application management web application
-and service developed by the UC Davis Division of Social Science.
+Roles Management (RM) is a people, roles, and application management web
+application and service developed by the UC Davis Division of Social Science.
 
 == Requirements
 
-RM was written for Ruby 1.9 and Rails 3.2 and is deployed using Unicorn and PostgreSQL.
+RM was written for Ruby 1.9 and Rails 3.2 and is deployed using Unicorn and
+PostgreSQL.
 
 == Deployment
 
-RM is designed to be re-deployable in any organization, though there are a few matters
-of configuration that need to be attended to:
+RM is designed to be re-deployable in any organization, though there are a few
+matters of configuration that need to be attended to:
 
 config/database.yml.example
 	Move this file to config/database.yml and set the appropriate values.
@@ -19,24 +20,24 @@ config/api_keys.yml.example
 	Move this file to config/api_keys.yml and set the appropriate values.
 
 config/environment.rb
-	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If you
-	decide to remove CAS, also remove the before_filter in
+	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If
+  you decide to remove CAS, also remove the before_filter in
 	app/controllers/application_controller.rb.
 
 config/deploy.rb
 	You'll likely want to set this to your own Capistrano setup or delete it
 	if you do not use Capistrano.
 
-You can also search the code for "INSTALLME" (case-sensitive) in case this README
-is out of date.
+You can also search the code for "INSTALLME" (case-sensitive) in case this
+README is out of date.
 
 == Technical Notes
 === Universal ID Convention
 There's an important convention regarding the polymorphism of people, groups,
-and OUs. For various reasons, we need a global ID for these objects, but the schema
-doesn't provide for one. The convention is very simple: a leading digit is placed
-in front of the actual ID (regardless of whether it's a person, group, or OU) to
-indicate which it is:
+and OUs. For various reasons, we need a global ID for these objects, but the
+schema doesn't provide for one. The convention is very simple: a leading digit
+is placed in front of the actual ID (regardless of whether it's a person,
+group, or OU) to indicate which it is:
 
   Leading digit
   -------------
@@ -45,29 +46,33 @@ indicate which it is:
   3 = OU
   4 = application (not usually exposed)
 
-You almost never need to know this if you properly query against the RESTful API,
-e.g., /api/search.json will return IDs in this convention, and /api/resolve.json will
-accept them and work just fine.
+You almost never need to know this if you properly query against the RESTful
+API, e.g., /api/search.json will return IDs in this convention, and
+/api/resolve.json will accept them and work just fine.
 
-If you are adding anything to /api, be sure to follow this convention for all output.
+If you are adding anything to /api, be sure to follow this convention for all
+output.
 
-To keep things clear, these UIDs are presumed to be the ID given unless you're working
-directly in the model's class. If you are unsure if a function uses the UID correctly,
-simply look the individual or group up in the database and see if a prefix has been added.
+To keep things clear, these UIDs are presumed to be the ID given unless you're
+working directly in the model's class. If you are unsure if a function uses
+the UID correctly, simply look the individual or group up in the database and
+see if a prefix has been added.
 
 === Mandatory vs Default Roles
 A role (permission template) has both a default and mandatory boolean.
 
-If a role is default, that implies any person or group assigned to that application or
-belonging to an OU or group assigned to that application will take that permission
-automatically. This behavior is reversed when default is turned off.
+If a role is default, that implies any person or group assigned to that
+application or belonging to an OU or group assigned to that application will
+take that permission automatically. This behavior is reversed when default is
+turned off.
 
-If a role is mandatory, it will _not_ appear to the user, and _must_ be assigned. This
-is only used for the "access" role, representing the implied role a person or group
-gains when they are dragged into that application.
+If a role is mandatory, it will _not_ appear to the user, and _must_ be
+assigned. This is only used for the "access" role, representing the implied
+role a person or group gains when they are dragged into that application.
 
-If this does not make sense, ignore mandatory. It is set and utilized by the code and
-does not need to be turned on or off by an administration. It is purely internal.
+If this does not make sense, ignore mandatory. It is set and utilized by the
+code and does not need to be turned on or off by an administration. It is
+purely internal.
 
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
