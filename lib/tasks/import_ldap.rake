@@ -250,7 +250,11 @@ namespace :ldap do
     log << "LDAP import took " + (timestamp_finish - timestamp_start).to_s + "s\n"
     
     # Email the log
-    WheneverMailer.ldap_report(log.string).deliver!
+    # E-mail to each RM admin (anyone with 'admin' permission on this app)
+    admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+    Role.find_by_id(admin_role_id).people.each do |admin|
+      WheneverMailer.ldap_report(admin.email, log.string).deliver!
+    end
   end
   
   desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'

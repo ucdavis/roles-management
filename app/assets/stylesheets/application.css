@@ -182,6 +182,10 @@ div#modal_container tr.fields button {
   margin-left: 4px;
 }
 
+.modal td input[type=checkbox] {
+  margin: -8px 0px 0 15px;
+}
+
 /* Twitter Bootstrap modifications (check here for problems when upgrading) */
 /* TB assumes .tab-content>.tab-pane but we have .tab-content>form>.tab-pane in details modals */
 .tab-content .tab-pane {display: none;}
