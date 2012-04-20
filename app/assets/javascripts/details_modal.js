@@ -70,7 +70,7 @@
       details_modal.group_edits['entity_id'] = $("form.edit_group input[name=entity_id]").val();
       details_modal.group_edits['name'] = $("form.edit_group input#group_name").val();
       $("form.edit_group").trigger("submit.rails");
-    } else if($("#application_ou_tokens").length > 0) {
+    } else if($("#application_owner_tokens").length > 0) {
       details_modal.application_edits['app_id'] = $("form.edit_application input[name=app_id]").val();
       details_modal.application_edits['display_name'] = $("form.edit_application input#application_display_name").val();
       details_modal.application_edits['description'] = $("form.edit_application input#application_description").val();
@@ -313,36 +313,5 @@
         details_modal.application_edits = [];
       });
     }
-  
-    $("button#edit").click(function() {
-      // Button toggles edit mode
-      if($(this).html() == "Edit") {
-        // Turning editing on
-        $(this).html("Done").css("color", "#db6c67");
-        details_modal.switch_mode(details_modal.EDIT_MODE);
-      } else {
-        // Turning editing off
-        $(this).html("Edit").css("color", "#000");
-        // And save the form, of course
-        details_modal.save();
-        // Switch back to 'view' _last_ - it disables elements that causes form elements not be to submitted
-        details_modal.switch_mode(details_modal.VIEW_MODE);
-      }
-    }).hover(
-      // fix jQuery's CSS hover mistake. TODO: fix this using css / apprise patching instead?
-      function() {
-        $(this).css("color", "#db6c67");
-      },
-      function() {
-        if($(this).html() == "Edit") {
-          $(this).css("color", "#000");
-        } else {
-          $(this).css("color", "#1eaaeb");
-        }
-      }
-    );
-  
-    // Assume view mode
-    //details_modal.switch_mode(details_modal.VIEW_MODE);
   }
 } (window.details_modal = window.details_modal || {}, jQuery));
