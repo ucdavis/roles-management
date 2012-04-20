@@ -366,6 +366,7 @@ $(function() {
       $(this).remove(); // it is a cloned element and safe to delete
     });
     
+    if(typeof ids == "undefined") return;
     if(ids.length == 0) return;
     
     // Generate a list of matching li elements

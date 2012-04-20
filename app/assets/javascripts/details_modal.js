@@ -7,56 +7,6 @@
   details_modal.group_edits = [];
   details_modal.application_edits = [];
   
-  details_modal.switch_mode = function(mode) {
-    switch(mode) {
-      case details_modal.EDIT_MODE:
-      // Turn on inputs
-      $("div#details_view .sidebar_content input:not(.submit),textarea")
-        .css("border", "1px solid #bbb")
-        .attr("readonly", false);
-      // Turn on token inputs
-      $("div#entity_details .token_input").each(function() {
-        $(this).tokenInput("toggleDisabled", {disable: false});
-      });
-      // Turn on dropdowns
-      $("div#entity_details select")
-        .removeClass("disabled")
-        .attr("disabled", false);
-      // Turn on any anchor-based controls
-      $("div#entity_details a.edit_mode").show();
-      // Turn on any 'JS submit' buttons
-      $("div#entity_details input.submit").show();
-      // Show unchecked boxes
-      $("div#entity_details input[type=checkbox]:not(:checked)").show();
-      // Enable the other checkboxes
-      $("div#entity_details input[type=checkbox]:checked").removeAttr("disabled");
-      break;
-      case details_modal.VIEW_MODE:
-      // Turn off inputs
-      $("div#details_view .sidebar_content input,textarea")
-        .css("border", "1px solid #fff")
-        .attr("readonly", true);
-      // Turn off token inputs
-      $("div#entity_details .token_input").each(function() {
-        $(this).tokenInput("toggleDisabled", {disable: true});
-      });
-      // Turn off dropdowns
-      $("div#entity_details select")
-        .addClass("disabled")
-        .attr("disabled", true);
-      // Turn off any anchor-based controls
-      $("div#entity_details a.edit_mode").hide();
-      // Turn off any 'JS submit' buttons
-      $("div#entity_details input.submit").hide();
-      // Hide unchecked boxes
-      $("div#entity_details input[type=checkbox]:not(:checked)").hide();
-      // Disable remaining checkboxes
-      $("div#entity_details input[type=checkbox]:checked").attr("disabled", true);
-      break;
-      default: break;
-    }
-  }
-  
   // Save whatever's in the modal
   details_modal.save = function() {
     template.status_text("Saving changes...");
@@ -208,6 +158,12 @@
   }
   
   details_modal.init = function() {
+    // Ensure the save button works
+    $(".modal #save").click(function() {
+      details_modal.save();
+      $(".modal").modal('hide');
+    });
+    
     if($("#person_ou_tokens").length > 0) {
       // Person details modal
       $("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
