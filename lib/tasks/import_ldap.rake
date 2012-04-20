@@ -89,6 +89,8 @@ namespace :ldap do
     # Query LDAP
     Person.transaction do
       for f in [staffFilter,facultyFilter,studentFilter] + manualFilter
+        record_log = StringIO.new # this log may or may not be added to the master 'log' depending on data sync states
+        
         unless f.length == 0
           conn.search(ldap_settings['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
             # TODO: Instead of merely setting fields, check if they've changed!
@@ -108,7 +110,7 @@ namespace :ldap do
               loginid = eduPersonPrincipalName.slice(0, eduPersonPrincipalName.index("@"))
             end
             
-            log << "Processing LDAP record for #{loginid}\n"
+            record_log << "Processing LDAP record for #{loginid}\n"
             
             # Find or create the Person object
             p = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
@@ -204,7 +206,7 @@ namespace :ldap do
               else
                 # Dept code doesn't exist
                 unless ucdAppointmentDepartmentCode.nil?
-                  log << "\tWarning: Could not find a deptartment code translation for " + ucdAppointmentDepartmentCode + "\n"
+                  record_log << "\tWarning: Could not find a deptartment code translation for " + ucdAppointmentDepartmentCode + "\n"
                 end
               end
             end
@@ -214,19 +216,22 @@ namespace :ldap do
             end
     
             if p.valid? == false
-              log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
-              log << "\tReason(s):\n"
+              record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
+              record_log << "\tReason(s):\n"
               p.errors.messages.each do |field,reason|
-                log << "\t\tField #{field} #{reason}\n"
+                record_log << "\t\tField #{field} #{reason}\n"
               end
             else
               if p.changed? == false
-                log << "\tNo changes for #{p.loginid}\n"
+                record_log << "\tNo changes for #{p.loginid}\n"
               else
-                log << "\tUpdating the following for #{p.loginid}:\n"
+                record_log << "\tUpdating the following for #{p.loginid}:\n"
                 p.changes.each do |field,changes|
-                  log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
+                  record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
                 end
+                
+                # Save this record log to the master log as it contains changes
+                log << record_log.string
               end
               p.save!
             end
