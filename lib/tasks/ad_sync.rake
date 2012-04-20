@@ -101,7 +101,10 @@ namespace :ad do
     log << "\nFinished. AD Sync took " + (timestamp_finish - timestamp_start).to_s + "s\n"
     
     # Email the log
-    WheneverMailer.adsync_report(log.string).deliver!
+    admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+    Role.find_by_id(admin_role_id).people.each do |admin|
+      WheneverMailer.adsync_report(admin.email, log.string).deliver!
+    end
   end
 end
 

@@ -8,14 +8,10 @@ class WheneverMailer < ActionMailer::Base
     mail(:to => user.email, :subject => "A Test E-Mail from roles.dss.ucdavis.edu")
   end
   
-  def adsync_report(log)
+  def adsync_report(email, log)
     @log = log
-    # E-mail to each RM admin (anyone with 'admin' permission on this app)
-    admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-    Role.find_by_id(admin_role_id).people.each do |admin|
-      logger.info "Sending AD Sync report e-mail to #{admin.email}..."
-      mail(:to => admin.email, :subject => "DSS-RM: AD Sync Report for %s" % [Time.now.strftime("%A %B %d, %Y")])
-    end
+    logger.info "Sending AD Sync report e-mail to #{email}..."
+    mail(:to => email, :subject => "DSS-RM: AD Sync Report for %s" % [Time.now.strftime("%A %B %d, %Y")])
   end
   
   def ldap_report(email, log)
