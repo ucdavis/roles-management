@@ -1,12 +1,20 @@
 == DSS Roles Management
 
 Roles Management (RM) is a people, roles, and application management web
-application and service developed by the UC Davis Division of Social Science.
+application developed by the UC Davis Division of Social Science.
+
+The purpose of DSS RM is to allow anyone with subordinate employees and
+virtual appliances (file servers, mailing lists, web applications) to
+manage and assign their people and groups whatever permissions they wish
+without requiring the help of IT.
 
 == Requirements
 
 RM was written for Ruby 1.9 and Rails 3.2 and is deployed using Unicorn and
-PostgreSQL.
+PostgreSQL. It has been tested on Apache and Nginix and should run fine on
+Linux, Mac OS X, and Windows. It has not been tested with Microsoft's
+IronRuby, and as of this writing, IronRuby does not support Ruby 1.9, which
+is a requirement for this application.
 
 == Deployment
 
@@ -28,8 +36,13 @@ config/deploy.rb
 	You'll likely want to set this to your own Capistrano setup or delete it
 	if you do not use Capistrano.
 
-You can also search the code for "INSTALLME" (case-sensitive) in case this
-README is out of date.
+config/schedule.rb
+  This file controls when cron jobs run to sync databases. It is currently
+  set up to do so at night, but you should change the time in this file if
+  you'd like anything else.
+
+You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
+in case this README neglects any configuration details.
 
 == Technical Notes
 === Universal ID Convention
@@ -66,13 +79,9 @@ application or belonging to an OU or group assigned to that application will
 take that permission automatically. This behavior is reversed when default is
 turned off.
 
-If a role is mandatory, it will _not_ appear to the user, and _must_ be
-assigned. This is only used for the "access" role, representing the implied
-role a person or group gains when they are dragged into that application.
-
-If this does not make sense, ignore mandatory. It is set and utilized by the
-code and does not need to be turned on or off by an administration. It is
-purely internal.
+If a role is mandatory, it will _not_ appear to the user, and _will_ be
+assigned. This is mostly used for the "access" role, representing the implied
+role a person or group gains when they are assigned to that application.
 
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
