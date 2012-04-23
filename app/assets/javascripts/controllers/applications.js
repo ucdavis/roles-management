@@ -28,15 +28,14 @@ $(function() {
     $("p.user a#impersonate_switch").click(function() {
       site.impersonate_dialog();
     });
-    
+        
     $("#search_applications").typeahead({
       source: function(query, maxResults, callback) {
-        // Create the list of applications
+        // Populate the search drop down
         apps = []
         var exact_match_found = false;
         _.each(_.rest(site.applications, 1), function(app) {
           if(~app.display_name.toLowerCase().indexOf(query.toLowerCase())) {
-            console.log(app.display_name.toLowerCase().indexOf(query.toLowerCase()));
             if(app.display_name.toLowerCase() == query.toLowerCase()) exact_match_found = true;
             apps.push({id: app.id, label: app.display_name });
           }
@@ -48,36 +47,13 @@ $(function() {
         
         callback(apps);
       },
-      valueField: 'id', // field in items to be used for the value of the item
-      labelField: 'label' // field in items to be used for the displayable value of the item
+      valueField: 'id',
+      labelField: 'label'
     });
     
-    // Set up search bar across top
-    $("form.search input#card_search").keyup(function() {
-      var value = $(this).val();
-      
-      if(value.length > 0) {
-        var re = new RegExp(value, "i");
-      
-        // Search the card titles
-        var matched_cards = $("div.card").map(function(o, i) {
-          var card_title = $(this).find("div.card_head h2:first").html();
-        
-          if(card_title.search(re) != -1) {
-            return $(this);
-          }
-        
-          return null;
-        });
-      
-        // Show only the matching cards
-        $("div.card").hide();
-        $(matched_cards).each(function() {
-          $(this).show();
-        });
-      } else {
-        $("div.card").show();
-      }
+    // .typeahead won't be called if they clear the field but we still need to update the visual filtering
+    $("#search_applications").keyup(function() {
+      cards.visual_filter($(this).val());
     });
     
     // Establish hover for application details

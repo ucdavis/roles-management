@@ -25,4 +25,31 @@ $(function() {
     });
     
   }
+  
+  // Shows and hides the div.card elements based on 'query' matching each .card-title>h3
+  cards.visual_filter = function(query) {
+    // Also filter the application cards themselves
+    if(query.length > 0) {
+      var re = new RegExp(query, "i");
+      
+      // Search the card titles
+      var matched_cards = $("div.card").map(function(o, i) {
+        var card_title = $(this).find(".card-title h3:first").html();
+            
+        if(card_title.search(re) != -1) {
+          return $(this);
+        }
+        
+        return null;
+      });
+      
+      // Show only the matching cards
+      $("div.card").hide();
+      $(matched_cards).each(function() {
+        $(this).show();
+      });
+    } else {
+      $("div.card").show();
+    }
+  }
 } (window.cards = window.cards || {}, jQuery));
