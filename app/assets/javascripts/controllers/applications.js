@@ -12,9 +12,6 @@ $(function() {
   
   // Constructor of sorts
   site.initialize = function() {
-    // Set up the new group button functionality
-    $("ul.pins li.new").click(site.new_group_pin_click);
-  
     // Set up the virtual application preferences
     $("div.card div.card_head").hover(
       function() {
@@ -30,6 +27,29 @@ $(function() {
     // Set up the impersonate functionality
     $("p.user a#impersonate_switch").click(function() {
       site.impersonate_dialog();
+    });
+    
+    $("#search_applications").typeahead({
+      source: function(query, maxResults, callback) {
+        // Create the list of applications
+        apps = []
+        var exact_match_found = false;
+        _.each(_.rest(site.applications, 1), function(app) {
+          if(~app.display_name.toLowerCase().indexOf(query.toLowerCase())) {
+            console.log(app.display_name.toLowerCase().indexOf(query.toLowerCase()));
+            if(app.display_name.toLowerCase() == query.toLowerCase()) exact_match_found = true;
+            apps.push({id: app.id, label: app.display_name });
+          }
+        });
+        if(exact_match_found == false) {
+          // Add the option to create a new one with this query
+          apps.push({id: -1, label: "Create " + query});
+        }
+        
+        callback(apps);
+      },
+      valueField: 'id', // field in items to be used for the value of the item
+      labelField: 'label' // field in items to be used for the displayable value of the item
     });
     
     // Set up search bar across top

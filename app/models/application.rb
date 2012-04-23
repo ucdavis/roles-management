@@ -26,7 +26,7 @@ class Application < ActiveRecord::Base
   end
   
   def as_json(options={}) 
-    { :id => self.id, :name => self.name, :roles => self.roles } 
+    { :id => self.id, :name => self.name, :roles => self.roles, :display_name => self.display_name } 
   end
   
   # Returns all people associated with any role of this app
