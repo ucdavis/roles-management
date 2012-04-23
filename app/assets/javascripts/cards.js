@@ -7,6 +7,7 @@ $(function() {
 (function (cards, $, undefined) {
   cards.cards = null; // will be filled in using the view
   cards.selected_card = null;
+  cards.template = null;
   
   cards.initialize = function() {
     // Allow clicking on cards to trigger their adherents
@@ -24,6 +25,12 @@ $(function() {
       cards.selected_card = $(this);
     });
     
+    // Render the application cards
+    cards.template = $("#tmpl-card").html();
+    _.each(site.applications, function(app) {
+      var compiledTmpl = _.template(cards.template, { app: app });
+      $("div#cards").append(compiledTmpl);
+    });
   }
   
   // Shows and hides the div.card elements based on 'query' matching each .card-title>h3

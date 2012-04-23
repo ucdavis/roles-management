@@ -11,6 +11,12 @@
 //= require details_modal
 //= require_self
 
+// Let Underscore know we'll be using Mustache-style templates
+_.templateSettings = {
+    interpolate: /\{\{\=(.+?)\}\}/g,
+    evaluate: /\{\{(.+?)\}\}/g
+};
+
 // Template-wide Javascript (setting up tabs, buttons, common callbacks, etc.)
 (function (template, $, undefined) {
   template.status_text = function(message) {

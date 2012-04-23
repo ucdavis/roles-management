@@ -1,6 +1,19 @@
 <%= javascript_include_tag "controllers/" + params[:controller] %>
 <%= javascript_include_tag "cards" %>
 
+<script id="tmpl-card" type="text/template">
+  <div class="card span4" data-application="{{= app.json }}" data-application-id="{{= app.id }}">
+      <div class="card-title"><h3>{{= app.display_name }}</h3><i class="icon-search" id="entity_details"></i></div>
+      <div class="card-content">
+        <div class="pins">
+          {{ _.each(app.roles, function(role) { }}
+          <div class="pin"><a href="#">{{= role.descriptor }}</a></div>
+          {{ }) }}
+        </div>
+      </div>
+	  </div> <!-- card -->
+</script>
+
 <div class="row-fluid">
   <div class="span9">
     
@@ -13,21 +26,9 @@
       site.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
       site.current_user_id = <%= current_user.id %>;
     </script>
-    <div class="card span4" data-application="<%= app.to_json %>" data-application-id="<%= app.id %>">
-      <div class="card-title"><h3><%= app.display_name %></h3><i class="icon-search" id="entity_details"></i></div>
-      <div class="card-content">
-        <div class="pins">
-          <% app.roles.each do |role| %>
-          <div class="pin"><a href="#"><%= role.descriptor %></a></div>
-          <% end %>
-        </div>
-      </div>
-	  </div> <!-- card -->
-    
-    <% if i % 2 == 1 %>
-      <div style="clear: left;"></div>
     <% end %>
-  <% end %>
+    
+    <div id="cards"></div>
   
   </div> <!-- /.span9 -->
   <div class="span3">
