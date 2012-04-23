@@ -88,12 +88,10 @@ namespace :ldap do
 
     # Query LDAP
     Person.transaction do
-      for f in [staffFilter,facultyFilter,studentFilter] + manualFilter
-        record_log = StringIO.new # this log may or may not be added to the master 'log' depending on data sync states
-        
+      for f in [staffFilter,facultyFilter,studentFilter] + manualFilter        
         unless f.length == 0
           conn.search(ldap_settings['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
-            # TODO: Instead of merely setting fields, check if they've changed!
+            record_log = StringIO.new # this log may or may not be added to the master 'log' depending on data sync states
             
             # First, determine their login ID from the principal name
             eduPersonPrincipalName = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
