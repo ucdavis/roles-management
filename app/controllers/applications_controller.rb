@@ -39,8 +39,6 @@ class ApplicationsController < ApplicationController
   # POST /applications
   def create
     @application = Application.new(params[:application])
-    
-    @application.api_key = generate_api_key(@application)
 
     respond_to do |format|
       if @application.save
@@ -54,8 +52,10 @@ class ApplicationsController < ApplicationController
         @application.roles << r
         
         format.html { redirect_to(@application, :notice => 'Application was successfully created.') }
+        format.json { render json: @application, status: :created, location: @application }
       else
         format.html { render :action => "new" }
+        format.json { render json: @application.errors, status: :unprocessable_entity }
       end
     end
   end

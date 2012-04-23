@@ -9,6 +9,10 @@
 	<%= csrf_meta_tag %>
 </head>
 <body>
+  <script type="text/javascript">
+  current_user_id = <%= current_user.id %>
+  </script>
+  
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">

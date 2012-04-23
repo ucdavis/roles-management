@@ -49,11 +49,26 @@ $(function() {
       },
       valueField: 'id',
       labelField: 'label'
-    });
-    
-    // .typeahead won't be called if they clear the field but we still need to update the visual filtering
-    $("#search_applications").keyup(function() {
+    }).keyup(function() {
+      // .typeahead won't be called if they clear the field but we still need to update the visual filtering
       cards.visual_filter($(this).val());
+    }).change(function() {
+      var selected_id = $(this).attr('data-value');
+      
+      if(selected_id == -1) {
+        template.status_text("Creating application...");
+        // They want to create a new application
+        var application = {};
+        application.name = $(this).val().slice(7); // cut off the "Create " at the beginning
+        application.owner_ids = [current_user_id];
+        $.ajax({ url: Routes.applications_path() + ".json", data: {application: application}, type: 'POST'}).always(
+          function(data) {
+            template.hide_status();
+            console.log(data);
+          }
+        );
+        
+      }
     });
     
     // Establish hover for application details
