@@ -53,6 +53,12 @@ namespace :ad do
         unless p.ous.length == 0
           short_ou = ou_to_short(p.ous[0].name)
           flattened_affiliation = flatten_affiliation(affiliation.name)
+          
+          # Skip unknown translations (they will be logged though)
+          if ((short_ou == false) || (flattened_affiliation == false))
+            next
+          end
+          
           unless short_ou.nil? or flattened_affiliation.nil?
             # Write them to cluster-affiliation-all
             caa = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
@@ -185,6 +191,8 @@ def ou_to_short(name)
   else
     Rails.logger.info "AD Sync: Missing OU for translation to container name: #{name}"
   end
+  
+  return false
 end
 
 def flatten_affiliation(affiliation)
@@ -214,4 +222,6 @@ def flatten_affiliation(affiliation)
   else
     Rails.logger.info "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
   end
+  
+  return false
 end
