@@ -13,16 +13,19 @@ $(function() {
   // Constructor of sorts
   site.initialize = function() {
     // Set up the virtual application preferences
-    $("div.card div.card_head").hover(
-      function() {
-        // hover in
+    $("div#left").on("mouseenter mouseleave", "div#cards div.card div.card-title", function(e) {
+      if(e.type == "mouseenter") {
         $(this).children("i").css("display", "block");
-      },
-      function() {
+      } else {
         // hover out
         $(this).children("i").css("display", "none");
       }
-    );
+    });
+    
+    // Establish hover for application details
+    $("div#left").on("click", "div#cards div.card div.card-title i", function() {
+      site.entity_details('4' + $(this).parent().parent().data("application-id"));
+    });
   
     // Set up the impersonate functionality
     $("p.user a#impersonate_switch").click(function() {
@@ -69,21 +72,6 @@ $(function() {
         );
         
       }
-    });
-    
-    // Establish hover for application details
-    $("div.card .card-title").hover(
-      function() {
-        // hover in
-        $(this).children("i").css("display", "block");
-      },
-      function() {
-        // hover out
-        $(this).children("i").css("display", "none");
-      }
-    );
-    $("div.card .card-title i").click(function() {
-      site.entity_details('4' + $(this).parent().parent().data("application-id"));
     });
   }
   
