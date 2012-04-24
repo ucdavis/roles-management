@@ -42,15 +42,6 @@ class ApplicationsController < ApplicationController
 
     respond_to do |format|
       if @application.save
-        # Also create the mandatory, default "access" role
-        r = Role.new
-        r.token = "access"
-        r.default = false
-        r.mandatory = true
-        r.descriptor = "Access"
-        r.description = "Allow access to this application"
-        @application.roles << r
-        
         format.html { redirect_to(@application, :notice => 'Application was successfully created.') }
         format.json { render json: @application, status: :created, location: @application }
       else
