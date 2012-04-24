@@ -10,6 +10,21 @@ $(function() {
   cards.template = null;
   
   cards.initialize = function() {
+    // Set up the virtual card preferences
+    $("div#left").on("mouseenter mouseleave", "div#cards div.card div.card-title", function(e) {
+      if(e.type == "mouseenter") {
+        $(this).children("i").css("display", "block");
+      } else {
+        // hover out
+        $(this).children("i").css("display", "none");
+      }
+    });
+    
+    // Establish hover for card details
+    $("div#left").on("click", "div#cards div.card div.card-title i", function() {
+      applications.entity_details('4' + $(this).parent().parent().data("application-id"));
+    });
+    
     // Allow clicking on cards to trigger their adherents
     $("div.card").on('click', function() {
       // Unhighlight other cards
@@ -19,7 +34,7 @@ $(function() {
       $(this).css("box-shadow", "#333 0 0 10px").css("border", "1px solid #777");
     
       // Re-sort the highlighted availability list based on who uses this template
-      site.sort_availability($(this).data("uids"));
+      applications.sort_availability($(this).data("uids"));
     
       // Record it
       cards.selected_card = $(this);
@@ -27,7 +42,7 @@ $(function() {
     
     // Render the application cards
     cards.template = $("#tmpl-card").html();
-    _.each(site.applications, function(app) {
+    _.each(applications.applications, function(app) {
       var compiledTmpl = _.template(cards.template, { app: app });
       $("div#cards").append(compiledTmpl);
     });

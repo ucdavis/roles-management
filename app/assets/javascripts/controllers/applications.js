@@ -1,43 +1,28 @@
 // Not a site-wide JS file - the name implies use for the 'Site' controller
 
 $(function() {
-  site.initialize();
+  applications.initialize();
 });
 
-(function (site, $, undefined) {
+(function (applications, $, undefined) {
   // Application and role relationship (filled in by index.html.erb)
-  site.applications = [];
-  site.current_user_id = null;
-  site.impersonate_user = null;
+  applications.applications = [];
+  applications.current_user_id = null;
+  applications.impersonate_user = null;
   
   // Constructor of sorts
-  site.initialize = function() {
-    // Set up the virtual application preferences
-    $("div#left").on("mouseenter mouseleave", "div#cards div.card div.card-title", function(e) {
-      if(e.type == "mouseenter") {
-        $(this).children("i").css("display", "block");
-      } else {
-        // hover out
-        $(this).children("i").css("display", "none");
-      }
-    });
-    
-    // Establish hover for application details
-    $("div#left").on("click", "div#cards div.card div.card-title i", function() {
-      site.entity_details('4' + $(this).parent().parent().data("application-id"));
-    });
-  
+  applications.initialize = function() {
     // Set up the impersonate functionality
     $("p.user a#impersonate_switch").click(function() {
-      site.impersonate_dialog();
+      applications.impersonate_dialog();
     });
-        
+    
     $("#search_applications").typeahead({
       source: function(query, maxResults, callback) {
         // Populate the search drop down
         apps = []
         var exact_match_found = false;
-        _.each(_.rest(site.applications, 1), function(app) {
+        _.each(_.rest(applications.applications, 1), function(app) {
           if(~app.display_name.toLowerCase().indexOf(query.toLowerCase())) {
             if(app.display_name.toLowerCase() == query.toLowerCase()) exact_match_found = true;
             apps.push({id: app.id, label: app.display_name });
@@ -68,12 +53,12 @@ $(function() {
           function(data) {
             template.hide_status();
             // Add to the applications list
-            site.applications[data.id] = data;
+            applications.applications[data.id] = data;
             // Render out the card
             var compiledTmpl = _.template(cards.template, { app: data });
             $("div#cards").append(compiledTmpl);
             // Bring up the details window
-            site.entity_details('4' + data.id);
+            applications.entity_details('4' + data.id);
             // Clear out the input
             $("#search_applications").val("");
             cards.visual_filter("");
@@ -85,7 +70,7 @@ $(function() {
   }
   
   // Displays the virtual application preferences for administrators
-  site.prefs = function(app_id) {
+  applications.prefs = function(app_id) {
     details_url = Routes.applications_path() + "/" + app_id;
     
     template.status_text("Fetching details...");
@@ -102,7 +87,7 @@ $(function() {
   
   // Updates or creates pins to represent the roles it's given. Can be called multiple times for the same app/role
   // dom_only = don't make the AJAX call to actually save the permission. Useful when merely constructing the existing list
-  site.register_role = function(entity, role, dom_only) {
+  applications.register_role = function(entity, role, dom_only) {
     if(dom_only == undefined) { dom_only = false; }
     
     console.log("Register role called");
@@ -114,7 +99,7 @@ $(function() {
       if($("div.card[data-application-id=" + role.application_id + "] div.pin[data-entity-id=" + entity.id + "]").length == 0) {
         var el = $( "<div class=\"pin\" data-application-id=\"" + role.application_id + "\" data-entity-id=\"" + entity.id + "\"></div>" );
         var el_html = "<i class=\"icon-search\" id=\"entity_details\"></i><a href=\"#\">" + entity.name + "</a> \
-                       <i class=\"icon-remove\" onClick=\"site.remove_pin($(this));\"></i> \
+                       <i class=\"icon-remove\" onClick=\"applications.remove_pin($(this));\"></i> \
                        <div class=\"pin-content\"></div>";
     
         $(el).html( el_html );
@@ -130,8 +115,8 @@ $(function() {
         );
     
         // Add the permissions list
-        for(var i = 0; i < site.applications[role.application_id].roles.length; i++) {
-          var r = site.applications[role.application_id].roles[i];
+        for(var i = 0; i < applications.applications[role.application_id].roles.length; i++) {
+          var r = applications.applications[role.application_id].roles[i];
           $(el).children("div.pin-content").append("<span class=\"permission\"><input type=\"checkbox\" data-app-id=\"" + role.application_id + "\" data-role-id=\"" + r.id + "\" /> (<b>" + r.descriptor + "</b>) " + r.description + "</span>");
         }
       
@@ -163,7 +148,7 @@ $(function() {
         });
     
         $(el).children("#entity_details").click(function() {
-          site.entity_details(entity.id);
+          applications.entity_details(entity.id);
         });
     
         $(el).children("a").click(function() {
@@ -202,7 +187,7 @@ $(function() {
   }
   
   // Remove a dropped pin from the app list
-  site.remove_pin = function (el) {
+  applications.remove_pin = function (el) {
     // Since this implies removing all permissions, prompt them first on this
     bootbox.confirm("This action will remove all permissions from the entity. Continue?", function(confirmed) {
       if(confirmed) {
@@ -230,7 +215,7 @@ $(function() {
     });
   }
 
-  site.entity_details = function (entity_id) {
+  applications.entity_details = function (entity_id) {
     var entity_type = entity_id.toString()[0];
     var entity_id = entity_id.toString().substr(1);
     var details_url = null;
@@ -258,10 +243,10 @@ $(function() {
   }
   
   // Creates a group for the current user named 'name' and returns the group entity
-  site.create_group = function (name) {
+  applications.create_group = function (name) {
     $.get(Routes.new_group_path() + ".json", function(group) {
       group.name = name;
-      group.owner_tokens = '1' + site.current_user_id;
+      group.owner_tokens = '1' + applications.current_user_id;
       
       template.status_text("Creating group...");
       
@@ -270,19 +255,19 @@ $(function() {
         // Reset the 'New Group' entity
         $("div#groups ul.pins li.new").remove();
         $("div#groups ul.pins").append("<li class=\"new\" data-pin-type=\"group\" data-pin-entity=\"0\">Create New Group</li>");
-        $("ul.pins li.new").click(site.new_group_pin_click);
+        $("ul.pins li.new").click(applications.new_group_pin_click);
         
         // Create a new group pin with the entity and reset the blank 'New Group' one
-        site.add_to_available_list(data);
+        applications.add_to_available_list(data);
       });      
     });
   }
   
-  site.new_group_pin_click = function() {
+  applications.new_group_pin_click = function() {
     $(this).html("<input type=\"text\" style=\"border: 0; background: none; font-size: 12px;\" />");
     $(this).children("input").keypress(function(event) {
       if ( event.which == 13 ) {
-        site.create_group($(this).val());
+        applications.create_group($(this).val());
         
         event.preventDefault();
       }
@@ -290,7 +275,7 @@ $(function() {
     $(this).children("input").focus();
   }
   
-  site.delete_group = function (group_pin) {
+  applications.delete_group = function (group_pin) {
     var group_id = group_pin.id.toString().substr(1);
     
     if (apprise("Really delete this group?",
@@ -311,7 +296,7 @@ $(function() {
     }));
   }
   
-  site.add_to_available_list = function (entity) {
+  applications.add_to_available_list = function (entity) {
     // Person or group entity?
     var type = entity.id.toString()[0];
     
@@ -335,14 +320,14 @@ $(function() {
       $(el).attr("data-pin-type", "person");
       $(el).attr("data-id", entity.id);
       $(el).attr("data-search-value", entity.name);
-      $(el).html("<i class=\"icon-search\" onClick=\"javascript:site.entity_details(" + entity.id + ");\"></i>" + entity.name);
+      $(el).html("<i class=\"icon-search\" onClick=\"javascript:applications.entity_details(" + entity.id + ");\"></i>" + entity.name);
       $("#master_list").append(el);
     } else if (type == '2') {
       // Group
       $(el).attr("data-pin-type", "group");
       $(el).attr("data-id", entity.id);
       $(el).attr("data-search-value", entity.name);
-      $(el).html("<i class=\"icon-remove\" onClick=\"javascript:site.delete_group($(this).parent().data('pin-entity'));\"></i> <i class=\"icon-search\" style=\"float: right; cursor: pointer; display: none;\" onClick=\"javascript:site.entity_details(" + entity.id + ");\"></i>" + entity.name);
+      $(el).html("<i class=\"icon-remove\" onClick=\"javascript:applications.delete_group($(this).parent().data('pin-entity'));\"></i> <i class=\"icon-search\" style=\"float: right; cursor: pointer; display: none;\" onClick=\"javascript:applications.entity_details(" + entity.id + ");\"></i>" + entity.name);
       $(el).addClass("group");
       $("#master_list").append(el);
     } else {
@@ -351,7 +336,7 @@ $(function() {
     }
   }
   
-  site.impersonate_dialog = function() {
+  applications.impersonate_dialog = function() {
     template.status_text("Loading...");
     
     $.get(Routes.admin_dialogs_impersonate_path(), function(data) {
@@ -359,14 +344,14 @@ $(function() {
       apprise(data, {'animate': true, 'verify': true, 'textYes': 'Impersonate', 'textNo': 'Cancel'}, function(impersonate) {
         if(impersonate) {
           // Redirect to impersonation URL
-          window.location.href = Routes.admin_path(site.impersonate_user);
+          window.location.href = Routes.admin_path(applications.impersonate_user);
         }
       });
     });
   }
   
   // Graphically sorts the right-hand availability list based on terms in 'str'
-  site.sort_availability = function(ids) {
+  applications.sort_availability = function(ids) {
     // Clear out the existing list (fade out li elements and destroy since they are clones)
     $("#highlighted_results>li").animate({
       opacity: 0
@@ -417,4 +402,4 @@ $(function() {
       item_offset_y += item_height;
     });
   }
-} (window.site = window.site || {}, jQuery));
+} (window.applications = window.applications || {}, jQuery));
