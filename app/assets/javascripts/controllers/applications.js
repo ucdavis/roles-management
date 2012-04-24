@@ -67,7 +67,16 @@ $(function() {
         $.ajax({ url: Routes.applications_path() + ".json", data: {application: application}, type: 'POST'}).always(
           function(data) {
             template.hide_status();
-            console.log(data);
+            // Add to the applications list
+            site.applications[data.id] = data;
+            // Render out the card
+            var compiledTmpl = _.template(cards.template, { app: data });
+            $("div#cards").append(compiledTmpl);
+            // Bring up the details window
+            site.entity_details('4' + data.id);
+            // Clear out the input
+            $("#search_applications").val("");
+            cards.visual_filter("");
           }
         );
         

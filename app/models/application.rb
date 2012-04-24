@@ -6,8 +6,6 @@ class Application < ActiveRecord::Base
   before_save :ensure_api_key_exists, :set_default_properties
   validate :has_at_least_one_role
   
-  #has_attached_file :icon, :styles => { :normal => "64x64>", :tiny => "16x16>" }
-  
   attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name, :icon, :description, :ad_path, :roles, :roles_attributes, :owner_tokens, :owner_ids
   attr_reader :ou_tokens
   
