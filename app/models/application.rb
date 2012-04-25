@@ -27,19 +27,18 @@ class Application < ActiveRecord::Base
     { :id => self.id, :name => self.name, :roles => self.roles, :display_name => self.display_name } 
   end
   
-  # Returns all people associated with any role of this app
-  def people
-    p = []
+  # Returns all UIDs associated with this app (via roles)
+  def uids
+    uids = []
     
-    # Include explicitly assigned
-    p += roles.collect{ |x| x.people }.flatten
-    # Include people via groups
-    roles.each{ |x| x.groups.each { |y| p += y.members } }
-    # Include people via OUs
+    # People assigned via roles
+    uids += roles.collect{ |x| x.people }.flatten.collect { |x| '1' + x.id.to_s }
     
+    # People assigned via groups assigned to roles
+    uids += roles.collect{ |r| r.groups }.flatten.collect{ |m| m.members }.flatten.collect{ |p| '1' + p.id.to_s }
     
     # Return without duplicates
-    p.inject([]) { |result,h| result << h unless result.include?(h); result }
+    uids.inject([]) { |result,h| result << h unless result.include?(h); result }
   end
   
   private
