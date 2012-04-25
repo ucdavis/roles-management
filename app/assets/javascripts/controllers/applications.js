@@ -296,46 +296,6 @@ $(function() {
     }));
   }
   
-  applications.add_to_available_list = function (entity) {
-    // Person or group entity?
-    var type = entity.id.toString()[0];
-    
-    var el = $("<li data-tooltip=\"Drag these over to the desired applications on the left.\">" + entity.name + "</li>");
-    $(el).data("pin-entity", entity);
-    
-    // Delete button on hover
-    $(el).hover(
-      function() {
-        // mouse enter
-        $(this).children("i").css("display", "block");
-      },
-      function() {
-        // mouse leave
-        $(this).children("i").css("display", "none");
-      }
-    );
-    
-    if(type == '1') {
-      // Person
-      $(el).attr("data-pin-type", "person");
-      $(el).attr("data-id", entity.id);
-      $(el).attr("data-search-value", entity.name);
-      $(el).html("<i class=\"icon-search\" onClick=\"javascript:applications.entity_details(" + entity.id + ");\"></i>" + entity.name);
-      $("#master_list").append(el);
-    } else if (type == '2') {
-      // Group
-      $(el).attr("data-pin-type", "group");
-      $(el).attr("data-id", entity.id);
-      $(el).attr("data-search-value", entity.name);
-      $(el).html("<i class=\"icon-remove\" onClick=\"javascript:applications.delete_group($(this).parent().data('pin-entity'));\"></i> <i class=\"icon-search\" style=\"float: right; cursor: pointer; display: none;\" onClick=\"javascript:applications.entity_details(" + entity.id + ");\"></i>" + entity.name);
-      $(el).addClass("group");
-      $("#master_list").append(el);
-    } else {
-      // Unknown
-      console.log("Cannot add entity to availability list, unknown type.");
-    }
-  }
-  
   applications.impersonate_dialog = function() {
     template.status_text("Loading...");
     

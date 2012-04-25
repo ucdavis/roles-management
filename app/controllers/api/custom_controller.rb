@@ -32,26 +32,26 @@ class Api::CustomController < Api::BaseController
     @entities = []
     
     unless params[:uids].nil?
-      ids = params[:uids].split(",")
+      uids = params[:uids].split(",")
       flatten = params.has_key? :flatten
     
-      ids.each do |id|
-        stripped_id = id[1..-1] # remove leading integer (indicates which object, see README Technical Notes)
-        case id.first.to_i
+      uids.each do |uid|
+        id = uid[1..-1] # remove leading integer (indicates which object, see README Technical Notes)
+        case uid.first.to_i
         when 1
-          p = Person.find_by_id(stripped_id)
+          p = Person.find_by_id(id)
           unless p.nil?
-            @entities << {:name => p.first + ' ' + p.last, :uid => id, :email => p.email}
+            @entities << {:name => p.first + ' ' + p.last, :uid => uid, :email => p.email}
           end
         when 2
-          g = Group.find_by_id(stripped_id)
+          g = Group.find_by_id(id)
           unless g.nil?
             if flatten
               g.people.each do |person|
                 @entities << {:name => person.first + ' ' + person.last, :uid => '1' + person.id.to_s, :email => person.email}
               end
             else
-              @entities << {:name => g.name, :uid => id}
+              @entities << {:name => g.name, :uid => uid}
             end
           end
         end
