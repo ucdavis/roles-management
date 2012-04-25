@@ -34,8 +34,8 @@ class Application < ActiveRecord::Base
     # People assigned via roles
     uids += roles.collect{ |x| x.people }.flatten.collect { |x| '1' + x.id.to_s }
     
-    # People assigned via groups assigned to roles
-    uids += roles.collect{ |r| r.groups }.flatten.collect{ |m| m.members }.flatten.collect{ |p| '1' + p.id.to_s }
+    # Groups assigned via roles
+    uids += roles.collect{ |r| r.groups }.flatten.collect{ |g| '2' + g.id.to_s }
     
     # Return without duplicates
     uids.inject([]) { |result,h| result << h unless result.include?(h); result }

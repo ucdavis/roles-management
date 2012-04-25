@@ -29,56 +29,37 @@ class Api::CustomController < Api::BaseController
   # Add &email to receive email addresses - implies &flatten as groups and OUs have no emails
   # Add &flatten to flatten groups and OUs into their people
   def resolve
-    ids = params[:ids].split(",")
-    include_email = params.has_key? :email
-    flatten = params.has_key? :flatten
+    @entities = []
     
-    # Include e-mail implies flatten as OUs and groups don't have specific e-mail addresses
-    if include_email then flatten = true end
+    unless params[:uids].nil?
+      ids = params[:uids].split(",")
+      flatten = params.has_key? :flatten
     
-    @everything = []
-    
-    ids.each do |id|
-      stripped_id = id[1..-1] # remove leading integer (indicates which object, see README Technical Notes)
-      case id.first.to_i
-      when 1
-        p = Person.find_by_id(stripped_id)
-        if include_email
-          @everything << {:name => p.first + ' ' + p.last, :id => id, :email => p.email}
-        else
-          @everything << {:name => p.first + ' ' + p.last, :id => id}
-        end
-      when 2
-        g = Group.find_by_id(stripped_id)
-        if flatten
-          g.people.each do |person|
-            if include_email
-              @everything << {:name => person.first + ' ' + person.last, :id => person.id, :email => person.email}
+      ids.each do |id|
+        stripped_id = id[1..-1] # remove leading integer (indicates which object, see README Technical Notes)
+        case id.first.to_i
+        when 1
+          p = Person.find_by_id(stripped_id)
+          unless p.nil?
+            @entities << {:name => p.first + ' ' + p.last, :uid => id, :email => p.email}
+          end
+        when 2
+          g = Group.find_by_id(stripped_id)
+          unless g.nil?
+            if flatten
+              g.people.each do |person|
+                @entities << {:name => person.first + ' ' + person.last, :uid => '1' + person.id.to_s, :email => person.email}
+              end
             else
-              @everything << {:name => person.first + ' ' + person.last, :id => person.id}
+              @entities << {:name => g.name, :uid => id}
             end
           end
-        else
-          @everything << {:name => g.name, :id => id}
-        end
-      when 3
-        o = Ou.find_by_id(stripped_id)
-        if flatten
-          o.members.each do |person|
-            if include_email
-              @everything << {:name => person.first + ' ' + person.last, :id => person.id, :email => person.email}
-            else
-              @everything << {:name => person.first + ' ' + person.last, :id => person.id}
-            end
-          end
-        else
-          @everything << {:name => o.name, :id => id}
         end
       end
     end
     
     respond_to do |format|
-      format.json { render :json => @everything, :callback => params[:callback] }
+      format.json { render :json => @entities, :callback => params[:callback] }
     end
   end
   
