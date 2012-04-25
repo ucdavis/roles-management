@@ -33,8 +33,8 @@ $(function() {
       // Highlight this card
       $(this).css("box-shadow", "#333 0 0 10px").css("border", "1px solid #777");
     
-      // Re-sort the highlighted availability list based on who uses this template
-      cards.sort_availability($(this).data("uids"));
+      // Re-sort the sidebar to show the associated people and groups
+      cards.populate_sidebar($(this).data("uids"));
     
       // Record it
       cards.selected_card = $(this);
@@ -76,10 +76,11 @@ $(function() {
   }
   
   // Graphically sorts the right-hand availability list based on terms in 'str'
-  cards.sort_availability = function(ids) {
+  cards.populate_sidebar = function(ids) {
     console.log(ids);
+    
     // Clear out the existing list (fade out li elements and destroy since they are clones)
-    $("#highlighted_results>li").animate({
+    $("#entity_list>li").animate({
       opacity: 0
     }, 200, function() {
       $(this).remove(); // it is a cloned element and safe to delete

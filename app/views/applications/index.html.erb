@@ -2,7 +2,7 @@
 <%= javascript_include_tag "cards" %>
 
 <script id="tmpl-card" type="text/template">
-  <div class="card span4" data-application-id="{{= app.id }}">
+  <div class="card span4" data-application-id="{{= app.id }}" data-uids="{{= app.uids }}">
       <div class="card-title"><h3>{{= app.display_name }}</h3><i class="icon-search" id="entity_details"></i></div>
       <div class="card-content">
         <div class="pins">
