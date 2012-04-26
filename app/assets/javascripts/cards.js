@@ -22,7 +22,7 @@ $(function() {
     
     // Establish hover for card details
     $("div#left").on("click", "div#cards div.card div.card-title i", function() {
-      applications.entity_details('4' + $(this).parent().parent().data("application-id"));
+      cards.entity_details('4' + $(this).parent().parent().data("application-id"));
     });
     
     // Allow clicking on cards to trigger their adherents
