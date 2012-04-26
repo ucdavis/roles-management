@@ -1,27 +1,23 @@
 class Api::CustomController < Api::BaseController
   def search
-    @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
-    @groups = Group.where("name like ?", "%#{params[:q]}%")
-    @ous = Ou.where("name like ?", "%#{params[:q]}%")
-    
-    # Return everything (in the search query)
-    @everything = []
-    
-    @people.each do |person|
-      @everything << {:id => ('1' + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
-    end
-    @groups.each do |group|
-      @everything << {:id => ('2' + group.id.to_s).to_i, :name => group.name }
-    end
-    @ous.each do |ou|
-      @everything << {:id => ('3' + ou.id.to_s).to_i, :name => ou.name }
-    end
+    @results = []
 
-    @everything.map()
+    unless params[:q].nil?
+      @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
+      @groups = Group.where("name like ?", "%#{params[:q]}%")
+    
+      @people.each do |person|
+        @results << {:uid => ('1' + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
+      end
+      @groups.each do |group|
+        @results << {:uid => ('2' + group.id.to_s).to_i, :name => group.name }
+      end
+
+      @results.map()
+    end
 
     respond_to do |format|
-      format.xml
-      format.json { render :json => @everything, :callback => params[:callback] }
+      format.json { render :json => @results, :callback => params[:callback] }
     end
   end
 
