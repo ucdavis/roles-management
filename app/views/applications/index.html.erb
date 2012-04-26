@@ -15,7 +15,7 @@
 </script>
 
 <script id="tmpl-pin" type="text/template">
-  <li><i class="icon-remove" onClick="javascript:applications.delete_group($(this).parent().data('pin-entity'));"></i> <i class="icon-search" onClick="javascript:applications.entity_details({{= entity.id }});"></i>{{= entity.name }}</li>
+  <li data-uid="{{= entity.uid }}"><i class="icon-remove" onClick="javascript:applications.delete_group($(this).parent().data('pin-entity'));"></i> <i class="icon-search"></i>{{= entity.name }}</li>
 </script>
 
 <div class="row-fluid">

@@ -53,7 +53,7 @@ ul.pins li {
   border-radius: 3px;
   background-color: #D9EDF7;
   margin: 3px;
-  cursor: move;
+  /*cursor: move;*/
 }
 
 ul.pins li i {

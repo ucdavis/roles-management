@@ -215,33 +215,6 @@ $(function() {
     });
   }
 
-  applications.entity_details = function (entity_id) {
-    var entity_type = entity_id.toString()[0];
-    var entity_id = entity_id.toString().substr(1);
-    var details_url = null;
-    
-    if(entity_type == '1') {
-      // person
-      details_url = Routes.people_path() + "/" + entity_id;
-    } else if(entity_type == '2') {
-      // group
-      details_url = Routes.groups_path() + "/" + entity_id;
-    } else {
-      // application
-      details_url = Routes.applications_path() + "/" + entity_id;
-    }
-    
-    template.status_text("Fetching details...");
-    
-    $.get(details_url, function(response) {
-      template.hide_status();
-      $("#modal_container").empty();
-      $("#modal_container").append(response);
-      $("#person_modal").modal();
-      details_modal.init();
-    });
-  }
-  
   // Creates a group for the current user named 'name' and returns the group entity
   applications.create_group = function (name) {
     $.get(Routes.new_group_path() + ".json", function(group) {
