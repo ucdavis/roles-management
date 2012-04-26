@@ -248,27 +248,6 @@ $(function() {
     $(this).children("input").focus();
   }
   
-  applications.delete_group = function (group_pin) {
-    var group_id = group_pin.id.toString().substr(1);
-    
-    if (apprise("Really delete this group?",
-    {'verify': true, 'textYes': "Delete Group", 'textNo': "Cancel"}, function(confirm_delete) {
-      if(confirm_delete) {
-        template.status_text("Deleting group...");
-    
-        // Delete the group
-        $.ajax({ url: Routes.group_path(group_id) + ".json", data: {}, type: 'DELETE', complete: function(data, status) {
-          template.hide_status();
-          // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
-          var el = $("ul.pins li[data-group-id=" + group_pin.id + "]");
-          el.fadeOut('fast', function() {
-            $(el).remove();
-          }); // fade out from the DOM
-        }});
-      }
-    }));
-  }
-  
   applications.impersonate_dialog = function() {
     template.status_text("Loading...");
     

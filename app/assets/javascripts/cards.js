@@ -65,6 +65,11 @@ $(function() {
     $("div#right").on("click", "ul.pins>li>i.icon-search", function() {
       cards.entity_details($(this).parent().data("uid"));
     });
+
+    // Enable the delete button for sidebar pins (only works on groups)
+    $("div#right").on("click", "ul.pins>li>i.icon-remove", function() {
+      cards.delete_group($(this).parent().data("uid"));
+    });
   }
   
   // Shows and hides the div.card elements based on 'query' matching each .card-title>h3
@@ -141,4 +146,23 @@ $(function() {
       details_modal.init();
     });
   }
+  
+  cards.delete_group = function(uid) {
+    var id = uid.toString().substr(1);
+    
+    if (apprise("Really delete this group?",
+    {'verify': true, 'textYes': "Delete Group", 'textNo': "Cancel"}, function(confirm_delete) {
+      if(confirm_delete) {
+        template.status_text("Deleting group...");
+    
+        // Delete the group
+        $.ajax({ url: Routes.group_path(id), type: 'DELETE', complete: function(data, status) {
+          template.hide_status();
+          // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
+          var el = $("ul.pins li[data-uid=" + uid + "]");
+          el.fadeOut('fast', function() { $(el).remove(); });
+        }});
+      }
+    }));
+  }  
 } (window.cards = window.cards || {}, jQuery));
