@@ -7,7 +7,7 @@
       <div class="card-content">
         <div class="pins">
           {{ _.each(app.roles, function(role) { }}
-          <div class="pin"><a href="#">{{= role.descriptor }}</a></div>
+          <div class="pin" data-role-id="{{= role.id }}"><a href="#">{{= role.descriptor }}</a></div>
           {{ }) }}
         </div>
       </div>

@@ -7,6 +7,7 @@ $(function() {
 (function (cards, $, undefined) {
   cards.cards = null; // will be filled in using the view
   cards.selected_card = null;
+  cards.selected_role = null;
   cards.template = null;
   
   cards.initialize = function() {
@@ -25,23 +26,65 @@ $(function() {
       cards.entity_details('4' + $(this).parent().parent().data("application-id"));
     });
     
-    // Allow clicking on cards to trigger their adherents
-    $("div#left").on("click", "div#cards div.card", function() {
+    // Allow clicking on blank space to deselect a card
+    $("div#left").on("click", function(event) {
+      event.stopPropagation();
+      
+      cards.selected_card = null;
+      cards.selected_role = null;
+      
       // Unhighlight other cards
       $("div.card").css("box-shadow", "").css("border", "");
+      // Unhighlight any role pins
+      $("div.pin").css("box-shadow", "").css("border", "");
+      
+      // Depopulate the sidebar
+      cards.populate_sidebar("");
+    });
+    // Allow clicking on cards to trigger their adherents
+    $("div#left").on("click", "div#cards div.card", function(event) {
+      event.stopPropagation();
+      
+      // Unhighlight other cards
+      $("div.card").css("box-shadow", "").css("border", "");
+      // Unhighlight any role pins
+      $("div.pin").css("box-shadow", "").css("border", "");
     
       // Highlight this card
-      $(this).css("box-shadow", "#333 0 0 10px").css("border", "1px solid #777");
+      $(this).css("box-shadow", "#08C 0 0 10px").css("border", "1px solid #08C");
     
       // Re-sort the sidebar to show the associated people and groups
       cards.populate_sidebar($(this).data("uids"));
     
       // Record it
       cards.selected_card = $(this);
+      cards.selected_role = null;
       
       // Clear out the sidebar
       $("#search_entities").attr("data-value", null).val("");
     });
+    // Allow clicking on card pins to trigger their role-specific adherents
+    $("div#left").on("click", "div#cards div.card div.pin", function(event) {
+      event.stopPropagation();
+      
+      // Unhighlight other cards
+      $("div.card").css("box-shadow", "").css("border", "");
+      // Unhighlight any role pins
+      $("div.pin").css("box-shadow", "").css("border", "");
+      
+      // Highlight this pin
+      $(this).css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
+    
+      // Re-sort the sidebar to show the associated people and groups
+      //cards.populate_sidebar($(this).data("uids"));
+    
+      // Record it
+      cards.selected_card = $(this).parent().parent().parent();
+      cards.selected_role = $(this).data("role-id");
+      
+      // Clear out the sidebar
+      $("#search_entities").attr("data-value", null).val("");
+    });    
     
     // Render the application cards
     cards.template = $("#tmpl-card").html();
