@@ -70,6 +70,35 @@ $(function() {
     $("div#right").on("click", "ul.pins>li>i.icon-remove", function() {
       cards.delete_group($(this).parent().data("uid"));
     });
+    
+    // Allow searching on the sidebar
+    $("#search_entities").typeahead({
+      source: function(query, maxResults, callback) {
+        // Populate the search drop down
+        if(query.length >= 3) {
+          $.ajax({ url: Routes.api_search_path(), data: { q: query }, type: 'GET' }).always(function(data) {
+            entities = [];
+            _.each(data, function(entity) {
+              entities.push({id: entity.uid, label: entity.name });
+            });
+            callback(entities);
+          });
+        }
+      },
+      valueField: 'id',
+      labelField: 'label'
+    }).keyup(function() {
+      // need to ensure the ID field is cleared on typing
+      $(this).attr('data-value', null);
+    }).change(function() {
+      var uid = $(this).attr('data-value');
+      
+      // They have selected a person. What to do depends on the mode of the UI
+      // Is there a card highlighted? In which case, assign this person
+      if(cards.selected_card && uid) {
+        console.log("need to assign " + uid + " to application " + $(cards.selected_card).data("application-id"));
+      }
+    });
   }
   
   // Shows and hides the div.card elements based on 'query' matching each .card-title>h3
