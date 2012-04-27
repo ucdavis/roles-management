@@ -127,25 +127,11 @@ div.pin {
   list-style-type: none;
 }
 
-div.pin.group {
-  background-color: #DFF0D8;
-  border-color: #D6E9C6;
-}
-
-div.pin.group a {
-  color: #468847;
-}
-
-div.pin i {
-  float: right;
-  display: none;
-  cursor: pointer;
-  margin-top: 2px;
-  margin-left: 6px;
-}
-
-div.pin div.pin-content {
-  display: none;
+div.pin a:hover {
+  text-decoration: inherit;
+  color: #08C;
+  text-shadow: inherit;
+  cursor: default;
 }
 
 input#search_people_groups {
