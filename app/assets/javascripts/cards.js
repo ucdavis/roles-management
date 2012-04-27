@@ -152,11 +152,7 @@ $(function() {
   // Graphically sorts the right-hand availability list based on terms in 'str'
   cards.populate_sidebar = function(uids) {
     // Clear out the existing list (fade out li elements and destroy since they are clones)
-    $("#entity_list>li").animate({
-      opacity: 0
-    }, 200, function() {
-      $(this).remove(); // it is a cloned element and safe to delete
-    });
+    $("#entity_list>li").remove();
     
     if(typeof uids == "undefined") return;
     
