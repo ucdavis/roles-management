@@ -166,8 +166,27 @@ $(function() {
           template.hide_status();
           
           // Update the sidebar list
-          console.log("TODO: Update the sidebar list now that a new assignment has been made.");
+          if(cards.selected_role) {
+            // specific role updated
+            var uids_arr = $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids").split(",");
+            uids_arr.push(uid);
+            $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids", uids_arr.join(","));
+            cards.populate_sidebar(uids_arr.join(","));
+            // also update the general role
+            uids_arr = $(cards.selected_card).data("uids").split(",");
+            uids_arr.push(uid);
+            $(cards.selected_card).data("uids", uids_arr.join(","));
+          } else {
+            // general access role updated
+            var uids_arr = $(cards.selected_card).data("uids").split(",");
+            uids_arr.push(uid);
+            $(cards.selected_card).data("uids", uids_arr.join(","));
+            cards.populate_sidebar(uids_arr.join(","));
+          }
         });
+        
+        // Clear the search field
+        $("#search_entities").attr("data-value", null).val("");
       }
     });
   }
