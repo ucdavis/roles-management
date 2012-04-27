@@ -13,11 +13,10 @@ class RolesController < ApplicationController
 
   # GET /roles/1
   def show
-    @application = Application.find_by_name(params[:application_id])
-    @role = @application.roles.find_by_id(params[:id])
-
+    @role = Role.find_by_id(params[:id])
+    
     respond_to do |format|
-      format.html
+      format.json { render json: @role }
     end
   end
 

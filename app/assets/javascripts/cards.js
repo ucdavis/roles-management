@@ -75,12 +75,12 @@ $(function() {
       // Highlight this pin
       $(this).css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
     
-      // Re-sort the sidebar to show the associated people and groups
-      //cards.populate_sidebar($(this).data("uids"));
-    
       // Record it
       cards.selected_card = $(this).parent().parent().parent();
       cards.selected_role = $(this).data("role-id");
+      
+      // Re-sort the sidebar to show the associated people and groups
+      cards.populate_sidebar($(this).data("uids"));
       
       // Clear out the sidebar
       $("#search_entities").attr("data-value", null).val("");
@@ -145,13 +145,20 @@ $(function() {
         var assignment = {};
         
         assignment.entity_id = uid;
-        assignment.role_id = _.first(_.filter(applications.applications[$(cards.selected_card).data("application-id")].roles, function(role) {
-          if(role.token == "access") {
-            return true;
-          } else {
-            return false;
-          }
-        })).id;
+        if(cards.selected_role) {
+          // A specific role is selected
+          assignment.role_id = cards.selected_role;
+        } else {
+          // No specific role is selected - give them the default
+          
+          assignment.role_id = _.first(_.filter(applications.applications[$(cards.selected_card).data("application-id")].roles, function(role) {
+            if(role.token == "access") {
+              return true;
+            } else {
+              return false;
+            }
+          })).id;
+        }
         
         template.status_text("Saving...");
         
@@ -159,7 +166,7 @@ $(function() {
           template.hide_status();
           
           // Update the sidebar list
-          
+          console.log("TODO: Update the sidebar list now that a new assignment has been made.");
         });
       }
     });

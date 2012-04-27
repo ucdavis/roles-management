@@ -296,6 +296,22 @@
   template_path: function(_id, options) {
   return Utils.build_path(["id"], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
   },
+// roles => /roles(.:format)
+  roles_path: function(options) {
+  return Utils.build_path([], [2,[2,[7,"/",false],[6,"roles",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
+// new_role => /roles/new(.:format)
+  new_role_path: function(options) {
+  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
+// edit_role => /roles/:id/edit(.:format)
+  edit_role_path: function(_id, options) {
+  return Utils.build_path(["id"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
+// role => /roles/:id(.:format)
+  role_path: function(_id, options) {
+  return Utils.build_path(["id"], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)
+  },
 // people => /people(.:format)
   people_path: function(options) {
   return Utils.build_path([], [2,[2,[7,"/",false],[6,"people",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments)

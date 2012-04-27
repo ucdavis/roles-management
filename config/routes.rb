@@ -23,6 +23,7 @@ DSSRM::Application.routes.draw do
   resources :groups
   resources :ous
   resources :templates
+  resources :roles
 
   resources :people do
     collection do
