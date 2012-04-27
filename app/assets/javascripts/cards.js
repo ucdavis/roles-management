@@ -38,6 +38,9 @@ $(function() {
     
       // Record it
       cards.selected_card = $(this);
+      
+      // Clear out the sidebar
+      $("#search_entities").attr("data-value", null).val("");
     });
     
     // Render the application cards
@@ -96,7 +99,25 @@ $(function() {
       // They have selected a person. What to do depends on the mode of the UI
       // Is there a card highlighted? In which case, assign this person
       if(cards.selected_card && uid) {
-        console.log("need to assign " + uid + " to application " + $(cards.selected_card).data("application-id"));
+        var assignment = {};
+        
+        assignment.entity_id = uid;
+        assignment.role_id = _.first(_.filter(applications.applications[$(cards.selected_card).data("application-id")].roles, function(role) {
+          if(role.token == "access") {
+            return true;
+          } else {
+            return false;
+          }
+        })).id;
+        
+        template.status_text("Saving...");
+        
+        $.ajax({ url: Routes.roles_assign_path(), data: {assignment: assignment}, type: 'POST'}).always(function() {
+          template.hide_status();
+          
+          // Update the sidebar list
+          
+        });
       }
     });
   }
