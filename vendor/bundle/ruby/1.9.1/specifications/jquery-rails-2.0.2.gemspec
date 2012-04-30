@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://rubygems.org/gems/jquery-rails"
   s.require_paths = ["lib"]
   s.rubyforge_project = "jquery-rails"
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "Use jQuery with Rails 3"
 
   if s.respond_to? :specification_version then

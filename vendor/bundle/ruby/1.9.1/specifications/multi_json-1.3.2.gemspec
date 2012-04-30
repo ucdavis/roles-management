@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.post_install_message = "********************************************************************************\n\n  MultiJson.encode is deprecated and will be removed in the next major version.\n  Use MultiJson.dump instead.\n\n  MultiJson.decode is deprecated and will be removed in the next major version.\n  Use MultiJson.load instead.\n\n  MultiJson.engine is deprecated and will be removed in the next major version.\n  Use MultiJson.adapter instead.\n\n  MultiJson.engine= is deprecated and will be removed in the next major\n  version. Use MultiJson.use instead.\n\n  MultiJson.default_engine is deprecated and will be removed in the next major\n  version. Use MultiJson.default_adapter instead.\n\n********************************************************************************\n"
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "A gem to provide swappable JSON backends."
 
   if s.respond_to? :specification_version then

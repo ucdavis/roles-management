@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--line-numbers", "--title", "Net::SSH: a pure-Ruby implementation of the SSH2 client protocol.", "--main", "README.rdoc"]
   s.require_paths = ["lib"]
   s.rubyforge_project = "net-ssh"
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "Net::SSH: a pure-Ruby implementation of the SSH2 client protocol."
 
   if s.respond_to? :specification_version then

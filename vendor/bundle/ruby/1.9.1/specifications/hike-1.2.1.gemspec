@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email = ["sstephenson@gmail.com"]
   s.homepage = "http://github.com/sstephenson/hike"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "Find files in a set of paths"
 
   if s.respond_to? :specification_version then

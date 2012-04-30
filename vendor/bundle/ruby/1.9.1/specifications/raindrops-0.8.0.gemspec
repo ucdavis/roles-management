@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["-t", "raindrops - real-time stats for preforking Rack servers", "-W", "http://bogomips.org/raindrops.git/tree/%s"]
   s.require_paths = ["lib"]
   s.rubyforge_project = "rainbows"
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "real-time stats for preforking Rack servers"
 
   if s.respond_to? :specification_version then

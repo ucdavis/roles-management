@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.homepage = ""
   s.require_paths = ["lib"]
   s.rubyforge_project = "sass-rails"
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "Sass adapter for the Rails asset pipeline."
 
   if s.respond_to? :specification_version then

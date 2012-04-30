@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["-t", "kgio - kinder, gentler I/O for Ruby", "-W", "http://bogomips.org/kgio.git/tree/%s"]
   s.require_paths = ["lib"]
   s.rubyforge_project = "rainbows"
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "kinder, gentler I/O for Ruby"
 
   if s.respond_to? :specification_version then

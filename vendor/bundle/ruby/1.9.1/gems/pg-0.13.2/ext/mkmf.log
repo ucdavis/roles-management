@@ -4,7 +4,7 @@ find_executable: checking for pg_config... -------------------- yes
 
 find_header: checking for libpq-fe.h... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib     -lruby.1.9.1  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib     -lruby.1.9.1  -lpthread -ldl -lobjc "
 checked program was:
 /* begin */
 1: #include "ruby.h"
@@ -12,7 +12,7 @@ checked program was:
 3: int main() {return 0;}
 /* end */
 
-"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
+"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
 checked program was:
 /* begin */
 1: #include "ruby.h"
@@ -24,7 +24,7 @@ checked program was:
 
 find_header: checking for libpq/libpq-fs.h... -------------------- yes
 
-"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
+"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
 checked program was:
 /* begin */
 1: #include "ruby.h"
@@ -36,7 +36,7 @@ checked program was:
 
 find_header: checking for pg_config_manual.h... -------------------- yes
 
-"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
+"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
 checked program was:
 /* begin */
 1: #include "ruby.h"
@@ -48,7 +48,7 @@ checked program was:
 
 have_library: checking for PQconnectdb() in -lpq... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib     -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib     -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 checked program was:
 /* begin */
 1: #include "ruby.h"
@@ -64,7 +64,7 @@ checked program was:
 
 have_func: checking for PQconnectionUsedPassword()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘PQconnectionUsedPassword’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -78,7 +78,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))PQconnectionUsedPassword; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘PQconnectionUsedPassword’
 checked program was:
@@ -94,7 +94,7 @@ checked program was:
 
 have_func: checking for PQisthreadsafe()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘PQisthreadsafe’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -108,7 +108,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))PQisthreadsafe; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘PQisthreadsafe’
 checked program was:
@@ -124,7 +124,7 @@ checked program was:
 
 have_func: checking for PQprepare()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘PQprepare’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -138,7 +138,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))PQprepare; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘PQprepare’
 checked program was:
@@ -154,7 +154,7 @@ checked program was:
 
 have_func: checking for PQexecParams()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘PQexecParams’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -168,7 +168,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))PQexecParams; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘PQexecParams’
 checked program was:
@@ -184,7 +184,7 @@ checked program was:
 
 have_func: checking for PQescapeString()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘PQescapeString’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -198,7 +198,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))PQescapeString; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘PQescapeString’
 checked program was:
@@ -214,7 +214,7 @@ checked program was:
 
 have_func: checking for PQescapeStringConn()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘PQescapeStringConn’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -228,7 +228,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))PQescapeStringConn; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘PQescapeStringConn’
 checked program was:
@@ -244,7 +244,7 @@ checked program was:
 
 have_func: checking for PQgetCancel()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘PQgetCancel’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -258,7 +258,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))PQgetCancel; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘PQgetCancel’
 checked program was:
@@ -274,7 +274,7 @@ checked program was:
 
 have_func: checking for lo_create()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘lo_create’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -288,7 +288,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))lo_create; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘lo_create’
 checked program was:
@@ -304,7 +304,7 @@ checked program was:
 
 have_func: checking for pg_encoding_to_char()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘pg_encoding_to_char’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -318,7 +318,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))pg_encoding_to_char; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘pg_encoding_to_char’
 checked program was:
@@ -334,7 +334,7 @@ checked program was:
 
 have_func: checking for pg_char_to_encoding()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘pg_char_to_encoding’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -348,7 +348,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))pg_char_to_encoding; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘pg_char_to_encoding’
 checked program was:
@@ -364,7 +364,7 @@ checked program was:
 
 have_func: checking for PQsetClientEncoding()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘PQsetClientEncoding’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -378,7 +378,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))PQsetClientEncoding; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘PQsetClientEncoding’
 checked program was:
@@ -394,7 +394,7 @@ checked program was:
 
 have_func: checking for rb_encdb_alias()... -------------------- yes
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘rb_encdb_alias’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -408,7 +408,7 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))rb_encdb_alias; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘rb_encdb_alias’
 checked program was:
@@ -424,7 +424,7 @@ checked program was:
 
 have_func: checking for rb_enc_alias()... -------------------- no
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: error: ‘rb_enc_alias’ undeclared (first use in this function)
 conftest.c:5: error: (Each undeclared identifier is reported only once
@@ -438,12 +438,12 @@ checked program was:
 5: int t() { void ((*volatile p)()); p = (void ((*)()))rb_enc_alias; return 0; }
 /* end */
 
-"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
+"gcc -o conftest -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe conftest.c  -L. -L/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/lib -L/Users/cthielen/.rvm/usr/lib -L. -L/usr/local/lib -L/usr/lib    -lpq  -lruby.1.9.1 -lpq  -lpthread -ldl -lobjc "
 conftest.c: In function ‘t’:
 conftest.c:5: warning: implicit declaration of function ‘rb_enc_alias’
 Undefined symbols for architecture x86_64:
   "_rb_enc_alias", referenced from:
-      _t in cc1qdVvr.o
+      _t in cchckxLj.o
 ld: symbol(s) not found for architecture x86_64
 collect2: ld returned 1 exit status
 checked program was:
@@ -459,7 +459,7 @@ checked program was:
 
 have_struct_member: checking for struct pgNotify.extra in libpq-fe.h... -------------------- yes
 
-"gcc -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe   -c conftest.c"
+"gcc -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe   -c conftest.c"
 checked program was:
 /* begin */
 1: #include "ruby.h"
@@ -475,7 +475,7 @@ checked program was:
 
 have_header: checking for unistd.h... -------------------- yes
 
-"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
+"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
 checked program was:
 /* begin */
 1: #include "ruby.h"
@@ -487,7 +487,7 @@ checked program was:
 
 have_header: checking for ruby/st.h... -------------------- yes
 
-"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -g -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
+"gcc -E -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/x86_64-darwin12.0.0 -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/ruby/backward -I/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1 -I. -I/Users/cthielen/.rvm/usr/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -I/usr/include  -O3 -ggdb -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration  -fno-common -pipe  conftest.c -o conftest.i"
 checked program was:
 /* begin */
 1: #include "ruby.h"
@@ -496,4 +496,28 @@ checked program was:
 /* end */
 
 --------------------
+
+extconf.h is:
+/* begin */
+ 1: #ifndef EXTCONF_H
+ 2: #define EXTCONF_H
+ 3: #define HAVE_PQCONNECTIONUSEDPASSWORD 1
+ 4: #define HAVE_PQISTHREADSAFE 1
+ 5: #define HAVE_PQPREPARE 1
+ 6: #define HAVE_PQEXECPARAMS 1
+ 7: #define HAVE_PQESCAPESTRING 1
+ 8: #define HAVE_PQESCAPESTRINGCONN 1
+ 9: #define HAVE_PQGETCANCEL 1
+10: #define HAVE_LO_CREATE 1
+11: #define HAVE_PG_ENCODING_TO_CHAR 1
+12: #define HAVE_PG_CHAR_TO_ENCODING 1
+13: #define HAVE_PQSETCLIENTENCODING 1
+14: #define HAVE_RB_ENCDB_ALIAS 1
+15: #define HAVE_STRUCT_PGNOTIFY_EXTRA 1
+16: #define HAVE_ST_EXTRA 1
+17: #define HAVE_ST_NOTIFY_EXTRA 1
+18: #define HAVE_UNISTD_H 1
+19: #define HAVE_RUBY_ST_H 1
+20: #endif
+/* end */
 

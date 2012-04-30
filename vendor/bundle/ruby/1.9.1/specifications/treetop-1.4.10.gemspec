@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://functionalform.blogspot.com"
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "A Ruby-based text parsing and interpretation DSL"
 
   if s.respond_to? :specification_version then

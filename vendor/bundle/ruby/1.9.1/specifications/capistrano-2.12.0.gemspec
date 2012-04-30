@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.files = ["bin/cap", "bin/capify", "README.mdown"]
   s.homepage = "http://github.com/capistrano/capistrano"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "Capistrano - Welcome to easy deployment with Ruby over SSH"
 
   if s.respond_to? :specification_version then

@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://ruby-ldap.sourceforge.net/"
   s.require_paths = ["lib"]
   s.rubyforge_project = "ruby-ldap"
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "Ruby/LDAP is an extension module for Ruby"
 
   if s.respond_to? :specification_version then

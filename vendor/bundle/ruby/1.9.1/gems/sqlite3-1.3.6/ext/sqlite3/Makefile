@@ -12,11 +12,11 @@ ECHO = $(ECHO1:0=@echo)
 #### Start of system configuration section. ####
 
 srcdir = .
-topdir = /Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1
-hdrdir = /Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1
-arch_hdrdir = /Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/include/ruby-1.9.1/$(arch)
+topdir = /Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1
+hdrdir = /Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1
+arch_hdrdir = /Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/include/ruby-1.9.1/$(arch)
 VPATH = $(srcdir):$(arch_hdrdir)/ruby:$(hdrdir)/ruby
-prefix = $(DESTDIR)/Users/cthielen/.rvm/rubies/ruby-1.9.3-p125
+prefix = $(DESTDIR)/Users/cthielen/.rvm/rubies/ruby-1.9.3-p194
 rubylibprefix = $(libdir)/$(RUBY_BASE_NAME)
 exec_prefix = $(prefix)
 vendorhdrdir = $(rubyhdrdir)/vendor_ruby
@@ -65,7 +65,7 @@ COUTFLAG = -o
 RUBY_EXTCONF_H = 
 cflags   =  $(optflags) $(debugflags) $(warnflags)
 optflags = -O3
-debugflags = -g
+debugflags = -ggdb
 warnflags = -Wextra -Wno-unused-parameter -Wno-parentheses -Wno-long-long -Wno-missing-field-initializers -Wpointer-arith -Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32 -Wimplicit-function-declaration
 CFLAGS   = -fno-common $(cflags)  -fno-common -pipe $(ARCH_FLAG)
 INCFLAGS = -I. -I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir)
@@ -87,7 +87,7 @@ RUBY_SO_NAME = ruby.1.9.1
 arch = x86_64-darwin12.0.0
 sitearch = $(arch)
 ruby_version = 1.9.1
-ruby = /Users/cthielen/.rvm/rubies/ruby-1.9.3-p125/bin/ruby
+ruby = /Users/cthielen/.rvm/rubies/ruby-1.9.3-p194/bin/ruby
 RUBY = $(ruby)
 RM = rm -f
 RM_RF = $(RUBY) -run -e rm -- -rf

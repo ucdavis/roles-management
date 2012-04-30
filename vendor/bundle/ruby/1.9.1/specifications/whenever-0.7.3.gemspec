@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.files = ["bin/whenever", "bin/wheneverize"]
   s.homepage = ""
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.8.21"
+  s.rubygems_version = "1.8.23"
   s.summary = "Cron jobs in ruby."
 
   if s.respond_to? :specification_version then
