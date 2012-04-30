@@ -4,7 +4,7 @@
 */
 
 .card {
-  min-height: 55px;
+  min-height: 25px;
   background-color: whiteSmoke;
   background-repeat: repeat-x;
   border-style: solid;

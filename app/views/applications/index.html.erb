@@ -5,13 +5,15 @@
   <div class="card span4" data-application-id="{{= app.id }}" data-uids="{{= app.uids }}">
       <div class="card-title"><h3>{{= app.display_name }}</h3><i class="icon-search" id="entity_details"></i></div>
       <div class="card-content">
-        <div class="pins">
-          {{ _.each(app.roles, function(role) { }}
-            {{ if(role.token != "access") { }}
-            <div class="pin" data-role-id="{{= role.id }}" data-uids="{{= role.uids }}"><a href="#">{{= role.descriptor }}</a></div>
-            {{ } }}
-          {{ }) }}
-        </div>
+        {{ if(app.roles.length > 1) { }}
+          <div class="pins">
+            {{ _.each(app.roles, function(role) { }}
+              {{ if(role.token != "access") { }}
+              <div class="pin" data-role-id="{{= role.id }}" data-uids="{{= role.uids }}"><a href="#">{{= role.descriptor }}</a></div>
+              {{ } }}
+            {{ }) }}
+          </div>
+        {{ } }}
       </div>
 	  </div> <!-- card -->
 </script>
