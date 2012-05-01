@@ -53,8 +53,10 @@ $(function() {
       // Highlight this card
       $(this).css("box-shadow", "#08C 0 0 10px").css("border", "1px solid #08C");
     
-      // Re-sort the sidebar to show the associated people and groups
-      cards.populate_sidebar($(this).data("uids"));
+      // Re-sort the sidebar to show the associated people and groups (avoid populate_sidebar if they've simply clicked the same area twice)
+      if(!($(cards.selected_card).data("application-id") == $(this).data("application-id") && cards.selected_role == null)) {
+        cards.populate_sidebar($(this).data("uids"));
+      }
     
       // Record it
       cards.selected_card = $(this);
@@ -74,13 +76,15 @@ $(function() {
       
       // Highlight this pin
       $(this).css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
-    
+          
+      // Re-sort the sidebar to show the associated people and groups
+      if(!($(cards.selected_card).data("application-id") == $(this).parent().parent().parent().data("application-id") && cards.selected_role == $(this).data("role-id"))) {
+        cards.populate_sidebar($(this).data("uids"));
+      }
+      
       // Record it
       cards.selected_card = $(this).parent().parent().parent();
       cards.selected_role = $(this).data("role-id");
-      
-      // Re-sort the sidebar to show the associated people and groups
-      cards.populate_sidebar($(this).data("uids"));
       
       // Clear out the sidebar
       $("#search_entities").attr("data-value", null).val("");
@@ -250,6 +254,11 @@ $(function() {
   
   // Graphically sorts the right-hand availability list based on terms in 'str'
   cards.populate_sidebar = function(uids) {
+    //if($("#entity_list").data("uids") == uids) return; // nothing to update
+    
+    // Record the uids to compare against future requests (to avoid redrawing a list with no updates)
+    //$("#entity_list").data("uids", uids);
+    
     // Clear out the existing list (fade out li elements and destroy since they are clones)
     $("#entity_list>li").remove();
     

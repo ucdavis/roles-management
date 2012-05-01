@@ -46,18 +46,6 @@ class Person < ActiveRecord::Base
       roles << assignment.role
     end
     
-    # Add roles via OU defaults
-    #ous.each do |ou|
-    #  ou.applications.each do |application|
-    #    application.roles.where(:default => true).each do |role|
-    #      # Ensure there are no duplicates
-    #      unless roles.include? role
-    #        roles << role
-    #      end
-    #    end
-    #  end
-    #end
-
     # Add roles via public defaults
     #Role.includes(:application).where( :default => true ).each do |role|
       # Avoid duplicates
