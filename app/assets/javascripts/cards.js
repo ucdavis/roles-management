@@ -124,9 +124,18 @@ $(function() {
         if(query.length >= 3) {
           $.ajax({ url: Routes.api_search_path(), data: { q: query }, type: 'GET' }).always(function(data) {
             entities = [];
+            var exact_match_found = false;
             _.each(data, function(entity) {
+              if(query.toLowerCase() == entity.name.toLowerCase()) exact_match_found = true;
               entities.push({id: entity.uid, label: entity.name });
             });
+            
+            if(exact_match_found == false) {
+              // Add the option to create a new one with this query
+              entities.push({id: -1, label: "Add Person " + query});
+              entities.push({id: -2, label: "Create Group " + query});
+            }
+            
             callback(entities);
           });
         }
