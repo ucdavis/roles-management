@@ -201,7 +201,7 @@ class Person < ActiveRecord::Base
 
   # Exports UIDs
   def as_json(options={}) 
-    { :id => ('1' + self.id.to_s).to_i, :name => self.first + " " + self.last } 
+    { :uid => ('1' + self.id.to_s).to_i, :name => self.first + " " + self.last } 
   end
 
   def ou_tokens=(ids)

@@ -19,7 +19,7 @@ class Group < ActiveRecord::Base
   
   validates :name, :presence => true
   
-  attr_accessible :name, :people_tokens, :people_ids, :description, :rules_attributes, :owner_tokens, :member_tokens
+  attr_accessible :name, :people_tokens, :people_ids, :description, :rules_attributes, :owner_tokens, :member_tokens, :owner_ids
   attr_reader :people_tokens
   
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
@@ -126,6 +126,6 @@ class Group < ActiveRecord::Base
   end
   
   def as_json(options={}) 
-    { :id => ('2' + self.id.to_s).to_i, :name => self.name } 
+    { :uid => ('2' + self.id.to_s).to_i, :name => self.name } 
   end
 end

@@ -150,7 +150,7 @@ $(function() {
       
       // They have selected a person. What to do depends on the mode of the UI
       // Is there a card highlighted? In which case, assign this person
-      if(cards.selected_card && uid) {
+      if(cards.selected_card && (uid >= 0)) {
         var assignment = {};
         
         assignment.entity_id = uid;
@@ -196,6 +196,27 @@ $(function() {
         
         // Clear the search field
         $("#search_entities").attr("data-value", null).val("");
+      } else if(uid < 0) {
+        // They want to create a new group or person
+        if(uid == -1) {
+          // New Person
+          
+        } else {
+          // New Group
+          template.status_text("Creating group...");
+          var group = {};
+          group.name = $(this).val().slice(13); // cut off the "Create Group " at the beginning
+          group.owner_ids = [current_user_id];
+          $.ajax({ url: Routes.groups_path() + ".json", data: {group: group}, type: 'POST'}).always(
+            function(data) {
+              template.hide_status();
+              // Bring up the details window
+              cards.entity_details(data.uid);
+              // Clear out the input
+              $("#search_entities").val("");
+            }
+          );
+        }
       }
     });
   }

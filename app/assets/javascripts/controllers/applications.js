@@ -58,7 +58,7 @@ $(function() {
             var compiledTmpl = _.template(cards.template, { app: data });
             $("div#cards").append(compiledTmpl);
             // Bring up the details window
-            applications.entity_details('4' + data.id);
+            cards.entity_details('4' + data.id);
             // Clear out the input
             $("#search_applications").val("");
             cards.visual_filter("");
