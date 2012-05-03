@@ -68,8 +68,8 @@ class Group < ActiveRecord::Base
       resolved_members += r.resolve
     end
     
-    result = explicit_members.map{ |x| { :id => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'explicit' } }
-    result += resolved_members.map{ |x| { :id => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'resolved' } }
+    result = explicit_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'explicit' } }
+    result += resolved_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'resolved' } }
     
     result
   end

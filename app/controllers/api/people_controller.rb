@@ -1,7 +1,7 @@
 class Api::PeopleController < Api::BaseController
   # GET /api/people.xml
   def index
-    @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
+    @people = Person.where("first like ? or last like ? or " + db_concat(:first, ' ', :last) + " like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
 
     @people.map()
 

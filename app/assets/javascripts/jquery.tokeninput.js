@@ -655,12 +655,18 @@ $.TokenList = function (input, url_or_data, settings) {
 
     // Update the hidden input box value
     function update_hidden_input(saved_tokens, hidden_input) {
+      console.log("update_hidden_input start");
         var token_values = $.map(saved_tokens, function (el) {
             if(typeof settings.tokenValue == 'function')
               return settings.tokenValue.call(this, el);
             
             return el[settings.tokenValue];
         });
+        console.log("settings.tokenValue is:" + settings.tokenValue);
+        console.log("saved_tokens:");
+        console.log(saved_tokens);
+        console.log("token_values:");
+        console.log(token_values);
         hidden_input.val(token_values.join(settings.tokenDelimiter));
 
     }
