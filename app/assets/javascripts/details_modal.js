@@ -170,21 +170,24 @@
         crossDomain: false,
         defaultText: "No organizations",
         prePopulate: $("#person_ou_tokens").data("pre"),
-        theme: "facebook"
+        theme: "facebook",
+        tokenValue: "uid"
       });
 
       $("#person_group_tokens").tokenInput($("#person_group_tokens").attr("method") + ".json", {
         crossDomain: false,
         defaultText: "No groups",
         prePopulate: $("#person_group_tokens").data("pre"),
-        theme: "facebook"
+        theme: "facebook",
+        tokenValue: "uid"
       });
 
       $("#person_subordinate_tokens").tokenInput($("#person_subordinate_tokens").attr("method") + ".json", {
         crossDomain: false,
         defaultText: "No subordinates",
         prePopulate: $("#person_subordinate_tokens").data("pre"),
-        theme: "facebook"
+        theme: "facebook",
+        tokenValue: "uid"
       });
     
       // Remote forms
@@ -206,6 +209,7 @@
         crossDomain: false,
         prePopulate: $("#group_member_tokens").data("pre"),
         theme: "facebook",
+        tokenValue: "uid",
         defaultText: "No members",
         onAdd: function (item) {
           console.log("Added " + item);
@@ -219,7 +223,8 @@
         crossDomain: false,
         defaultText: "No owners",
         prePopulate: $("#group_owner_tokens").data("pre"),
-        theme: "facebook"
+        theme: "facebook",
+        tokenValue: "uid"
       });
     
       // Remote forms
