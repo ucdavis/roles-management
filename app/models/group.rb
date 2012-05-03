@@ -122,7 +122,7 @@ class Group < ActiveRecord::Base
     end
     
     self.person_ids = p_ids
-    self.group_ids = g_ids
+    self.child_ids = g_ids
   end
   
   def as_json(options={}) 

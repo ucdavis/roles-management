@@ -223,9 +223,9 @@
       });
     
       // Remote forms
-      $("form.edit_group").bind('ajax:complete', function(){
+      $("form.edit_group").bind('ajax:complete', function() {
         template.hide_status();
-      
+        
         // Update any pins
         $("div.pin[data-entity-id=" + details_modal.group_edits['entity_id'] + "] a").each(function() {
           $(this).html(details_modal.group_edits['name']);
