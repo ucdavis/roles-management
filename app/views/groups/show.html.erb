@@ -37,6 +37,30 @@
           <%= f.fields_for :rules do |builder| %>
             <%= render "rule_fields", :f => builder %>
           <% end %>
+          <tr class="fields">
+            <td>
+              <select id="group_rules_attributes_new_rules_column" name="group[rules_attributes][new_rules][column]">
+                <option value="loginid">Login ID</option>
+                <option value="title">Title</option>
+                <option value="major">Major</option>
+                <option value="affiliation">Affiliation</option>
+                <option value="classification">Classification</option>
+              </select>
+            </td>
+            <td>
+              <select id="group_rules_attributes_new_rules_condition" name="group[rules_attributes][new_rules][condition]">
+                <option value="may be">may be</option>
+                <option value="may not be">may not be</option>
+              </select>
+            </td>
+            <td>
+              <input id="group_rules_attributes_new_rules_value" name="group[rules_attributes][new_rules][value]" size="15" type="text" />
+            </td>
+            <td>
+              <input id="group_rules_attributes_new_rules__destroy" name="group[rules_attributes][new_rules][_destroy]" type="hidden" value="false" />
+              <button class="btn btn-danger" onclick="remove_fields(this)" type="submit">Remove</button>
+            </td>
+          </tr>
           </table>
   
           <p><%= link_to_add_fields "Add Rule", f, :rules %></p>

@@ -283,22 +283,22 @@ $(function() {
   cards.entity_details = function(uid) {
     var entity_type = uid.toString()[0];
     var id = uid.toString().substr(1);
-    var details_url = null;
+    var show_url = null;
     
     if(entity_type == '1') {
       // person
-      details_url = Routes.people_path() + "/" + id;
+      show_url = Routes.people_path() + "/" + id;
     } else if(entity_type == '2') {
       // group
-      details_url = Routes.groups_path() + "/" + id;
+      show_url = Routes.groups_path() + "/" + id;
     } else {
       // application
-      details_url = Routes.applications_path() + "/" + id;
+      show_url = Routes.applications_path() + "/" + id;
     }
     
     template.status_text("Fetching details...");
     
-    $.get(details_url, function(response) {
+    $.get(show_url, function(response) {
       template.hide_status();
       $("#modal_container").empty();
       $("#modal_container").append(response);

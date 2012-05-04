@@ -21,7 +21,7 @@ class GroupsController < ApplicationController
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
 
     respond_to do |format|
-      format.html { render :partial => "details", :layout => false }
+      format.html { render "show", :layout => false }
       format.json { render json: @group }
     end
   end

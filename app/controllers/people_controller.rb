@@ -25,7 +25,7 @@ class PeopleController < ApplicationController
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded person page for #{params[:id]}."
 
     respond_to do |format|
-      format.html { render :partial => "details", :layout => false }
+      format.html { render "show", :layout => false }
     end
   end
 
