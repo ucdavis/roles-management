@@ -256,7 +256,8 @@
         crossDomain: false,
         defaultText: "",
         prePopulate: $("#application_owner_tokens").data("pre"),
-        theme: "facebook"
+        theme: "facebook",
+        tokenValue: "uid"
       });
     
       // Remote forms

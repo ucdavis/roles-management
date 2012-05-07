@@ -2,8 +2,6 @@ class ApplicationsController < ApplicationController
   require 'digest/md5'
   
   before_filter :load_application, :only => [:show]
-  
-  #filter_resource_access
   filter_access_to :all
   
   # GET /applications
