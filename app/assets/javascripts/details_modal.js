@@ -5,7 +5,6 @@
   // Temporarily holds edits made via AJAX saves. Used to update the DOM to match later.
   details_modal.person_edits = [];
   details_modal.group_edits = [];
-  details_modal.application_edits = [];
   
   // Save whatever's in the modal
   details_modal.save = function() {
@@ -21,9 +20,6 @@
       details_modal.group_edits['name'] = $("form.edit_group input#group_name").val();
       $("form.edit_group").trigger("submit.rails");
     } else if($("#application_owner_tokens").length > 0) {
-      details_modal.application_edits['app_id'] = $("form.edit_application input[name=app_id]").val();
-      details_modal.application_edits['display_name'] = $("form.edit_application input#application_display_name").val();
-      details_modal.application_edits['description'] = $("form.edit_application input#application_description").val();
       $("form.edit_application").trigger("submit.rails");
     }
   }
@@ -162,6 +158,7 @@
     $(".modal #save").click(function() {
       details_modal.save();
       $(".modal").modal('hide');
+      cards.render_cards();
     });
     
     if($("#person_ou_tokens").length > 0) {
@@ -191,7 +188,7 @@
       });
     
       // Remote forms
-      $("form.edit_person").bind('ajax:complete', function(){
+      $("form.edit_person").bind('ajax:complete', function() {
         template.hide_status();
       
         // Update any pins
@@ -261,18 +258,14 @@
       });
     
       // Remote forms
-      $("form.edit_application").bind('ajax:complete', function(){
+      $("form.edit_application").bind('ajax:complete', function(e, o) {
         template.hide_status();
-      
-        // Update any pins
-        $("div.card[data-application-id=" + details_modal.application_edits['app_id'] + "] div.card_head h2").each(function() {
-          $(this).html(details_modal.application_edits['display_name']);
-        });
-        $("div.card[data-application-id=" + details_modal.application_edits['app_id'] + "] div.card_content p").each(function() {
-          $(this).html("<i>“" + details_modal.application_edits['description'] + "”</i>");
-        });
-      
-        details_modal.application_edits = [];
+        
+        // Update the local-side models and re-render the necessary DOM bits
+        var updated_application = $.parseJSON(o.responseText);
+        applications.applications[updated_application.id] = updated_application;
+        
+        cards.render_cards();
       });
     }
   }

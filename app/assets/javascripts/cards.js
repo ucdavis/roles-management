@@ -91,11 +91,7 @@ $(function() {
     });    
     
     // Render the application cards
-    cards.template = $("#tmpl-card").html();
-    _.each(applications.applications, function(app) {
-      var compiledTmpl = _.template(cards.template, { app: app });
-      $("div#cards").append(compiledTmpl);
-    });
+    cards.render_cards();
     
     // Delete/info button(s) appear on hover for the sidebar pins
     $("div#right").on("mouseenter mouseleave", "ul.pins li", function(e) {
@@ -250,6 +246,15 @@ $(function() {
     } else {
       $("div.card").show();
     }
+  }
+  
+  cards.render_cards = function() {
+    $("div#cards").empty();
+    cards.template = $("#tmpl-card").html();
+    _.each(applications.applications, function(app) {
+      var compiledTmpl = _.template(cards.template, { app: app });
+      $("div#cards").append(compiledTmpl);
+    });
   }
   
   // Graphically sorts the right-hand availability list based on terms in 'str'

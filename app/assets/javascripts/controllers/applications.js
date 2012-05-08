@@ -69,22 +69,6 @@ $(function() {
     });
   }
   
-  // Displays the virtual application preferences for administrators
-  applications.prefs = function(app_id) {
-    details_url = Routes.applications_path() + "/" + app_id;
-    
-    template.status_text("Fetching details...");
-    
-    $.get(details_url, function(data) {
-      template.hide_status();
-      apprise(data, {'animate': true, 'textOk': 'Dismiss'});
-      details_modal.init();
-      var scope = $("div#entity_details");
-      template.setup_sidebar(scope);
-      template.setup_default_text(scope);
-    });
-  }
-  
   // Updates or creates pins to represent the roles it's given. Can be called multiple times for the same app/role
   // dom_only = don't make the AJAX call to actually save the permission. Useful when merely constructing the existing list
   applications.register_role = function(entity, role, dom_only) {

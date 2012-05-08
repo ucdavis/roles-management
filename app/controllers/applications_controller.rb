@@ -53,14 +53,14 @@ class ApplicationsController < ApplicationController
   def update
     @application = Application.find(params[:id])
 
-    if params[:commit] == "reset"
-      @application.api_key = generate_api_key(@application)
-    end
+    #if params[:commit] == "reset"
+    #  @application.api_key = generate_api_key(@application)
+    #end
     
     respond_to do |format|
       if @application.update_attributes(params[:application])
         format.html { redirect_to(@application, :notice => 'Application was successfully updated.') }
-        format.js { head :ok }
+        format.js { render json: @application, status: :ok }
       else
         format.html { render :action => "edit" }
         format.js { render json: @application.errors, status: :unprocessable_entity }
