@@ -286,8 +286,15 @@ $(function() {
       pin_template = $("#tmpl-pin").html();
       _.each(entities, function(entity) {
         var compiledTmpl = _.template(pin_template, { entity: entity });
-        console.log(entity);
-        $("#entity_list").append(compiledTmpl);
+        existing_pin = $("#entity_list").find("li[data-uid=" + entity.uid + "]").first();
+        if(existing_pin.length) {
+          // replace the existing pin
+          $(compiledTmpl).insertBefore(existing_pin);
+          $(existing_pin).remove();
+        } else {
+          // pin doesn't already exist, just add it
+          $("#entity_list").append(compiledTmpl);
+        }
       });
     });
   }

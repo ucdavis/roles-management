@@ -3,7 +3,6 @@
   details_modal.VIEW_MODE = 1;
   
   // Temporarily holds edits made via AJAX saves. Used to update the DOM to match later.
-  details_modal.person_edits = [];
   details_modal.group_edits = [];
   
   // Save whatever's in the modal
@@ -12,8 +11,6 @@
     
     // Which modal is this? Person, Group, or Application?
     if($("#person_ou_tokens").length > 0) {
-      details_modal.person_edits['entity_id'] = $("form.edit_person input[name=entity_id]").val();
-      details_modal.person_edits['name'] = $("form.edit_person input#person_first").val() + " " + $("form.edit_person input#person_last").val();
       $("form.edit_person").trigger("submit.rails");
     } else if($("#group_member_tokens").length > 0) {
       details_modal.group_edits['entity_id'] = $("form.edit_group input[name=entity_id]").val();
@@ -190,15 +187,11 @@
       // Remote forms
       $("form.edit_person").bind('ajax:complete', function(e, o) {
         template.hide_status();
-      
+        
         // Update the local-side models and re-render the necessary DOM bits
         var updated_person = $.parseJSON(o.responseText);
         
-        // Update any pins
-        $("div.pin[data-entity-id=" + details_modal.person_edits['entity_id'] + "] a").each(function() {
-          $(this).html(details_modal.person_edits['name']);
-        });
-        details_modal.person_edits = [];
+        cards.populate_sidebar(updated_person.uid, true);
       });
     }
   
