@@ -14,7 +14,6 @@ module ApplicationHelper
   end
   
   def link_to_remove_fields(name, f)
-    #f.hidden_field(:_destroy) + link_to_function(name, "remove_fields(this)", :class => "edit_mode")
     f.hidden_field(:_destroy) + content_tag("button", name, {:type => "submit", :class => "btn btn-danger", :onclick => "remove_fields(this)"})
   end
 

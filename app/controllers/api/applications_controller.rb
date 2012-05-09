@@ -32,6 +32,8 @@ class Api::ApplicationsController < Api::BaseController
         format.xml
       end
     else
+      @people = resolve_uids(@application.uids, true)
+      
       respond_to do |format|
         format.xml { render :text => @application.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
         format.text

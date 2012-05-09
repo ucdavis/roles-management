@@ -87,10 +87,6 @@ class Group < ActiveRecord::Base
     self.person_ids = ids.split(",")
   end
   
-  #def member_tokens
-  #  members.map{ |x| { :id => ('1' + x.id.to_s).to_i, :name => x.name } }
-  #end
-  
   # Takes UIDs
   def member_tokens=(ids)
     # Members can be people or groups, so we have to do some processing

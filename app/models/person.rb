@@ -193,7 +193,7 @@ class Person < ActiveRecord::Base
   end
 
   def ou_tokens=(ids)
-    self.ou_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+    #self.ou_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
   end
 
   def group_tokens=(ids)

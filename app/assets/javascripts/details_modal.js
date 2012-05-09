@@ -188,9 +188,12 @@
       });
     
       // Remote forms
-      $("form.edit_person").bind('ajax:complete', function() {
+      $("form.edit_person").bind('ajax:complete', function(e, o) {
         template.hide_status();
       
+        // Update the local-side models and re-render the necessary DOM bits
+        var updated_person = $.parseJSON(o.responseText);
+        
         // Update any pins
         $("div.pin[data-entity-id=" + details_modal.person_edits['entity_id'] + "] a").each(function() {
           $(this).html(details_modal.person_edits['name']);

@@ -258,20 +258,26 @@ $(function() {
   }
   
   // Graphically sorts the right-hand availability list based on terms in 'str'
-  cards.populate_sidebar = function(uids) {
-    // Clear out the existing list (fade out li elements and destroy since they are clones)
-    // We do it backwards since we're altering CSS positioning
-    $($("#entity_list>li").get().reverse()).each(function(i, el) {
-      // Switch the positioning to absolute so the list may fade out while another fades in without affecting positioning (overlay each other)
-      var offset = $(el).offset();
-      $(el).css("top", offset.top - parseInt($(el).css("margin-top")));
-      $(el).css("left", offset.left - parseInt($(el).css("margin-left")));
-      $(el).css("width", $(el).width());
-      $(el).css("position", "absolute");
-    });
-    $("#entity_list>li").fadeOut(500, function() {
-      $(this).remove();
-    });
+  cards.populate_sidebar = function(uids, partial) {
+    if(typeof(partial) == "undefined") {
+      partial = false;
+    }
+    
+    if(partial == false) {
+      // Clear out the existing list (fade out li elements and destroy since they are clones)
+      // We do it backwards since we're altering CSS positioning
+      $($("#entity_list>li").get().reverse()).each(function(i, el) {
+        // Switch the positioning to absolute so the list may fade out while another fades in without affecting positioning (overlay each other)
+        var offset = $(el).offset();
+        $(el).css("top", offset.top - parseInt($(el).css("margin-top")));
+        $(el).css("left", offset.left - parseInt($(el).css("margin-left")));
+        $(el).css("width", $(el).width());
+        $(el).css("position", "absolute");
+      });
+      $("#entity_list>li").fadeOut(500, function() {
+        $(this).remove();
+      });
+    }
     
     if(typeof uids == "undefined") return;
     
@@ -280,6 +286,7 @@ $(function() {
       pin_template = $("#tmpl-pin").html();
       _.each(entities, function(entity) {
         var compiledTmpl = _.template(pin_template, { entity: entity });
+        console.log(entity);
         $("#entity_list").append(compiledTmpl);
       });
     });
