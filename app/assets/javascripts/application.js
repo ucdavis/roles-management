@@ -78,4 +78,34 @@ $(function() {
       xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
     }
   });
+  
+  application.initialize();
 });
+
+(function (application, $, undefined) {
+  application.current_user_id = null;
+  application.impersonate_user = null;
+  
+  application.initialize = function() {
+    $("#admin-impersonate").click(application.impersonate_dialog);
+  }
+  
+  application.impersonate_dialog = function() {
+    template.status_text("Loading...");
+    
+    $.get(Routes.admin_dialogs_impersonate_path(), function(data) {
+      template.hide_status();
+      $("#modal_container").empty();
+      $("#modal_container").append(data);
+      $("#impersonate_modal").modal();
+      //details_modal.init();
+      
+      //apprise(data, {'animate': true, 'verify': true, 'textYes': 'Impersonate', 'textNo': 'Cancel'}, function(impersonate) {
+        //if(impersonate) {
+          // Redirect to impersonation URL
+          //window.location.href = Routes.admin_path(application.impersonate_user);
+          //}
+      //});
+    });
+  }
+} (window.application = window.application || {}, jQuery));

@@ -7,8 +7,6 @@ $(function() {
 (function (applications, $, undefined) {
   // Application and role relationship (filled in by index.html.erb)
   applications.applications = [];
-  applications.current_user_id = null;
-  applications.impersonate_user = null;
   
   // Constructor of sorts
   applications.initialize = function() {
@@ -48,7 +46,7 @@ $(function() {
         // They want to create a new application
         var application = {};
         application.name = $(this).val().slice(7); // cut off the "Create " at the beginning
-        application.owner_ids = [current_user_id];
+        application.owner_ids = [application.current_user_id];
         $.ajax({ url: Routes.applications_path() + ".json", data: {application: application}, type: 'POST'}).always(
           function(data) {
             template.hide_status();
@@ -203,7 +201,7 @@ $(function() {
   applications.create_group = function (name) {
     $.get(Routes.new_group_path() + ".json", function(group) {
       group.name = name;
-      group.owner_tokens = '1' + applications.current_user_id;
+      group.owner_tokens = '1' + application.current_user_id;
       
       template.status_text("Creating group...");
       
@@ -230,19 +228,5 @@ $(function() {
       }
     });
     $(this).children("input").focus();
-  }
-  
-  applications.impersonate_dialog = function() {
-    template.status_text("Loading...");
-    
-    $.get(Routes.admin_dialogs_impersonate_path(), function(data) {
-      template.hide_status();
-      apprise(data, {'animate': true, 'verify': true, 'textYes': 'Impersonate', 'textNo': 'Cancel'}, function(impersonate) {
-        if(impersonate) {
-          // Redirect to impersonation URL
-          window.location.href = Routes.admin_path(applications.impersonate_user);
-        }
-      });
-    });
   }
 } (window.applications = window.applications || {}, jQuery));

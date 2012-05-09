@@ -10,7 +10,7 @@
 </head>
 <body>
   <script type="text/javascript">
-  current_user_id = <%= current_user.id %>
+    application.current_user_id = <%= current_user.id %> // application, not applications
   </script>
   
   <div class="navbar navbar-fixed-top">
@@ -29,6 +29,18 @@
               <%= li_link_with_class({:title => 'Settings', :controller => 'site', :action => 'settings'}) %>
             <% end %>
           </ul>
+          <% has_role? :admin do %>
+          <ul class="nav pull-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrate <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#" id="admin-impersonate">Impersonate…</a></li>
+                <li class="divider"></li>
+                <li><a href="#">About…</a></li>
+              </ul>
+            </li>
+          </ul>
+          <% end %>
         </div><!-- /.nav-collapse -->
       </div>
     </div><!-- /navbar-inner -->

@@ -32,7 +32,6 @@
     <% current_user.manageable_applications.each_with_index do |app, i| %>
     <script type="text/javascript">
       applications.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
-      applications.current_user_id = <%= current_user.id %>;
     </script>
     <% end %>
     

@@ -1,22 +1,22 @@
-<div id="impersonate_dialog">
-  <div class="block popup_block">
-  	<div class="block_head">
-  		<div class="bheadl"></div>
-  		<div class="bheadr"></div>
-      
-  		<h2>Impersonate</h2>
-  	</div>		<!-- .block_head ends -->
-  	<div class="block_content">
-      <form style="width: 100%;">
-        <div style="width: 500px; margin: 0 auto;">
-          <b>Login ID to Impersonate</b><br />
-          <input type="text" class="text medium" id="loginid" /> <span id="loginid_status"></span><br />
-          <br />
-        </div>
-      </form>
-    </div> <!-- .block_content ends -->
-  </div> <!-- .block ends -->
-</div> <!-- .entity_details -->
+<div class="modal" id="person_modal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>Impersonate</h3>
+  </div>
+  <div class="modal-body">
+    <form style="width: 100%;">
+      <div style="width: 500px; margin: 0 auto;">
+        <b>Login ID to Impersonate</b><br />
+        <input type="text" class="text medium" id="loginid" /> <span id="loginid_status"></span><br />
+        <br />
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Never mind</a>
+    <a href="#" class="btn btn-primary" id="save">Impersonate</a>
+  </div>
+</div>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -28,12 +28,12 @@ $(document).ready(function() {
         // Write 'Ok' and enable the impersonate button
         $("div#impersonate_dialog div.block_content span#loginid_status").html("<span style='color: #00aa00;'>Ok</span>");
         $("div.appriseInner div.aButtons button[value=ok]").attr("disabled", false).css("color", "#232D3D");
-        site.impersonate_user = loginid;
+        application.impersonate_user = loginid;
       } else {
         // Write 'Not Found' and disable the impersonate button
         $("div#impersonate_dialog div.block_content span#loginid_status").html("<span style='color: #aa0000;'>Not found</span>");
         $("div.appriseInner div.aButtons button[value=ok]").attr("disabled", true).css("color", "#aaa");
-        site.impersonate_user = null;
+        application.impersonate_user = null;
       }
     });
   });

@@ -1,7 +1,4 @@
 (function (details_modal, $, undefined) {
-  details_modal.EDIT_MODE = 0;
-  details_modal.VIEW_MODE = 1;
-  
   // Temporarily holds edits made via AJAX saves. Used to update the DOM to match later.
   details_modal.group_edits = [];
   
