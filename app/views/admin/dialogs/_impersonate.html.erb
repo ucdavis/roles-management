@@ -20,19 +20,23 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-  $("div#impersonate_dialog div.block_content input#loginid").on('keyup', function(el) {
+  $("#impersonate_modal a.btn-primary").click(function() {
+    window.location.href = Routes.admin_path(application.impersonate_user);
+  });
+  
+  $("#impersonate_modal input#loginid").on('keyup', function(el) {
     var loginid = $(this).val();
     
     $.get(Routes.api_person_exists_path(loginid), function(exists) {
       if(exists) {
         // Write 'Ok' and enable the impersonate button
-        $("div#impersonate_dialog div.block_content span#loginid_status").html("<span style='color: #00aa00;'>Ok</span>");
-        $("div.appriseInner div.aButtons button[value=ok]").attr("disabled", false).css("color", "#232D3D");
+        $("#impersonate_modal span#loginid_status").html("<span style='color: #00aa00;'>Ok</span>");
+        $(".modal-footer a.btn-primary").attr("disabled", false).removeClass("disabled");
         application.impersonate_user = loginid;
       } else {
         // Write 'Not Found' and disable the impersonate button
-        $("div#impersonate_dialog div.block_content span#loginid_status").html("<span style='color: #aa0000;'>Not found</span>");
-        $("div.appriseInner div.aButtons button[value=ok]").attr("disabled", true).css("color", "#aaa");
+        $("#impersonate_modal span#loginid_status").html("<span style='color: #aa0000;'>Not found</span>");
+        $(".modal-footer a.btn-primary").attr("disabled", true).addClass("disabled");
         application.impersonate_user = null;
       }
     });
