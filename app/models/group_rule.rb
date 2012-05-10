@@ -23,15 +23,18 @@ class GroupRule < ActiveRecord::Base
     when "major"
       puts "Any condition involving 'major' is currently unsupported."
     when "affiliation"
-      ps = Affiliation.find_by_name(value).people #.collect{|x| ["1" + x.id.to_s, x.name]}
-      case condition
-      when "may be"
-        p = p + ps
-      when "may not be"
-        puts " -- 'affiliation may not be' is unsupported"
-      else
-        # unsupported
-        puts "Unsupported condition for affiliation in group rule."
+      affiliation = Affiliation.find_by_name(value)
+      unless affiliation.nil?
+        ps = affiliation.people #.collect{|x| ["1" + x.id.to_s, x.name]}
+        case condition
+        when "may be"
+          p = p + ps
+        when "may not be"
+          puts " -- 'affiliation may not be' is unsupported"
+        else
+          # unsupported
+          puts "Unsupported condition for affiliation in group rule."
+        end
       end
     when "ou"
       ou = Ou.find_by_name(value)
