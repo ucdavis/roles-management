@@ -11,6 +11,7 @@ class GroupsController < ApplicationController
 
     respond_to do |format|
       format.html
+      format.json { render json: @group }
     end
   end
 

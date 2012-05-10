@@ -266,6 +266,14 @@
   templates_unassign_path: function(options) {
   return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[6,"unassign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// roles_assign => /roles/assign(.:format)
+  roles_assign_path: function(options) {
+  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[6,"assign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// roles_unassign => /roles/unassign(.:format)
+  roles_unassign_path: function(options) {
+  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[6,"unassign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // groups => /groups(.:format)
   groups_path: function(options) {
   return Utils.build_path([], [2,[2,[7,"/",false],[6,"groups",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -505,14 +513,6 @@
 // api_affiliation => /api/affiliation(.:format)
   api_affiliation_path: function(options) {
   return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"affiliation",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// roles_assign => /roles/assign(.:format)
-  roles_assign_path: function(options) {
-  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[6,"assign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// roles_unassign => /roles/unassign(.:format)
-  roles_unassign_path: function(options) {
-  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[6,"unassign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // graph_authorization_rules => /authorization_rules/graph(.:format)
   graph_authorization_rules_path: function(options) {

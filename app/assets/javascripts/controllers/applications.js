@@ -107,7 +107,7 @@ $(function() {
           var assignment = {};
         
           assignment.role_id = $(this).attr("data-role-id");
-          assignment.entity_id = $(this).parent().parent().parent().attr("data-entity-id");
+          assignment.uid = $(this).parent().parent().parent().attr("data-entity-id");
         
           // Turning the permission on or off?
           if($(this).attr("checked") == undefined) {
@@ -155,7 +155,7 @@ $(function() {
     // Save this permission assignment
     if( dom_only == false) {
       template.status_text("Saving...");
-      $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: {role_id: role.id, entity_id: entity.id}}, type: 'POST'}).always(
+      $.ajax({ url: Routes.roles_assign_path() + ".json", data: {assignment: {role_id: role.id, uid: entity.id}}, type: 'POST'}).always(
         function() {
           template.hide_status();
         }
@@ -179,7 +179,7 @@ $(function() {
           var assignment = {};
           
           assignment.role_id = $(this).attr("data-role-id");
-          assignment.entity_id = $(this).parent().parent().parent().attr("data-entity-id");
+          assignment.uid = $(this).parent().parent().parent().attr("data-entity-id");
           
           $.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'});
         });

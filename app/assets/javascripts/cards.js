@@ -114,7 +114,7 @@ $(function() {
 
     // Enable the delete button for sidebar pins (only works on groups)
     $("div#right").on("click", "ul.pins>li>i.icon-remove", function() {
-      cards.delete_group($(this).parent().data("uid"));
+      cards.disassociate_group($(this).parent().data("uid"));
     });
     
     // Allow searching on the sidebar
@@ -324,6 +324,41 @@ $(function() {
       $("#person_modal").modal();
       details_modal.init();
     });
+  }
+
+  cards.disassociate_group = function(uid) {
+    var id = uid.toString().substr(1);
+    var role_id = null;
+    
+    // Determine the role ID
+    if(cards.selected_role == null) {
+      // No specific role selected. Determine ID of implied 'access' role
+      result = _.find(applications.applications[$(cards.selected_card).data("application-id")].roles, function(item) {
+        if(item.token == "access")
+          return true;
+        else
+          return false;
+      });
+      role_id = result.id;
+    } else {
+      // Specific role
+      role_id = cards.selected_role;
+    }
+    
+    if (bootstrap_modal_alert("Really remove this group?",
+    {'verify': true, 'textYes': "Remove Group", 'textNo': "Cancel"}, function(confirm_delete) {
+      if(confirm_delete) {
+        template.status_text("Removing group...");
+    
+        // Disassociate the group
+        $.ajax({ url: Routes.roles_unassign_path(), data: { assignment: { uid: uid, role_id: role_id } }, type: 'DELETE', complete: function(data, status) {
+          template.hide_status();
+          // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
+          var el = $("ul.pins li[data-uid=" + uid + "]");
+          el.fadeOut('fast', function() { $(el).remove(); });
+        }});
+      }
+    }));
   }
   
   cards.delete_group = function(uid) {

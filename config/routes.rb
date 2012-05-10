@@ -20,6 +20,10 @@ DSSRM::Application.routes.draw do
   post "/templates/assign", :controller => "template_assignments", :action => "create"
   delete "/templates/unassign", :controller => "template_assignments", :action => "destroy"
 
+  # For AJAX on the CAO interface (checking and unchecking permission boxes)
+  post "/roles/assign", :controller => "role_assignments", :action => "create"
+  delete "/roles/unassign", :controller => "role_assignments", :action => "destroy"
+
   resources :groups
   resources :ous
   resources :templates
@@ -58,8 +62,4 @@ DSSRM::Application.routes.draw do
     get "affiliation", :controller => "custom"
     get "ou", :controller => "custom"
   end
-  
-  # For AJAX on the CAO interface (checking and unchecking permission boxes)
-  post "/roles/assign", :controller => "role_assignments", :action => "create"
-  delete "/roles/unassign", :controller => "role_assignments", :action => "destroy"
 end
