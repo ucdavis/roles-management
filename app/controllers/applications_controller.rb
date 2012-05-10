@@ -16,7 +16,7 @@ class ApplicationsController < ApplicationController
   # GET /applications/1
   def show
     respond_to do |format|
-      format.html { render :partial => "details", :layout => false }
+      format.html { render "show", :layout => false }
     end
   end
 
