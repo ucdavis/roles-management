@@ -329,7 +329,7 @@ $(function() {
   cards.delete_group = function(uid) {
     var id = uid.toString().substr(1);
     
-    if (apprise("Really delete this group?",
+    if (bootstrap_modal_alert("Really delete this group?",
     {'verify': true, 'textYes': "Delete Group", 'textNo': "Cancel"}, function(confirm_delete) {
       if(confirm_delete) {
         template.status_text("Deleting group...");

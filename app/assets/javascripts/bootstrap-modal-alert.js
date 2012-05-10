@@ -1,5 +1,5 @@
 // Uses Twitter Bootstrap modal to replace built-in alert()
-function modal_alert(text, options, callback) {
+function bootstrap_modal_alert(text, options, callback) {
   var template = '<div class="container"><div id="_bootstrap_modal_alert_container"> \
   <div class="modal" id="_bootstrap_modal_alert_modal"> \
   <div class="modal-header"> \
@@ -17,7 +17,11 @@ function modal_alert(text, options, callback) {
 
   // Insert the modal into the DOM
   // TODO: This assumes usage of .container-fluid. That's not always the case but there's CSS woes if you do 'body:last-child'
-  $(template).insertAfter(".container-fluid:last>:last-child");
+  if($(".container-fluid").length) {
+    $(template).insertAfter(".container-fluid:last>:last-child");
+  } else {
+    $(template).insertAfter(".container:last>:last-child");
+  }
   $("#_bootstrap_modal_alert_container").modal();
   
   $(document).ready(function() {
