@@ -21,71 +21,68 @@
   // Called whenever a group rule input is focused.
   // We need to switch modes depending on the state of the
   // corresponding dropdown in order to set up the look ahead field.
-  details_modal.switch_group_rules_autocomplete = function() {
+  details_modal.switch_group_rules_autocomplete = function(el) {
     // Determine the value of the row's dropdown
-    var mode = $(this).parent().parent().find("td:first select").val();
+    var mode = $(el).parent().parent().find("td:first select").val();
     
     // Change the callback accordingly
     switch(mode) {
       case 'loginid':
-      $(this).autocomplete({
-      			source: function( request, response ) {
+      console.log("switching to loginid autocomplete mode");
+      return;
+      $(el).typeahead({
+      			source: function( query, maxResults, callback ) {
       				$.ajax({
-      					url: Routes.api_loginid_path() + ".json",
+      					url: Routes.api_loginid_path(),
       					data: {
-      						q: request.term
+      						q: query
       					},
-      					success: function( data, status, xmlhttp ) {
-      						response( $.map( data, function( item ) {
-      							return {
-      								label: item,
-      								value: item
-      							}
-      						}));
+      					complete: function( data ) {
+                  data = $.parseJSON(data.responseText);
+                  entities = [];
+                  _.each(data, function(entity) {
+                    entities.push({id: entity, label: entity });
+                  });
+            
+                  callback(entities);
       					}
       				});
       			},
-      			minLength: 2,
-      			open: function() {
-      				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-      			},
-      			close: function() {
-      				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-      			}
+            valueField: 'id',
+            labelField: 'label'
       		});
         break;
       case 'title':
-      $(this).autocomplete({
-      			source: function( request, response ) {
+      console.log("switching to title autocomplete mode");
+      $(el).typeahead({
+      			source: function( query, maxResults, callback ) {
       				$.ajax({
-      					url: Routes.api_titles_path() + ".json",
+      					url: Routes.api_titles_path(),
       					data: {
-      						q: request.term
+      						q: query
       					},
-      					success: function( data, status, xmlhttp ) {
-      						response( $.map( data, function( item ) {
-      							return {
-      								label: item.name,
-      								value: item.name
-      							}
-      						}));
+      					complete: function( data ) {
+                  data = $.parseJSON(data.responseText);
+                  entities = [];
+                  _.each(data, function(entity) {
+                    entities.push({id: entity.id, label: entity.name });
+                  });
+                  
+                  console.log(entities);
+                  
+                  callback(entities);
       					}
       				});
       			},
-      			minLength: 2,
-      			open: function() {
-      				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-      			},
-      			close: function() {
-      				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-      			}
+            valueField: 'id',
+            labelField: 'label'
       		});
         break;
       case 'major':
         
         break;
       case 'affiliation':
-      $(this).autocomplete({
+      $(el).typeahead({
       			source: function( request, response ) {
       				$.ajax({
       					url: Routes.api_affiliation_path() + ".json",
@@ -112,7 +109,7 @@
       		});
         break;
       case 'classification':
-      $(this).autocomplete({
+      $(el).typeahead({
       			source: function( request, response ) {
       				$.ajax({
       					url: Routes.api_classifications_path() + ".json",
@@ -231,12 +228,12 @@
       // Auto-complete for group rules
       // Set up auto-complete for existing dropdown default settings
       $("form.edit_group table tbody tr.fields td:nth-child(3) input").each(function(i, el) {
-        $(this).focus(details_modal.switch_group_rules_autocomplete);
-        details_modal.switch_group_rules_autocomplete(0);
+        $(this).focus(details_modal.switch_group_rules_autocomplete(el));
+        details_modal.switch_group_rules_autocomplete(el);
       });
       // Set up auto-complete for dropdowns which may not exist yet
-      $("form.edit_group table tbody").on("focus", "tr.fields td:nth-child(3) input", function(event) {
-        $(this).focus(details_modal.switch_group_rules_autocomplete);
+      $("form.edit_group table tbody").on("focus", "tr.fields td:nth-child(3) input", function(e) {
+        $(this).focus(details_modal.switch_group_rules_autocomplete(e.currentTarget));
       });
     }
   
