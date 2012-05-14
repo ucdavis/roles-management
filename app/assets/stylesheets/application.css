@@ -209,6 +209,10 @@ div#modal_container tr.fields button {
   width: auto;
 }
 
+.modal table tr td input#group_rules_attributes_new_rules_value {
+  width: 250px;
+}
+
 #highlighted_results>li {
   margin-bottom: 6px;
 }

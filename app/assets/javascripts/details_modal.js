@@ -78,9 +78,6 @@
             labelField: 'label'
       		});
         break;
-      case 'major':
-        
-        break;
       case 'affiliation':
       $(el).typeahead({
       			source: function( request, response ) {
