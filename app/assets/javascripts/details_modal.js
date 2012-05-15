@@ -1,6 +1,7 @@
 (function (details_modal, $, undefined) {
   // Temporarily holds edits made via AJAX saves. Used to update the DOM to match later.
   details_modal.group_edits = [];
+  details_modal.group_rules_typeahead_callback = null;
   
   // Save whatever's in the modal
   details_modal.save = function() {
@@ -22,35 +23,41 @@
   // We need to switch modes depending on the state of the
   // corresponding dropdown in order to set up the look ahead field.
   details_modal.switch_group_rules_autocomplete = function(el) {
+    // Ensure the typeahead is initialized
+    if($(el).typeahead == undefined) {
+      $(el).typeahead({
+  			source: function() {
+          console.log("source function called");
+          details_modal.group_rules_typeahead_callback();
+        },
+        valueField: 'id',
+        labelField: 'label'
+  		});
+    }
+    
     // Determine the value of the row's dropdown
     var mode = $(el).parent().parent().find("td:first select").val();
     
     // Change the callback accordingly
     switch(mode) {
       case 'loginid':
-      console.log("switching to loginid autocomplete mode");
-      return;
-      $(el).typeahead({
-      			source: function( query, maxResults, callback ) {
-      				$.ajax({
-      					url: Routes.api_loginid_path(),
-      					data: {
-      						q: query
-      					},
-      					complete: function( data ) {
-                  data = $.parseJSON(data.responseText);
-                  entities = [];
-                  _.each(data, function(entity) {
-                    entities.push({id: entity, label: entity });
-                  });
+      details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
+  				$.ajax({
+  					url: Routes.api_loginid_path(),
+  					data: {
+  						q: query
+  					},
+  					complete: function( data ) {
+              data = $.parseJSON(data.responseText);
+              entities = [];
+              _.each(data, function(entity) {
+                entities.push({id: entity, label: entity });
+              });
             
-                  callback(entities);
-      					}
-      				});
-      			},
-            valueField: 'id',
-            labelField: 'label'
-      		});
+              callback(entities);
+  					}
+  				});
+  			};
         break;
       case 'title':
       console.log("switching to title autocomplete mode");
@@ -224,11 +231,6 @@
     
       // Auto-complete for group rules
       // Set up auto-complete for existing dropdown default settings
-      $("form.edit_group table tbody tr.fields td:nth-child(3) input").each(function(i, el) {
-        $(this).focus(details_modal.switch_group_rules_autocomplete(el));
-        details_modal.switch_group_rules_autocomplete(el);
-      });
-      // Set up auto-complete for dropdowns which may not exist yet
       $("form.edit_group table tbody").on("focus", "tr.fields td:nth-child(3) input", function(e) {
         $(this).focus(details_modal.switch_group_rules_autocomplete(e.currentTarget));
       });
