@@ -22,17 +22,21 @@
   // Called whenever a group rule input is focused.
   // We need to switch modes depending on the state of the
   // corresponding dropdown in order to set up the look ahead field.
+  // Note: We switch a callback function instead of re-initializing typeahead()
+  //       as typeahead() does not seem to like being reinitialized (as of Bootstrap v2.0.3)
   details_modal.switch_group_rules_autocomplete = function(el) {
     // Ensure the typeahead is initialized
-    if($(el).typeahead == undefined) {
+    // Note: As of Bootstrap 2.0.3, $(el).typeahead is always defined, so we cannot use that as a check
+    //       and will have to fall back on our own data attribute
+    if($(el).data('typeahead-inited') == undefined) {
       $(el).typeahead({
-  			source: function() {
-          console.log("source function called");
-          details_modal.group_rules_typeahead_callback();
+  			source: function( query, maxResults, callback ) {
+          details_modal.group_rules_typeahead_callback( query, maxResults, callback );
         },
         valueField: 'id',
         labelField: 'label'
   		});
+      $(el).data('typeahead-inited', true);
     }
     
     // Determine the value of the row's dropdown
@@ -41,7 +45,7 @@
     // Change the callback accordingly
     switch(mode) {
       case 'loginid':
-      details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
+        details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
   				$.ajax({
   					url: Routes.api_loginid_path(),
   					data: {
@@ -60,87 +64,64 @@
   			};
         break;
       case 'title':
-      console.log("switching to title autocomplete mode");
-      $(el).typeahead({
-      			source: function( query, maxResults, callback ) {
-      				$.ajax({
-      					url: Routes.api_titles_path(),
-      					data: {
-      						q: query
-      					},
-      					complete: function( data ) {
-                  data = $.parseJSON(data.responseText);
-                  entities = [];
-                  _.each(data, function(entity) {
-                    entities.push({id: entity.id, label: entity.name });
-                  });
+        details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
+          $.ajax({
+  					url: Routes.api_titles_path(),
+  					data: {
+  						q: query
+  					},
+  					complete: function( data ) {
+              data = $.parseJSON(data.responseText);
+              entities = [];
+              _.each(data, function(entity) {
+                entities.push({id: entity.id, label: entity.name });
+              });
                   
-                  console.log(entities);
-                  
-                  callback(entities);
-      					}
-      				});
-      			},
-            valueField: 'id',
-            labelField: 'label'
-      		});
+              callback(entities);
+  					}
+  				});
+  			}
         break;
       case 'affiliation':
-      $(el).typeahead({
-      			source: function( request, response ) {
-      				$.ajax({
-      					url: Routes.api_affiliation_path() + ".json",
-      					data: {
-      						q: request.term
-      					},
-      					success: function( data, status, xmlhttp ) {
-      						response( $.map( data, function( item ) {
-      							return {
-      								label: item,
-      								value: item
-      							}
-      						}));
-      					}
-      				});
-      			},
-      			minLength: 2,
-      			open: function() {
-      				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-      			},
-      			close: function() {
-      				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-      			}
-      		});
+        details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
+          $.ajax({
+  					url: Routes.api_affiliation_path(),
+  					data: {
+  						q: query
+  					},
+  					complete: function( data ) {
+              data = $.parseJSON(data.responseText);
+              entities = [];
+              _.each(data, function(entity) {
+                entities.push({id: entity, label: entity });
+              });
+                  
+              callback(entities);
+  					}
+  				});
+  			}
         break;
       case 'classification':
-      $(el).typeahead({
-      			source: function( request, response ) {
-      				$.ajax({
-      					url: Routes.api_classifications_path() + ".json",
-      					data: {
-      						q: request.term
-      					},
-      					success: function( data, status, xmlhttp ) {
-      						response( $.map( data, function( item ) {
-      							return {
-      								label: item.name,
-      								value: item.name
-      							}
-      						}));
-      					}
-      				});
-      			},
-      			minLength: 2,
-      			open: function() {
-      				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-      			},
-      			close: function() {
-      				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-      			}
-      		});
+        details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
+          $.ajax({
+  					url: Routes.api_classifications_path(),
+  					data: {
+  						q: query
+  					},
+  					complete: function( data ) {
+              data = $.parseJSON(data.responseText);
+              entities = [];
+              _.each(data, function(entity) {
+                entities.push({id: entity, label: entity });
+              });
+                  
+              callback(entities);
+  					}
+  				});
+  			}
         break;
       case 'ou':
-        
+        console.log("ou");
         break;
       default:
         console.log("Unimplemented group rule dropdown value: " + mode);
@@ -201,13 +182,7 @@
         prePopulate: $("#group_member_tokens").data("pre"),
         theme: "facebook",
         tokenValue: "uid",
-        defaultText: "No members",
-        onAdd: function (item) {
-          console.log("Added " + item);
-        },
-        onDelete: function (item) {
-          console.log("Deleted " + item);
-        }
+        defaultText: "No members"
       });
 
       $("#group_owner_tokens").tokenInput($("#group_owner_tokens").attr("method") + ".json", {
