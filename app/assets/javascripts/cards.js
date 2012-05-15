@@ -200,7 +200,19 @@ $(function() {
         // They want to create a new group or person
         if(uid == -1) {
           // New Person
-          
+          template.status_text("Creating person...");
+          var person = {};
+          person.name = $(this).val().slice(11); // cut off the "Create Person " at the beginning
+          person.loginid = "SET_ME";
+          $.ajax({ url: Routes.people_path() + ".json", data: {person: person}, type: 'POST'}).always(
+            function(data) {
+              template.hide_status();
+              // Bring up the details window
+              cards.entity_details(data.uid);
+              // Clear out the input
+              $("#search_entities").val("");
+            }
+          );
         } else {
           // New Group
           template.status_text("Creating group...");

@@ -20,11 +20,19 @@ class Person < ActiveRecord::Base
   #validates :first, :presence => true
   #validates :last, :presence => true
   
-  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens
+  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens, :name
   attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
   
   def name
       "#{first} #{last}"
+  end
+  
+  def name=(str)
+    words = str.split(/\W+/)
+    unless words.length < 2
+      self.first = words[0]
+      self.last = words[1]
+    end
   end
   
   # Compute their classifications based on their title

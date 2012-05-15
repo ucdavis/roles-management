@@ -26,6 +26,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       format.html { render "show", :layout => false }
+      format.json { render json: @person }
     end
   end
 
@@ -80,8 +81,10 @@ class PeopleController < ApplicationController
       if @person.save
         logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new person, #{params[:person]}."
         format.html { redirect_to(@person, :notice => 'Person was successfully created.') }
+        format.json { render json: @person, status: :created, location: @person }
       else
         format.html { render :action => "new" }
+        format.json { render json: @person.errors, status: :unprocessable_entity }
       end
     end
   end
