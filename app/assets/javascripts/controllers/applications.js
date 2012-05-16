@@ -44,10 +44,10 @@ $(function() {
       if(selected_id == -1) {
         template.status_text("Creating application...");
         // They want to create a new application
-        var application = {};
-        application.name = $(this).val().slice(7); // cut off the "Create " at the beginning
-        application.owner_ids = [application.current_user_id];
-        $.ajax({ url: Routes.applications_path() + ".json", data: {application: application}, type: 'POST'}).always(
+        var app = {};
+        app.name = $(this).val().slice(7); // cut off the "Create " at the beginning
+        app.owner_ids = [application.current_user_id];
+        $.ajax({ url: Routes.applications_path() + ".json", data: {application: app}, type: 'POST'}).always(
           function(data) {
             template.hide_status();
             // Add to the applications list
