@@ -26,7 +26,7 @@
   			  <%# f.label :ou_tokens, "Organizational Scoping" %>
       	  <%# f.text_field :ou_tokens, "data-pre" => @application.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>
           <label>Sympa URL:</label>
-          <input type="text" class="span6" value="<%= url_for( :controller => 'api/applications', :action => 'show', :id => @application.name, :only_path => false ) %>.txt" disabled />
+          <input id="sympa_url" type="text" class="span6" value="<%= url_for( :controller => 'api/applications', :action => 'show', :id => @application.name, :only_path => false ) %>.txt" disabled />
         </fieldset>
     		<fieldset class="tab-pane" id="roles">
           <table>
@@ -56,6 +56,7 @@
     </div> <!-- /tabbable -->
   </div>
   <div class="modal-footer">
+    <a href="#" class="btn btn-danger" style="float: left;">Delete Application</a>
     <a href="#" class="btn" data-dismiss="modal">Close</a>
     <a href="#" class="btn btn-primary" id="save">Save changes</a>
   </div>
