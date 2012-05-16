@@ -231,6 +231,25 @@
         
         cards.render_cards();
       });
+      
+      $("div.modal-footer").on("click", "a#delete", function(e) {
+        bootstrap_modal_alert("Are you sure you want to permanently delete this application?",
+            {'verify': true, 'textYes': "Permanently Delete Application", 'textNo': "Cancel"}, function(confirm) {
+              if(confirm) {
+                // Delete the application
+                var app_id = $("form.edit_application input#app_id").val();
+                
+        				$.ajax({ url: Routes.application_path(app_id), type: 'DELETE',
+        					complete: function( data ) {
+                    // Application deleted. Close the dialog(s)
+                    $(".modal").modal('hide');
+                    applications.applications[app_id] = undefined;
+                    cards.render_cards();
+        					}
+        				});
+              }
+            });
+      });
     }
   }
 } (window.details_modal = window.details_modal || {}, jQuery));

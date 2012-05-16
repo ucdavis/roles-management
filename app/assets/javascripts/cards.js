@@ -5,7 +5,6 @@ $(function() {
 });
 
 (function (cards, $, undefined) {
-  cards.cards = null; // will be filled in using the view
   cards.selected_card = null;
   cards.selected_role = null;
   cards.template = null;
