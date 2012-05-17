@@ -45,7 +45,7 @@ module Authentication
   
   # Returns true if we're currently impersonating another user
   def impersonating?
-    actual_user == current_user
+    actual_user.loginid != current_user.loginid
   end
   
   def login_required

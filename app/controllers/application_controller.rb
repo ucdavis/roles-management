@@ -20,8 +20,8 @@ class ApplicationController < ActionController::Base
     redirect_to :controller => 'site', :action => 'access_denied'
   end
   
-  def allowed_to?(action, controller)
-    view_context.allowed_to?(action, controller)
+  def _permitted_to?(action, controller)
+    view_context._permitted_to?(action, controller)
   end
   
   # 'uids' is a list of UIDs (see README)

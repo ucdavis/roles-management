@@ -81,8 +81,11 @@ class ApplicationsController < ApplicationController
   protected
   
   def load_application
-    if allowed_to? :show, :applications
+    if permitted_to?(:show, :applications)
       @application = Application.find(params[:id])
+    else
+      @application = nil
+      logger.info "#{current_user.loginid}@#{request.remote_ip}: Tried loading an application without permission."
     end
   end
 end

@@ -25,8 +25,22 @@ module ApplicationHelper
     content_tag("button", name, {:type => "submit", :class => "btn", :onclick => "add_fields(this, '#{association}', '#{escape_javascript(fields)}')"})
   end
   
-  def allowed_to?(action, controller)
-    permitted_to?(action, controller) #unless impersonating? == true
+  def _permitted_to?(action_name, controller_name)
+    if impersonating?
+      # We assume anybody impersonating is an admin and has every role anyway ...
+      yield if block_given?
+    else
+      yield if permitted_to?(action_name, controller_name)
+    end
+  end
+
+  def _has_role?(role)
+    if impersonating?
+      # We assume anybody impersonating is an admin and has every role anyway ...
+      yield if block_given?
+    else
+      yield if has_role?(role)
+    end
   end
   
   # Produces a link_to, adjusting CSS class if link is to current controller
