@@ -152,7 +152,7 @@ $(function() {
       if(cards.selected_card && (uid >= 0)) {
         var assignment = {};
         
-        assignment.entity_id = uid;
+        assignment.uid = uid;
         if(cards.selected_role) {
           // A specific role is selected
           assignment.role_id = cards.selected_role;

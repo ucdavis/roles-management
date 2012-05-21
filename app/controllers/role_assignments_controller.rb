@@ -4,14 +4,17 @@ class RoleAssignmentsController < ApplicationController
     unless current_user.can_administer_role? params[:assignment][:role_id] == false    
       @assignment = RoleAssignment.new
       @assignment.role_id = params[:assignment][:role_id]
+      
+      uid = determine_uid params[:assignment][:uid]
+      
       # Person or group?
-      if params[:assignment][:uid][0] == '1'
-        person_id = params[:assignment][:uid][1..-1].to_i
+      if uid[:type] == UID_PERSON
+        person_id = uid[:id]
         unless current_user.can_administer_person? person_id == false
           @assignment.person_id = person_id
         end
       else
-        group_id = params[:assignment][:uid][1..-1].to_i
+        group_id = uid[:id]
         unless current_user.can_administer_group? group_id == false
           @assignment.group_id = group_id
         end
@@ -29,9 +32,11 @@ class RoleAssignmentsController < ApplicationController
   end
   
   def destroy
-    unless current_user.can_administer_role? params[:assignment][:role_id] == false    
+    unless current_user.can_administer_role? params[:assignment][:role_id] == false
+      uid = determine_uid params[:assignment][:uid]
+      
       # Destroying a person-based or group-based role assignment?
-      if params[:assignment][:uid][0] == '1'
+      if uid[:type] == UID_PERSON
         # Person
         person_id = params[:assignment][:uid][1..-1].to_i # strip off the UID indicator
         unless current_user.can_administer_person? person_id == false

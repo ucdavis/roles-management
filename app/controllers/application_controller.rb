@@ -62,4 +62,13 @@ class ApplicationController < ActionController::Base
     
     results
   end
+  
+  # Returns an array containing the UID integer and ID separated
+  def determine_uid(uid)
+    uid = uid.to_s # ensure it's a string
+    ret = {}
+    ret[:type] = uid[0].to_i
+    ret[:id] = uid[1..-1].to_i
+    ret
+  end
 end
