@@ -14,7 +14,7 @@ module ApplicationHelper
   end
   
   def link_to_remove_fields(name, f)
-    f.hidden_field(:_destroy) + content_tag("button", name, {:type => "submit", :class => "btn btn-danger", :onclick => "remove_fields(this)"})
+    f.hidden_field(:_destroy) + content_tag("button", name, {:type => "button", :class => "btn btn-danger", :onclick => "remove_fields(this)"})
   end
 
   def link_to_add_fields(name, f, association)
@@ -22,7 +22,7 @@ module ApplicationHelper
     fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
       render(association.to_s.singularize + "_fields", :f => builder)
     end
-    content_tag("button", name, {:type => "submit", :class => "btn", :onclick => "add_fields(this, '#{association}', '#{escape_javascript(fields)}')"})
+    content_tag("button", name, {:type => "button", :class => "btn", :onclick => "add_fields(this, '#{association}', '#{escape_javascript(fields)}')"})
   end
   
   def _permitted_to?(action_name, controller_name)
