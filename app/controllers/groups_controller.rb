@@ -99,7 +99,7 @@ class GroupsController < ApplicationController
   protected
   
   def load_group
-    if allowed_to? :show, :groups
+    if _permitted_to? :show, :groups
       @group = Group.find_by_id(params[:id])
     end
   end
