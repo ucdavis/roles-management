@@ -13,7 +13,7 @@
       </ul>
       <div class="tab-content">
         <%= form_for @group, :remote => true do |f| %>
-        <%= hidden_field_tag 'entity_id', '2' + @group.id.to_s %>
+        <%= hidden_field_tag 'group_id', @group.id.to_s %>
     		<fieldset class="tab-pane active" id="summary">
         	<%= f.label :name %>
         	<%= f.text_field :name %>

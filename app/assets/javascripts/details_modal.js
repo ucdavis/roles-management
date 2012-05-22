@@ -217,15 +217,20 @@
             // Delete the application
             var group_id = $("form.edit_group input#group_id").val();
             
-            console.log(group_id);
-            
     				$.ajax({ url: Routes.group_path(group_id), type: 'DELETE',
     					complete: function( data ) {
                 // Group deleted. Close the dialog(s)
                 $(".modal").modal('hide');
-                alert("REMOVE THE GROUP FROM ANY LISTS HERE");
-                //applications.applications[app_id] = undefined;
-                cards.render_cards();
+                
+                var deleted_uid = '2' + group_id;
+                
+                // Remove the group's UID from any application listing
+                _.each(applications.applications, function(app) {
+                  app.uids = _.filter(app.uids, function(uid) { return uid != deleted_uid });
+                });
+                
+                // Remove the deleted group from the sidebar
+                cards.depopulate_sidebar([deleted_uid]);
     					}
     				});
           }

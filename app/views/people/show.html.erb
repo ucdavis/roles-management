@@ -14,9 +14,8 @@
         <li><a href="#memberships" data-toggle="tab">Memberships</a></li>
       </ul>
       <div class="tab-content">
-        
         <%= form_for @person, :remote => true do |f| %>
-        <%= hidden_field_tag 'entity_id', '1' + @person.id.to_s %>
+        <%= hidden_field_tag 'person_id', @person.id.to_s %>
     		<fieldset class="tab-pane active" id="summary">
             <%= f.label :first, "Name" %>
             <%= f.text_field :first, :class => "text small" %> <%= f.text_field :last, :class => "text small" %>

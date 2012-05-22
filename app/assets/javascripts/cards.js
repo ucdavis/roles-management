@@ -310,6 +310,13 @@ $(function() {
     });
   }
   
+  // Used to remove specific UIDs from the sidebar (e.g. when a group is deleted)
+  cards.depopulate_sidebar = function(uids) {
+    _.each(uids, function(uid) {
+      $("#entity_list>li[data-uid=" + uid + "]").remove();
+    });
+  }
+  
   cards.entity_details = function(uid) {
     var entity_type = uid.toString()[0];
     var id = uid.toString().substr(1);
