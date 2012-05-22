@@ -120,7 +120,7 @@ class PeopleController < ApplicationController
   protected
   
   def load_person
-    if allowed_to? :show, :people
+    if _permitted_to? :show, :people
       @person = Person.find_by_id(params[:id])
     end
   end

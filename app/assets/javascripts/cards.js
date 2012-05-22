@@ -186,7 +186,7 @@ $(function() {
             $(cards.selected_card).data("uids", uids_arr.join(","));
           } else {
             // general access role updated
-            var uids_arr = $(cards.selected_card).data("uids").split(",");
+            var uids_arr = $(cards.selected_card).data("uids").toString().split(",");
             uids_arr.push(uid);
             $(cards.selected_card).data("uids", uids_arr.join(","));
             cards.populate_sidebar(uids_arr.join(","));

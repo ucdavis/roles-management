@@ -29,9 +29,14 @@ module ApplicationHelper
     if impersonating?
       # We assume anybody impersonating is an admin and has every role anyway ...
       yield if block_given?
+      return true
     else
-      yield if permitted_to?(action_name, controller_name)
+      if permitted_to?(action_name, controller_name)
+        yield if block_given?
+        return true
+      end
     end
+    return false
   end
 
   def _has_role?(role)
