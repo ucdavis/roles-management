@@ -332,7 +332,7 @@ $(function() {
       template.hide_status();
       $("#modal_container").empty();
       $("#modal_container").append(response);
-      $("#person_modal").modal();
+      $("#details_modal").modal();
       details_modal.init();
     });
   }
@@ -371,23 +371,4 @@ $(function() {
       }
     }));
   }
-  
-  cards.delete_group = function(uid) {
-    var id = uid.toString().substr(1);
-    
-    if (bootstrap_modal_alert("Really delete this group?",
-    {'verify': true, 'textYes': "Delete Group", 'textNo': "Cancel"}, function(confirm_delete) {
-      if(confirm_delete) {
-        template.status_text("Deleting group...");
-    
-        // Delete the group
-        $.ajax({ url: Routes.group_path(id), type: 'DELETE', complete: function(data, status) {
-          template.hide_status();
-          // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
-          var el = $("ul.pins li[data-uid=" + uid + "]");
-          el.fadeOut('fast', function() { $(el).remove(); });
-        }});
-      }
-    }));
-  }  
 } (window.cards = window.cards || {}, jQuery));

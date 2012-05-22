@@ -216,7 +216,9 @@
           if(confirm) {
             // Delete the application
             var group_id = $("form.edit_group input#group_id").val();
-                
+            
+            console.log(group_id);
+            
     				$.ajax({ url: Routes.group_path(group_id), type: 'DELETE',
     					complete: function( data ) {
                 // Group deleted. Close the dialog(s)
