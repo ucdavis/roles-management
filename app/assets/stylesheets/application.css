@@ -179,8 +179,8 @@ div#modal_container tr.fields button {
 
 /* Modal dialog is too narrow for our uses */
 .modal {
-  width: 760px;
-  margin-left: -380px;
+  width: 840px;
+  margin-left: -420px;
 }
 
 /* UCD colors for the navbar */
@@ -207,10 +207,6 @@ div#modal_container tr.fields button {
 
 .modal table tr td input,select {
   width: auto;
-}
-
-.modal table tr td input#group_rules_attributes_new_rules_value {
-  width: 250px;
 }
 
 #highlighted_results>li {

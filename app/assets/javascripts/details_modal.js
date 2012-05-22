@@ -209,6 +209,26 @@
       $("form.edit_group table tbody").on("focus", "tr.fields td:nth-child(3) input", function(e) {
         $(this).focus(details_modal.switch_group_rules_autocomplete(e.currentTarget));
       });
+      
+      $("div.modal-footer").on("click", "a#delete", function(e) {
+        bootstrap_modal_alert("Are you sure you want to permanently delete this group?",
+          {'verify': true, 'textYes': "Permanently Delete Group", 'textNo': "Cancel"}, function(confirm) {
+          if(confirm) {
+            // Delete the application
+            var group_id = $("form.edit_group input#group_id").val();
+                
+    				$.ajax({ url: Routes.group_path(group_id), type: 'DELETE',
+    					complete: function( data ) {
+                // Group deleted. Close the dialog(s)
+                $(".modal").modal('hide');
+                alert("REMOVE THE GROUP FROM ANY LISTS HERE");
+                //applications.applications[app_id] = undefined;
+                cards.render_cards();
+    					}
+    				});
+          }
+        });
+      });
     }
   
     if($("#application_owner_tokens").length > 0) {
@@ -234,21 +254,21 @@
       
       $("div.modal-footer").on("click", "a#delete", function(e) {
         bootstrap_modal_alert("Are you sure you want to permanently delete this application?",
-            {'verify': true, 'textYes': "Permanently Delete Application", 'textNo': "Cancel"}, function(confirm) {
-              if(confirm) {
-                // Delete the application
-                var app_id = $("form.edit_application input#app_id").val();
+          {'verify': true, 'textYes': "Permanently Delete Application", 'textNo': "Cancel"}, function(confirm) {
+          if(confirm) {
+            // Delete the application
+            var app_id = $("form.edit_application input#app_id").val();
                 
-        				$.ajax({ url: Routes.application_path(app_id), type: 'DELETE',
-        					complete: function( data ) {
-                    // Application deleted. Close the dialog(s)
-                    $(".modal").modal('hide');
-                    applications.applications[app_id] = undefined;
-                    cards.render_cards();
-        					}
-        				});
-              }
-            });
+    				$.ajax({ url: Routes.application_path(app_id), type: 'DELETE',
+    					complete: function( data ) {
+                // Application deleted. Close the dialog(s)
+                $(".modal").modal('hide');
+                applications.applications[app_id] = undefined;
+                cards.render_cards();
+    					}
+    				});
+          }
+        });
       });
     }
   }
