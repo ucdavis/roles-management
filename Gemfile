@@ -34,3 +34,6 @@ gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git
 
 gem "js-routes"
 gem "ruby_parser"
+
+gem 'exception_notification'
+gem 'letter_opener', group: :development

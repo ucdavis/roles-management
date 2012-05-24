@@ -63,4 +63,10 @@ DSSRM::Application.configure do
   config.action_mailer.delivery_method = :sendmail
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
+  
+  # Send e-mail on exceptions
+  config.middleware.use ExceptionNotifier,
+    sender_address: 'no-reply@roles.dss.ucdavis.edu',
+    exception_recipients: 'cmthielen@ucdavis.edu',
+    ignore_exceptions: ExceptionNotifier.default_ignore_exceptions # + [RuntimeError]
 end
