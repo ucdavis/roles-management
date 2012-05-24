@@ -8,6 +8,10 @@ $(function() {
   // Application and role relationship (filled in by index.html.erb)
   applications.applications = [];
   
+  applications.selected_application = function() {
+    return applications.applications[$(cards.selected_card).data("application-id")];
+  }
+  
   // Constructor of sorts
   applications.initialize = function() {
     // Set up the impersonate functionality

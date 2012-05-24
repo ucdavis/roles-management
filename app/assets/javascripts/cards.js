@@ -373,19 +373,20 @@ $(function() {
       role_id = cards.selected_role;
     }
     
-    if (bootstrap_modal_alert("Really remove this group?",
-    {'verify': true, 'textYes': "Remove Group", 'textNo': "Cancel"}, function(confirm_delete) {
-      if(confirm_delete) {
-        template.status_text("Removing group...");
+    template.status_text("Removing group...");
     
-        // Disassociate the group
-        $.ajax({ url: Routes.roles_unassign_path(), data: { assignment: { uid: uid, role_id: role_id } }, type: 'DELETE', complete: function(data, status) {
-          template.hide_status();
-          // Remove the pin (Note: status = 'parseerror' because jQuery doesn't like blank 200 OK ajax responses. Ignore this.)
-          var el = $("ul.pins li[data-uid=" + uid + "]");
-          el.fadeOut('fast', function() { $(el).remove(); });
-        }});
-      }
-    }));
+    // Disassociate the group
+    $.ajax({ url: Routes.roles_unassign_path(), data: { assignment: { uid: uid, role_id: role_id } }, type: 'DELETE', complete: function(data, status) {
+      var $selected_card = $(cards.selected_card);
+      
+      template.hide_status();
+      cards.depopulate_sidebar([uid]);
+      
+      // Remove group from internal application list
+      var app = applications.selected_application();
+      app.uids = _.filter(app.uids, function(a_uid) { return a_uid != uid; });
+      // Also remove group from HTML data attributes (bad typing issues here...)
+      $selected_card.data("uids", _.filter($selected_card.data("uids").split(","), function(a_uid) { return a_uid != uid; }).join(","));
+    }});
   }
 } (window.cards = window.cards || {}, jQuery));
