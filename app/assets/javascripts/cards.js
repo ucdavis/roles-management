@@ -260,11 +260,21 @@ $(function() {
   }
   
   cards.render_cards = function() {
-    $("div#cards").empty();
+    var $left = $("div#cards-left");
+    var $right = $("div#cards-right");
+    var $current = $left;
+    var count = 0; _.map(applications.applications, function(x) { count++; });
+    
+    $left.empty();
+    $right.empty();
     cards.template = $("#tmpl-card").html();
+    
+    var i = 0;
     _.each(applications.applications, function(app) {
+      if(i >= count / 2) $current = $right;
       var compiledTmpl = _.template(cards.template, { app: app });
-      $("div#cards").append(compiledTmpl);
+      $current.append(compiledTmpl);
+      i++;
     });
   }
   
