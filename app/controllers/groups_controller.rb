@@ -1,6 +1,5 @@
 class GroupsController < ApplicationController
   before_filter :load_group, :only => [:show]
-  #filter_resource_access
   filter_access_to :all
 
   # GET /groups
@@ -17,8 +16,6 @@ class GroupsController < ApplicationController
 
   # GET /groups/1
   def show
-    @group = Group.find_by_id(params[:id])
-
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
 
     respond_to do |format|

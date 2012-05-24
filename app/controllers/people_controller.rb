@@ -1,8 +1,5 @@
 class PeopleController < ApplicationController
-  require 'ldap'
-  
   before_filter :load_person, :only => [:show]
-  #filter_resource_access
   filter_access_to :all
   
   # GET /people
@@ -20,8 +17,6 @@ class PeopleController < ApplicationController
 
   # GET /people/1
   def show
-    @person = Person.find_by_id(params[:id])
-
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded person page for #{params[:id]}."
 
     respond_to do |format|
@@ -32,6 +27,8 @@ class PeopleController < ApplicationController
 
   # GET /people/new
   def new
+    require 'ldap'
+    
     @person = Person.new
 
     if params[:loginid]
