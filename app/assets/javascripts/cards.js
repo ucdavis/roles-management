@@ -95,10 +95,7 @@ $(function() {
     // Delete/info button(s) appear on hover for the sidebar pins
     $("div#right").on("mouseenter mouseleave", "ul.pins li", function(e) {
       if(e.type == "mouseenter") {
-        if($(this).data("uid").toString()[0] == "2") {
-          // only show a delete item if this is a group (you cannot delete users through this interface)
-          $(this).children("i.icon-remove").css("display", "block");
-        }
+        $(this).children("i.icon-remove").css("display", "block");
         $(this).children("i.icon-search").css("display", "block");
       } else {
         // hover out
