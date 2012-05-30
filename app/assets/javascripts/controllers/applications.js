@@ -14,11 +14,6 @@ $(function() {
   
   // Constructor of sorts
   applications.initialize = function() {
-    // Set up the impersonate functionality
-    $("p.user a#impersonate_switch").click(function() {
-      applications.impersonate_dialog();
-    });
-    
     $("#search_applications").typeahead({
       source: function(query, maxResults, callback) {
         // Populate the search drop down
