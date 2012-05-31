@@ -257,19 +257,29 @@ $(function() {
   }
   
   cards.render_cards = function() {
+    var collection = null;
     var $left = $("div#cards-left");
     var $right = $("div#cards-right");
     var $current = $left;
-    var count = 0; _.map(applications.applications, function(x) { count++; });
+    
+    if(typeof applications === "undefined") {
+      // template mode
+      collection = templates.templates;
+    } else {
+      // application mode
+      collection = applications.applications;
+    }
+    
+    var count = 0; _.map(collection, function(x) { count++; });
     
     $left.empty();
     $right.empty();
     cards.template = $("#tmpl-card").html();
     
     var i = 0;
-    _.each(applications.applications, function(app) {
+    _.each(collection, function(item) {
       if(i >= count / 2) $current = $right;
-      var compiledTmpl = _.template(cards.template, { app: app });
+      var compiledTmpl = _.template(cards.template, { item: item });
       $current.append(compiledTmpl);
       i++;
     });

@@ -1,44 +1,42 @@
-<%= javascript_include_tag "controllers/applications.js" %>
 <%= javascript_include_tag "controllers/" + params[:controller] %>
 <%= javascript_include_tag "cards" %>
 
-<script type="text/javascript">
-  templates.templates = $.parseJSON('<%= @templates.map{|x| x.name}.to_json.html_safe %>');
+<script id="tmpl-card" type="text/template">
+  <div class="card span4" data-template-id="{{= item.id }}" data-uids="{{= item.uids }}">
+      <div class="card-title"><h3>{{= item.name }}</h3><i class="icon-search" id="entity_details"></i></div>
+      <div class="card-content">
+        {{ if(item.rules.length > 1) { }}
+          <div class="pins">
+            {{ _.each(item.rules, function(rule) { }}
+              <div class="pin" data-rule-id="{{= rule.id }}" data-uids="{{= rule.uids }}"><a href="#">{{= rule.descriptor }}</a></div>
+            {{ }) }}
+          </div>
+        {{ } }}
+      </div>
+	  </div> <!-- card -->
+</script>
+
+<script id="tmpl-pin" type="text/template">
+  <li data-uid="{{= entity.uid }}"><i class="icon-remove"></i> <i class="icon-search"></i>{{= entity.name }}</li>
 </script>
 
 <div class="row-fluid">
-  <div class="span9">
+  <div class="span9" id="left">
     
     <form class="form-search">
-      <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_templates", :placeholder => "Search templates…", :data => { :provide => "typeahead", :items => 4, :source => @templates.map{ |x| x.name } } } %>
+      <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_templates", :placeholder => "Search templates…" } %>
     </form>
     
-    <% current_user.manageable_applications.each_with_index do |app, i| %>
-    <script type="text/javascript">
-      applications.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
-    </script>
-    <% end %>
-
-    <% @templates.each do |template| %>
-    <%= content_tag :div, :class => "card span9", :data => {:uids => template.assignment_uids, :template_id => template.id} do -%>
-      <div class="card-title"><h3><%= template.name %></h3></div>
-      <div class="card-content">
-        <div class="pins">
-          <% template.rules.each do |rule| %>
-            <div class="pin">
-              <a href="#"><%= rule.condition %> <strong><%= rule.value %></strong></a>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    <% end -%>
-    <% end %>
+    <div id="cards">
+      <div id="cards-left" class="span4"></div>
+      <div id="cards-right" class="span4"></div>
+    </div>
   
   </div> <!-- /.span9 -->
-  <div class="span3">
+  <div class="span3" id="right">
     
     <form class="form-search">
-      <input id="search_entities" placeholder="Search people and groups…" type="text" class="input-large search-query" id="search_people_groups">
+      <input id="search_entities" placeholder="Search people and groups…" type="text" class="input-large search-query">
     </form>
     
 	  <ul class="pins" id="entity_list"></ul>
