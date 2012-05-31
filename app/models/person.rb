@@ -35,6 +35,10 @@ class Person < ActiveRecord::Base
     end
   end
   
+  def uid
+    (UID_PERSON.to_s + id.to_s).to_i
+  end
+  
   # Compute their classifications based on their title
   def classifications
     title.classifications
@@ -83,27 +87,6 @@ class Person < ActiveRecord::Base
       apps << a
     end
     
-    # Add apps via OU defaults
-    #ous.each do |ou|
-    #  ou.applications.each do |application|
-    #    application.roles.where(:default => true).each do |role|
-    #      # Ensure there are no duplicates
-    #      unless apps.include? role.application
-    #        apps << role.application
-    #      end
-    #    end
-    #  end
-    #end
-    
-    # Add apps open to the public
-    # DON'T DO THIS - default role does not imply public access
-    #Role.includes(:application).where( :default => true ).each do |role|
-      # Avoid duplicates
-      #unless apps.include? role.application
-        #apps << role.application
-        #end
-    #end
-    
     apps
   end
   
@@ -113,27 +96,6 @@ class Person < ActiveRecord::Base
     
     # Add apps via roles explicitly assigned
     roles.each { |role| apps << role.application }
-
-    # Add apps via OU defaults
-    #ous.each do |ou|
-    #  ou.applications.each do |application|
-    #    application.roles.where(:default => true).each do |role|
-    #      # Ensure there are no duplicates
-    #      unless apps.include? role.application
-    #        apps << role.application
-    #      end
-    #    end
-    #  end
-    #end
-    
-    # Add apps via public defaults
-    # DON'T DO THIS - default role does not imply public access
-    #Role.includes(:application).where( :default => true ).each do |role|
-      # Avoid duplicates
-      #unless apps.include? role.application
-        #apps << role.application
-        #end
-    #end
 
     apps
   end

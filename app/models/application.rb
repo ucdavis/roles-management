@@ -14,6 +14,10 @@ class Application < ActiveRecord::Base
   def ou_tokens=(ids)
       self.ou_ids = ids.split(",")
   end
+  
+  def uid
+    (UID_APPLICATION.to_s + id.to_s).to_i
+  end
 
   def owner_tokens
       self.owner_ids

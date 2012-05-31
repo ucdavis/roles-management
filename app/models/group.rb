@@ -25,7 +25,8 @@ class Group < ActiveRecord::Base
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
   
   # Calculates all members, including those defined via rules.
-  # If flatten is set to true, child groups are resolved recursively until only a list of people remains
+  # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
+  # If flatten is false, any member groups will simply be returned as a group (i.e. not as the people _in_ that member group)
   def members(flatten = false)
     members = []
     
@@ -50,7 +51,18 @@ class Group < ActiveRecord::Base
       members += r.resolve
     end
     
+    
+    
     members
+  end
+  
+  # An 'OU' is merely a group with a code field set (used to sync with external databases)
+  def uid
+    if code.nil?
+      (UID_GROUP.to_s + id.to_s).to_i
+    else
+      (UID_OU.to_s + id.to_s).to_i
+    end
   end
   
   # Returns tokenized members, including 'via' parameter to differentiate explicitly-assigned
