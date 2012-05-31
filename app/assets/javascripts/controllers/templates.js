@@ -76,7 +76,7 @@ $(function() {
           assignment.role_id = $(this).attr("data-role-id");
           assignment.uid = $(this).parent().parent().parent().attr("data-entity-id");
           
-          $.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'});
+          //$.ajax({ url: Routes.roles_unassign_path() + ".json", data: {assignment: assignment}, type: 'DELETE'});
         });
         template.hide_status();
         
