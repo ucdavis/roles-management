@@ -51,9 +51,8 @@ class Group < ActiveRecord::Base
       members += r.resolve
     end
     
-    
-    
-    members
+    # Only return a unique list
+    members.uniq{|x| x.uid}
   end
   
   # An 'OU' is merely a group with a code field set (used to sync with external databases)
@@ -86,6 +85,10 @@ class Group < ActiveRecord::Base
     rules.each do |r|
       resolved_members += r.resolve
     end
+    
+    # Unique members only
+    explicit_members = explicit_members.uniq{|x| x.uid}
+    resolved_members = resolved_members.uniq{|x| x.uid}
     
     result = explicit_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'explicit' } }
     result += resolved_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'resolved' } }

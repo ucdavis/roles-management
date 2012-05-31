@@ -489,7 +489,10 @@ $.TokenList = function (input, url_or_data, settings) {
         this_token = $(this_token)
           .addClass(settings.classes.token)
           .insertBefore(input_token);
+          
+          console.log(item);
 
+          if(item.via !== "resolved") {
         // The 'delete token' button
         $("<span>" + settings.deleteText + "</span>")
             .addClass(settings.classes.tokenDelete)
@@ -501,6 +504,7 @@ $.TokenList = function (input, url_or_data, settings) {
                     return false;
                 }
             });
+          }
 
         // Store data on the token
         var token_data = item;
