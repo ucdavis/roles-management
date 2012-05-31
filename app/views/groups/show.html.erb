@@ -37,7 +37,7 @@
           <%= f.fields_for :rules do |builder| %>
             <%= render "rule_fields", :f => builder %>
           <% end %>
-          <tr class="fields">
+          <!--<tr class="fields">
             <td>
               <select id="group_rules_attributes_new_rules_column" name="group[rules_attributes][new_rules][column]">
                 <option value="loginid">Login ID</option>
@@ -60,7 +60,7 @@
               <input id="group_rules_attributes_new_rules__destroy" name="group[rules_attributes][new_rules][_destroy]" type="hidden" value="false" />
               <button class="btn btn-danger" onclick="remove_fields(this)" type="submit">Remove</button>
             </td>
-          </tr>
+          </tr>-->
           </table>
   
           <p><%= link_to_add_fields "Add Rule", f, :rules %></p>
