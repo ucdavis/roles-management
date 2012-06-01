@@ -90,8 +90,8 @@ class Group < ActiveRecord::Base
     explicit_members = explicit_members.uniq{|x| x.uid}
     resolved_members = resolved_members.uniq{|x| x.uid}
     
-    result = explicit_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'explicit' } }
-    result += resolved_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :via => 'resolved' } }
+    result = explicit_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => false } }
+    result += resolved_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => true } }
     
     result
   end

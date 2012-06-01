@@ -45,6 +45,11 @@ li.token-input-token-facebook {
     white-space: nowrap;
 }
 
+li.token-input-token-readonly-facebook {
+  background-color: #CCD5E4;
+  border-color: #A5AEBD;
+}
+
 li.token-input-token-facebook p {
     display: inline;
     padding: 0;
