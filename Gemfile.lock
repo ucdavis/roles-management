@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/nessche/net-ssh.git
+  revision: 21dde273463f5aae11dcad34dfb3feb08dc81375
+  specs:
+    net-ssh (2.5.1)
+      jruby-pageant (>= 1.0.2)
+
+GIT
   remote: git://github.com/richardun/active_directory.git
   revision: 64e7b977a7547306a59ff2973021b79129b09773
   specs:
@@ -98,8 +105,6 @@ GEM
       net-ssh (>= 1.99.1)
     net-sftp (2.0.5)
       net-ssh (>= 2.0.9)
-    net-ssh (2.5.1)
-      jruby-pageant (>= 1.0.2)
     net-ssh-gateway (1.1.0)
       net-ssh (>= 1.99.1)
     pg (0.13.2)
@@ -174,6 +179,7 @@ DEPENDENCIES
   jquery-rails (>= 1.0.12)
   js-routes
   letter_opener
+  net-ssh!
   pg
   rails (= 3.2.3)
   ruby-ldap
