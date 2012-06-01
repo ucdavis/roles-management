@@ -4,6 +4,7 @@ class Role < ActiveRecord::Base
   has_many :role_assignments
   has_many :people, :through => :role_assignments
   has_many :groups, :through => :role_assignments
+  after_save :sync_ad
   
   belongs_to :application
   
@@ -26,5 +27,23 @@ class Role < ActiveRecord::Base
   
   def as_json(options={}) 
     { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :uids => self.uids } 
+  end
+  
+  private
+  
+  # Syncronizes with AD
+  # Note: Due to AD's architecture, this cannot be verified as a success right away
+  def sync_ad
+    require 'AdSync'
+    
+    unless ad_path.nil?
+      g = AdSync.fetch_group(ad_path)
+      people.each do |person|
+        u = AdSync.fetch_user(person.loginid)
+        unless AdSync.in_group(u, g)
+          AdSync.add_user_to_group(u, g)
+        end
+      end
+    end
   end
 end
