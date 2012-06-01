@@ -10,3 +10,4 @@ config/api_keys.yml
 public/assets/
 .rvmrc
 public/system
+vendor/bundle
