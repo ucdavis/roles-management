@@ -71,6 +71,8 @@ working directly in the model's class. If you are unsure if a function uses
 the UID correctly, simply look the individual or group up in the database and
 see if a prefix has been added.
 
+The file config/initializers/uid_conventions.rb also contains this information.
+
 === Mandatory vs Default Roles
 A role (permission template) has both a default and mandatory boolean.
 
