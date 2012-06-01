@@ -92,6 +92,8 @@ $(function() {
     $("#admin-unimpersonate").click(function() {
       window.location.href = Routes.admin_ops_unimpersonate_path();
     });
+    
+    $("#admin-about").click(application.about_dialog);
   }
   
   application.impersonate_dialog = function() {
@@ -102,6 +104,17 @@ $(function() {
       $("#modal_container").empty();
       $("#modal_container").append(data);
       $("#impersonate_modal").modal();
+    });
+  }
+  
+  application.about_dialog = function() {
+    template.status_text("Loading...");
+    
+    $.get(Routes.site_about_path(), function(data) {
+      template.hide_status();
+      $("#modal_container").empty();
+      $("#modal_container").append(data);
+      $("#about_modal").modal();
     });
   }
 } (window.application = window.application || {}, jQuery));

@@ -214,6 +214,10 @@
   site_access_denied_path: function(options) {
   return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"access_denied",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// site_about => /site/about(.:format)
+  site_about_path: function(options) {
+  return Utils.build_path([], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"about",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // admin_dialogs_impersonate => /admin/dialogs/impersonate(.:format)
   admin_dialogs_impersonate_path: function(options) {
   return Utils.build_path([], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"dialogs",false]],[7,"/",false]],[6,"impersonate",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);

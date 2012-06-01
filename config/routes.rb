@@ -5,6 +5,7 @@ DSSRM::Application.routes.draw do
   get "site/administrate"
   get "site/logout"
   get "site/access_denied"
+  get "site/about"
   
   namespace "admin" do
     get "dialogs/impersonate"
