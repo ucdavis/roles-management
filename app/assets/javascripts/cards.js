@@ -147,27 +147,9 @@ $(function() {
       // They have selected a person. What to do depends on the mode of the UI
       // Is there a card highlighted? In which case, assign this person
       if(cards.selected_card && (uid >= 0)) {
-        var assignment = {};
-        
-        assignment.uid = uid;
-        if(cards.selected_role) {
-          // A specific role is selected
-          assignment.role_id = cards.selected_role;
-        } else {
-          // No specific role is selected - give them the default
-          
-          assignment.role_id = _.first(_.filter(applications.applications[$(cards.selected_card).data("application-id")].roles, function(role) {
-            if(role.token == "access") {
-              return true;
-            } else {
-              return false;
-            }
-          })).id;
-        }
-        
         template.status_text("Saving...");
         
-        $.ajax({ url: Routes.roles_assign_path(), data: {assignment: assignment}, type: 'POST'}).always(function() {
+        cards.assign_role(uid, undefined, function() {
           template.hide_status();
           
           // Update the sidebar list
@@ -227,6 +209,37 @@ $(function() {
         }
       }
     });
+  }
+  
+  // Saves an assignment. If role_id is not provided, it will be guessed from the state of the UI
+  // on_complete is an optional callback. It will be called when the role is successfully saved
+  cards.assign_role = function(uid, role_id, on_complete) {
+    var assignment = {};
+    
+    assignment.uid = uid;
+    if(role_id !== undefined) {
+      assignment.role_id = role_id;
+    } else {
+      // role_id was not provided. Guess what it is from the interface
+      
+      if(cards.selected_role) {
+        // A specific role is selected
+        assignment.role_id = cards.selected_role;
+      } else {
+        // No specific role is selected - give them the default
+      
+        assignment.role_id = _.first(_.filter(applications.applications[$(cards.selected_card).data("application-id")].roles, function(role) {
+          if(role.token == "access") {
+            return true;
+          } else {
+            return false;
+          }
+        })).id;
+      }
+    }
+    
+    // Save the assignment
+    $.ajax({ url: Routes.roles_assign_path(), data: {assignment: assignment}, type: 'POST'}).always(on_complete);
   }
   
   // Shows and hides the div.card elements based on 'query' matching each .card-title>h3
