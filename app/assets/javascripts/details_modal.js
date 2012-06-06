@@ -217,7 +217,7 @@
             // Delete the application
             var group_id = $("form.edit_group input#group_id").val();
             
-    				$.ajax({ url: Routes.group_path(group_id), type: 'DELETE',
+    				$.ajax({ url: Routes.group_path(group_id) + ".json", type: 'DELETE',
     					complete: function( data ) {
                 // Group deleted. Close the dialog(s)
                 $(".modal").modal('hide');
