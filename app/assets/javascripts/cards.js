@@ -151,25 +151,6 @@ $(function() {
         
         cards.assign_role(uid, undefined, function() {
           template.hide_status();
-          
-          // Update the sidebar list
-          if(cards.selected_role) {
-            // specific role updated
-            var uids_arr = $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids").split(",");
-            uids_arr.push(uid);
-            $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids", uids_arr.join(","));
-            cards.populate_sidebar(uids_arr.join(","));
-            // also update the general role
-            uids_arr = $(cards.selected_card).data("uids").split(",");
-            uids_arr.push(uid);
-            $(cards.selected_card).data("uids", uids_arr.join(","));
-          } else {
-            // general access role updated
-            var uids_arr = $(cards.selected_card).data("uids").toString().split(",");
-            uids_arr.push(uid);
-            $(cards.selected_card).data("uids", uids_arr.join(","));
-            cards.populate_sidebar(uids_arr.join(","));
-          }
         });
         
         // Clear the search field
@@ -189,6 +170,8 @@ $(function() {
               cards.entity_details(data.uid);
               // Clear out the input
               $("#search_entities").val("");
+              // Assign this newly created person
+              cards.assign_role(data.uid, undefined, undefined);
             }
           );
         } else {
@@ -204,6 +187,8 @@ $(function() {
               cards.entity_details(data.uid);
               // Clear out the input
               $("#search_entities").val("");
+              // Assign this newly created group
+              cards.assign_role(data.uid, undefined, undefined);
             }
           );
         }
@@ -239,7 +224,28 @@ $(function() {
     }
     
     // Save the assignment
-    $.ajax({ url: Routes.roles_assign_path(), data: {assignment: assignment}, type: 'POST'}).always(on_complete);
+    $.ajax({ url: Routes.roles_assign_path(), data: {assignment: assignment}, type: 'POST'}).always(function() {
+      // Update the sidebar list
+      if(cards.selected_role) {
+        // specific role updated
+        var uids_arr = $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids").split(",");
+        uids_arr.push(uid);
+        $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids", uids_arr.join(","));
+        cards.populate_sidebar(uids_arr.join(","));
+        // also update the general role
+        uids_arr = $(cards.selected_card).data("uids").split(",");
+        uids_arr.push(uid);
+        $(cards.selected_card).data("uids", uids_arr.join(","));
+      } else {
+        // general access role updated
+        var uids_arr = $(cards.selected_card).data("uids").toString().split(",");
+        uids_arr.push(uid);
+        $(cards.selected_card).data("uids", uids_arr.join(","));
+        cards.populate_sidebar(uids_arr.join(","));
+      }
+      
+      if(on_complete !== undefined) on_complete();
+    });
   }
   
   // Shows and hides the div.card elements based on 'query' matching each .card-title>h3
