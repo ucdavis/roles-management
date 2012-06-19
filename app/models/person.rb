@@ -77,7 +77,7 @@ class Person < ActiveRecord::Base
   end
   
   def roles_by_application(application_id)
-    Role.includes(:role_assignments).where(:application_id => application_id, :role_assignments => { :person_id => self.id } )
+    Role.includes(:role_assignments).where(:application_id => application_id, :role_assignments => { :person_id => self.id } ).map{ |x| x.token }
   end
   
   # Compute applications they can assign subordinates to.
