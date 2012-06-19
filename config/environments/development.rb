@@ -44,5 +44,5 @@ DSSRM::Application.configure do
     exception_recipients: 'cmthielen@ucdavis.edu',
     ignore_exceptions: ExceptionNotifier.default_ignore_exceptions # + [RuntimeError]
   
-  config.action_mailer.delivery_method = :letter_opener
+  #config.action_mailer.delivery_method = :file
 end

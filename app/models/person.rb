@@ -76,6 +76,10 @@ class Person < ActiveRecord::Base
     roles
   end
   
+  def roles_by_application(application_id)
+    Role.includes(:role_assignments).where(:application_id => application_id, :role_assignments => { :person_id => self.id } )
+  end
+  
   # Compute applications they can assign subordinates to.
   # These are applications they either explicitly own or
   # applications made available on a global level.
