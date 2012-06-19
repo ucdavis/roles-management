@@ -40,3 +40,5 @@ gem 'letter_opener', group: :development
 
 # Temporary version of net-ssh to workaround broken 2.5.1
 gem 'net-ssh', :git => 'git://github.com/nessche/net-ssh.git'
+
+gem 'jbuilder'

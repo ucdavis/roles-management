@@ -14,7 +14,7 @@ xml.person do
   xml.roles("type"=>"array") do
     @person.roles.each do |role|
       xml.role do
-        xml.name role.name
+        xml.token role.token
         xml.app role.application.name
       end
     end
@@ -25,8 +25,6 @@ xml.person do
         xml.name app.name
         xml.url app.hostname
         xml.tag! "display_name", app.display_name
-        xml.icon app.icon.url(:normal)
-        xml.tiny_icon app.icon.url(:tiny)
       end
     end
   end
@@ -49,17 +47,17 @@ xml.person do
     end
   end
   
-  if @person.requestable_applications.length > 0
-    xml.requestable_apps("type" => "array") do
-      @person.requestable_applications.each do |app|
-        xml.requestable_app do
-          xml.name app.name
-          xml.url app.hostname
-          xml.tag! "display_name", app.display_name
-          xml.icon app.icon.url(:normal)
-          xml.tiny_icon app.icon.url(:tiny)
-        end
-      end
-    end
-  end
+  #if @person.requestable_applications.length > 0
+  #  xml.requestable_apps("type" => "array") do
+  #    @person.requestable_applications.each do |app|
+  #      xml.requestable_app do
+  #        xml.name app.name
+  #        xml.url app.hostname
+  #        xml.tag! "display_name", app.display_name
+  #        xml.icon app.icon.url(:normal)
+  #        xml.tiny_icon app.icon.url(:tiny)
+  #      end
+  #    end
+  #  end
+  #end
 end

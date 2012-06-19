@@ -22,10 +22,6 @@ class Api::PeopleController < Api::BaseController
       # Not numeric only, assume loginid
       @person = Person.find_by_loginid(params[:id])
     end
-
-    respond_to do |format|
-      format.xml
-    end
   end
 
   # GET /api/people/new.xml
