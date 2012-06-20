@@ -2,7 +2,7 @@ class RoleAssignment < ActiveRecord::Base
   belongs_to :role
   belongs_to :person
   belongs_to :group
-  validates :role, :presence => true
+  validates :role_id, :presence => true
   validate :has_person_or_group
   
   private
