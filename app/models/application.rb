@@ -56,6 +56,7 @@ class Application < ActiveRecord::Base
       r.descriptor = "Access"
       r.description = "Allow access to this application"
       r.default = true
+      r.application_id = self.id
       r.save!
       self.roles << r
     end
@@ -90,6 +91,9 @@ class Application < ActiveRecord::Base
   end
   
   def has_at_least_one_role
+    if self.new_record? # new records get a pass because we can't create a role until the record is at least saved
+      return true
+    end
     if roles.length > 0
       true
     else
