@@ -129,7 +129,7 @@
             delete options[left];
             return this.path_identifier(value); 
           } else {
-            throw new ParameterMissing("Route parameter missing: " + left);
+            //throw new ParameterMissing("Route parameter missing: " + left);
           }
         /*
          * I don't know what is this node type

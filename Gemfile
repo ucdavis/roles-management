@@ -32,7 +32,7 @@ gem 'whenever', :require => false
 # For MS Active Directory support
 gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
 
-gem "js-routes"
+gem "js-routes", :git => 'git://github.com/railsware/js-routes.git'
 gem "ruby_parser"
 
 gem 'exception_notification'
