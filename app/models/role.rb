@@ -1,5 +1,6 @@
 class Role < ActiveRecord::Base
   validates :token, :uniqueness => { :scope => :id, :message => "token must be unique per application" }
+  validates :application_id, :presence => true # must have an application
   
   has_many :role_assignments
   has_many :people, :through => :role_assignments
