@@ -3,8 +3,16 @@ class Api::CustomController < Api::BaseController
     @results = []
 
     unless params[:q].nil?
-      @people = Person.where("first like ? or last like ? or " + db_concat(:first, ' ', :last) + " like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
-      @groups = Group.where("name like ?", "%#{params[:q]}%")
+      adapter = ActiveRecord::Base.connection.instance_values["config"][:adapter].to_sym
+      
+      case adapter
+      when :sqlite3
+        @people = Person.where("first like ? or last like ? or " + db_concat(:first, ' ', :last) + " like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
+        @groups = Group.where("name like ?", "%#{params[:q]}%")
+      else
+        @people = Person.where("first ilike ? or last ilike ? or " + db_concat(:first, ' ', :last) + " ilike ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
+        @groups = Group.where("name ilike ?", "%#{params[:q]}%")
+      end
     
       @people.each do |person|
         @results << {:uid => ('1' + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
