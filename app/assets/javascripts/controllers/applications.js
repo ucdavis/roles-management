@@ -51,14 +51,13 @@ $(function() {
             template.hide_status();
             // Add to the applications list
             applications.applications[data.id] = data;
-            // Render out the card
-            var compiledTmpl = _.template(cards.template, { app: data });
-            $("div#cards").append(compiledTmpl);
-            // Bring up the details window
-            cards.entity_details('4' + data.id);
             // Clear out the input
             $("#search_applications").val("");
             cards.visual_filter("");
+            // Render out the card
+            cards.render_cards();
+            // Bring up the details window
+            cards.entity_details('4' + data.id);
           }
         );
         

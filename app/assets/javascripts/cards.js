@@ -289,7 +289,7 @@ $(function() {
       collection = applications.applications;
     }
     
-    var count = 0; _.map(collection, function(x) { count++; });
+    var count = 0; _.map(collection, function(x) { if(x) { count++; } });
     
     $left.empty();
     $right.empty();
