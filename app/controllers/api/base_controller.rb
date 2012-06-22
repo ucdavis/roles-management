@@ -13,15 +13,21 @@ class Api::BaseController < ApplicationController
         if @application.nil? == false
           # Application exists
           if @application.api_key == password
+            logger.info "API authenticated via application key"
             session[:current_application] = @application
             return true
           end
         end
 
+        logger.info "API authentication failed. Application name or key is wrong."
         raise ActionController::RoutingError.new('Access denied')
 
         return false
       end
+    else
+      logger.info "API authentication allowed as user is in CAS."
+      session[:current_application] = nil
+      return true
     end
   end
 
