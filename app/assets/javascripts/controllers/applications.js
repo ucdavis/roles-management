@@ -19,10 +19,12 @@ $(function() {
         // Populate the search drop down
         apps = []
         var exact_match_found = false;
-        _.each(_.rest(applications.applications, 1), function(app) {
-          if(~app.display_name.toLowerCase().indexOf(query.toLowerCase())) {
-            if(app.display_name.toLowerCase() == query.toLowerCase()) exact_match_found = true;
-            apps.push({id: app.id, label: app.display_name });
+        _.each(applications.applications, function(app) {
+          if(app) {
+            if(~app.display_name.toLowerCase().indexOf(query.toLowerCase())) {
+              if(app.display_name.toLowerCase() == query.toLowerCase()) exact_match_found = true;
+              apps.push({id: app.id, label: app.display_name });
+            }
           }
         });
         if(exact_match_found == false) {

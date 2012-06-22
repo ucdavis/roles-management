@@ -2,9 +2,12 @@ class Application < ActiveRecord::Base
   has_many :roles
   has_many :application_owner_assignments
   has_many :owners, :through => :application_owner_assignments
+
   after_save :ensure_access_role_exists
   before_save :ensure_api_key_exists, :set_default_properties
+
   validate :has_at_least_one_role
+  validates :name, :presence => true
   
   attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name, :icon, :description, :ad_path, :roles, :roles_attributes, :owner_tokens, :owner_ids
   attr_reader :ou_tokens
