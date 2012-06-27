@@ -16,9 +16,9 @@ class Person < ActiveRecord::Base
   
   has_many :group_manager_assignments
   
+  belongs_to :major
+  
   validates :loginid, :presence => true, :uniqueness => true
-  #validates :first, :presence => true
-  #validates :last, :presence => true
   
   attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens, :name
   attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
