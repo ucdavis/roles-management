@@ -3,7 +3,7 @@ namespace :ldap do
   task :import, :loginid do |t, args|
     require 'ldap'
     require 'stringio'
-    
+
     Rake::Task['environment'].invoke
 
     # Keep a log to e-mail to the admins
@@ -33,7 +33,7 @@ namespace :ldap do
     people = {}
 
     log << "Using the following LDAP queries:\n"
-    
+
     # If they specified a loginid, only import them, otherwise, do everybody
     unless args[:loginid].nil?
       # Specified a loginid
@@ -42,11 +42,11 @@ namespace :ldap do
       studentFilter = ''
       manualFilter = []
       manualFilter << '(uid=' + args[:loginid] + ')'
-      
+
       log << "\t" + manualFilter.join(",") + "\n"
     else
       # Did not specify a loginid - import everyone
-      
+
       # Build needed LDAP filters
       # Staff filter
       staffFilter = '(&(ucdPersonAffiliation=staff*)(|'
@@ -72,15 +72,15 @@ namespace :ldap do
            studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
       end
       studentFilter = studentFilter + '))'
-      
+
       log << "\t" + studentFilter + "\n"
-    
+
       # Manual filter
       manualFilter = []
       for m in UcdLookups::MANUAL_INCLUDES
         manualFilter << '(uid=' + m + ')'
       end
-      
+
       log << "\t" + manualFilter.join(",") + "\n"
     end
 
@@ -88,11 +88,11 @@ namespace :ldap do
 
     # Query LDAP
     Person.transaction do
-      for f in [staffFilter,facultyFilter,studentFilter] + manualFilter        
+      for f in [staffFilter,facultyFilter,studentFilter] + manualFilter
         unless f.length == 0
           conn.search(ldap_settings['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
             record_log = StringIO.new # this log may or may not be added to the master 'log' depending on data sync states
-            
+
             # First, determine their login ID from the principal name
             eduPersonPrincipalName = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
             if eduPersonPrincipalName.nil?
@@ -107,9 +107,9 @@ namespace :ldap do
             else
               loginid = eduPersonPrincipalName.slice(0, eduPersonPrincipalName.index("@"))
             end
-            
+
             record_log << "Processing LDAP record for #{loginid}\n"
-            
+
             # Find or create the Person object
             p = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
 
@@ -123,7 +123,7 @@ namespace :ldap do
             p.address = entry.get_values('street').to_s[2..-3]
             p.status = true
             p.preferred_name = entry.get_values('displayName')[0]
-            
+
             # A person may have multiple affiliations
             entry.get_values('ucdPersonAffiliation').each do |affiliation_name|
               affiliation = Affiliation.find_or_create_by_name(affiliation_name)
@@ -131,7 +131,7 @@ namespace :ldap do
                 p.affiliations << affiliation
               end
             end
-            
+
             # Set title: take the original unless there is a translation from UcdLookups
             title = entry.get_values('title').to_s[2..-3]
             ucdAppointmentTitleCode = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
@@ -145,13 +145,16 @@ namespace :ldap do
               title.save
             end
             p.title = title
-            
+
             ucdAppointmentDepartmentCode = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
             ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
-            
+
             # Update the list of majors if needed and record the major if needed
-            TODO
-            
+            unless ucdStudentMajor.empty?
+              major = Major.find_or_create_by_name ucdStudentMajor
+              p.major = major
+            end
+
             # Use UcdLookups to clean up the data
             if ucdAppointmentDepartmentCode
               if UcdLookups::DEPT_CODES.keys().include? ucdAppointmentDepartmentCode
@@ -178,9 +181,9 @@ namespace :ldap do
             if UcdLookups::DEPT_TRANSLATIONS.keys().include? ou
               ou = UcdLookups::DEPT_TRANSLATIONS[ou]
             end
-            
+
             if( p.affiliations.collect { |x| x.name }.include? "student:graduate" )
-              # Graduate student 'ou's are determined not by the ou entry but by the 
+              # Graduate student 'ou's are determined not by the ou entry but by the
               ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
               # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
               ou.save!
@@ -194,7 +197,7 @@ namespace :ldap do
                 end
                 ou.save!
               end
-      
+
               unless UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode].nil?
                 # Find or create the manager (if we see the rest of their data later, it will be updated accordingly)
                 manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]["manager"])
@@ -202,7 +205,7 @@ namespace :ldap do
                 unless ou.owners.exists? manager
                   ou.owners << manager
                 end
-            
+
                 p.managers << manager
               else
                 # Dept code doesn't exist
@@ -211,11 +214,11 @@ namespace :ldap do
                 end
               end
             end
-        
+
             unless p.groups.include? ou or ou.nil?
               p.groups << ou
             end
-    
+
             if p.valid? == false
               record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
               record_log << "\tReason(s):\n"
@@ -230,7 +233,7 @@ namespace :ldap do
                 p.changes.each do |field,changes|
                   record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
                 end
-                
+
                 # Save this record log to the master log as it contains changes
                 log << record_log.string
               end
@@ -243,13 +246,13 @@ namespace :ldap do
 
     # Disconnect
     conn.unbind
-    
+
     log << "Finished LDAP import.\n"
-    
+
     timestamp_finish = Time.now
-    
+
     log << "LDAP import took " + (timestamp_finish - timestamp_start).to_s + "s\n"
-    
+
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
     admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
@@ -257,7 +260,7 @@ namespace :ldap do
       WheneverMailer.ldap_report(admin.email, log.string).deliver!
     end
   end
-  
+
   desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'
   task :erase => :environment do
     if Rails.env != "production"
