@@ -150,7 +150,7 @@ namespace :ldap do
             ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
 
             # Update the list of majors if needed and record the major if needed
-            unless ucdStudentMajor.empty?
+            unless ucdStudentMajor.nil?
               major = Major.find_or_create_by_name ucdStudentMajor
               p.major = major
             end
@@ -182,7 +182,7 @@ namespace :ldap do
               ou = UcdLookups::DEPT_TRANSLATIONS[ou]
             end
 
-            if( p.affiliations.collect { |x| x.name }.include? "student:graduate" )
+            if(( p.affiliations.collect { |x| x.name }.include? "student:graduate" ) and not ucdStudentMajor.nil? )
               # Graduate student 'ou's are determined not by the ou entry but by the
               ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
               # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
