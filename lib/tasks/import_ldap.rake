@@ -148,7 +148,10 @@ namespace :ldap do
             
             ucdAppointmentDepartmentCode = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
             ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
-          
+            
+            # Update the list of majors if needed and record the major if needed
+            TODO
+            
             # Use UcdLookups to clean up the data
             if ucdAppointmentDepartmentCode
               if UcdLookups::DEPT_CODES.keys().include? ucdAppointmentDepartmentCode
