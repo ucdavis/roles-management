@@ -1,4 +1,5 @@
 json.uid @person.uid
+json.loginid @person.loginid
 json.name @person.name
 json.email @person.email
 # If they authenticated via the API key (and not CAS), show only the roles associated
