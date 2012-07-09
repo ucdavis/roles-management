@@ -15,7 +15,11 @@
   var Utils = {
 
     serialize: function(obj){
-      if (obj === null) {return '';}
+      if (!obj) {return '';}
+      if (window.jQuery) {
+        var result = window.jQuery.param(obj);
+        return !result ? "" : "?" + result
+      }
       var s = [];
       for (prop in obj){
         if (obj[prop]) {
@@ -36,11 +40,14 @@
     },
 
     clean_path: function(path) {
-      return path.replace(/\/+/g, "/").replace(/[\)\(]/g, "").replace(/\.$/m, '').replace(/\/$/m, '');
+      path = path.split("://");
+      last_index = path.length - 1;
+      path[last_index] = path[last_index].replace(/\/+/g, "/").replace(/\/$/m, '');
+      return path.join("://");
     },
 
     set_default_format: function(options) {
-      if (!options.hasOwnProperty("format")) options.format = defaults.format;
+      if (!options.hasOwnProperty("format") && defaults.format) options.format = defaults.format;
     },
 
     extract_anchor: function(options) {
@@ -82,11 +89,17 @@
     },
 
     prepare_parameters: function(required_parameters, actual_parameters, options) {
-      var result = this.clone(options);
+      var result = this.clone(options) || {};
       for (var i=0; i < required_parameters.length; i++) {
         result[required_parameters[i]] = actual_parameters[i];
       }
       return result;
+    },
+
+    smartIndexOf: function(array, item){
+      if (Array.prototype.indexOf && array.indexOf === Array.prototype.indexOf) return array.indexOf(item);
+      for (var i = 0; i < array.length; i++) if (i in array && array[i] === item) return i;
+      return -1;
     },
 
     build_path: function(required_parameters, optional_parts, route, args) {
@@ -97,7 +110,8 @@
       }
 
       parameters = this.prepare_parameters(required_parameters, args, opts);
-      if (optional_parts.indexOf('format') != -1) {
+      // Array#indexOf is not supported by IE <= 8, so we use custom method
+      if (Utils.smartIndexOf(optional_parts, 'format') !== -1) {
         this.set_default_format(parameters);
       }
       var result = Utils.get_prefix();
