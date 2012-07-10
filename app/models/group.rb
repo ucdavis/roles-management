@@ -1,4 +1,6 @@
 class Group < ActiveRecord::Base
+  include Uids
+
   # Group-to-group relationships
   ## Children
   has_many :group_children_assignments
@@ -84,7 +86,7 @@ class Group < ActiveRecord::Base
   # person_owners and group_owners
   def owner_ids=(uids)
     uids.each do |uid|
-      ret = determine_uid uid
+      ret = determine_uid(uid)
       if ret[:type] == UID_PERSON
         p = Person.find_by_id(ret[:id])
         person_owners << p unless p.nil?
