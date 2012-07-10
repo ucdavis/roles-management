@@ -238,17 +238,31 @@ namespace :ldap do
               end
             else
               if p.changed? == false
-                record_log << "\tNo changes for #{p.loginid}\n"
+                record_log << "\tNo standard record changes for #{p.loginid}\n"
               else
                 record_log << "\tUpdating the following for #{p.loginid}:\n"
                 p.changes.each do |field,changes|
                   record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
                 end
+              end
+              p.save!
 
+              if p.student
+                if p.student.changed? == false
+                  record_log << "\tStudent record exists but there are no changes for #{p.loginid}\n"
+                else
+                  record_log << "\tUpdating the following student records for #{p.loginid}:\n"
+                  p.student.changes.each do |field,changes|
+                    record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
+                  end
+                end
+                p.student.save!
+              end
+
+              if p.changed? or (p.student and p.student.changed?)
                 # Save this record log to the master log as it contains changes
                 log << record_log.string
               end
-              p.save!
             end
           end
         end
