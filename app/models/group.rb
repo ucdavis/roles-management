@@ -85,14 +85,17 @@ class Group < ActiveRecord::Base
   # Decodes the fake AR 'owner_ids' and assigned the appropriate objects to
   # person_owners and group_owners
   def owner_ids=(uids)
+    self.person_owner_ids = []
+    self.group_owner_ids = []
+
     uids.each do |uid|
       ret = determine_uid(uid)
       if ret[:type] == UID_PERSON
         p = Person.find_by_id(ret[:id])
-        person_owners << p unless p.nil?
+        person_owners << p unless p.nil? or person_owners.include? p
       elsif ret[:type] == UID_GROUP
         g = Group.find_by_id(ret[:id])
-        group_owners << g unless g.nil?
+        group_owners << g unless g.nil? or group_owners.include? g
       end
     end
   end
@@ -144,7 +147,7 @@ class Group < ActiveRecord::Base
 
   # Takes UIDs
   def owner_tokens=(ids)
-    self.owner_ids = ids.split(",").map{|x| x[1..-1]}
+    self.owner_ids = ids.split(",") #.map{|x| x[1..-1]}
   end
 
   def people_tokens=(ids)
