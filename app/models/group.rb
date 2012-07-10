@@ -56,6 +56,20 @@ class Group < ActiveRecord::Base
     members.uniq{|x| x.uid}
   end
 
+  def owners
+    # Just avoiding the name 'owners' again
+    collected_owners = []
+
+    person_owners.each do |p|
+      collected_owners << p
+    end
+    group_owners.each do |g|
+      collected_owners << g
+    end
+
+    collected_owners
+  end
+
   # An 'OU' is merely a group with a code field set (used to sync with external databases)
   def uid
     if code.nil?
