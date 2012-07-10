@@ -150,10 +150,19 @@ namespace :ldap do
             ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
             ucdStudentLevel = entry.get_values('ucdStudentLevel').to_s[2..-3]
 
+            # If they have any student data, ensure they own a corresponding 'student' model
+            if ucdStudentMajor or ucdStudentLevel
+              p.student = Student.new if p.student == nil
+            end
             # Update the list of majors if needed and record the major if needed
             unless ucdStudentMajor.nil?
               major = Major.find_or_create_by_name ucdStudentMajor
               p.major = major
+            end
+            # Update the list of student levels if needed and record the student level if needed
+            unless ucdStudentLevel.nil?
+              level = StudentLevel.find_or_create_by_name ucdStudentLevel
+              p.student.level = level
             end
 
             # Use UcdLookups to clean up the data

@@ -1,5 +1,5 @@
 class Student < ActiveRecord::Base
   attr_accessible :person_id, :student_level_id
   belongs_to :person
-  belongs_to :student_level
+  belongs_to :level, :class_name => "StudentLevel"
 end
