@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120710004746) do
+ActiveRecord::Schema.define(:version => 20120710184529) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(:version => 20120710004746) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "title_id"
+    t.integer  "major_id"
   end
 
   create_table "person_manager_assignments", :force => true do |t|
