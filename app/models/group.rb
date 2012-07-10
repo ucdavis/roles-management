@@ -80,6 +80,21 @@ class Group < ActiveRecord::Base
     collected_owner_ids
   end
 
+  # Decodes the fake AR 'owner_ids' and assigned the appropriate objects to
+  # person_owners and group_owners
+  def owner_ids=(uids)
+    uids.each do |uid|
+      ret = determine_uid uid
+      if ret[:type] == UID_PERSON
+        p = Person.find_by_id(ret[:id])
+        person_owners << p unless p.nil?
+      elsif ret[:type] == UID_GROUP
+        g = Group.find_by_id(ret[:id])
+        group_owners << g unless g.nil?
+      end
+    end
+  end
+
   # An 'OU' is merely a group with a code field set (used to sync with external databases)
   def uid
     if code.nil?
