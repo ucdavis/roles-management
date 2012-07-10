@@ -4,7 +4,7 @@
     <h3><%= @group.name %></h3>
   </div>
   <div class="modal-body">
-    
+
     <div class="tabbable tabs-left">
       <ul class="nav nav-tabs">
         <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
@@ -20,7 +20,7 @@
         	<%= f.label :description, :class => "control-label" %>
       	  <%= f.text_area :description, :class => "input-xlarge", :rows => 8 %>
     		  <%= f.label :owner_tokens, "Owners" %>
-    		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
+    		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/custom", :action => "search"), :class => "token_input" %>
     		  <%= f.label :member_tokens, "Members" %>
     		  <p id="members">
     		    <%= f.text_field :member_tokens, "data-pre" => add_class_attr_to_group_json(@group.member_tokens.to_json), "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
@@ -62,7 +62,7 @@
             </td>
           </tr>-->
           </table>
-  
+
           <p><%= link_to_add_fields "Add Rule", f, :rules %></p>
         </fieldset>
     		<fieldset class="tab-pane" id="roles">
