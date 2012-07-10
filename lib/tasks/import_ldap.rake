@@ -146,8 +146,9 @@ namespace :ldap do
             end
             p.title = title
 
-            ucdAppointmentDepartmentCode = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
+            # Handle student-specific data
             ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
+            ucdStudentLevel = entry.get_values('ucdStudentLevel').to_s[2..-3]
 
             # Update the list of majors if needed and record the major if needed
             unless ucdStudentMajor.nil?
@@ -156,6 +157,7 @@ namespace :ldap do
             end
 
             # Use UcdLookups to clean up the data
+            ucdAppointmentDepartmentCode = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
             if ucdAppointmentDepartmentCode
               if UcdLookups::DEPT_CODES.keys().include? ucdAppointmentDepartmentCode
                 ou = UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]['name']

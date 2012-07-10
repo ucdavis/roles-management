@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120710194819) do
+ActiveRecord::Schema.define(:version => 20120710200138) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -139,6 +139,12 @@ ActiveRecord::Schema.define(:version => 20120710194819) do
     t.string   "description"
     t.boolean  "mandatory"
     t.string   "ad_path"
+  end
+
+  create_table "student_levels", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "students", :force => true do |t|
