@@ -70,6 +70,16 @@ class Group < ActiveRecord::Base
     collected_owners
   end
 
+  def owner_ids
+    collected_owner_ids = []
+
+    owners.each do |o|
+      collected_owner_ids << o.uid
+    end
+
+    collected_owner_ids
+  end
+
   # An 'OU' is merely a group with a code field set (used to sync with external databases)
   def uid
     if code.nil?
