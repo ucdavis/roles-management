@@ -213,7 +213,7 @@ namespace :ldap do
                 # Find or create the manager (if we see the rest of their data later, it will be updated accordingly)
                 manager = Person.find_by_loginid(UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]["manager"]) || Person.create(:loginid => UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]["manager"])
                 # Avoid duplicate managers
-                unless ou.owners.exists? manager
+                unless ou.owners.include? manager
                   ou.owners << manager
                 end
 
