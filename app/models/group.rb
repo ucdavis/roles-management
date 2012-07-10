@@ -166,13 +166,10 @@ class Group < ActiveRecord::Base
       r_members += r.resolve.map{|x| x.id}
     end
 
-    logger.info "r_members is " + r_members.to_s
-
     member_ids.each do |id|
       if(id[0] == '1')
         # Person
         unless r_members.include? id[1..-1].to_i
-          logger.info "adding to p_id: " + id[1..-1].to_s
           p_ids << id[1..-1]
         end
       elsif(id[0] == '2')
