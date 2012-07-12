@@ -20,8 +20,6 @@ module AdSync
           }
       }
 
-      puts "trying #{entry['base']}"
-
       ActiveDirectory::Base.setup(settings)
       u = ActiveDirectory::User.find(:first, :samaccountname => loginid)
       break unless u.nil?
@@ -106,10 +104,15 @@ module AdSync
 
     ActiveDirectory::Base.setup(settings)
 
-    unless user.nil? or group.nil?
-      if user.member_of? group
-        return true
+    begin
+      unless user.nil? or group.nil?
+        if user.member_of? group
+          return true
+        end
       end
+    rescue ArgumentError
+      # puts "Skipping user due to ArgumentError exception"
+      return false
     end
 
     return false
