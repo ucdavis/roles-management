@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
 	<title>Rights Management</title>
 
-  <%= stylesheet_link_tag "application" %>	
+  <%= stylesheet_link_tag "application" %>
   <%= javascript_include_tag "application" %>
 	<%= csrf_meta_tag %>
 </head>
@@ -12,7 +12,7 @@
   <script type="text/javascript">
     application.current_user_id = <%= current_user.id %>; // application, not applications
   </script>
-  
+
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
@@ -22,9 +22,9 @@
             <% _permitted_to? :index, :applications do %>
               <%= li_link_with_class({:title => 'Manage', :controller => 'applications', :action => 'index'}) %>
             <% end %>
-            <% _permitted_to? :index, :templates do %>
+            <!--<% _permitted_to? :index, :templates do %>
               <%= li_link_with_class({:title => 'Templates', :controller => 'templates', :action => 'index'}) %>
-            <% end %>
+            <% end %>-->
             <% _permitted_to? :index, :settings do %>
               <%= li_link_with_class({:title => 'Settings', :controller => 'site', :action => 'settings'}) %>
             <% end %>
@@ -50,11 +50,11 @@
       </div>
     </div><!-- /navbar-inner -->
   </div><!-- /navbar -->
-  
+
   <div id="main-body" class="container-fluid">
 	  <%= yield %>
   </div><!-- /.container-fluid -->
-	
+
   <div class="status_bar"></div>
 </body>
 </html>
