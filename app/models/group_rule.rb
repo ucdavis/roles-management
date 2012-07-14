@@ -15,13 +15,25 @@ class GroupRule < ActiveRecord::Base
       when "may be"
         p = p + ps
       when "may not be"
-        puts " -- 'title may not be' is unsupported"
+        logger.warn " -- 'title may not be' is unsupported"
       else
         # unsupported
-        puts "Unsupported condition for title in group rule."
+        logger.warn "Unsupported condition for title in group rule."
       end
     when "major"
-      puts "Any condition involving 'major' is currently unsupported."
+      major = Major.find_by_name(value)
+      unless major.nil?
+        ps = major.people #.collect{|x| ["1" + x.id.to_s, x.name]}
+        case condition
+        when "may be"
+          p = p + ps
+        when "may not be"
+          logger.warn " -- 'major may not be' is unsupported"
+        else
+          # unsupported
+          logger.warn "Unsupported condition for major in group rule."
+        end
+      end
     when "affiliation"
       affiliation = Affiliation.find_by_name(value)
       unless affiliation.nil?
@@ -30,10 +42,10 @@ class GroupRule < ActiveRecord::Base
         when "may be"
           p = p + ps
         when "may not be"
-          puts " -- 'affiliation may not be' is unsupported"
+          logger.warn " -- 'affiliation may not be' is unsupported"
         else
           # unsupported
-          puts "Unsupported condition for affiliation in group rule."
+          logger.warn "Unsupported condition for affiliation in group rule."
         end
       end
     when "ou"
@@ -44,13 +56,13 @@ class GroupRule < ActiveRecord::Base
         when "may be"
           p = p + ps
         when "may not be"
-          puts " -- 'OU may not be' is unsupported"
+          logger.warn " -- 'OU may not be' is unsupported"
         else
           # unsupported
-          puts "Unsupported condition for OU in group rule."
+          logger.warn "Unsupported condition for OU in group rule."
         end
       else
-        puts "OU not found"
+        logger.warn "OU not found"
       end
     when "classification"
       classification = Classification.find_by_name(value)
@@ -61,13 +73,13 @@ class GroupRule < ActiveRecord::Base
         when "may be"
           p = p + ps
         when "may not be"
-          puts " -- 'classification may not be' is unsupported"
+          logger.warn " -- 'classification may not be' is unsupported"
         else
           # unsupported
-          puts "Unsupported condition for classification in group rule."
+          logger.warn "Unsupported condition for classification in group rule."
         end
       else
-        puts "Classification not found"
+        logger.warn "Classification not found"
       end
     when "loginid"
       ps = Person.where(:loginid => value) #.collect{|x| ["1" + x.id.to_s, x.name]}
@@ -75,14 +87,14 @@ class GroupRule < ActiveRecord::Base
       when "may be"
         p = p + ps
       when "may not be"
-        puts " -- 'loginid may not be' is unsupported"
+        logger.warn " -- 'loginid may not be' is unsupported"
       else
         # unsupported
-        puts "Unsupported condition for loginid in group rule."
+        logger.warn "Unsupported condition for loginid in group rule."
       end
     else
       # Undefined column
-      puts " -- unknown rule type (#{column})"
+      logger.warn " -- unknown rule type (#{column})"
     end
 
     p
