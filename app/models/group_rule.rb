@@ -1,13 +1,13 @@
 class GroupRule < ActiveRecord::Base
   validates_inclusion_of :condition, :in => %w( may\ be may\ not\ be  )
   validates_inclusion_of :column, :in => %w( title major affiliation classification loginid ou )
-  
+
   belongs_to :group
-  
+
   # Discern the rule and return a UID and name for the person
   def resolve
     p = []
-    
+
     case column
     when "title"
       ps = Person.where(:title_id => Title.find_by_name(value)) #.collect{|x| ["1" + x.id.to_s, x.name]}
@@ -37,7 +37,7 @@ class GroupRule < ActiveRecord::Base
         end
       end
     when "ou"
-      ou = Ou.find_by_name(value)
+      ou = Group.find_by_name(value)
       unless ou == nil
         ps = ou.members
         case condition
@@ -84,10 +84,10 @@ class GroupRule < ActiveRecord::Base
       # Undefined column
       puts " -- unknown rule type (#{column})"
     end
-    
+
     p
   end
-  
+
   def print_formatted
     case column
     when 'title'
@@ -101,16 +101,16 @@ class GroupRule < ActiveRecord::Base
     when 'classification'
       str = "<b>Classification</b> "
     end
-    
+
     case condition
     when 'may be'
       str = str + "may be "
     when 'may not be'
       str = str + "may not be "
     end
-    
+
     str = str + "<b>" + value + "</b>"
-    
+
     str.html_safe
   end
 end

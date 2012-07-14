@@ -55,7 +55,7 @@
               data = $.parseJSON(data.responseText);
               entities = [];
               _.each(data, function(entity) {
-                entities.push({id: entity, label: entity });
+                entities.push({id: entity.uid, label: entity.name });
               });
 
               callback(entities);
