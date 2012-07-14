@@ -2,11 +2,11 @@
   // Temporarily holds edits made via AJAX saves. Used to update the DOM to match later.
   details_modal.group_edits = [];
   details_modal.group_rules_typeahead_callback = null;
-  
+
   // Save whatever's in the modal
   details_modal.save = function() {
     template.status_text("Saving changes...");
-    
+
     // Which modal is this? Person, Group, or Application?
     if($("#person_ou_tokens").length > 0) {
       $("form.edit_person").trigger("submit.rails");
@@ -18,7 +18,7 @@
       $("form.edit_application").trigger("submit.rails");
     }
   }
-  
+
   // Called whenever a group rule input is focused.
   // We need to switch modes depending on the state of the
   // corresponding dropdown in order to set up the look ahead field.
@@ -38,12 +38,31 @@
   		});
       $(el).data('typeahead-inited', true);
     }
-    
+
     // Determine the value of the row's dropdown
     var mode = $(el).parent().parent().find("td:first select").val();
-    
+
     // Change the callback accordingly
     switch(mode) {
+      case 'ou':
+        details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
+          $.ajax({
+            url: Routes.api_groups_path(),
+            data: {
+              q: query
+            },
+            complete: function( data ) {
+              data = $.parseJSON(data.responseText);
+              entities = [];
+              _.each(data, function(entity) {
+                entities.push({id: entity, label: entity });
+              });
+
+              callback(entities);
+            }
+          });
+        };
+        break;
       case 'loginid':
         details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
   				$.ajax({
@@ -57,7 +76,7 @@
               _.each(data, function(entity) {
                 entities.push({id: entity, label: entity });
               });
-            
+
               callback(entities);
   					}
   				});
@@ -76,7 +95,7 @@
               _.each(data, function(entity) {
                 entities.push({id: entity.id, label: entity.name });
               });
-                  
+
               callback(entities);
   					}
   				});
@@ -95,7 +114,7 @@
               _.each(data, function(entity) {
                 entities.push({id: entity, label: entity });
               });
-                  
+
               callback(entities);
   					}
   				});
@@ -114,21 +133,18 @@
               _.each(data, function(entity) {
                 entities.push({id: entity, label: entity });
               });
-                  
+
               callback(entities);
   					}
   				});
   			}
-        break;
-      case 'ou':
-        console.log("ou");
         break;
       default:
         console.log("Unimplemented group rule dropdown value: " + mode);
         break;
     }
   }
-  
+
   details_modal.init = function() {
     // Ensure the save button works
     $(".modal #save").click(function() {
@@ -136,7 +152,7 @@
       $(".modal").modal('hide');
       cards.render_cards();
     });
-    
+
     if($("#person_ou_tokens").length > 0) {
       // Person details modal
       $("#person_ou_tokens").tokenInput($("#person_ou_tokens").attr("method") + ".json", {
@@ -162,18 +178,18 @@
         theme: "facebook",
         tokenValue: "uid"
       });
-    
+
       // Remote forms
       $("form.edit_person").bind('ajax:complete', function(e, o) {
         template.hide_status();
-        
+
         // Update the local-side models and re-render the necessary DOM bits
         var updated_person = $.parseJSON(o.responseText);
-        
+
         cards.populate_sidebar(updated_person.uid, true);
       });
     }
-  
+
     if($("#group_member_tokens").length > 0) {
       // Group details modal
       // Token inputs
@@ -192,43 +208,43 @@
         theme: "facebook",
         tokenValue: "uid"
       });
-    
+
       // Remote forms
       $("form.edit_group").bind('ajax:complete', function() {
         template.hide_status();
-        
+
         // Update any pins
         $("div.pin[data-entity-id=" + details_modal.group_edits['entity_id'] + "] a").each(function() {
           $(this).html(details_modal.group_edits['name']);
         });
         details_modal.group_edits = [];
       });
-    
+
       // Auto-complete for group rules
       // Set up auto-complete for existing dropdown default settings
       $("form.edit_group table tbody").on("focus", "tr.fields td:nth-child(3) input", function(e) {
         $(this).focus(details_modal.switch_group_rules_autocomplete(e.currentTarget));
       });
-      
+
       $("div.modal-footer").on("click", "a#delete", function(e) {
         bootstrap_modal_alert("Are you sure you want to permanently delete this group?",
           {'verify': true, 'textYes': "Permanently Delete Group", 'textNo': "Cancel"}, function(confirm) {
           if(confirm) {
             // Delete the application
             var group_id = $("form.edit_group input#group_id").val();
-            
+
     				$.ajax({ url: Routes.group_path(group_id) + ".json", type: 'DELETE',
     					complete: function( data ) {
                 // Group deleted. Close the dialog(s)
                 $(".modal").modal('hide');
-                
+
                 var deleted_uid = '2' + group_id;
-                
+
                 // Remove the group's UID from any application listing
                 _.each(applications.applications, function(app) {
                   app.uids = _.filter(app.uids, function(uid) { return uid != deleted_uid });
                 });
-                
+
                 // Remove the deleted group from the sidebar
                 cards.depopulate_sidebar([deleted_uid]);
     					}
@@ -237,7 +253,7 @@
         });
       });
     }
-  
+
     if($("#application_owner_tokens").length > 0) {
       // Application details modal
       $("#application_owner_tokens").tokenInput($("#application_owner_tokens").attr("method") + ".json", {
@@ -247,25 +263,25 @@
         theme: "facebook",
         tokenValue: "uid"
       });
-    
+
       // Remote forms
       $("form.edit_application").bind('ajax:complete', function(e, o) {
         template.hide_status();
-        
+
         // Update the local-side models and re-render the necessary DOM bits
         var updated_application = $.parseJSON(o.responseText);
         applications.applications[updated_application.id] = updated_application;
-        
+
         cards.render_cards();
       });
-      
+
       $("div.modal-footer").on("click", "a#delete", function(e) {
         bootstrap_modal_alert("Are you sure you want to permanently delete this application?",
           {'verify': true, 'textYes': "Permanently Delete Application", 'textNo': "Cancel"}, function(confirm) {
           if(confirm) {
             // Delete the application
             var app_id = $("form.edit_application input#app_id").val();
-                
+
     				$.ajax({ url: Routes.application_path(app_id), type: 'DELETE',
     					complete: function( data ) {
                 // Application deleted. Close the dialog(s)

@@ -4,7 +4,7 @@ class Api::GroupsController < Api::BaseController
     @groups = Group.where("name like ?", "%#{params[:q]}%")
 
     respond_to do |format|
-      format.json { render :json => @groups.map(&:attributes) }
+      format.json { render :json => @groups } #.map(&:attributes) }
     end
   end
 
