@@ -4,7 +4,7 @@ class Api::CustomController < Api::BaseController
 
     unless params[:q].nil?
       adapter = ActiveRecord::Base.connection.instance_values["config"][:adapter].to_sym
-      
+
       case adapter
       when :sqlite3
         @people = Person.where("first like ? or last like ? or " + db_concat(:first, ' ', :last) + " like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
@@ -13,7 +13,7 @@ class Api::CustomController < Api::BaseController
         @people = Person.where("first ilike ? or last ilike ? or " + db_concat(:first, ' ', :last) + " ilike ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
         @groups = Group.where("name ilike ?", "%#{params[:q]}%")
       end
-    
+
       @people.each do |person|
         @results << {:uid => ('1' + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
       end
@@ -34,11 +34,11 @@ class Api::CustomController < Api::BaseController
   # Add &flatten to flatten groups and OUs into their people
   def resolve
     @entities = []
-    
+
     unless params[:uids].nil?
       uids = params[:uids].split(",")
       flatten = params.has_key? :flatten
-    
+
       uids.each do |uid|
         id = uid[1..-1] # remove leading integer (indicates which object, see README Technical Notes)
         case uid.first.to_i
@@ -61,12 +61,12 @@ class Api::CustomController < Api::BaseController
         end
       end
     end
-    
+
     respond_to do |format|
       format.json { render :json => @entities, :callback => params[:callback] }
     end
   end
-  
+
   def org_chart
     if params[:format] == "csv"
       @people = Person.all
@@ -80,39 +80,42 @@ class Api::CustomController < Api::BaseController
       format.csv { render :csv => @roots }
     end
   end
-  
+
   # Returns JSON against param 'q' to search against loginids
   def loginid
     @people = Person.where("loginid like ?", "%#{params[:q]}%")
     @loginids = @people.map{ |x| x.loginid }
-    
+
     respond_to do |format|
       format.json { render :json => @loginids }
     end
   end
-  
+
   # Returns JSON against param 'q' to search against majors
   def major
+    @majors = Major.where("name like ?", "%#{params[:q]}%")
+    #@majors = @majors.map{ |x| x.name }
+
     respond_to do |format|
-      format.json { render :json => [] }
+      format.json { render :json => @majors }
     end
   end
-  
+
   # Returns JSON against param 'q' to search against affiliations
   def affiliation
     @as = Affiliation.where("name like ?", "%#{params[:q]}%")
     @affiliations = @as.map{ |x| x.name }
-    
+
     respond_to do |format|
       format.json { render :json => @affiliations }
     end
   end
-  
+
   # Returns JSON against param 'q' to search against ous
   def ou
     @os = Ou.where("name like ?", "%#{params[:q]}%")
     @ous = @os.map{ |x| x.name }
-    
+
     respond_to do |format|
       format.json { render :json => @ous }
     end

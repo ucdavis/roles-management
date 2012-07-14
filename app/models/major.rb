@@ -1,4 +1,9 @@
 class Major < ActiveRecord::Base
   # attr_accessible :title, :body
   has_many :people
+
+  # Needed by custom controller#majors, used in details modal
+  def as_json(options={})
+    { :id => self.id, :name => self.name }
+  end
 end

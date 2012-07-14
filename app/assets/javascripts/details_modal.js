@@ -44,6 +44,25 @@
 
     // Change the callback accordingly
     switch(mode) {
+      case 'major':
+        details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
+          $.ajax({
+            url: Routes.api_major_path(),
+            data: {
+              q: query
+            },
+            complete: function( data ) {
+              data = $.parseJSON(data.responseText);
+              entities = [];
+              _.each(data, function(entity) {
+                entities.push({id: entity.uid, label: entity.name });
+              });
+
+              callback(entities);
+            }
+          });
+        };
+        break;
       case 'ou':
         details_modal.group_rules_typeahead_callback = function( query, maxResults, callback ) {
           $.ajax({
