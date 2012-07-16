@@ -186,6 +186,6 @@ class Group < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :uid => ('2' + self.id.to_s).to_i, :name => self.name }
+    { :uid => ('2' + self.id.to_s).to_i, :name => self.name, :owners => self.owners, :members => self.members }
   end
 end
