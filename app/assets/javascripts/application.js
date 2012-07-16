@@ -23,7 +23,7 @@ _.templateSettings = {
   template.status_text = function(message) {
     $("div.status_bar").show().html(message);
   }
-  
+
   template.hide_status = function() {
     $("div.status_bar").hide();
   }
@@ -38,7 +38,9 @@ function remove_fields(link) {
 function add_fields(link, association, content) {
   var new_id = new Date().getTime();
   var regexp = new RegExp("new_" + association, "g");
-  $(link).parent().prev().children("tbody").append(content.replace(regexp, new_id));
+  $tbody = $(link).parent().prev().children("tbody");
+  $tbody.append(content.replace(regexp, new_id));
+  $tbody.trigger('add_fields');
 }
 
 $(function() {
@@ -60,45 +62,45 @@ $(function() {
     prePopulate: $("#application_ou_tokens").data("pre"),
     theme: "facebook"
   });
-  
+
   $("#classification_title_tokens").tokenInput($("#classification_title_tokens").attr("method") + ".json", {
     crossDomain: false,
     prePopulate: $("#classification_title_tokens").data("pre"),
     theme: "facebook"
   });
-  
+
   // /people/new/:loginid specific
   $("input[name=fetch_ldap_details]").click(function() {
     var loginid = $("input[name=fetch_ldap_details_field]").val();
     document.location.href = document.location.href + "/" + loginid;
   });
-	
+
   // Fix AJAX headers
   $.ajaxSetup({
     beforeSend: function (xhr, settings) {
       xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
     }
   });
-  
+
   application.initialize();
 });
 
 (function (application, $, undefined) {
   application.current_user_id = null;
   application.impersonate_user = null;
-  
+
   application.initialize = function() {
     $("#admin-impersonate").click(application.impersonate_dialog);
     $("#admin-unimpersonate").click(function() {
       window.location.href = Routes.admin_ops_unimpersonate_path();
     });
-    
+
     $("#admin-about").click(application.about_dialog);
   }
-  
+
   application.impersonate_dialog = function() {
     template.status_text("Loading...");
-    
+
     $.get(Routes.admin_dialogs_impersonate_path(), function(data) {
       template.hide_status();
       $("#modal_container").empty();
@@ -106,10 +108,10 @@ $(function() {
       $("#impersonate_modal").modal();
     });
   }
-  
+
   application.about_dialog = function() {
     template.status_text("Loading...");
-    
+
     $.get(Routes.site_about_path(), function(data) {
       template.hide_status();
       $("#modal_container").empty();
