@@ -271,6 +271,23 @@
           }
         });
       });
+
+      // Recalculate group membership when we view the Summary tab
+      $("div.modal ul.nav-tabs a").bind('shown', function(e) {
+        if(e.target.innerHTML == "Summary") {
+          $.getJSON(Routes.group_path($("#group_id").val()) + ".json", function (data) {
+            $member_tokens = $("#group_member_tokens");
+            $member_tokens.tokenInput("clear");
+            $.each(data, function(key, val) {
+              if(key == 'members') {
+                _.each(val, function(entity) {
+                  $member_tokens.tokenInput("add", { id: entity.uid, name: entity.name, readonly: entity.readonly });
+                });
+              }
+            });
+          });
+        }
+      });
     }
 
     if($("#application_owner_tokens").length > 0) {
