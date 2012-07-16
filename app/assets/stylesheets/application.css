@@ -33,8 +33,12 @@
   float: right;
   display: none;
   cursor: pointer;
-  margin-top: -20px;
-  margin-right: 16px;
+  margin-top: 7px;
+  margin-right: 0px;
+}
+.card-title h3 {
+  max-width: 270px;
+  margin: auto auto;
 }
 
 #cards-left, #cards-right {

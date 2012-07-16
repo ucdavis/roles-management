@@ -3,7 +3,7 @@
 
 <script id="tmpl-card" type="text/template">
   <div class="card span4" data-template-id="{{= item.id }}" data-uids="{{= item.uids }}">
-      <div class="card-title"><h3>{{= item.name }}</h3><i class="icon-search" id="entity_details"></i></div>
+      <div class="card-title"><i class="icon-search" id="entity_details"></i><h3>{{= item.name }}</h3></div>
       <div class="card-content">
         {{ if(item.rules.length > 1) { }}
           <div class="pins">
@@ -22,23 +22,23 @@
 
 <div class="row-fluid">
   <div class="span9" id="left">
-    
+
     <form class="form-search">
       <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_templates", :placeholder => "Search templates…" } %>
     </form>
-    
+
     <div id="cards">
       <div id="cards-left" class="span4"></div>
       <div id="cards-right" class="span4"></div>
     </div>
-  
+
   </div> <!-- /.span9 -->
   <div class="span3" id="right">
-    
+
     <form class="form-search">
       <input id="search_entities" placeholder="Search people and groups…" type="text" class="input-large search-query">
     </form>
-    
+
 	  <ul class="pins" id="entity_list"></ul>
   </div> <!-- /.span3 -->
 </div>
