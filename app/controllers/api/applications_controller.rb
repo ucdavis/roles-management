@@ -5,6 +5,7 @@ class Api::ApplicationsController < Api::BaseController
     @applications = Application.all
 
     respond_to do |format|
+      format.json
       format.xml { render :text => @applications.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
     end
   end
