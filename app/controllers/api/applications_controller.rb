@@ -1,6 +1,6 @@
 class Api::ApplicationsController < Api::BaseController
   require 'digest/md5'
-  
+
   def index
     @applications = Application.all
 
@@ -10,13 +10,27 @@ class Api::ApplicationsController < Api::BaseController
   end
 
   def show
+    logger.info "API application/show requesting #{params[:id]}"
     @application = Application.find_by_name(params[:id])
 
-    if(params[:person_id].nil? == false)
+    logger.info "Application '#{@application.name}' successfully retrieved" unless @application.nil?
+
+    if params[:person_id].nil?
+      logger.info "No specific individual specified. Returning generic API application/show"
+      # No person specified
+      @people = resolve_uids(@application.uids, true)
+
+      respond_to do |format|
+        format.xml { render :text => @application.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
+        format.json
+        format.text
+      end
+    else
+      # Person specified
       @person = Person.find_by_loginid(params[:person_id])
-      
+
       @roles = []
-      
+
       # Search for roles specific to this person
       r = Role.includes(:role_assignments, :people).where( :people => { :loginid => @person.loginid }, :application_id => Application.find_by_name(@application.name) )
       unless r.length == 0
@@ -27,16 +41,9 @@ class Api::ApplicationsController < Api::BaseController
       unless r.length == 0
         @roles = @roles + r.flatten
       end
-      
+
       respond_to do |format|
         format.xml
-      end
-    else
-      @people = resolve_uids(@application.uids, true)
-      
-      respond_to do |format|
-        format.xml { render :text => @application.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
-        format.text
       end
     end
   end
@@ -55,7 +62,7 @@ class Api::ApplicationsController < Api::BaseController
 
   def create
     @application = Application.new(params[:application])
-    
+
     @application.api_key = generate_api_key(@application)
 
     respond_to do |format|
@@ -87,12 +94,12 @@ class Api::ApplicationsController < Api::BaseController
       format.html { redirect_to(applications_url) }
     end
   end
-  
+
   private
-  
+
   def generate_api_key(application)
     api_key_settings = YAML.load_file("#{Rails.root.to_s}/config/api_keys.yml")['development']
-    
-    Digest::MD5.hexdigest(application.name + application.hostname + api_key_settings['key']) # last string should be unique to 
+
+    Digest::MD5.hexdigest(application.name + application.hostname + api_key_settings['key']) # last string should be unique to
   end
 end
