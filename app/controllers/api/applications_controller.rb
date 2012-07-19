@@ -2,7 +2,7 @@ class Api::ApplicationsController < Api::BaseController
   require 'digest/md5'
 
   def index
-    @applications = Application.all
+    @applications = Application.includes(:api_key).where( :api_keys => { :secret => session[:api_key].secret } )
 
     respond_to do |format|
       format.json
