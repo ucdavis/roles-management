@@ -5,28 +5,25 @@ class Api::BaseController < ApplicationController
 
   def api_authenticate
     @application = nil
-    
+
     if session[:cas_user].nil?
       authenticate_or_request_with_http_basic do |username, password|
-        @application = Application.find_by_name(username)
+        key = ApiKey.find_by_secret(password)
 
-        if @application.nil? == false
-          # Application exists
-          if @application.api_key == password
-            logger.info "API authenticated via application key"
-            session[:current_application] = @application
-            return true
-          end
+        if key
+          logger.info "API authenticated via application key"
+          session[:api_key] = key
+          return true
         end
 
-        logger.info "API authentication failed. Application name or key is wrong."
+        logger.info "API authentication failed. Application key is wrong."
         raise ActionController::RoutingError.new('Access denied')
 
         return false
       end
     else
-      logger.info "API authentication allowed as user is in CAS."
-      session[:current_application] = nil
+      logger.info "API authentication allowed via CAS."
+      session[:api_key] = nil
       return true
     end
   end

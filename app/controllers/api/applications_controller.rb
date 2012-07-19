@@ -6,7 +6,7 @@ class Api::ApplicationsController < Api::BaseController
 
     respond_to do |format|
       format.json
-      format.xml { render :text => @applications.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
+      format.xml { render :text => @applications.to_xml( :except => [:created_at, :id, :updated_at] ) }
     end
   end
 
@@ -22,7 +22,7 @@ class Api::ApplicationsController < Api::BaseController
       @people = resolve_uids(@application.uids, true)
 
       respond_to do |format|
-        format.xml { render :text => @application.to_xml( :except => [:api_key, :created_at, :id, :updated_at] ) }
+        format.xml { render :text => @application.to_xml( :except => [:created_at, :id, :updated_at] ) }
         format.json
         format.text
       end
@@ -64,8 +64,6 @@ class Api::ApplicationsController < Api::BaseController
   def create
     @application = Application.new(params[:application])
 
-    @application.api_key = generate_api_key(@application)
-
     respond_to do |format|
       if @application.save
         format.html { redirect_to(@application, :notice => 'Application was successfully created.') }
@@ -94,13 +92,5 @@ class Api::ApplicationsController < Api::BaseController
     respond_to do |format|
       format.html { redirect_to(applications_url) }
     end
-  end
-
-  private
-
-  def generate_api_key(application)
-    api_key_settings = YAML.load_file("#{Rails.root.to_s}/config/api_keys.yml")['development']
-
-    Digest::MD5.hexdigest(application.name + application.hostname + api_key_settings['key']) # last string should be unique to
   end
 end

@@ -144,16 +144,16 @@ class Person < ActiveRecord::Base
     syms = []
 
     # Query for permissions of user via API key, converting them into declarative_authentication's needed symbols
-    roles.each do |role|
-      unless role.application.nil?
-        if role.application.api_key == api_key
-          syms << role.token.underscore.to_sym
-        end
-      end
-    end
+    #roles.each do |role|
+    #  unless role.application.nil?
+    #    if role.application.api_key == api_key
+    #      syms << role.token.underscore.to_sym
+    #    end
+    #  end
+    #end
 
-    # All people in the database have the default role of 'user'
-    syms << "user".to_sym
+    # All people in the database have the default role of 'access'
+    syms << "access".to_sym
 
     syms
   end
