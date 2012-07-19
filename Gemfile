@@ -42,3 +42,5 @@ gem 'letter_opener', group: :development
 gem 'net-ssh', :git => 'git://github.com/nessche/net-ssh.git'
 
 gem 'jbuilder'
+
+gem 'debugger'
