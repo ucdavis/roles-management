@@ -11,6 +11,6 @@ class ApiKey < ActiveRecord::Base
   end
 
   def generate_secret
-    Digest::MD5.hexdigest(self.name + Time.now.to_i.to_s)
+    Digest::MD5.hexdigest('dssrm' + Time.now.to_i.to_s)
   end
 end
