@@ -43,4 +43,4 @@ gem 'net-ssh', :git => 'git://github.com/nessche/net-ssh.git'
 
 gem 'jbuilder'
 
-gem 'debugger'
+gem 'debugger', :group => :development
