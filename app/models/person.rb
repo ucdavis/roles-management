@@ -75,6 +75,11 @@ class Person < ActiveRecord::Base
     Role.includes(:role_assignments).where(:application_id => application_id, :role_assignments => { :person_id => self.id } ).map{ |x| x.token }
   end
 
+  def roles_by_api_key(api_key_id)
+    api_key_role_ids = Application.find_by_api_key_id(api_key_id).roles.map { |x| x.id }
+    roles.reject{ |x| ! api_key_role_ids.include? x.id }
+  end
+
   # Compute applications they can assign subordinates to.
   # These are applications they either explicitly own or
   # applications made available on a global level.

@@ -7,5 +7,5 @@ json.groups @person.groups
 # If they authenticated via the API key (and not CAS), show only the roles associated
 # with that application's API key
 if session[:api_key]
-  json.roles @person.roles_by_application(session[:api_key].id)
+  json.roles @person.roles_by_api_key(session[:api_key].id)
 end
