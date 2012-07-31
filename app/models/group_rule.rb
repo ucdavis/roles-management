@@ -103,46 +103,25 @@ class GroupRule < ActiveRecord::Base
   # Returns true if the given person satisfies the rule
   def matches(person)
     # 'cond' is a boolean representing this rule's 'is' or 'is not'
-    condition == "is" ? cond = 1 : cond = 0
+    cond = (condition == "is")
+    matched = nil
 
     case column
     when "title"
-      if person.title == Title.find_by_name(value)
-        return true & cond
-      else
-        return false & cond
-      end
+      matched = person.title == Title.find_by_name(value)
     when "major"
-      if person.major == Major.find_by_name(value)
-        return true & cond
-      else
-        return false & cond
-      end
+      matched = person.major == Major.find_by_name(value)
     when "affiliation"
-      if person.affiliation.include? Affiliation.find_by_name(value)
-        return true & cond
-      else
-        return false & cond
-      end
+      matched = person.affiliation.include? Affiliation.find_by_name(value)
     when "ou"
-      if person.ous.include? Group.find_by_name(value)
-        return true & cond
-      else
-        return false & cond
-      end
+      matched = person.ous.include? Group.find_by_name(value)
     when "classification"
-      if person.classification == Classification.find_by_name(value)
-        return true & cond
-      else
-        return false & cond
-      end
+      matched = person.classification == Classification.find_by_name(value)
     when "loginid"
-      if person.loginid == value
-        return true & cond
-      else
-        return false & cond
-      end
+      matched = person.loginid == value
     end
+
+    return cond == matched
   end
 
   def print_formatted
