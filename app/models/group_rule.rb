@@ -1,21 +1,21 @@
 class GroupRule < ActiveRecord::Base
-  validates_inclusion_of :condition, :in => %w( may\ be may\ not\ be  )
+  validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => %w( title major affiliation classification loginid ou )
 
   belongs_to :group
 
-  # Discern the rule and return a UID and name for the person
+  # Resolve (discern) the rule and return a UID and name for the person
   def resolve
     p = []
 
     case column
     when "title"
-      ps = Person.where(:title_id => Title.find_by_name(value)) #.collect{|x| ["1" + x.id.to_s, x.name]}
+      ps = Person.where(:title_id => Title.find_by_name(value))
       case condition
-      when "may be"
+      when "is"
         p = p + ps
-      when "may not be"
-        logger.warn " -- 'title may not be' is unsupported"
+      when "is not"
+        logger.info " -- 'title is not' will not be resolved within GroupRule"
       else
         # unsupported
         logger.warn "Unsupported condition for title in group rule."
@@ -23,12 +23,12 @@ class GroupRule < ActiveRecord::Base
     when "major"
       major = Major.find_by_name(value)
       unless major.nil?
-        ps = major.people #.collect{|x| ["1" + x.id.to_s, x.name]}
+        ps = major.people
         case condition
-        when "may be"
+        when "is"
           p = p + ps
-        when "may not be"
-          logger.warn " -- 'major may not be' is unsupported"
+        when "is not"
+          logger.info " -- 'major is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for major in group rule."
@@ -37,12 +37,12 @@ class GroupRule < ActiveRecord::Base
     when "affiliation"
       affiliation = Affiliation.find_by_name(value)
       unless affiliation.nil?
-        ps = affiliation.people #.collect{|x| ["1" + x.id.to_s, x.name]}
+        ps = affiliation.people
         case condition
-        when "may be"
+        when "is"
           p = p + ps
-        when "may not be"
-          logger.warn " -- 'affiliation may not be' is unsupported"
+        when "is not"
+          logger.info " -- 'affiliation is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for affiliation in group rule."
@@ -53,10 +53,10 @@ class GroupRule < ActiveRecord::Base
       unless ou == nil
         ps = ou.members
         case condition
-        when "may be"
+        when "is"
           p = p + ps
-        when "may not be"
-          logger.warn " -- 'OU may not be' is unsupported"
+        when "is not"
+          logger.info " -- 'OU is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for OU in group rule."
@@ -68,12 +68,12 @@ class GroupRule < ActiveRecord::Base
       classification = Classification.find_by_name(value)
       unless classification == nil
         title_ids = Title.where(:id => classification.title_ids)
-        ps = Person.where(:title_id => title_ids) #.collect{|x| ["1" + x.id.to_s, x.name]}
+        ps = Person.where(:title_id => title_ids)
         case condition
-        when "may be"
+        when "is"
           p = p + ps
-        when "may not be"
-          logger.warn " -- 'classification may not be' is unsupported"
+        when "is not"
+          logger.info " -- 'classification is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for classification in group rule."
@@ -84,10 +84,10 @@ class GroupRule < ActiveRecord::Base
     when "loginid"
       ps = Person.where(:loginid => value) #.collect{|x| ["1" + x.id.to_s, x.name]}
       case condition
-      when "may be"
+      when "is"
         p = p + ps
-      when "may not be"
-        logger.warn " -- 'loginid may not be' is unsupported"
+      when "is not"
+        logger.info " -- 'loginid is not' will not be resolved within GroupRule"
       else
         # unsupported
         logger.warn "Unsupported condition for loginid in group rule."
@@ -98,6 +98,51 @@ class GroupRule < ActiveRecord::Base
     end
 
     p
+  end
+
+  # Returns true if the given person satisfies the rule
+  def matches(person)
+    # 'cond' is a boolean representing this rule's 'is' or 'is not'
+    condition == "is" ? cond = 1 : cond = 0
+
+    case column
+    when "title"
+      if person.title == Title.find_by_name(value)
+        return true & cond
+      else
+        return false & cond
+      end
+    when "major"
+      if person.major == Major.find_by_name(value)
+        return true & cond
+      else
+        return false & cond
+      end
+    when "affiliation"
+      if person.affiliation.include? Affiliation.find_by_name(value)
+        return true & cond
+      else
+        return false & cond
+      end
+    when "ou"
+      if person.ous.include? Group.find_by_name(value)
+        return true & cond
+      else
+        return false & cond
+      end
+    when "classification"
+      if person.classification == Classification.find_by_name(value)
+        return true & cond
+      else
+        return false & cond
+      end
+    when "loginid"
+      if person.loginid == value
+        return true & cond
+      else
+        return false & cond
+      end
+    end
   end
 
   def print_formatted
@@ -115,10 +160,10 @@ class GroupRule < ActiveRecord::Base
     end
 
     case condition
-    when 'may be'
-      str = str + "may be "
-    when 'may not be'
-      str = str + "may not be "
+    when 'is'
+      str = str + "is "
+    when 'is not'
+      str = str + "is not "
     end
 
     str = str + "<b>" + value + "</b>"

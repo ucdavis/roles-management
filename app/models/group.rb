@@ -50,9 +50,7 @@ class Group < ActiveRecord::Base
     end
 
     # Include members via rules
-    rules.each do |r|
-      members += r.resolve
-    end
+    members += rule_members
 
     # Only return a unique list
     members.uniq{|x| x.uid}
@@ -127,9 +125,7 @@ class Group < ActiveRecord::Base
     end
 
     # Include members via rules
-    rules.each do |r|
-      resolved_members += r.resolve
-    end
+    resolved_members += rule_members
 
     # Unique members only
     explicit_members = explicit_members.uniq{|x| x.uid}
@@ -165,8 +161,8 @@ class Group < ActiveRecord::Base
 
     # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
     r_members = []
-    rules.each do |r|
-      r_members += r.resolve.map{|x| x.id}
+    rule_members.each do |r|
+      r_members += r.map{|x| x.id}
     end
 
     member_ids.each do |id|
@@ -187,5 +183,36 @@ class Group < ActiveRecord::Base
 
   def as_json(options={})
     { :uid => ('2' + self.id.to_s).to_i, :name => self.name, :owners => self.owners, :members => self.member_tokens }
+  end
+
+  # Returns all members via resolving group rules
+  # This algorithm starts with an empty set, then runs all 'is'
+  # rules, intersecting those sets, then makes a second pass and
+  # removes anyone who fails a 'is not' rule.
+  def rule_members
+    results = []
+
+    # Step One: Build groups out of each 'is' rule
+    rules.where(:condition => "is").each do |rule|
+      results << rule.resolve
+    end
+
+    # Step Two: AND all groups from step one together
+    result = results[0] # start with the first group
+    results[1..-1].each do |r|
+      result = result & r
+    end
+
+    # Step Three: Pass over the result from step two and
+    # remove anybody who violates an 'is not' rule
+    result.find_all{ |member|
+      keep = true
+      rules.where(:condition => "is not").each do |rule|
+        keep &= rule.matches(member)
+      end
+      keep
+    }
+
+    result
   end
 end

@@ -1,6 +1,6 @@
 <tr class="fields">
   <td><%= f.select :column, [['Department', "ou"], ['Login ID', "loginid"], ['Title', "title"], ['Major', "major"], ['Affiliation', "affiliation"]] %></td>
-  <td><%= f.select :condition, [['may be', "may be"], ['may not be', "may not be"]] %></td>
+  <td><%= f.select :condition, [['is', "is"], ['is not', "is not"]] %></td>
   <td><%= f.text_field :value, :size => 15 %></td>
   <td><%= link_to_remove_fields "Remove", f %></td>
 </tr>

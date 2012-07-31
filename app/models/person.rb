@@ -153,19 +153,11 @@ class Person < ActiveRecord::Base
 
   # ACL symbols
   def role_symbols
-    # Get this app's API key
-    api_key = YAML.load_file("#{Rails.root.to_s}/config/api_keys.yml")['keys']['key']
-
     syms = []
 
-    # Query for permissions of user via API key, converting them into declarative_authentication's needed symbols
-    #roles.each do |role|
-    #  unless role.application.nil?
-    #    if role.application.api_key == api_key
-    #      syms << role.token.underscore.to_sym
-    #    end
-    #  end
-    #end
+    roles(:here).each do |role|
+      syms << role.token.underscore.to_sym
+    end
 
     # All people in the database have the default role of 'access'
     syms << "access".to_sym
