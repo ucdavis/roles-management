@@ -198,20 +198,23 @@ class Group < ActiveRecord::Base
     end
 
     # Step Two: AND all groups from step one together
-    result = results[0] # start with the first group
-    results[1..-1].each do |r|
-      result = result & r
-    end
+    result = results.inject(results.first) { |sum,m| sum &= m }
 
     # Step Three: Pass over the result from step two and
     # remove anybody who violates an 'is not' rule
-    result.find_all{ |member|
-      keep = true
-      rules.where(:condition => "is not").each do |rule|
-        keep &= rule.matches(member)
-      end
-      keep
-    }
+    if result
+      result.find_all{ |member|
+        keep = true
+        rules.where(:condition => "is not").each do |rule|
+          keep &= rule.matches(member)
+        end
+        keep
+      }
+    end
+
+    if result.nil?
+      return []
+    end
 
     result
   end
