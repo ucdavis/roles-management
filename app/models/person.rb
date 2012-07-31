@@ -52,20 +52,30 @@ class Person < ActiveRecord::Base
   end
 
   # Compute roles
-  def roles
+  # Scope can be one of the following:
+  #       :here (default) - Only show roles from this application
+  #       :all            - Show all roles from all applications
+  def roles(scope = :all)
     roles = []
 
-    # Add roles explicitly assigned
-    role_assignments.each do |assignment|
-      roles << assignment.role
-    end
-
-    groups.each do |g|
-      g.roles.each do |role|
-        unless roles.include? role
-          roles << role
+    case scope
+      when :here
+        role_assignments.where(:role_id => Application.find_by_name("DSS Rights Management").roles).each do |assignment|
+          roles << assignment.role
         end
-      end
+      when :all
+        # Add roles explicitly assigned
+        role_assignments.each do |assignment|
+          roles << assignment.role
+        end
+
+        groups.each do |g|
+          g.roles.each do |role|
+            unless roles.include? role
+              roles << role
+            end
+          end
+        end
     end
 
     roles
