@@ -661,28 +661,16 @@ $.TokenList = function (input, url_or_data, settings) {
 
     // Update the hidden input box value
     function update_hidden_input(saved_tokens, hidden_input) {
-        console.log("update_hidden input:");
         var token_values = $.map(saved_tokens, function (el) {
             if(typeof settings.tokenValue == 'function')
               return settings.tokenValue.call(this, el);
 
-            console.log(el);
-
             // Avoid readonly tokens if excludeReadOnlyOnSubmit is true (default: false)
             if(el.readonly !== true || !settings.excludeReadOnlyOnSubmit) {
-              console.log("adding");
               return el[settings.tokenValue];
-            } else {
-              console.log("not adding");
             }
         });
-        console.log("finished, token_value is:");
-        console.log(token_values);
-        console.log("token_value joined is:");
-        console.log(token_values.join(settings.tokenDelimiter));
-        console.log(hidden_input);
         hidden_input.val(token_values.join(settings.tokenDelimiter));
-        console.log(hidden_input);
     }
 
     // Hide and clear the results dropdown
