@@ -19,6 +19,7 @@ var DEFAULT_SETTINGS = {
     propertyToSearch: "name",
     jsonContainer: null,
     contentType: "json",
+    excludeReadOnlyOnSubmit: false,
 
 	// Prepopulation settings
     prePopulate: null,
@@ -488,9 +489,9 @@ $.TokenList = function (input, url_or_data, settings) {
     function insert_token(item) {
         var $this_token = $(settings.tokenFormatter(item));
         var readonly = item.readonly === true ? true : false;
-        
+
         if(readonly) $this_token.addClass(settings.classes.tokenReadOnly);
-        
+
         $this_token.addClass(settings.classes.token).insertBefore(input_token);
 
         // The 'delete token' button
@@ -660,14 +661,28 @@ $.TokenList = function (input, url_or_data, settings) {
 
     // Update the hidden input box value
     function update_hidden_input(saved_tokens, hidden_input) {
+        console.log("update_hidden input:");
         var token_values = $.map(saved_tokens, function (el) {
             if(typeof settings.tokenValue == 'function')
               return settings.tokenValue.call(this, el);
-            
-            return el[settings.tokenValue];
-        });
-        hidden_input.val(token_values.join(settings.tokenDelimiter));
 
+            console.log(el);
+
+            // Avoid readonly tokens if excludeReadOnlyOnSubmit is true (default: false)
+            if(el.readonly !== true || !settings.excludeReadOnlyOnSubmit) {
+              console.log("adding");
+              return el[settings.tokenValue];
+            } else {
+              console.log("not adding");
+            }
+        });
+        console.log("finished, token_value is:");
+        console.log(token_values);
+        console.log("token_value joined is:");
+        console.log(token_values.join(settings.tokenDelimiter));
+        console.log(hidden_input);
+        hidden_input.val(token_values.join(settings.tokenDelimiter));
+        console.log(hidden_input);
     }
 
     // Hide and clear the results dropdown
@@ -884,7 +899,7 @@ $.TokenList = function (input, url_or_data, settings) {
     // Bring browser focus to the specified object.
     // Use of setTimeout is to get around an IE bug.
     // (See, e.g., http://stackoverflow.com/questions/2600186/focus-doesnt-work-in-ie)
-    // 
+    //
     // obj: a jQuery object to focus()
     function focus_with_timeout(obj) {
         setTimeout(function() { obj.focus(); }, 50);

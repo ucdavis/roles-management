@@ -217,7 +217,8 @@
         prePopulate: $("#group_member_tokens").data("pre"),
         theme: "facebook",
         tokenValue: "uid",
-        defaultText: "No members"
+        defaultText: "No members",
+        excludeReadOnlyOnSubmit: true
       });
 
       $("#group_owner_tokens").tokenInput($("#group_owner_tokens").attr("method") + ".json", {
