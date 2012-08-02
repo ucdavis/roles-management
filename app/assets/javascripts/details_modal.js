@@ -165,10 +165,10 @@
   }
 
   details_modal.init = function() {
-    // Ensure the save button works
-    $(".modal #save").click(function() {
+    // Ensure the apply button works
+    $(".modal #apply").click(function() {
       details_modal.save();
-      $(".modal").modal('hide');
+      //$(".modal").modal('hide');
       cards.render_cards();
     });
 

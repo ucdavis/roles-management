@@ -162,7 +162,7 @@ class Group < ActiveRecord::Base
     # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
     r_members = []
     rule_members.each do |r|
-      r_members += r.map{|x| x.id}
+      r_members += [r.uid]
     end
 
     member_ids.each do |id|
