@@ -190,8 +190,6 @@ class Group < ActiveRecord::Base
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
   def rule_members
-    require 'pp'
-
     results = []
 
     # Step One: Build groups out of each 'is' rule,
@@ -206,14 +204,8 @@ class Group < ActiveRecord::Base
       results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
     end
 
-    puts "End of step one:"
-    pp results
-
     # Step Two: AND all groups from step one together
     result = results.inject(results.first) { |sum,m| sum &= m }
-
-    puts "End of step two:"
-    pp results
 
     # Step Three: Pass over the result from step two and
     # remove anybody who violates an 'is not' rule

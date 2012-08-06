@@ -1,3 +1,55 @@
+<script id="tmpl-group-rule" type="text/template">
+  <tr class="fields">
+    <td>
+      <select id="group_rules_attributes_{{= rule.id }}_column" name="group[rules_attributes][{{= rule.id }}][column]">
+        {{ if(rule.column == "ou") { }}
+          <option value="ou" selected="selected">Department</option>
+        {{ } else { }}
+          <option value="ou">Department</option>
+        {{ } }}
+        {{ if(rule.column == "loginid") { }}
+          <option value="loginid" selected="selected">Login ID</option>
+        {{ } else { }}
+          <option value="loginid">Login ID</option>
+        {{ } }}
+        {{ if(rule.column == "title") { }}
+          <option value="title" selected="selected">Title</option>
+        {{ } else { }}
+          <option value="title">Title</option>
+        {{ } }}
+        {{ if(rule.column == "major") { }}
+          <option value="major" selected="selected">Major</option>
+        {{ } else { }}
+          <option value="major">Major</option>
+        {{ } }}
+        {{ if(rule.column == "affiliation") { }}
+          <option value="affiliation" selected="selected">Affiliation</option>
+        {{ } else { }}
+          <option value="affiliation">Affiliation</option>
+        {{ } }}
+      </select>
+    </td>
+    <td>
+      <select id="group_rules_attributes_{{= rule.id }}_condition" name="group[rules_attributes][{{= rule.id }}][condition]">
+        {{ if(rule.condition == "is") { }}
+          <option value="is" selected="selected">is</option>
+          <option value="is not">is not</option>
+        {{ } else { }}
+          <option value="is">is</option>
+          <option value="is not" selected="selected">is not</option>
+        {{ } }}
+      </select>
+    </td>
+    <td>
+      <input id="group_rules_attributes_{{= rule.id }}_value" name="group[rules_attributes][{{= rule.id }}][value]" size="15" type="text" value="{{= rule.value }}">
+    </td>
+    <td>
+      <input id="group_rules_attributes_{{= rule.id }}__destroy" name="group[rules_attributes][{{= rule.id }}][_destroy]" type="hidden" value="false">
+      <button class="btn btn-danger" onclick="remove_fields(this)" type="button">Remove</button>
+    </td>
+  </tr>
+</script>
+
 <div class="modal" id="details_modal">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
@@ -28,42 +80,18 @@
         </fieldset>
     		<fieldset class="tab-pane" id="rules">
           <table>
-          <tr>
-            <th>Column</th>
-            <th>Condition</th>
-            <th>Value</th>
-            <th><!-- Actions --></th>
-          </tr>
-          <%= f.fields_for :rules do |builder| %>
-            <%= render "rule_fields", :f => builder %>
-          <% end %>
-          <!--<tr class="fields">
-            <td>
-              <select id="group_rules_attributes_new_rules_column" name="group[rules_attributes][new_rules][column]">
-                <option value="loginid">Login ID</option>
-                <option value="title">Title</option>
-                <option value="affiliation">Affiliation</option>
-                <option value="classification">Classification</option>
-                <option value="ou">Department</option>
-              </select>
-            </td>
-            <td>
-              <select id="group_rules_attributes_new_rules_condition" name="group[rules_attributes][new_rules][condition]">
-                <option value="may be">may be</option>
-                <option value="may not be">may not be</option>
-              </select>
-            </td>
-            <td>
-              <input id="group_rules_attributes_new_rules_value" name="group[rules_attributes][new_rules][value]" size="15" type="text" />
-            </td>
-            <td>
-              <input id="group_rules_attributes_new_rules__destroy" name="group[rules_attributes][new_rules][_destroy]" type="hidden" value="false" />
-              <button class="btn btn-danger" onclick="remove_fields(this)" type="submit">Remove</button>
-            </td>
-          </tr>-->
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Condition</th>
+                <th>Value</th>
+                <th><!-- Actions --></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
           </table>
 
-          <p><%= link_to_add_fields "Add Rule", f, :rules %></p>
+          <p><button class="btn">Add Rule</button></p>
         </fieldset>
     		<fieldset class="tab-pane" id="roles">
           <b>To add or remove roles</b> from this group, use the main interface.
@@ -78,3 +106,7 @@
     <a href="#" class="btn btn-primary" id="apply">Apply</a>
   </div>
 </div>
+
+<script type="text/javascript">
+  details_modal.group_rules = <%= @group.rules.to_json.html_safe %>;
+</script>

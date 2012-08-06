@@ -2,6 +2,7 @@
   // Temporarily holds edits made via AJAX saves. Used to update the DOM to match later.
   details_modal.group_edits = [];
   details_modal.group_rules_typeahead_callback = null;
+  details_modal.group_rules = null;
 
   // Save whatever's in the modal
   details_modal.save = function() {
@@ -164,6 +165,17 @@
     }
   }
 
+  details_modal.render_group_rules = function() {
+    console.log("rendering group rules");
+    group_rule_template = $("#tmpl-group-rule").html();
+    $rule_table = $("fieldset#rules table tbody");
+    $rule_table.empty();
+    _.each(details_modal.group_rules, function(rule) {
+      var compiledTmpl = _.template(group_rule_template, { rule: rule.group_rule });
+      $rule_table.append(compiledTmpl);
+    });
+  }
+
   details_modal.init = function() {
     // Ensure the apply button works
     $(".modal #apply").click(function() {
@@ -242,7 +254,8 @@
 
       // Auto-complete for group rules
       // Set up auto-complete for existing dropdown default settings
-      $("form.edit_group table tbody").on("focus", "tr.fields td:nth-child(3) input", function(e) {
+      $("fieldset#rules table tbody").on("focus", "tr.fields td:nth-child(3) input", function(e) {
+        console.log("focus");
         $(this).focus(details_modal.switch_group_rules_autocomplete(e.currentTarget));
       });
 
@@ -289,6 +302,9 @@
           });
         }
       });
+
+      // Render the group rule view (done via JS because it can be updated dynmically)
+      details_modal.render_group_rules();
     }
 
     if($("#application_owner_tokens").length > 0) {

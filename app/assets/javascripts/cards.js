@@ -8,7 +8,7 @@ $(function() {
   cards.selected_card = null;
   cards.selected_role = null;
   cards.template = null;
-  
+
   cards.initialize = function() {
     // Set up the virtual card preferences
     $("div#left").on("mouseenter mouseleave", "div#cards div.card div.card-title", function(e) {
@@ -19,79 +19,79 @@ $(function() {
         $(this).children("i").css("display", "none");
       }
     });
-    
+
     // Establish hover for card details
     $("div#left").on("click", "div#cards div.card div.card-title i", function() {
       cards.entity_details('4' + $(this).parent().parent().data("application-id"));
     });
-    
+
     // Allow clicking on blank space to deselect a card
     $("div#left").on("click", function(event) {
       event.stopPropagation();
-      
+
       cards.selected_card = null;
       cards.selected_role = null;
-      
+
       // Unhighlight other cards
       $("div.card").css("box-shadow", "").css("border", "");
       // Unhighlight any role pins
       $("div.pin").css("box-shadow", "").css("border", "");
-      
+
       // Depopulate the sidebar
       cards.populate_sidebar("");
     });
     // Allow clicking on cards to trigger their adherents
     $("div#left").on("click", "div#cards div.card", function(event) {
       event.stopPropagation();
-      
+
       // Unhighlight other cards
       $("div.card").css("box-shadow", "").css("border", "");
       // Unhighlight any role pins
       $("div.pin").css("box-shadow", "").css("border", "");
-    
+
       // Highlight this card
       $(this).css("box-shadow", "#08C 0 0 10px").css("border", "1px solid #08C");
-    
+
       // Re-sort the sidebar to show the associated people and groups (avoid populate_sidebar if they've simply clicked the same area twice)
       if(!($(cards.selected_card).data("application-id") == $(this).data("application-id") && cards.selected_role == null)) {
         cards.populate_sidebar($(this).data("uids"));
       }
-    
+
       // Record it
       cards.selected_card = $(this);
       cards.selected_role = null;
-      
+
       // Clear out the sidebar
       $("#search_entities").attr("data-value", null).val("");
     });
     // Allow clicking on card pins to trigger their role-specific adherents
     $("div#left").on("click", "div#cards div.card div.pin", function(event) {
       event.stopPropagation();
-      
+
       // Unhighlight other cards
       $("div.card").css("box-shadow", "").css("border", "");
       // Unhighlight any role pins
       $("div.pin").css("box-shadow", "").css("border", "");
-      
+
       // Highlight this pin
       $(this).css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
-          
+
       // Re-sort the sidebar to show the associated people and groups
       if(!($(cards.selected_card).data("application-id") == $(this).parent().parent().parent().data("application-id") && cards.selected_role == $(this).data("role-id"))) {
         cards.populate_sidebar($(this).data("uids"));
       }
-      
+
       // Record it
       cards.selected_card = $(this).parent().parent().parent();
       cards.selected_role = $(this).data("role-id");
-      
+
       // Clear out the sidebar
       $("#search_entities").attr("data-value", null).val("");
-    });    
-    
+    });
+
     // Render the application cards
     cards.render_cards();
-    
+
     // Delete/info button(s) appear on hover for the sidebar pins
     $("div#right").on("mouseenter mouseleave", "ul.pins li", function(e) {
       if(e.type == "mouseenter") {
@@ -102,7 +102,7 @@ $(function() {
         $(this).children("i").css("display", "none");
       }
     });
-    
+
     // Enable the details button for sidebar pins
     $("div#right").on("click", "ul.pins>li>i.icon-search", function() {
       cards.entity_details($(this).parent().data("uid"));
@@ -112,7 +112,7 @@ $(function() {
     $("div#right").on("click", "ul.pins>li>i.icon-remove", function() {
       cards.disassociate_group($(this).parent().data("uid"));
     });
-    
+
     // Allow searching on the sidebar
     $("#search_entities").typeahead({
       source: function(query, maxResults, callback) {
@@ -125,13 +125,13 @@ $(function() {
               if(query.toLowerCase() == entity.name.toLowerCase()) exact_match_found = true;
               entities.push({id: entity.uid, label: entity.name });
             });
-            
+
             if(exact_match_found == false) {
               // Add the option to create a new one with this query
               entities.push({id: -1, label: "Add Person " + query});
               entities.push({id: -2, label: "Create Group " + query});
             }
-            
+
             callback(entities);
           });
         }
@@ -143,16 +143,16 @@ $(function() {
       $(this).attr('data-value', null);
     }).change(function() {
       var uid = $(this).attr('data-value');
-      
+
       // They have selected a person. What to do depends on the mode of the UI
       // Is there a card highlighted? In which case, assign this person
       if(cards.selected_card && (uid >= 0)) {
         template.status_text("Saving...");
-        
+
         cards.assign_role(uid, undefined, function() {
           template.hide_status();
         });
-        
+
         // Clear the search field
         $("#search_entities").attr("data-value", null).val("");
       } else if(uid < 0) {
@@ -195,24 +195,24 @@ $(function() {
       }
     });
   }
-  
+
   // Saves an assignment. If role_id is not provided, it will be guessed from the state of the UI
   // on_complete is an optional callback. It will be called when the role is successfully saved
   cards.assign_role = function(uid, role_id, on_complete) {
     var assignment = {};
-    
+
     assignment.uid = uid;
     if(role_id !== undefined) {
       assignment.role_id = role_id;
     } else {
       // role_id was not provided. Guess what it is from the interface
-      
+
       if(cards.selected_role) {
         // A specific role is selected
         assignment.role_id = cards.selected_role;
       } else {
         // No specific role is selected - give them the default
-      
+
         assignment.role_id = _.first(_.filter(applications.applications[$(cards.selected_card).data("application-id")].roles, function(role) {
           if(role.token == "access") {
             return true;
@@ -222,7 +222,7 @@ $(function() {
         })).id;
       }
     }
-    
+
     // Save the assignment
     $.ajax({ url: Routes.roles_assign_path(), data: {assignment: assignment}, type: 'POST'}).always(function() {
       // Update the sidebar list
@@ -243,28 +243,28 @@ $(function() {
         $(cards.selected_card).data("uids", uids_arr.join(","));
         cards.populate_sidebar(uids_arr.join(","));
       }
-      
+
       if(on_complete !== undefined) on_complete();
     });
   }
-  
+
   // Shows and hides the div.card elements based on 'query' matching each .card-title>h3
   cards.visual_filter = function(query) {
     // Also filter the application cards themselves
     if(query.length > 0) {
       var re = new RegExp(query, "i");
-      
+
       // Search the card titles
       var matched_cards = $("div.card").map(function(o, i) {
         var card_title = $(this).find(".card-title h3:first").html();
-            
+
         if(card_title.search(re) != -1) {
           return $(this);
         }
-        
+
         return null;
       });
-      
+
       // Show only the matching cards
       $("div.card").hide();
       $(matched_cards).each(function() {
@@ -274,13 +274,13 @@ $(function() {
       $("div.card").show();
     }
   }
-  
+
   cards.render_cards = function() {
     var collection = null;
     var $left = $("div#cards-left");
     var $right = $("div#cards-right");
     var $current = $left;
-    
+
     if(typeof applications === "undefined") {
       // template mode
       collection = templates.templates;
@@ -288,13 +288,13 @@ $(function() {
       // application mode
       collection = applications.applications;
     }
-    
+
     var count = 0; _.map(collection, function(x) { if(x) { count++; } });
-    
+
     $left.empty();
     $right.empty();
     cards.template = $("#tmpl-card").html();
-    
+
     var i = 0;
     _.each(collection, function(item) {
       if(i >= count / 2) $current = $right;
@@ -303,13 +303,13 @@ $(function() {
       i++;
     });
   }
-  
+
   // Graphically sorts the right-hand availability list based on terms in 'str'
   cards.populate_sidebar = function(uids, partial) {
     if(typeof(partial) == "undefined") {
       partial = false;
     }
-    
+
     if(partial == false) {
       // Clear out the existing list (fade out li elements and destroy since they are clones)
       // We do it backwards since we're altering CSS positioning
@@ -325,9 +325,9 @@ $(function() {
         $(this).remove();
       });
     }
-    
+
     if(typeof uids == "undefined") return;
-    
+
     // Generate a list of matching li elements
     $.ajax({ url: Routes.api_resolve_path(), data: { uids: uids }, type: 'GET'}).always(function(entities) {
       pin_template = $("#tmpl-pin").html();
@@ -345,19 +345,19 @@ $(function() {
       });
     });
   }
-  
+
   // Used to remove specific UIDs from the sidebar (e.g. when a group is deleted)
   cards.depopulate_sidebar = function(uids) {
     _.each(uids, function(uid) {
       $("#entity_list>li[data-uid=" + uid + "]").remove();
     });
   }
-  
+
   cards.entity_details = function(uid) {
     var entity_type = uid.toString()[0];
     var id = uid.toString().substr(1);
     var show_url = null;
-    
+
     if(entity_type == '1') {
       // person
       show_url = Routes.people_path() + "/" + id;
@@ -368,9 +368,9 @@ $(function() {
       // application
       show_url = Routes.applications_path() + "/" + id;
     }
-    
+
     template.status_text("Fetching details...");
-    
+
     $.get(show_url, function(response) {
       template.hide_status();
       $("#modal_container").empty();
@@ -383,7 +383,7 @@ $(function() {
   cards.disassociate_group = function(uid) {
     var id = uid.toString().substr(1);
     var role_id = null;
-    
+
     // Determine the role ID
     if(cards.selected_role == null) {
       // No specific role selected. Determine ID of implied 'access' role
@@ -398,16 +398,16 @@ $(function() {
       // Specific role
       role_id = cards.selected_role;
     }
-    
+
     template.status_text("Removing group...");
-    
+
     // Disassociate the group
     $.ajax({ url: Routes.roles_unassign_path(), data: { assignment: { uid: uid, role_id: role_id } }, type: 'DELETE', complete: function(data, status) {
       var $selected_card = $(cards.selected_card);
-      
+
       template.hide_status();
       cards.depopulate_sidebar([uid]);
-      
+
       // Remove group from internal application list
       var app = applications.selected_application();
       app.uids = _.filter(app.uids, function(a_uid) { return a_uid != uid; });
