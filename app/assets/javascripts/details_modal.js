@@ -166,7 +166,6 @@
   }
 
   details_modal.render_group_rules = function() {
-    console.log("rendering group rules");
     group_rule_template = $("#tmpl-group-rule").html();
     $rule_table = $("fieldset#rules table tbody");
     $rule_table.empty();
@@ -254,8 +253,8 @@
 
       // Auto-complete for group rules
       // Set up auto-complete for existing dropdown default settings
-      $("fieldset#rules table tbody").on("focus", "tr.fields td:nth-child(3) input", function(e) {
-        console.log("focus");
+      $("fieldset#rules table tbody").on("focus", "tr.fields td input", function(e) {
+        console.log("outer focus");
         $(this).focus(details_modal.switch_group_rules_autocomplete(e.currentTarget));
       });
 
