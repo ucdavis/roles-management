@@ -308,6 +308,7 @@
       $("fieldset#rules").on("click", "button#group_rule_add", function(e) {
         details_modal.group_rules.push({group_rule: { id: '', column: 'Department', condition: 'is', value: '' }});
         details_modal.render_group_rules();
+        return false;
       });
       $("fieldset#rules").on("click", "button#group_rule_remove", function(e) {
         var rule_id = $(this).parent().parent().data("rule-id");
