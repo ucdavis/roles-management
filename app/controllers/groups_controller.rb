@@ -62,13 +62,14 @@ class GroupsController < ApplicationController
   # PUT /groups/1
   def update
     @group = Group.find_by_id(params[:id])
-    
+
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated group #{params[:id]}."
 
     respond_to do |format|
       if @group.update_attributes(params[:group])
         format.html { redirect_to(@group, :notice => 'Group was successfully updated.') }
         format.js { head :ok }
+        format.json
       else
         format.html { render :action => "edit" }
         format.js { render json: @group.errors, status: :unprocessable_entity }
@@ -81,7 +82,7 @@ class GroupsController < ApplicationController
     unless current_user.can_administer_group? params[:id] == false
       @group = Group.find_by_id(params[:id])
       @group.destroy
-    
+
       logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted group #{params[:id]}."
     else
       logger.info "#{current_user.loginid}@#{request.remote_ip}: Attempted to delete group #{params[:id]} but does not have permission."
@@ -92,9 +93,9 @@ class GroupsController < ApplicationController
       format.json { head :ok }
     end
   end
-  
+
   protected
-  
+
   def load_group
     if _permitted_to? :show, :groups
       @group = Group.find_by_id(params[:id])

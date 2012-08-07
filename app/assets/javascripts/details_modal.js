@@ -318,6 +318,14 @@
           details_modal.render_group_rules();
         }
       });
+
+      $("form.edit_group").on("ajax:success", function(e, data) {
+        console.log("success");
+        // Re-render the rules as any new rules may have just been given IDs required for deleting
+        // (this is only the case where they create a rule, hit apply, then delete a rule, without leaving the modal)
+        details_modal.group_rules = data.rules;
+        details_modal.render_group_rules();
+      })
     }
 
     if($("#application_owner_tokens").length > 0) {
