@@ -1,5 +1,5 @@
 <script id="tmpl-group-rule" type="text/template">
-  <tr class="fields">
+  <tr class="fields" data-rule-id="{{= rule.id }}" style="{{= ( rule._destroy ? 'display: none;' : '' ) }}">
     <td>
       <select id="group_rules_attributes_{{= index }}_column" name="group[rules_attributes][{{= index }}][column]">
         {{ if(rule.column == "ou") { }}
@@ -44,6 +44,7 @@
       <input id="group_rules_attributes_{{= index }}_value" name="group[rules_attributes][{{= index }}][value]" size="15" type="text" value="{{= rule.value }}">
     </td>
     <td>
+      <input id="group_rules_attributes_{{= index }}__destroy" name="group[rules_attributes][{{= index }}][_destroy]" type="hidden" value="{{= (rule._destroy ? 'true' : 'false') }}">
       <button class="btn btn-danger" id="group_rule_remove" type="button">Remove</button>
     </td>
   </tr>

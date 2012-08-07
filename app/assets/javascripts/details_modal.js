@@ -310,7 +310,13 @@
         details_modal.render_group_rules();
       });
       $("fieldset#rules").on("click", "button#group_rule_remove", function(e) {
-
+        var rule_id = $(this).parent().parent().data("rule-id");
+        // Remove the rule from the list and re-render
+        var rule = _.find(details_modal.group_rules, function(rule) {if(rule.group_rule.id == rule_id) return true;});
+        if(rule) {
+          rule.group_rule._destroy = true;
+          details_modal.render_group_rules();
+        }
       });
     }
 
