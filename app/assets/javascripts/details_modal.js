@@ -308,16 +308,18 @@
       $("fieldset#rules").on("click", "button#group_rule_add", function(e) {
         details_modal.group_rules.push({group_rule: { id: '', column: 'Department', condition: 'is', value: '' }});
         details_modal.render_group_rules();
-        return false;
+        e.preventDefault();
       });
       $("fieldset#rules").on("click", "button#group_rule_remove", function(e) {
-        var rule_id = $(this).parent().parent().data("rule-id");
+        // We can't rely on rule_id because it doesn't exist for rules that haven't been saved yet
+        var rule_index = $(this).parent().parent().index() / 2; // divide by 2 because we have an input element next to every tr
         // Remove the rule from the list and re-render
-        var rule = _.find(details_modal.group_rules, function(rule) {if(rule.group_rule.id == rule_id) return true;});
+        var rule = details_modal.group_rules[rule_index];
         if(rule) {
           rule.group_rule._destroy = true;
           details_modal.render_group_rules();
         }
+        e.preventDefault();
       });
 
       $("form.edit_group").on("ajax:success", function(e, data) {
