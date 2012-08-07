@@ -169,8 +169,8 @@
     group_rule_template = $("#tmpl-group-rule").html();
     $rule_table = $("fieldset#rules table tbody");
     $rule_table.empty();
-    _.each(details_modal.group_rules, function(rule) {
-      var compiledTmpl = _.template(group_rule_template, { rule: rule.group_rule });
+    _.each(details_modal.group_rules, function(rule, i) {
+      var compiledTmpl = _.template(group_rule_template, { rule: rule.group_rule, index: i });
       $rule_table.append(compiledTmpl);
     });
   }
@@ -254,7 +254,6 @@
       // Auto-complete for group rules
       // Set up auto-complete for existing dropdown default settings
       $("fieldset#rules table tbody").on("focus", "tr.fields td input", function(e) {
-        console.log("outer focus");
         $(this).focus(details_modal.switch_group_rules_autocomplete(e.currentTarget));
       });
 
@@ -304,6 +303,15 @@
 
       // Render the group rule view (done via JS because it can be updated dynmically)
       details_modal.render_group_rules();
+
+      // Bind the Add Rule and Remove Rule buttons
+      $("fieldset#rules").on("click", "button#group_rule_add", function(e) {
+        details_modal.group_rules.push({group_rule: { id: '', column: 'Department', condition: 'is', value: '' }});
+        details_modal.render_group_rules();
+      });
+      $("fieldset#rules").on("click", "button#group_rule_remove", function(e) {
+
+      });
     }
 
     if($("#application_owner_tokens").length > 0) {

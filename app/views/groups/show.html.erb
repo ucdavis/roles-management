@@ -1,7 +1,7 @@
 <script id="tmpl-group-rule" type="text/template">
   <tr class="fields">
     <td>
-      <select id="group_rules_attributes_{{= rule.id }}_column" name="group[rules_attributes][{{= rule.id }}][column]">
+      <select id="group_rules_attributes_{{= index }}_column" name="group[rules_attributes][{{= index }}][column]">
         {{ if(rule.column == "ou") { }}
           <option value="ou" selected="selected">Department</option>
         {{ } else { }}
@@ -30,7 +30,7 @@
       </select>
     </td>
     <td>
-      <select id="group_rules_attributes_{{= rule.id }}_condition" name="group[rules_attributes][{{= rule.id }}][condition]">
+      <select id="group_rules_attributes_{{= index }}_condition" name="group[rules_attributes][{{= index }}][condition]">
         {{ if(rule.condition == "is") { }}
           <option value="is" selected="selected">is</option>
           <option value="is not">is not</option>
@@ -41,13 +41,13 @@
       </select>
     </td>
     <td>
-      <input id="group_rules_attributes_{{= rule.id }}_value" name="group[rules_attributes][{{= rule.id }}][value]" size="15" type="text" value="{{= rule.value }}">
+      <input id="group_rules_attributes_{{= index }}_value" name="group[rules_attributes][{{= index }}][value]" size="15" type="text" value="{{= rule.value }}">
     </td>
     <td>
-      <input id="group_rules_attributes_{{= rule.id }}__destroy" name="group[rules_attributes][{{= rule.id }}][_destroy]" type="hidden" value="false">
-      <button class="btn btn-danger" onclick="remove_fields(this)" type="button">Remove</button>
+      <button class="btn btn-danger" id="group_rule_remove" type="button">Remove</button>
     </td>
   </tr>
+  <input id="group_rules_attributes_{{= index }}_id" name="group[rules_attributes][{{= index }}][id]" type="hidden" value="{{= rule.id }}">
 </script>
 
 <div class="modal" id="details_modal">
@@ -91,7 +91,7 @@
             <tbody></tbody>
           </table>
 
-          <p><button class="btn">Add Rule</button></p>
+          <p><button class="btn" id="group_rule_add">Add Rule</button></p>
         </fieldset>
     		<fieldset class="tab-pane" id="roles">
           <b>To add or remove roles</b> from this group, use the main interface.
