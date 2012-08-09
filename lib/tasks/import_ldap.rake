@@ -230,6 +230,19 @@ namespace :ldap do
               p.groups << ou
             end
 
+            # Remove this person from any OUs not mentioned in LDAP
+            # Note: It's assumed LDAP can only mention up to one OU
+            #       We do not simply remove all OUs and then re-add
+            #       the proper one above in order to maintain clean
+            #       logs (deleting an OU association may trigger a
+            #       log message).
+            p.ous.each do |o|
+              if o != ou
+                p.groups.delete(o)
+                puts "Removing ou #{o.name} from person #{p.loginid}"
+              end
+            end
+
             if p.valid? == false
               record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
               record_log << "\tReason(s):\n"
