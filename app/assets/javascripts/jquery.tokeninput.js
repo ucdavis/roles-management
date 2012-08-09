@@ -635,7 +635,7 @@ $.TokenList = function (input, url_or_data, settings) {
         selected_token = null;
 
         // Show the input box and give it focus again
-        focus_with_timeout(input_box);
+        //focus_with_timeout(input_box);
 
         // Remove this token from the saved list
         saved_tokens = saved_tokens.slice(0,index).concat(saved_tokens.slice(index+1));

@@ -229,3 +229,18 @@ div#modal_container tr.fields button {
   box-shadow: #3A87AD 0px 0px 5px;
   border: 1px solid #3A87AD;
 }
+
+div#details_modal #corner_summary {
+  float: right;
+  text-align: center;
+  color: #666;
+  font-size: 8pt;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+div#details_modal #corner_summary #group_member_count {
+  font-weight: bold;
+  font-size: 20pt;
+  color: #333;
+}

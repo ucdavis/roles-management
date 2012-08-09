@@ -68,6 +68,9 @@
         <%= form_for @group, :remote => true, :url => group_path(@group, :format => "json") do |f| %>
         <%= hidden_field_tag 'group_id', @group.id.to_s %>
     		<fieldset class="tab-pane active" id="summary">
+          <span id="corner_summary">
+            <span id="group_member_count"><%= @group.member_tokens.length %></span><br />members
+          </span>
         	<%= f.label :name %>
         	<%= f.text_field :name %>
         	<%= f.label :description, :class => "control-label" %>

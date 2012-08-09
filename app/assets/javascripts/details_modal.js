@@ -20,6 +20,22 @@
     }
   }
 
+  details_modal.refresh_group_member_tokens = function() {
+    $.getJSON(Routes.group_path($("#group_id").val()) + ".json", function (data) {
+      $member_tokens = $("#group_member_tokens");
+      $member_tokens.tokenInput("clear");
+      $.each(data, function(key, val) {
+        if(key == 'members') {
+          _.each(val, function(entity) {
+            $member_tokens.tokenInput("add", { id: entity.uid, name: entity.name, readonly: entity.readonly });
+          });
+          // Update the group member count
+          $("span#group_member_count").html(val.length);
+        }
+      });
+    });
+  }
+
   // Called whenever a group rule input is focused.
   // We need to switch modes depending on the state of the
   // corresponding dropdown in order to set up the look ahead field.
@@ -249,6 +265,9 @@
           $(this).html(details_modal.group_edits['name']);
         });
         details_modal.group_edits = [];
+
+        // Update the group member tokens
+        details_modal.refresh_group_member_tokens();
       });
 
       // Auto-complete for group rules
@@ -284,23 +303,6 @@
         });
       });
 
-      // Recalculate group membership when we view the Summary tab
-      $("div.modal ul.nav-tabs a").bind('shown', function(e) {
-        if(e.target.innerHTML == "Summary") {
-          $.getJSON(Routes.group_path($("#group_id").val()) + ".json", function (data) {
-            $member_tokens = $("#group_member_tokens");
-            $member_tokens.tokenInput("clear");
-            $.each(data, function(key, val) {
-              if(key == 'members') {
-                _.each(val, function(entity) {
-                  $member_tokens.tokenInput("add", { id: entity.uid, name: entity.name, readonly: entity.readonly });
-                });
-              }
-            });
-          });
-        }
-      });
-
       // Render the group rule view (done via JS because it can be updated dynmically)
       details_modal.render_group_rules();
 
@@ -323,7 +325,6 @@
       });
 
       $("form.edit_group").on("ajax:success", function(e, data) {
-        console.log("success");
         // Re-render the rules as any new rules may have just been given IDs required for deleting
         // (this is only the case where they create a rule, hit apply, then delete a rule, without leaving the modal)
         details_modal.group_rules = data.rules;
