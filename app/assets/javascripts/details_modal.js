@@ -181,6 +181,15 @@
     }
   }
 
+  // Reads the group rules interface and ensures the internal JS rule list is up-to-date
+  details_modal.bind_group_rules_to_interface = function() {
+    $("fieldset#rules table tbody tr.fields").each(function(i, el) {
+      details_modal.group_rules[i].group_rule.column = $(el).find("td:eq(0) select").val();
+      details_modal.group_rules[i].group_rule.condition = $(el).find("td:eq(1) select").val();
+      details_modal.group_rules[i].group_rule.value = $(el).find("td:eq(2) input").val();
+    });
+  }
+
   details_modal.render_group_rules = function() {
     group_rule_template = $("#tmpl-group-rule").html();
     $rule_table = $("fieldset#rules table tbody");
@@ -324,12 +333,22 @@
         e.preventDefault();
       });
 
+      // Bind interface changes to rules to our JS dataset
+      // This is necessary to ensure clicking "Add Rule" numerous times without saving
+      // won't revert filled-in values back to their defaults
+      $("fieldset#rules table tbody").on("blur", "tr.fields select", function(e) {
+        details_modal.bind_group_rules_to_interface();
+      });
+      $("fieldset#rules table tbody").on("change", "tr.fields input", function(e) {
+        details_modal.bind_group_rules_to_interface();
+      });
+
       $("form.edit_group").on("ajax:success", function(e, data) {
         // Re-render the rules as any new rules may have just been given IDs required for deleting
         // (this is only the case where they create a rule, hit apply, then delete a rule, without leaving the modal)
         details_modal.group_rules = data.rules;
         details_modal.render_group_rules();
-      })
+      });
     }
 
     if($("#application_owner_tokens").length > 0) {
