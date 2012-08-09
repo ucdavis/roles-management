@@ -62,7 +62,6 @@
       <ul class="nav nav-tabs">
         <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
         <li><a href="#rules" data-toggle="tab">Rules</a></li>
-        <li><a href="#roles" data-toggle="tab">Roles</a></li>
       </ul>
       <div class="tab-content">
         <%= form_for @group, :remote => true, :url => group_path(@group, :format => "json") do |f| %>
@@ -96,9 +95,6 @@
           </table>
 
           <p><button class="btn" id="group_rule_add">Add Rule</button></p>
-        </fieldset>
-    		<fieldset class="tab-pane" id="roles">
-          <b>To add or remove roles</b> from this group, use the main interface.
         </fieldset>
         <% end %>
       </div>
