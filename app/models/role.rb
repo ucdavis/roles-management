@@ -9,7 +9,7 @@ class Role < ActiveRecord::Base
 
   belongs_to :application
 
-  attr_accessible :token, :people_tokens, :people_ids, :default, :group_tokens, :descriptor, :description
+  attr_accessible :token, :people_tokens, :people_ids, :default, :group_tokens, :descriptor, :description, :ad_path
   attr_reader :people_tokens, :group_tokens
 
   def uids

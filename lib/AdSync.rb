@@ -73,6 +73,10 @@ module AdSync
   def AdSync.list_group_members(group)
     members = []
 
+    if group.nil?
+      return []
+    end
+
     AD_PEOPLE_SETTINGS.each do |entry|
       settings = {
           :host => entry['host'],

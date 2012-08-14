@@ -37,15 +37,19 @@
               <th>Description</th>
               <th><!-- Actions --></th>
             </tr>
-            <%= f.fields_for :roles do |builder| %>
-              <%= render "role_fields", :f => builder %>
+            <% @application.roles.each_with_index do |role, i| %>
+              <%= f.fields_for :roles, role, :child_index => i do |builder| %>
+                <%= render "role_fields", :f => builder %>
+              <% end %>
             <% end %>
           </table>
           <p><%= link_to_add_fields "Add Role", f, :roles %></p>
         </fieldset>
     		<fieldset class="tab-pane" id="ad">
-          <%= f.fields_for :roles do |builder| %>
-            <%= render "role_ad_fields", :f => builder %>
+          <% @application.roles.each_with_index do |role, i| %>
+            <%= f.fields_for :roles, role, :child_index => i do |builder| %>
+              <%= render "role_ad_fields", :f => builder %>
+            <% end %>
           <% end %>
           <p>
             <small>The group name is appended after the base AD path configured by the administrator.</small>
