@@ -239,7 +239,7 @@ namespace :ldap do
             p.ous.each do |o|
               if o != ou
                 p.groups.delete(o)
-                puts "Removing ou #{o.name} from person #{p.loginid}"
+                record_log << "\tRemoving ou #{o.name} from person #{p.loginid}\n"
               end
             end
 
