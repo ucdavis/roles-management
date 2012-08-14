@@ -71,21 +71,27 @@ module AdSync
 
   # Takes group as an ActiveDirectory::Group object and returns an array of users
   def AdSync.list_group_members(group)
-    settings = {
-        :host => AD_PEOPLE_SETTINGS['host'],
-        :base => AD_PEOPLE_SETTINGS['base'],
-        :port => 636,
-        :encryption => :simple_tls,
-        :auth => {
-          :method => :simple,
-          :username => AD_PEOPLE_SETTINGS['user'],
-          :password => AD_PEOPLE_SETTINGS['pass']
-        }
-    }
+    members = []
 
-    ActiveDirectory::Base.setup(settings)
+    AD_PEOPLE_SETTINGS.each do |entry|
+      settings = {
+          :host => entry['host'],
+          :base => entry['base'],
+          :port => 636,
+          :encryption => :simple_tls,
+          :auth => {
+            :method => :simple,
+            :username => entry['user'],
+            :password => entry['pass']
+          }
+      }
 
-    group.member_users
+      ActiveDirectory::Base.setup(settings)
+
+      members += group.member_users
+    end
+
+    members
   end
 
   # Returns true if 'user' is in 'group' (both objects should be queried using fetch_user and fetch_group)
@@ -116,5 +122,27 @@ module AdSync
     end
 
     return false
+  end
+
+  def AdSync.remove_user_from_group(user, group)
+    if group.nil?
+      return false
+    end
+
+    settings = {
+        :host => AD_GROUPS_SETTINGS['host'],
+        :base => AD_GROUPS_SETTINGS['base'],
+        :port => 636,
+        :encryption => :simple_tls,
+        :auth => {
+          :method => :simple,
+          :username => AD_GROUPS_SETTINGS['user'],
+          :password => AD_GROUPS_SETTINGS['pass']
+        }
+    }
+
+    ActiveDirectory::Base.setup(settings)
+
+    group.remove user
   end
 end
