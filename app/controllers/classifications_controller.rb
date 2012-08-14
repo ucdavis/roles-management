@@ -37,6 +37,7 @@ class ClassificationsController < ApplicationController
 
     respond_to do |format|
       if @classification.save
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new classification, #{params[:classification]}."
         format.html { redirect_to @classification, notice: 'Classification was successfully created.' }
       else
         format.html { render action: "new" }
@@ -50,6 +51,7 @@ class ClassificationsController < ApplicationController
 
     respond_to do |format|
       if @classification.update_attributes(params[:classification])
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated classification, #{params[:classification]}."
         format.html { redirect_to @classification, notice: 'Classification was successfully updated.' }
       else
         format.html { render action: "edit" }
@@ -61,6 +63,8 @@ class ClassificationsController < ApplicationController
   def destroy
     @classification = Classification.find(params[:id])
     @classification.destroy
+
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Destroyed classification, #{params[:classification]}."
 
     respond_to do |format|
       format.html { redirect_to classifications_url }

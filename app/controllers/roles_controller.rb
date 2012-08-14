@@ -14,7 +14,7 @@ class RolesController < ApplicationController
   # GET /roles/1
   def show
     @role = Role.find_by_id(params[:id])
-    
+
     respond_to do |format|
       format.json { render json: @role }
     end
@@ -43,6 +43,7 @@ class RolesController < ApplicationController
 
     respond_to do |format|
       if @role.save
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new role, #{params[:role]}."
         format.html { redirect_to application_roles_path(@application), :notice => 'Role was successfully created.' }
       else
         format.html { render :action => "new" }
@@ -57,6 +58,7 @@ class RolesController < ApplicationController
 
     respond_to do |format|
       if @role.update_attributes(params[:role])
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated role, #{params[:role]}."
         format.html { redirect_to([@application, @role], :notice => 'Role was successfully updated.') }
       else
         format.html { render :action => "edit" }
@@ -69,6 +71,8 @@ class RolesController < ApplicationController
     @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.find_by_id(params[:id])
     @role.destroy
+
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted role, #{params[:role]}."
 
     respond_to do |format|
       format.html { redirect_to([@application, @role], :notice => 'Role was successfully destroyed.') }

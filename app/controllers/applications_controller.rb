@@ -38,6 +38,7 @@ class ApplicationsController < ApplicationController
 
     respond_to do |format|
       if @application.save
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new application, #{params[:application]}."
         format.html { redirect_to(@application, :notice => 'Application was successfully created.') }
         format.json { render json: @application, status: :created, location: @application }
       else
@@ -53,6 +54,7 @@ class ApplicationsController < ApplicationController
 
     respond_to do |format|
       if @application.update_attributes(params[:application])
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated application, #{params[:application]}."
         format.html { redirect_to(@application, :notice => 'Application was successfully updated.') }
         format.js { render json: @application, status: :ok }
       else
@@ -66,6 +68,8 @@ class ApplicationsController < ApplicationController
   def destroy
     @application = Application.find(params[:id])
     @application.destroy
+
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted application, #{params[:application]}."
 
     respond_to do |format|
       format.html { redirect_to(applications_url) }
