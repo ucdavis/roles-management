@@ -5,6 +5,7 @@
 //= require bootstrap-modal
 //= require bootstrap-transition
 //= require bootstrap-typeahead
+//= require bootstrap-tooltip
 //= require jquery.tokeninput
 //= require routes
 //= require underscore-min

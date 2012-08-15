@@ -299,6 +299,8 @@ $(function() {
     _.each(collection, function(item) {
       if(i >= count / 2) $current = $right;
       var compiledTmpl = _.template(cards.template, { item: item });
+      //$(compiledTmpl).filter("i#entity_details").tooltip({placement: 'bottom', title: 'something'});
+      //console.log($(compiledTmpl).filter("i"));
       $current.append(compiledTmpl);
       i++;
     });
