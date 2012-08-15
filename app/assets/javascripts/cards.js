@@ -26,8 +26,8 @@ $(function() {
     });
 
     // Allow clicking on blank space to deselect a card
-    $("div#left").on("click", function(event) {
-      event.stopPropagation();
+    $("div#left").on("click", function(e) {
+      e.preventDefault();
 
       cards.selected_card = null;
       cards.selected_role = null;
@@ -41,8 +41,8 @@ $(function() {
       cards.populate_sidebar("");
     });
     // Allow clicking on cards to trigger their adherents
-    $("div#left").on("click", "div#cards div.card", function(event) {
-      event.stopPropagation();
+    $("div#left").on("click", "div#cards div.card", function(e) {
+      e.stopPropagation();
 
       // Unhighlight other cards
       $("div.card").css("box-shadow", "").css("border", "");
@@ -65,8 +65,8 @@ $(function() {
       $("#search_entities").attr("data-value", null).val("");
     });
     // Allow clicking on card pins to trigger their role-specific adherents
-    $("div#left").on("click", "div#cards div.card div.pin", function(event) {
-      event.stopPropagation();
+    $("div#left").on("click", "div#cards div.card div.pin", function(e) {
+      e.stopPropagation();
 
       // Unhighlight other cards
       $("div.card").css("box-shadow", "").css("border", "");

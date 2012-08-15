@@ -67,12 +67,6 @@ $(function() {
     theme: "facebook"
   });
 
-  // /people/new/:loginid specific
-  $("input[name=fetch_ldap_details]").click(function() {
-    var loginid = $("input[name=fetch_ldap_details_field]").val();
-    document.location.href = document.location.href + "/" + loginid;
-  });
-
   // Fix AJAX headers
   $.ajaxSetup({
     beforeSend: function (xhr, settings) {
