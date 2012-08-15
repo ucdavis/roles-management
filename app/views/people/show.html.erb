@@ -39,7 +39,7 @@
           </p>
           <ul>
             <% @person.roles.each do |role| %>
-            <li><%= role.descriptor %> (<%= role.token %>) for <%= link_to role.application.name, role.application %></li>
+            <li><%= role.descriptor %> (<%= role.token %>) for <%= role.application.name %></li>
             <% end %>
           </ul>
         </fieldset>
@@ -52,7 +52,7 @@
           </p>
           <ul>
             <% @person.applications.each do |app| %>
-            <li><%= link_to app.name, app %></li>
+            <li><%= app.name %></li>
             <% end %>
           </ul>
         </fieldset>
