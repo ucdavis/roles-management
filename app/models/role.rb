@@ -41,24 +41,25 @@ class Role < ActiveRecord::Base
     logger.info "Syncing role #{id} with AD..."
       g = AdSync.fetch_group(ad_path)
 
-      # Add new people
+      # Add members to AD
       people.each do |person|
         u = AdSync.fetch_user(person.loginid)
         unless AdSync.in_group(u, g)
-          logger.info "Adding user #{u[:samaccountname]} to group #{ad_path}"
+          logger.info "Adding user #{u[:samaccountname]} to AD group #{ad_path}"
           AdSync.add_user_to_group(u, g)
         else
-          logger.info "User #{u[:samaccountname]} is already in group #{ad_path}"
+          logger.info "User #{u[:samaccountname]} is already in AD group #{ad_path}"
         end
       end
 
-      # Remove old people
+      # Add AD people as members
       ad_members = AdSync.list_group_members(g)
       role_members = people.map{ |x| x.loginid }
       ad_members.each do |m|
         unless role_members.include? m[:samaccountname]
-          AdSync.remove_user_from_group(m, g)
-          logger.info "Removing user #{m[:samaccountname]} from group #{ad_path} in AD."
+          p = Person.find_by_loginid m[:samaccountname]
+          people << p unless p.nil?
+          logger.info "Adding user #{m[:samaccountname]} from AD group #{ad_path} in AD."
         end
       end
 
