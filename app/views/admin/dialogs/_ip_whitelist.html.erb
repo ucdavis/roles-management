@@ -1,0 +1,49 @@
+<div class="modal" id="whitelist_modal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>API Whitelist</h3>
+  </div>
+  <div class="modal-body">
+    <table class="table table-striped" id="addresses">
+      <thead>
+        <tr>
+          <th>IP Address</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @addresses.each do |address| %>
+          <tr>
+            <td><%= address.address %></td>
+            <td><%= link_to "Remove", admin_api_whitelisted_ip_path(address), :method => :delete, :remote => true, :confirm => "Are you sure?" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= form_tag admin_api_whitelisted_ips_path, :remote => true, :class => "well form-inline", :id => "new-address" do %>
+      <span class="help-block">Add new address:</span>
+      <%= text_field_tag 'address[address]', '', :class => "span3", :placeholder => "IP Address…" %>
+      <button type="submit" class="btn">Add</button>
+    <% end %>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Done</a>
+  </div>
+</div>
+
+<script type="text/javascript">
+  // Address was created. Keep the view up-to-date by adding the corresponding table row
+  $("form#new-address").bind("ajax:success", function(event, data, status, xhr) {
+    var address = data.api_whitelisted_ip;
+    // Add the row
+    $("table#addresses tbody tr:last").after("<tr><td>" + address.address + "</td><td><a href=\"/admin/subnets/" + address.id + "\" data-confirm=\"Are you sure?\" data-method=\"delete\" data-remote=\"true\" rel=\"nofollow\">Remove</a></td></tr>");
+    // Clear out the input
+    $("form#new-address #address_address").val("");
+  });
+
+  // Address was deleted. Keep the view up-to-date by deleting the corresponding table row
+  $("table#addresses tbody").on("ajax:success", "tr td a", function(event, data, status, xhr) {
+    $(this).parent().parent().remove();
+  });
+</script>

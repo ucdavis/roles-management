@@ -3,10 +3,16 @@ class Api::BaseController < ApplicationController
 
   protected
 
+  # API authentication is available via CAS, an IP whitelist, and HTTP basic auth
   def api_authenticate
     @application = nil
 
     if session[:cas_user].nil?
+      # Check if the IP is whitelisted for API access (needed for Sympa)
+      if ApiWhitelistedIp.find_by_address(request.remote_ip).length > 0
+
+      end
+
       authenticate_or_request_with_http_basic do |username, password|
         key = ApiKey.find_by_secret(password)
 

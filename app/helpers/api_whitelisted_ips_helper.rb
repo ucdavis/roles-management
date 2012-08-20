@@ -1,0 +1,2 @@
+module ApiWhitelistedIpsHelper
+end

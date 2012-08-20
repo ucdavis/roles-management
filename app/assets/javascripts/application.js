@@ -88,28 +88,23 @@ $(function() {
       window.location.href = Routes.admin_ops_unimpersonate_path();
     });
 
+    $("#admin-ip-whitelist").click(application.ip_whitelist_dialog);
+
     $("#admin-about").click(application.about_dialog);
   }
 
-  application.impersonate_dialog = function() {
+  application.impersonate_dialog = function() { application.open_dialog( Routes.admin_dialogs_impersonate_path(), "impersonate_modal" ) };
+  application.about_dialog = function() { application.open_dialog( Routes.site_about_path(), "about_modal" ) };
+  application.ip_whitelist_dialog = function() { application.open_dialog( Routes.admin_dialogs_ip_whitelist_path(), "whitelist_modal" ) };
+
+  application.open_dialog = function(url, modal_dom_id) {
     template.status_text("Loading...");
 
-    $.get(Routes.admin_dialogs_impersonate_path(), function(data) {
+    $.get(url, function(data) {
       template.hide_status();
       $("#modal_container").empty();
       $("#modal_container").append(data);
-      $("#impersonate_modal").modal();
-    });
-  }
-
-  application.about_dialog = function() {
-    template.status_text("Loading...");
-
-    $.get(Routes.site_about_path(), function(data) {
-      template.hide_status();
-      $("#modal_container").empty();
-      $("#modal_container").append(data);
-      $("#about_modal").modal();
+      $("#" + modal_dom_id).modal();
     });
   }
 } (window.application = window.application || {}, jQuery));

@@ -202,9 +202,21 @@
   admin_path: function(_loginid, options) {
   return Utils.build_path(["loginid"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"ops",false]],[7,"/",false]],[6,"impersonate",false]],[7,"/",false]],[3,"loginid",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// admin_api_whitelisted_ip => /admin/api_whitelisted_ips/:id(.:format)
+  admin_api_whitelisted_ip_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_whitelisted_ips",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// admin_api_whitelisted_ips => /admin/api_whitelisted_ips(.:format)
+  admin_api_whitelisted_ips_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_whitelisted_ips",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // admin_dialogs_impersonate => /admin/dialogs/impersonate(.:format)
   admin_dialogs_impersonate_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"dialogs",false]],[7,"/",false]],[6,"impersonate",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// admin_dialogs_ip_whitelist => /admin/dialogs/ip_whitelist(.:format)
+  admin_dialogs_ip_whitelist_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"dialogs",false]],[7,"/",false]],[6,"ip_whitelist",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // admin_ops_unimpersonate => /admin/ops/unimpersonate(.:format)
   admin_ops_unimpersonate_path: function(options) {
@@ -338,6 +350,10 @@
   classifications_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"classifications",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// edit_admin_api_whitelisted_ip => /admin/api_whitelisted_ips/:id/edit(.:format)
+  edit_admin_api_whitelisted_ip_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_whitelisted_ips",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // edit_api_application => /api/applications/:id/edit(.:format)
   edit_api_application_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"applications",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -413,6 +429,10 @@
 // groups => /groups(.:format)
   groups_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"groups",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// new_admin_api_whitelisted_ip => /admin/api_whitelisted_ips/new(.:format)
+  new_admin_api_whitelisted_ip_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_whitelisted_ips",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // new_api_application => /api/applications/new(.:format)
   new_api_application_path: function(options) {
