@@ -10,7 +10,9 @@ class Api::BaseController < ApplicationController
     if session[:cas_user].nil?
       # Check if the IP is whitelisted for API access (needed for Sympa)
       if ApiWhitelistedIp.find_by_address(request.remote_ip).length > 0
-
+        logger.info "API authenticated via whitelist IP: #{request.remote_ip}"
+        session[:api_key] = nil
+        return true
       end
 
       authenticate_or_request_with_http_basic do |username, password|
