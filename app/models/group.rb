@@ -134,7 +134,7 @@ class Group < ActiveRecord::Base
     result = explicit_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => false } }
     result += resolved_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => true } }
 
-    result
+    result.sort {|a,b| a[:name] <=> b[:name] }
   end
 
   def owner_tokens
