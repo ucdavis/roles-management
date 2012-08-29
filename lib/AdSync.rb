@@ -67,6 +67,7 @@ module AdSync
       return false
     else
       return true
+    end
   end
 
   # Takes user as an ActiveDirectory::User object and group as a ActiveDirectory::Group object and returns boolean
