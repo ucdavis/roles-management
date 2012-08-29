@@ -39,28 +39,34 @@ class Role < ActiveRecord::Base
     logger.info "Syncing role #{id} (#{application.name} / #{token}) with AD..."
       g = AdSync.fetch_group(ad_path)
 
-      # Add members to AD
-      people.each do |person|
-        u = AdSync.fetch_user(person.loginid)
-        unless AdSync.in_group(u, g)
-          logger.info "Adding user #{u[:samaccountname]} to AD group #{ad_path}"
-          AdSync.add_user_to_group(u, g)
-        else
-          logger.info "User #{u[:samaccountname]} is already in AD group #{ad_path}"
-        end
-      end
+      unless g.nil?
+        logger.info "Found group #{ad_path} in AD."
 
-      # Add AD people as members
-      ad_members = AdSync.list_group_members(g)
-      role_members = people.map{ |x| x.loginid }
-      ad_members.each do |m|
-        unless role_members.include? m[:samaccountname]
-          p = Person.find_by_loginid m[:samaccountname]
-          people << p unless p.nil?
-          logger.info "Adding user #{m[:samaccountname]} from AD group #{ad_path} in AD."
-        else
-          logger.info "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD."
+        # Add members to AD
+        people.each do |person|
+          u = AdSync.fetch_user(person.loginid)
+          unless AdSync.in_group(u, g)
+            logger.info "Adding user #{u[:samaccountname]} to AD group #{ad_path}"
+            AdSync.add_user_to_group(u, g)
+          else
+            logger.info "User #{u[:samaccountname]} is already in AD group #{ad_path}"
+          end
         end
+
+        # Add AD people as members
+        ad_members = AdSync.list_group_members(g)
+        role_members = people.map{ |x| x.loginid }
+        ad_members.each do |m|
+          unless role_members.include? m[:samaccountname]
+            p = Person.find_by_loginid m[:samaccountname]
+            people << p unless p.nil?
+            logger.info "Adding user #{m[:samaccountname]} from AD group #{ad_path} in AD."
+          else
+            logger.info "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD."
+          end
+        end
+      else
+        logger.info "Could not find group #{ad_path} in AD."
       end
 
       logger.info "Done syncing role #{id} with AD."
