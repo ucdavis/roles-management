@@ -30,15 +30,13 @@ class Role < ActiveRecord::Base
     { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :uids => self.uids }
   end
 
-  private
-
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
     require 'AdSync'
 
     unless ad_path.nil?
-    logger.info "Syncing role #{id} with AD..."
+    logger.info "Syncing role #{id} (#{application.name} / #{token}) with AD..."
       g = AdSync.fetch_group(ad_path)
 
       # Add members to AD
@@ -60,6 +58,8 @@ class Role < ActiveRecord::Base
           p = Person.find_by_loginid m[:samaccountname]
           people << p unless p.nil?
           logger.info "Adding user #{m[:samaccountname]} from AD group #{ad_path} in AD."
+        else
+          logger.info "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD."
         end
       end
 
