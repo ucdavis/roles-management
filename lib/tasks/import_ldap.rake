@@ -20,8 +20,8 @@ namespace :ldap do
     # STEP ONE: Connect to LDAP. Query needed data.
     #
 
-    # Retrieve LDAP passwords from config/database.yml
-    ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ldap']
+    # Retrieve LDAP passwords from config/ldap.yml
+    ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
 
     # Connect to LDAP
     conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )

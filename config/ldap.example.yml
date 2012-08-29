@@ -1,0 +1,4 @@
+ldap:
+  base_dn: "uid=user,ou=users,dc=example,dc=com"
+  base_pw: "secret"
+  search_dn: "ou=people,dc=example,dc=com"

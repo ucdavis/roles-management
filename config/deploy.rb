@@ -36,6 +36,8 @@ namespace :deploy do
     run "mkdir -p #{shared_path}/config"
     put File.read("config/database.example.yml"), "#{shared_path}/config/database.yml"
     put File.read("config/api_keys.example.yml"), "#{shared_path}/config/api_keys.yml"
+    put File.read("config/ldap.example.yml"), "#{shared_path}/config/ldap.yml"
+    put File.read("config/active_directory.example.yml"), "#{shared_path}/config/active_directory.yml"
     puts "Now edit the config files in #{shared_path}."
   end
   after "deploy:setup", "deploy:setup_config"
@@ -43,6 +45,8 @@ namespace :deploy do
   task :symlink_config, roles: :app do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"
+    run "ln -nfs #{shared_path}/config/ldap.yml #{release_path}/config/ldap.yml"
+    run "ln -nfs #{shared_path}/config/active_directory.yml #{release_path}/config/active_directory.yml"
   end
   after "deploy:finalize_update", "deploy:symlink_config"
 

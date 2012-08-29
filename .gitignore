@@ -6,6 +6,8 @@ tmp/
 public/.DS_Store
 config/database.yml
 config/api_keys.yml
+config/ldap.yml
+config/active_directory.yml
 .sass-cache/
 public/assets/
 .rvmrc

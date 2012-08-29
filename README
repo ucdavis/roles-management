@@ -27,6 +27,12 @@ config/database.yml.example
 config/api_keys.yml.example
 	Move this file to config/api_keys.yml and set the appropriate values.
 
+config/ldap.yml.example
+  Move this file to config/ldap.yml and set the appropriate values.
+
+config/active_directory.yml.example
+  Move this file to config/active_directory.yml and set the appropriate values.
+
 config/environment.rb
 	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If
   you decide to remove CAS, also remove the before_filter in

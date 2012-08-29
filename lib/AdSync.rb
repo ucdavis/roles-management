@@ -1,7 +1,7 @@
 module AdSync
   require 'active_directory'
-  AD_PEOPLE_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ad_people']
-  AD_GROUPS_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ad_groups']
+  AD_PEOPLE_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/active_directory.yml")['ad_people']
+  AD_GROUPS_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/active_directory.yml")['ad_groups']
 
   # Takes loginid as a string (e.g. 'jsmith') and returns an ActiveDirectory::User object
   def AdSync.fetch_user(loginid)

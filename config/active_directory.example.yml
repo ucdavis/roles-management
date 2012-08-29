@@ -1,0 +1,16 @@
+ad_people:
+  - host: 'example.com'
+    user: 'DC=user,DC=example,DC=com'
+    pass: ''
+    base: 'DC=ou,DC=example,DC=com'
+
+  - host: 'example.com'
+    user: 'DC=user,DC=example,DC=com'
+    pass: ''
+    base: 'DC=ou,DC=example,DC=com'
+
+ad_groups:
+  host: 'example.com'
+  user: 'DC=user,DC=example,DC=com'
+  pass: ''
+  base: 'DC=ou,DC=example,DC=com'
