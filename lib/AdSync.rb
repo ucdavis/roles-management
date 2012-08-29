@@ -46,6 +46,29 @@ module AdSync
     ActiveDirectory::Group.find(:first, :cn => group_name)
   end
 
+  # Takes name as a string (e.g. 'this-that') and returns true or false
+  def AdSync.group_exists?(group_name)
+    settings = {
+        :host => AD_GROUPS_SETTINGS['host'],
+        :base => AD_GROUPS_SETTINGS['base'],
+        :port => 636,
+        :encryption => :simple_tls,
+        :auth => {
+          :method => :simple,
+          :username => AD_GROUPS_SETTINGS['user'],
+          :password => AD_GROUPS_SETTINGS['pass']
+        }
+    }
+
+    ActiveDirectory::Base.setup(settings)
+    g = ActiveDirectory::Group.find(:first, :cn => group_name)
+
+    if g.nil?
+      return false
+    else
+      return true
+  end
+
   # Takes user as an ActiveDirectory::User object and group as a ActiveDirectory::Group object and returns boolean
   def AdSync.add_user_to_group(user, group)
     if group.nil?

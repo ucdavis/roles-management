@@ -3,6 +3,9 @@
   details_modal.group_edits = [];
   details_modal.group_rules_typeahead_callback = null;
   details_modal.group_rules = null;
+  details_modal.ad_path_check_delay = 750; // milliseconds
+  details_modal.ad_path_last_check = 0;
+  details_modal.ad_path_check_delayed = false;
 
   // Save whatever's in the modal
   details_modal.save = function() {
@@ -370,6 +373,25 @@
         applications.applications[updated_application.id] = updated_application;
 
         cards.render_cards();
+      });
+
+      // AD path validity check
+      $("form.edit_application input#application_ad_path").on("keyup", function(e) {
+        // Ensure adequate delay has passed
+        if((details_modal.ad_path_last_check + details_modal.ad_path_check_delay) < Date.now()) {
+          details_modal.ad_path_last_check = Date.now();
+          details_modal.ad_path_check_delayed = false;
+
+          console.log("checking path: " + $(this).val());
+        } else {
+          // Not enough time has passed, but in case there are no more keyup events, we need to remind ourselves to check back
+          if(details_modal.ad_path_check_delayed == false) {
+            details_modal.ad_path_check_delayed = true;
+            setTimeout(function() {
+              $("form.edit_application input#application_ad_path").trigger("keyup");
+            }, details_modal.ad_path_check_delay * 1.5);
+          }
+        }
       });
 
       $("div.modal-footer").on("click", "a#delete", function(e) {
