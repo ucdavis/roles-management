@@ -179,7 +179,7 @@ $(function() {
           template.status_text("Creating group...");
           var group = {};
           group.name = $(this).val().slice(13); // cut off the "Create Group " at the beginning
-          group.owner_ids = [application.current_user_id];
+          group.owner_ids = ['1' + application.current_user_id];
           $.ajax({ url: Routes.groups_path() + ".json", data: {group: group}, type: 'POST'}).always(
             function(data) {
               template.hide_status();
