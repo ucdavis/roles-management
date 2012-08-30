@@ -1,4 +1,4 @@
-class ApiWhitelistedIpsController < ApplicationController
+class Admin::ApiWhitelistedIpsController < ApplicationController
   # POST /admin/api_whitelisted_ips.json
   def create
     @address = ApiWhitelistedIp.new(params[:address])
