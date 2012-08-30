@@ -79,7 +79,7 @@
     		  <%= f.label :member_tokens, "Members" %>
     		  <p id="members">
     		    <%= f.text_field :member_tokens, "data-pre" => add_class_attr_to_group_json(@group.member_tokens.to_json), "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>
-            <span id="group-csv-download"><a href="#">Download as CSV</a></span>
+            <span id="group-csv-download"><%= link_to "Download as CSV", group_path(@group, :format => 'csv') %></span>
     		  </p>
         </fieldset>
     		<fieldset class="tab-pane" id="rules">

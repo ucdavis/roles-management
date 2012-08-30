@@ -21,6 +21,18 @@ class GroupsController < ApplicationController
     respond_to do |format|
       format.html { render "show", :layout => false }
       format.json { render json: @group }
+      format.csv {
+        # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
+        csv_data = CSV.generate do |csv|
+          csv << Person.csv_header
+          @group.members(flatten = true).each do |m|
+            csv << m.to_csv
+          end
+        end
+        send_data csv_data,
+          :type => 'text/csv; charset=iso-8859-1; header=present',
+          :disposition => "attachment; filename=rm_group_#{to_param}.csv"
+      }
     end
   end
 

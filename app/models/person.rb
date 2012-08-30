@@ -41,6 +41,14 @@ class Person < ActiveRecord::Base
     (UID_PERSON.to_s + id.to_s).to_i
   end
 
+  def self.csv_header
+    "UID,Login ID, Email, First, Last".split(',')
+  end
+
+  def to_csv
+    [uid, loginid, email, first, last]
+  end
+
   # Compute their classifications based on their title
   def classifications
     title.classifications
