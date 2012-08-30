@@ -33,7 +33,7 @@ class GroupsController < ApplicationController
         end
         send_data csv_data,
           :type => 'text/csv; charset=iso-8859-1; header=present',
-          :disposition => "attachment; filename=rm_group_#{to_param}.csv"
+          :disposition => "attachment; filename=rm_group_#{@group.to_param}.csv"
       }
     end
   end
