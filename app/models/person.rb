@@ -1,20 +1,20 @@
 class Person < ActiveRecord::Base
   belongs_to :title
-  has_many :affiliation_assignments
+  has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
 
   has_and_belongs_to_many :groups, :uniq => true
-  has_many :role_assignments
+  has_many :role_assignments, :dependent => :destroy
 
-  has_many :person_manager_assignments
+  has_many :person_manager_assignments, :dependent => :destroy
   has_many :managers, :through => :person_manager_assignments
   has_many :subordinate_relationships, :class_name => "PersonManagerAssignment", :foreign_key => "manager_id"
   has_many :subordinates, :through => :subordinate_relationships, :source => :subordinate
 
-  has_many :application_owner_assignments, :foreign_key => "owner_id"
+  has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
 
-  has_many :group_manager_assignments
+  #has_many :group_manager_assignments
 
   has_one :student
 

@@ -3,22 +3,22 @@ class Group < ActiveRecord::Base
 
   # Group-to-group relationships
   ## Children
-  has_many :group_children_assignments
+  has_many :group_children_assignments, :dependent => :destroy
   has_many :children, :through => :group_children_assignments
   ## Parents
-  has_many :group_parent_assignment, :class_name => "GroupChildrenAssignment", :foreign_key => "child_id"
+  has_many :group_parent_assignment, :class_name => "GroupChildrenAssignment", :foreign_key => "child_id", :dependent => :destroy
   has_many :parents, :through => :group_parent_assignment, :source => :group
 
   has_and_belongs_to_many :people
 
-  has_many :role_assignments
+  has_many :role_assignments, :dependent => :destroy
   has_many :roles, :through => :role_assignments
 
   has_many :person_owners, :class_name => "Person", :through => :group_owner_assignments, :source => :owner_person
   has_many :group_owners, :class_name => "Group", :through => :group_owner_assignments, :source => :owner_group
   has_many :group_owner_assignments, :dependent => :destroy
 
-  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule"
+  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
 
   validates :name, :presence => true
 

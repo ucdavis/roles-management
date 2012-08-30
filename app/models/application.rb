@@ -1,6 +1,6 @@
 class Application < ActiveRecord::Base
-  has_many :roles
-  has_many :application_owner_assignments
+  has_many :roles, :dependent => :destroy
+  has_many :application_owner_assignments, :dependent => :destroy
   has_many :owners, :through => :application_owner_assignments
 
   after_save :ensure_access_role_exists
