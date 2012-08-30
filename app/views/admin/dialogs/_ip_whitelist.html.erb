@@ -8,6 +8,7 @@
       <thead>
         <tr>
           <th>IP Address</th>
+          <th>Reason</th>
           <th></th>
         </tr>
       </thead>
@@ -15,6 +16,7 @@
         <% @addresses.each do |address| %>
           <tr>
             <td><%= address.address %></td>
+            <td><%= address.reason %></td>
             <td><%= link_to "Remove", admin_api_whitelisted_ip_path(address), :method => :delete, :remote => true, :confirm => "Are you sure?" %></td>
           </tr>
         <% end %>
@@ -24,6 +26,7 @@
     <%= form_tag admin_api_whitelisted_ips_path, :remote => true, :class => "well form-inline", :id => "new-address" do %>
       <span class="help-block">Add new address:</span>
       <%= text_field_tag 'address[address]', '', :class => "span3", :placeholder => "IP Address…" %>
+      <%= text_field_tag 'address[reason]', '', :class => "span3", :placeholder => "Reason…" %>
       <button type="submit" class="btn">Add</button>
     <% end %>
   </div>
@@ -37,7 +40,7 @@
   $("form#new-address").bind("ajax:success", function(event, data, status, xhr) {
     var address = data.api_whitelisted_ip;
     // Add the row
-    $("table#addresses tbody tr:last").after("<tr><td>" + address.address + "</td><td><a href=\"/admin/api_whitelisted_ips/" + address.id + "\" data-confirm=\"Are you sure?\" data-method=\"delete\" data-remote=\"true\" rel=\"nofollow\">Remove</a></td></tr>");
+    $("table#addresses tbody tr:last").after("<tr><td>" + address.address + "</td><td>" + address.reason + "</td><td><a href=\"/admin/api_whitelisted_ips/" + address.id + "\" data-confirm=\"Are you sure?\" data-method=\"delete\" data-remote=\"true\" rel=\"nofollow\">Remove</a></td></tr>");
     // Clear out the input
     $("form#new-address #address_address").val("");
   });
