@@ -37,7 +37,7 @@
   $("form#new-address").bind("ajax:success", function(event, data, status, xhr) {
     var address = data.api_whitelisted_ip;
     // Add the row
-    $("table#addresses tbody tr:last").after("<tr><td>" + address.address + "</td><td><a href=\"/admin/subnets/" + address.id + "\" data-confirm=\"Are you sure?\" data-method=\"delete\" data-remote=\"true\" rel=\"nofollow\">Remove</a></td></tr>");
+    $("table#addresses tbody tr:last").after("<tr><td>" + address.address + "</td><td><a href=\"/admin/api_whitelisted_ips/" + address.id + "\" data-confirm=\"Are you sure?\" data-method=\"delete\" data-remote=\"true\" rel=\"nofollow\">Remove</a></td></tr>");
     // Clear out the input
     $("form#new-address #address_address").val("");
   });
