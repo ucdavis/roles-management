@@ -22,6 +22,8 @@ class GroupsController < ApplicationController
       format.html { render "show", :layout => false }
       format.json { render json: @group }
       format.csv {
+        require 'csv'
+
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
         csv_data = CSV.generate do |csv|
           csv << Person.csv_header
