@@ -11,6 +11,7 @@
 //= require underscore-min
 //= require details_modal
 //= require bootstrap-modal-alert
+//= require jQuery.equalHeights
 //= require_self
 
 // Let Underscore know we'll be using Mustache-style templates

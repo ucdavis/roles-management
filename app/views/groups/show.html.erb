@@ -41,7 +41,7 @@
       </select>
     </td>
     <td>
-      <input id="group_rules_attributes_{{= index }}_value" name="group[rules_attributes][{{= index }}][value]" size="15" type="text" value="{{= rule.value }}">
+      <input id="group_rules_attributes_{{= index }}_value" name="group[rules_attributes][{{= index }}][value]" size="45" type="text" value="{{= rule.value }}">
     </td>
     <td>
       <input id="group_rules_attributes_{{= index }}__destroy" name="group[rules_attributes][{{= index }}][_destroy]" type="hidden" value="{{= (rule._destroy ? 'true' : 'false') }}">
@@ -73,7 +73,7 @@
         	<%= f.label :name %>
         	<%= f.text_field :name %>
         	<%= f.label :description, :class => "control-label" %>
-      	  <%= f.text_area :description, :class => "input-xlarge", :rows => 8 %>
+      	  <%= f.text_area :description, :class => "input-xlarge", :rows => 2 %>
     		  <%= f.label :owner_tokens, "Owners" %>
     		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/custom", :action => "search"), :class => "token_input" %>
     		  <%= f.label :member_tokens, "Members" %>

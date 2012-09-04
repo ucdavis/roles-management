@@ -412,5 +412,8 @@
         });
       });
     }
+
+    // Ensure all tabs are the same height
+    $(".modal form").equalHeights();
   }
 } (window.details_modal = window.details_modal || {}, jQuery));

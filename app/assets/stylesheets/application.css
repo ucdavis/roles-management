@@ -190,6 +190,15 @@ div#modal_container tr.fields button {
 .modal {
   width: 840px;
   margin-left: -420px;
+  top: 40%;
+}
+
+.modal .modal-header {
+  text-align: center;
+}
+
+.modal .modal-body {
+  max-height: 700px;
 }
 
 /* UCD colors for the navbar */
