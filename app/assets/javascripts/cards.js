@@ -280,6 +280,7 @@ $(function() {
     var $left = $("div#cards-left");
     var $right = $("div#cards-right");
     var $current = $left;
+    var highlighted_application_id = null;
 
     if(typeof applications === "undefined") {
       // template mode
@@ -287,6 +288,8 @@ $(function() {
     } else {
       // application mode
       collection = applications.applications;
+      // preserve highlighted application card, if any
+      if(cards.selected_card) highlighted_application_id = $(cards.selected_card).data("application-id");
     }
 
     var count = 0; _.map(collection, function(x) { if(x) { count++; } });
@@ -303,6 +306,9 @@ $(function() {
         //$(compiledTmpl).filter("i#entity_details").tooltip({placement: 'bottom', title: 'something'});
         //console.log($(compiledTmpl).filter("i"));
         $current.append(compiledTmpl);
+        if(highlighted_application_id) {
+          if(item.id == highlighted_application_id) $("div.card[data-application-id=" + item.id + "]").css("box-shadow", "#08C 0 0 10px").css("border", "1px solid #08C");
+        }
         i++;
       }
     });

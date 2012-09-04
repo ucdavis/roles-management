@@ -207,7 +207,6 @@
     // Ensure the apply button works
     $(".modal #apply").click(function() {
       details_modal.save();
-      //$(".modal").modal('hide');
       cards.render_cards();
     });
 
