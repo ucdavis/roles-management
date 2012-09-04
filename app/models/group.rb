@@ -194,7 +194,8 @@ class Group < ActiveRecord::Base
 
     # Step One: Build groups out of each 'is' rule,
     #           groupping rules of similar type together via OR
-    rules.where(:condition => "is").group_by(&:column).each do |ruleset|
+    #           Note: we ignore the 'loginid' column as it is calculated separately
+    rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).group_by(&:column).each do |ruleset|
       ruleset_results = []
 
       ruleset[1].each do |rule|
@@ -207,16 +208,21 @@ class Group < ActiveRecord::Base
     # Step Two: AND all groups from step one together
     result = results.inject(results.first) { |sum,m| sum &= m }
 
-    # Step Three: Pass over the result from step two and
-    # remove anybody who violates an 'is not' rule
     if result
-      result.find_all{ |member|
+      # Step Three: Pass over the result from step two and
+      # remove anybody who violates an 'is not' rule
+      result = result.find_all{ |member|
         keep = true
         rules.where(:condition => "is not").each do |rule|
           keep &= rule.matches(member)
         end
         keep
       }
+
+      # Step Four: Process any 'loginid is' rules
+      rules.where({:condition => "is", :column => "loginid"}).each do |rule|
+        result << rule.resolve.at(0)
+      end
     end
 
     if result.nil?

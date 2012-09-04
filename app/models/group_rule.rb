@@ -1,8 +1,15 @@
 class GroupRule < ActiveRecord::Base
+  @@valid_columns = %w( title major affiliation classification loginid ou )
+
   validates_inclusion_of :condition, :in => %w( is is\ not  )
-  validates_inclusion_of :column, :in => %w( title major affiliation classification loginid ou )
+  validates_inclusion_of :column, :in => @@valid_columns
 
   belongs_to :group
+
+  # Needed by 'Group' when calculating rules
+  def GroupRule.valid_columns
+    @@valid_columns
+  end
 
   # Resolve (discern) the rule and return a UID and name for the person
   def resolve
