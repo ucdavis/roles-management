@@ -70,8 +70,8 @@ class Role < ActiveRecord::Base
         logger.info "Found group #{ad_path} in AD."
 
         # Add members to AD
-        people.each do |person|
-          u = AdSync.fetch_user(person.loginid)
+        members.each do |member|
+          u = AdSync.fetch_user(member.loginid)
           unless AdSync.in_group(u, g)
             logger.info "Adding user #{u[:samaccountname]} to AD group #{ad_path}"
             AdSync.add_user_to_group(u, g)
@@ -82,7 +82,7 @@ class Role < ActiveRecord::Base
 
         # Add AD people as members
         ad_members = AdSync.list_group_members(g)
-        role_members = people.map{ |x| x.loginid }
+        role_members = members.map{ |x| x.loginid }
         ad_members.each do |m|
           unless role_members.include? m[:samaccountname]
             p = Person.find_by_loginid m[:samaccountname]
