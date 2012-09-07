@@ -131,8 +131,8 @@ class Group < ActiveRecord::Base
     explicit_members = explicit_members.uniq{|x| x.uid}
     resolved_members = resolved_members.uniq{|x| x.uid}
 
-    result = resolved_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => true, :loginid => x.loginid } }.sort {|a,b| a[:name] <=> b[:name] }
-    result += explicit_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => false, :loginid => x.loginid } }.sort {|a,b| a[:name] <=> b[:name] }
+    result = resolved_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => true, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
+    result += explicit_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => false, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
 
     result
   end

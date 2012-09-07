@@ -406,7 +406,7 @@ $.TokenList = function (input, url_or_data, settings) {
     this.clear = function() {
         token_list.children("li").each(function() {
             if ($(this).children("input").length === 0) {
-                delete_token($(this));
+                delete_token($(this), false);
             }
         });
     }
@@ -427,7 +427,7 @@ $.TokenList = function (input, url_or_data, settings) {
                     }
                 }
                 if (match) {
-                    delete_token($(this));
+                    delete_token($(this), false);
                 }
             }
         });
@@ -623,7 +623,9 @@ $.TokenList = function (input, url_or_data, settings) {
     }
 
     // Delete a token from the token list
-    function delete_token (token) {
+    function delete_token (token, do_callback) {
+        do_callback = typeof do_callback !== 'undefined' ? do_callback : true;
+
         // Remove the id from the saved list
         var token_data = $.data(token.get(0), "tokeninput");
         var callback = settings.onDelete;
@@ -655,7 +657,7 @@ $.TokenList = function (input, url_or_data, settings) {
         }
 
         // Execute the onDelete callback if defined
-        if($.isFunction(callback)) {
+        if($.isFunction(callback) && do_callback) {
             callback.call(hidden_input,token_data);
         }
     }
