@@ -27,7 +27,7 @@ gem 'pg'
 gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
 
 # For scheduled tasks
-gem 'whenever', :require => false
+gem 'whenever'
 
 # For MS Active Directory support
 gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
@@ -44,3 +44,5 @@ gem 'net-ssh', :git => 'git://github.com/nessche/net-ssh.git'
 gem 'jbuilder'
 
 gem 'debugger', :group => :development
+
+gem 'delayed_job_active_record'

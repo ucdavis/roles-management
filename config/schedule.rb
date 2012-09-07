@@ -19,6 +19,13 @@
 
 # Learn more: http://github.com/javan/whenever
 
+job_type :envcommand, 'cd :path && RAILS_ENV=:environment :task'
+
+# Ensure our background processor starts up on reboot
+every :reboot do
+  envcommand 'script/delayed_job restart'
+end
+
 # Run LDAP import updater every 24 hours at 2am
 every :day, :at => "2am" do
   rake "ldap:import"
