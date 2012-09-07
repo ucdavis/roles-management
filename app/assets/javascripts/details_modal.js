@@ -203,6 +203,15 @@
     });
   }
 
+  details_modal.generateExclusionRuleIfNeeded = function(token) {
+    if(token.readonly == true) {
+      // User has deleted a group member that comes from a rule.
+      // We will generate a new 'LoginID is not' rule to account for this.
+      details_modal.group_rules.push({group_rule: { id: '', column: 'loginid', condition: 'is not', value: token.loginid }});
+      details_modal.render_group_rules();
+    }
+  }
+
   details_modal.init = function() {
     // Ensure the apply button works
     $(".modal #apply").click(function() {
@@ -256,7 +265,9 @@
         theme: "facebook",
         tokenValue: "uid",
         defaultText: "No members",
-        excludeReadOnlyOnSubmit: true
+        excludeReadOnlyOnSubmit: true,
+        forceDeleteActionOnReadOnly: true,
+        onDelete: details_modal.generateExclusionRuleIfNeeded
       });
 
       $("#group_owner_tokens").tokenInput($("#group_owner_tokens").attr("method") + ".json", {

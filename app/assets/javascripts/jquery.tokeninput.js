@@ -20,6 +20,7 @@ var DEFAULT_SETTINGS = {
     jsonContainer: null,
     contentType: "json",
     excludeReadOnlyOnSubmit: false,
+    forceDeleteActionOnReadOnly: false,
 
 	// Prepopulation settings
     prePopulate: null,
@@ -495,7 +496,7 @@ $.TokenList = function (input, url_or_data, settings) {
         $this_token.addClass(settings.classes.token).insertBefore(input_token);
 
         // The 'delete token' button
-        if(!readonly) {
+        if(!readonly || settings.forceDeleteActionOnReadOnly) {
           $("<span>" + settings.deleteText + "</span>")
               .addClass(settings.classes.tokenDelete)
               .appendTo($this_token)

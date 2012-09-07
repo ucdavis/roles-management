@@ -116,7 +116,11 @@ module AdSync
 
       ActiveDirectory::Base.setup(settings)
 
-      members += group.member_users
+      begin
+        members += group.member_users
+      rescue NoMethodError
+        # active_directory gem throws a NoMethodError if the group is blank
+      end
     end
 
     members
