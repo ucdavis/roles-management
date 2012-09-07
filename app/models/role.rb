@@ -30,6 +30,33 @@ class Role < ActiveRecord::Base
     { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :uids => self.uids }
   end
 
+  # Slightly different than 'people' or 'groups' ...
+  # members takes all people and all people from groups (flattens the group)
+  # and returns them as a list. It also computes the full list of people
+  # who have access to an application if the role is named 'access' (e.g. include people in other roles,
+  # mimicking the frontend interface and making AD sync behave the same way)
+  def members
+    all = []
+
+    # Add all people
+    all += people
+
+    # Add all (flattened) groups
+    groups.each do |group|
+      all += group.members(true)
+    end
+
+    # If this is the 'access' role, add all members of all other roles
+    if token == "access"
+      application.roles.reject{ |r| r.token == "access" }.each do |role|
+        all += role.members
+      end
+    end
+
+    # Return a unique list
+    all.uniq{ |x| x.uid }
+  end
+
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
