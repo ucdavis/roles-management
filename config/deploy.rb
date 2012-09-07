@@ -4,6 +4,12 @@ require "bundler/capistrano"
 set :whenever_command, "bundle exec whenever"
 require "whenever/capistrano"
 
+require "delayed/recipes"
+before "deploy:restart", "delayed_job:stop"
+after  "deploy:restart", "delayed_job:start"
+after "deploy:stop",  "delayed_job:stop"
+after "deploy:start", "delayed_job:start"
+
 server "169.237.120.176", :web, :app, :db, primary: true
 
 set :application, "dss-rm"

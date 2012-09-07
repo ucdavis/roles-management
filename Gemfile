@@ -26,9 +26,6 @@ gem 'pg'
 
 gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
 
-# For scheduled tasks
-gem 'whenever'
-
 # For MS Active Directory support
 gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
 
@@ -45,4 +42,9 @@ gem 'jbuilder'
 
 gem 'debugger', :group => :development
 
+# For scheduled tasks
+gem 'whenever'
+
+# For background processing
 gem 'delayed_job_active_record'
+gem 'daemons'

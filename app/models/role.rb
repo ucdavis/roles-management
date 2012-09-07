@@ -101,4 +101,5 @@ class Role < ActiveRecord::Base
       logger.info "Not syncing role #{id} because no AD path is set"
     end
   end
+  handle_asynchronously :sync_ad
 end

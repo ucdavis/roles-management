@@ -81,6 +81,7 @@ GEM
       execjs
     coffee-script-source (1.3.3)
     columnize (0.3.6)
+    daemons (1.1.9)
     debugger (1.2.0)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.1.1)
@@ -195,6 +196,7 @@ DEPENDENCIES
   active_directory!
   capistrano
   coffee-rails (~> 3.2.1)
+  daemons
   debugger
   declarative_authorization!
   delayed_job_active_record
