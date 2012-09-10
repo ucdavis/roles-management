@@ -1,7 +1,16 @@
 class Api::PeopleController < Api::BaseController
   # GET /api/people.xml
   def index
-    @people = Person.where("first like ? or last like ? or preferred_name like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
+    adapter = ActiveRecord::Base.connection.instance_values["config"][:adapter].to_sym
+
+    case adapter
+    when :sqlite3
+      @people = Person.where("first like ? or last like ? or " + db_concat(:first, ' ', :last) + " like ? or preferred_name like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
+    else
+      @people = Person.where("first ilike ? or last ilike ? or " + db_concat(:first, ' ', :last) + " ilike ? or preferred_name ilike ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
+    end
+
+    #@people = Person.where("first like ? or last like ? or preferred_name like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
 
     @people.map()
 
@@ -73,11 +82,11 @@ class Api::PeopleController < Api::BaseController
       format.xml  { head :ok }
     end
   end
-  
+
   # GET /api/people/[loginid]/exists
   def exists
     exists = (not Person.find_by_loginid(params[:person_id]).nil?)
-    
+
     respond_to do |format|
       format.json { render json: exists, status: :created }
     end
