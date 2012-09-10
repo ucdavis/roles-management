@@ -119,7 +119,7 @@ class GroupRule < ActiveRecord::Base
     when "major"
       matched = person.major == Major.find_by_name(value)
     when "affiliation"
-      matched = person.affiliation.include? Affiliation.find_by_name(value)
+      matched = person.affiliations.include? Affiliation.find_by_name(value)
     when "ou"
       matched = person.ous.include? Group.find_by_name(value)
     when "classification"
