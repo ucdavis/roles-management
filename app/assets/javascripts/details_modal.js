@@ -284,8 +284,6 @@
       $("form.edit_group").bind('ajax:success', function(e, group) {
         template.hide_status();
 
-        console.log(group);
-
         // Update various bits of the UI with a potential new group name
         $("div#modal_container .modal-header h3").html(group.name);
         $("ul.pins li[data-uid=" + group.uid + "]").html("<i class=\"icon-remove\" style=\"display: none;\"></i> <i class=\"icon-search\" style=\"display: none;\"></i>" + group.name);
