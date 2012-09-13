@@ -14,7 +14,7 @@ class Person < ActiveRecord::Base
   has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
 
-  #has_many :group_manager_assignments
+  has_many :group_owner_assignments
 
   has_one :student
 
@@ -152,7 +152,7 @@ class Person < ActiveRecord::Base
   def owns
     groups = []
 
-    GroupOwnerAssignment.includes(:group).where(:owner_id => id).each do |ownership|
+    GroupOwnerAssignment.includes(:group).where(:owner_person_id => id).each do |ownership|
       groups << ownership.group
     end
 
