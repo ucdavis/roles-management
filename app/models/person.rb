@@ -14,7 +14,7 @@ class Person < ActiveRecord::Base
   has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
 
-  has_many :group_owner_assignments
+  has_many :group_owner_assignments, :foreign_key => "owner_person_id"
 
   has_one :student
 
@@ -150,13 +150,7 @@ class Person < ActiveRecord::Base
 
   # Returns all groups owned by this person (see 'manages' for people)
   def owns
-    groups = []
-
-    GroupOwnerAssignment.includes(:group).where(:owner_person_id => id).each do |ownership|
-      groups << ownership.group
-    end
-
-    groups
+    group_owner_assignments.includes(:group).where(:owner_person_id => id).map{|x| x.group}
   end
 
   # ACL symbols
