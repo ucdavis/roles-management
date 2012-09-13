@@ -1,5 +1,6 @@
 //= require jquery
 //= require jquery_ujs
+//= require json2
 //= require bootstrap.min
 //= require bootbox.min
 //= require bootstrap-modal

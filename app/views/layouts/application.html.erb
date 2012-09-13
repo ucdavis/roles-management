@@ -5,13 +5,14 @@
 	<title>Rights Management</title>
 
   <%= stylesheet_link_tag "application" %>
-  <%= javascript_include_tag "application" %>
 	<%= csrf_meta_tag %>
 </head>
 <body>
-  <script type="text/javascript">
-    application.current_user_id = <%= current_user.id %>; // application, not applications
-  </script>
+  <%= content_for :javascript do -%>
+    <script type="text/javascript">
+      application.current_user_id = <%= current_user.id %>; // application, not applications
+    </script>
+  <% end %>
 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -51,5 +52,8 @@
   </div><!-- /.container-fluid -->
 
   <div class="status_bar"></div>
+
+  <%= javascript_include_tag "application" %>
+  <%= yield :javascript %>
 </body>
 </html>

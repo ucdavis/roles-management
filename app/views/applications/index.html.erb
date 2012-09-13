@@ -1,5 +1,7 @@
-<%= javascript_include_tag "controllers/" + params[:controller] %>
-<%= javascript_include_tag "cards" %>
+<%= content_for :javascript do -%>
+  <%= javascript_include_tag "controllers/" + params[:controller] %>
+  <%= javascript_include_tag "cards" %>
+<% end %>
 
 <script id="tmpl-card" type="text/template">
   <div class="card span4" data-application-id="{{= item.id }}" data-uids="{{= item.uids }}">
@@ -29,9 +31,11 @@
       <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_applications", :placeholder => "Search applications…" } %>
     </form>
 
-    <% current_user.manageable_applications.each_with_index do |app, i| %>
+    <%= content_for :javascript do -%>
     <script type="text/javascript">
+    <% current_user.manageable_applications.each_with_index do |app, i| %>
       applications.applications[<%= app.id %>] = <%= app.to_json.html_safe %>;
+    <% end %>
     </script>
     <% end %>
 
@@ -52,3 +56,21 @@
 </div>
 
 <div id="modal_container"></div>
+
+<script type="text/json" id="bootstrap">
+  {
+    "manageable_uids": <%= current_user.manageable_uids.to_json %>
+  }
+</script>
+
+<%= content_for :javascript do -%>
+  <script type="text/javascript">
+    $(function () {
+      var div = $('<div></div>');
+      div.html($('#bootstrap').text());
+      var data = JSON.parse(div.text());
+
+      console.log(data);
+    });
+  </script>
+<% end %>
