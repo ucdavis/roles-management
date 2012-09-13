@@ -112,6 +112,21 @@ class Person < ActiveRecord::Base
     apps
   end
 
+  # Returns UIDs (and some additional info) of all subordinates
+  # and groups which this person can assign.
+  def manageable_uids
+    uids = []
+
+    owns.each do |group| # includes OUs
+      uids << {:uid => group.uid, :name => group.name}
+    end
+    subordinates.each do |person|
+      uids << {:uid => person.uid, :name => person.name}
+    end
+
+    uids
+  end
+
   # Compute accessible applications
   def applications
     apps = []
