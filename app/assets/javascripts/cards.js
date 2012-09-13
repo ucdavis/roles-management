@@ -8,6 +8,7 @@ $(function() {
   cards.selected_card = null;
   cards.selected_role = null;
   cards.template = null;
+  cards.manageable_uids = null;
 
   cards.initialize = function() {
     // Set up the virtual card preferences

@@ -186,11 +186,13 @@ div#modal_container tr.fields button {
 .tab-content .tab-pane {display: none;}
 .tab-content .active {display:block;}
 
-/* Modal dialog is too narrow for our uses */
+/* Make modal wider and take as much height as possible */
 .modal {
   width: 840px;
   margin-left: -420px;
-  top: 40%;
+  max-height: 90%;
+  margin-top:-45%;
+  /*top: 40%;*/
 }
 
 .modal .modal-header {
@@ -198,7 +200,7 @@ div#modal_container tr.fields button {
 }
 
 .modal .modal-body {
-  max-height: 700px;
+  max-height: 475px;
 }
 
 /* UCD colors for the navbar */

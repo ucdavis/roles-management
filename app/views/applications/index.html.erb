@@ -70,7 +70,7 @@
       div.html($('#bootstrap').text());
       var data = JSON.parse(div.text());
 
-      console.log(data);
+      cards.manageable_uids = data.manageable_uids;
     });
   </script>
 <% end %>
