@@ -38,6 +38,7 @@ class Api::CustomController < Api::BaseController
     unless params[:uids].nil?
       uids = params[:uids].split(",")
       flatten = params.has_key? :flatten
+      include_applications = params.has_key? :applications
 
       uids.each do |uid|
         id = uid[1..-1] # remove leading integer (indicates which object, see README Technical Notes)
@@ -45,17 +46,23 @@ class Api::CustomController < Api::BaseController
         when 1
           p = Person.find_by_id(id)
           unless p.nil?
-            @entities << {:name => p.first + ' ' + p.last, :uid => uid, :email => p.email}
+            p_entity = {:name => p.first + ' ' + p.last, :uid => uid, :email => p.email}
+            include_applications ? p_entity.merge!({:applications => p.applications}) : nil
+            @entities << p_entity
           end
         when 2
           g = Group.find_by_id(id)
           unless g.nil?
             if flatten
               g.people.each do |person|
-                @entities << {:name => person.first + ' ' + person.last, :uid => '1' + person.id.to_s, :email => person.email}
+                p_entity = {:name => person.first + ' ' + person.last, :uid => '1' + person.id.to_s, :email => person.email}
+                include_applications ? p_entity.merge!({:applications => person.applications}) : nil
+                @entities << p_entity
               end
             else
-              @entities << {:name => g.name, :uid => uid}
+              g_entity = {:name => g.name, :uid => uid}
+              include_applications ? g_entity.merge!({:applications => g.applications}) : nil
+              @entities << g_entity
             end
           end
         end

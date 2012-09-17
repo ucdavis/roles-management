@@ -107,6 +107,16 @@ class Group < ActiveRecord::Base
     end
   end
 
+  # Compute accessible applications
+  def applications
+    apps = []
+
+    # Add apps via roles explicitly assigned
+    roles.each { |role| apps << role.application }
+
+    apps
+  end
+
   # Returns tokenized members, including 'via' parameter to differentiate explicitly-assigned
   # vs. rule-resolved members
   def member_tokens

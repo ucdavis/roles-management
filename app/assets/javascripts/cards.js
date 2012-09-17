@@ -37,6 +37,7 @@
       // Restore default sidebar contents
       cards.populate_sidebar(_.map(cards.manageable_uids, function(e) { return e.uid }).join());
     });
+
     // Allow clicking on cards to trigger their adherents
     $("div#left").on("click", "div#cards div.card", function(e) {
       e.stopPropagation();
@@ -61,6 +62,7 @@
       // Clear out the sidebar
       $("#search_entities").attr("data-value", null).val("");
     });
+
     // Allow clicking on card pins to trigger their role-specific adherents
     $("div#left").on("click", "div#cards div.card div.pin", function(e) {
       e.stopPropagation();
@@ -190,6 +192,11 @@
           );
         }
       }
+    });
+
+    // Allow clicking on the right sidebar pins to bring up associated applications
+    $("ul.pins").on("click", "li", function(e) {
+      console.log($(this).data("uid"));
     });
 
     // Default sidebar contents
