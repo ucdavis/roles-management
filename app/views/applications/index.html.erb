@@ -71,6 +71,8 @@
       var data = JSON.parse(div.text());
 
       cards.manageable_uids = data.manageable_uids;
+
+      cards.initialize();
     });
   </script>
 <% end %>

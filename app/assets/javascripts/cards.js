@@ -1,9 +1,5 @@
 // Functions to interact on any page utilizing 'cards' (Manage & Template pages, namely)
 
-$(function() {
-  cards.initialize();
-});
-
 (function (cards, $, undefined) {
   cards.selected_card = null;
   cards.selected_role = null;
@@ -38,8 +34,8 @@ $(function() {
       // Unhighlight any role pins
       $("div.pin").css("box-shadow", "").css("border", "");
 
-      // Depopulate the sidebar
-      cards.populate_sidebar("");
+      // Restore default sidebar contents
+      cards.populate_sidebar(_.map(cards.manageable_uids, function(e) { return e.uid }).join());
     });
     // Allow clicking on cards to trigger their adherents
     $("div#left").on("click", "div#cards div.card", function(e) {
@@ -195,6 +191,9 @@ $(function() {
         }
       }
     });
+
+    // Default sidebar contents
+    cards.populate_sidebar(_.map(cards.manageable_uids, function(e) { return e.uid }).join());
   }
 
   // Saves an assignment. If role_id is not provided, it will be guessed from the state of the UI
