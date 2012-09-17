@@ -199,7 +199,7 @@
       $this = $(this);
 
       // Unhighlight all pins
-      $("ul.pins li").css("box-shadow", "none").css("border", "none");
+      $("ul.pins li").css("box-shadow", "none").css("border", "1px solid #BCE8F1");
       // Unhighlight all applications
       cards.selected_card = null;
       cards.selected_role = null;
@@ -211,6 +211,20 @@
 
       // Highlight this pin
       $this.css("box-shadow", "#08C 0 0 2px").css("border", "1px solid #08C");
+
+      template.status_text("Fetching details...");
+      $.ajax({ url: Routes.api_resolve_path(), data: { uids: $this.data("uid"), applications: true }, type: 'GET'}).always(function(entities) {
+        template.hide_status();
+
+        // Parse out the application ID list
+        entity = entities[0];
+        applications = _.map(entity.applications, function(a) { return a.id });
+
+        // Highlight those applications
+        _.each(applications, function(app_id) {
+          $("div.card[data-application-id=" + app_id + "]").css("box-shadow", "#08C 0 0 10px").css("border", "1px solid #08C");
+        });
+      });
     });
 
     // Default sidebar contents
