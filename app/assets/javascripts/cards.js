@@ -196,7 +196,21 @@
 
     // Allow clicking on the right sidebar pins to bring up associated applications
     $("ul.pins").on("click", "li", function(e) {
-      console.log($(this).data("uid"));
+      $this = $(this);
+
+      // Unhighlight all pins
+      $("ul.pins li").css("box-shadow", "none").css("border", "none");
+      // Unhighlight all applications
+      cards.selected_card = null;
+      cards.selected_role = null;
+
+      // Unhighlight other cards
+      $("div.card").css("box-shadow", "").css("border", "");
+      // Unhighlight any role pins
+      $("div.pin").css("box-shadow", "").css("border", "");
+
+      // Highlight this pin
+      $this.css("box-shadow", "#08C 0 0 2px").css("border", "1px solid #08C");
     });
 
     // Default sidebar contents
