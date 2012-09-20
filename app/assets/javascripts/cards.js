@@ -18,8 +18,9 @@
     });
 
     // Establish hover for card details
-    $("div#left").on("click", "div#cards div.card div.card-title i", function() {
+    $("div#left").on("click", "div#cards div.card div.card-title i", function(e) {
       cards.entity_details('4' + $(this).parent().parent().data("application-id"));
+      e.stopPropagation();
     });
 
     // Allow clicking on blank space to deselect a card
@@ -103,12 +104,15 @@
     });
 
     // Enable the details button for sidebar pins
-    $("div#right").on("click", "ul.pins>li>i.icon-search", function() {
+    $("ul.pins").on("click", "li>i.icon-search", function(e) {
+      console.log("clicked a pin details");
+      e.stopPropagation();
       cards.entity_details($(this).parent().data("uid"));
     });
 
     // Enable the delete/disassociate button for sidebar pins
-    $("div#right").on("click", "ul.pins>li>i.icon-remove", function() {
+    $("ul.pins").on("click", "li>i.icon-remove", function(e) {
+      e.stopPropagation();
       cards.disassociate($(this).parent().data("uid"));
     });
 
@@ -197,6 +201,8 @@
     // Allow clicking on the right sidebar pins to bring up associated applications
     $("ul.pins").on("click", "li", function(e) {
       $this = $(this);
+
+      console.log("clicked a pin");
 
       // Unhighlight all pins
       $("ul.pins li").css("box-shadow", "none").css("border", "1px solid #BCE8F1");
