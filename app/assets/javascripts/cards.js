@@ -213,7 +213,7 @@
       $this.css("box-shadow", "#08C 0 0 2px").css("border", "1px solid #08C");
 
       template.status_text("Fetching details...");
-      $.ajax({ url: Routes.api_resolve_path(), data: { uids: $this.data("uid"), applications: true }, type: 'GET'}).always(function(entities) {
+      $.ajax({ url: Routes.api_resolve_path(), data: { uids: $this.data("uid"), applications: true }, type: 'POST'}).always(function(entities) {
         template.hide_status();
 
         // Parse out the application ID list
