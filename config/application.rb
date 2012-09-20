@@ -48,7 +48,7 @@ module DSSRM
     config.assets.enabled = true
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.9'
+    config.assets.version = '1.10'
 
     config.assets.paths << Rails.root.join("app", "assets", "javascripts", "controllers")
   end
