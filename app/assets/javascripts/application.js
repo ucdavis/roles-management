@@ -95,9 +95,14 @@ $(function() {
     $("#admin-about").click(application.about_dialog);
 
     // Enable tooltips
-    $('body').tooltip({
+    $("body").tooltip({
       selector: '[rel=tooltip]',
       delay: { show: 400, hide: 75 }
+    });
+
+    // And fix buggy tooltips ...
+    $("body").on("mouseout", "[rel=tooltip]", function() {
+      $(this).tooltip("hide");
     });
   }
 
