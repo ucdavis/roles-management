@@ -105,7 +105,6 @@
 
     // Enable the details button for sidebar pins
     $("ul.pins").on("click", "li>i.icon-search", function(e) {
-      console.log("clicked a pin details");
       e.stopPropagation();
       cards.entity_details($(this).parent().data("uid"));
     });
@@ -201,8 +200,6 @@
     // Allow clicking on the right sidebar pins to bring up associated applications
     $("ul.pins").on("click", "li", function(e) {
       $this = $(this);
-
-      console.log("clicked a pin");
 
       // Unhighlight all pins
       $("ul.pins li").css("box-shadow", "none").css("border", "1px solid #BCE8F1");
