@@ -5,13 +5,13 @@
 
 <script id="tmpl-card" type="text/template">
   <div class="card span4" data-application-id="{{= item.id }}" data-uids="{{= item.uids }}">
-      <div class="card-title"><i class="icon-search" id="entity_details"></i><h3>{{= item.display_name }}</h3></div>
+      <div class="card-title" rel="tooltip" title="{{= item.description }}"><i class="icon-search" id="entity_details" rel="tooltip" title="View details"></i><h3>{{= item.display_name }}</h3></div>
       <div class="card-content">
         {{ if(item.roles.length > 1) { }}
           <div class="pins">
             {{ _.each(item.roles, function(role) { }}
               {{ if(role.token != "access") { }}
-              <div class="pin" data-role-id="{{= role.id }}" data-uids="{{= role.uids }}"><a href="#">{{= role.descriptor }}</a></div>
+              <div class="pin" data-role-id="{{= role.id }}" data-uids="{{= role.uids }}" rel="tooltip" title="{{= role.description }}"><a href="#">{{= role.descriptor }}</a></div>
               {{ } }}
             {{ }) }}
           </div>
@@ -21,7 +21,7 @@
 </script>
 
 <script id="tmpl-pin" type="text/template">
-  <li data-uid="{{= entity.uid }}"><i class="icon-remove"></i> <i class="icon-search"></i>{{= entity.name }}</li>
+  <li data-uid="{{= entity.uid }}"><i class="icon-remove" rel="tooltip" title="Remove"></i> <i class="icon-search" rel="tooltip" title="See details"></i>{{= entity.name }}</li>
 </script>
 
 <div class="row-fluid">

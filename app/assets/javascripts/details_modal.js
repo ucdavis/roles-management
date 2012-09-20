@@ -204,8 +204,6 @@
   }
 
   details_modal.generateExclusionRuleIfNeeded = function(token) {
-    console.log("generate exclusion called");
-    console.log(token);
     if(token.readonly == true) {
       // User has deleted a group member that comes from a rule.
       // We will generate a new 'LoginID is not' rule to account for this.

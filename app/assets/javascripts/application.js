@@ -1,7 +1,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require json2
-//= require bootstrap.min
+//= require bootstrap
 //= require bootbox.min
 //= require bootstrap-modal
 //= require bootstrap-transition
@@ -93,6 +93,12 @@ $(function() {
     $("#admin-ip-whitelist").click(application.ip_whitelist_dialog);
 
     $("#admin-about").click(application.about_dialog);
+
+    // Enable tooltips
+    $('body').tooltip({
+      selector: '[rel=tooltip]',
+      delay: { show: 400, hide: 75 }
+    });
   }
 
   application.impersonate_dialog = function() { application.open_dialog( Routes.admin_dialogs_impersonate_path(), "impersonate_modal" ) };
