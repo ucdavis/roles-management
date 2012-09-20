@@ -35,6 +35,7 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
+    SyslogLogger (1.4.1)
     actionmailer (3.2.8)
       actionpack (= 3.2.8)
       mail (~> 2.4.4)
@@ -193,6 +194,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  SyslogLogger
   active_directory!
   capistrano
   coffee-rails (~> 3.2.1)
