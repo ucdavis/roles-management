@@ -57,7 +57,7 @@ DSSRM::Application.routes.draw do
     end
 
     get "search", :controller => "custom"
-    get "resolve", :controller => "custom"
+    post "resolve", :controller => "custom"
     get "org_chart", :controller => "custom"
 
     # Used on the site/index details modal group rule constructor, possibly elsewhere

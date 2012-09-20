@@ -374,7 +374,7 @@
     if(typeof uids == "undefined") return;
 
     // Generate a list of matching li elements
-    $.ajax({ url: Routes.api_resolve_path(), data: { uids: uids }, type: 'GET'}).always(function(entities) {
+    $.ajax({ url: Routes.api_resolve_path(), data: { uids: uids }, type: 'POST'}).always(function(entities) {
       pin_template = $("#tmpl-pin").html();
       _.each(entities, function(entity) {
         var compiledTmpl = _.template(pin_template, { entity: entity });
