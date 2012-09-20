@@ -3,6 +3,7 @@ namespace :ldap do
   task :import, :loginid do |t, args|
     require 'ldap'
     require 'stringio'
+    notify_admins = false
 
     Rake::Task['environment'].invoke
 
@@ -244,6 +245,7 @@ namespace :ldap do
             end
 
             if p.valid? == false
+              notify_admins = true
               record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
               record_log << "\tReason(s):\n"
               p.errors.messages.each do |field,reason|
@@ -293,9 +295,11 @@ namespace :ldap do
 
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
-    admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-    Role.find_by_id(admin_role_id).people.each do |admin|
-      WheneverMailer.ldap_report(admin.email, log.string).deliver!
+    if notify_admins
+      admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+      Role.find_by_id(admin_role_id).people.each do |admin|
+        WheneverMailer.ldap_report(admin.email, log.string).deliver!
+      end
     end
   end
 
