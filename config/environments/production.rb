@@ -22,7 +22,7 @@ DSSRM::Application.configure do
   # config.log_level = :debug
 
   # Use a different logger for distributed setups
-  # config.logger = SyslogLogger.new
+  config.logger = SyslogLogger.new
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
@@ -46,24 +46,24 @@ DSSRM::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
-  
+
   # Compress JavaScripts and CSS
   config.assets.compress = true
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = true
-  
+
   # Don't forget additional files requiring compilation
   config.assets.precompile += ['cards.js', 'controllers/applications.js', 'controllers/templates.js']
 
   # Generate digests for assets URLs
   config.assets.digest = true
-  
+
   # Use local sendmail
   config.action_mailer.delivery_method = :sendmail
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
-  
+
   # Send e-mail on exceptions
   config.middleware.use ExceptionNotifier,
     sender_address: 'no-reply@roles.dss.ucdavis.edu',
