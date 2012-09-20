@@ -41,7 +41,7 @@
       </select>
     </td>
     <td>
-      <input id="group_rules_attributes_{{= index }}_value" size="45" type="text" value="{{= rule.value }}" onChange="$(this).next().val($(this).val().substr(0, $(this).val().lastIndexOf('(') - 1));">
+      <input id="group_rules_attributes_{{= index }}_value" size="45" type="text" value="{{= rule.value }}" onChange="$(this).next().val($(this).val().substr(0, $(this).val().lastIndexOf('(') - 1));" autocomplete="off">
       <input name="group[rules_attributes][{{= index }}][value]" size="45" type="hidden" value="{{= rule.value }}">
     </td>
     <td>

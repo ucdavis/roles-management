@@ -28,7 +28,7 @@
   <div class="span9" id="left">
 
     <form class="form-search">
-      <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_applications", :placeholder => "Search applications…" } %>
+      <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_applications", :placeholder => "Search applications…", :autocomplete => "off" } %>
     </form>
 
     <%= content_for :javascript do -%>
@@ -48,7 +48,7 @@
   <div class="span3" id="right">
 
     <form class="form-search">
-      <input id="search_entities" placeholder="Search people and groups…" type="text" class="input-large search-query">
+      <input id="search_entities" placeholder="Search people and groups…" type="text" autocomplete="off" class="input-large search-query">
     </form>
 
 	  <ul class="pins" id="entity_list"></ul>
