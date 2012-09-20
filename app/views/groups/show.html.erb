@@ -41,7 +41,8 @@
       </select>
     </td>
     <td>
-      <input id="group_rules_attributes_{{= index }}_value" name="group[rules_attributes][{{= index }}][value]" size="45" type="text" value="{{= rule.value }}">
+      <input id="group_rules_attributes_{{= index }}_value" size="45" type="text" value="{{= rule.value }}" onChange="$(this).next().val($(this).val().substr(0, $(this).val().lastIndexOf('(') - 1));">
+      <input name="group[rules_attributes][{{= index }}][value]" size="45" type="hidden" value="{{= rule.value }}">
     </td>
     <td>
       <input id="group_rules_attributes_{{= index }}__destroy" name="group[rules_attributes][{{= index }}][_destroy]" type="hidden" value="{{= (rule._destroy ? 'true' : 'false') }}">
