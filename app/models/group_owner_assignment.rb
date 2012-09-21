@@ -1,4 +1,6 @@
 class GroupOwnerAssignment < ActiveRecord::Base
+  using_access_control
+
   validates_presence_of :group
   validate :person_or_group_is_present
   validate :group_cannot_own_itself

@@ -1,4 +1,6 @@
 class GroupRule < ActiveRecord::Base
+  using_access_control
+
   @@valid_columns = %w( title major affiliation classification loginid ou )
 
   validates_inclusion_of :condition, :in => %w( is is\ not  )

@@ -1,4 +1,6 @@
 class Person < ActiveRecord::Base
+  using_access_control
+
   belongs_to :title
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true

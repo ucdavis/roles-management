@@ -1,4 +1,6 @@
 class Application < ActiveRecord::Base
+  using_access_control
+
   has_many :roles, :dependent => :destroy
   has_many :application_owner_assignments, :dependent => :destroy
   has_many :owners, :through => :application_owner_assignments

@@ -1,4 +1,6 @@
 class Role < ActiveRecord::Base
+  using_access_control
+
   validates :token, :uniqueness => { :scope => :id, :message => "token must be unique per application" }
   validates :application_id, :presence => true # must have an application
 

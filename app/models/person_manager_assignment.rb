@@ -1,4 +1,6 @@
 class PersonManagerAssignment < ActiveRecord::Base
+  using_access_control
+
   validates_uniqueness_of :manager_id, :scope => [:person_id, :ou_id]
   validate :cannot_manage_self
 

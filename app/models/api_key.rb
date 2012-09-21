@@ -1,4 +1,6 @@
 class ApiKey < ActiveRecord::Base
+  using_access_control
+
   before_save :ensure_secret_exists
 
   # attr_accessible :title, :body

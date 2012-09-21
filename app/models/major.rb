@@ -1,5 +1,6 @@
 class Major < ActiveRecord::Base
-  # attr_accessible :title, :body
+  using_access_control
+
   has_many :people
 
   # Needed by custom controller#majors, used in details modal

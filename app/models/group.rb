@@ -1,4 +1,6 @@
 class Group < ActiveRecord::Base
+  using_access_control
+
   include Uids
 
   # Group-to-group relationships
