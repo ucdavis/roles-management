@@ -26,7 +26,8 @@
   			  <%# f.label :ou_tokens, "Organizational Scoping" %>
       	  <%# f.text_field :ou_tokens, "data-pre" => @application.ous.to_json, "method" => url_for(:controller => "api/ous", :action => "index"), :class => "token_input" %>
           <label>Sympa URL:</label>
-          <input id="sympa_url" type="text" class="span6" value="<%= url_for( :controller => 'api/applications', :action => 'show', :id => @application.name, :only_path => false ) %>.txt" disabled />
+          <input id="sympa_url" type="text" style="width: 99%" value="<%= url_for( :controller => 'api/applications', :action => 'show', :id => @application.name, :only_path => false ) %>.txt" disabled />
+          <span id="csv-download"><%= link_to "Download as CSV", application_path(@application, :format => 'csv') %></span>
         </fieldset>
     		<fieldset class="tab-pane" id="roles">
           <table>

@@ -201,6 +201,12 @@ div#modal_container tr.fields button {
   max-height: 475px;
 }
 
+.modal span#csv-download {
+    float: right;
+    font-size: 75%;
+    margin-top: -6px;
+}
+
 /* UCD colors for the navbar */
 .navbar-inner {
   background-image: -webkit-linear-gradient(bottom, #123764, #33537B);
