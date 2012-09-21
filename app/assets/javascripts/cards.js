@@ -264,27 +264,32 @@
     }
 
     // Save the assignment
-    $.ajax({ url: Routes.roles_assign_path(), data: {assignment: assignment}, type: 'POST'}).always(function() {
-      // Update the sidebar list
-      if(cards.selected_role) {
-        // specific role updated
-        var uids_arr = $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids").split(",");
-        uids_arr.push(uid);
-        $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids", uids_arr.join(","));
-        cards.populate_sidebar(uids_arr.join(","));
-        // also update the general role
-        uids_arr = $(cards.selected_card).data("uids").split(",");
-        uids_arr.push(uid);
-        $(cards.selected_card).data("uids", uids_arr.join(","));
-      } else {
-        // general access role updated
-        var uids_arr = $(cards.selected_card).data("uids").toString().split(",");
-        uids_arr.push(uid);
-        $(cards.selected_card).data("uids", uids_arr.join(","));
-        cards.populate_sidebar(uids_arr.join(","));
-      }
+    $.ajax({ url: Routes.roles_assign_path(), data: {assignment: assignment}, type: 'POST',
+      success: function() {
+        // Update the sidebar list
+        if(cards.selected_role) {
+          // specific role updated
+          var uids_arr = $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids").split(",");
+          uids_arr.push(uid);
+          $("div.pin[data-role-id=" + cards.selected_role + "]").data("uids", uids_arr.join(","));
+          cards.populate_sidebar(uids_arr.join(","));
+          // also update the general role
+          uids_arr = $(cards.selected_card).data("uids").split(",");
+          uids_arr.push(uid);
+          $(cards.selected_card).data("uids", uids_arr.join(","));
+        } else {
+          // general access role updated
+          var uids_arr = $(cards.selected_card).data("uids").toString().split(",");
+          uids_arr.push(uid);
+          $(cards.selected_card).data("uids", uids_arr.join(","));
+          cards.populate_sidebar(uids_arr.join(","));
+        }
 
-      if(on_complete !== undefined) on_complete();
+        if(on_complete !== undefined) on_complete();
+      },
+      error: function() {
+        template.status_text("An error occurred while saving your data.", "error");
+      }
     });
   }
 

@@ -4,6 +4,7 @@ authorization do
     has_permission_on :authorization_rules, :to => :read
     has_permission_on :admin_dialogs, :to => [:impersonate, :ip_whitelist]
     has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate]
+    has_permission_on :role_assignments, :to => [:create, :delete]
   end
   role :access do
     has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy]
