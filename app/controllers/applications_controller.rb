@@ -20,8 +20,18 @@ class ApplicationsController < ApplicationController
 
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
         csv_data = CSV.generate do |csv|
+          # Add the header
           csv << Application.csv_header
-          csv << @application.to_csv
+          # Add members of each role
+          @application.roles.each do |r|
+            r.to_csv.each do |row|
+              csv << row
+            end
+          end
+          # Add the owners
+          @application.owners.each do |owner|
+            csv << ["owner", owner.to_csv].flatten
+          end
         end
         send_data csv_data,
           :type => 'text/csv; charset=iso-8859-1; header=present',
