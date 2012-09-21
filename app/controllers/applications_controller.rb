@@ -15,6 +15,18 @@ class ApplicationsController < ApplicationController
   def show
     respond_to do |format|
       format.html { render "show", :layout => false }
+      format.csv {
+        require 'csv'
+
+        # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
+        csv_data = CSV.generate do |csv|
+          csv << Application.csv_header
+          csv << @application.to_csv
+        end
+        send_data csv_data,
+          :type => 'text/csv; charset=iso-8859-1; header=present',
+          :disposition => "attachment; filename=rm_application_#{@application.to_param}.csv"
+      }
     end
   end
 

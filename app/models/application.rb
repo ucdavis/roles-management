@@ -24,6 +24,19 @@ class Application < ActiveRecord::Base
     (UID_APPLICATION.to_s + id.to_s).to_i
   end
 
+  def self.csv_header
+    "Role Token,UID,Login ID, Email, First, Last".split(',')
+  end
+
+  def to_csv
+    data = []
+    roles.each do |r|
+      data << r.to_csv
+    end
+
+    return data
+  end
+
   def owner_tokens
       self.owner_ids
   end

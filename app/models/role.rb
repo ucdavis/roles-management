@@ -30,6 +30,16 @@ class Role < ActiveRecord::Base
     { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :uids => self.uids }
   end
 
+  def to_csv
+    data = []
+
+    members.each do |m|
+      data << [token, m.uid, m.loginid, m.email, m.first, m.last]
+    end
+
+    return data
+  end
+
   # Slightly different than 'people' or 'groups' ...
   # members takes all people and all people from groups (flattens the group)
   # and returns them as a list. It also computes the full list of people
