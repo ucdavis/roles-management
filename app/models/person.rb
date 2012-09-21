@@ -68,7 +68,13 @@ class Person < ActiveRecord::Base
 
     case scope
       when :here
+        # Add roles explicitly assigned
         role_assignments.where(:role_id => Application.find_by_name("DSS Rights Management").roles).each do |assignment|
+          roles << assignment.role
+        end
+
+        # Add roles implicitly assigned via groups
+        RoleAssignment.where(:group_id => groups, :role_id => Application.find_by_name("DSS Rights Management").roles).each do |assignment|
           roles << assignment.role
         end
       when :all
