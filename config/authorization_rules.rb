@@ -10,5 +10,6 @@ authorization do
     has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy]
     has_permission_on :applications, :to => [:index, :show, :new, :create, :edit, :update, :destroy]
     has_permission_on :people, :to => [:index, :show, :edit, :update]
+    has_permission_on :role_assignments, :to => [:create, :delete]
   end
 end

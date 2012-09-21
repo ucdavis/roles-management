@@ -7,11 +7,11 @@ $(function() {
 (function (applications, $, undefined) {
   // Application and role relationship (filled in by index.html.erb)
   applications.applications = [];
-  
+
   applications.selected_application = function() {
     return applications.applications[$(cards.selected_card).data("application-id")];
   }
-  
+
   // Constructor of sorts
   applications.initialize = function() {
     $("#search_applications").typeahead({
@@ -31,7 +31,7 @@ $(function() {
           // Add the option to create a new one with this query
           apps.push({id: -1, label: "Create " + query});
         }
-        
+
         callback(apps);
       },
       valueField: 'id',
@@ -41,15 +41,15 @@ $(function() {
       cards.visual_filter($(this).val());
     }).change(function() {
       var selected_id = $(this).attr('data-value');
-      
+
       if(selected_id == -1) {
         template.status_text("Creating application...");
         // They want to create a new application
         var app = {};
         app.name = $(this).val().slice(7); // cut off the "Create " at the beginning
         app.owner_ids = [application.current_user_id];
-        $.ajax({ url: Routes.applications_path() + ".json", data: {application: app}, type: 'POST'}).always(
-          function(data) {
+        $.ajax({ url: Routes.applications_path() + ".json", data: {application: app}, type: 'POST',
+          success: function(data) {
             template.hide_status();
             // Add to the applications list
             applications.applications[data.id] = data;
@@ -60,9 +60,11 @@ $(function() {
             cards.render_cards();
             // Bring up the details window
             cards.entity_details('4' + data.id);
+          },
+          error: function(data) {
+            template.status_text("An error occurred while saving your data.", "error");
           }
-        );
-        
+        });
       }
     });
   }
