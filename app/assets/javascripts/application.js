@@ -23,12 +23,30 @@ _.templateSettings = {
 
 // Template-wide Javascript (setting up tabs, buttons, common callbacks, etc.)
 (function (template, $, undefined) {
-  template.status_text = function(message) {
-    $("div.status_bar").show().html(message);
+  // Condition (optional, values: "default", "error"), lifetime (milliseconds) to auto-hide (optional)
+  template.status_text = function(message, condition, lifetime) {
+    // Default parameters
+    condition = typeof condition !== 'undefined' ? condition : "default";
+    lifetime = typeof lifetime !== 'undefined' ? lifetime : 0;
+
+    // Show the status bar and set it
+    $("div#status_bar").fadeIn(250).html(message);
+
+    if(condition == "error") {
+      $("div#status_bar").addClass("status-bar-error");
+    } else {
+      $("div#status_bar").removeClass("status-bar-error");
+    }
+
+    if(lifetime > 0) {
+      setTimeout(function() {
+        $("div#status_bar").fadeOut(250);
+      }, lifetime);
+    }
   }
 
   template.hide_status = function() {
-    $("div.status_bar").hide();
+    $("div#status_bar").hide();
   }
 } (window.template = window.template || {}, jQuery));
 

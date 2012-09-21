@@ -453,20 +453,25 @@
     template.status_text("Removing...");
 
     // Disassociate the group
-    $.ajax({ url: Routes.roles_unassign_path(), data: { assignment: { uid: uid, role_id: role_id } }, type: 'DELETE', complete: function(data, status) {
-      template.hide_status();
-      cards.depopulate_sidebar([uid]);
+    $.ajax({ url: Routes.roles_unassign_path(), data: { assignment: { uid: uid, role_id: role_id } }, type: 'DELETE',
+      success: function(data, status) {
+        template.hide_status();
+        cards.depopulate_sidebar([uid]);
 
-      // Remove group from internal application list
-      var app = applications.selected_application();
-      app.uids = _.filter(app.uids, function(a_uid) { return a_uid != uid; });
-      // Also remove group from HTML data attributes (bad typing issues here, need to adopt a JS MVC framework badly in a future revision)
-      if($selected_role.data("uids").toString().indexOf(",") == -1) {
-        // only one UID in the list
-        if($selected_role.data("uids") == uid) $selected_role.data("uids", "");
-      } else {
-        $selected_role.data("uids", _.filter($selected_role.data("uids").split(","), function(a_uid) { return a_uid != uid; }).join(","));
+        // Remove group from internal application list
+        var app = applications.selected_application();
+        app.uids = _.filter(app.uids, function(a_uid) { return a_uid != uid; });
+        // Also remove group from HTML data attributes (bad typing issues here, need to adopt a JS MVC framework badly in a future revision)
+        if($selected_role.data("uids").toString().indexOf(",") == -1) {
+          // only one UID in the list
+          if($selected_role.data("uids") == uid) $selected_role.data("uids", "");
+        } else {
+          $selected_role.data("uids", _.filter($selected_role.data("uids").split(","), function(a_uid) { return a_uid != uid; }).join(","));
+        }
+      },
+      error: function(data, status) {
+        template.status_text("An error occurred while saving your data.", "error");
       }
-    }});
+    });
   }
 } (window.cards = window.cards || {}, jQuery));
