@@ -185,7 +185,7 @@ class Person < ActiveRecord::Base
     end
 
     # All people in the database have the default role of 'access'
-    syms << "access".to_sym
+    syms << "access".to_sym unless syms.include? :access
 
     syms
   end
