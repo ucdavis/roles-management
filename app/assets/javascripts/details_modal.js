@@ -5,7 +5,7 @@
   details_modal.group_rules = null;
   details_modal.ad_path_check_delay = 750; // milliseconds
   details_modal.ad_path_last_check = 0;
-  details_modal.ad_path_check_delayed = false;
+  details_modal.last_path_checked = "";
 
   // Save whatever's in the modal
   details_modal.save = function() {
@@ -396,14 +396,15 @@
       $("form.edit_application input#application_ad_path").on("keyup", function(e) {
         // Ensure adequate delay has passed
         if((details_modal.ad_path_last_check + details_modal.ad_path_check_delay) < Date.now()) {
-          details_modal.ad_path_last_check = Date.now();
-          details_modal.ad_path_check_delayed = false;
+          var path = $(this).val();
 
-          console.log("checking path: " + $(this).val());
+          details_modal.ad_path_last_check = Date.now();
+          details_modal.last_path_checked = path;
+
+          console.log("checking path: " + path);
         } else {
           // Not enough time has passed, but in case there are no more keyup events, we need to remind ourselves to check back
-          if(details_modal.ad_path_check_delayed == false) {
-            details_modal.ad_path_check_delayed = true;
+          if($("form.edit_application input#application_ad_path").val() != details_modal.last_path_checked) {
             setTimeout(function() {
               $("form.edit_application input#application_ad_path").trigger("keyup");
             }, details_modal.ad_path_check_delay * 1.5);
