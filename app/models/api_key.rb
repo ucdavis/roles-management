@@ -3,7 +3,6 @@ class ApiKey < ActiveRecord::Base
 
   before_save :ensure_secret_exists
 
-  # attr_accessible :title, :body
   has_many :applications
 
   def ensure_secret_exists

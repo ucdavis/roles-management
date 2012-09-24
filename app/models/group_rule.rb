@@ -5,6 +5,7 @@ class GroupRule < ActiveRecord::Base
 
   validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => @@valid_columns
+  validate :must_own_group
 
   belongs_to :group
 
@@ -157,5 +158,13 @@ class GroupRule < ActiveRecord::Base
     str = str + "<b>" + value + "</b>"
 
     str.html_safe
+  end
+
+  private
+
+  # Group rules cannot be changed if the current user does not own
+  # the associated group.
+  def must_own_group
+    logger.error "Implementation needed."
   end
 end

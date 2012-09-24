@@ -3,6 +3,7 @@ class Role < ActiveRecord::Base
 
   validates :token, :uniqueness => { :scope => :id, :message => "token must be unique per application" }
   validates :application_id, :presence => true # must have an application
+  validate :must_own_associated_application
 
   has_many :role_assignments, :dependent => :destroy
   has_many :people, :through => :role_assignments
@@ -114,4 +115,11 @@ class Role < ActiveRecord::Base
     end
   end
   handle_asynchronously :sync_ad
+
+  private
+
+  # No changes can be made to this role unless the user owns the associated application
+  def must_own_associated_application
+    logger.error "Implementation needed."
+  end
 end
