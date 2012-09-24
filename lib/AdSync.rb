@@ -48,22 +48,7 @@ module AdSync
 
   # Takes name as a string (e.g. 'this-that') and returns true or false
   def AdSync.group_exists?(group_name)
-    settings = {
-        :host => AD_GROUPS_SETTINGS['host'],
-        :base => AD_GROUPS_SETTINGS['base'],
-        :port => 636,
-        :encryption => :simple_tls,
-        :auth => {
-          :method => :simple,
-          :username => AD_GROUPS_SETTINGS['user'],
-          :password => AD_GROUPS_SETTINGS['pass']
-        }
-    }
-
-    ActiveDirectory::Base.setup(settings)
-    g = ActiveDirectory::Group.find(:first, :cn => group_name)
-
-    if g.nil?
+    if AdSync.fetch_group(group_name).nil?
       return false
     else
       return true
