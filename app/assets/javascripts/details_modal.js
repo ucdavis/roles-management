@@ -401,13 +401,36 @@
           details_modal.ad_path_last_check = Date.now();
           details_modal.last_path_checked = path;
 
-          console.log("checking path: " + path);
+          template.status_text("Validating path ...");
+          $(e.target).next().hide();
+
+          $.ajax({ url: Routes.admin_ad_path_check_path() + ".json", data: { path: path }, type: 'GET',
+            success: function( data ) {
+              template.hide_status();
+              var $i = $(e.target).next();
+              $i.show();
+              $i.removeClass("icon-search");
+
+              if(data.exists) {
+                // path exists
+                $i.removeClass("icon-remove");
+                $i.addClass("icon-ok");
+              } else {
+                // path does not exist
+                $i.removeClass("icon-ok");
+                $i.addClass("icon-remove");
+              }
+            },
+            error: function(data, status) {
+              template.status_text("An error occurred while validating the path.", "error");
+            }
+          });
         } else {
           // Not enough time has passed, but in case there are no more keyup events, we need to remind ourselves to check back
           if($("form.edit_application input#application_ad_path").val() != details_modal.last_path_checked) {
             setTimeout(function() {
               $("form.edit_application input#application_ad_path").trigger("keyup");
-            }, details_modal.ad_path_check_delay * 1.5);
+            }, details_modal.ad_path_check_delay * 1.1);
           }
         }
       });
