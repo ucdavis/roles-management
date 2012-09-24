@@ -19,4 +19,12 @@ class Admin::OpsController < Admin::BaseController
 
     redirect_to root_url
   end
+
+  def ad_path_check
+    require 'AdSync'
+
+    respond_to do |format|
+      format.json { render :json => { exists: AdSync.group_exists?(params[:path]) } }
+    end
+  end
 end
