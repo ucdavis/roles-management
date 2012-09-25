@@ -20,6 +20,10 @@ class Group < ActiveRecord::Base
   has_many :group_owners, :class_name => "Group", :through => :group_owner_assignments, :source => :owner_group
   has_many :group_owner_assignments, :dependent => :destroy
 
+  has_many :person_operators, :class_name => "Person", :through => :group_operator_assignments, :source => :operator_person
+  has_many :group_operators, :class_name => "Group", :through => :group_operator_assignments, :source => :operator_group
+  has_many :group_operator_assignments, :dependent => :destroy
+
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
 
   validates :name, :presence => true
@@ -96,6 +100,47 @@ class Group < ActiveRecord::Base
       elsif ret[:type] == UID_GROUP
         g = Group.find_by_id(ret[:id])
         group_owners << g unless g.nil? or group_owners.include? g
+      end
+    end
+  end
+
+  def operators
+    collected_operators = []
+
+    person_operators.each do |p|
+      collected_operators << p
+    end
+    group_operators.each do |g|
+      collected_operators << g
+    end
+
+    collected_operators
+  end
+
+  def operator_ids
+    collected_operator_ids = []
+
+    operators.each do |o|
+      collected_operator_ids << o.uid
+    end
+
+    collected_operator_ids
+  end
+
+  # Decodes the fake AR 'operator_ids' and assigned the appropriate objects to
+  # person_operators and group_operators
+  def operator_ids=(uids)
+    self.person_operator_ids = []
+    self.group_operator_ids = []
+
+    uids.each do |uid|
+      ret = determine_uid(uid)
+      if ret[:type] == UID_PERSON
+        p = Person.find_by_id(ret[:id])
+        person_operators << p unless p.nil? or person_operators.include? p
+      elsif ret[:type] == UID_GROUP
+        g = Group.find_by_id(ret[:id])
+        group_operators << g unless g.nil? or group_operators.include? g
       end
     end
   end
