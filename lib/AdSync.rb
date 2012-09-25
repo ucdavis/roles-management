@@ -43,7 +43,13 @@ module AdSync
     }
 
     ActiveDirectory::Base.setup(settings)
-    ActiveDirectory::Group.find(:first, :cn => group_name)
+
+    begin
+      ActiveDirectory::Group.find(:first, :cn => group_name)
+    rescue SystemCallError
+      # Usually occurs when AD can't be reached (times out)
+      return nil
+    end
   end
 
   # Takes name as a string (e.g. 'this-that') and returns true or false
