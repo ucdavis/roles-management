@@ -8,6 +8,7 @@ authorization do
     has_permission_on :admin_ops, :to => [:ad_path_check]
     has_permission_on :application_owner_assignments, :to => [:create, :delete]
     has_permission_on :group_owner_assignments, :to =>[:create, :delete, :update]
+    has_permission_on :group_rules, :to => [:create, :delete, :update]
   end
   role :access do
     has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy]
