@@ -8,6 +8,12 @@ class RoleAssignment < ActiveRecord::Base
   validate :has_person_or_group
   validate :must_be_owner_or_operator_of_application
 
+  # Only allow roles to be assigned if the associated application
+  # is owned or can be operated upon by the current user
+  def must_be_owner_or_operator_of_application
+    logger.error "Implementation needed."
+  end
+
   private
 
   def has_person_or_group
@@ -18,11 +24,5 @@ class RoleAssignment < ActiveRecord::Base
 
     # Must have a person or a group
     !person.nil? || !group.nil?
-  end
-
-  # Only allow roles to be assigned if the associated application
-  # is owned or can be operated upon by the current user
-  def must_be_owner_of_operator_of_application
-    logger.error "Implementation needed."
   end
 end

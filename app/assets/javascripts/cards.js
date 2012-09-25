@@ -458,7 +458,7 @@
     template.status_text("Removing...");
 
     // Disassociate the group
-    $.ajax({ url: Routes.roles_unassign_path(), data: { assignment: { uid: uid, role_id: role_id } }, type: 'DELETE',
+    $.ajax({ url: Routes.roles_unassign_path() + ".json", data: { assignment: { uid: uid, role_id: role_id } }, type: 'DELETE',
       success: function(data, status) {
         template.hide_status();
         cards.depopulate_sidebar([uid]);
@@ -476,6 +476,8 @@
       },
       error: function(data, status) {
         template.status_text("An error occurred while saving your data.", "error");
+        console.log(data);
+        console.log(status);
       }
     });
   }
