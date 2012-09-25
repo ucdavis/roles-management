@@ -5,7 +5,7 @@
 
 <script id="tmpl-card" type="text/template">
   <div class="card span4" data-application-id="{{= item.id }}" data-uids="{{= item.uids }}">
-      <div class="card-title" rel="tooltip" title="{{= item.description }}"><i class="icon-search" id="entity_details" rel="tooltip" title="View details"></i><h3>{{= item.display_name }}</h3></div>
+      <div class="card-title" rel="tooltip" title="{{= item.description }}"><i class="icon-search" id="entity_details" rel="tooltip" title="View details"></i><h3>{{= item.name }}</h3></div>
       <div class="card-content">
         {{ if(item.roles.length > 1) { }}
           <div class="pins">

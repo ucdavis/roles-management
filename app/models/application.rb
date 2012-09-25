@@ -11,7 +11,7 @@ class Application < ActiveRecord::Base
   validate :has_at_least_one_role
   validates :name, :presence => true
 
-  attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :display_name, :icon, :description, :ad_path, :roles, :roles_attributes, :owner_tokens, :owner_ids
+  attr_accessible :name, :ou_tokens, :ous_ids, :hostname, :description, :ad_path, :roles, :roles_attributes, :owner_tokens, :owner_ids
   attr_reader :ou_tokens
 
   belongs_to :api_key
@@ -39,7 +39,7 @@ class Application < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :roles => self.roles, :display_name => self.display_name, :uids => self.uids, :description => self.description }
+    { :id => self.id, :name => self.name, :roles => self.roles, :uids => self.uids, :description => self.description }
   end
 
   # Returns all UIDs associated with this app (via roles)
@@ -75,9 +75,6 @@ class Application < ActiveRecord::Base
 
   # Set a few default properties if they're unset
   def set_default_properties
-    unless self.display_name
-      self.display_name = self.name
-    end
     unless self.description
       self.description = "No description given"
     end

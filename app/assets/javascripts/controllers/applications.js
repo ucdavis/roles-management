@@ -21,9 +21,9 @@ $(function() {
         var exact_match_found = false;
         _.each(applications.applications, function(app) {
           if(app) {
-            if(~app.display_name.toLowerCase().indexOf(query.toLowerCase())) {
-              if(app.display_name.toLowerCase() == query.toLowerCase()) exact_match_found = true;
-              apps.push({id: app.id, label: app.display_name });
+            if(~app.name.toLowerCase().indexOf(query.toLowerCase())) {
+              if(app.name.toLowerCase() == query.toLowerCase()) exact_match_found = true;
+              apps.push({id: app.id, label: app.name });
             }
           }
         });

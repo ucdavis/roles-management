@@ -24,11 +24,10 @@ xml.person do
       xml.app do
         xml.name app.name
         xml.url app.hostname
-        xml.tag! "display_name", app.display_name
       end
     end
   end
-  
+
   xml.groups("type" => "array") do
     @person.groups.each do |group|
       xml.group do
@@ -37,7 +36,7 @@ xml.person do
       end
     end
   end
-  
+
   xml.ous("type" => "array") do
     @person.ous.each do |ou|
       xml.ou do
@@ -46,18 +45,4 @@ xml.person do
       end
     end
   end
-  
-  #if @person.requestable_applications.length > 0
-  #  xml.requestable_apps("type" => "array") do
-  #    @person.requestable_applications.each do |app|
-  #      xml.requestable_app do
-  #        xml.name app.name
-  #        xml.url app.hostname
-  #        xml.tag! "display_name", app.display_name
-  #        xml.icon app.icon.url(:normal)
-  #        xml.tiny_icon app.icon.url(:tiny)
-  #      end
-  #    end
-  #  end
-  #end
 end
