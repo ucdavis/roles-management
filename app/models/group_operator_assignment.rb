@@ -1,4 +1,4 @@
-class GroupOperatorAssignments < ActiveRecord::Base
+class GroupOperatorAssignment < ActiveRecord::Base
   using_access_control
 
   validates_presence_of :group
