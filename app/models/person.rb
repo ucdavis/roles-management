@@ -36,6 +36,9 @@ class Person < ActiveRecord::Base
     unless words.length < 2
       self.first = words[0]
       self.last = words[1]
+    else
+      self.first = words[0]
+      self.last = ""
     end
   end
 
