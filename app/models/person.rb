@@ -133,6 +133,9 @@ class Person < ActiveRecord::Base
     owns.each do |group| # includes OUs
       uids << {:uid => group.uid, :name => group.name}
     end
+    operates.each do |group|
+      uids << {:uid => group.uid, :name => group.name}
+    end
     subordinates.each do |person|
       uids << {:uid => person.uid, :name => person.name}
     end
