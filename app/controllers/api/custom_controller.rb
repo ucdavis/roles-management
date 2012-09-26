@@ -1,4 +1,6 @@
 class Api::CustomController < Api::BaseController
+  # Searches for all users and groups visible to current_user
+  # (This is all people and only groups owned or operated by current_user)
   def search
     @results = []
 
@@ -13,6 +15,9 @@ class Api::CustomController < Api::BaseController
         @people = Person.where("first ilike ? or last ilike ? or " + db_concat(:first, ' ', :last) + " ilike ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
         @groups = Group.where("name ilike ?", "%#{params[:q]}%")
       end
+
+      visible_uids = current_user.manageable_uids
+      logger.info "visible uids are #{visible_uids}"
 
       @people.each do |person|
         @results << {:uid => ('1' + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
