@@ -4,8 +4,8 @@ class Api::BaseController < ApplicationController
   # Returns method of API access for the current request
   # Valid responses are :api_key, :cas_user, :whitelisted_ip, or :none
   # :none indicates they have not authenticated.
-  def authenticated_via?
-    @authenticated_via
+  def authenticated_via?(sym)
+    @authenticated_via == sym
   end
 
   protected

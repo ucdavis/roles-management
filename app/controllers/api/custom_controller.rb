@@ -16,17 +16,26 @@ class Api::CustomController < Api::BaseController
         @groups = Group.where("name ilike ?", "%#{params[:q]}%")
       end
 
-      unless current_user == :cas_user_not_in_database
-        visible_uids = current_user.manageable_uids
+      if authenticated_via? :cas_user
+        visible_uids = current_user.manageable_uids.map{ |x| x[:uid] }
       else
-        visible_uids = []
+        visible_uids = nil
       end
 
       @people.each do |person|
         @results << {:uid => ('1' + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
       end
       @groups.each do |group|
-        @results << {:uid => ('2' + group.id.to_s).to_i, :name => group.name }
+        g = {:uid => ('2' + group.id.to_s).to_i, :name => group.name }
+        if visible_uids
+          # If visible_uids exists, it means a user (as opposed to an application) is performing a search.
+          # We need to filter the results in this case.
+          if visible_uids.include? g[:uid]
+            @results << g
+          end
+        else
+          @results << g
+        end
       end
 
       @results.map()
