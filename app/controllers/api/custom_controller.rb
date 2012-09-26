@@ -16,8 +16,11 @@ class Api::CustomController < Api::BaseController
         @groups = Group.where("name ilike ?", "%#{params[:q]}%")
       end
 
-      visible_uids = current_user.manageable_uids
-      logger.info "visible uids are #{visible_uids}"
+      unless current_user == :cas_user_not_in_database
+        visible_uids = current_user.manageable_uids
+      else
+        visible_uids = []
+      end
 
       @people.each do |person|
         @results << {:uid => ('1' + person.id.to_s).to_i, :name => person.first + ' ' + person.last }

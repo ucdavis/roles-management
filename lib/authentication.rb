@@ -17,20 +17,20 @@ module Authentication
     #controller.send :helper_method, :current_user, :logged_in?, :redirect_to_target_or_default
   end
 
-  # Sets @@user and Authorization.current_user based on CAS session cookie
-  # If CAS cookie is not present, @@user and Authorization.current_user will be nil
-  # If CAS cookie is present but user is not in the database, @@user will be :cas_user_not_in_database
+  # Sets @user and Authorization.current_user based on CAS session cookie
+  # If CAS cookie is not present, @user and Authorization.current_user will be nil
+  # If CAS cookie is present but user is not in the database, @user will be :cas_user_not_in_database
   def set_current_user
     if session[:cas_user]
-      @@user = Person.find_by_loginid(session[:cas_user])
-      if @@user == nil
-        @@user = :cas_user_not_in_database
+      @user = Person.find_by_loginid(session[:cas_user])
+      if @user == nil
+        @user = :cas_user_not_in_database
       end
     else
-      @@user = nil
+      @user = nil
     end
 
-    Authorization.current_user = @@user
+    Authorization.current_user = @user
   end
 
   # Returns the current user, which may be an impersonated user.
@@ -40,14 +40,14 @@ module Authentication
     if session[:impersonate]
       Person.find_by_loginid(session[:impersonate])
     else
-      @@user
+      @user
     end
   end
 
   # Only use this if you know you don't want current_user, e.g. "Log out"
   # Most code will want current_user to work transparently with impersonation
   def actual_user
-    @@user
+    @user
   end
 
   # Returns true if we're currently impersonating another user
@@ -56,8 +56,8 @@ module Authentication
   end
 
   def login_required
-    unless @@user.nil?
-      if @@user == :cas_user_not_in_database
+    unless @user.nil?
+      if @user == :cas_user_not_in_database
         flash[:error] = 'You have authenticated but are not allowed access.'
         redirect_to :controller => "site", :action => "access_denied"
       else

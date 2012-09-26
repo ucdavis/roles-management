@@ -1,17 +1,25 @@
 class Api::BaseController < ApplicationController
   before_filter :api_authenticate
 
+  # Returns method of API access for the current request
+  # Valid responses are :api_key, :cas_user, :whitelisted_ip, or :none
+  # :none indicates they have not authenticated.
+  def authenticated_via?
+    @authenticated_via
+  end
+
   protected
 
   # API authentication is available via CAS, an IP whitelist, and HTTP basic auth
   def api_authenticate
-    @application = nil
+    @authenticated_via = :none
 
     if session[:cas_user].nil?
       # Check if the IP is whitelisted for API access (needed for Sympa)
       if ApiWhitelistedIp.find_by_address(request.remote_ip)
         logger.info "API authenticated via whitelist IP: #{request.remote_ip}"
         session[:api_key] = nil
+        @authenticated_via = :whitelisted_ip
         return true
       end
 
@@ -21,6 +29,7 @@ class Api::BaseController < ApplicationController
         if key
           logger.info "API authenticated via application key"
           session[:api_key] = key
+          @authenticated_via = :api_key
           return true
         end
 
@@ -32,6 +41,7 @@ class Api::BaseController < ApplicationController
     else
       logger.info "API authentication allowed via CAS."
       session[:api_key] = nil
+      @authenticated_via = :cas_user
       return true
     end
   end
