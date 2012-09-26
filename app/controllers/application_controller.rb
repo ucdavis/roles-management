@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_filter CASClient::Frameworks::Rails::GatewayFilter, :unless => :requested_api?
   before_filter :set_current_user # it's okay that they might not be using CAS
   before_filter :login_required, :unless => :requested_api?
-  skip_before_filter :set_current_user, :only => [:access_denied]
+  skip_before_filter :login_required, :only => [:access_denied]
 
   protected
 

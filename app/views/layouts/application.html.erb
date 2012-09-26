@@ -10,7 +10,9 @@
 <body>
   <%= content_for :javascript do -%>
     <script type="text/javascript">
-      application.current_user_id = <%= current_user.id %>; // application, not applications
+      <% unless defined?(current_user.id) == nil %>
+        application.current_user_id = <%= current_user.id %>; // application, not applications
+      <% end %>
     </script>
   <% end %>
 

@@ -1,18 +1,18 @@
 module ApplicationHelper
   include Authentication
-  
+
   def current_controller?(options)
     options[:controller] == controller_name
   end
-  
+
   def current_action?(options)
     options[:action] == action_name
   end
-  
+
   def current_page?(options)
     options[:controller] == controller_name and options[:action] == action_name
   end
-  
+
   def link_to_remove_fields(name, f)
     f.hidden_field(:_destroy) + content_tag("button", name, {:type => "button", :class => "btn btn-danger", :onclick => "remove_fields(this)"})
   end
@@ -24,30 +24,35 @@ module ApplicationHelper
     end
     content_tag("button", name, {:type => "button", :class => "btn", :onclick => "add_fields(this, '#{association}', '#{escape_javascript(fields)}')"})
   end
-  
+
   def _permitted_to?(action_name, controller_name)
-    if impersonating?
-      # We assume anybody impersonating is an admin and has every role anyway ...
-      yield if block_given?
-      return true
-    else
-      if permitted_to?(action_name, controller_name)
+    unless current_user == :cas_user_not_in_database
+      if impersonating?
+        # We assume anybody impersonating is an admin and has every role anyway ...
         yield if block_given?
         return true
+      else
+        if permitted_to?(action_name, controller_name)
+          yield if block_given?
+          return true
+        end
       end
     end
+
     return false
   end
 
   def _has_role?(role)
-    if impersonating?
-      # We assume anybody impersonating is an admin and has every role anyway ...
-      yield if block_given?
-    else
-      yield if has_role?(role)
+    unless current_user == :cas_user_not_in_database
+      if impersonating?
+        # We assume anybody impersonating is an admin and has every role anyway ...
+        yield if block_given?
+      else
+        yield if has_role?(role)
+      end
     end
   end
-  
+
   # Produces a link_to, adjusting CSS class if link is to current controller
   def li_link_with_class(options)
     title = options[:title]

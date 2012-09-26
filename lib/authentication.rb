@@ -22,9 +22,8 @@ module Authentication
   # If CAS cookie is present but user is not in the database, @@user will be :cas_user_not_in_database
   def set_current_user
     if session[:cas_user]
-      begin
-        @@user = Person.find_by_loginid(session[:cas_user])
-      rescue Exception => e
+      @@user = Person.find_by_loginid(session[:cas_user])
+      if @@user == nil
         @@user = :cas_user_not_in_database
       end
     else
@@ -57,10 +56,10 @@ module Authentication
   end
 
   def login_required
-     unless @@user.nil?
+    unless @@user.nil?
       if @@user == :cas_user_not_in_database
         flash[:error] = 'You have authenticated but are not allowed access.'
-        @@user = nil
+        redirect_to :controller => "site", :action => "access_denied"
       else
         return true
       end
