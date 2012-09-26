@@ -23,10 +23,10 @@ class Api::CustomController < Api::BaseController
       end
 
       @people.each do |person|
-        @results << {:uid => ('1' + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
+        @results << {:uid => (UID_PERSON_S + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
       end
       @groups.each do |group|
-        g = {:uid => ('2' + group.id.to_s).to_i, :name => group.name }
+        g = {:uid => (UID_GROUP_S + group.id.to_s).to_i, :name => group.name }
         if visible_uids
           # If visible_uids exists, it means a user (as opposed to an application) is performing a search.
           # We need to filter the results in this case.
@@ -72,7 +72,7 @@ class Api::CustomController < Api::BaseController
           unless g.nil?
             if flatten
               g.people.each do |person|
-                p_entity = {:name => person.first + ' ' + person.last, :uid => '1' + person.id.to_s, :email => person.email}
+                p_entity = {:name => person.first + ' ' + person.last, :uid => UID_PERSON_S + person.id.to_s, :email => person.email}
                 include_applications ? p_entity.merge!({:applications => person.applications}) : nil
                 @entities << p_entity
               end
