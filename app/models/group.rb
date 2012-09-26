@@ -28,7 +28,7 @@ class Group < ActiveRecord::Base
 
   validates :name, :presence => true
 
-  attr_accessible :name, :people_tokens, :people_ids, :description, :rules_attributes, :owner_tokens, :member_tokens, :owner_ids
+  attr_accessible :name, :people_tokens, :people_ids, :description, :rules_attributes, :owner_tokens, :operator_tokens, :member_tokens, :owner_ids
   attr_reader :people_tokens
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
@@ -200,7 +200,16 @@ class Group < ActiveRecord::Base
 
   # Takes UIDs
   def owner_tokens=(ids)
-    self.owner_ids = ids.split(",") #.map{|x| x[1..-1]}
+    self.owner_ids = ids.split(",")
+  end
+
+  def operator_tokens
+    operator_ids
+  end
+
+  # Takes UIDs
+  def operator_tokens=(ids)
+    self.operator_ids = ids.split(",")
   end
 
   def people_tokens=(ids)

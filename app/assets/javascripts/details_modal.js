@@ -278,6 +278,14 @@
         tokenValue: "uid"
       });
 
+      $("#group_operator_tokens").tokenInput($("#group_operator_tokens").attr("method") + ".json", {
+        crossDomain: false,
+        defaultText: "No operators",
+        prePopulate: $("#group_operator_tokens").data("pre"),
+        theme: "facebook",
+        tokenValue: "uid"
+      });
+
       // Remote forms
       $("form.edit_group").bind('ajax:success', function(e, group) {
         template.hide_status();

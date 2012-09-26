@@ -81,6 +81,8 @@
       	  <%= f.text_area :description, :class => "input-xlarge", :rows => 2 %>
     		  <%= f.label :owner_tokens, "Owners" %>
     		  <%= f.text_field :owner_tokens, "data-pre" => @group.owners.to_json, "method" => url_for(:controller => "api/custom", :action => "search"), :class => "token_input" %>
+          <%= f.label :operator_tokens, "Operators" %>
+          <%= f.text_field :operator_tokens, "data-pre" => @group.operators.to_json, "method" => url_for(:controller => "api/custom", :action => "search"), :class => "token_input" %>
     		  <%= f.label :member_tokens, "Members" %>
     		  <p id="members">
     		    <%= f.text_field :member_tokens, "data-pre" => add_class_attr_to_group_json(@group.member_tokens.to_json), "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input" %>

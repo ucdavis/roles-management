@@ -18,6 +18,8 @@ class Person < ActiveRecord::Base
 
   has_many :group_owner_assignments, :foreign_key => "owner_person_id"
 
+  has_many :group_operator_assignments, :foreign_key => "operator_person_id"
+
   has_one :student
 
   belongs_to :major
@@ -124,7 +126,7 @@ class Person < ActiveRecord::Base
   end
 
   # Returns UIDs (and some additional info) of all subordinates
-  # and groups which this person can assign.
+  # and groups which this person can assign (owns and operates).
   def manageable_uids
     uids = []
 
@@ -177,6 +179,11 @@ class Person < ActiveRecord::Base
   # Returns all groups owned by this person (see 'manages' for people)
   def owns
     group_owner_assignments.includes(:group).where(:owner_person_id => id).map{|x| x.group}
+  end
+
+  # Returns all groups operated by this person (see 'manages' for people, 'owns' for group ownerships)
+  def operates
+    group_operator_assignments.includes(:group).where(:operator_person_id => id).map{|x| x.group}
   end
 
   # ACL symbols
