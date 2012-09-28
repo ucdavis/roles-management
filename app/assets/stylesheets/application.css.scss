@@ -3,6 +3,15 @@
 *= require_self
 */
 
+input#search_applications {
+  margin-bottom: 1.3em;
+  margin-left: 15px;
+}
+
+input#search_entities {
+  margin-bottom: 1.3em;
+}
+
 .card {
   min-height: 25px;
   background-color: whiteSmoke;

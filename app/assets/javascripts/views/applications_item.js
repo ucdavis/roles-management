@@ -12,11 +12,12 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
   render: function () {
     this.$el.attr("id", "application_" + this.model.id);
     this.$el.html(JST['applications/item']({ application: this.model }));
-    this.renderFormContents();
+    this.renderCardContents();
     return this;
   },
 
-  renderFormContents: function() {
+  renderCardContents: function() {
+    this.$('h3').html(this.model.escape('name'));
     //this.$('label').attr("for", "task_completed_" + this.model.get('id'));
     //this.$('label').html(this.model.escape('title'));
 
