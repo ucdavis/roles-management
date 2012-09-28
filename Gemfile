@@ -14,6 +14,11 @@ group :production do
   gem 'SyslogLogger'
 end
 
+group :development do
+  gem 'letter_opener'
+  gem 'debugger'
+end
+
 gem 'sqlite3', :groups => [:development, :test]
 
 # Deploy with Capistrano
@@ -25,8 +30,12 @@ gem 'ruby-ldap'
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 gem 'dynamic_form'
 
-gem 'jquery-rails', '>= 1.0.12'
 gem 'pg'
+
+gem 'rails-backbone', '~> 0.7.0'
+gem 'jquery-rails'
+gem 'ejs'
+gem 'backbone-support'
 
 gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
 
@@ -37,14 +46,11 @@ gem "js-routes", :git => 'git://github.com/railsware/js-routes.git'
 gem "ruby_parser"
 
 gem 'exception_notification'
-gem 'letter_opener', group: :development
 
 # Temporary version of net-ssh to workaround broken 2.5.1
 gem 'net-ssh', :git => 'git://github.com/nessche/net-ssh.git'
 
 gem 'jbuilder'
-
-gem 'debugger', :group => :development
 
 # For scheduled tasks
 gem 'whenever'
