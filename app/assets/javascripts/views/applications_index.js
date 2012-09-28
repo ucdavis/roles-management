@@ -17,9 +17,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   renderApplications: function() {
     var self = this;
     this.collection.each(function(application) {
-      var row = new DssRm.Views.ApplicationItem({ model: application });
-      self.renderChild(row);
-      self.$('tbody').append(row.el);
+      var card = new DssRm.Views.ApplicationItem({ model: application });
+      self.renderChild(card);
+      self.$('#left').append(card.el);
     });
   }
 });
