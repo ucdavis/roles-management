@@ -4,6 +4,23 @@ _.templateSettings = {
     evaluate: /\{\{(.+?)\}\}/g
 };
 
+window.DssRm = {
+  Models: {},
+  Collections: {},
+  Views: {},
+  Routers: {},
+  initialize: function(data) {
+    this.applications = new DssRm.Collections.Applications(data.applications);
+    this.entities = new DssRm.Collections.Entities(data.entities);
+
+    new DssRm.Routers.Applications({ collection: this.applications, entities: this.entities });
+    if (!Backbone.history.started) {
+      Backbone.history.start();
+      Backbone.history.started = true;
+    }
+  }
+};
+
 // Template-wide Javascript (setting up tabs, buttons, common callbacks, etc.)
 (function (template, $, undefined) {
   // Condition (optional, values: "default", "error"), lifetime (milliseconds) to auto-hide (optional)
