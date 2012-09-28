@@ -51,5 +51,6 @@ module DSSRM
     config.assets.version = '1.11'
 
     config.assets.paths << Rails.root.join("app", "assets", "javascripts", "controllers")
+    config.assets.paths << Rails.root.join("app", "assets", "templates")
   end
 end

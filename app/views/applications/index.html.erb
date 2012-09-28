@@ -3,49 +3,9 @@
   <%= javascript_include_tag "cards" %>
 <% end %>
 
-<script id="tmpl-card" type="text/template">
-  <div class="card span4" data-application-id="{{= item.id }}" data-uids="{{= item.uids }}">
-      <div class="card-title" rel="tooltip" title="{{= item.description }}"><i class="icon-search" id="entity_details" rel="tooltip" title="View details"></i><h3>{{= item.name }}</h3></div>
-      <div class="card-content">
-        {{ if(item.roles.length > 1) { }}
-          <div class="pins">
-            {{ _.each(item.roles, function(role) { }}
-              {{ if(role.token != "access") { }}
-              <div class="pin" data-role-id="{{= role.id }}" data-uids="{{= role.uids }}" rel="tooltip" title="{{= role.description }}"><a href="#" rel="tooltip" title="{{= role.description }}">{{= role.descriptor }}</a></div>
-              {{ } }}
-            {{ }) }}
-          </div>
-        {{ } }}
-      </div>
-	  </div> <!-- card -->
-</script>
-
 <script id="tmpl-pin" type="text/template">
   <li data-uid="{{= entity.uid }}"><i class="icon-remove" rel="tooltip" title="Remove"></i> <i class="icon-search" rel="tooltip" title="See details"></i>{{= entity.name }}</li>
 </script>
-
-<div class="row-fluid">
-  <div class="span9" id="left">
-
-    <form class="form-search">
-      <%= content_tag :input, nil, {:class => "input-xxlarge search-query", :type => "text", :id => "search_applications", :placeholder => "Search applications…", :autocomplete => "off" } %>
-    </form>
-
-    <div id="cards">
-      <div id="cards-left" class="span4"></div>
-      <div id="cards-right" class="span4"></div>
-    </div>
-
-  </div> <!-- /.span9 -->
-  <div class="span3" id="right">
-
-    <form class="form-search">
-      <input id="search_entities" placeholder="Search people and groups…" type="text" autocomplete="off" class="input-large search-query">
-    </form>
-
-	  <ul class="pins" id="entity_list"></ul>
-  </div> <!-- /.span3 -->
-</div>
 
 <div id="modal_container"></div>
 

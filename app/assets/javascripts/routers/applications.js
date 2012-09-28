@@ -12,12 +12,12 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   index: function() {
-    var view = new DssRm.Views.ApplicationsIndex({ collection: this.collection });
+    var view = new DssRm.Views.ApplicationsIndex({ collection: this.applications });
     this.swap(view);
   },
 
   newApplication: function() {
-    var view = new DssRm.Views.TasksNew({ collection: this.collection });
+    var view = new DssRm.Views.TasksNew({ collection: this.applications });
     this.swap(view);
   },
 
