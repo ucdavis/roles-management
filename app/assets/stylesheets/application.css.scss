@@ -25,7 +25,7 @@ input#search_entities {
   -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   color: #333;
-  float: left;
+  float: none !important;
   margin: 15px;
   margin-top: 0px;
   padding-bottom: 4px;
@@ -48,11 +48,6 @@ input#search_entities {
 .card-title h3 {
   max-width: 270px;
   margin: auto auto;
-}
-
-#cards-left, #cards-right {
-  margin-left: 0;
-  margin-right: 35px;
 }
 
 ul.pins {

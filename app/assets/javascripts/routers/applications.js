@@ -14,6 +14,9 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   index: function() {
     var view = new DssRm.Views.ApplicationsIndex({ collection: this.applications });
     this.swap(view);
+
+    // Workaround CSS float limitations
+    $("#cards").masonry({ itemSelector: 'div.card' });
   },
 
   newApplication: function() {

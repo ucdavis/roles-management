@@ -1,5 +1,6 @@
 DssRm.Views.ApplicationItem = Support.CompositeView.extend({
   tagName: "div",
+  className: "card span4",
 
   events: {
     "change input": "update"
@@ -20,22 +21,13 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     var self = this;
 
     self.$('h3').html(this.model.escape('name'));
+    self.$('.card-title').attr("title", this.model.escape('description'));
 
     this.model.roles.each(function(role) {
       var roleItem = new DssRm.Views.RoleItem({ model: role });
       self.renderChild(roleItem);
       self.$('.roles').append(roleItem.el);
     });
-
-    //this.$('label').attr("for", "task_completed_" + this.model.get('id'));
-    //this.$('label').html(this.model.escape('title'));
-
-    //this.$('input').attr("id", "task_completed_" + this.model.get('id'));
-    //this.$('input').prop("checked", this.model.isComplete());
-
-    //this.$('td.assignees').html(this.model.assignedUsers.pluck('email').join(", "));
-
-    //this.$('a').attr("href", this.taskUrl());
   },
 
   applicationUrl: function() {

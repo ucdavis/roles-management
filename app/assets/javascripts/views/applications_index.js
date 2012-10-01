@@ -1,4 +1,7 @@
 DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
+  tagName: "div",
+  className: "row-fluid",
+
   initialize: function() {
     _.bindAll(this, "render");
     this.bindTo(this.collection, "add", this.render);
@@ -7,6 +10,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   render: function () {
     this.renderTemplate();
     this.renderApplications();
+
     return this;
   },
 

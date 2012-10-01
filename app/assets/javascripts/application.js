@@ -16,6 +16,7 @@
 //= require jQuery.equalHeights
 //= require jquery.tokeninput
 //= require routes
+//= require jquery.masonry
 //
 //= require dss-rm
 //
