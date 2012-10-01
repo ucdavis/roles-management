@@ -1,4 +1,4 @@
-DssRm.Views.ApplicationItem = Support.CompositeView.extend({
+DssRm.Views.RoleItem = Support.CompositeView.extend({
   tagName: "div",
 
   events: {
@@ -10,21 +10,14 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
   },
 
   render: function () {
-    this.$el.attr("id", "application_" + this.model.id);
-    this.$el.html(JST['applications/item']({ application: this.model }));
-    this.renderCardContents();
+    this.$el.attr("id", "role_" + this.model.id);
+    this.$el.html(JST['roles/item']({ role: this.model }));
+    this.renderRoleContents();
     return this;
   },
 
-  renderCardContents: function() {
-    this.$('h3').html(this.model.escape('name'));
-
-    this.collection.each(function(role) {
-      var pin = new DssRm.Views.ApplicationItemPin({ pin: role });
-      self.renderChild(pin);
-      self.$('.pins').append(pin.el);
-    });
-
+  renderRoleContents: function() {
+    //this.$('h3').html(this.model.escape('name'));
     //this.$('label').attr("for", "task_completed_" + this.model.get('id'));
     //this.$('label').html(this.model.escape('title'));
 
@@ -34,10 +27,6 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     //this.$('td.assignees').html(this.model.assignedUsers.pluck('email').join(", "));
 
     //this.$('a').attr("href", this.taskUrl());
-  },
-
-  applicationUrl: function() {
-    return "#applications/" + this.model.get('id');
   },
 
   update: function() {
