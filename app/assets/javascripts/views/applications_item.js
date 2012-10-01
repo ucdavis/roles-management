@@ -17,12 +17,14 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
   },
 
   renderCardContents: function() {
-    this.$('h3').html(this.model.escape('name'));
+    var self = this;
 
-    this.collection.each(function(role) {
-      var pin = new DssRm.Views.ApplicationItemPin({ pin: role });
-      self.renderChild(pin);
-      self.$('.pins').append(pin.el);
+    self.$('h3').html(this.model.escape('name'));
+
+    this.model.roles.each(function(role) {
+      var roleItem = new DssRm.Views.RoleItem({ model: role });
+      self.renderChild(roleItem);
+      self.$('.roles').append(roleItem.el);
     });
 
     //this.$('label').attr("for", "task_completed_" + this.model.get('id'));

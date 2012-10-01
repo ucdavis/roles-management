@@ -94,14 +94,14 @@ li.ui-draggable-dragging.group {
   color: #468847;
 }
 
-div.pins {
+div.card div.roles {
   min-height: 25px;
   background-color: white;
   background-repeat: repeat-x;
   border-style: solid;
-  border-radius: 4px;
-  border-color: #CCC;
-  border-bottom-color: #B3B3B3;
+  border-radius: 3px;
+  border-color: #ccc;
+  border-bottom-color: #b3b3b3;
   border-width: 1px;
   -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -109,10 +109,10 @@ div.pins {
   color: #333;
   margin: 15px;
   margin-top: 10px;
-  padding-bottom: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 4px;
+  padding-bottom: 2px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 2px;
   text-shadow: rgba(255, 255, 255, 0.746094) 0px 1px 1px;
 }
 

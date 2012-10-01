@@ -17,16 +17,11 @@ DssRm.Views.RoleItem = Support.CompositeView.extend({
   },
 
   renderRoleContents: function() {
-    //this.$('h3').html(this.model.escape('name'));
-    //this.$('label').attr("for", "task_completed_" + this.model.get('id'));
-    //this.$('label').html(this.model.escape('title'));
+    var self = this;
 
-    //this.$('input').attr("id", "task_completed_" + this.model.get('id'));
-    //this.$('input').prop("checked", this.model.isComplete());
-
-    //this.$('td.assignees').html(this.model.assignedUsers.pluck('email').join(", "));
-
-    //this.$('a').attr("href", this.taskUrl());
+    self.$('.pin').attr("title", this.model.escape('description'));
+    self.$('a').html(this.model.escape('descriptor'));
+    self.$('a').attr("title", this.model.escape('description'));
   },
 
   update: function() {
