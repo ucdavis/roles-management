@@ -418,10 +418,6 @@
   edit_role_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// edit_template => /templates/:id/edit(.:format)
-  edit_template_path: function(_id, options) {
-  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
 // graph_authorization_rules => /authorization_rules/graph(.:format)
   graph_authorization_rules_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"authorization_rules",false]],[7,"/",false]],[6,"graph",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -498,10 +494,6 @@
   new_role_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// new_template => /templates/new(.:format)
-  new_template_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
 // ou => /ous/:id(.:format)
   ou_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"ous",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -565,22 +557,6 @@
 // suggest_change_authorization_rules => /authorization_rules/suggest_change(.:format)
   suggest_change_authorization_rules_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"authorization_rules",false]],[7,"/",false]],[6,"suggest_change",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// template => /templates/:id(.:format)
-  template_path: function(_id, options) {
-  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// templates => /templates(.:format)
-  templates_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"templates",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// templates_assign => /templates/assign(.:format)
-  templates_assign_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[6,"assign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// templates_unassign => /templates/unassign(.:format)
-  templates_unassign_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"templates",false]],[7,"/",false]],[6,"unassign",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   }}
 ;
   window.Routes.options = defaults;

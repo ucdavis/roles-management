@@ -12,7 +12,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   index: function() {
-    var view = new DssRm.Views.ApplicationsIndex({ collection: this.applications });
+    var view = new DssRm.Views.ApplicationsIndex({ applications: this.applications, entities: this.entities });
     this.swap(view);
 
     // Workaround CSS float limitations
@@ -20,12 +20,12 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   newApplication: function() {
-    var view = new DssRm.Views.TasksNew({ collection: this.applications });
-    this.swap(view);
+    //var view = new DssRm.Views.TasksNew({ collection: this.applications });
+    //this.swap(view);
   },
 
   show: function(applicationId) {
-    var application = this.collection.get(applicationId);
+    var application = this.applications.get(applicationId);
     var applicationsRouter = this;
     task.fetch({
       success: function() {

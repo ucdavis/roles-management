@@ -3,8 +3,11 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   initialize: function() {
+    this.applications = this.options.applications;
+    this.entities = this.options.entities;
+
     _.bindAll(this, "render");
-    this.bindTo(this.collection, "add", this.render);
+    this.bindTo(this.applications, "add", this.render);
   },
 
   render: function () {
@@ -15,12 +18,12 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   },
 
   renderTemplate: function() {
-    this.$el.html(JST['applications/index']({ applications: this.collection }));
+    this.$el.html(JST['applications/index']({ applications: this.applications }));
   },
 
   renderApplications: function() {
     var self = this;
-    this.collection.each(function(application) {
+    this.applications.each(function(application) {
       var card = new DssRm.Views.ApplicationItem({ model: application });
       self.renderChild(card);
       self.$('#cards').append(card.el);
