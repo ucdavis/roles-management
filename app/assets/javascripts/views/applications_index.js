@@ -13,6 +13,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   render: function () {
     this.renderTemplate();
     this.renderApplications();
+    this.renderSidebar();
 
     return this;
   },
@@ -27,6 +28,15 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       var card = new DssRm.Views.ApplicationItem({ model: application });
       self.renderChild(card);
       self.$('#cards').append(card.el);
+    });
+  },
+
+  renderSidebar: function() {
+    var self = this;
+    this.entities.each(function(entity) {
+      var pin = new DssRm.Views.EntityItem({ model: entity });
+      self.renderChild(pin);
+      self.$('#pins').append(pin.el);
     });
   }
 });

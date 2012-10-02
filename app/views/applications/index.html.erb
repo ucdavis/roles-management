@@ -1,12 +1,3 @@
-<%= content_for :javascript do -%>
-  <%= javascript_include_tag "controllers/" + params[:controller] %>
-  <%= javascript_include_tag "cards" %>
-<% end %>
-
-<script id="tmpl-pin" type="text/template">
-  <li data-uid="{{= entity.uid }}"><i class="icon-remove" rel="tooltip" title="Remove"></i> <i class="icon-search" rel="tooltip" title="See details"></i>{{= entity.name }}</li>
-</script>
-
 <div id="applications"></div>
 
 <script type="text/json" id="bootstrap">
@@ -22,11 +13,6 @@
       var div = $('<div></div>');
       div.html($('#bootstrap').text());
       var data = JSON.parse(div.text());
-
-      //cards.manageable_uids = data.manageable_uids;
-      //applications.applications = data.available_applications;
-
-      //cards.initialize();
 
       DssRm.initialize(data);
     });
