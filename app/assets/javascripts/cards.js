@@ -82,18 +82,6 @@
     // Render the application cards
     cards.render_cards();
 
-    // Delete/info button(s) appear on hover for the sidebar pins
-    $("div#right").on("mouseenter mouseleave", "ul.pins li", function(e) {
-      if(e.type == "mouseenter") {
-        $(this).children("i.icon-remove").css("display", "block");
-        $(this).children("i.icon-search").css("display", "block");
-      } else {
-        // hover out
-        $(this).children("i").tooltip("hide");
-        $(this).children("i").css("display", "none");
-      }
-    });
-
     // Enable the details button for sidebar pins
     $("ul.pins").on("click", "li>i.icon-search", function(e) {
       e.stopPropagation();
