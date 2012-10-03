@@ -7,17 +7,6 @@
   cards.manageable_uids = null;
 
   cards.initialize = function() {
-    // Set up the virtual card preferences
-    $("div#left").on("mouseenter mouseleave", "div#cards div.card div.card-title", function(e) {
-      if(e.type == "mouseenter") {
-        $(this).children("i").css("display", "block");
-      } else {
-        // hover out
-        $(this).children("i").tooltip("hide");
-        $(this).children("i").css("display", "none");
-      }
-    });
-
     // Establish hover for card details
     $("div#left").on("click", "div#cards div.card div.card-title i", function(e) {
       cards.entity_details('4' + $(this).parent().parent().data("application-id"));

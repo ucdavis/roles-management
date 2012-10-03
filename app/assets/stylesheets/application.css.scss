@@ -12,44 +12,6 @@ input#search_entities {
   margin-bottom: 1.3em;
 }
 
-.card {
-  min-height: 25px;
-  background-color: whiteSmoke;
-  background-repeat: repeat-x;
-  border-style: solid;
-  border-color: #CCC;
-  border-bottom-color: #B3B3B3;
-  border-radius: 4px;
-  border-width: 1px;
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  color: #333;
-  float: none !important;
-  margin: 15px;
-  margin-top: 0px;
-  padding-bottom: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 4px;
-  text-shadow: rgba(255, 255, 255, 0.746094) 0px 1px 1px;
-}
-.card-title {
-  text-align: center;
-  font-size: 16px;
-}
-.card-title i {
-  float: right;
-  display: none;
-  cursor: pointer;
-  margin-top: 7px;
-  margin-right: 0px;
-}
-.card-title h3 {
-  max-width: 270px;
-  margin: auto auto;
-}
-
 ul.pins {
   margin-left: 0px;
   list-style-type: none;
