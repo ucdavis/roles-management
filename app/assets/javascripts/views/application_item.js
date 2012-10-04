@@ -3,7 +3,7 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
   className: "card span4",
 
   events: {
-    "change input": "update"
+    "click i.details": "showDetails"
   },
 
   initialize: function() {
@@ -28,6 +28,10 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
       self.renderChild(roleItem);
       self.$('.roles').append(roleItem.el);
     });
+  },
+
+  showDetails: function() {
+
   },
 
   applicationUrl: function() {

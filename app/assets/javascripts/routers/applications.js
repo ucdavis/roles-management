@@ -6,9 +6,9 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   routes: {
-    "":          "index",
-    "new":       "newTask",
-    "tasks/:id": "show"
+    "":                 "index",
+    "new":              "newApplication",
+    "applications/:id": "show"
   },
 
   index: function() {
@@ -27,7 +27,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   show: function(applicationId) {
     var application = this.applications.get(applicationId);
     var applicationsRouter = this;
-    task.fetch({
+    application.fetch({
       success: function() {
         var view = new DssRm.Views.ApplicationShow({ model: application });
         applicationsRouter.swap(view);

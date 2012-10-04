@@ -2,10 +2,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   tagName: "div",
   className: "row-fluid",
 
-  events: {
-
-  },
-
   initialize: function() {
     this.applications = this.options.applications;
     this.entities = this.options.entities;
