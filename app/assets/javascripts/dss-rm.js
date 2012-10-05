@@ -88,13 +88,6 @@ $(function() {
     theme: "facebook"
   });
 
-  // Fix AJAX headers
-  $.ajaxSetup({
-    beforeSend: function (xhr, settings) {
-      xhr.setRequestHeader("accept", '*/*;q=0.5, ' + settings.accepts.script);
-    }
-  });
-
   application.initialize();
 });
 

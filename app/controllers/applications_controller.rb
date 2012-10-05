@@ -15,6 +15,7 @@ class ApplicationsController < ApplicationController
   def show
     respond_to do |format|
       format.html { render "show", :layout => false }
+      format.json { render json: @application }
       format.csv {
         require 'csv'
 
