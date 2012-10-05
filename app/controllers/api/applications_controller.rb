@@ -12,7 +12,7 @@ class Api::ApplicationsController < Api::BaseController
 
   def show
     logger.info "API application/show requesting #{params[:id]}"
-    @application = Application.find_by_name(params[:id])
+    @application = Application.find(params[:id])
 
     logger.info "Application '#{@application.name}' successfully retrieved" unless @application.nil?
 

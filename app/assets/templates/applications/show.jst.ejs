@@ -4,7 +4,6 @@
     <h3>name</h3>
   </div>
   <div class="modal-body">
-
     <div class="tabbable tabs-left">
       <ul class="nav nav-tabs">
         <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
@@ -17,13 +16,13 @@
         <fieldset class="tab-pane active" id="summary">
           <label>Name</label>
           <input type="text" name="name" />
-          f.label :description
-          f.text_field :description
-          f.label :owner_tokens, "Owners"
-          f.text_field :owner_tokens, "data-pre" => @application.owners.to_json, "method" => url_for(:controller => "api/people", :action => "index"), :class => "token_input"
+          <label>Description</label>
+          <input type="text" name="description" />
+          <label>Owners</label>
+          <input type="text" name="owners" data-pre="@application.owners.to_json" "method"="url_for(:controller => api/people, :action => index)" class="token_input" />
           <label>Sympa URL:</label>
-          <input id="sympa_url" type="text" style="width: 99%" value=" url_for( :controller => 'api/applications', :action => 'show', :id => @application.name, :only_path => false ) .txt" disabled />
-          <span id="csv-download"> link_to "Download as CSV", application_path(@application, :format => 'csv')</span>
+          <input id="sympa_url" type="text" style="width: 99%" value="sympa_path" disabled />
+          <span id="csv-download"><a href="application_path(@application, :format => 'csv')">Download as CSV</a></span>
         </fieldset>
         <fieldset class="tab-pane" id="roles">
           <table>
