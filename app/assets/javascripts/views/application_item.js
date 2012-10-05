@@ -22,6 +22,7 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
 
     self.$('h3').html(this.model.escape('name'));
     self.$('.card-title').attr("title", this.model.escape('description'));
+    self.$('.application-link').attr("href", this.applicationUrl());
 
     this.model.roles.each(function(role) {
       var roleItem = new DssRm.Views.RoleItem({ model: role });
