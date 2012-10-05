@@ -7,8 +7,8 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
 
   routes: {
     "":                 "index",
-    "new":              "newApplication",
-    "applications/:id": "show"
+    "new":              "newApplication"
+    //"applications/:id": "show"
   },
 
   index: function() {

@@ -32,7 +32,9 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
   },
 
   showDetails: function() {
-
+    var view = new DssRm.Views.ApplicationShow({ model: this.model });
+    view.render();
+    view.$el.modal();
   },
 
   applicationUrl: function() {
