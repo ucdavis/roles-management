@@ -43,6 +43,13 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       self.renderChild(roleItem);
       self.$('table#roles').append(roleItem.el);
     });
+
+    // Active Directory tab
+    this.model.roles.each(function(role) {
+      var roleItem = new DssRm.Views.ApplicationShowAD({ model: role });
+      self.renderChild(roleItem);
+      self.$('div#ad_fields').append(roleItem.el);
+    });
   },
 
   update: function() {

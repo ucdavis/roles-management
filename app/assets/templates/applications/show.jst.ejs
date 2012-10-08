@@ -37,11 +37,7 @@
           <p><button class="btn">Add Role</button></p>
         </fieldset>
         <fieldset class="tab-pane" id="ad">
-          @application.roles.each_with_index do |role, i|
-            f.fields_for :roles, role, :child_index => i do |builder|
-              render "role_ad_fields", :f => builder
-            end
-          end
+          <div id="ad_fields"></div>
           <p>
             <small>The group name is appended after the base AD path configured by the administrator.</small>
           </p>
