@@ -31,7 +31,7 @@
               <th>Default</th>
               <th>Descriptor</th>
               <th>Description</th>
-              <th><!-- Actions --></th>
+              <th></th>
             </tr>
             @application.roles.each_with_index do |role, i|
               f.fields_for :roles, role, :child_index => i do |builder|
