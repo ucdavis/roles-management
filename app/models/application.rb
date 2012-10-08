@@ -39,7 +39,7 @@ class Application < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :roles => self.roles, :uids => self.uids, :description => self.description }
+    { :id => self.id, :name => self.name, :roles => self.roles, :uids => self.uids, :description => self.description, :owners => self.owners }
   end
 
   # Returns all UIDs associated with this app (via roles)
