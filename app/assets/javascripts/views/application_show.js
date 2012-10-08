@@ -38,13 +38,11 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     self.$('#sympa_url').val(window.location.protocol + "//" + window.location.hostname + Routes.api_application_path(this.model.id) + ".txt");
 
     // Roles tab
-
-
-    //this.model.roles.each(function(role) {
-      //var roleItem = new DssRm.Views.RoleItem({ model: role });
-      //self.renderChild(roleItem);
-      //self.$('.roles').append(roleItem.el);
-    //});
+    this.model.roles.each(function(role) {
+      var roleItem = new DssRm.Views.ApplicationShowRole({ model: role });
+      self.renderChild(roleItem);
+      self.$('table#roles').append(roleItem.el);
+    });
   },
 
   update: function() {
