@@ -1,9 +1,8 @@
 DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   tagName: "div",
-  className: "",
 
   events: {
-
+    "click a#apply": "save"
   },
 
   initialize: function() {
@@ -52,8 +51,14 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     });
   },
 
+  save: function() {
+    debugger;
+    this.model.set({ name: this.$('input[name=name]').val() });
+    this.model.save();
+  },
+
   update: function() {
     //var complete = this.$('input').prop('checked');
-    this.model.save({ complete: complete });
+    //this.model.save({ complete: complete });
   }
 });

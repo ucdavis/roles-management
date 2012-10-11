@@ -32,7 +32,7 @@ gem 'dynamic_form'
 
 gem 'pg'
 
-gem 'rails-backbone', '~> 0.7.0'
+gem 'rails-backbone' #, '~> 0.7.0'
 gem 'jquery-rails'
 gem 'ejs'
 gem 'backbone-support'

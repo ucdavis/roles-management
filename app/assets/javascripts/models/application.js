@@ -10,5 +10,13 @@ DssRm.Models.Application = Backbone.Model.extend({
     this.roles = new DssRm.Collections.Roles(rolesAttr);
   },
 
+  toJSON: function() {
+    var json = _.omit(this.attributes, 'roles', 'owners', 'uids');
+    json.roles_attributes = this.roles.map(function(role) {
+      return { role_id: role.id };
+    });
+    return json;
+  },
+
   urlRoot: '/applications'
 });
