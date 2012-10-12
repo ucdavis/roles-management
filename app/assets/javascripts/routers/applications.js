@@ -16,7 +16,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     this.swap(view);
 
     // Workaround CSS float limitations
-    $("#cards").masonry({ itemSelector: 'div.card' });
+    //$("#cards").masonry({ itemSelector: 'div.card' });
   },
 
   newApplication: function() {

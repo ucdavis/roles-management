@@ -6,7 +6,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   initialize: function() {
-    _.bindAll(this, "render");
+    this.model.bind('change', this.render, this);
   },
 
   render: function () {
@@ -52,13 +52,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   save: function() {
-    debugger;
     this.model.set({ name: this.$('input[name=name]').val() });
     this.model.save();
-  },
-
-  update: function() {
-    //var complete = this.$('input').prop('checked');
-    //this.model.save({ complete: complete });
   }
 });

@@ -6,7 +6,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.applications = this.options.applications;
     this.entities = this.options.entities;
 
-    _.bindAll(this, "render");
+    this.applications.bind('change', this.render, this);
     this.bindTo(this.applications, "add", this.render);
   },
 
