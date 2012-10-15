@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-	<title>Rights Management</title>
+	<title>Roles Management</title>
 
   <%= stylesheet_link_tag "application" %>
 	<%= csrf_meta_tag %>
@@ -19,7 +19,7 @@
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
-        <%= link_to "Rights Management", root_url, :class => "brand" %>
+        <%= link_to "Roles Management", root_url, :class => "brand" %>
         <div class="nav-collapse">
           <ul class="nav">
             <% _permitted_to? :index, :applications do %>
