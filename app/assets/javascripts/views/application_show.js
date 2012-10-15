@@ -2,7 +2,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   tagName: "div",
 
   events: {
-    "click a#apply": "save"
+    "click a#apply": "save",
+    "hidden": "cleanUpModal"
   },
 
   initialize: function() {
@@ -54,5 +55,10 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   save: function() {
     this.model.set({ name: this.$('input[name=name]').val() });
     this.model.save();
+  },
+
+  cleanUpModal: function() {
+    $("div#applicationShowModal").remove();
+    //this.parent.removeChild(this);
   }
 });

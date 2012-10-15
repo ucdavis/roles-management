@@ -7,16 +7,13 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
 
   routes: {
     "":                 "index",
-    "new":              "newApplication"
-    //"applications/:id": "show"
+    "new":              "newApplication",
+    "applications/:id": "show"
   },
 
   index: function() {
     var view = new DssRm.Views.ApplicationsIndex({ applications: this.applications, entities: this.entities });
     this.swap(view);
-
-    // Workaround CSS float limitations
-    //$("#cards").masonry({ itemSelector: 'div.card' });
   },
 
   newApplication: function() {
@@ -30,7 +27,8 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     application.fetch({
       success: function() {
         var view = new DssRm.Views.ApplicationShow({ model: application });
-        applicationsRouter.swap(view);
+        applicationsRouter.currentView.renderChild(view);
+        view.$el.modal();
       }
     });
   }
