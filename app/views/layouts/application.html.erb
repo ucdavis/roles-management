@@ -23,7 +23,7 @@
         <div class="nav-collapse">
           <ul class="nav">
             <% _permitted_to? :index, :applications do %>
-              <%= li_link_with_class({:title => 'Manage', :controller => 'applications', :action => 'index'}) %>
+              <%#= li_link_with_class({:title => 'Manage', :controller => 'applications', :action => 'index'}) %>
             <% end %>
           </ul>
           <% _has_role? :admin do %>
