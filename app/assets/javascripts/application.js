@@ -8,10 +8,7 @@
 //
 //= require bootstrap
 //= require bootbox.min
-//= require bootstrap-modal
-//= require bootstrap-transition
 //= require bootstrap-typeahead
-//= require bootstrap-tooltip
 //= require bootstrap-modal-alert
 //= require jQuery.equalHeights
 //= require jquery.tokeninput
