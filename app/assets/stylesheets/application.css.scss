@@ -24,13 +24,13 @@ div.pin {
   background-color: #D9EDF7;
   margin: 3px 3px 5px;
   list-style-type: none;
-}
 
-div.pin a:hover {
-  text-decoration: inherit;
-  color: #08C;
-  text-shadow: inherit;
-  cursor: default;
+  a:hover {
+    text-decoration: inherit;
+    color: #08C;
+    text-shadow: inherit;
+    cursor: default;
+  }
 }
 
 input#search_people_groups {
@@ -75,10 +75,6 @@ div#modal_container tr.fields button {
   margin-left: 4px;
 }
 
-.modal td input[type=checkbox] {
-  margin: -8px 0px 0 15px;
-}
-
 /* Twitter Bootstrap modifications (check here for problems when upgrading) */
 /* TB assumes .tab-content>.tab-pane but we have .tab-content>form>.tab-pane in details modals */
 .tab-content .tab-pane {display: none;}
@@ -89,20 +85,28 @@ div#modal_container tr.fields button {
   width: 840px;
   margin-left: -420px;
   max-height: 90%;
-}
 
-.modal .modal-header {
-  text-align: center;
-}
+  .modal-header {
+    text-align: center;
+  }
 
-.modal .modal-body {
-  max-height: 475px;
-}
+  .modal-body {
+    max-height: 475px;
+  }
 
-.modal span#csv-download {
+  td input[type=checkbox] {
+    margin: -8px 0px 0 15px;
+  }
+
+  span#csv-download {
     float: right;
     font-size: 75%;
     margin-top: -6px;
+  }
+
+  table tr td input,select {
+    width: auto;
+  }
 }
 
 /* UCD colors for the navbar */
@@ -126,10 +130,6 @@ div#modal_container tr.fields button {
   border: 1px solid #151515;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1),0 1px 0px rgba(255, 255, 255, 0.15);
   padding: 4px 9px;
-}
-
-.modal table tr td input,select {
-  width: auto;
 }
 
 #highlighted_results>li {

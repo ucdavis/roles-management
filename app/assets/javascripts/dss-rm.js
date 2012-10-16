@@ -18,6 +18,17 @@ window.DssRm = {
       Backbone.history.start();
       Backbone.history.started = true;
     }
+  },
+
+  // Takes a uid like "143" and returns "people/43"
+  DetermineEntityUrl: function(uid) {
+    uid = String(uid); // cast, just in case
+    switch(uid[0]) {
+      case '1': return "people/" + uid.split(2)[1];
+      case '2': return "groups/" + uid.split(2)[1];
+    }
+
+    return "";
   }
 };
 

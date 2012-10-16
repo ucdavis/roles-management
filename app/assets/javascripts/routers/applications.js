@@ -8,7 +8,9 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   routes: {
     "":                 "index",
     "new":              "newApplication",
-    "applications/:id": "show"
+    "applications/:id": "showApplication",
+    "people/:id": "showPerson",
+    "groups/:id": "showGroup"
   },
 
   index: function() {
@@ -21,7 +23,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     //this.swap(view);
   },
 
-  show: function(applicationId) {
+  showApplication: function(applicationId) {
     var application = this.applications.get(applicationId);
     var applicationsRouter = this;
     application.fetch({
@@ -31,5 +33,13 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
         view.$el.modal();
       }
     });
+  },
+
+  showPerson: function(personId) {
+
+  },
+
+  showGroup: function(groupId) {
+
   }
 });

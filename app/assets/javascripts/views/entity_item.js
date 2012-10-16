@@ -1,10 +1,6 @@
 DssRm.Views.EntityItem = Support.CompositeView.extend({
   tagName: "li",
 
-  events: {
-    //"change input": "update"
-  },
-
   initialize: function() {
     _.bindAll(this, "render");
   },
@@ -14,11 +10,12 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     this.$el.html(JST['entities/item']({ entity: this.model }));
     this.$('span').html(this.model.escape('name'));
     this.$el.addClass("group");
+    this.$('.entity-details-link').attr("href", this.entityUrl());
 
     return this;
   },
 
-  update: function() {
-    this.model.save({ complete: complete });
+  entityUrl: function() {
+    return "#" + DssRm.DetermineEntityUrl(this.model.get('uid'));
   }
 });
