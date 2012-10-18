@@ -40,6 +40,14 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   showGroup: function(groupId) {
-
+    var group = this.entities.get(groupId);
+    var groupsRouter = this;
+    group.fetch({
+      success: function() {
+        var view = new DssRm.Views.GroupShow({ model: group });
+        groupsRouter.currentView.renderChild(view);
+        view.$el.modal();
+      }
+    });
   }
 });
