@@ -11,45 +11,52 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   render: function () {
-    this.$el.html(JST['entities/show']({ model: this.model }));
-    this.renderModalContents();
+    var resolved = DssRm.DetermineEntityType( this.model.get('id') );
+
+    this.$el.html(JST['entities/show_' + resolved.type ]({ model: this.model }));
+    this.renderModalContents(resolved);
+
     return this;
   },
 
-  renderModalContents: function() {
+  renderModalContents: function(resolved) {
     var self = this;
 
-    // Summary tab
-    //self.$('h3').html(this.model.escape('name'));
-    //self.$('input[name=name]').val(this.model.escape('name'));
-    //self.$('input[name=description]').val(this.model.escape('description'));
+    if(resolved.type == "group") {
+      // Summary tab
+      self.$('h3').html(this.model.escape('name'));
+      self.$('input[name=name]').val(this.model.escape('name'));
+      self.$('input[name=description]').val(this.model.escape('description'));
 
-    //var owners_tokeninput = self.$("input[name=owners]");
-    //owners_tokeninput.tokenInput(Routes.api_people_path(), {
-      //crossDomain: false,
-      //defaultText: "",
-      //theme: "facebook",
-      //tokenValue: "uid"
-    //});
-    //_.each(this.model.get('owners'), function(owner) {
-      //owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
-    //});
+      //var owners_tokeninput = self.$("input[name=owners]");
+      //owners_tokeninput.tokenInput(Routes.api_people_path(), {
+        //crossDomain: false,
+        //defaultText: "",
+        //theme: "facebook",
+        //tokenValue: "uid"
+      //});
+      //_.each(this.model.get('owners'), function(owner) {
+        //owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
+      //});
 
-    //self.$('#sympa_url').val(window.location.protocol + "//" + window.location.hostname + Routes.api_application_path(this.model.id) + ".txt");
+      //self.$('#sympa_url').val(window.location.protocol + "//" + window.location.hostname + Routes.api_application_path(this.model.id) + ".txt");
 
-    // Roles tab
-    //this.model.roles.each(function(role) {
-      //var roleItem = new DssRm.Views.ApplicationShowRole({ model: role });
-      //self.renderChild(roleItem);
-      //self.$('table#roles').append(roleItem.el);
-    //});
+      // Roles tab
+      //this.model.roles.each(function(role) {
+        //var roleItem = new DssRm.Views.ApplicationShowRole({ model: role });
+        //self.renderChild(roleItem);
+        //self.$('table#roles').append(roleItem.el);
+      //});
 
-    // Active Directory tab
-    //this.model.roles.each(function(role) {
-      //var roleItem = new DssRm.Views.ApplicationShowAD({ model: role });
-      //self.renderChild(roleItem);
-      //self.$('div#ad_fields').append(roleItem.el);
-    //});
+      // Active Directory tab
+      //this.model.roles.each(function(role) {
+        //var roleItem = new DssRm.Views.ApplicationShowAD({ model: role });
+        //self.renderChild(roleItem);
+        //self.$('div#ad_fields').append(roleItem.el);
+      //});
+    } else if(resolved.type == "person") {
+
+    }
   },
 
   save: function() {
