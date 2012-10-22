@@ -1,3 +1,4 @@
 DssRm.Collections.Entities = Backbone.Collection.extend({
-  model: DssRm.Models.Entity
+  model: DssRm.Models.Entity,
+  url: '/entities'
 });

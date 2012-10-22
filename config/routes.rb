@@ -25,6 +25,8 @@ DSSRM::Application.routes.draw do
   post "/roles/assign", :controller => "role_assignments", :action => "create"
   delete "/roles/unassign", :controller => "role_assignments", :action => "destroy"
 
+  resources :entities
+
   resources :groups
   resources :ous
   resources :roles

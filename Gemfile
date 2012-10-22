@@ -45,6 +45,8 @@ gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git
 gem "js-routes", :git => 'git://github.com/railsware/js-routes.git'
 gem "ruby_parser"
 
+gem "rabl"
+
 gem 'exception_notification'
 
 # Temporary version of net-ssh to workaround broken 2.5.1
