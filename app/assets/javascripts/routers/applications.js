@@ -25,6 +25,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   showApplication: function(applicationId) {
     var application = this.applications.get(applicationId);
     var applicationsRouter = this;
+
     application.fetch({
       success: function() {
         var view = new DssRm.Views.ApplicationShow({ model: application });
@@ -37,9 +38,10 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   showEntity: function(uid) {
     var entity = this.entities.get(uid);
     var entitiesRouter = this;
+
     entity.fetch({
       success: function() {
-        var view = new DssRm.Views.GroupShow({ model: entity });
+        var view = new DssRm.Views.EntityShow({ model: entity });
         entitiesRouter.currentView.renderChild(view);
         view.$el.modal();
       }

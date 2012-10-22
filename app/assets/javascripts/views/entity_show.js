@@ -1,4 +1,4 @@
-DssRm.Views.GroupShow = Support.CompositeView.extend({
+DssRm.Views.EntityShow = Support.CompositeView.extend({
   tagName: "div",
 
   events: {
@@ -11,7 +11,7 @@ DssRm.Views.GroupShow = Support.CompositeView.extend({
   },
 
   render: function () {
-    this.$el.html(JST['groups/show']({ group: this.model }));
+    this.$el.html(JST['entities/show']({ model: this.model }));
     this.renderModalContents();
     return this;
   },

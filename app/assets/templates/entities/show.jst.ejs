@@ -1,0 +1,57 @@
+<div class="modal" id="entityShowModal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>name</h3>
+  </div>
+  <div class="modal-body">
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#rules" data-toggle="tab">Rules</a></li>
+      </ul>
+      <div class="tab-content">
+        <form>
+
+        <fieldset class="tab-pane active" id="summary">
+          <span id="corner_summary">
+            <span id="group_member_count">count</span><br />members
+          </span>
+          <label>Name</label>
+          <input type="text" name="name" />
+          <label>Description</label>
+          <textarea name="description" class="input-xlarge" rows="2"></textarea>
+          <label>Owners</label>
+          <input type="text" class="token_input" />
+          <label>Operators</label>
+          <input type="text" class="token_input" />
+          <label>Members</label>
+          <p id="members">
+            <input type="text" class="token_input" />
+            <span id="csv-download"><a href="#">Download as CSV</a></span>
+          </p>
+        </fieldset>
+        <fieldset class="tab-pane" id="rules">
+          <table>
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Condition</th>
+                <th>Value</th>
+                <th><!-- Actions --></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
+          <p><button class="btn" id="group_rule_add">Add Rule</button></p>
+        </fieldset>
+        </form>
+      </div>
+    </div> <!-- /tabbable -->
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn btn-danger" style="float: left;" id="delete">Delete Group</a>
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+    <a href="#" class="btn btn-primary" id="apply">Apply</a>
+  </div>
+</div>
