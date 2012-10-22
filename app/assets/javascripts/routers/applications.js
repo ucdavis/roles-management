@@ -6,11 +6,10 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   routes: {
-    "":                 "index",
-    "new":              "newApplication",
-    "applications/:id": "showApplication",
-    "people/:id": "showPerson",
-    "groups/:id": "showGroup"
+    ""                 : "index",
+    "new"              : "newApplication",
+    "applications/:id" : "showApplication",
+    "entities/:uid"    : "showEntity"
   },
 
   index: function() {
@@ -35,17 +34,13 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     });
   },
 
-  showPerson: function(personId) {
-
-  },
-
-  showGroup: function(groupId) {
-    var group = this.entities.get(groupId);
-    var groupsRouter = this;
-    group.fetch({
+  showEntity: function(uid) {
+    var entity = this.entities.get(uid);
+    var entitiesRouter = this;
+    entity.fetch({
       success: function() {
-        var view = new DssRm.Views.GroupShow({ model: group });
-        groupsRouter.currentView.renderChild(view);
+        var view = new DssRm.Views.GroupShow({ model: entity });
+        entitiesRouter.currentView.renderChild(view);
         view.$el.modal();
       }
     });

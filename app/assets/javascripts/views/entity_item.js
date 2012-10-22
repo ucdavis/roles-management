@@ -16,6 +16,6 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
   },
 
   entityUrl: function() {
-    return "#" + DssRm.DetermineEntityUrl(this.model.get('uid'));
+    return "#" + "/entities/" + this.model.get('id');
   }
 });

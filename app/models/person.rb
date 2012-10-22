@@ -143,6 +143,24 @@ class Person < ActiveRecord::Base
     uids
   end
 
+  # FIXME: Duplicate of the above function - remove manageable_uids once the
+  # refactoring toward an Entity controller is complete
+  def entities
+    entities = []
+
+    owns.each do |group| # includes OUs
+      entities << {:id => group.uid, :name => group.name}
+    end
+    operates.each do |group|
+      entities << {:id => group.uid, :name => group.name}
+    end
+    subordinates.each do |person|
+      entities << {:id => person.uid, :name => person.name}
+    end
+
+    entities
+  end
+
   # Compute accessible applications
   def applications
     apps = []
