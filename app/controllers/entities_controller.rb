@@ -3,7 +3,7 @@ class EntitiesController < ApplicationController
   filter_access_to :all
   respond_to :json
 
-  #wrap_parameters :task, :include => [:assignments_attributes, :title, :complete]
+  wrap_parameters :entity #, :include => [:assignments_attributes, :title, :complete]
 
   def index
     @entities = current_user.manageable_uids

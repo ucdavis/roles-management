@@ -28,6 +28,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       self.$('input[name=name]').val(this.model.escape('name'));
       self.$('input[name=description]').val(this.model.escape('description'));
 
+      console.log(this.model);
+
       //var owners_tokeninput = self.$("input[name=owners]");
       //owners_tokeninput.tokenInput(Routes.api_people_path(), {
         //crossDomain: false,

@@ -144,7 +144,7 @@ div#modal_container tr.fields button {
   border: 1px solid #3A87AD;
 }
 
-div#details_modal #corner_summary {
+div#entityShowModal #corner_summary {
   float: right;
   text-align: center;
   color: #666;
@@ -153,7 +153,7 @@ div#details_modal #corner_summary {
   margin-top: 5px;
 }
 
-div#details_modal #corner_summary #group_member_count {
+div#entityShowModal #corner_summary #group_member_count {
   font-weight: bold;
   font-size: 20pt;
   color: #333;
