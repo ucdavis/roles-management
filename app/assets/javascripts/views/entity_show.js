@@ -62,7 +62,15 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         members_tokeninput.tokenInput("add", {uid: member.uid, name: member.name});
       });
 
-      //debugger;
+      // Rules tab
+      var rules_table = self.$("table#rules tbody");
+      _.each(this.model.get('rules'), function(rule) {
+        var $rule = $(JST['entities/group_rule']());
+        $rule.find("td:nth-child(1) select").val(rule.column);
+        $rule.find("td:nth-child(2) select").val(rule.condition);
+        $rule.find("td:nth-child(3) input").val(rule.value);
+        rules_table.append($rule);
+      });
     } else if(resolved.type == "person") {
 
     }
@@ -74,7 +82,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   cleanUpModal: function() {
-    //$("div#applicationShowModal").remove();
+    $("div#entityShowModal").remove();
     // Need to change URL in case they want to open the same modal again
     Backbone.history.navigate("");
   }
