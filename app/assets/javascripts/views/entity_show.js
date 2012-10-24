@@ -26,36 +26,43 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
       self.$('input[name=name]').val(this.model.escape('name'));
-      self.$('input[name=description]').val(this.model.escape('description'));
+      self.$('textarea[name=description]').val(this.model.escape('description'));
+      self.$('span#group_member_count').html(this.model.get('members').length);
 
-      console.log(this.model);
+      var owners_tokeninput = self.$("input[name=owners]");
+      owners_tokeninput.tokenInput(Routes.api_people_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        tokenValue: "uid"
+      });
+      _.each(this.model.get('owners'), function(owner) {
+        owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
+      });
 
-      //var owners_tokeninput = self.$("input[name=owners]");
-      //owners_tokeninput.tokenInput(Routes.api_people_path(), {
-        //crossDomain: false,
-        //defaultText: "",
-        //theme: "facebook",
-        //tokenValue: "uid"
-      //});
-      //_.each(this.model.get('owners'), function(owner) {
-        //owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
-      //});
+      var operators_tokeninput = self.$("input[name=operators]");
+      operators_tokeninput.tokenInput(Routes.api_people_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        tokenValue: "uid"
+      });
+      _.each(this.model.get('operators'), function(operator) {
+        operators_tokeninput.tokenInput("add", {uid: operator.uid, name: operator.name});
+      });
 
-      //self.$('#sympa_url').val(window.location.protocol + "//" + window.location.hostname + Routes.api_application_path(this.model.id) + ".txt");
+      var members_tokeninput = self.$("input[name=members]");
+      members_tokeninput.tokenInput(Routes.api_people_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        tokenValue: "uid"
+      });
+      _.each(this.model.get('members'), function(member) {
+        members_tokeninput.tokenInput("add", {uid: member.uid, name: member.name});
+      });
 
-      // Roles tab
-      //this.model.roles.each(function(role) {
-        //var roleItem = new DssRm.Views.ApplicationShowRole({ model: role });
-        //self.renderChild(roleItem);
-        //self.$('table#roles').append(roleItem.el);
-      //});
-
-      // Active Directory tab
-      //this.model.roles.each(function(role) {
-        //var roleItem = new DssRm.Views.ApplicationShowAD({ model: role });
-        //self.renderChild(roleItem);
-        //self.$('div#ad_fields').append(roleItem.el);
-      //});
+      //debugger;
     } else if(resolved.type == "person") {
 
     }

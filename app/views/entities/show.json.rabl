@@ -1,7 +1,16 @@
 object @entity
 
-attributes :id, :created_at, :name
+attribute :uid => :id
+attributes :created_at, :name
 
-child :members do
-  attributes :id
+child @entity.members => :members do
+  attributes :id, :loginid, :name
+end
+
+child @entity.owners => :owners do
+  attributes :uid, :loginid, :name
+end
+
+child @entity.operators => :operators do
+  attributes :uid, :loginid, :name
 end
