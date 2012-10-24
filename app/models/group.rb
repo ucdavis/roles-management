@@ -284,11 +284,14 @@ class Group < ActiveRecord::Base
         end
         keep
       }
+    end
 
-      # Step Four: Process any 'loginid is' rules
-      rules.where({:condition => "is", :column => "loginid"}).each do |rule|
-        result << rule.resolve.at(0)
+    # Step Four: Process any 'loginid is' rules
+    rules.where({:condition => "is", :column => "loginid"}).each do |rule|
+      if result.nil?
+        result = []
       end
+      result << rule.resolve.at(0)
     end
 
     if result.nil?
