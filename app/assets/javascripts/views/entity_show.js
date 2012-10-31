@@ -48,16 +48,19 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       self.$('span#group_member_count').html(this.model.get('members').length);
 
       var owners_tokeninput = self.$("input[name=owners]");
+      owners_tokeninput.tokenInput("clear");
       _.each(this.model.get('owners'), function(owner) {
         owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
       });
 
       var operators_tokeninput = self.$("input[name=operators]");
+      operators_tokeninput.tokenInput("clear");
       _.each(this.model.get('operators'), function(operator) {
         operators_tokeninput.tokenInput("add", {uid: operator.uid, name: operator.name});
       });
 
       var members_tokeninput = self.$("input[name=members]");
+      members_tokeninput.tokenInput("clear");
       _.each(this.model.get('members'), function(member) {
         members_tokeninput.tokenInput("add", {uid: member.uid, name: member.name});
       });
@@ -80,9 +83,11 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     return this;
   },
 
-  save: function() {
+  save: function(e) {
     //this.model.set({ name: this.$('input[name=name]').val() });
     this.model.save();
+
+    return false;
   },
 
   remove_rule: function(e) {
