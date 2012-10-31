@@ -91,12 +91,13 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     this.model.set(
       { rules: _.reject(this.model.get('rules'), function(r) { return r.id == rule_id }) }
     );
-
-    //$(e.currentTarget).parents("tr.fields").remove();
   },
 
   cleanUpModal: function() {
+    this.model.unbind('change', this.render, this);
+
     $("div#entityShowModal").remove();
+
     // Need to change URL in case they want to open the same modal again
     Backbone.history.navigate("");
   }
