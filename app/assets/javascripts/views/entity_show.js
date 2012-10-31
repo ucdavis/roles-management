@@ -11,21 +11,36 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
   initialize: function() {
     this.model.bind('change', this.render, this);
+
+    this.resolved = DssRm.DetermineEntityType( this.model.get('id') );
+    this.$el.html(JST['entities/show_' + this.resolved.type ]({ model: this.model }));
+
+    this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
+      crossDomain: false,
+      defaultText: "",
+      theme: "facebook",
+      tokenValue: "uid"
+    });
+
+    this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
+      crossDomain: false,
+      defaultText: "",
+      theme: "facebook",
+      tokenValue: "uid"
+    });
+
+    this.$("input[name=members]").tokenInput(Routes.api_people_path(), {
+      crossDomain: false,
+      defaultText: "",
+      theme: "facebook",
+      tokenValue: "uid"
+    });
   },
 
-  render: function () {
-    var resolved = DssRm.DetermineEntityType( this.model.get('id') );
-
-    this.$el.html(JST['entities/show_' + resolved.type ]({ model: this.model }));
-    this.renderModalContents(resolved);
-
-    return this;
-  },
-
-  renderModalContents: function(resolved) {
+  render: function() {
     var self = this;
 
-    if(resolved.type == "group") {
+    if(this.resolved.type == "group") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
       self.$('input[name=name]').val(this.model.escape('name'));
@@ -33,40 +48,23 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       self.$('span#group_member_count').html(this.model.get('members').length);
 
       var owners_tokeninput = self.$("input[name=owners]");
-      owners_tokeninput.tokenInput(Routes.api_people_path(), {
-        crossDomain: false,
-        defaultText: "",
-        theme: "facebook",
-        tokenValue: "uid"
-      });
       _.each(this.model.get('owners'), function(owner) {
         owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
       });
 
       var operators_tokeninput = self.$("input[name=operators]");
-      operators_tokeninput.tokenInput(Routes.api_people_path(), {
-        crossDomain: false,
-        defaultText: "",
-        theme: "facebook",
-        tokenValue: "uid"
-      });
       _.each(this.model.get('operators'), function(operator) {
         operators_tokeninput.tokenInput("add", {uid: operator.uid, name: operator.name});
       });
 
       var members_tokeninput = self.$("input[name=members]");
-      members_tokeninput.tokenInput(Routes.api_people_path(), {
-        crossDomain: false,
-        defaultText: "",
-        theme: "facebook",
-        tokenValue: "uid"
-      });
       _.each(this.model.get('members'), function(member) {
         members_tokeninput.tokenInput("add", {uid: member.uid, name: member.name});
       });
 
       // Rules tab
       var rules_table = self.$("table#rules tbody");
+      rules_table.empty();
       _.each(this.model.get('rules'), function(rule) {
         var $rule = $(JST['entities/group_rule']());
         $rule.find("td:nth-child(1) select").val(rule.column);
@@ -75,27 +73,26 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rule.data("rule_id", rule.id);
         rules_table.append($rule);
       });
-    } else if(resolved.type == "person") {
+    } else if(this.resolved.type == "person") {
 
     }
+
+    return this;
   },
 
   save: function() {
     //this.model.set({ name: this.$('input[name=name]').val() });
     this.model.save();
-
-    return false;
   },
 
   remove_rule: function(e) {
     var rule_id = $(e.target).parents("tr").data("rule_id");
 
     this.model.set(
-      { rules: _.reject(this.model.get('rules'), function(r) { return r.id == rule_id }) },
-      { silent: false }
+      { rules: _.reject(this.model.get('rules'), function(r) { return r.id == rule_id }) }
     );
 
-    $(e.currentTarget).parents("tr.fields").remove();
+    //$(e.currentTarget).parents("tr.fields").remove();
   },
 
   cleanUpModal: function() {
