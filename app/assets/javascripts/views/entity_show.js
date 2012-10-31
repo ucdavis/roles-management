@@ -1,8 +1,11 @@
 DssRm.Views.EntityShow = Support.CompositeView.extend({
   tagName: "div",
+  className: "modal",
+  id: "entityShowModal",
 
   events: {
     "click a#apply": "save",
+    "click button#remove_group_rule": "remove_rule",
     "hidden": "cleanUpModal"
   },
 
@@ -69,6 +72,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rule.find("td:nth-child(1) select").val(rule.column);
         $rule.find("td:nth-child(2) select").val(rule.condition);
         $rule.find("td:nth-child(3) input").val(rule.value);
+        $rule.data("rule_id", rule.id);
         rules_table.append($rule);
       });
     } else if(resolved.type == "person") {
@@ -78,7 +82,20 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
   save: function() {
     //this.model.set({ name: this.$('input[name=name]').val() });
-    //this.model.save();
+    this.model.save();
+
+    return false;
+  },
+
+  remove_rule: function(e) {
+    var rule_id = $(e.target).parents("tr").data("rule_id");
+
+    this.model.set(
+      { rules: _.reject(this.model.get('rules'), function(r) { return r.id == rule_id }) },
+      { silent: false }
+    );
+
+    $(e.currentTarget).parents("tr.fields").remove();
   },
 
   cleanUpModal: function() {
