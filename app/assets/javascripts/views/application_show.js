@@ -58,6 +58,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   cleanUpModal: function() {
+    this.model.unbind('change', this.render, this);
+
     $("div#applicationShowModal").remove();
     // Need to change URL in case they want to open the same modal again
     Backbone.history.navigate("");
