@@ -5,6 +5,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
   events: {
     "click a#apply": "save",
+    "click button#group_rule_add": "add_rule",
     "click button#remove_group_rule": "remove_rule",
     "hidden": "cleanUpModal"
   },
@@ -38,6 +39,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   render: function() {
+    console.log("render called");
+
     var self = this;
 
     if(this.resolved.type == "group") {
@@ -88,6 +91,19 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     this.model.save();
 
     return false;
+  },
+
+  add_rule: function(e) {
+    var updated_rules = this.model.get('rules');
+    updated_rules.push({ column: 'ou', condition: 'is', value: '' });
+
+    this.model.set(
+      { rules: updated_rules }
+    );
+
+    this.model.trigger('change');
+
+    window.testers = this;
   },
 
   remove_rule: function(e) {
