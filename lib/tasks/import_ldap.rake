@@ -7,6 +7,8 @@ namespace :ldap do
 
     Rake::Task['environment'].invoke
 
+    Authorization.ignore_access_control(true)
+
     # Keep a log to e-mail to the admins
     log = StringIO.new
 
@@ -123,7 +125,7 @@ namespace :ldap do
             end
             p.address = entry.get_values('street').to_s[2..-3]
             p.status = true
-            p.preferred_name = entry.get_values('displayName')[0]
+            p.name = entry.get_values('displayName')[0]
 
             # A person may have multiple affiliations
             entry.get_values('ucdPersonAffiliation').each do |affiliation_name|
@@ -218,7 +220,9 @@ namespace :ldap do
                   ou.owners << manager
                 end
 
-                p.managers << manager
+                unless (manager.id == p.id) or (p.managers.include? manager)
+                  p.managers << manager
+                end
               else
                 # Dept code doesn't exist
                 unless ucdAppointmentDepartmentCode.nil?
@@ -301,11 +305,15 @@ namespace :ldap do
         WheneverMailer.ldap_report(admin.email, log.string).deliver!
       end
     end
+
+    Authorization.ignore_access_control(false)
   end
 
   desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'
   task :erase => :environment do
     if Rails.env != "production"
+      Authorization.ignore_access_control(true)
+
       Person.destroy_all
       Group.destroy_all
       RoleAssignment.destroy_all
@@ -315,7 +323,13 @@ namespace :ldap do
       PersonManagerAssignment.destroy_all
       Classification.destroy_all
       Title.destroy_all
-      TemplateAssignment.destroy_all
+      ApplicationOwnerAssignment.destroy_all
+      GroupOperatorAssignment.destroy_all
+      GroupOwnerAssignment.destroy_all
+      Student.destroy_all
+
+      Authorization.ignore_access_control(false)
+
       puts "Be sure to assign roles if you re-import the directory."
     else
       puts "This task is purposefully disabled in production mode."

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121101211510) do
+ActiveRecord::Schema.define(:version => 20121102232624) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -80,6 +80,24 @@ ActiveRecord::Schema.define(:version => 20121101211510) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
+  create_table "entities", :force => true do |t|
+    t.string   "type"
+    t.string   "name"
+    t.string   "first"
+    t.string   "last"
+    t.string   "email"
+    t.string   "loginid"
+    t.boolean  "status"
+    t.string   "phone"
+    t.string   "address"
+    t.integer  "title_id"
+    t.integer  "major_id"
+    t.string   "code"
+    t.text     "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
   create_table "group_children_assignments", :force => true do |t|
     t.integer "group_id"
     t.integer "child_id"
@@ -110,16 +128,6 @@ ActiveRecord::Schema.define(:version => 20121101211510) do
     t.integer  "group_id"
   end
 
-  create_table "groups", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "min_size"
-    t.integer  "max_size"
-    t.text     "description"
-    t.string   "code"
-  end
-
   create_table "groups_people", :id => false, :force => true do |t|
     t.integer "group_id"
     t.integer "person_id"
@@ -129,21 +137,6 @@ ActiveRecord::Schema.define(:version => 20121101211510) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
-  end
-
-  create_table "people", :force => true do |t|
-    t.string   "first"
-    t.string   "last"
-    t.string   "email"
-    t.string   "loginid"
-    t.string   "preferred_name"
-    t.boolean  "status"
-    t.string   "phone"
-    t.string   "address"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "title_id"
-    t.integer  "major_id"
   end
 
   create_table "person_manager_assignments", :force => true do |t|

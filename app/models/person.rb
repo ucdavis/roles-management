@@ -1,4 +1,4 @@
-class Person < ActiveRecord::Base
+class Person < Entity
   using_access_control
 
   belongs_to :title
@@ -26,34 +26,15 @@ class Person < ActiveRecord::Base
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :preferred_name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens, :name
+  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens, :name
   attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
 
-  def name
-      "#{first} #{last}"
-  end
-
-  def name=(str)
-    words = str.split(/\W+/)
-    unless words.length < 2
-      self.first = words[0]
-      self.last = words[1]
-    else
-      self.first = words[0]
-      self.last = ""
-    end
-  end
-
-  def uid
-    (UID_PERSON.to_s + id.to_s).to_i
-  end
-
   def self.csv_header
-    "UID,Login ID, Email, First, Last".split(',')
+    "ID,Login ID, Email, First, Last".split(',')
   end
 
   def to_csv
-    [uid, loginid, email, first, last]
+    [id, loginid, email, first, last]
   end
 
   # Compute their classifications based on their title
@@ -125,37 +106,37 @@ class Person < ActiveRecord::Base
     apps
   end
 
-  # Returns UIDs (and some additional info) of all subordinates
+  # Returns IDs (and some additional info) of all subordinates
   # and groups which this person can assign (owns and operates).
-  def manageable_uids
-    uids = []
+  def manageable_ids
+    ids = []
 
     owns.each do |group| # includes OUs
-      uids << {:uid => group.uid, :name => group.name}
+      ids << {:id => group.id, :name => group.name}
     end
     operates.each do |group|
-      uids << {:uid => group.uid, :name => group.name}
+      ids << {:id => group.id, :name => group.name}
     end
     subordinates.each do |person|
-      uids << {:uid => person.uid, :name => person.name}
+      ids << {:id => person.id, :name => person.name}
     end
 
-    uids
+    ids
   end
 
-  # FIXME: Duplicate of the above function - remove manageable_uids once the
+  # FIXME: Duplicate of the above function - remove manageable_ids once the
   # refactoring toward an Entity controller is complete
   def entities
     entities = []
 
     owns.each do |group| # includes OUs
-      entities << {:id => group.uid, :name => group.name}
+      entities << {:id => group.id, :name => group.name}
     end
     operates.each do |group|
-      entities << {:id => group.uid, :name => group.name}
+      entities << {:id => group.id, :name => group.name}
     end
     subordinates.each do |person|
-      entities << {:id => person.uid, :name => person.name}
+      entities << {:id => person.id, :name => person.name}
     end
 
     entities
@@ -221,21 +202,16 @@ class Person < ActiveRecord::Base
     syms
   end
 
-  # Exports UIDs
   def as_json(options={})
-    { :uid => ('1' + self.id.to_s).to_i, :name => self.first + " " + self.last }
-  end
-
-  def ou_tokens=(ids)
-    #self.ou_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+    { :id => self.id, :name => self.first + " " + self.last }
   end
 
   def group_tokens=(ids)
-    self.group_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+    self.group_ids = ids.split(",")
   end
 
   def subordinate_tokens=(ids)
-    ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+    ids = ids.split(",")
 
     # Remove any unmentioned IDs
     subordinates.each do |s|

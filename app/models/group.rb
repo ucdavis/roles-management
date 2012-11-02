@@ -1,7 +1,5 @@
-class Group < ActiveRecord::Base
+class Group < Entity
   using_access_control
-
-  include Uids
 
   # Group-to-group relationships
   ## Children
@@ -59,7 +57,7 @@ class Group < ActiveRecord::Base
     members += rule_members
 
     # Only return a unique list
-    members.uniq{|x| x.uid}
+    members.uniq{|x| x.id}
   end
 
   def owners
@@ -80,7 +78,7 @@ class Group < ActiveRecord::Base
     collected_owner_ids = []
 
     owners.each do |o|
-      collected_owner_ids << o.uid
+      collected_owner_ids << o.id
     end
 
     collected_owner_ids
@@ -88,12 +86,12 @@ class Group < ActiveRecord::Base
 
   # Decodes the fake AR 'owner_ids' and assigned the appropriate objects to
   # person_owners and group_owners
-  def owner_ids=(uids)
+  def owner_ids=(ids)
     self.person_owner_ids = []
     self.group_owner_ids = []
 
-    uids.each do |uid|
-      ret = determine_uid(uid)
+    ids.each do |id|
+      e = Entity.find_by_id(id)
       if ret[:type] == UID_PERSON
         p = Person.find_by_id(ret[:id])
         person_owners << p unless p.nil? or person_owners.include? p
@@ -146,13 +144,13 @@ class Group < ActiveRecord::Base
   end
 
   # An 'OU' is merely a group with a code field set (used to sync with external databases)
-  def uid
-    if code.nil?
-      (UID_GROUP.to_s + id.to_s).to_i
-    else
-      (UID_OU.to_s + id.to_s).to_i
-    end
-  end
+  #def uid
+  #  if code.nil?
+  #    (UID_GROUP.to_s + id.to_s).to_i
+  #  else
+  #    (UID_OU.to_s + id.to_s).to_i
+  #  end
+  #end
 
   # Compute accessible applications
   def applications
@@ -248,7 +246,7 @@ class Group < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :uid => ('2' + self.id.to_s).to_i, :name => self.name, :owners => self.owners, :members => self.member_tokens }
+    { :id => self.id, :name => self.name, :owners => self.owners, :members => self.member_tokens }
   end
 
   # Returns all members via resolving group rules
