@@ -7,6 +7,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     "click a#apply": "save",
     "click button#group_rule_add": "add_rule",
     "click button#remove_group_rule": "remove_rule",
+    "change table#rules select": "store_changes",
+    "change table#rules input": "store_changes",
     "hidden": "cleanUpModal"
   },
 
@@ -71,7 +73,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       // Rules tab
       var rules_table = self.$("table#rules tbody");
       rules_table.empty();
-      _.each(this.model.get('rules'), function(rule) {
+      _.each(this.model.get('rules'), function(rule, i) {
         var $rule = $(JST['entities/group_rule']());
         $rule.find("td:nth-child(1) select").val(rule.column);
         $rule.find("td:nth-child(2) select").val(rule.condition);
@@ -94,16 +96,13 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   add_rule: function(e) {
-    var updated_rules = this.model.get('rules');
-    updated_rules.push({ column: 'ou', condition: 'is', value: '' });
+    var updated_rules = _.clone(this.model.get('rules'));
+    // the false ID simply needs to be unique in case the 'remove' button is hit - our backend will provide a proper ID on saving
+    updated_rules.push({ column: 'ou', condition: 'is', value: '', id: 'new_' + Math.round((new Date()).getTime()) });
 
     this.model.set(
       { rules: updated_rules }
     );
-
-    this.model.trigger('change');
-
-    window.testers = this;
   },
 
   remove_rule: function(e) {
@@ -111,6 +110,17 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
     this.model.set(
       { rules: _.reject(this.model.get('rules'), function(r) { return r.id == rule_id }) }
+    );
+  },
+
+  store_changes: function(e) {
+    var rule_id = $(e.target).parents("tr").data("rule_id");
+    var column = $(e.target).parents("tr").children("td:nth-child(1)").find("select").val();
+    var condition = $(e.target).parents("tr").children("td:nth-child(2)").find("select").val();
+    var value = $(e.target).parents("tr").children("td:nth-child(3)").find("input").val();
+
+    this.model.set(
+      { rules: _.map(this.model.get('rules'), function(r) { if(r.id == rule_id) { r.column = column; r.condition = condition; r.value = value; }; return r; } ) }
     );
   },
 
