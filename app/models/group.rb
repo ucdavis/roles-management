@@ -28,7 +28,7 @@ class Group < ActiveRecord::Base
 
   validates :name, :presence => true
 
-  attr_accessible :name, :people_tokens, :people_ids, :description, :rules_attributes, :owner_tokens, :operator_tokens, :member_tokens, :owner_ids
+  attr_accessible :name, :members, :owners, :operators, :rules
   attr_reader :people_tokens
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true

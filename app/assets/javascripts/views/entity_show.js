@@ -41,8 +41,6 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   render: function() {
-    console.log("render called");
-
     var self = this;
 
     if(this.resolved.type == "group") {
