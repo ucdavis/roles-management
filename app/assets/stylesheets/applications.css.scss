@@ -20,6 +20,12 @@
   margin-left: 3px;
 }
 
+#cards {
+  -webkit-column-count: auto;
+  -webkit-column-width: 335px;
+  -webkit-column-gap: 10px;
+}
+
 .card {
   min-height: 25px;
   background-color: whiteSmoke;
@@ -35,12 +41,13 @@
   color: #333;
   /*float: none !important;*/
   margin: 15px;
-  margin-top: 0px;
   padding-bottom: 4px;
   padding-left: 8px;
   padding-right: 8px;
   padding-top: 4px;
   text-shadow: rgba(255, 255, 255, 0.746094) 0px 1px 1px;
+  display: inline-block !important;
+  width: 300px;
 
   .card-title {
     text-align: center;

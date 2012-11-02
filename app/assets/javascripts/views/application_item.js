@@ -1,6 +1,6 @@
 DssRm.Views.ApplicationItem = Support.CompositeView.extend({
   tagName: "div",
-  className: "card span4",
+  className: "card",
 
   initialize: function() {
     _.bindAll(this, "render");
