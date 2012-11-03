@@ -1,7 +1,7 @@
 class PeopleController < ApplicationController
   before_filter :load_person, :only => [:show]
   filter_access_to :all
-  
+
   # GET /people
   def index
     @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
@@ -28,12 +28,12 @@ class PeopleController < ApplicationController
   # GET /people/new
   def new
     require 'ldap'
-    
+
     @person = Person.new
 
     if params[:loginid]
       @person.loginid = params[:loginid]
-      
+
       # Search via LDAP
       # Retrieve LDAP passwords from config/database.yml
       ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ldap']
@@ -42,7 +42,7 @@ class PeopleController < ApplicationController
       conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )
       conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
       conn.bind(dn = ldap_settings['base_dn'], password = ldap_settings['base_pw'] )
-      
+
       # Search!
       conn.search('ou=People,dc=ucdavis,dc=edu', LDAP::LDAP_SCOPE_SUBTREE, '(uid=' + params[:loginid] + ')') do |entry|
         @person.first = entry.get_values('givenName').to_s[2..-3]
@@ -53,9 +53,9 @@ class PeopleController < ApplicationController
           @person.phone = @person.phone.sub("+1 ", "").gsub(" ", "") # clean up number
         end
         @person.address = entry.get_values('street').to_s[2..-3]
-        @person.preferred_name = @person.first + " " + @person.last
+        @person.name = @person.first + " " + @person.last
       end
-      
+
     end
 
     respond_to do |format|
@@ -66,7 +66,7 @@ class PeopleController < ApplicationController
   # GET /people/1/edit
   def edit
     @person = Person.find_by_id(params[:id])
-    
+
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded edit page for #{params[:id]}."
   end
 
@@ -106,7 +106,7 @@ class PeopleController < ApplicationController
   def destroy
     @person = Person.find_by_id(params[:id])
     @person.destroy!
-    
+
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted person #{params[:id]}."
 
     respond_to do |format|
@@ -115,7 +115,7 @@ class PeopleController < ApplicationController
   end
 
   protected
-  
+
   def load_person
     if _permitted_to? :show, :people
       @person = Person.find_by_id(params[:id])

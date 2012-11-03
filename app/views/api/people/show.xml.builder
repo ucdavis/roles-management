@@ -4,7 +4,7 @@ xml.person do
   xml.id '1' + @person.id.to_s
   xml.first @person.first
   xml.last @person.last
-  xml.preferred @person.preferred_name
+  xml.name @person.name
   xml.email @person.email
   xml.phone @person.phone
   xml.address @person.address

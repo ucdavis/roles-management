@@ -5,12 +5,10 @@ class Api::PeopleController < Api::BaseController
 
     case adapter
     when :sqlite3
-      @people = Person.where("first like ? or last like ? or " + db_concat(:first, ' ', :last) + " like ? or preferred_name like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
+      @people = Person.where("first like ? or last like ? or " + db_concat(:first, ' ', :last) + " like ? or name like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
     else
-      @people = Person.where("first ilike ? or last ilike ? or " + db_concat(:first, ' ', :last) + " ilike ? or preferred_name ilike ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
+      @people = Person.where("first ilike ? or last ilike ? or " + db_concat(:first, ' ', :last) + " ilike ? or name ilike ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
     end
-
-    #@people = Person.where("first like ? or last like ? or preferred_name like ?", "%#{params[:q]}%", "%#{params[:q]}%", "%#{params[:q]}%")
 
     @people.map()
 
