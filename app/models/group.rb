@@ -14,7 +14,8 @@ class Group < Entity
   has_many :role_assignments, :dependent => :destroy
   has_many :roles, :through => :role_assignments
 
-  has_many :owners, :through => :group_owner_assignments, :source => :entity
+  has_many :group_owner_assignments
+  has_many :owners, :through => :group_owner_assignments, :source => "entity", :dependent => :destroy
 
   has_many :person_operators, :class_name => "Person", :through => :group_operator_assignments, :source => :operator_person
   has_many :group_operators, :class_name => "Group", :through => :group_operator_assignments, :source => :operator_group
