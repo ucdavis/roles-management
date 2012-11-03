@@ -2,8 +2,11 @@
 
 object @entity
 
-attribute :uid => :id
-attributes :created_at, :name
+attributes :id, :created_at, :name
+
+node :type do |e|
+  e.type.downcase
+end
 
 if ((defined? @entity.members) != nil)
   child @entity.members => :members do
@@ -13,13 +16,13 @@ end
 
 if ((defined? @entity.owners) != nil)
   child @entity.owners => :owners do
-    attributes :uid, :loginid, :name
+    attributes :id, :loginid, :name
   end
 end
 
 if ((defined? @entity.operators) != nil)
   child @entity.operators => :operators do
-    attributes :uid, :loginid, :name
+    attributes :id, :loginid, :name
   end
 end
 

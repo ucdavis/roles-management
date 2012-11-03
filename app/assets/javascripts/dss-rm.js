@@ -18,16 +18,6 @@ window.DssRm = {
       Backbone.history.start();
       Backbone.history.started = true;
     }
-  },
-
-  DetermineEntityType: function(uid) {
-    uid = String(uid); // cast, just in case
-    switch(uid[0]) {
-      case '1': return { id: uid.split(2)[1], type: 'person' };
-      case '2': return { id: uid.split(2)[1], type: 'group' };
-    }
-
-    return "";
   }
 };
 

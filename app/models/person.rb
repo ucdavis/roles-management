@@ -178,7 +178,7 @@ class Person < Entity
 
   # Returns all groups owned by this person (see 'manages' for people)
   def owns
-    group_owner_assignments.includes(:group).where(:owner_person_id => id).map{|x| x.group}
+    group_owner_assignments.includes(:group).where(:entity_id => id).map{|x| x.group}
   end
 
   # Returns all groups operated by this person (see 'manages' for people, 'owns' for group ownerships)

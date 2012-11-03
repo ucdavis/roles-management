@@ -15,35 +15,31 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   initialize: function() {
     this.model.bind('change', this.render, this);
 
-    this.resolved = DssRm.DetermineEntityType( this.model.get('id') );
-    this.$el.html(JST['entities/show_' + this.resolved.type ]({ model: this.model }));
+    this.$el.html(JST['entities/show_' + this.model.get('type') ]({ model: this.model }));
 
     this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
-      theme: "facebook",
-      tokenValue: "uid"
+      theme: "facebook"
     });
 
     this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
-      theme: "facebook",
-      tokenValue: "uid"
+      theme: "facebook"
     });
 
     this.$("input[name=members]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
-      theme: "facebook",
-      tokenValue: "uid"
+      theme: "facebook"
     });
   },
 
   render: function() {
     var self = this;
 
-    if(this.resolved.type == "group") {
+    if(this.model.get('type') == "group") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
       self.$('input[name=name]').val(this.model.escape('name'));
@@ -53,19 +49,19 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       var owners_tokeninput = self.$("input[name=owners]");
       owners_tokeninput.tokenInput("clear");
       _.each(this.model.get('owners'), function(owner) {
-        owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
+        owners_tokeninput.tokenInput("add", {id: owner.id, name: owner.name});
       });
 
       var operators_tokeninput = self.$("input[name=operators]");
       operators_tokeninput.tokenInput("clear");
       _.each(this.model.get('operators'), function(operator) {
-        operators_tokeninput.tokenInput("add", {uid: operator.uid, name: operator.name});
+        operators_tokeninput.tokenInput("add", {id: operator.id, name: operator.name});
       });
 
       var members_tokeninput = self.$("input[name=members]");
       members_tokeninput.tokenInput("clear");
       _.each(this.model.get('members'), function(member) {
-        members_tokeninput.tokenInput("add", {uid: member.uid, name: member.name});
+        members_tokeninput.tokenInput("add", {id: member.id, name: member.name});
       });
 
       // Rules tab
@@ -79,7 +75,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rule.data("rule_id", rule.id);
         rules_table.append($rule);
       });
-    } else if(this.resolved.type == "person") {
+    } else if(this.model.get('type') == "person") {
 
     }
 
