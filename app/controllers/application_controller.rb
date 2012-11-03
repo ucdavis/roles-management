@@ -1,6 +1,5 @@
 class ApplicationController < ActionController::Base
   include Authentication
-  include Uids
   helper :all
   protect_from_forgery
 

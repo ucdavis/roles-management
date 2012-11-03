@@ -14,9 +14,7 @@ class Group < Entity
   has_many :role_assignments, :dependent => :destroy
   has_many :roles, :through => :role_assignments
 
-  has_many :person_owners, :class_name => "Person", :through => :group_owner_assignments, :source => :owner_person
-  has_many :group_owners, :class_name => "Group", :through => :group_owner_assignments, :source => :owner_group
-  has_many :group_owner_assignments, :dependent => :destroy
+  has_many :owners, :through => :group_owner_assignments, :source => :entity
 
   has_many :person_operators, :class_name => "Person", :through => :group_operator_assignments, :source => :operator_person
   has_many :group_operators, :class_name => "Group", :through => :group_operator_assignments, :source => :operator_group
@@ -60,48 +58,6 @@ class Group < Entity
     members.uniq{|x| x.id}
   end
 
-  def owners
-    # Just avoiding the name 'owners' again
-    collected_owners = []
-
-    person_owners.each do |p|
-      collected_owners << p
-    end
-    group_owners.each do |g|
-      collected_owners << g
-    end
-
-    collected_owners
-  end
-
-  def owner_ids
-    collected_owner_ids = []
-
-    owners.each do |o|
-      collected_owner_ids << o.id
-    end
-
-    collected_owner_ids
-  end
-
-  # Decodes the fake AR 'owner_ids' and assigned the appropriate objects to
-  # person_owners and group_owners
-  def owner_ids=(ids)
-    self.person_owner_ids = []
-    self.group_owner_ids = []
-
-    ids.each do |id|
-      e = Entity.find_by_id(id)
-      if ret[:type] == UID_PERSON
-        p = Person.find_by_id(ret[:id])
-        person_owners << p unless p.nil? or person_owners.include? p
-      elsif ret[:type] == UID_GROUP
-        g = Group.find_by_id(ret[:id])
-        group_owners << g unless g.nil? or group_owners.include? g
-      end
-    end
-  end
-
   def operators
     collected_operators = []
 
@@ -119,7 +75,7 @@ class Group < Entity
     collected_operator_ids = []
 
     operators.each do |o|
-      collected_operator_ids << o.uid
+      collected_operator_ids << o.id
     end
 
     collected_operator_ids
@@ -127,30 +83,19 @@ class Group < Entity
 
   # Decodes the fake AR 'operator_ids' and assigned the appropriate objects to
   # person_operators and group_operators
-  def operator_ids=(uids)
+  def operator_ids=(ids)
     self.person_operator_ids = []
     self.group_operator_ids = []
 
-    uids.each do |uid|
-      ret = determine_uid(uid)
-      if ret[:type] == UID_PERSON
-        p = Person.find_by_id(ret[:id])
-        person_operators << p unless p.nil? or person_operators.include? p
-      elsif ret[:type] == UID_GROUP
-        g = Group.find_by_id(ret[:id])
-        group_operators << g unless g.nil? or group_operators.include? g
+    ids.each do |id|
+      e = Entity.find_by_id(id)
+      if e.type == "Person"
+        person_operators << e unless e.nil? or person_operators.include? e
+      elsif e.type == "Group"
+        group_operators << e unless e.nil? or group_operators.include? e
       end
     end
   end
-
-  # An 'OU' is merely a group with a code field set (used to sync with external databases)
-  #def uid
-  #  if code.nil?
-  #    (UID_GROUP.to_s + id.to_s).to_i
-  #  else
-  #    (UID_OU.to_s + id.to_s).to_i
-  #  end
-  #end
 
   # Compute accessible applications
   def applications
@@ -183,11 +128,11 @@ class Group < Entity
     resolved_members += rule_members
 
     # Unique members only
-    explicit_members = explicit_members.uniq{|x| x.uid}
-    resolved_members = resolved_members.uniq{|x| x.uid}
+    explicit_members = explicit_members.uniq{|x| x.id}
+    resolved_members = resolved_members.uniq{|x| x.id}
 
-    result = resolved_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => true, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
-    result += explicit_members.map{ |x| { :uid => ('1' + x.id.to_s).to_i, :name => x.name, :readonly => false, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
+    result = resolved_members.map{ |x| { :id => x.id, :name => x.name, :readonly => true, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
+    result += explicit_members.map{ |x| { :id => x.id, :name => x.name, :readonly => false, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
 
     result
   end
@@ -196,7 +141,6 @@ class Group < Entity
     owner_ids
   end
 
-  # Takes UIDs
   def owner_tokens=(ids)
     self.owner_ids = ids.split(",")
   end
@@ -205,7 +149,6 @@ class Group < Entity
     operator_ids
   end
 
-  # Takes UIDs
   def operator_tokens=(ids)
     self.operator_ids = ids.split(",")
   end
@@ -214,7 +157,6 @@ class Group < Entity
     self.person_ids = ids.split(",")
   end
 
-  # Takes UIDs
   def member_tokens=(ids)
     # Members can be people or groups, so we have to do some processing
     member_ids = ids.split(",")
@@ -226,7 +168,7 @@ class Group < Entity
     # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
     r_members = []
     rule_members.each do |r|
-      r_members += [r.uid]
+      r_members += [r.id]
     end
 
     member_ids.each do |id|

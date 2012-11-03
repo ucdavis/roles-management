@@ -16,8 +16,6 @@ class Person < Entity
   has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
 
-  has_many :group_owner_assignments, :foreign_key => "owner_person_id"
-
   has_many :group_operator_assignments, :foreign_key => "operator_person_id"
 
   has_one :student
