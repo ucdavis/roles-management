@@ -13,6 +13,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   initialize: function() {
+    var self = this;
+
     this.model.bind('change', this.render, this);
 
     this.$el.html(JST['entities/show_' + this.model.get('type') ]({ model: this.model }));
@@ -20,19 +22,58 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
-      theme: "facebook"
+      theme: "facebook",
+      onAdd: function(item) {
+        var owners = self.model.get('owners');
+        if (! _.find(owners, function(i) { return i.id == item.id })) {
+          // onAdd is triggered by the .tokenInput("add") lines in render,
+          // so we need to ensure this actually is a new item
+          owners.push(item);
+          self.model.set('owners', owners);
+        }
+      },
+      onDelete: function(item) {
+        var owners = _.filter(self.model.get('owners'), function(owner) { return owner.id != item.id });
+        self.model.set('owners', owners);
+      }
     });
 
     this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
-      theme: "facebook"
+      theme: "facebook",
+      onAdd: function(item) {
+        var operators = self.model.get('operators');
+        if (! _.find(operators, function(i) { return i.id == item.id })) {
+          // onAdd is triggered by the .tokenInput("add") lines in render,
+          // so we need to ensure this actually is a new item
+          operators.push(item);
+          self.model.set('operators', operators);
+        }
+      },
+      onDelete: function(item) {
+        var operators = _.filter(self.model.get('operators'), function(operator) { return operator.id != item.id });
+        self.model.set('operators', operators);
+      }
     });
 
     this.$("input[name=members]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
-      theme: "facebook"
+      theme: "facebook",
+      onAdd: function(item) {
+        var members = self.model.get('members');
+        if (! _.find(members, function(i) { return i.id == item.id })) {
+          // onAdd is triggered by the .tokenInput("add") lines in render,
+          // so we need to ensure this actually is a new item
+          members.push(item);
+          self.model.set('members', members);
+        }
+      },
+      onDelete: function(item) {
+        var members = _.filter(self.model.get('members'), function(member) { return member.id != item.id });
+        self.model.set('members', members);
+      }
     });
   },
 
@@ -105,6 +146,11 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     this.model.set(
       { rules: _.reject(this.model.get('rules'), function(r) { return r.id == rule_id }) }
     );
+  },
+
+  updateOwnersFromDOM: function(item) {
+    console.log("owners updated");
+    console.log(item);
   },
 
   store_changes: function(e) {

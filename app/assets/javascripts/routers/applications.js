@@ -42,7 +42,6 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     entity.fetch({
       success: function() {
         var view = new DssRm.Views.EntityShow({ model: entity });
-        console.log(entity);
         entitiesRouter.currentView.renderChild(view);
         view.$el.modal();
       }
