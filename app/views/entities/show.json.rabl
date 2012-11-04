@@ -2,7 +2,7 @@
 
 object @entity
 
-attributes :id, :created_at, :name
+attributes :id, :name
 
 node :type do |e|
   e.type.downcase

@@ -25,7 +25,7 @@ class Group < Entity
 
   validates :name, :presence => true
 
-  attr_accessible :name, :members, :owners, :operators, :rules
+  attr_accessible :name, :description, :members, :owners, :operators, :rules
   attr_reader :people_tokens
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true

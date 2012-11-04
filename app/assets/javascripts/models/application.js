@@ -25,7 +25,5 @@ DssRm.Models.Application = Backbone.Model.extend({
       return { owner_id: owner.id };
     });
     return json;
-  },
-
-  urlRoot: '/applications'
+  }
 });

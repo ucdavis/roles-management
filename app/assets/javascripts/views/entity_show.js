@@ -5,10 +5,10 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
   events: {
     "click a#apply": "save",
-    "click button#group_rule_add": "add_rule",
-    "click button#remove_group_rule": "remove_rule",
-    "change table#rules select": "store_changes",
-    "change table#rules input": "store_changes",
+    "click button#group_rule_add": "addRule",
+    "click button#remove_group_rule": "removeRule",
+    "change table#rules select": "storeRuleChanges",
+    "change table#rules input": "storeRuleChanges",
     "hidden": "cleanUpModal"
   },
 
@@ -124,13 +124,15 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   save: function(e) {
-    //this.model.set({ name: this.$('input[name=name]').val() });
+    this.model.set({ name: this.$('input[name=name]').val() });
+    this.model.set({ description: this.$('textarea[name=description]').val() });
+
     this.model.save();
 
     return false;
   },
 
-  add_rule: function(e) {
+  addRule: function(e) {
     var updated_rules = _.clone(this.model.get('rules'));
     // the false ID simply needs to be unique in case the 'remove' button is hit - our backend will provide a proper ID on saving
     updated_rules.push({ column: 'ou', condition: 'is', value: '', id: 'new_' + Math.round((new Date()).getTime()) });
@@ -140,7 +142,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     );
   },
 
-  remove_rule: function(e) {
+  removeRule: function(e) {
     var rule_id = $(e.target).parents("tr").data("rule_id");
 
     this.model.set(
@@ -153,7 +155,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     console.log(item);
   },
 
-  store_changes: function(e) {
+  // Copies values off the DOM into this.model
+  storeRuleChanges: function(e) {
     var rule_id = $(e.target).parents("tr").data("rule_id");
     var column = $(e.target).parents("tr").children("td:nth-child(1)").find("select").val();
     var condition = $(e.target).parents("tr").children("td:nth-child(2)").find("select").val();

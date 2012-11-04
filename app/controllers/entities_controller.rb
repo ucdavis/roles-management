@@ -2,8 +2,6 @@ class EntitiesController < ApplicationController
   filter_access_to :all
   respond_to :json
 
-  #wrap_parameters :entity #, :include => [:members]
-
   def index
     @entities = current_user.manageable_uids
   end

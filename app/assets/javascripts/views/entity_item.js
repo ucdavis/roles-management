@@ -2,7 +2,7 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
   tagName: "li",
 
   initialize: function() {
-    _.bindAll(this, "render");
+    this.model.bind('change', this.render, this);
   },
 
   render: function () {
