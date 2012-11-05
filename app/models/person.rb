@@ -5,7 +5,8 @@ class Person < Entity
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
 
-  has_and_belongs_to_many :groups, :uniq => true
+  has_and_belongs_to_many :groups, :foreign_key => "entity_id", :join_table => :entities_groups, :uniq => true
+
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
 
   has_many :person_manager_assignments, :dependent => :destroy
@@ -16,7 +17,7 @@ class Person < Entity
   has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
 
-  has_many :group_operator_assignments, :foreign_key => "operator_person_id"
+  has_many :group_operator_assignments, :foreign_key => "entity_id"
 
   has_one :student
 
@@ -60,7 +61,7 @@ class Person < Entity
         end
 
         # Add roles implicitly assigned via groups
-        RoleAssignment.where(:group_id => groups, :role_id => Application.find_by_name("DSS Roles Management").roles).each do |assignment|
+        RoleAssignment.where(:entity_id => groups, :role_id => Application.find_by_name("DSS Roles Management").roles).each do |assignment|
           roles << assignment.role
         end
       when :all
@@ -122,24 +123,6 @@ class Person < Entity
     ids
   end
 
-  # FIXME: Duplicate of the above function - remove manageable_ids once the
-  # refactoring toward an Entity controller is complete
-  def entities
-    entities = []
-
-    owns.each do |group| # includes OUs
-      entities << {:id => group.id, :name => group.name}
-    end
-    operates.each do |group|
-      entities << {:id => group.id, :name => group.name}
-    end
-    subordinates.each do |person|
-      entities << {:id => person.id, :name => person.name}
-    end
-
-    entities
-  end
-
   # Compute accessible applications
   def applications
     apps = []
@@ -183,7 +166,7 @@ class Person < Entity
 
   # Returns all groups operated by this person (see 'manages' for people, 'owns' for group ownerships)
   def operates
-    group_operator_assignments.includes(:group).where(:operator_person_id => id).map{|x| x.group}
+    group_operator_assignments.includes(:group).where(:entity_id => id).map{ |x| x.group }
   end
 
   # ACL symbols
