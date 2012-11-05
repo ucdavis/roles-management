@@ -1,15 +1,7 @@
 class Group < Entity
   using_access_control
 
-  # Group-to-group relationships
-  ## Children
-  has_many :group_children_assignments, :dependent => :destroy
-  has_many :children, :through => :group_children_assignments
-  ## Parents
-  has_many :group_parent_assignment, :class_name => "GroupChildrenAssignment", :foreign_key => "child_id", :dependent => :destroy
-  has_many :parents, :through => :group_parent_assignment, :source => :group
-
-  has_and_belongs_to_many :people
+  has_and_belongs_to_many :entities
 
   has_many :role_assignments, :foreign_key => "entity_id"
   has_many :roles, :through => :role_assignments, :dependent => :destroy
@@ -25,7 +17,7 @@ class Group < Entity
   validates :name, :presence => true
 
   attr_accessible :name, :description, :members, :owners, :operators, :rules
-  attr_reader :people_tokens
+  attr_reader :entities_tokens
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
 
@@ -35,19 +27,13 @@ class Group < Entity
   def members(flatten = false)
     members = []
 
-    # Include all people
-    people.each do |p|
-      members << p
-    end
-
-    # Include all children
-    children.each do |g|
-      if flatten
-        g.members(true).each do |p|
-          members << p
+    entities.each do |e|
+      if flatten and e.type == "Group"
+        e.members(true).each do |m|
+          members << m
         end
       else
-        members << g
+        members << e
       end
     end
 
@@ -75,14 +61,8 @@ class Group < Entity
     explicit_members = []
     resolved_members = []
 
-    # Include all people
-    people.each do |p|
-      explicit_members << p
-    end
-
-    # Include all children
-    children.each do |g|
-      explicit_members << g
+    entities.each do |e|
+      explicit_members << e
     end
 
     # Include members via rules
@@ -114,17 +94,15 @@ class Group < Entity
     self.operator_ids = ids.split(",")
   end
 
-  def people_tokens=(ids)
-    self.person_ids = ids.split(",")
+  def entities_tokens=(ids)
+    self.entity_ids = ids.split(",")
   end
 
   def member_tokens=(ids)
-    # Members can be people or groups, so we have to do some processing
     member_ids = ids.split(",")
 
     # We'll build these lists and assign them at the end
-    p_ids = []
-    g_ids = []
+    e_ids = []
 
     # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
     r_members = []
@@ -133,19 +111,12 @@ class Group < Entity
     end
 
     member_ids.each do |id|
-      if(id[0] == '1')
-        # Person
-        unless r_members.include? id[1..-1].to_i
-          p_ids << id[1..-1]
-        end
-      elsif(id[0] == '2')
-        # Group
-        g_ids << id[1..-1]
+      unless r_members.include? id
+        p_ids << id
       end
     end
 
-    self.person_ids = p_ids
-    self.child_ids = g_ids
+    self.entity_ids = e_ids
   end
 
   def as_json(options={})
