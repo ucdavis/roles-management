@@ -51,34 +51,6 @@ You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
 in case this README neglects any configuration details.
 
 == Technical Notes
-=== Universal ID Convention
-There's an important convention regarding the polymorphism of people, groups,
-and OUs. For various reasons, we need a global ID for these objects, but the
-schema doesn't provide for one. The convention is very simple: a leading digit
-is placed in front of the actual ID (regardless of whether it's a person,
-group, or OU) to indicate which it is:
-
-  Leading digit
-  -------------
-  1 = person
-  2 = group
-  3 = OU
-  4 = application (not usually exposed)
-
-You almost never need to know this if you properly query against the RESTful
-API, e.g., /api/search.json will return IDs in this convention, and
-/api/resolve.json will accept them and work just fine.
-
-If you are adding anything to /api, be sure to follow this convention for all
-output.
-
-To keep things clear, these UIDs are presumed to be the ID given unless you're
-working directly in the model's class. If you are unsure if a function uses
-the UID correctly, simply look the individual or group up in the database and
-see if a prefix has been added.
-
-The file config/initializers/uid_conventions.rb also contains this information.
-
 === Mandatory vs Default Roles
 A role (permission template) has both a default and mandatory boolean.
 

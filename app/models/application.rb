@@ -22,12 +22,8 @@ class Application < ActiveRecord::Base
       self.ou_ids = ids.split(",")
   end
 
-  def uid
-    (UID_APPLICATION.to_s + id.to_s).to_i
-  end
-
   def self.csv_header
-    "Role,UID,Login ID, Email, First, Last".split(',')
+    "Role,ID,Login ID, Email, First, Last".split(',')
   end
 
   def owner_tokens
@@ -39,21 +35,15 @@ class Application < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :roles => self.roles, :uids => self.uids, :description => self.description, :owners => self.owners }
+    { :id => self.id, :name => self.name, :roles => self.roles, :ids => self.ids, :description => self.description, :owners => self.owners }
   end
 
-  # Returns all UIDs associated with this app (via roles)
-  def uids
-    uids = []
+  # Returns all IDs associated with this app (via roles)
+  def ids
+    ids = roles.collect{ |x| x.entities }.flatten
 
-    # People assigned via roles
-    uids += roles.collect{ |x| x.people }.flatten.collect { |x| '1' + x.id.to_s }
-
-    # Groups assigned via roles
-    uids += roles.collect{ |r| r.groups }.flatten.collect{ |g| '2' + g.id.to_s }
-
-    # Return without duplicates
-    uids.inject([]) { |result,h| result << h unless result.include?(h); result }
+    # No duplicates
+    ids.inject([]) { |result,h| result << h unless result.include?(h); result }
   end
 
   private

@@ -2,7 +2,7 @@
 
 <script type="text/json" id="bootstrap">
   {
-    "entities": <%= current_user.entities.to_json %>,
+    "entities": <%= current_user.manageable_ids.to_json %>,
     "applications": <%= current_user.manageable_applications.to_json %>
   }
 </script>
