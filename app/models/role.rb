@@ -6,38 +6,27 @@ class Role < ActiveRecord::Base
   validate :must_own_associated_application
 
   has_many :role_assignments, :dependent => :destroy
-  has_many :people, :through => :role_assignments
-  has_many :groups, :through => :role_assignments
+  has_many :entities, :through => :role_assignments
   after_save :sync_ad
 
   belongs_to :application
 
-  attr_accessible :token, :people_tokens, :people_ids, :default, :group_tokens, :descriptor, :description, :ad_path
-  attr_reader :people_tokens, :group_tokens
+  attr_accessible :token, :entities_tokens, :default, :descriptor, :description, :ad_path
+  attr_reader :entity_tokens
 
-  def uids
-    uids = []
-
-    uids += self.person_ids.map{ |x| '1' + x.to_s }
-    uids += self.group_ids.map{ |x| '2' + x.to_s }
-  end
-
-  def people_tokens=(ids)
-    self.person_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
-  end
-  def group_tokens=(ids)
-    self.group_ids = ids.split(",").collect { |x| x[1..-1] } # cut off the UID (see README)
+  def entities_tokens=(ids)
+    self.entity_ids = ids.split(",")
   end
 
   def as_json(options={})
-    { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :uids => self.uids }
+    { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :entities => self.entities }
   end
 
   def to_csv
     data = []
 
     members.each do |m|
-      data << [token, m.uid, m.loginid, m.email, m.first, m.last]
+      data << [token, m.id, m.loginid, m.email, m.first, m.last]
     end
 
     return data
@@ -52,10 +41,10 @@ class Role < ActiveRecord::Base
     all = []
 
     # Add all people
-    all += people
+    all += entities.where(:type => "Person")
 
     # Add all (flattened) groups
-    groups.each do |group|
+    entities.where(:type => "Group").each do |group|
       all += group.members(true)
     end
 
@@ -67,7 +56,7 @@ class Role < ActiveRecord::Base
     end
 
     # Return a unique list
-    all.uniq{ |x| x.uid }
+    all.uniq{ |x| x.id }
   end
 
   # Syncronizes with AD

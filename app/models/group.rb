@@ -11,15 +11,14 @@ class Group < Entity
 
   has_and_belongs_to_many :people
 
-  has_many :role_assignments, :dependent => :destroy
-  has_many :roles, :through => :role_assignments
+  has_many :role_assignments, :foreign_key => "entity_id"
+  has_many :roles, :through => :role_assignments, :dependent => :destroy
 
   has_many :group_owner_assignments
   has_many :owners, :through => :group_owner_assignments, :source => "entity", :dependent => :destroy
 
-  has_many :person_operators, :class_name => "Person", :through => :group_operator_assignments, :source => :operator_person
-  has_many :group_operators, :class_name => "Group", :through => :group_operator_assignments, :source => :operator_group
-  has_many :group_operator_assignments, :dependent => :destroy
+  has_many :group_operator_assignments
+  has_many :operators, :through => :group_operator_assignments, :source => "entity", :dependent => :destroy
 
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
 
@@ -57,45 +56,6 @@ class Group < Entity
 
     # Only return a unique list
     members.uniq{|x| x.id}
-  end
-
-  def operators
-    collected_operators = []
-
-    person_operators.each do |p|
-      collected_operators << p
-    end
-    group_operators.each do |g|
-      collected_operators << g
-    end
-
-    collected_operators
-  end
-
-  def operator_ids
-    collected_operator_ids = []
-
-    operators.each do |o|
-      collected_operator_ids << o.id
-    end
-
-    collected_operator_ids
-  end
-
-  # Decodes the fake AR 'operator_ids' and assigned the appropriate objects to
-  # person_operators and group_operators
-  def operator_ids=(ids)
-    self.person_operator_ids = []
-    self.group_operator_ids = []
-
-    ids.each do |id|
-      e = Entity.find_by_id(id)
-      if e.type == "Person"
-        person_operators << e unless e.nil? or person_operators.include? e
-      elsif e.type == "Group"
-        group_operators << e unless e.nil? or group_operators.include? e
-      end
-    end
   end
 
   # Compute accessible applications

@@ -6,7 +6,7 @@ class Person < Entity
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
 
   has_and_belongs_to_many :groups, :uniq => true
-  has_many :role_assignments, :dependent => :destroy
+  has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
 
   has_many :person_manager_assignments, :dependent => :destroy
   has_many :managers, :through => :person_manager_assignments
@@ -82,7 +82,7 @@ class Person < Entity
   end
 
   def roles_by_application(application_id)
-    Role.includes(:role_assignments).where(:application_id => application_id, :role_assignments => { :person_id => self.id } ).map{ |x| x.token }
+    Role.includes(:role_assignments).where(:application_id => application_id, :role_assignments => { :entity_id => self.id } ).map{ |x| x.token }
   end
 
   def roles_by_api_key(api_key_id)
