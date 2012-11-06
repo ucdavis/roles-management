@@ -3,6 +3,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   initialize: function() {
+    var self = this;
+
     this.applications = this.options.applications;
     this.entities = this.options.entities;
 
@@ -10,32 +12,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
-    this.$("#search_entities").typeahead({
-      source: function(query, maxResults, callback) {
-        console.log("source");
-        // Populate the search drop down
-        if(query.length >= 3) {
-          $.ajax({ url: Routes.api_search_path(), data: { q: query }, type: 'GET' }).always(function(data) {
-            entities = [];
-            var exact_match_found = false;
-            _.each(data, function(entity) {
-              if(query.toLowerCase() == entity.name.toLowerCase()) exact_match_found = true;
-              entities.push({id: entity.uid, label: entity.name });
-            });
-
-            if(exact_match_found == false) {
-              // Add the option to create a new one with this query
-              entities.push({id: -1, label: "Add Person " + query});
-              entities.push({id: -2, label: "Create Group " + query});
-            }
-
-            callback(entities);
-          });
-        }
-      },
-      valueField: 'id',
-      labelField: 'label'
-    });
+    this.$("#sidebar_search").typeahead({ source: self.sidebar_search });
   },
 
   render: function () {
@@ -53,5 +30,27 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     });
 
     return this;
+  },
+
+  // Populates the sidebar search with results via async call to Routes.api_search_path()
+  sidebar_search: function(query, process) {
+    if(query.length >= 3) {
+      $.ajax({ url: Routes.api_search_path(), data: { q: query }, type: 'GET' }).always(function(data) {
+        entities = [];
+        var exact_match_found = false;
+        _.each(data, function(entity) {
+          if(query.toLowerCase() == entity.name.toLowerCase()) exact_match_found = true;
+          entities.push(entity.name);
+        });
+
+        if(exact_match_found == false) {
+          // Add the option to create a new one with this query
+          entities.push("Add Person " + query);
+          entities.push("Create Group " + query);
+        }
+
+        process(entities);
+      });
+    }
   }
 });
