@@ -25,7 +25,7 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :first, :last, :loginid, :email, :phone, :status, :address, :name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens, :name
+  attr_accessible :name, :first, :last, :loginid, :email, :phone, :status, :address, :name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens
   attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
 
   def self.csv_header

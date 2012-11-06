@@ -20,6 +20,7 @@ class Group < Entity
   attr_reader :entities_tokens
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
+  accepts_nested_attributes_for :owners, :operators
 
   # Calculates all members, including those defined via rules.
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.

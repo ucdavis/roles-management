@@ -80,7 +80,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
       break;
       case DssRm.Views.ApplicationsIndex.FID_CREATE_GROUP:
-        self.entities.add({ name: label.slice(13) }); // slice(13) is removing the "Create Group " prefix
+        self.entities.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
       break;
     }
   }
