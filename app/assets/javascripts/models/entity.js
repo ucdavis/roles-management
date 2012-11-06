@@ -28,9 +28,6 @@ DssRm.Models.Entity = Backbone.Model.extend({
     json.owners_attributes = this.owners.map(function(owner) {
       return { owner_id: owner.id };
     });
-    //json.owners_attributes = this.owners.map(function(owner) {
-      //return { owner_id: owner.id };
-    //});
     return json;
   }
 });
