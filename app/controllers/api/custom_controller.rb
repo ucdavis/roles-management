@@ -17,20 +17,20 @@ class Api::CustomController < Api::BaseController
       end
 
       if authenticated_via? :cas_user
-        visible_uids = current_user.manageable_uids.map{ |x| x[:uid] }
+        visible_ids = current_user.manageable_ids.map{ |x| x[:id] }
       else
-        visible_uids = nil
+        visible_ids = nil
       end
 
       @people.each do |person|
-        @results << {:uid => (UID_PERSON_S + person.id.to_s).to_i, :name => person.first + ' ' + person.last }
+        @results << {:id => person.id, :name => person.first + ' ' + person.last }
       end
       @groups.each do |group|
-        g = {:uid => (UID_GROUP_S + group.id.to_s).to_i, :name => group.name }
-        if visible_uids
-          # If visible_uids exists, it means a user (as opposed to an application) is performing a search.
+        g = {:id => group.id, :name => group.name }
+        if visible_ids
+          # If visible_ids exists, it means a user (as opposed to an application) is performing a search.
           # We need to filter the results in this case.
-          if visible_uids.include? g[:uid]
+          if visible_ids.include? g[:id]
             @results << g
           end
         else
@@ -52,32 +52,28 @@ class Api::CustomController < Api::BaseController
   def resolve
     @entities = []
 
-    unless params[:uids].nil?
-      uids = params[:uids].split(",")
+    unless params[:ids].nil?
+      ids = params[:ids].split(",")
       flatten = params.has_key? :flatten
       include_applications = params.has_key? :applications
 
-      uids.each do |uid|
-        id = uid[1..-1] # remove leading integer (indicates which object, see README Technical Notes)
-        case uid.first.to_i
-        when 1
-          p = Person.find_by_id(id)
-          unless p.nil?
-            p_entity = {:name => p.first + ' ' + p.last, :uid => uid, :email => p.email}
-            include_applications ? p_entity.merge!({:applications => p.applications}) : nil
-            @entities << p_entity
-          end
-        when 2
-          g = Group.find_by_id(id)
-          unless g.nil?
+      ids.each do |id|
+        e = Entity.find(id)
+
+        unless e.nil?
+          if e.type == "Person"
+            e_hash = {:name => e.name, :id => id, :email => e.email}
+            include_applications ? e_hash.merge!({:applications => e.applications}) : nil
+            @entities << e_hash
+          elsif e.type == "Group"
             if flatten
-              g.people.each do |person|
-                p_entity = {:name => person.first + ' ' + person.last, :uid => UID_PERSON_S + person.id.to_s, :email => person.email}
+              e.people.each do |person|
+                p_entity = {:name => person.name, :id => person.id, :email => person.email}
                 include_applications ? p_entity.merge!({:applications => person.applications}) : nil
                 @entities << p_entity
               end
             else
-              g_entity = {:name => g.name, :uid => uid}
+              g_entity = {:name => g.name, :id => id}
               include_applications ? g_entity.merge!({:applications => g.applications}) : nil
               @entities << g_entity
             end
@@ -118,7 +114,6 @@ class Api::CustomController < Api::BaseController
   # Returns JSON against param 'q' to search against majors
   def major
     @majors = Major.where("name like ?", "%#{params[:q]}%")
-    #@majors = @majors.map{ |x| x.name }
 
     respond_to do |format|
       format.json { render :json => @majors }
