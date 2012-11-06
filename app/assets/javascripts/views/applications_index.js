@@ -12,7 +12,19 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
-    this.$("#sidebar_search").typeahead({ source: self.sidebar_search });
+    this.$("#sidebar_search").typeahead({
+      minLength: 2,
+      sorter: function(items) { return items; }, // required to keep the order given to process() in 'source'
+      highlighter: function (item) {
+        var item = item.split('####')[1]; // See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+        var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
+        return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+          return '<strong>' + match + '</strong>'
+        })
+      },
+      source: self.sidebar_search,
+      updater: self.searchResultSelected
+    });
   },
 
   render: function () {
@@ -34,23 +46,29 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
   // Populates the sidebar search with results via async call to Routes.api_search_path()
   sidebar_search: function(query, process) {
-    if(query.length >= 3) {
-      $.ajax({ url: Routes.api_search_path(), data: { q: query }, type: 'GET' }).always(function(data) {
-        entities = [];
-        var exact_match_found = false;
-        _.each(data, function(entity) {
-          if(query.toLowerCase() == entity.name.toLowerCase()) exact_match_found = true;
-          entities.push(entity.name);
-        });
-
-        if(exact_match_found == false) {
-          // Add the option to create a new one with this query
-          entities.push("Add Person " + query);
-          entities.push("Create Group " + query);
-        }
-
-        process(entities);
+    $.ajax({ url: Routes.api_search_path(), data: { q: query }, type: 'GET' }).always(function(data) {
+      entities = [];
+      var exact_match_found = false;
+      _.each(data, function(entity) {
+        if(query.toLowerCase() == entity.name.toLowerCase()) exact_match_found = true;
+        entities.push(entity.id + '####' + entity.name);
       });
-    }
+
+      if(exact_match_found == false) {
+        // Add the option to create a new one with this query (-1 and -2 are invalid IDs to indicate these choices)
+        entities.push('-1####Add Person ' + query);
+        entities.push('-2####Create Group ' + query);
+      }
+
+      process(entities);
+    });
+  },
+
+  searchResultSelected: function(item) {
+    var parts = item.split('####');
+    var id = parts[0];
+    var label = parts[1];
+
+
   }
 });
