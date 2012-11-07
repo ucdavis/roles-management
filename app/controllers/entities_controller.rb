@@ -3,7 +3,7 @@ class EntitiesController < ApplicationController
   respond_to :json
 
   def index
-    @entities = current_user.manageable_uids
+    @entities = current_user.manageable_ids
   end
 
   def show
@@ -22,7 +22,10 @@ class EntitiesController < ApplicationController
   end
 
   def update
-    entity = Entity.find(params[:id])
+    entity = params[:type].capitalize.constantize.find(params[:id])
+
+    logger.info "entity is:"
+    logger.info entity
 
     params[params[:type].to_sym] = build_params(entity, params)
 
@@ -33,7 +36,7 @@ class EntitiesController < ApplicationController
       params[:entity][:type] = params[:entity][:type].capitalize
     end
 
-    entity.update_attributes(params[:entity])
+    entity.update_attributes(params[params[:type].to_sym])
     respond_with entity
   end
 

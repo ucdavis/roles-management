@@ -127,8 +127,6 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     this.model.set({ name: this.$('input[name=name]').val() });
     this.model.set({ description: this.$('textarea[name=description]').val() });
 
-    debugger;
-
     this.model.save();
 
     return false;
