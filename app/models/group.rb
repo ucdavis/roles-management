@@ -45,10 +45,6 @@ class Group < Entity
     members.uniq{|x| x.id}
   end
 
-  def member_ids=(ids)
-    member_tokens = ids
-  end
-
   # Compute accessible applications
   def applications
     apps = []
@@ -103,9 +99,7 @@ class Group < Entity
     self.entity_ids = ids.split(",")
   end
 
-  def member_tokens=(ids)
-    member_ids = ids.split(",")
-
+  def member_ids=(ids)
     # We'll build these lists and assign them at the end
     e_ids = []
 
@@ -115,9 +109,9 @@ class Group < Entity
       r_members += [r.id]
     end
 
-    member_ids.each do |id|
+    ids.each do |id|
       unless r_members.include? id
-        p_ids << id
+        e_ids << id
       end
     end
 
