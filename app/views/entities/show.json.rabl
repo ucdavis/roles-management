@@ -10,6 +10,10 @@ end
 
 if @entity.type == "Person"
   attributes :first, :last, :email, :phone, :address, :loginid
+
+  child @entity.roles => :roles do
+    attributes :id, :token, :descriptor, :description
+  end
 end
 
 if ((defined? @entity.members) != nil)

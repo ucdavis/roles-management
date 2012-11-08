@@ -126,6 +126,17 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       self.$('input[name=phone]').val(this.model.escape('phone'));
       self.$('input[name=address]').val(this.model.escape('address'));
 
+      // Roles tab
+      var roles_list = self.$("ul#roles");
+      roles_list.empty();
+      _.each(this.model.get('roles'), function(role, i) {
+        var $role = $('<li><span id="role-descriptor"></span> (<span id="role-token"></span>) for <span id="role-application"></span></li>');
+        $role.find("span#role-descriptor").html(role.descriptor);
+        $role.find("span#role-token").html(role.token);
+        $role.find("span#role-application").html(role.application.name);
+        $role.data("role_id", role.id);
+        roles_list.append($role);
+      });
     }
 
     return this;
