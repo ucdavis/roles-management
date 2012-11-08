@@ -112,13 +112,13 @@ class Person < Entity
     ids = []
 
     owns.each do |group| # includes OUs
-      ids << {:id => group.id, :name => group.name}
+      ids << {:id => group.id, :name => group.name, :type => "group"}
     end
     operates.each do |group|
-      ids << {:id => group.id, :name => group.name}
+      ids << {:id => group.id, :name => group.name, :type => "group"}
     end
     subordinates.each do |person|
-      ids << {:id => person.id, :name => person.name}
+      ids << {:id => person.id, :name => person.name, :type => "person"}
     end
 
     ids

@@ -26,6 +26,5 @@ class EntitiesController < ApplicationController
 
     @entity.update_attributes(params[:entity])
     render "show"
-    #respond_with entity
   end
 end
