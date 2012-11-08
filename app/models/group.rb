@@ -16,11 +16,11 @@ class Group < Entity
 
   validates :name, :presence => true
 
-  attr_accessible :name, :description, :members_attributes, :owners_attributes, :operators_attributes, :rules_attributes
+  attr_accessible :name, :description, :member_ids, :owner_ids, :operator_ids, :rule_ids
   attr_reader :entities_tokens
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
-  accepts_nested_attributes_for :owners, :operators
+  accepts_nested_attributes_for :owners, :operators, :allow_destroy => true
 
   # Calculates all members, including those defined via rules.
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
@@ -45,7 +45,7 @@ class Group < Entity
     members.uniq{|x| x.id}
   end
 
-  def members_attributes=(ids)
+  def member_ids=(ids)
     member_tokens = ids
   end
 

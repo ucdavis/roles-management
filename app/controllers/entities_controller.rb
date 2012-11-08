@@ -24,26 +24,8 @@ class EntitiesController < ApplicationController
   end
 
   def update
-    #entity = params[:type].capitalize.constantize.find(params[:id])
     entity = Entity.find(params[:id])
 
-    #ActionController::Base.wrap_parameters params[:type].to_sym
-    #ActionController::ParamsWrapper.process_action "update", request
-    #ActiveSupport::Concern.process_action "update", request
-
-    #logger.info "entity is:"
-    #logger.info entity
-
-    #params[params[:type].to_sym] = build_params(entity, params)
-
-    #logger.info "%%%%"
-    #logger.info params
-
-    #unless params[:entity][:type].nil?
-    #  params[:entity][:type] = params[:entity][:type].capitalize
-    #end
-
-    #entity.update_attributes(params[params[:type].to_sym])
     entity.update_attributes(params[:entity])
     respond_with entity
   end
