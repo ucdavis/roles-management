@@ -18,6 +18,11 @@ class Role < ActiveRecord::Base
     self.entity_ids = ids.split(",")
   end
 
+  # Needed in show.json.rabl to display a role's application's name
+  def application_name
+    application.name
+  end
+
   def as_json(options={})
     { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :entities => self.entities }
   end

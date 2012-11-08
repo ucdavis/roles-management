@@ -8,6 +8,7 @@ class Person < Entity
   has_and_belongs_to_many :groups, :foreign_key => "entity_id", :join_table => :entities_groups, :uniq => true
 
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
+  has_many :roles, :through => :role_assignments
 
   has_many :person_manager_assignments, :dependent => :destroy
   has_many :managers, :through => :person_manager_assignments
@@ -45,42 +46,6 @@ class Person < Entity
   # An OU is a group with a (title) code
   def ous
     groups.where(Group.arel_table[:code].not_eq(nil))
-  end
-
-  # Compute roles
-  # Scope can be one of the following:
-  #       :here (default) - Only show roles from this application
-  #       :all            - Show all roles from all applications
-  def roles(scope = :all)
-    roles = []
-
-    case scope
-      when :here
-        # Add roles explicitly assigned
-        role_assignments.where(:role_id => Application.find_by_name("DSS Roles Management").roles).each do |assignment|
-          roles << assignment.role
-        end
-
-        # Add roles implicitly assigned via groups
-        RoleAssignment.where(:entity_id => groups, :role_id => Application.find_by_name("DSS Roles Management").roles).each do |assignment|
-          roles << assignment.role
-        end
-      when :all
-        # Add roles explicitly assigned
-        role_assignments.each do |assignment|
-          roles << assignment.role
-        end
-
-        groups.each do |g|
-          g.roles.each do |role|
-            unless roles.include? role
-              roles << role
-            end
-          end
-        end
-    end
-
-    roles
   end
 
   def roles_by_application(application_id)
@@ -174,7 +139,7 @@ class Person < Entity
   def role_symbols
     syms = []
 
-    roles(:here).each do |role|
+    roles.where(:id => Application.find_by_name("DSS Roles Management").roles).each do |role|
       syms << role.token.underscore.to_sym
     end
 
