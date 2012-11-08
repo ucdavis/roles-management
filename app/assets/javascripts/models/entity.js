@@ -4,9 +4,9 @@ DssRm.Models.Entity = Backbone.Model.extend({
     json.owner_ids = this.get('owners').map(function(owner) { return owner.id });
     json.operator_ids = this.get('operators').map(function(operator) { return operator.id });
     json.member_ids = this.get('members').map(function(member) { return member.id });
-    //json.rules_attributes = this.get('rules').map(function(rule) {
-      //return { id: rule.id, column: rule.column, condition: rule.condition, value: rule.value };
-    //});
+    json.rules_attributes = this.get('rules').map(function(rule) {
+      return { id: rule.id, column: rule.column, condition: rule.condition, value: rule.value };
+    });
     return { entity: json };
   }
 });

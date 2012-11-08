@@ -16,11 +16,10 @@ class Group < Entity
 
   validates :name, :presence => true
 
-  attr_accessible :name, :description, :member_ids, :owner_ids, :operator_ids, :rule_ids
+  attr_accessible :name, :description, :member_ids, :owner_ids, :operator_ids, :rules_attributes
   attr_reader :entities_tokens
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
-  accepts_nested_attributes_for :owners, :operators, :allow_destroy => true
 
   # Calculates all members, including those defined via rules.
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
@@ -43,6 +42,49 @@ class Group < Entity
 
     # Only return a unique list
     members.uniq{|x| x.id}
+  end
+
+  # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction
+  def rules_attributes=(rule_attrs)
+    ids_touched = [] # We'll remove any rules that weren't touched at the end
+
+    # Add/update rules
+    rule_attrs.each do |rule|
+      logger.info "add/update loop, rule is"
+      logger.info rule.inspect
+      if (rule[:id].to_s)[0..3] == "new_"
+        # New rule
+        r = GroupRule.new
+        r.column = rule[:column]
+        r.condition = rule[:condition]
+        r.value = rule[:value]
+        r.group_id = id
+        r.save
+        logger.info "saved rule, its id is"
+        logger.info r.id
+        ids_touched << r.id
+        logger.info "adding a rule"
+      else
+        # Updating a rule
+        logger.info "updating a rule"
+        r = GroupRule.find(rule[:id])
+        r.column = rule[:column]
+        r.condition = rule[:condition]
+        r.value = rule[:value]
+        r.save
+        ids_touched << r.id
+      end
+    end
+
+    logger.info "ids_touched is #{ids_touched}"
+
+    # Remove unnecessary ones
+    rules.all.each do |r|
+      unless ids_touched.include? r.id
+        logger.info "removing rule with id of #{r.id}"
+        r.destroy
+      end
+    end
   end
 
   # Compute accessible applications
