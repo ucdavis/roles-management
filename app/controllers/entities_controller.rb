@@ -2,8 +2,6 @@ class EntitiesController < ApplicationController
   filter_access_to :all
   respond_to :json
 
-  #wrap_parameters (defined? params) ? params[:type].to_sym : Group
-
   def index
     @entities = current_user.manageable_ids
   end
@@ -24,20 +22,10 @@ class EntitiesController < ApplicationController
   end
 
   def update
-    entity = Entity.find(params[:id])
+    @entity = Entity.find(params[:id])
 
-    entity.update_attributes(params[:entity])
-    respond_with entity
-  end
-
-  private
-
-  def build_params(entity, params)
-    ret = {}
-    entity.attribute_names.each do |atr|
-      logger.info atr
-      ret[atr.to_sym] = params[atr]
-    end
-    return ret
+    @entity.update_attributes(params[:entity])
+    render "show"
+    #respond_with entity
   end
 end
