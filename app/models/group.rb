@@ -16,7 +16,7 @@ class Group < Entity
 
   validates :name, :presence => true
 
-  attr_accessible :name, :description, :members, :owners, :operators, :rules
+  attr_accessible :name, :description, :members_attributes, :owners_attributes, :operators_attributes, :rules_attributes
   attr_reader :entities_tokens
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
@@ -43,6 +43,10 @@ class Group < Entity
 
     # Only return a unique list
     members.uniq{|x| x.id}
+  end
+
+  def members_attributes=(ids)
+    member_tokens = ids
   end
 
   # Compute accessible applications

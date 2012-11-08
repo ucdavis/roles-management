@@ -2,6 +2,8 @@ class EntitiesController < ApplicationController
   filter_access_to :all
   respond_to :json
 
+  #wrap_parameters (defined? params) ? params[:type].to_sym : Group
+
   def index
     @entities = current_user.manageable_ids
   end
@@ -22,21 +24,27 @@ class EntitiesController < ApplicationController
   end
 
   def update
-    entity = params[:type].capitalize.constantize.find(params[:id])
+    #entity = params[:type].capitalize.constantize.find(params[:id])
+    entity = Entity.find(params[:id])
 
-    logger.info "entity is:"
-    logger.info entity
+    #ActionController::Base.wrap_parameters params[:type].to_sym
+    #ActionController::ParamsWrapper.process_action "update", request
+    #ActiveSupport::Concern.process_action "update", request
 
-    params[params[:type].to_sym] = build_params(entity, params)
+    #logger.info "entity is:"
+    #logger.info entity
 
-    logger.info "%%%%"
-    logger.info params
+    #params[params[:type].to_sym] = build_params(entity, params)
 
-    unless params[:entity][:type].nil?
-      params[:entity][:type] = params[:entity][:type].capitalize
-    end
+    #logger.info "%%%%"
+    #logger.info params
 
-    entity.update_attributes(params[params[:type].to_sym])
+    #unless params[:entity][:type].nil?
+    #  params[:entity][:type] = params[:entity][:type].capitalize
+    #end
+
+    #entity.update_attributes(params[params[:type].to_sym])
+    entity.update_attributes(params[:entity])
     respond_with entity
   end
 
