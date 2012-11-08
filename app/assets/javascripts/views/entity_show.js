@@ -117,6 +117,14 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         rules_table.append($rule);
       });
     } else if(this.model.get('type') == "person") {
+      // Summary tab
+      self.$('h3').html(this.model.escape('name'));
+      self.$('input[name=first]').val(this.model.escape('first'));
+      self.$('input[name=last]').val(this.model.escape('last'));
+      self.$('input[name=email]').val(this.model.escape('email'));
+      self.$('input[name=loginid]').val(this.model.escape('loginid'));
+      self.$('input[name=phone]').val(this.model.escape('phone'));
+      self.$('input[name=address]').val(this.model.escape('address'));
 
     }
 

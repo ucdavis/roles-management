@@ -8,6 +8,10 @@ node :type do |e|
   e.type.downcase
 end
 
+if @entity.type == "Person"
+  attributes :first, :last, :email, :phone, :address, :loginid
+end
+
 if ((defined? @entity.members) != nil)
   child @entity.members => :members do
     attributes :id, :loginid, :name
