@@ -1,6 +1,10 @@
 DssRm.Views.EntityItem = Support.CompositeView.extend({
   tagName: "li",
 
+  events: {
+    "click a>i": "patchTooltipBehavior"
+  },
+
   initialize: function() {
     this.model.bind('change', this.render, this);
   },
@@ -17,5 +21,10 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
 
   entityUrl: function() {
     return "#" + "/entities/" + this.model.get('id');
+  },
+
+  // This is necessary to fix a bug in tooltips (as of Bootstrap 2.1.1)
+  patchTooltipBehavior: function(e) {
+    $(e.currentTarget).tooltip('hide');
   }
 });
