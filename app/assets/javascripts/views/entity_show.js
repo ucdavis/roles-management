@@ -129,7 +129,6 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       // Roles tab
       var roles_list = self.$("ul#roles");
       roles_list.empty();
-      debugger;
       _.each(this.model.get('roles'), function(role, i) {
         var $role = $('<li><span id="role-descriptor"></span> (<span id="role-token"></span>) for <span id="role-application"></span></li>');
         $role.find("span#role-descriptor").html(role.descriptor);
