@@ -11,7 +11,7 @@ end
 if @entity.type == "Person"
   attributes :first, :last, :email, :phone, :address, :loginid
 
-  child @entity.roles do |role|
+  child @entity.roles => :roles do
     attributes :id, :token, :descriptor, :description, :application_name
   end
 end
