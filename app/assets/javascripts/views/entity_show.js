@@ -14,67 +14,70 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
   initialize: function() {
     var self = this;
+    var type = this.model.get('type');
 
     this.model.bind('change', this.render, this);
 
     this.$el.html(JST['entities/show_' + this.model.get('type') ]({ model: this.model }));
 
-    this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
-      crossDomain: false,
-      defaultText: "",
-      theme: "facebook",
-      onAdd: function(item) {
-        var owners = self.model.get('owners');
-        if (! _.find(owners, function(i) { return i.id == item.id })) {
-          // onAdd is triggered by the .tokenInput("add") lines in render,
-          // so we need to ensure this actually is a new item
-          owners.push(item);
+    if(type == "group") {
+      this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        onAdd: function(item) {
+          var owners = self.model.get('owners');
+          if (! _.find(owners, function(i) { return i.id == item.id })) {
+            // onAdd is triggered by the .tokenInput("add") lines in render,
+            // so we need to ensure this actually is a new item
+            owners.push(item);
+            self.model.set('owners', owners);
+          }
+        },
+        onDelete: function(item) {
+          var owners = _.filter(self.model.get('owners'), function(owner) { return owner.id != item.id });
           self.model.set('owners', owners);
         }
-      },
-      onDelete: function(item) {
-        var owners = _.filter(self.model.get('owners'), function(owner) { return owner.id != item.id });
-        self.model.set('owners', owners);
-      }
-    });
+      });
 
-    this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
-      crossDomain: false,
-      defaultText: "",
-      theme: "facebook",
-      onAdd: function(item) {
-        var operators = self.model.get('operators');
-        if (! _.find(operators, function(i) { return i.id == item.id })) {
-          // onAdd is triggered by the .tokenInput("add") lines in render,
-          // so we need to ensure this actually is a new item
-          operators.push(item);
+      this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        onAdd: function(item) {
+          var operators = self.model.get('operators');
+          if (! _.find(operators, function(i) { return i.id == item.id })) {
+            // onAdd is triggered by the .tokenInput("add") lines in render,
+            // so we need to ensure this actually is a new item
+            operators.push(item);
+            self.model.set('operators', operators);
+          }
+        },
+        onDelete: function(item) {
+          var operators = _.filter(self.model.get('operators'), function(operator) { return operator.id != item.id });
           self.model.set('operators', operators);
         }
-      },
-      onDelete: function(item) {
-        var operators = _.filter(self.model.get('operators'), function(operator) { return operator.id != item.id });
-        self.model.set('operators', operators);
-      }
-    });
+      });
 
-    this.$("input[name=members]").tokenInput(Routes.api_people_path(), {
-      crossDomain: false,
-      defaultText: "",
-      theme: "facebook",
-      onAdd: function(item) {
-        var members = self.model.get('members');
-        if (! _.find(members, function(i) { return i.id == item.id })) {
-          // onAdd is triggered by the .tokenInput("add") lines in render,
-          // so we need to ensure this actually is a new item
-          members.push(item);
+      this.$("input[name=members]").tokenInput(Routes.api_people_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        onAdd: function(item) {
+          var members = self.model.get('members');
+          if (! _.find(members, function(i) { return i.id == item.id })) {
+            // onAdd is triggered by the .tokenInput("add") lines in render,
+            // so we need to ensure this actually is a new item
+            members.push(item);
+            self.model.set('members', members);
+          }
+        },
+        onDelete: function(item) {
+          var members = _.filter(self.model.get('members'), function(member) { return member.id != item.id });
           self.model.set('members', members);
         }
-      },
-      onDelete: function(item) {
-        var members = _.filter(self.model.get('members'), function(member) { return member.id != item.id });
-        self.model.set('members', members);
-      }
-    });
+      });
+    }
   },
 
   render: function() {
@@ -148,11 +151,19 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     var type = this.model.get('type');
 
     if(type == "group") {
-      this.model.set({ name: this.$('input[name=name]').val() });
-      this.model.set({ description: this.$('textarea[name=description]').val() });
+      this.model.set({
+        name: this.$('input[name=name]').val(),
+        description: this.$('textarea[name=description]').val()
+      });
     } else if(type == "person") {
-      this.model.set({ first: this.$('input[name=first]').val() });
-      this.model.set({ last: this.$('input[name=last]').val() });
+      this.model.set({
+        first: this.$('input[name=first]').val(),
+        last: this.$('input[name=last]').val(),
+        email: this.$('input[name=email]').val(),
+        loginid: this.$('input[name=loginid]').val(),
+        phone: this.$('input[name=phone]').val(),
+        address: this.$('input[name=address]').val()
+      });
     }
 
     this.model.save();
