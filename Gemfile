@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.8'
+gem 'rails', '3.2.9'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -32,7 +32,7 @@ gem 'dynamic_form'
 
 gem 'pg'
 
-gem 'rails-backbone' #, '~> 0.7.0'
+gem 'rails-backbone'
 gem 'jquery-rails'
 gem 'ejs'
 gem 'backbone-support'
