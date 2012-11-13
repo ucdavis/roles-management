@@ -79,8 +79,9 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
   render: function() {
     var self = this;
+    var type = this.model.get('type');
 
-    if(this.model.get('type') == "group") {
+    if(type == "group") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
       self.$('input[name=name]').val(this.model.escape('name'));
@@ -116,7 +117,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rule.data("rule_id", rule.id);
         rules_table.append($rule);
       });
-    } else if(this.model.get('type') == "person") {
+    } else if(type == "person") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
       self.$('input[name=first]').val(this.model.escape('first'));
@@ -144,8 +145,15 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   save: function(e) {
-    this.model.set({ name: this.$('input[name=name]').val() });
-    this.model.set({ description: this.$('textarea[name=description]').val() });
+    var type = this.model.get('type');
+
+    if(type == "group") {
+      this.model.set({ name: this.$('input[name=name]').val() });
+      this.model.set({ description: this.$('textarea[name=description]').val() });
+    } else if(type == "person") {
+      this.model.set({ first: this.$('input[name=first]').val() });
+      this.model.set({ last: this.$('input[name=last]').val() });
+    }
 
     this.model.save();
 

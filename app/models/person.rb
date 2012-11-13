@@ -27,7 +27,7 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :name, :first, :last, :loginid, :email, :phone, :status, :address, :name, :ou_tokens, :ou_ids, :group_tokens, :group_ids, :subordinate_tokens
+  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :role_ids
   attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
 
   def self.csv_header
@@ -36,6 +36,10 @@ class Person < Entity
 
   def to_csv
     [id, loginid, email, first, last]
+  end
+
+  def name
+    first + " " + last
   end
 
   # Compute their classifications based on their title
@@ -142,9 +146,6 @@ class Person < Entity
     roles.where(:id => Application.find_by_name("DSS Roles Management").roles).each do |role|
       syms << role.token.underscore.to_sym
     end
-
-    # All people in the database have the default role of 'access'
-    #syms << "access".to_sym unless syms.include? :access
 
     syms
   end
