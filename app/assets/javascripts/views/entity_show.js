@@ -77,6 +77,63 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
           self.model.set('members', members);
         }
       });
+    } else if (type == "person") {
+      this.$("input[name=subordinates]").tokenInput(Routes.api_people_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        onAdd: function(item) {
+          var subordinates = self.model.get('subordinates');
+          if (! _.find(subordinates, function(i) { return i.id == item.id })) {
+            // onAdd is triggered by the .tokenInput("add") lines in render,
+            // so we need to ensure this actually is a new item
+            subordinates.push(item);
+            self.model.set('subordinates', subordinates);
+          }
+        },
+        onDelete: function(item) {
+          var subordinates = _.filter(self.model.get('subordinates'), function(subordinate) { return subordinate.id != item.id });
+          self.model.set('subordinates', subordinates);
+        }
+      });
+
+      this.$("input[name=groups]").tokenInput(Routes.api_groups_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        onAdd: function(item) {
+          var groups = self.model.get('groups');
+          if (! _.find(groups, function(i) { return i.id == item.id })) {
+            // onAdd is triggered by the .tokenInput("add") lines in render,
+            // so we need to ensure this actually is a new item
+            groups.push(item);
+            self.model.set('groups', groups);
+          }
+        },
+        onDelete: function(item) {
+          var groups = _.filter(self.model.get('groups'), function(group) { return group.id != item.id });
+          self.model.set('groups', groups);
+        }
+      });
+
+      this.$("input[name=ous]").tokenInput(Routes.api_groups_path(), {
+        crossDomain: false,
+        defaultText: "",
+        theme: "facebook",
+        onAdd: function(item) {
+          var ous = self.model.get('ous');
+          if (! _.find(ous, function(i) { return i.id == item.id })) {
+            // onAdd is triggered by the .tokenInput("add") lines in render,
+            // so we need to ensure this actually is a new item
+            ous.push(item);
+            self.model.set('ous', ous);
+          }
+        },
+        onDelete: function(item) {
+          var ous = _.filter(self.model.get('ous'), function(ou) { return ou.id != item.id });
+          self.model.set('ous', ous);
+        }
+      });
     }
   },
 
@@ -129,6 +186,24 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       self.$('input[name=loginid]').val(this.model.escape('loginid'));
       self.$('input[name=phone]').val(this.model.escape('phone'));
       self.$('input[name=address]').val(this.model.escape('address'));
+
+      var subordinates_tokeninput = self.$("input[name=subordinates]");
+      subordinates_tokeninput.tokenInput("clear");
+      _.each(this.model.get('subordinates'), function(subordinate) {
+        subordinates_tokeninput.tokenInput("add", {id: subordinate.id, name: subordinate.name});
+      });
+
+      var groups_tokeninput = self.$("input[name=groups]");
+      groups_tokeninput.tokenInput("clear");
+      _.each(this.model.get('groups'), function(group) {
+        groups_tokeninput.tokenInput("add", {id: group.id, name: group.name});
+      });
+
+      var ous_tokeninput = self.$("input[name=ous]");
+      ous_tokeninput.tokenInput("clear");
+      _.each(this.model.get('ous'), function(ou) {
+        ous_tokeninput.tokenInput("add", {id: ou.id, name: ou.name});
+      });
 
       // Roles tab
       var roles_list = self.$("ul#roles");

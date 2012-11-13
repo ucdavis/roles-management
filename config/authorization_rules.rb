@@ -10,6 +10,7 @@ authorization do
     has_permission_on :group_owner_assignments, :to => [:create, :delete, :update]
     has_permission_on :group_rules, :to => [:create, :delete, :update]
     has_permission_on :group_operator_assignments, :to => [:create, :delete]
+    has_permission_on :person_manager_assignments, :to => [:create, :update, :delete]
   end
   role :access do
     has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy]
@@ -22,5 +23,6 @@ authorization do
     has_permission_on :group_operator_assignments, :to => [:create, :delete]
     has_permission_on :application_owner_assignments, :to => [:create, :delete]
     has_permission_on :roles, :to => [:create, :update, :delete]
+    has_permission_on :person_manager_assignments, :to => [:create, :update, :delete]
   end
 end

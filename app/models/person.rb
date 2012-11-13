@@ -27,8 +27,7 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :role_ids
-  attr_reader :ou_tokens, :group_tokens, :subordinate_tokens
+  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :role_ids, :subordinate_ids, :group_ids, :ou_ids
 
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
@@ -152,30 +151,6 @@ class Person < Entity
 
   def as_json(options={})
     { :id => self.id, :name => self.first + " " + self.last }
-  end
-
-  def group_tokens=(ids)
-    self.group_ids = ids.split(",")
-  end
-
-  def subordinate_tokens=(ids)
-    ids = ids.split(",")
-
-    # Remove any unmentioned IDs
-    subordinates.each do |s|
-      if (ids.include? s.id) == false
-        s.managers.delete self
-      end
-    end
-
-    # Add the rest
-    ids.each do |id|
-      p = Person.find_by_id(id)
-      if (p.managers.include? self) == false
-        p.managers << self
-        p.save
-      end
-    end
   end
 
   def can_administer_application?(app_id)

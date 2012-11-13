@@ -14,6 +14,18 @@ if @entity.type == "Person"
   child @entity.roles => :roles do
     attributes :id, :token, :descriptor, :description, :application_name
   end
+
+  child @entity.subordinates => :subordinates do
+    attributes :id, :name
+  end
+
+  child @entity.groups => :groups do
+    attributes :id, :name
+  end
+
+  child @entity.ous => :ous do
+    attributes :id, :name
+  end
 end
 
 if ((defined? @entity.members) != nil)

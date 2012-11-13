@@ -7,9 +7,6 @@
     <ul class="nav nav-tabs">
       <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
       <li><a href="#roles" data-toggle="tab">Roles</a></li>
-      <li><a href="#apps" data-toggle="tab">Applications</a></li>
-      <li><a href="#subordinates" data-toggle="tab">Subordinates</a></li>
-      <li><a href="#memberships" data-toggle="tab">Memberships</a></li>
     </ul>
     <div class="tab-content">
       <form>
@@ -17,14 +14,40 @@
         <fieldset class="tab-pane active" id="summary">
           <label for="first">Name</label>
           <input type="text" name="first" class="text small" /> <input type="text" name="last" class="text small" />
-          <label for="email">E-Mail</label>
-          <input type="text" name="email" class="text small" />
-          <label for="loginid">Login ID</label>
-          <input type="text" name="loginid" class="text small" />
-          <label for="phone">Phone</label>
-          <input type="text" name="phone" class="text" />
-          <label for="address">Address</label>
-          <input type="text" name="address" class="text" />
+          <br />
+          <span style="display: inline-block;">
+            <label for="email">E-Mail</label>
+            <input type="text" name="email" class="text small" />
+          </span>
+          <span style="display: inline-block;">
+            <label for="loginid">Login ID</label>
+            <input type="text" name="loginid" class="text small" />
+          </span>
+          <br />
+          <span style="display: inline-block;">
+            <label for="phone">Phone</label>
+            <input type="text" name="phone" class="text" />
+          </span>
+          <span style="display: inline-block;">
+            <label for="address">Address</label>
+            <input type="text" name="address" class="text" />
+          </span>
+          <br />
+
+          <p>
+            <label for="subordinates">Subordinates <small>(Only subordinates not via group ownership)</small></label>
+            <input type="text" name="subordinates" class="token_input" />
+          </p>
+
+          <label for="group_tokens">Groups</label>
+          <p>
+            <input type="text" name="groups" class="token_input" />
+          </p>
+
+          <label for="ou_tokens">Organizational Units</label>
+          <p>
+            <input type="text" name="ous" class="token_input" />
+          </p>
         </fieldset>
         <fieldset class="tab-pane" id="roles">
           <p>
@@ -34,34 +57,6 @@
             <b>To add or remove roles</b> which you have given this person, use the main interface.
           </p>
           <ul id="roles"></ul>
-        </fieldset>
-        <fieldset class="tab-pane" id="apps">
-          <p>
-            An audit of this person's application access is displayed below.
-          </p>
-          <p>
-            <b>To add or remove applications</b> which you have given this person, use the main interface.
-          </p>
-          <ul>
-            <li>app name</li>
-          </ul>
-        </fieldset>
-        <fieldset class="tab-pane" id="subordinates">
-          <p>
-            <label for="subordinates">Subordinates <small>(Only subordinates not via group ownership)</small></label>
-            <input type="text" name="subordinate_tokens" data-pre="person.subordinates.to_json" method="url_for(:controller => api/people, :action => index)" class="token_input" />
-          </p>
-        </fieldset>
-        <fieldset class="tab-pane" id="memberships">
-          <b>Groups:</b><br />
-          <p>
-            <input type="text" name="group_tokens" data-pre="person.groups.to_json" method="url_for(:controller => api/groups, :action => index)" class="token_input" />
-          </p>
-
-          <b>Organizational Units:</b><br />
-          <p>
-            <input type="text" name="ou_tokens" data-pre="person.ous.to_json" method="url_for(:controller => api/groups, :action => index)" class="token_input" />
-          </p>
         </fieldset>
       </form>
     </div>
