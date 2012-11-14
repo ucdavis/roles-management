@@ -19,11 +19,11 @@ if @entity.type == "Person"
     attributes :id, :name
   end
 
-  child @entity.groups => :groups do
+  child @entity.groups.non_ous => :groups do
     attributes :id, :name
   end
 
-  child @entity.ous => :ous do
+  child @entity.groups.ous => :ous do
     attributes :id, :name
   end
 end

@@ -46,9 +46,21 @@ class Person < Entity
     title.classifications
   end
 
-  # An OU is a group with a (title) code
-  def ous
-    groups.where(Group.arel_table[:code].not_eq(nil))
+  def ou_ids=(ids)
+    # Add any new OUs
+    ids.each do |id|
+      ou = Group.find_by_id(id, :conditions => "code not null")
+      unless (groups.include? ou) or ou.nil?
+        groups << ou
+      end
+    end
+
+    # Remove any OUs not mentioned (ou_ids= behavior is to always give the complete list)
+    groups.ous.each do |ou|
+      unless ids.include? ou.id
+        groups.delete(ou.id)
+      end
+    end
   end
 
   def roles_by_application(application_id)

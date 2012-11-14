@@ -1,6 +1,9 @@
 class Group < Entity
   using_access_control
 
+  scope :ous, where(Group.arel_table[:code].not_eq(nil))
+  scope :non_ous, where(Group.arel_table[:code].eq(nil))
+
   has_and_belongs_to_many :entities
 
   has_many :role_assignments, :foreign_key => "entity_id"
