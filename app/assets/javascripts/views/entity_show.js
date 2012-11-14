@@ -116,7 +116,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
 
-      this.$("input[name=ous]").tokenInput(Routes.api_groups_path(), {
+      this.$("input[name=ous]").tokenInput(Routes.api_ous_path(), {
         crossDomain: false,
         defaultText: "",
         theme: "facebook",
