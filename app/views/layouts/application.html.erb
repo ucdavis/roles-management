@@ -8,13 +8,10 @@
 	<%= csrf_meta_tag %>
 </head>
 <body>
-  <%= content_for :javascript do -%>
-    <script type="text/javascript">
-      <% unless defined?(current_user.id) == nil %>
-        application.current_user_id = <%= current_user.id %>; // application, not applications
-      <% end %>
-    </script>
-  <% end %>
+
+  <script type="text/javascript">
+    window.application_last_updated = "<%= LAST_UPDATED %>";
+  </script>
 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
@@ -32,13 +29,13 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrate <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <% unless session[:impersonate].nil? %>
-                  <li><a href="#" id="admin-unimpersonate">Unimpersonate</a></li>
+                  <li><a href="#unimpersonate" id="admin-unimpersonate">Unimpersonate</a></li>
                 <% else %>
-                  <li><a href="#" id="admin-impersonate">Impersonate…</a></li>
+                  <li><a href="#impersonate" id="admin-impersonate">Impersonate…</a></li>
                 <% end %>
-                <li><a href="#" id="admin-ip-whitelist">API Whitelist…</a></li>
+                <li><a href="#whitelist" id="admin-ip-whitelist">API Whitelist…</a></li>
                 <li class="divider"></li>
-                <li><a href="#" id="admin-about">About…</a></li>
+                <li><a href="#about" id="admin-about">About…</a></li>
               </ul>
               <%= li_link_with_class({:title => 'Log out', :controller => 'site', :action => 'logout'}) %>
             </li>

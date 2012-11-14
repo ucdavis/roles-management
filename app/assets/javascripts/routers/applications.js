@@ -9,7 +9,8 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     ""                 : "index",
     "new"              : "newApplication",
     "applications/:id" : "showApplication",
-    "entities/:uid"    : "showEntity"
+    "entities/:uid"    : "showEntity",
+    "about"            : "aboutDialog"
   },
 
   index: function() {
@@ -46,5 +47,11 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
         view.$el.modal();
       }
     });
+  },
+
+  aboutDialog: function() {
+    var view = new DssRm.Views.AboutDialog();
+    this.currentView.renderChild(view);
+    view.$el.modal();
   }
 });
