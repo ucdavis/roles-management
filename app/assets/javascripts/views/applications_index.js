@@ -2,8 +2,15 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   tagName: "div",
   className: "row-fluid",
 
+  events: {
+    "click div.card"  : "selectCard",
+    "click div#cards" : "deselectCard"
+  },
+
   initialize: function() {
     var self = this;
+
+    this.selected_application = null;
 
     this.applications = this.options.applications;
     this.entities = this.options.entities;
@@ -33,7 +40,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.$('#cards').empty();
     this.applications.each(function(application) {
-      var card = new DssRm.Views.ApplicationItem({ model: application });
+      var card = new DssRm.Views.ApplicationItem({ model: application, highlighted_application_id: self.selected_application });
       self.renderChild(card);
       self.$('#cards').append(card.el);
     });
@@ -83,6 +90,22 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         self.entities.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
       break;
     }
+  },
+
+  selectCard: function(e) {
+    e.stopPropagation();
+
+    this.selected_application = $(e.currentTarget).data('application-id');
+
+    this.render();
+  },
+
+  deselectCard: function(e) {
+    e.preventDefault();
+
+    this.selected_application = null;
+
+    this.render();
   }
 }, {
   // Constants used in this view
