@@ -7,18 +7,6 @@
   cards.manageable_uids = null;
 
   cards.initialize = function() {
-    // Enable the details button for sidebar pins
-    $("ul.pins").on("click", "li>i.icon-search", function(e) {
-      e.stopPropagation();
-      cards.entity_details($(this).parent().data("uid"));
-    });
-
-    // Enable the delete/disassociate button for sidebar pins
-    $("ul.pins").on("click", "li>i.icon-remove", function(e) {
-      e.stopPropagation();
-      cards.disassociate($(this).parent().data("uid"));
-    });
-
     // Allow searching on the sidebar
     $("#search_entities").typeahead({
       source: function(query, maxResults, callback) {
