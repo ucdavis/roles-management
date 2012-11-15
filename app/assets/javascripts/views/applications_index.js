@@ -38,6 +38,12 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   render: function () {
     var self = this;
 
+    // We must ensure tooltips are closed before possibly deleting their
+    // associated DOM elements
+    this.$('[rel=tooltip]').each(function(i, el) {
+      if(el != undefined) $(el).tooltip('hide');
+    });
+
     this.$('#cards').empty();
     this.applications.each(function(application) {
       var card = new DssRm.Views.ApplicationItem({ model: application, highlighted_application_id: self.selected_application });

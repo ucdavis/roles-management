@@ -20,7 +20,7 @@ window.DssRm = {
     }
 
     // Enable tooltips
-    $("body").tooltip({
+    $('body').tooltip({
       selector: '[rel=tooltip]'
     });
   }
