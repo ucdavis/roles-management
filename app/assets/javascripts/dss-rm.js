@@ -21,12 +21,7 @@ window.DssRm = {
 
     // Enable tooltips
     $("body").tooltip({
-      selector: '[rel=tooltip]',
-      delay: { show: 400, hide: 75 }
-    });
-
-    $(document).click(function (e) {
-      if( $(e.target).parents('.tooltip').length == 0 ) $("[data-original-title]").tooltip('hide');
+      selector: '[rel=tooltip]'
     });
   }
 };
