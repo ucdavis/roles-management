@@ -114,6 +114,14 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.selected_application = $(e.currentTarget).data('application-id');
     this.selected_pin = null;
+    var application_entities = this.applications.get(this.selected_application).get('ids');
+    this.selected_entities = this.entities.filter(function(e) {
+      return _.find(application_entities, function(i) {
+        return i.id == e.id;
+      });
+    });
+
+    this.selected_entities = _.map(this.selected_entities, function(e) { return e.id });
 
     this.render();
   },
