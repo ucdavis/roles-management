@@ -13,6 +13,7 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
 
   render: function () {
     this.$el.data('entity-id', this.model.get('id'));
+    this.$el.data('entity-name', this.model.get('name'));
     this.$el.html(JST['entities/item']({ entity: this.model }));
     this.$('span').html(this.model.escape('name'));
     this.$el.addClass(this.model.get('type'));

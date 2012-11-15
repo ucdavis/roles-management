@@ -52,7 +52,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.applications.each(function(application) {
       var card = new DssRm.Views.ApplicationItem({
         model: application,
-        highlighted_application_id: self.selected_application,
+        highlighted_application_id: self.selected_application ? self.selected_application.get('id') : null,
         highlighted_pin_id: self.selected_pin
       });
       self.renderChild(card);
@@ -112,9 +112,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   selectCard: function(e) {
     e.stopPropagation();
 
-    this.selected_application = $(e.currentTarget).data('application-id');
+    this.selected_application = this.applications.get($(e.currentTarget).data('application-id'));
     this.selected_pin = null;
-    var application_entities = this.applications.get(this.selected_application).get('ids');
+    var application_entities = this.selected_application.get('ids');
     this.selected_entities = this.entities.filter(function(e) {
       return _.find(application_entities, function(i) {
         return i.id == e.id;
@@ -146,10 +146,39 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   },
 
   selectEntity: function(e) {
+    var clicked_entity_id = $(e.currentTarget).data('entity-id');
+    var clicked_entity_name = $(e.currentTarget).data('entity-name');
+
     e.stopPropagation();
 
-    this.selected_entities.push($(e.currentTarget).data('entity-id'));
-    this.selected_entities = _.uniq(this.selected_entities);
+    // Behavior of selecting an entity changes depending on whether an application/role
+    // is selected or not.
+    // If an application/role is selected, toggling an entity associates or disassociates
+    // that entity from that application/role.
+    // If no application/role is selected, clicking an entity merely filters the application/role
+    // list to display their current assignments.
+
+    if(this.selected_application) {
+      var application_entities = this.selected_application.get('ids');
+
+      // toggle on or off
+      var matched = application_entities.filter(function(e) { return e.id == clicked_entity_id });
+      if(matched.length > 0) {
+        application_entities = _.without(application_entities, matched[0]);
+      } else {
+        application_entities.push({ id: clicked_entity_id, name: clicked_entity_name });
+      }
+
+      this.selected_application.set({
+        ids: application_entities
+      });
+      this.selected_entities = application_entities.map(function(e) { return e.id });
+
+      this.selected_application.save();
+    } else {
+      //this.selected_entities.push($(e.currentTarget).data('entity-id'));
+      //this.selected_entities = _.uniq(this.selected_entities);
+    }
 
     this.render();
   }
