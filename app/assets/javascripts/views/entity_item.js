@@ -5,16 +5,22 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     "click a>i": "patchTooltipBehavior"
   },
 
-  initialize: function() {
+  initialize: function(options) {
     this.model.bind('change', this.render, this);
+
+    this.highlighted = options.highlighted;
   },
 
   render: function () {
-    this.$el.attr("uid", this.model.get('uid'));
+    this.$el.data('entity-id', this.model.get('id'));
     this.$el.html(JST['entities/item']({ entity: this.model }));
     this.$('span').html(this.model.escape('name'));
     this.$el.addClass(this.model.get('type'));
     this.$('.entity-details-link').attr("href", this.entityUrl());
+
+    if(this.highlighted) {
+      this.$el.css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
+    }
 
     return this;
   },

@@ -3,9 +3,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   events: {
-    "click div.card"                   : "selectCard",
-    "click div#cards"                  : "deselectCard",
-    "click div#cards div.card div.pin" : "selectPin"
+    "click .card"             : "selectCard",
+    "click #cards"            : "deselectAll",
+    "click #cards .card .pin" : "selectRole",
+    "click #pins li"          : "selectEntity"
   },
 
   initialize: function() {
@@ -13,6 +14,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.selected_application = null;
     this.selected_pin = null;
+    this.selected_entities = [];
 
     this.applications = this.options.applications;
     this.entities = this.options.entities;
@@ -59,7 +61,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.$('#pins').empty();
     this.entities.each(function(entity) {
-      var pin = new DssRm.Views.EntityItem({ model: entity });
+      var pin = new DssRm.Views.EntityItem({
+        model: entity,
+        highlighted: _.indexOf(self.selected_entities, entity.get('id')) >= 0 // true if in selected_entities list
+      });
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
     });
@@ -113,20 +118,30 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.render();
   },
 
-  deselectCard: function(e) {
+  deselectAll: function(e) {
     e.preventDefault();
 
     this.selected_application = null;
     this.selected_pin = null;
+    this.selected_entities = [];
 
     this.render();
   },
 
-  selectPin: function(e) {
+  selectRole: function(e) {
     e.stopPropagation();
 
     this.selected_application = null;
     this.selected_pin = $(e.currentTarget).parent().data('role-id');
+
+    this.render();
+  },
+
+  selectEntity: function(e) {
+    e.stopPropagation();
+
+    this.selected_entities.push($(e.currentTarget).data('entity-id'));
+    this.selected_entities = _.uniq(this.selected_entities);
 
     this.render();
   }
