@@ -1,5 +1,6 @@
 DssRm.Views.RoleItem = Support.CompositeView.extend({
   tagName: "div",
+  className: "role",
 
   events: {
     "change input": "update"
@@ -12,9 +13,10 @@ DssRm.Views.RoleItem = Support.CompositeView.extend({
   },
 
   render: function () {
-    this.$el.attr("id", "role_" + this.model.id);
+    //this.$el.attr("id", "role_" + this.model.id);
     this.$el.data('role-id', this.model.get('id'));
     this.$el.html(JST['roles/item']({ role: this.model }));
+    this.$el.attr("rel", "tooltip");
     this.renderRoleContents();
 
     if(this.draw_highlighted) {
@@ -27,9 +29,8 @@ DssRm.Views.RoleItem = Support.CompositeView.extend({
   renderRoleContents: function() {
     var self = this;
 
-    self.$('.pin').attr("title", this.model.escape('description'));
     self.$('a').html(this.model.escape('descriptor'));
-    self.$('a').attr("title", this.model.escape('description'));
+    self.$el.attr("title", this.model.escape('description'));
   },
 
   update: function() {

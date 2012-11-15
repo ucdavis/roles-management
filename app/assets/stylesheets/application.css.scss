@@ -12,7 +12,7 @@ input#sidebar_search {
   margin-bottom: 1.3em;
 }
 
-div.pin {
+div.role {
   padding: 2px 4px 2px;
   color: #3A87AD;
   border: 1px solid #BCE8F1;
@@ -77,8 +77,8 @@ div#modal_container tr.fields button {
 
 /* Twitter Bootstrap modifications (check here for problems when upgrading) */
 /* TB assumes .tab-content>.tab-pane but we have .tab-content>form>.tab-pane in details modals */
-.tab-content .tab-pane {display: none;}
-.tab-content .active {display:block;}
+.tab-content .tab-pane { display: none; }
+.tab-content .active { display:block; }
 
 /* Make modal wider and take as much height as possible */
 .modal {

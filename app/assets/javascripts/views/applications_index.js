@@ -3,17 +3,17 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   events: {
-    "click .card"             : "selectCard",
-    "click #cards"            : "deselectAll",
-    "click #cards .card .pin" : "selectRole",
-    "click #pins li"          : "selectEntity"
+    "click .card"              : "selectCard",
+    "click #cards"             : "deselectAll",
+    "click #cards .card .role" : "selectRole",
+    "click #pins li"           : "selectEntity"
   },
 
   initialize: function() {
     var self = this;
 
     this.selected_application = null;
-    this.selected_pin = null;
+    this.selected_role = null;
     this.selected_entities = [];
 
     this.applications = this.options.applications;
@@ -53,7 +53,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       var card = new DssRm.Views.ApplicationItem({
         model: application,
         highlighted_application_id: self.selected_application ? self.selected_application.get('id') : null,
-        highlighted_pin_id: self.selected_pin
+        highlighted_role_id: self.selected_role
       });
       self.renderChild(card);
       self.$('#cards').append(card.el);
@@ -113,7 +113,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     e.stopPropagation();
 
     this.selected_application = this.applications.get($(e.currentTarget).data('application-id'));
-    this.selected_pin = null;
+    this.selected_role = null;
     var application_entities = this.selected_application.get('ids');
     this.selected_entities = this.entities.filter(function(e) {
       return _.find(application_entities, function(i) {
@@ -130,7 +130,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     e.preventDefault();
 
     this.selected_application = null;
-    this.selected_pin = null;
+    this.selected_role = null;
     this.selected_entities = [];
 
     this.render();
@@ -140,7 +140,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     e.stopPropagation();
 
     this.selected_application = null;
-    this.selected_pin = $(e.currentTarget).parent().data('role-id');
+    this.selected_role = $(e.currentTarget).parent().data('role-id');
 
     this.render();
   },
