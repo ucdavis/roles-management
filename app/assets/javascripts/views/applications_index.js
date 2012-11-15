@@ -3,14 +3,16 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   events: {
-    "click div.card"  : "selectCard",
-    "click div#cards" : "deselectCard"
+    "click div.card"                   : "selectCard",
+    "click div#cards"                  : "deselectCard",
+    "click div#cards div.card div.pin" : "selectPin"
   },
 
   initialize: function() {
     var self = this;
 
     this.selected_application = null;
+    this.selected_pin = null;
 
     this.applications = this.options.applications;
     this.entities = this.options.entities;
@@ -46,7 +48,11 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.$('#cards').empty();
     this.applications.each(function(application) {
-      var card = new DssRm.Views.ApplicationItem({ model: application, highlighted_application_id: self.selected_application });
+      var card = new DssRm.Views.ApplicationItem({
+        model: application,
+        highlighted_application_id: self.selected_application,
+        highlighted_pin_id: self.selected_pin
+      });
       self.renderChild(card);
       self.$('#cards').append(card.el);
     });
@@ -102,6 +108,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     e.stopPropagation();
 
     this.selected_application = $(e.currentTarget).data('application-id');
+    this.selected_pin = null;
 
     this.render();
   },
@@ -110,6 +117,16 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     e.preventDefault();
 
     this.selected_application = null;
+    this.selected_pin = null;
+
+    this.render();
+  },
+
+  selectPin: function(e) {
+    e.stopPropagation();
+
+    this.selected_application = null;
+    this.selected_pin = $(e.currentTarget).parent().data('role-id');
 
     this.render();
   }
