@@ -3,10 +3,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   events: {
-    //"click .card"              : "selectCard",
-    "click #cards"             : "deselectAll",
     "click #cards .card .role" : "selectRole",
-    "click #pins li"           : "selectEntity"
+    "click #pins li"           : "selectEntity",
+    "click #cards"             : "deselectAll"
   },
 
   initialize: function(options) {
@@ -111,18 +110,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     }
   },
 
-  //selectCard: function(e) {
-    //e.stopPropagation();
-
-    //this.selected.application = this.applications.get($(e.currentTarget).data('application-id'));
-    //this.selected.role = null;
-    //this.selected.entities = _.map(this.selected.application.members, function(e) { return e.id });
-
-    //this.render();
-  //},
-
   deselectAll: function(e) {
-    e.preventDefault();
+    //e.preventDefault();
 
     this.selected.application = null;
     this.selected.role = null;
@@ -136,8 +125,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     var application_id = $(e.currentTarget).parent().parent().parent().data('application-id');
 
-    this.selected.application = null;
-    this.selected.role = this.applications.get(application_id).roles.get($(e.currentTarget).data('role-id'));
+    this.selected.application = this.applications.get(application_id);
+    this.selected.role = this.selected.application.roles.get($(e.currentTarget).data('role-id'));
+    this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
 
     this.render();
   },
@@ -171,7 +161,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       });
       this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
 
-      //this.selected.role.save();
+      this.selected.application.save();
     } else {
       //this.selected_entities.push($(e.currentTarget).data('entity-id'));
       //this.selected_entities = _.uniq(this.selected_entities);
