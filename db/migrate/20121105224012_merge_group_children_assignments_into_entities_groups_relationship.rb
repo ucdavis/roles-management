@@ -3,8 +3,8 @@ class MergeGroupChildrenAssignmentsIntoEntitiesGroupsRelationship < ActiveRecord
     Authorization.ignore_access_control(true)
 
     GroupChildrenAssignment.all.each do |gca|
-      g = Group.find_by_id(gca.group_id)
-      e = Entity.find_by_id(gca.child_id)
+      g = Group.find_by_id(('2' + gca.group_id.to_s).to_i)
+      e = Entity.find_by_id(('2' + gca.child_id.to_s).to_i)
 
       g.entities << e
 
