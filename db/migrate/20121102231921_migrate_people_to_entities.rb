@@ -2,6 +2,8 @@ class MigratePeopleToEntities < ActiveRecord::Migration
   def up
     Authorization.ignore_access_control(true)
 
+    Person.set_table_name "people"
+
     Person.all.each do |p|
       e = Entity.new
 

@@ -2,6 +2,8 @@ class MigrateGroupsToEntities < ActiveRecord::Migration
   def up
     Authorization.ignore_access_control(true)
 
+    Group.set_table_name "groups"
+
     Group.all.each do |g|
       e = Entity.new
 
