@@ -7,6 +7,8 @@ class MigrateGroupsToEntities < ActiveRecord::Migration
 
     Group.set_table_name "groups"
 
+    fauik
+
     Group.all.each do |g|
       e = Entity.new
 
