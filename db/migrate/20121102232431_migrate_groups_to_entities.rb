@@ -2,6 +2,9 @@ class MigrateGroupsToEntities < ActiveRecord::Migration
   def up
     Authorization.ignore_access_control(true)
 
+    # AR assumes this exists even though we don't need it
+    add_column :groups, :type, :string
+
     Group.set_table_name "groups"
 
     Group.all.each do |g|
