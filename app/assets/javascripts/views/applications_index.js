@@ -38,6 +38,22 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       source: self.sidebarSearch,
       updater: function(item) { self.searchResultSelected(item, self); }
     });
+
+    this.$("#search_applications").typeahead({
+      minLength: 2,
+      sorter: function(items) { return items; }, // required to keep the order given to process() in 'source'
+      highlighter: function (item) {
+        var item = item.split('####')[1]; // See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+        var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
+        return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+          return '<strong>' + match + '</strong>'
+        })
+      },
+      source: function(query, process) {
+        self.applicationSearch(query, process, self);
+      },
+      updater: function(item) { self.applicationSearchResultSelected(item, self); }
+    });
   },
 
   render: function () {
@@ -75,8 +91,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
   // Populates the sidebar search with results via async call to Routes.api_search_path()
   sidebarSearch: function(query, process) {
-    var self = this;
-
     $.ajax({ url: Routes.api_search_path(), data: { q: query }, type: 'GET' }).always(function(data) {
       entities = [];
       var exact_match_found = false;
@@ -110,8 +124,39 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     }
   },
 
+  applicationSearch: function(query, process, self) {
+    entities = [];
+    var exact_match_found = false;
+
+    self.applications.each(function(app) {
+      if(app) {
+        if(~app.get('name').toLowerCase().indexOf(query.toLowerCase())) {
+          if(app.get('name').toLowerCase() == query.toLowerCase()) exact_match_found = true;
+          entities.push(app.get('id') + '####' + app.get('name'));
+        }
+      }
+    });
+    if(exact_match_found == false) {
+      // Add the option to create a new one with this query
+      entities.push(DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION + '####Create ' + query);
+    }
+
+    process(entities);
+  },
+
+  applicationSearchResultSelected: function(item, self) {
+    var parts = item.split('####');
+    var id = parseInt(parts[0]);
+    var label = parts[1];
+
+    switch(id) {
+      case DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION:
+        self.applications.create({ name: label.slice(7) }); // slice(7) is removing the "Create " prefix
+      break;
+    }
+  },
+
   deselectAll: function(e) {
-    //e.preventDefault();
 
     this.selected.application = null;
     this.selected.role = null;
@@ -172,5 +217,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 }, {
   // Constants used in this view
   FID_ADD_PERSON: -1,
-  FID_CREATE_GROUP: -2
+  FID_CREATE_GROUP: -2,
+  FID_CREATE_APPLICATION: -3
 });
