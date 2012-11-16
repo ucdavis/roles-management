@@ -15,7 +15,7 @@ class Application < ActiveRecord::Base
 
   belongs_to :api_key
 
-  accepts_nested_attributes_for :roles, :reject_if => lambda { |a| a[:token].blank? || a[:descriptor].blank? }, :allow_destroy => true
+  accepts_nested_attributes_for :roles, :allow_destroy => true
 
   def self.csv_header
     "Role,ID,Login ID, Email, First, Last".split(',')
