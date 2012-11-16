@@ -157,7 +157,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   },
 
   deselectAll: function(e) {
-
     this.selected.application = null;
     this.selected.role = null;
     this.selected.entities = [];

@@ -57,6 +57,7 @@ class ApplicationsController < ApplicationController
 
   # POST /applications
   def create
+    params[:application][:owner_ids] << current_user.id
     @application = Application.new(params[:application])
 
     respond_to do |format|
