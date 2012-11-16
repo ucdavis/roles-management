@@ -7,7 +7,7 @@ class MigrateGroupsToEntities < ActiveRecord::Migration
     Group.all.each do |g|
       e = Entity.new
 
-      e.id = g.uid
+      e.id = ('2' + g.id.to_s).to_i # convert off the UID
       e.type = "Group"
       e.created_at = g.created_at
       e.updated_at = g.updated_at

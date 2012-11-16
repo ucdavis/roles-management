@@ -7,7 +7,7 @@ class MigratePeopleToEntities < ActiveRecord::Migration
     Person.all.each do |p|
       e = Entity.new
 
-      e.id = p.uid
+      e.id = ('1' + p.id.to_s).to_i # convert off the UID
       e.type = "Person"
       e.first = p.first
       e.last = p.last
