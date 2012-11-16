@@ -3,7 +3,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   events: {
-    "click .card"              : "selectCard",
+    //"click .card"              : "selectCard",
     "click #cards"             : "deselectAll",
     "click #cards .card .role" : "selectRole",
     "click #pins li"           : "selectEntity"
@@ -111,15 +111,15 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     }
   },
 
-  selectCard: function(e) {
-    e.stopPropagation();
+  //selectCard: function(e) {
+    //e.stopPropagation();
 
-    this.selected.application = this.applications.get($(e.currentTarget).data('application-id'));
-    this.selected.role = null;
-    this.selected.entities = _.map(this.selected.application.members, function(e) { return e.id });
+    //this.selected.application = this.applications.get($(e.currentTarget).data('application-id'));
+    //this.selected.role = null;
+    //this.selected.entities = _.map(this.selected.application.members, function(e) { return e.id });
 
-    this.render();
-  },
+    //this.render();
+  //},
 
   deselectAll: function(e) {
     e.preventDefault();

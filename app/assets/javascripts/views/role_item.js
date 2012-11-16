@@ -13,7 +13,6 @@ DssRm.Views.RoleItem = Support.CompositeView.extend({
   },
 
   render: function () {
-    //this.$el.attr("id", "role_" + this.model.id);
     this.$el.data('role-id', this.model.get('id'));
     this.$el.html(JST['roles/item']({ role: this.model }));
     this.$el.attr("rel", "tooltip");
