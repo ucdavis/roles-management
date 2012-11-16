@@ -11,7 +11,7 @@ class Application < ActiveRecord::Base
   validate :has_at_least_one_role
   validates :name, :presence => true
 
-  attr_accessible :name, :ous_ids, :hostname, :description, :roles, :roles_attributes, :owners_attributes
+  attr_accessible :name, :ous_ids, :hostname, :description, :roles, :roles_attributes, :owner_ids
 
   belongs_to :api_key
 

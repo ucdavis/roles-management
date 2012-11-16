@@ -9,12 +9,14 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     "click #pins li"           : "selectEntity"
   },
 
-  initialize: function() {
+  initialize: function(options) {
     var self = this;
 
-    this.selected_application = null;
-    this.selected_role = null;
-    this.selected_entities = [];
+    // View states
+    this.selected = {};
+    this.selected.application = null;
+    this.selected.role = null;
+    this.selected.entities = [];
 
     this.applications = this.options.applications;
     this.entities = this.options.entities;
@@ -52,8 +54,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.applications.each(function(application) {
       var card = new DssRm.Views.ApplicationItem({
         model: application,
-        highlighted_application_id: self.selected_application ? self.selected_application.get('id') : null,
-        highlighted_role_id: self.selected_role
+        highlighted_application_id: self.selected.application ? self.selected.application.get('id') : null,
+        highlighted_role_id: self.selected.role ? self.selected.role.get('id') : null
       });
       self.renderChild(card);
       self.$('#cards').append(card.el);
@@ -63,7 +65,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.entities.each(function(entity) {
       var pin = new DssRm.Views.EntityItem({
         model: entity,
-        highlighted: _.indexOf(self.selected_entities, entity.get('id')) >= 0 // true if in selected_entities list
+        highlighted: _.indexOf(self.selected.entities, entity.get('id')) >= 0 // true if in selected_entities list
       });
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
@@ -112,16 +114,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   selectCard: function(e) {
     e.stopPropagation();
 
-    this.selected_application = this.applications.get($(e.currentTarget).data('application-id'));
-    this.selected_role = null;
-    var application_entities = this.selected_application.get('ids');
-    this.selected_entities = this.entities.filter(function(e) {
-      return _.find(application_entities, function(i) {
-        return i.id == e.id;
-      });
-    });
-
-    this.selected_entities = _.map(this.selected_entities, function(e) { return e.id });
+    this.selected.application = this.applications.get($(e.currentTarget).data('application-id'));
+    this.selected.role = null;
+    this.selected.entities = _.map(this.selected.application.members, function(e) { return e.id });
 
     this.render();
   },
@@ -129,9 +124,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   deselectAll: function(e) {
     e.preventDefault();
 
-    this.selected_application = null;
-    this.selected_role = null;
-    this.selected_entities = [];
+    this.selected.application = null;
+    this.selected.role = null;
+    this.selected.entities = [];
 
     this.render();
   },
@@ -139,8 +134,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   selectRole: function(e) {
     e.stopPropagation();
 
-    this.selected_application = null;
-    this.selected_role = $(e.currentTarget).parent().data('role-id');
+    this.selected.application = null;
+    this.selected.role = $(e.currentTarget).parent().data('role-id');
 
     this.render();
   },
@@ -158,23 +153,21 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // If no application/role is selected, clicking an entity merely filters the application/role
     // list to display their current assignments.
 
-    if(this.selected_application) {
-      var application_entities = this.selected_application.get('ids');
-
+    if(this.selected.application) {
       // toggle on or off
-      var matched = application_entities.filter(function(e) { return e.id == clicked_entity_id });
+      var matched = this.selected.application.members.filter(function(e) { return e.id == clicked_entity_id });
       if(matched.length > 0) {
-        application_entities = _.without(application_entities, matched[0]);
+        this.selected.application.members = _.without(this.selected.application.members, matched[0]);
       } else {
-        application_entities.push({ id: clicked_entity_id, name: clicked_entity_name });
+        this.selected.application.members.push({ id: clicked_entity_id, name: clicked_entity_name });
       }
 
-      this.selected_application.set({
-        ids: application_entities
+      this.selected.application.set({
+        members: this.selected.application.members
       });
-      this.selected_entities = application_entities.map(function(e) { return e.id });
+      this.selected.entities = this.selected.application.members.map(function(e) { return e.id });
 
-      this.selected_application.save();
+      this.selected.application.save();
     } else {
       //this.selected_entities.push($(e.currentTarget).data('entity-id'));
       //this.selected_entities = _.uniq(this.selected_entities);
