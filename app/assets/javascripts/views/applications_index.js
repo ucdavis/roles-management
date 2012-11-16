@@ -155,21 +155,23 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // If no application/role is selected, clicking an entity merely filters the application/role
     // list to display their current assignments.
 
-    if(this.selected.application) {
+    if(this.selected.role) {
       // toggle on or off
-      var matched = this.selected.application.members.filter(function(e) { return e.id == clicked_entity_id });
+      var matched = this.selected.role.get('entities').filter(function(e) { return e.id == clicked_entity_id });
+      var updated_entities = null;
       if(matched.length > 0) {
-        this.selected.application.members = _.without(this.selected.application.members, matched[0]);
+        updated_entities = _.without(this.selected.role.get('entities'), matched[0]);
       } else {
-        this.selected.application.members.push({ id: clicked_entity_id, name: clicked_entity_name });
+        updated_entities = this.selected.role.get('entities');
+        updated_entities.push({ id: clicked_entity_id, name: clicked_entity_name });
       }
 
-      this.selected.application.set({
-        members: this.selected.application.members
+      this.selected.role.set({
+        entities: updated_entities
       });
-      this.selected.entities = this.selected.application.members.map(function(e) { return e.id });
+      this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
 
-      this.selected.application.save();
+      //this.selected.role.save();
     } else {
       //this.selected_entities.push($(e.currentTarget).data('entity-id'));
       //this.selected_entities = _.uniq(this.selected_entities);

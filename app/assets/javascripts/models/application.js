@@ -3,12 +3,12 @@ DssRm.Models.Application = Backbone.Model.extend({
     this.on("change:roles", function() {
       this.parseRoles();
       this.parseOwners();
-      this.updateMembers();
+      //this.updateMembers();
     });
 
     this.parseRoles();
     this.parseOwners();
-    this.updateMembers();
+    //this.updateMembers();
   },
 
   parseRoles: function() {
@@ -21,19 +21,19 @@ DssRm.Models.Application = Backbone.Model.extend({
     this.owners = new DssRm.Collections.Entities(ownersAttr);
   },
 
-  updateMembers: function() {
-    var self = this;
+  //updateMembers: function() {
+    //var self = this;
 
-    this.members = [];
+    //this.members = [];
 
-    this.roles.each(function(role) {
-      _.each(role.get('entities'), function(entity) {
-        self.members.push(entity);
-      });
-    });
+    //this.roles.each(function(role) {
+      //_.each(role.get('entities'), function(entity) {
+        //self.members.push(entity);
+      //});
+    //});
 
-    this.members = _.uniq(this.members, false, function(e) { return e.id });
-  },
+    //this.members = _.uniq(this.members, false, function(e) { return e.id });
+  //},
 
   toJSON: function() {
     var json = _.omit(this.attributes, 'roles', 'owners', 'uids');
