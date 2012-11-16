@@ -1,3 +1,11 @@
+# Re-defined here because it was deleted
+class GroupChildrenAssignment < ActiveRecord::Base
+  using_access_control
+
+  belongs_to :group
+  belongs_to :child, :class_name => "Group"
+end
+
 class MergeGroupChildrenAssignmentsIntoEntitiesGroupsRelationship < ActiveRecord::Migration
   def up
     Authorization.ignore_access_control(true)
