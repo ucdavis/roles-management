@@ -11,12 +11,7 @@ class Role < ActiveRecord::Base
 
   belongs_to :application
 
-  attr_accessible :token, :entities_tokens, :default, :descriptor, :description, :ad_path
-  attr_reader :entity_tokens
-
-  def entities_tokens=(ids)
-    self.entity_ids = ids.split(",")
-  end
+  attr_accessible :token, :entity_ids, :default, :descriptor, :description, :ad_path
 
   # Needed in show.json.rabl to display a role's application's name
   def application_name
