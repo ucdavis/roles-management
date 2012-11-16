@@ -9,7 +9,7 @@ DssRm.Views.RoleItem = Support.CompositeView.extend({
   initialize: function(options) {
     _.bindAll(this, "render");
 
-    this.draw_highlighted = (options.highlighted_pin_id == this.model.id);
+    this.draw_highlighted = (options.highlighted_role_id == this.model.id);
   },
 
   render: function () {
@@ -20,7 +20,7 @@ DssRm.Views.RoleItem = Support.CompositeView.extend({
     this.renderRoleContents();
 
     if(this.draw_highlighted) {
-      this.$('div.pin').css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
+      this.$el.css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
     }
 
     return this;

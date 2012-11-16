@@ -134,8 +134,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   selectRole: function(e) {
     e.stopPropagation();
 
+    var application_id = $(e.currentTarget).parent().parent().parent().data('application-id');
+
     this.selected.application = null;
-    this.selected.role = $(e.currentTarget).parent().data('role-id');
+    this.selected.role = this.applications.get(application_id).roles.get($(e.currentTarget).data('role-id'));
 
     this.render();
   },

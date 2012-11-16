@@ -6,7 +6,7 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     _.bindAll(this, "render");
 
     this.draw_highlighted = (options.highlighted_application_id == this.model.id);
-    this.highlighted_pin_id = options.highlighted_pin_id;
+    this.highlighted_role_id = options.highlighted_role_id;
   },
 
   render: function() {
@@ -30,7 +30,10 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     self.$('.application-link').attr("href", this.applicationUrl());
 
     this.model.roles.each(function(role) {
-      var roleItem = new DssRm.Views.RoleItem({ model: role, highlighted_pin_id: self.highlighted_pin_id });
+      var roleItem = new DssRm.Views.RoleItem({
+        model: role,
+        highlighted_role_id: self.highlighted_role_id
+      });
       self.renderChild(roleItem);
       self.$('.roles').append(roleItem.el);
     });
