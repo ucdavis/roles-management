@@ -19,7 +19,7 @@ class Api::ApplicationsController < Api::BaseController
     if params[:person_id].nil?
       logger.info "No specific individual specified. Returning generic API application/show"
       # No person specified
-      @people = resolve_uids(@application.uids, true)
+      @people = @application.roles.collect{|r| r.entities}.flatten.uniq
 
       respond_to do |format|
         format.xml { render :text => @application.to_xml( :except => [:created_at, :id, :updated_at] ) }
