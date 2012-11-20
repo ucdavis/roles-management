@@ -7,7 +7,7 @@
 //= require backbone-support
 //
 //= require bootstrap
-//= require bootbox.min
+//= require bootbox
 //= require bootstrap-modal-alert
 //= require jQuery.equalHeights
 //= require jquery.tokeninput
