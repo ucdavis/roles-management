@@ -2,12 +2,15 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   tagName: "div",
 
   events: {
-    "click a#apply": "save",
+    "click a#apply": "saveApplication",
+    "click a#delete": "deleteApplication",
     "hidden": "cleanUpModal"
   },
 
-  initialize: function() {
+  initialize: function(options) {
     this.model.bind('change', this.render, this);
+
+    this.applications = options.applications;
 
     this.$el.html(JST['applications/show']({ application: this.model }));
 
@@ -54,9 +57,30 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     return this;
   },
 
-  save: function() {
+  saveApplication: function() {
     this.model.set({ name: this.$('input[name=name]').val() });
     this.model.save();
+
+    return false;
+  },
+
+  deleteApplication: function() {
+    var self = this;
+
+    self.$el.fadeOut();
+    bootbox.confirm("Are you sure you want to delete " + this.model.escape('name') + "?", function(result) {
+      self.$el.fadeIn();
+
+      if (result) {
+        // delete the application and dismiss the dialog
+        self.model.destroy();
+
+        // dismiss the dialog
+        self.$(".modal-header a.close").trigger("click");
+      } else {
+        // do nothing - do not delete
+      }
+    });
 
     return false;
   },

@@ -29,7 +29,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
 
     application.fetch({
       success: function() {
-        var view = new DssRm.Views.ApplicationShow({ model: application });
+        var view = new DssRm.Views.ApplicationShow({ model: application, applications: applicationsRouter.applications });
         applicationsRouter.currentView.renderChild(view);
         view.$el.modal();
       }

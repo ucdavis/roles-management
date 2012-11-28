@@ -20,8 +20,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.applications = this.options.applications;
     this.entities = this.options.entities;
 
-    this.applications.on('change add', this.render, this);
-    this.entities.on('change add', this.render, this);
+    this.applications.on('change add destroy sync', this.render, this);
+    this.entities.on('change add destroy sync', this.render, this);
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 

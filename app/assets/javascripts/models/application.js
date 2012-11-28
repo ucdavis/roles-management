@@ -1,5 +1,11 @@
 DssRm.Models.Application = Backbone.Model.extend({
   initialize: function() {
+    this.bind('sync', this.updateAttributes, this);
+
+    this.updateAttributes();
+  },
+
+  updateAttributes: function() {
     var rolesAttr = this.get('roles');
     this.roles = new DssRm.Collections.Roles(rolesAttr);
 
