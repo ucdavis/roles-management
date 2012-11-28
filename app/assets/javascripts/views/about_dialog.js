@@ -8,7 +8,7 @@ DssRm.Views.AboutDialog = Support.CompositeView.extend({
   },
 
   initialize: function() {
-    this.$el.html(JST['application/about_dialog' ]());
+    this.$el.html(JST['application/about_dialog']());
   },
 
   render: function() {

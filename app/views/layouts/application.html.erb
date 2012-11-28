@@ -9,33 +9,30 @@
 </head>
 <body>
 
+  <% _has_role? :admin do %>
   <script type="text/javascript">
     window.application_last_updated = "<%= LAST_UPDATED %>";
   </script>
+  <% end %>
 
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
         <%= link_to "Roles Management", root_url, :class => "brand" %>
         <div class="nav-collapse">
-          <ul class="nav">
-            <% _permitted_to? :index, :applications do %>
-              <%#= li_link_with_class({:title => 'Manage', :controller => 'applications', :action => 'index'}) %>
-            <% end %>
-          </ul>
           <% _has_role? :admin do %>
           <ul class="nav pull-right">
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrate <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <% unless session[:impersonate].nil? %>
-                  <li><a href="#unimpersonate" id="admin-unimpersonate">Unimpersonate</a></li>
+                  <li><a href="#unimpersonate">Unimpersonate</a></li>
                 <% else %>
-                  <li><a href="#impersonate" id="admin-impersonate">Impersonate…</a></li>
+                  <li><a href="#impersonate">Impersonate…</a></li>
                 <% end %>
-                <li><a href="#whitelist" id="admin-ip-whitelist">API Whitelist…</a></li>
+                <li><a href="#whitelist">API Whitelist…</a></li>
                 <li class="divider"></li>
-                <li><a href="#about" id="admin-about">About…</a></li>
+                <li><a href="#about">About…</a></li>
               </ul>
               <%= li_link_with_class({:title => 'Log out', :controller => 'site', :action => 'logout'}) %>
             </li>

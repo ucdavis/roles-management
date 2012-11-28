@@ -7,20 +7,16 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
 
   routes: {
     ""                 : "index",
-    "new"              : "newApplication",
     "applications/:id" : "showApplication",
     "entities/:uid"    : "showEntity",
+    "impersonate"      : "impersonateDialog",
+    "unimpersonate"    : "unimpersonate",
     "about"            : "aboutDialog"
   },
 
   index: function() {
     var view = new DssRm.Views.ApplicationsIndex({ applications: this.applications, entities: this.entities });
     this.swap(view);
-  },
-
-  newApplication: function() {
-    //var view = new DssRm.Views.TasksNew({ collection: this.applications });
-    //this.swap(view);
   },
 
   showApplication: function(applicationId) {
@@ -47,6 +43,16 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
         view.$el.modal();
       }
     });
+  },
+
+  impersonateDialog: function() {
+    var view = new DssRm.Views.ImpersonateDialog();
+    this.currentView.renderChild(view);
+    view.$el.modal();
+  },
+
+  unimpersonate: function() {
+    window.location.href = Routes.admin_ops_unimpersonate_path();
   },
 
   aboutDialog: function() {
