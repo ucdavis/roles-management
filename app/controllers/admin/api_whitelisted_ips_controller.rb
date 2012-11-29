@@ -10,7 +10,7 @@ class Admin::ApiWhitelistedIpsController < ApplicationController
 
   # POST /admin/api_whitelisted_ips.json
   def create
-    @address = ApiWhitelistedIp.new(params[:address])
+    @address = ApiWhitelistedIp.new(params[:api_whitelisted_ip])
 
     respond_to do |format|
       if @address.save

@@ -60,7 +60,9 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     var self = this;
 
     $.get(Routes.admin_api_whitelisted_ips_path(), function(ips) {
-      var view = new DssRm.Views.WhitelistDialog({ whitelist: _(ips) });
+      self.whitelisted_ips = new DssRm.Collections.WhitelistedIPs(ips);
+
+      var view = new DssRm.Views.WhitelistDialog({ whitelist: self.whitelisted_ips });
       self.currentView.renderChild(view);
       view.$el.modal();
     });

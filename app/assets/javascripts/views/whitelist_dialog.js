@@ -13,6 +13,8 @@ DssRm.Views.WhitelistDialog = Support.CompositeView.extend({
     this.$el.html(JST['application/whitelist_dialog']());
 
     this.whitelist = options.whitelist;
+
+    this.whitelist.on('change add destroy sync', this.render, this);
   },
 
   render: function() {
@@ -20,8 +22,8 @@ DssRm.Views.WhitelistDialog = Support.CompositeView.extend({
 
     this.$("tbody").empty();
     this.whitelist.each(function(ip) {
-      var row = $("<tr><td>" + ip.address + "</td><td>" + ip.reason + "</td><td><a href=\"#\" id=\"remove_ip\">Remove</a></td></tr>");
-      $(row).data("ip_id", ip.id);
+      var row = $("<tr><td>" + ip.escape('address') + "</td><td>" + ip.escape('reason') + "</td><td><a href=\"#\" id=\"remove_ip\">Remove</a></td></tr>");
+      $(row).data("ip_id", ip.get('id'));
       self.$("tbody").append(row);
     });
 
@@ -33,18 +35,20 @@ DssRm.Views.WhitelistDialog = Support.CompositeView.extend({
     var new_address = $(e.currentTarget).find("input[name=address]").val();
     var new_reason = $(e.currentTarget).find("input[name=reason]").val();
 
-    $.post(Routes.admin_api_whitelisted_ips_path(), { address: {address: new_address, reason: new_reason } }, function() {
-        self.trigger('render');
-      }
-    );
+    this.whitelist.create({ address: new_address, reason: new_reason });
 
     return false;
   },
 
   removeAddress: function(e) {
     var ip_id = $(e.currentTarget).parents("tr").data("ip_id");
-    console.log("remove address");
-    console.log(ip_id);
+
+    var model = this.whitelist.get(ip_id);
+    model.destroy();
+
+    this.whitelist.remove(model);
+
+    this.whitelist.trigger('sync');
 
     return false;
   },
