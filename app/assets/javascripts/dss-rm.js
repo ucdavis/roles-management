@@ -1,9 +1,3 @@
-// Let Underscore know we'll be using Mustache-style templates
-_.templateSettings = {
-    interpolate: /\{\{\=(.+?)\}\}/g,
-    evaluate: /\{\{(.+?)\}\}/g
-};
-
 window.DssRm = {
   Models: {},
   Collections: {},

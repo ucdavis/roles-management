@@ -1,4 +1,13 @@
 class Admin::ApiWhitelistedIpsController < ApplicationController
+  filter_access_to :all
+  respond_to :json
+
+  def index
+    @addresses = ApiWhitelistedIp.all
+
+    respond_with @addresses
+  end
+
   # POST /admin/api_whitelisted_ips.json
   def create
     @address = ApiWhitelistedIp.new(params[:address])

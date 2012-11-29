@@ -11,6 +11,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     "entities/:uid"    : "showEntity",
     "impersonate"      : "impersonateDialog",
     "unimpersonate"    : "unimpersonate",
+    "whitelist"        : "whitelistDialog",
     "about"            : "aboutDialog"
   },
 
@@ -53,6 +54,16 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
 
   unimpersonate: function() {
     window.location.href = Routes.admin_ops_unimpersonate_path();
+  },
+
+  whitelistDialog: function() {
+    var self = this;
+
+    $.get(Routes.admin_api_whitelisted_ips_path(), function(ips) {
+      var view = new DssRm.Views.WhitelistDialog({ whitelist: _(ips) });
+      self.currentView.renderChild(view);
+      view.$el.modal();
+    });
   },
 
   aboutDialog: function() {

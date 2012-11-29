@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <a class="close" data-dismiss="modal">×</a>
+  <h3>API Whitelist</h3>
+</div>
+<div class="modal-body">
+  <table class="table table-striped" id="addresses">
+    <thead>
+      <tr>
+        <th>IP Address</th>
+        <th>Reason</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <form class="well form-inline" id="new-address">
+    <span class="help-block">Add new address:</span>
+    <input type="text" name="address" class="span3" placeholder="IP Address…" />
+    <input type="text" name="reason" class="span3" placeholder="Reason…" />
+    <button type="submit" class="btn">Add</button>
+  </form>
+</div>
+<div class="modal-footer">
+  <a href="#" class="btn" data-dismiss="modal">Close</a>
+</div>
