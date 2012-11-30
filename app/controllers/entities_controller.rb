@@ -11,8 +11,6 @@ class EntitiesController < ApplicationController
   end
 
   def create
-    logger.info("creating new group:")
-    logger.info(params[:entity])
     entity = Entity.new( params[:entity] )
     entity.save
 

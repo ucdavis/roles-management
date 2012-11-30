@@ -19,7 +19,7 @@ class Group < Entity
 
   validates :name, :presence => true
 
-  attr_accessible :name, :description, :member_ids, :owner_ids, :operator_ids, :rules_attributes
+  attr_accessible :name, :description, :type, :member_ids, :owner_ids, :operator_ids, :rules_attributes
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
 

@@ -27,7 +27,7 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :role_ids, :subordinate_ids, :group_ids, :ou_ids
+  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :subordinate_ids, :group_ids, :ou_ids
 
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')

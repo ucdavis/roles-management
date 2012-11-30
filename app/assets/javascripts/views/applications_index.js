@@ -78,8 +78,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.$('#pins').empty();
     this.entities.each(function(entity) {
-      console.log("rendering entity:");
-      console.log(entity);
       var pin = new DssRm.Views.EntityItem({
         model: entity,
         highlighted: _.indexOf(self.selected.entities, entity.get('id')) >= 0 // true if in selected_entities list

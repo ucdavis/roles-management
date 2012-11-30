@@ -1,9 +1,25 @@
 DssRm.Models.Entity = Backbone.Model.extend({
+  initialize: function() {
+    var type = this.get('type');
+
+    // Some attribtues may or may not exist depending on how this model was initialized.
+    // Ensure needed attributes exist, even if blank.
+    if(type == "Group") {
+      if(this.get('owners') === undefined) this.set('owners', []);
+      if(this.get('operators') === undefined) this.set('operators', []);
+      if(this.get('members') === undefined) this.set('members', []);
+      if(this.get('rules') === undefined) this.set('rules', []);
+    } else if(type == "Person") {
+      if(this.get('roles') === undefined) this.set('roles', []);
+      if(this.get('subordinates') === undefined) this.set('subordinates', []);
+      if(this.get('groups') === undefined) this.set('groups', []);
+      if(this.get('ous') === undefined) this.set('ous', []);
+    }
+  },
+
   toJSON: function() {
     var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'roles', 'subordinates', 'groups', 'ous');
     var type = this.get('type');
-
-    console.log("json-ifying, type is " + type);
 
     if(type == "Group") {
       // Group-specific JSON
