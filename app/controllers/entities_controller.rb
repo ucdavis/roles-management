@@ -11,14 +11,20 @@ class EntitiesController < ApplicationController
   end
 
   def create
-    entity = Entity.new( params[:entity] )
-    entity.save
+    # Only allow "Group" and "Person" to be constantized for security
+    if (params[:entity][:type] == "Group") || (params[:entity][:type] == "Person")
+      entity = params[:entity][:type].constantize.new(params[:entity])
 
-    if params[:entity][:type] == "Group"
-      Group.find(entity.id).owners << current_user # cannot add to 'entity' directly b/c of Rails' limited STI
+      #entity = Entity.new( params[:entity] )
+      entity.save
+
+      if params[:entity][:type] == "Group"
+        #Group.find(entity.id).owners << current_user # cannot add to 'entity' directly b/c of Rails' limited STI
+        entity.owners << current_user
+      end
+
+      respond_with entity
     end
-
-    respond_with entity
   end
 
   def update
