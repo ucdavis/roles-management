@@ -15,7 +15,7 @@ class EntitiesController < ApplicationController
     entity.save
 
     if params[:entity][:type] == "Group"
-      Group.find(entity.id).owners << current_user # cannot add 'entity' directly b/c of Rails' limited STI
+      Group.find(entity.id).owners << current_user # cannot add to 'entity' directly b/c of Rails' limited STI
     end
 
     respond_with entity
