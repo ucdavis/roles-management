@@ -58,55 +58,55 @@ class GroupsController < ApplicationController
   end
 
   # POST /groups
-  def create
-    @group = Group.new(params[:group])
+  #def create
+    #@group = Group.new(params[:group])
 
-    respond_to do |format|
-      if @group.save!
-        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created group #{params[:group]}."
-        format.html { redirect_to(@group, :notice => 'Group was successfully created.') }
-        format.json { render json: @group, status: :created, location: @group }
-      else
-        format.html { render :action => "new" }
-        format.json { render json: @group.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+    #respond_to do |format|
+      #if @group.save!
+        #logger.info "#{current_user.loginid}@#{request.remote_ip}: Created group #{params[:group]}."
+        #format.html { redirect_to(@group, :notice => 'Group was successfully created.') }
+        #format.json { render json: @group, status: :created, location: @group }
+      #else
+        #format.html { render :action => "new" }
+        #format.json { render json: @group.errors, status: :unprocessable_entity }
+      #end
+    #end
+  #end
 
   # PUT /groups/1
-  def update
-    @group = Group.find_by_id(params[:id])
+  #def update
+    #@group = Group.find_by_id(params[:id])
 
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated group #{params[:id]}."
+    #logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated group #{params[:id]}."
 
-    respond_to do |format|
-      if @group.update_attributes(params[:group])
-        format.html { redirect_to(@group, :notice => 'Group was successfully updated.') }
-        format.js { head :ok }
-        format.json
-      else
-        format.html { render :action => "edit" }
-        format.js { render json: @group.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+    #respond_to do |format|
+      #if @group.update_attributes(params[:group])
+        #format.html { redirect_to(@group, :notice => 'Group was successfully updated.') }
+        #format.js { head :ok }
+        #format.json
+      #else
+        #format.html { render :action => "edit" }
+        #format.js { render json: @group.errors, status: :unprocessable_entity }
+      #end
+    #end
+  #end
 
   # DELETE /groups/1
-  def destroy
-    unless current_user.can_administer_group? params[:id] == false
-      @group = Group.find_by_id(params[:id])
-      @group.destroy
+  #def destroy
+    #unless current_user.can_administer_group? params[:id] == false
+      #@group = Group.find_by_id(params[:id])
+      #@group.destroy
 
-      logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted group #{params[:id]}."
-    else
-      logger.info "#{current_user.loginid}@#{request.remote_ip}: Attempted to delete group #{params[:id]} but does not have permission."
-    end
+      #logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted group #{params[:id]}."
+    #else
+      #logger.info "#{current_user.loginid}@#{request.remote_ip}: Attempted to delete group #{params[:id]} but does not have permission."
+    #end
 
-    respond_to do |format|
-      format.html { redirect_to(groups_url) }
-      format.json { head :no_content }
-    end
-  end
+    #respond_to do |format|
+      #format.html { redirect_to(groups_url) }
+      #format.json { head :no_content }
+    #end
+  #end
 
   protected
 

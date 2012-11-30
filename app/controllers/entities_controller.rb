@@ -15,11 +15,9 @@ class EntitiesController < ApplicationController
     if (params[:entity][:type] == "Group") || (params[:entity][:type] == "Person")
       entity = params[:entity][:type].constantize.new(params[:entity])
 
-      #entity = Entity.new( params[:entity] )
       entity.save
 
       if params[:entity][:type] == "Group"
-        #Group.find(entity.id).owners << current_user # cannot add to 'entity' directly b/c of Rails' limited STI
         entity.owners << current_user
       end
 
