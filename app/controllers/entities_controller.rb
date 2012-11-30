@@ -31,4 +31,19 @@ class EntitiesController < ApplicationController
     @entity.update_attributes(params[:entity])
     render "show"
   end
+
+  def destroy
+    entity = Entity.find(params[:id])
+
+    if entity.type == "Group"
+      if entity.owners.include? current_user
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted entity, #{entity}."
+
+        # Must own the group to delete it
+        entity.destroy
+
+        render :nothing => true
+      end
+    end
+  end
 end

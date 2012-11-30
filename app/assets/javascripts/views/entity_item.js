@@ -37,11 +37,13 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
   },
 
   removeEntity: function() {
-    // Removing an entity doesn't imply deleting it.
-    // If a person removes an individual, for instance, we may merely unassign
-    // that individual as a subordinate.
+    // This is not the same as unassigning. If somebody clicks the remove link
+    // on an entity, they are either deleting a group or attempting to delete
+    // a person.
+    var type = this.model.get('type');
 
-
-    return false;
+    if(type == "Group") {
+      this.model.destroy();
+    }
   }
 });
