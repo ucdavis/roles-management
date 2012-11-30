@@ -2,7 +2,8 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
   tagName: "li",
 
   events: {
-    "click a>i": "patchTooltipBehavior"
+    "click a>i"                 : "patchTooltipBehavior",
+    "click a.entity-remove-link": "removeEntity"
   },
 
   initialize: function(options) {
@@ -33,5 +34,14 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
   // This is necessary to fix a bug in tooltips (as of Bootstrap 2.1.1)
   patchTooltipBehavior: function(e) {
     $(e.currentTarget).tooltip('hide');
+  },
+
+  removeEntity: function() {
+    // Removing an entity doesn't imply deleting it.
+    // If a person removes an individual, for instance, we may merely unassign
+    // that individual as a subordinate.
+
+
+    return false;
   }
 });
