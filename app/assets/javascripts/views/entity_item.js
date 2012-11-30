@@ -16,7 +16,7 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     this.$el.data('entity-name', this.model.get('name'));
     this.$el.html(JST['entities/item']({ entity: this.model }));
     this.$('span').html(this.model.escape('name'));
-    this.$el.addClass(this.model.get('type'));
+    this.$el.addClass(this.model.get('type').toLowerCase());
     this.$('.entity-details-link').attr("href", this.entityUrl());
 
     if(this.highlighted) {

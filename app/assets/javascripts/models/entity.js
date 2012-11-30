@@ -1,9 +1,11 @@
 DssRm.Models.Entity = Backbone.Model.extend({
   toJSON: function() {
-    var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'type', 'roles', 'subordinates', 'groups', 'ous');
+    var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'roles', 'subordinates', 'groups', 'ous');
     var type = this.get('type');
 
-    if(type == "group") {
+    console.log("json-ifying, type is " + type);
+
+    if(type == "Group") {
       // Group-specific JSON
       json.owner_ids = this.get('owners').map(function(owner) { return owner.id });
       json.operator_ids = this.get('operators').map(function(operator) { return operator.id });
@@ -11,7 +13,7 @@ DssRm.Models.Entity = Backbone.Model.extend({
       json.rules_attributes = this.get('rules').map(function(rule) {
         return { id: rule.id, column: rule.column, condition: rule.condition, value: rule.value };
       });
-    } else if(type == "person") {
+    } else if(type == "Person") {
       // Person-specific JSON
       json.role_ids = this.get('roles').map(function(role) { return role.id });
       json.subordinate_ids = this.get('subordinates').map(function(subordinate) { return subordinate.id });

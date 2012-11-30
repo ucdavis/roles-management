@@ -18,9 +18,9 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
     this.model.bind('change', this.render, this);
 
-    this.$el.html(JST['entities/show_' + this.model.get('type') ]({ model: this.model }));
+    this.$el.html(JST['entities/show_' + this.model.get('type').toLowerCase() ]({ model: this.model }));
 
-    if(type == "group") {
+    if(type == "Group") {
       this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
         crossDomain: false,
         defaultText: "",
@@ -77,7 +77,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
           self.model.set('members', members);
         }
       });
-    } else if (type == "person") {
+    } else if (type == "Person") {
       this.$("input[name=subordinates]").tokenInput(Routes.api_people_path(), {
         crossDomain: false,
         defaultText: "",
@@ -141,7 +141,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     var self = this;
     var type = this.model.get('type');
 
-    if(type == "group") {
+    if(type == "Group") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
       self.$('input[name=name]').val(this.model.escape('name'));
@@ -177,7 +177,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rule.data("rule_id", rule.id);
         rules_table.append($rule);
       });
-    } else if(type == "person") {
+    } else if(type == "Person") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
       self.$('input[name=first]').val(this.model.escape('first'));
@@ -225,12 +225,12 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   save: function(e) {
     var type = this.model.get('type');
 
-    if(type == "group") {
+    if(type == "Group") {
       this.model.set({
         name: this.$('input[name=name]').val(),
         description: this.$('textarea[name=description]').val()
       });
-    } else if(type == "person") {
+    } else if(type == "Person") {
       this.model.set({
         first: this.$('input[name=first]').val(),
         last: this.$('input[name=last]').val(),
