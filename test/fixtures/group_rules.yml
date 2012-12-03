@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
 one:
-  field: MyString
+  column: MyString
   condition: MyString
   value: MyString
 
 two:
-  field: MyString
+  column: MyString
   condition: MyString
   value: MyString

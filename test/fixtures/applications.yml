@@ -1,5 +1,9 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
+dssrm:
+  name: DSS Roles Management
+  api_key: 1234567
+
 evote:
   name: eVote
   api_key: abcdefg
