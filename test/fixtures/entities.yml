@@ -31,7 +31,15 @@ jeremy:
   address:
 
 dssit:
+  name: "DSS IT"
   type: Group
+  code: "0002"
 
 lands:
+  name: "College of L&S"
+  type: Group
+  code: "0001"
+
+jeremys_group:
+  name: "Jeremy's Group"
   type: Group
