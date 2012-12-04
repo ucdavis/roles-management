@@ -4,17 +4,13 @@ class ApplicationsController < ApplicationController
 
   # GET /applications
   def index
-    @applications = Application.all
-
-    respond_to do |format|
-      format.html
-    end
   end
 
   # GET /applications/1
   def show
+    # SECUREME: Can the current user see this application?
+
     respond_to do |format|
-      format.html { render "show", :layout => false }
       format.json { render json: @application }
       format.csv {
         require 'csv'
@@ -43,10 +39,12 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/new
   def new
+    # SECUREME: Can the current user try to create a new application?
+
     @application = Application.new
 
     respond_to do |format|
-      format.html
+      format.json
     end
   end
 
@@ -57,6 +55,8 @@ class ApplicationsController < ApplicationController
 
   # POST /applications
   def create
+    # SECUREME: Can the current user create applications?
+
     params[:application][:owner_ids] << current_user.id
     @application = Application.new(params[:application])
 
@@ -74,6 +74,8 @@ class ApplicationsController < ApplicationController
 
   # PUT /applications/1
   def update
+    # SECUREME: Can the current user update this application?
+
     @application = Application.find(params[:id])
 
     respond_to do |format|
@@ -90,6 +92,8 @@ class ApplicationsController < ApplicationController
 
   # DELETE /applications/1
   def destroy
+    # SECUREME: Can the current user delete this application?
+
     @application = Application.find(params[:id])
     @application.destroy
 

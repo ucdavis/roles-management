@@ -78,9 +78,14 @@ class Person < Entity
   def manageable_applications
     apps = []
 
-    # Add apps where they are explicitly the owners
-    application_ownerships.each do |a|
-      apps << a
+    # Admins can see all applications
+    if is_rm_admin?
+      apps = Application.all
+    else
+      # Add apps where they are explicitly the owners
+      application_ownerships.each do |a|
+        apps << a
+      end
     end
 
     apps
@@ -179,5 +184,10 @@ class Person < Entity
 
   def can_administer_role?(role_id)
     applications.collect{|x| x.role_ids}.flatten.include? role_id
+  end
+
+  # Returns true if this user is an admin of "DSS Roles Management" itself
+  def is_rm_admin?
+    roles.includes(:application).where(:token => "admin", :applications => { :name => "DSS Roles Management" }).exists?
   end
 end
