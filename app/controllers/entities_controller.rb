@@ -7,10 +7,12 @@ class EntitiesController < ApplicationController
   end
 
   def show
+    # SECUREME
     @entity = Entity.find(params[:id])
   end
 
   def create
+    # SECUREME
     # Only allow "Group" and "Person" to be constantized for security
     if (params[:entity][:type] == "Group") || (params[:entity][:type] == "Person")
       entity = params[:entity][:type].constantize.new(params[:entity])
@@ -26,6 +28,7 @@ class EntitiesController < ApplicationController
   end
 
   def update
+    # SECUREME
     @entity = Entity.find(params[:id])
 
     @entity.update_attributes(params[:entity])
@@ -33,6 +36,7 @@ class EntitiesController < ApplicationController
   end
 
   def destroy
+    # SECUREME
     entity = Entity.find(params[:id])
 
     if entity.type == "Group"

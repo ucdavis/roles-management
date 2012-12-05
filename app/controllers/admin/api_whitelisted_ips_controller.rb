@@ -3,6 +3,7 @@ class Admin::ApiWhitelistedIpsController < ApplicationController
   respond_to :json
 
   def index
+    # SECUREME
     @addresses = ApiWhitelistedIp.all
 
     respond_with @addresses
@@ -10,6 +11,7 @@ class Admin::ApiWhitelistedIpsController < ApplicationController
 
   # POST /admin/api_whitelisted_ips.json
   def create
+    # SECUREME
     @address = ApiWhitelistedIp.new(params[:api_whitelisted_ip])
 
     respond_to do |format|
@@ -24,6 +26,7 @@ class Admin::ApiWhitelistedIpsController < ApplicationController
 
   # DELETE /admin/api_whitelisted_ips/1.json
   def destroy
+    # SECUREME
     @address = ApiWhitelistedIp.find(params[:id])
     @address.destroy
 

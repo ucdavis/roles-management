@@ -3,59 +3,59 @@ class GroupsController < ApplicationController
   filter_access_to :all
 
   # GET /groups
-  def index
-    @groups = Group.where("name like ?", "%#{params[:q]}%")
+  # def index
+  #   @groups = Group.where("name like ?", "%#{params[:q]}%")
 
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group index."
+  #   logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group index."
 
-    respond_to do |format|
-      format.html
-      format.json { render json: @group }
-    end
-  end
+  #   respond_to do |format|
+  #     format.html
+  #     format.json { render json: @group }
+  #   end
+  # end
 
   # GET /groups/1
-  def show
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
+  # def show
+  #   logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
 
-    respond_to do |format|
-      format.html { render "show", :layout => false }
-      format.json { render json: @group }
-      format.csv {
-        require 'csv'
+  #   respond_to do |format|
+  #     format.html { render "show", :layout => false }
+  #     format.json { render json: @group }
+  #     format.csv {
+  #       require 'csv'
 
-        # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
-        csv_data = CSV.generate do |csv|
-          csv << Person.csv_header
-          @group.members(flatten = true).each do |m|
-            csv << m.to_csv
-          end
-        end
-        send_data csv_data,
-          :type => 'text/csv; charset=iso-8859-1; header=present',
-          :disposition => "attachment; filename=rm_group_#{@group.to_param}.csv"
-      }
-    end
-  end
+  #       # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
+  #       csv_data = CSV.generate do |csv|
+  #         csv << Person.csv_header
+  #         @group.members(flatten = true).each do |m|
+  #           csv << m.to_csv
+  #         end
+  #       end
+  #       send_data csv_data,
+  #         :type => 'text/csv; charset=iso-8859-1; header=present',
+  #         :disposition => "attachment; filename=rm_group_#{@group.to_param}.csv"
+  #     }
+  #   end
+  # end
 
   # GET /groups/new
-  def new
-    @group = Group.new
+  # def new
+  #   @group = Group.new
 
-    3.times do
-      @group.rules.build
-    end
+  #   3.times do
+  #     @group.rules.build
+  #   end
 
-    respond_to do |format|
-      format.html
-      format.json { render json: @group }
-    end
-  end
+  #   respond_to do |format|
+  #     format.html
+  #     format.json { render json: @group }
+  #   end
+  # end
 
   # GET /groups/1/edit
-  def edit
-    @group = Group.find_by_id(params[:id])
-  end
+  # def edit
+  #   @group = Group.find_by_id(params[:id])
+  # end
 
   # POST /groups
   #def create

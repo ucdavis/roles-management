@@ -4,70 +4,70 @@ class PeopleController < ApplicationController
 
   # GET /people
   def index
-    @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
+    # @people = Person.where("first like ? or last like ?", "%#{params[:q]}%", "%#{params[:q]}%")
 
-    @people.map()
+    # @people.map()
 
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded people index page."
+    # logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded people index page."
 
-    respond_to do |format|
-      format.html
-    end
+    # respond_to do |format|
+    #   format.html
+    # end
   end
 
   # GET /people/1
   def show
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded person page for #{params[:id]}."
+    # logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded person page for #{params[:id]}."
 
-    respond_to do |format|
-      format.html { render "show", :layout => false }
-      format.json { render json: @person }
-    end
+    # respond_to do |format|
+    #   format.html { render "show", :layout => false }
+    #   format.json { render json: @person }
+    # end
   end
 
   # GET /people/new
   def new
-    require 'ldap'
+    # require 'ldap'
 
-    @person = Person.new
+    # @person = Person.new
 
-    if params[:loginid]
-      @person.loginid = params[:loginid]
+    # if params[:loginid]
+    #   @person.loginid = params[:loginid]
 
-      # Search via LDAP
-      # Retrieve LDAP passwords from config/database.yml
-      ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ldap']
+    #   # Search via LDAP
+    #   # Retrieve LDAP passwords from config/database.yml
+    #   ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/database.yml")['ldap']
 
-      # Connect to LDAP
-      conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )
-      conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
-      conn.bind(dn = ldap_settings['base_dn'], password = ldap_settings['base_pw'] )
+    #   # Connect to LDAP
+    #   conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )
+    #   conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
+    #   conn.bind(dn = ldap_settings['base_dn'], password = ldap_settings['base_pw'] )
 
-      # Search!
-      conn.search('ou=People,dc=ucdavis,dc=edu', LDAP::LDAP_SCOPE_SUBTREE, '(uid=' + params[:loginid] + ')') do |entry|
-        @person.first = entry.get_values('givenName').to_s[2..-3]
-        @person.last = entry.get_values('sn').to_s[2..-3]
-        @person.email = entry.get_values('mail').to_s[2..-3]
-        @person.phone = entry.get_values('telephoneNumber').to_s[2..-3]
-        if @person.phone != nil
-          @person.phone = @person.phone.sub("+1 ", "").gsub(" ", "") # clean up number
-        end
-        @person.address = entry.get_values('street').to_s[2..-3]
-        @person.name = @person.first + " " + @person.last
-      end
+    #   # Search!
+    #   conn.search('ou=People,dc=ucdavis,dc=edu', LDAP::LDAP_SCOPE_SUBTREE, '(uid=' + params[:loginid] + ')') do |entry|
+    #     @person.first = entry.get_values('givenName').to_s[2..-3]
+    #     @person.last = entry.get_values('sn').to_s[2..-3]
+    #     @person.email = entry.get_values('mail').to_s[2..-3]
+    #     @person.phone = entry.get_values('telephoneNumber').to_s[2..-3]
+    #     if @person.phone != nil
+    #       @person.phone = @person.phone.sub("+1 ", "").gsub(" ", "") # clean up number
+    #     end
+    #     @person.address = entry.get_values('street').to_s[2..-3]
+    #     @person.name = @person.first + " " + @person.last
+    #   end
 
-    end
+    # end
 
-    respond_to do |format|
-      format.html
-    end
+    # respond_to do |format|
+    #   format.html
+    # end
   end
 
   # GET /people/1/edit
   def edit
-    @person = Person.find_by_id(params[:id])
+    # @person = Person.find_by_id(params[:id])
 
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded edit page for #{params[:id]}."
+    # logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded edit page for #{params[:id]}."
   end
 
   # POST /people

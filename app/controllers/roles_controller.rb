@@ -3,6 +3,7 @@ class RolesController < ApplicationController
 
   # GET /roles
   def index
+    # SECUREME
     @application = Application.find_by_name(params[:application_id])
     @roles = @application.roles
 
@@ -13,6 +14,7 @@ class RolesController < ApplicationController
 
   # GET /roles/1
   def show
+    # SECUREME
     @role = Role.find_by_id(params[:id])
 
     respond_to do |format|
@@ -22,6 +24,7 @@ class RolesController < ApplicationController
 
   # GET /roles/new
   def new
+    # SECUREME
     @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.build
 
@@ -32,12 +35,14 @@ class RolesController < ApplicationController
 
   # GET /roles/1/edit
   def edit
+    # SECUREME
     @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.find_by_id(params[:id])
   end
 
   # POST /roles
   def create
+    # SECUREME
     @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.build(params[:role])
 
@@ -53,6 +58,7 @@ class RolesController < ApplicationController
 
   # PUT /roles/1
   def update
+    # SECUREME
     @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.find_by_id(params[:id])
 
@@ -68,6 +74,7 @@ class RolesController < ApplicationController
 
   # DELETE /roles/1
   def destroy
+    # SECUREME
     @application = Application.find_by_name(params[:application_id])
     @role = @application.roles.find_by_id(params[:id])
     @role.destroy

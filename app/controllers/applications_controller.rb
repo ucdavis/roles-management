@@ -48,11 +48,6 @@ class ApplicationsController < ApplicationController
     end
   end
 
-  # GET /applications/1/edit
-  def edit
-    @application = Application.find(params[:id])
-  end
-
   # POST /applications
   def create
     # SECUREME: Can the current user create applications?

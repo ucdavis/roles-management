@@ -1,6 +1,7 @@
 # Useful with AJAX calls from the CAO interface
 class RoleAssignmentsController < ApplicationController
   def create
+    # SECUREME
     unless current_user.can_administer_role? params[:assignment][:role_id] == false
       @assignment = RoleAssignment.new
       @assignment.role_id = params[:assignment][:role_id]
@@ -32,6 +33,7 @@ class RoleAssignmentsController < ApplicationController
   end
 
   def destroy
+    # SECUREME
     unless current_user.can_administer_role? params[:assignment][:role_id] == false
       uid = determine_uid params[:assignment][:uid]
 
