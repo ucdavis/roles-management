@@ -1,11 +1,14 @@
 DSSRM::Application.routes.draw do
-  #resources :classifications
-
-  #get "site/index"
-  #get "site/administrate"
   get "site/logout"
   get "site/access_denied"
   get "site/about"
+
+  resources :applications
+  resources :entities
+  resources :roles
+
+  post "/roles/assign", :controller => "role_assignments", :action => "create"
+  delete "/roles/unassign", :controller => "role_assignments", :action => "destroy"
 
   namespace "admin" do
     get "dialogs/impersonate"
@@ -17,46 +20,16 @@ DSSRM::Application.routes.draw do
     resources :api_whitelisted_ips
   end
 
-  resources :applications #do
-    #resources :applications
-  #end
-
-  # For AJAX on the CAO interface (checking and unchecking permission boxes)
-  post "/roles/assign", :controller => "role_assignments", :action => "create"
-  delete "/roles/unassign", :controller => "role_assignments", :action => "destroy"
-
-  resources :entities
-
-  #resources :groups
-  #resources :ous
-  resources :roles
-
-  # resources :people do
-  #   collection do
-  #     match "new/:loginid", :action => "new"
-  #   end
-  # end
-
-  root :to => 'applications#index'
-
   namespace "api" do
-    resources :people #do
-    #   resources :applications
-    #   get "exists"
-    # end
+    resources :people
 
     resources :groups
     resources :ous
-    # resources :classifications
-    # resources :titles
 
-    resources :applications #do
-    #   resources :roles
-    # end
+    resources :applications
 
     get "search", :controller => "custom"
     post "resolve", :controller => "custom"
-    # get "org_chart", :controller => "custom"
 
     # Used on the site/index details modal group rule constructor, possibly elsewhere
     get "loginid", :controller => "custom"
@@ -64,4 +37,6 @@ DSSRM::Application.routes.draw do
     get "affiliation", :controller => "custom"
     get "ou", :controller => "custom"
   end
+
+  root :to => 'applications#index'
 end
