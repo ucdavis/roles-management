@@ -5,10 +5,9 @@ class Application < ActiveRecord::Base
   has_many :application_owner_assignments, :dependent => :destroy
   has_many :owners, :through => :application_owner_assignments
 
-  after_save :ensure_access_role_exists
   before_save :set_default_properties
 
-  validate :has_at_least_one_role
+  #validate :has_at_least_one_role
   validates :name, :presence => true
 
   attr_accessible :name, :ous_ids, :hostname, :description, :roles, :roles_attributes, :owner_ids
@@ -27,21 +26,6 @@ class Application < ActiveRecord::Base
 
   private
 
-  # All applications must at least have the 'default' access role.
-  # If it doesn't exist, create it
-  def ensure_access_role_exists
-    if roles.find_by_token("access").nil?
-      r = Role.new
-      r.token = "access"
-      r.descriptor = "Access"
-      r.description = "Allow access to this application"
-      r.default = true
-      r.application_id = self.id
-      r.save!
-      self.roles << r
-    end
-  end
-
   # Set a few default properties if they're unset
   def set_default_properties
     unless self.description
@@ -49,14 +33,14 @@ class Application < ActiveRecord::Base
     end
   end
 
-  def has_at_least_one_role
-    if self.new_record? # new records get a pass because we can't create a role until the record is at least saved
-      return true
-    end
-    if roles.length > 0
-      true
-    else
-      false
-    end
-  end
+  # def has_at_least_one_role
+  #   if self.new_record? # new records get a pass because we can't create a role until the record is at least saved
+  #     return true
+  #   end
+  #   if roles.length > 0
+  #     true
+  #   else
+  #     false
+  #   end
+  # end
 end

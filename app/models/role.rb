@@ -32,11 +32,9 @@ class Role < ActiveRecord::Base
     return data
   end
 
-  # Slightly different than 'people' or 'groups' ...
+  # Slightly different than 'entities' ...
   # members takes all people and all people from groups (flattens the group)
-  # and returns them as a list. It also computes the full list of people
-  # who have access to an application if the role is named 'access' (e.g. include people in other roles,
-  # mimicking the frontend interface and making AD sync behave the same way)
+  # and returns them as a list.
   def members
     all = []
 
@@ -46,13 +44,6 @@ class Role < ActiveRecord::Base
     # Add all (flattened) groups
     entities.where(:type => "Group").each do |group|
       all += group.members(true)
-    end
-
-    # If this is the 'access' role, add all members of all other roles
-    if token == "access"
-      application.roles.reject{ |r| r.token == "access" }.each do |role|
-        all += role.members
-      end
     end
 
     # Return a unique list
