@@ -29,14 +29,19 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     self.$('.card-title').attr("title", this.model.escape('description'));
     self.$('.application-link').attr("href", this.applicationUrl());
 
-    this.model.roles.each(function(role) {
-      var roleItem = new DssRm.Views.RoleItem({
-        model: role,
-        highlighted_role_id: self.highlighted_role_id
+    if(this.model.roles.length == 0) {
+      self.$('.roles').hide();
+    } else {
+      self.$('.roles').show();
+      this.model.roles.each(function(role) {
+        var roleItem = new DssRm.Views.RoleItem({
+          model: role,
+          highlighted_role_id: self.highlighted_role_id
+        });
+        self.renderChild(roleItem);
+        self.$('.roles').append(roleItem.el);
       });
-      self.renderChild(roleItem);
-      self.$('.roles').append(roleItem.el);
-    });
+    }
   },
 
   applicationUrl: function() {
