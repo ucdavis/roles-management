@@ -241,7 +241,7 @@ namespace :ldap do
             #       the proper one above in order to maintain clean
             #       logs (deleting an OU association may trigger a
             #       log message).
-            p.ous.each do |o|
+            p.groups.ous.each do |o|
               if o != ou
                 p.groups.delete(o)
                 record_log << "\tRemoving ou #{o.name} from person #{p.loginid}\n"
