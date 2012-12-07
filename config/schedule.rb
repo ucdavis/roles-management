@@ -19,7 +19,6 @@
 
 # Learn more: http://github.com/javan/whenever
 
-set :output, {:error => 'error.log', :standard => 'cron.log'}
 job_type :envcommand, 'cd :path && RAILS_ENV=:environment :task'
 
 # Ensure our background processor starts up on reboot
