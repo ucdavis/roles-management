@@ -220,8 +220,8 @@ namespace :ldap do
                   ou.owners << manager
                 end
 
-                unless (manager.id == p.id) or (p.managers.include? manager)
-                  p.managers << manager
+                unless (manager.id == p.id) or (manager.favorites.include? p)
+                  manager.favorites << p
                 end
               else
                 # Dept code doesn't exist
