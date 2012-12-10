@@ -2,7 +2,7 @@
 
 <script type="text/json" id="bootstrap">
   {
-    "favorites": <%= current_user.manageable_ids.to_json %>,
+    "current_user": <%= current_user.to_json %>,
     "applications": <%= current_user.manageable_applications.to_json %>
   }
 </script>

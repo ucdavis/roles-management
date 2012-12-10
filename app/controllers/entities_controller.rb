@@ -2,9 +2,9 @@ class EntitiesController < ApplicationController
   filter_access_to :all
   respond_to :json
 
-  def index
-    @entities = current_user.manageable_ids
-  end
+  #def index
+    #@entities = current_user.manageable_ids
+  #end
 
   def show
     # SECUREME

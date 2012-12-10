@@ -1,12 +1,8 @@
-# This file renders both people and groups (and OUs, which are a special form of groups)
+# This file renders both people and groups (and OUs, a special form of group)
 
 object @entity
 
 attributes :id, :name, :type
-
-#node :type do |e|
-#  e.type.downcase
-#end
 
 if @entity.type == "Person"
   attributes :first, :last, :email, :phone, :address, :loginid
@@ -24,6 +20,14 @@ if @entity.type == "Person"
   end
 
   child @entity.groups.ous => :ous do
+    attributes :id, :name
+  end
+
+  child @entity.group_ownerships => :group_ownerships do
+    attributes :id, :name
+  end
+
+  child @entity.group_operatorships => :group_operatorships do
     attributes :id, :name
   end
 end

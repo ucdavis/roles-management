@@ -17,7 +17,10 @@ class Person < Entity
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
 
   has_many :group_operator_assignments, :foreign_key => "entity_id"
+  has_many :group_operatorships, :through => :group_operator_assignments, :source => :group
+
   has_many :group_owner_assignments, :foreign_key => "entity_id"
+  has_many :group_ownerships, :through => :group_owner_assignments, :source => :group
 
   has_one :student
 
@@ -94,10 +97,10 @@ class Person < Entity
   def manageable_ids
     ids = []
 
-    owns.each do |group| # includes OUs
+    group_ownerships.each do |group| # includes OUs
       ids << {:id => group.id, :name => group.name, :type => "Group"}
     end
-    operates.each do |group|
+    group_operatorships.each do |group|
       ids << {:id => group.id, :name => group.name, :type => "Group"}
     end
     favorites.each do |person|
@@ -141,16 +144,6 @@ class Person < Entity
     end
 
     apps
-  end
-
-  # Returns all groups owned by this person (see 'manages' for people)
-  def owns
-    group_owner_assignments.includes(:group).where(:entity_id => id).map{|x| x.group}
-  end
-
-  # Returns all groups operated by this person (see 'manages' for people, 'owns' for group ownerships)
-  def operates
-    group_operator_assignments.includes(:group).where(:entity_id => id).map{ |x| x.group }
   end
 
   # ACL symbols

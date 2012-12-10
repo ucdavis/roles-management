@@ -1,4 +1,8 @@
 DssRm.Models.Entity = Backbone.Model.extend({
+  url: function() {
+    return '/entities/' + this.get('id')
+  },
+
   initialize: function() {
     var type = this.get('type');
 
