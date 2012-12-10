@@ -78,22 +78,22 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
     } else if (type == "Person") {
-      this.$("input[name=subordinates]").tokenInput(Routes.api_people_path(), {
+      this.$("input[name=favorites]").tokenInput(Routes.api_people_path(), {
         crossDomain: false,
         defaultText: "",
         theme: "facebook",
         onAdd: function(item) {
-          var subordinates = self.model.get('subordinates');
-          if (! _.find(subordinates, function(i) { return i.id == item.id })) {
+          var favorites = self.model.get('favorites');
+          if (! _.find(favorites, function(i) { return i.id == item.id })) {
             // onAdd is triggered by the .tokenInput("add") lines in render,
             // so we need to ensure this actually is a new item
-            subordinates.push(item);
-            self.model.set('subordinates', subordinates);
+            favorites.push(item);
+            self.model.set('favorites', favorites);
           }
         },
         onDelete: function(item) {
-          var subordinates = _.filter(self.model.get('subordinates'), function(subordinate) { return subordinate.id != item.id });
-          self.model.set('subordinates', subordinates);
+          var favorites = _.filter(self.model.get('favorites'), function(favorite) { return favorite.id != item.id });
+          self.model.set('favorites', favorites);
         }
       });
 
@@ -187,10 +187,10 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       self.$('input[name=phone]').val(this.model.escape('phone'));
       self.$('input[name=address]').val(this.model.escape('address'));
 
-      var subordinates_tokeninput = self.$("input[name=subordinates]");
-      subordinates_tokeninput.tokenInput("clear");
-      _.each(this.model.get('subordinates'), function(subordinate) {
-        subordinates_tokeninput.tokenInput("add", {id: subordinate.id, name: subordinate.name});
+      var favorites_tokeninput = self.$("input[name=favorites]");
+      favorites_tokeninput.tokenInput("clear");
+      _.each(this.model.get('favorites'), function(favorite) {
+        favorites_tokeninput.tokenInput("add", {id: favorite.id, name: favorite.name});
       });
 
       var groups_tokeninput = self.$("input[name=groups]");

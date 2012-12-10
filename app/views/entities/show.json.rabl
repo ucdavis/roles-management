@@ -15,7 +15,7 @@ if @entity.type == "Person"
     attributes :id, :token, :descriptor, :description, :application_name
   end
 
-  child @entity.subordinates => :subordinates do
+  child @entity.favorites => :favorites do
     attributes :id, :name
   end
 

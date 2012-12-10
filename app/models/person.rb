@@ -10,10 +10,8 @@ class Person < Entity
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments
 
-  has_many :person_manager_assignments, :dependent => :destroy
-  has_many :managers, :through => :person_manager_assignments
-  has_many :subordinate_relationships, :class_name => "PersonManagerAssignment", :foreign_key => "manager_id"
-  has_many :subordinates, :through => :subordinate_relationships, :source => :subordinate
+  has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "favorite_id"
+  has_many :favorites, :through => :favorite_relationships, :source => :favorite
 
   has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
@@ -27,7 +25,7 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :subordinate_ids, :group_ids, :ou_ids
+  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_ids, :ou_ids
 
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
@@ -72,7 +70,7 @@ class Person < Entity
     roles.reject{ |x| ! api_key_role_ids.include? x.id }
   end
 
-  # Compute applications they can assign subordinates to.
+  # Compute applications for which they can make assignments.
   # These are applications they either explicitly own or
   # applications made available on a global level.
   def manageable_applications
@@ -91,7 +89,7 @@ class Person < Entity
     apps
   end
 
-  # Returns IDs (and some additional info) of all subordinates
+  # Returns IDs (and some additional info) of all favorites
   # and groups which this person can assign (owns and operates).
   def manageable_ids
     ids = []
@@ -102,7 +100,7 @@ class Person < Entity
     operates.each do |group|
       ids << {:id => group.id, :name => group.name, :type => "Group"}
     end
-    subordinates.each do |person|
+    favorites.each do |person|
       ids << {:id => person.id, :name => person.name, :type => "Person"}
     end
 
@@ -174,8 +172,9 @@ class Person < Entity
     applications.collect{ |x| x.id }.include? app_id
   end
 
+  # SECUREME: Does it matter that this computes based on favorites now?
   def can_administer_person?(person_id)
-    subordinates.collect{ |x| x.id }.include? person_id
+    favorites.collect{ |x| x.id }.include? person_id
   end
 
   def can_administer_group?(group_id)

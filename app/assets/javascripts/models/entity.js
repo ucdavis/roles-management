@@ -11,14 +11,14 @@ DssRm.Models.Entity = Backbone.Model.extend({
       if(this.get('rules') === undefined) this.set('rules', []);
     } else if(type == "Person") {
       if(this.get('roles') === undefined) this.set('roles', []);
-      if(this.get('subordinates') === undefined) this.set('subordinates', []);
+      if(this.get('favorites') === undefined) this.set('favorites', []);
       if(this.get('groups') === undefined) this.set('groups', []);
       if(this.get('ous') === undefined) this.set('ous', []);
     }
   },
 
   toJSON: function() {
-    var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'roles', 'subordinates', 'groups', 'ous');
+    var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'roles', 'favorites', 'groups', 'ous');
     var type = this.get('type');
 
     if(type == "Group") {
@@ -32,7 +32,7 @@ DssRm.Models.Entity = Backbone.Model.extend({
     } else if(type == "Person") {
       // Person-specific JSON
       json.role_ids = this.get('roles').map(function(role) { return role.id });
-      json.subordinate_ids = this.get('subordinates').map(function(subordinate) { return subordinate.id });
+      json.favorite_ids = this.get('favorites').map(function(favorite) { return favorite.id });
       json.group_ids = this.get('groups').map(function(group) { return group.id });
       json.ou_ids = this.get('ous').map(function(ou) { return ou.id });
     }
