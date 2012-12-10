@@ -15,13 +15,13 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.selected = {};
     this.selected.application = null;
     this.selected.role = null;
-    this.selected.entities = [];
+    this.selected.favorites = [];
 
     this.applications = this.options.applications;
-    this.entities = this.options.entities;
+    this.favorites = this.options.favorites;
 
     this.applications.on('change add destroy sync', this.render, this);
-    this.entities.on('change add destroy sync', this.render, this);
+    this.favorites.on('change add destroy sync', this.render, this);
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
@@ -77,10 +77,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     });
 
     this.$('#pins').empty();
-    this.entities.each(function(entity) {
+    this.favorites.each(function(favorite) {
       var pin = new DssRm.Views.EntityItem({
-        model: entity,
-        highlighted: _.indexOf(self.selected.entities, entity.get('id')) >= 0 // true if in selected_entities list
+        model: favorite,
+        highlighted: _.indexOf(self.selected.favorites, favorite.get('id')) >= 0 // true if in selected_favorites list
       });
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
@@ -119,12 +119,16 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         alert("Currently unsupported.");
       break;
       case DssRm.Views.ApplicationsIndex.FID_CREATE_GROUP:
-        self.entities.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
+        self.favorites.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
       break;
       default:
-        // Exact result selected
-        alert(label);
-        alert(id);
+        // Exact result selected. Add this person to their favorites if needed.
+        if(self.favorites.find(function(e) { return e.id === id }) === undefined) {
+          // Add this result
+          var p = new DssRm.Models.Entity({ id: id, name: label, type: 'Person' });
+          self.favorites.add(p);
+
+        }
       break;
     }
   },
@@ -164,7 +168,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   deselectAll: function(e) {
     this.selected.application = null;
     this.selected.role = null;
-    this.selected.entities = [];
+    this.selected.favorites = [];
 
     this.render();
   },
@@ -176,7 +180,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.selected.application = this.applications.get(application_id);
     this.selected.role = this.selected.application.roles.get($(e.currentTarget).data('role-id'));
-    this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
+    this.selected.favorites = this.selected.role.get('entities').map(function(e) { return e.id });
 
     this.render();
   },
@@ -197,18 +201,18 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     if(this.selected.role) {
       // toggle on or off
       var matched = this.selected.role.get('entities').filter(function(e) { return e.id == clicked_entity_id });
-      var updated_entities = null;
+      var updated_favorites = null;
       if(matched.length > 0) {
-        updated_entities = _.without(this.selected.role.get('entities'), matched[0]);
+        updated_favorites = _.without(this.selected.role.get('entities'), matched[0]);
       } else {
-        updated_entities = this.selected.role.get('entities');
-        updated_entities.push({ id: clicked_entity_id, name: clicked_entity_name });
+        updated_favorites = this.selected.role.get('entities');
+        updated_favorites.push({ id: clicked_entity_id, name: clicked_entity_name });
       }
 
       this.selected.role.set({
-        entities: updated_entities
+        entities: updated_favorites
       });
-      this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
+      this.selected.favorites = this.selected.role.get('entities').map(function(e) { return e.id });
 
       this.selected.application.save();
     } else {

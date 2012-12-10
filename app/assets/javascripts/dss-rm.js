@@ -5,9 +5,9 @@ window.DssRm = {
   Routers: {},
   initialize: function(data) {
     this.applications = new DssRm.Collections.Applications(data.applications);
-    this.entities = new DssRm.Collections.Entities(data.entities);
+    this.favorites = new DssRm.Collections.Entities(data.favorites);
 
-    new DssRm.Routers.Applications({ applications: this.applications, entities: this.entities });
+    new DssRm.Routers.Applications({ applications: this.applications, favorites: this.favorites });
     if (!Backbone.history.started) {
       Backbone.history.start();
       Backbone.history.started = true;
