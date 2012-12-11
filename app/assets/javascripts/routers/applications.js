@@ -18,9 +18,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   index: function() {
     var view = new DssRm.Views.ApplicationsIndex({
       applications: this.applications,
-      favorites: this.current_user.favorites,
-      group_ownerships: this.current_user.group_ownerships,
-      group_operatorships: this.current_user.group_operatorships
+      sidebar_entities: this.current_user.sidebar_entities
     });
     this.swap(view);
   },
@@ -39,7 +37,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   showEntity: function(uid) {
-    var entity = this.current_user.favorites.get(uid);
+    var entity = this.current_user.sidebar_entities.get(uid);
     var entitiesRouter = this;
 
     entity.fetch({

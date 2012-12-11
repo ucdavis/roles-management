@@ -15,17 +15,13 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.selected = {};
     this.selected.application = null;
     this.selected.role = null;
-    this.selected.favorites = [];
+    this.selected.entities = [];
 
     this.applications = this.options.applications;
-    this.favorites = this.options.favorites;
-    this.group_ownerships = this.options.group_ownerships;
-    this.group_operatorships = this.options.group_operatorships;
+    this.sidebar_entities = this.options.sidebar_entities;
 
     this.applications.on('change add destroy sync', this.render, this);
-    this.favorites.on('change add destroy sync', this.render, this);
-    this.group_ownerships.on('change add destroy sync', this.render, this);
-    this.group_operatorships.on('change add destroy sync', this.render, this);
+    this.sidebar_entities.on('change add destroy sync', this.render, this);
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
@@ -81,10 +77,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     });
 
     this.$('#pins').empty();
-    this.favorites.each(function(favorite) {
+    this.sidebar_entities.each(function(entity) {
       var pin = new DssRm.Views.EntityItem({
-        model: favorite,
-        highlighted: _.indexOf(self.selected.favorites, favorite.get('id')) >= 0 // true if in selected_favorites list
+        model: entity,
+        highlighted: _.indexOf(self.selected.entities, entity.get('id')) >= 0 // true if in selected.entities
       });
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
@@ -172,7 +168,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   deselectAll: function(e) {
     this.selected.application = null;
     this.selected.role = null;
-    this.selected.favorites = [];
+    this.selected.entities = [];
 
     this.render();
   },
@@ -184,7 +180,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.selected.application = this.applications.get(application_id);
     this.selected.role = this.selected.application.roles.get($(e.currentTarget).data('role-id'));
-    this.selected.favorites = this.selected.role.get('entities').map(function(e) { return e.id });
+    this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
 
     this.render();
   },
@@ -216,7 +212,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       this.selected.role.set({
         entities: updated_favorites
       });
-      this.selected.favorites = this.selected.role.get('entities').map(function(e) { return e.id });
+      this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
 
       this.selected.application.save();
     } else {

@@ -16,19 +16,19 @@ if @entity.type == "Person"
   end
 
   child @entity.group_memberships.non_ous => :group_memberships do
-    attributes :id, :name
+    attributes :id, :name, :type
   end
 
   child @entity.group_memberships.ous => :ous do
-    attributes :id, :name
+    attributes :id, :name, :type
   end
 
   child @entity.group_ownerships => :group_ownerships do
-    attributes :id, :name
+    attributes :id, :name, :type
   end
 
   child @entity.group_operatorships => :group_operatorships do
-    attributes :id, :name
+    attributes :id, :name, :type
   end
 end
 

@@ -31,6 +31,19 @@ DssRm.Models.Entity = Backbone.Model.extend({
       this.group_memberships = new DssRm.Collections.Entities(this.get('group_memberships'));
       this.group_ownerships = new DssRm.Collections.Entities(this.get('group_ownerships'));
       this.group_operatorships = new DssRm.Collections.Entities(this.get('group_operatorships'));
+
+      var _sidebar_entities = _.union(
+        this.get('group_ownerships'),
+        this.get('group_operatorships'),
+        this.get('favorites'));
+      var _sidebar_entities = _.sortBy(_sidebar_entities, function(e) {
+        var prepend = (e.type == "Group") ? '1' : '2';
+        var sort_num = parseInt((prepend + e.name.charCodeAt(0).toString()));
+        console.log(sort_num);
+        return parseInt((prepend + e.name.charCodeAt(0).toString()));
+      });
+
+      this.sidebar_entities = new DssRm.Collections.Entities(_sidebar_entities);
     }
   },
 
