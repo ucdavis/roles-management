@@ -14,8 +14,8 @@ window.DssRm = {
     });
 
     this.current_user.fetch({
-      success: function() {
-        self.favorites = new DssRm.Collections.Entities(data.current_user.favorites);
+      success: function(current_user) {
+        self.favorites = new DssRm.Collections.Entities(current_user.get('favorites'));
 
         new DssRm.Routers.Applications({ applications: self.applications, favorites: self.favorites });
         if (!Backbone.history.started) {

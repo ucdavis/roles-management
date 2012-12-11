@@ -1,5 +1,5 @@
 class Api::CustomController < Api::BaseController
-  # Searches for all users and groups visible to current_user
+  # Searches for all users and groups <s>visible to current_user</s>
   # (This is all people and only groups owned or operated by current_user)
   def search
     @results = []
@@ -17,7 +17,7 @@ class Api::CustomController < Api::BaseController
       end
 
       if authenticated_via? :cas_user
-        visible_ids = current_user.manageable_ids.map{ |x| x[:id] }
+        visible_ids = Person.all.map{ |x| x[:id] }
       else
         visible_ids = nil
       end

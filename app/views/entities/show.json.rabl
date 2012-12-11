@@ -12,7 +12,7 @@ if @entity.type == "Person"
   end
 
   child @entity.favorites => :favorites do
-    attributes :id, :name
+    attributes :id, :name, :type
   end
 
   child @entity.groups.non_ous => :groups do

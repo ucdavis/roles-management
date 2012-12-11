@@ -92,24 +92,6 @@ class Person < Entity
     apps
   end
 
-  # Returns IDs (and some additional info) of all favorites
-  # and groups which this person can assign (owns and operates).
-  def manageable_ids
-    ids = []
-
-    group_ownerships.each do |group| # includes OUs
-      ids << {:id => group.id, :name => group.name, :type => "Group"}
-    end
-    group_operatorships.each do |group|
-      ids << {:id => group.id, :name => group.name, :type => "Group"}
-    end
-    favorites.each do |person|
-      ids << {:id => person.id, :name => person.name, :type => "Person"}
-    end
-
-    ids
-  end
-
   # Compute accessible applications
   def applications
     apps = []
