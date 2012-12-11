@@ -28,10 +28,10 @@ xml.person do
     end
   end
 
-  xml.groups("type" => "array") do
-    @person.groups.each do |group|
+  xml.group_memberships("type" => "array") do
+    @person.group_memberships.each do |group|
       xml.group do
-        xml.id "2" + group.id.to_s # leading digit of 2 is UID for type group, see README
+        xml.id group.id
         xml.name group.name
       end
     end
@@ -40,7 +40,7 @@ xml.person do
   xml.ous("type" => "array") do
     @person.ous.each do |ou|
       xml.ou do
-        xml.id "3" + ou.id.to_s # leading digit of 3 is UID for type OU, see README
+        xml.id ou.id
         xml.name ou.name
       end
     end

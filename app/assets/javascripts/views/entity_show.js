@@ -102,17 +102,17 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         defaultText: "",
         theme: "facebook",
         onAdd: function(item) {
-          var groups = self.model.get('groups');
-          if (! _.find(groups, function(i) { return i.id == item.id })) {
+          var group_memberships = self.model.get('group_memberships');
+          if (! _.find(group_memberships, function(i) { return i.id == item.id })) {
             // onAdd is triggered by the .tokenInput("add") lines in render,
             // so we need to ensure this actually is a new item
-            groups.push(item);
-            self.model.set('groups', groups);
+            group_memberships.push(item);
+            self.model.set('group_memberships', group_memberships);
           }
         },
         onDelete: function(item) {
-          var groups = _.filter(self.model.get('groups'), function(group) { return group.id != item.id });
-          self.model.set('groups', groups);
+          var group_memberships = _.filter(self.model.get('group_memberships'), function(group) { return group.id != item.id });
+          self.model.set('group_memberships', group_memberships);
         }
       });
 
@@ -195,7 +195,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
       var groups_tokeninput = self.$("input[name=groups]");
       groups_tokeninput.tokenInput("clear");
-      _.each(this.model.get('groups'), function(group) {
+      _.each(this.model.get('group_memberships'), function(group) {
         groups_tokeninput.tokenInput("add", {id: group.id, name: group.name});
       });
 

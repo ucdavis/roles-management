@@ -5,7 +5,7 @@ class Person < Entity
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
 
-  has_and_belongs_to_many :groups, :foreign_key => "entity_id", :join_table => :entities_groups, :uniq => true
+  has_and_belongs_to_many :group_memberships, :class_name => "Group", :foreign_key => "entity_id", :join_table => :entities_groups, :uniq => true
 
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments
@@ -28,7 +28,7 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_ids, :ou_ids
+  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_membership_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
 
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
@@ -51,15 +51,15 @@ class Person < Entity
     # Add any new OUs
     ids.each do |id|
       ou = Group.find_by_id(id, :conditions => "code not null")
-      unless (groups.include? ou) or ou.nil?
-        groups << ou
+      unless (group_memberships.include? ou) or ou.nil?
+        group_memberships << ou
       end
     end
 
     # Remove any OUs not mentioned (ou_ids= behavior is to always give the complete list)
-    groups.ous.each do |ou|
+    group_memberships.ous.each do |ou|
       unless ids.include? ou.id
-        groups.delete(ou.id)
+        group_memberships.delete(ou.id)
       end
     end
   end
@@ -153,7 +153,7 @@ class Person < Entity
   end
 
   def can_administer_group?(group_id)
-    groups.collect{ |x| x.id }.include? group_id
+    group_memberships.collect{ |x| x.id }.include? group_id
   end
 
   def can_administer_role?(role_id)

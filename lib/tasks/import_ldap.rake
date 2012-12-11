@@ -231,8 +231,8 @@ namespace :ldap do
               end
             end
 
-            unless p.groups.include? ou or ou.nil?
-              p.groups << ou
+            unless p.group_memberships.include? ou or ou.nil?
+              p.group_memberships << ou
             end
 
             # Remove this person from any OUs not mentioned in LDAP
@@ -241,9 +241,9 @@ namespace :ldap do
             #       the proper one above in order to maintain clean
             #       logs (deleting an OU association may trigger a
             #       log message).
-            p.groups.ous.each do |o|
+            p.group_memberships.ous.each do |o|
               if o != ou
-                p.groups.delete(o)
+                p.group_memberships.delete(o)
                 record_log << "\tRemoving ou #{o.name} from person #{p.loginid}\n"
               end
             end

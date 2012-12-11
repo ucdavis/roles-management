@@ -3,7 +3,7 @@ json.loginid @person.loginid
 json.name @person.name
 json.email @person.email
 json.ous @person.ous
-json.groups @person.groups
+json.group_memberships @person.group_memberships
 # If they authenticated via the API key (and not CAS), show only the roles associated
 # with that application's API key
 if session[:api_key]
