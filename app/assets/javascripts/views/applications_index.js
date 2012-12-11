@@ -19,9 +19,13 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.applications = this.options.applications;
     this.favorites = this.options.favorites;
+    this.group_ownerships = this.options.group_ownerships;
+    this.group_operatorships = this.options.group_operatorships;
 
     this.applications.on('change add destroy sync', this.render, this);
     this.favorites.on('change add destroy sync', this.render, this);
+    this.group_ownerships.on('change add destroy sync', this.render, this);
+    this.group_operatorships.on('change add destroy sync', this.render, this);
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 

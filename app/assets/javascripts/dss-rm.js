@@ -15,9 +15,7 @@ window.DssRm = {
 
     this.current_user.fetch({
       success: function(current_user) {
-        self.favorites = new DssRm.Collections.Entities(current_user.get('favorites'));
-
-        new DssRm.Routers.Applications({ applications: self.applications, favorites: self.favorites });
+        new DssRm.Routers.Applications({ applications: self.applications, current_user: self.current_user });
         if (!Backbone.history.started) {
           Backbone.history.start();
           Backbone.history.started = true;
