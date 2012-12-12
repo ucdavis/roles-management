@@ -4,12 +4,6 @@ DssRm.Models.Entity = Backbone.Model.extend({
   },
 
   initialize: function() {
-    this.bind('sync change', this.updateAttributes, this);
-
-    this.updateAttributes();
-  },
-
-  updateAttributes: function() {
     var type = this.get('type');
 
     // Some attribtues may or may not exist depending on how this model was initialized.
@@ -26,24 +20,6 @@ DssRm.Models.Entity = Backbone.Model.extend({
       if(this.get('group_ownerships') === undefined) this.set('group_ownerships', []);
       if(this.get('group_operatorships') === undefined) this.set('group_operatorships', []);
       if(this.get('ous') === undefined) this.set('ous', []);
-
-      this.favorites = new DssRm.Collections.Entities(this.get('favorites'));
-      this.group_memberships = new DssRm.Collections.Entities(this.get('group_memberships'));
-      this.group_ownerships = new DssRm.Collections.Entities(this.get('group_ownerships'));
-      this.group_operatorships = new DssRm.Collections.Entities(this.get('group_operatorships'));
-
-      var _sidebar_entities = _.union(
-        this.get('group_ownerships'),
-        this.get('group_operatorships'),
-        this.get('favorites'));
-      var _sidebar_entities = _.sortBy(_sidebar_entities, function(e) {
-        var prepend = (e.type == "Group") ? '1' : '2';
-        var sort_num = parseInt((prepend + e.name.charCodeAt(0).toString()));
-        console.log(sort_num);
-        return parseInt((prepend + e.name.charCodeAt(0).toString()));
-      });
-
-      this.sidebar_entities = new DssRm.Collections.Entities(_sidebar_entities);
     }
   },
 

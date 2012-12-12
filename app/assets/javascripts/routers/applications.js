@@ -3,6 +3,11 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     this.el = $('#applications');
     this.applications = options.applications;
     this.current_user = options.current_user;
+
+    this.indexView = new DssRm.Views.ApplicationsIndex({
+      applications: this.applications,
+      current_user: this.current_user
+    });
   },
 
   routes: {
@@ -16,11 +21,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   index: function() {
-    var view = new DssRm.Views.ApplicationsIndex({
-      applications: this.applications,
-      sidebar_entities: this.current_user.sidebar_entities
-    });
-    this.swap(view);
+    this.swap(this.indexView);
   },
 
   showApplication: function(applicationId) {
@@ -37,13 +38,13 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   showEntity: function(uid) {
-    var entity = this.current_user.sidebar_entities.get(uid);
-    var entitiesRouter = this;
+    var entity = new DssRm.Models.Entity({ id: uid });
+    var self = this;
 
     entity.fetch({
       success: function() {
         var view = new DssRm.Views.EntityShow({ model: entity });
-        entitiesRouter.currentView.renderChild(view);
+        self.currentView.renderChild(view);
         view.$el.modal();
       }
     });

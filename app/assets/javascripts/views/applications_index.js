@@ -18,10 +18,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.selected.entities = [];
 
     this.applications = this.options.applications;
-    this.sidebar_entities = this.options.sidebar_entities;
+    this.current_user = this.options.current_user;
 
     this.applications.on('change add destroy sync', this.render, this);
-    this.sidebar_entities.on('change add destroy sync', this.render, this);
+    this.current_user.on('change add destroy sync', this.render, this);
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
@@ -76,6 +76,19 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       self.$('#cards').append(card.el);
     });
 
+    var _sidebar_entities = _.union(
+      this.current_user.get('group_ownerships'),
+      this.current_user.get('group_operatorships'),
+      this.current_user.get('favorites'));
+    var _sidebar_entities = _.sortBy(_sidebar_entities, function(e) {
+      var prepend = (e.type == "Group") ? '1' : '2';
+      var sort_num = parseInt((prepend + e.name.charCodeAt(0).toString()));
+      return parseInt((prepend + e.name.charCodeAt(0).toString()));
+    });
+
+    if(this.sidebar_entities === undefined) this.sidebar_entities = new DssRm.Collections.Entities();
+    this.sidebar_entities.reset(_sidebar_entities);
+
     this.$('#pins').empty();
     this.sidebar_entities.each(function(entity) {
       var pin = new DssRm.Views.EntityItem({
@@ -119,15 +132,15 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         alert("Currently unsupported.");
       break;
       case DssRm.Views.ApplicationsIndex.FID_CREATE_GROUP:
-        self.favorites.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
+        //self.sidebar_entities.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
       break;
       default:
-        // Exact result selected. Add this person to their favorites if needed.
-        if(self.favorites.find(function(e) { return e.id === id }) === undefined) {
+        // Exact result selected. Add this person to their sidebar_entities as needed
+        if(self.current_user.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {
           // Add this result
           var p = new DssRm.Models.Entity({ id: id, name: label, type: 'Person' });
-          self.favorites.add(p);
-
+          debugger;
+          self.current_user.favorites.add(p);
         }
       break;
     }
