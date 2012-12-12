@@ -38,7 +38,11 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   showEntity: function(uid) {
-    var entity = new DssRm.Models.Entity({ id: uid });
+    // Search for this entity (we use the current_user collections for events-sake)
+    var entity = this.current_user.favorites.get(uid);
+    if(entity === undefined) entity = this.current_user.group_ownerships.get(uid);
+    if(entity === undefined) entity = this.current_user.group_operatorships.get(uid);
+
     var self = this;
 
     entity.fetch({

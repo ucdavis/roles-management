@@ -15,11 +15,29 @@ DssRm.Models.Entity = Backbone.Model.extend({
       if(this.get('rules') === undefined) this.set('rules', []);
     } else if(type == "Person") {
       if(this.get('roles') === undefined) this.set('roles', []);
-      if(this.get('favorites') === undefined) this.set('favorites', []);
       if(this.get('group_memberships') === undefined) this.set('group_memberships', []);
-      if(this.get('group_ownerships') === undefined) this.set('group_ownerships', []);
-      if(this.get('group_operatorships') === undefined) this.set('group_operatorships', []);
       if(this.get('ous') === undefined) this.set('ous', []);
+    } else {
+      console.log("Unexpected entity type:");
+      console.log(this);
+    }
+
+    this.updateAttributes();
+
+    this.on('change', this.updateAttributes, this);
+  },
+
+  updateAttributes: function() {
+    var type = this.get('type');
+
+    if(type == "Person") {
+      if(this.favorites === undefined) this.favorites = new DssRm.Collections.Entities(this.get('favorites'));
+      if(this.group_ownerships === undefined) this.group_ownerships = new DssRm.Collections.Entities(this.get('group_ownerships'));
+      if(this.group_operatorships === undefined) this.group_operatorships = new DssRm.Collections.Entities(this.get('group_operatorships'));
+
+      this.favorites.reset(this.get('favorites'));
+      this.group_ownerships.reset(this.get('group_ownerships'));
+      this.group_operatorships.reset(this.get('group_operatorships'));
     }
   },
 
@@ -38,10 +56,10 @@ DssRm.Models.Entity = Backbone.Model.extend({
     } else if(type == "Person") {
       // Person-specific JSON
       json.role_ids = this.get('roles').map(function(role) { return role.id });
-      json.favorite_ids = this.get('favorites').map(function(favorite) { return favorite.id });
+      json.favorite_ids = this.favorites.map(function(favorite) { return favorite.id });
       json.group_membership_ids = this.get('group_memberships').map(function(group) { return group.id });
-      json.group_ownership_ids = this.get('group_ownerships').map(function(group) { return group.id });
-      json.group_operatorship_ids = this.get('group_operatorships').map(function(group) { return group.id });
+      json.group_ownership_ids = this.group_ownerships.map(function(group) { return group.id });
+      json.group_operatorship_ids = this.group_operatorships.map(function(group) { return group.id });
       json.ou_ids = this.get('ous').map(function(ou) { return ou.id });
     }
 

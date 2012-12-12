@@ -21,7 +21,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.current_user = this.options.current_user;
 
     this.applications.on('change add destroy sync', this.render, this);
-    this.current_user.on('change add destroy sync', this.render, this);
+    this.current_user.favorites.on('change add destroy sync', this.render, this);
+    this.current_user.group_ownerships.on('change add destroy sync', this.render, this);
+    this.current_user.group_operatorships.on('change add destroy sync', this.render, this);
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
@@ -77,13 +79,13 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     });
 
     var _sidebar_entities = _.union(
-      this.current_user.get('group_ownerships'),
-      this.current_user.get('group_operatorships'),
-      this.current_user.get('favorites'));
+      this.current_user.group_ownerships.models,
+      this.current_user.group_operatorships.models,
+      this.current_user.favorites.models);
     var _sidebar_entities = _.sortBy(_sidebar_entities, function(e) {
-      var prepend = (e.type == "Group") ? '1' : '2';
-      var sort_num = parseInt((prepend + e.name.charCodeAt(0).toString()));
-      return parseInt((prepend + e.name.charCodeAt(0).toString()));
+      var prepend = (e.get('type') == "Group") ? '1' : '2';
+      var sort_num = parseInt((prepend + e.get('name').charCodeAt(0).toString()));
+      return sort_num;
     });
 
     if(this.sidebar_entities === undefined) this.sidebar_entities = new DssRm.Collections.Entities();
@@ -136,7 +138,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       break;
       default:
         // Exact result selected. Add this person to their sidebar_entities as needed
-        if(self.current_user.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {
+        if(self.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {
           // Add this result
           var p = new DssRm.Models.Entity({ id: id, name: label, type: 'Person' });
           debugger;
