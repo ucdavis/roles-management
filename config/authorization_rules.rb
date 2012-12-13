@@ -10,7 +10,7 @@ authorization do
     has_permission_on :group_owner_assignments, :to => [:create, :delete, :update]
     has_permission_on :group_rules, :to => [:create, :delete, :update]
     has_permission_on :group_operator_assignments, :to => [:create, :delete]
-    has_permission_on :person_manager_assignments, :to => [:create, :update, :delete]
+    has_permission_on :person_favorite_assignments, :to => [:create, :update, :delete]
     has_permission_on :application_owner_assignments, :to => [:create, :update, :delete]
     has_permission_on :api_whitelisted_ips, :to => [:create, :delete]
     has_permission_on :admin_api_whitelisted_ips, :to => [:index, :create, :destroy]
@@ -26,7 +26,7 @@ authorization do
     has_permission_on :group_operator_assignments, :to => [:create, :delete]
     has_permission_on :application_owner_assignments, :to => [:create, :delete]
     has_permission_on :roles, :to => [:create, :update, :delete]
-    has_permission_on :person_manager_assignments, :to => [:create, :update, :delete]
+    has_permission_on :person_favorite_assignments, :to => [:create, :update, :delete]
     has_permission_on :application_owner_assignments, :to => [:create, :update, :delete]
   end
 end

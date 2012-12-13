@@ -141,8 +141,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         if(self.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {
           // Add this result
           var p = new DssRm.Models.Entity({ id: id, name: label, type: 'Person' });
-          debugger;
           self.current_user.favorites.add(p);
+          self.current_user.save();
         }
       break;
     }

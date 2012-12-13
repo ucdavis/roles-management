@@ -3,7 +3,9 @@ class EntitiesController < ApplicationController
   respond_to :json
 
   #def index
-    #@entities = current_user.manageable_ids
+    #@entities = Person.all #current_user.manageable_ids
+
+    #respond_with @entities
   #end
 
   def show
