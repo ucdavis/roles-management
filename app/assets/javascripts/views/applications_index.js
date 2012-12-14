@@ -246,6 +246,11 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
 
       this.selected.application.save();
+
+      console.log("role:");
+      console.log(this.selected.role);
+      console.log("application:");
+      console.log(this.selected.application);
     } else {
       //this.selected_entities.push($(e.currentTarget).data('entity-id'));
       //this.selected_entities = _.uniq(this.selected_entities);

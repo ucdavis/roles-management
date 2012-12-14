@@ -1,16 +1,26 @@
 DssRm.Models.Application = Backbone.Model.extend({
   initialize: function() {
-    this.bind('sync', this.updateAttributes, this);
+    this.roles = new DssRm.Collections.Roles(this.get('roles'));
+    this.owners = new DssRm.Collections.Entities(this.get('owners'));
 
-    this.updateAttributes();
+    //this.bind('sync', this.updateAttributes, this);
+
+    //this.updateAttributes();
+
+    //this.roles.on('add destroy sync change', this.updateAttributes, this);
   },
 
   updateAttributes: function() {
-    var rolesAttr = this.get('roles');
-    this.roles = new DssRm.Collections.Roles(rolesAttr);
+    //var rolesAttr = this.get('roles');
+    //this.roles.reset(rolesAttr);
 
-    var ownersAttr = this.get('owners');
-    this.owners = new DssRm.Collections.Entities(ownersAttr);
+    //if(this.get('name') == "New App") {
+      //console.log("applicated updated, roles:");
+      //console.log(rolesAttr);
+    //}
+
+    //var ownersAttr = this.get('owners');
+    //this.owners.reset(ownersAttr);
   },
 
   toJSON: function() {
