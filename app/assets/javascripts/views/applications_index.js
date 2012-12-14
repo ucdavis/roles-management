@@ -134,7 +134,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         alert("Currently unsupported.");
       break;
       case DssRm.Views.ApplicationsIndex.FID_CREATE_GROUP:
-        //self.sidebar_entities.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
+        self.current_user.group_ownerships.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
       break;
       default:
         // Exact result selected. Add this person to their sidebar_entities as needed
@@ -246,11 +246,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
 
       this.selected.application.save();
-
-      console.log("role:");
-      console.log(this.selected.role);
-      console.log("application:");
-      console.log(this.selected.application);
     } else {
       //this.selected_entities.push($(e.currentTarget).data('entity-id'));
       //this.selected_entities = _.uniq(this.selected_entities);

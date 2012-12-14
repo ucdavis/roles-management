@@ -1,6 +1,10 @@
 DssRm.Models.Entity = Backbone.Model.extend({
   url: function() {
-    return '/entities/' + this.get('id')
+    if(this.get('id')) {
+      return '/entities/' + this.get('id')
+    } else {
+      return '/entities';
+    }
   },
 
   initialize: function() {

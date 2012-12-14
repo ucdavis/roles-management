@@ -17,15 +17,15 @@ class EntitiesController < ApplicationController
     # SECUREME
     # Only allow "Group" and "Person" to be constantized for security
     if (params[:entity][:type] == "Group") || (params[:entity][:type] == "Person")
-      entity = params[:entity][:type].constantize.new(params[:entity])
+      @entity = params[:entity][:type].constantize.new(params[:entity])
 
-      entity.save
+      @entity.save
 
       if params[:entity][:type] == "Group"
-        entity.owners << current_user
+        @entity.owners << current_user
       end
 
-      respond_with entity
+      render "entities/show"
     end
   end
 
