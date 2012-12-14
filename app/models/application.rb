@@ -24,6 +24,43 @@ class Application < ActiveRecord::Base
     { :id => self.id, :name => self.name, :roles => self.roles, :description => self.description, :owners => self.owners }
   end
 
+  # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction
+  def roles_attributes=(role_attrs)
+    ids_touched = [] # We'll remove any roles that weren't touched at the end
+
+    # Add/update roles
+    role_attrs.each do |role|
+      logger.info role
+      if (role[:id].to_s)[0..3] == "new_"
+        # New role
+        r = Role.new
+        r.token = role[:token]
+        r.default = role[:default]
+        r.descriptor = role[:descriptor]
+        r.description = role[:description]
+        r.application_id = id
+        r.save
+        ids_touched << r.id
+      else
+        # Updating a role
+        r = Role.find(role[:id])
+        r.token = role[:token]
+        r.default = role[:default]
+        r.descriptor = role[:descriptor]
+        r.description = role[:description]
+        r.save
+        ids_touched << r.id
+      end
+    end
+
+    # Remove unnecessary ones
+    roles.all.each do |r|
+      unless ids_touched.include? r.id
+        r.destroy
+      end
+    end
+  end
+
   private
 
   # Set a few default properties if they're unset
@@ -32,15 +69,4 @@ class Application < ActiveRecord::Base
       self.description = "No description given"
     end
   end
-
-  # def has_at_least_one_role
-  #   if self.new_record? # new records get a pass because we can't create a role until the record is at least saved
-  #     return true
-  #   end
-  #   if roles.length > 0
-  #     true
-  #   else
-  #     false
-  #   end
-  # end
 end

@@ -2,10 +2,12 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   tagName: "div",
 
   events: {
-    "click a#apply"        : "saveApplication",
-    "click a#delete"       : "deleteApplication",
-    "hidden"               : "cleanUpModal",
-    "click button#add_role": "addRole"
+    "click a#apply"           : "saveApplication",
+    "click a#delete"          : "deleteApplication",
+    "hidden"                  : "cleanUpModal",
+    "click button#add_role"   : "addRole",
+    "click button#remove_role": "removeRole",
+    "change table#roles input": "storeRoleChanges"
   },
 
   initialize: function(options) {
@@ -62,20 +64,6 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   saveApplication: function() {
     this.model.set({ name: this.$('input[name=name]').val() });
 
-    var roles = [];
-    this.$('table#roles tbody tr').each(function(i, e) {
-      var role = new DssRm.Models.Role();
-
-      role.set('name', $(e).find('input[name=token]').val());
-      role.set('default', $(e).find('input[name=default]').val());
-      role.set('descriptor', $(e).find('input[name=descriptor]').val());
-      role.set('description', $(e).find('input[name=description]').val());
-
-      roles.push(role);
-    });
-
-    this.model.roles.reset(roles);
-
     this.model.save();
 
     return false;
@@ -111,8 +99,30 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   addRole: function() {
-    this.model.roles.add();
+    // the false ID simply needs to be unique in case the 'remove' button is hit - our backend will provide a proper ID on saving
+    this.model.roles.add({ id: 'new_' + Math.round((new Date()).getTime()) });
 
     return false;
+  },
+
+  removeRole: function(e) {
+    var role_id = $(e.target).parents("tr").data("role_id");
+    var role = this.model.roles.find(function(r) { return r.id == role_id });
+
+    this.model.roles.remove(role);
+
+    return false;
+  },
+
+  storeRoleChanges: function(e) {
+    var rule_id = $(e.target).parents("tr").data("role_id");
+    var role = this.model.roles.find(function(e) { return e.id == rule_id });
+
+    role.set({
+      token: $(e.target).parents("tr").find('input[name=token]').val(),
+      default: $(e.target).parents("tr").find('input[name=default]').attr("checked") == "checked",
+      descriptor: $(e.target).parents("tr").find('input[name=descriptor]').val(),
+      description: $(e.target).parents("tr").find('input[name=description]').val()
+    });
   }
 });

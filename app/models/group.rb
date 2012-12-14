@@ -52,8 +52,6 @@ class Group < Entity
 
     # Add/update rules
     rule_attrs.each do |rule|
-      logger.info "add/update loop, rule is"
-      logger.info rule.inspect
       if (rule[:id].to_s)[0..3] == "new_"
         # New rule
         r = GroupRule.new
@@ -62,13 +60,9 @@ class Group < Entity
         r.value = rule[:value]
         r.group_id = id
         r.save
-        logger.info "saved rule, its id is"
-        logger.info r.id
         ids_touched << r.id
-        logger.info "adding a rule"
       else
         # Updating a rule
-        logger.info "updating a rule"
         r = GroupRule.find(rule[:id])
         r.column = rule[:column]
         r.condition = rule[:condition]
@@ -78,12 +72,9 @@ class Group < Entity
       end
     end
 
-    logger.info "ids_touched is #{ids_touched}"
-
     # Remove unnecessary ones
     rules.all.each do |r|
       unless ids_touched.include? r.id
-        logger.info "removing rule with id of #{r.id}"
         r.destroy
       end
     end

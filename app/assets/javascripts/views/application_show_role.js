@@ -8,6 +8,7 @@ DssRm.Views.ApplicationShowRole = Support.CompositeView.extend({
     if(this.model.get('default')) this.$('input[name=default]').attr("checked", "checked");
     this.$('input[name=descriptor]').val(this.model.escape('descriptor'));
     this.$('input[name=description]').val(this.model.escape('description'));
+    this.$el.data("role_id", this.model.escape('id'));
 
     return this;
   },
