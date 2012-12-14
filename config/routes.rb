@@ -25,6 +25,7 @@ DSSRM::Application.routes.draw do
 
     resources :groups
     resources :ous
+    resources :titles
 
     resources :applications
 

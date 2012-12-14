@@ -181,6 +181,22 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rule.data("rule_id", rule.id);
         rules_table.append($rule);
       });
+
+      self.$("table#rules tbody tr").each(function(i, e) {
+        $(e).find("input#value").typeahead({
+          minLength: 2,
+          sorter: function(items) { return items; }, // required to keep the order given to process() in 'source'
+          highlighter: function (item) {
+            var item = item.split('####')[1]; // See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+            var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
+            return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+              return '<strong>' + match + '</strong>'
+            })
+          },
+          source: self.ruleSearch,
+          updater: function(item) { return self.ruleSearchResultSelected(item, self); }
+        });
+      });
     } else if(type == "Person") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
@@ -292,5 +308,53 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
     // Need to change URL in case they want to open the same modal again
     Backbone.history.navigate("");
+  },
+
+  // Populates the sidebar search with results via async call to Routes.api_search_path()
+  ruleSearch: function(query, process, e) {
+    var lookahead_type = this.$element.parents("tr").find("td:first select").val();
+    var lookahead_url = "";
+
+    switch(lookahead_type) {
+      case 'major':
+        lookahead_url = Routes.api_major_path();
+        break;
+      case 'ou':
+        lookahead_url = Routes.api_ous_path();
+        break;
+      case 'loginid':
+        lookahead_url = Routes.api_loginid_path();
+        break;
+      case 'title':
+        lookahead_url = Routes.api_titles_path();
+        break;
+      case 'affiliation':
+        lookahead_url = Routes.api_affiliation_path();
+        break;
+      case 'classification':
+        lookahead_url = Routes.api_classifications_path();
+        break;
+    }
+
+    console.log(lookahead_url);
+
+    $.ajax({ url: lookahead_url, data: { q: query }, type: 'GET' }).always(function(data) {
+      entities = [];
+      _.each(data, function(entity) {
+        entities.push(entity.id + '####' + entity.name);
+      });
+
+      console.log(entities);
+
+      process(entities);
+    });
+  },
+
+  ruleSearchResultSelected: function(item, self) {
+    var parts = item.split('####');
+    var id = parseInt(parts[0]);
+    var label = parts[1];
+
+    return label;
   }
 });

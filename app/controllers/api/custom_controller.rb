@@ -104,7 +104,7 @@ class Api::CustomController < Api::BaseController
   # Returns JSON against param 'q' to search against loginids
   def loginid
     @people = Person.where("loginid like ?", "%#{params[:q]}%")
-    @loginids = @people.map{ |x| x.loginid }
+    @loginids = @people.map{ |x| {id: x.id, name: x.loginid} }
 
     respond_to do |format|
       format.json { render :json => @loginids }
@@ -123,7 +123,7 @@ class Api::CustomController < Api::BaseController
   # Returns JSON against param 'q' to search against affiliations
   def affiliation
     @as = Affiliation.where("name like ?", "%#{params[:q]}%")
-    @affiliations = @as.map{ |x| x.name }
+    @affiliations = @as.map{ |x| {id: x.id, name: x.name } }
 
     respond_to do |format|
       format.json { render :json => @affiliations }
