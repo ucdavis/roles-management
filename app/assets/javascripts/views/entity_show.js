@@ -77,6 +77,10 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
           self.model.set('members', members);
         }
       });
+
+      this.$el.on("keyup", "table#rules tbody tr input", function(e) {
+        console.log("keyup on tbody tr");
+      });
     } else if (type == "Person") {
       this.$("input[name=favorites]").tokenInput(Routes.api_people_path(), {
         crossDomain: false,

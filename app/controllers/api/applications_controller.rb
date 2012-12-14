@@ -29,7 +29,6 @@ class Api::ApplicationsController < Api::BaseController
       respond_to do |format|
         format.xml { render :text => @application.to_xml( :except => [:created_at, :id, :updated_at] ) }
         format.json
-        format.text
       end
     else
       # Person specified

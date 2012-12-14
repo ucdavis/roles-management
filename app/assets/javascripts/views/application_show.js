@@ -40,8 +40,6 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
     });
 
-    self.$('#sympa_url').val(window.location.protocol + "//" + window.location.hostname + Routes.api_application_path(this.model.id) + ".txt");
-
     // Roles tab
     self.$('table#roles tbody').empty();
     this.model.roles.each(function(role) {

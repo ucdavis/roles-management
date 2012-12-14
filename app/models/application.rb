@@ -38,6 +38,7 @@ class Application < ActiveRecord::Base
         r.default = role[:default]
         r.descriptor = role[:descriptor]
         r.description = role[:description]
+        r.entity_ids = role[:entity_ids]
         r.application_id = id
         r.save
         ids_touched << r.id
@@ -48,6 +49,7 @@ class Application < ActiveRecord::Base
         r.default = role[:default]
         r.descriptor = role[:descriptor]
         r.description = role[:description]
+        r.entity_ids = role[:entity_ids]
         r.save
         ids_touched << r.id
       end
