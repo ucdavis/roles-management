@@ -10,7 +10,16 @@ DssRm.Models.Application = Backbone.Model.extend({
 
     json.roles_attributes = {};
     this.roles.each(function(role, i) {
-      json.roles_attributes[i] = { id: role.id.toString(), entity_ids: _.map(role.get('entities'), function(e) { return e.id }) };
+      var role = {};
+
+      if(role.id) role.id = role.id.toString();
+      if(role.get('entities')) role.entity_ids = _.map(role.get('entities'), function(e) { return e.id });
+      role.token = role.get('token');
+      role.default = role.get('default');
+      role.descriptor = role.get('descriptor');
+      role.description = role.get('description');
+
+      json.roles_attributes[i] = role;
     });
     json.owner_ids = this.owners.map(function(owner) {
       return owner.id;

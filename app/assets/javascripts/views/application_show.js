@@ -2,13 +2,15 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   tagName: "div",
 
   events: {
-    "click a#apply": "saveApplication",
-    "click a#delete": "deleteApplication",
-    "hidden": "cleanUpModal"
+    "click a#apply"        : "saveApplication",
+    "click a#delete"       : "deleteApplication",
+    "hidden"               : "cleanUpModal",
+    "click button#add_role": "addRole"
   },
 
   initialize: function(options) {
-    this.model.bind('change', this.render, this);
+    this.model.on('add change remove sync', this.render, this);
+    this.model.roles.on('add change remove sync reset', this.render, this);
 
     this.applications = options.applications;
 
@@ -27,8 +29,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
     // Summary tab
     self.$('h3').html(this.model.escape('name'));
-    self.$('input[name=name]').val(this.model.escape('name'));
-    self.$('input[name=description]').val(this.model.escape('description'));
+    self.$('input[name=name]').val(this.model.get('name'));
+    self.$('input[name=description]').val(this.model.get('description'));
 
     var owners_tokeninput = self.$("input[name=owners]");
     owners_tokeninput.tokenInput("clear");
@@ -59,6 +61,21 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
   saveApplication: function() {
     this.model.set({ name: this.$('input[name=name]').val() });
+
+    var roles = [];
+    this.$('table#roles tbody tr').each(function(i, e) {
+      var role = new DssRm.Models.Role();
+
+      role.set('name', $(e).find('input[name=token]').val());
+      role.set('default', $(e).find('input[name=default]').val());
+      role.set('descriptor', $(e).find('input[name=descriptor]').val());
+      role.set('description', $(e).find('input[name=description]').val());
+
+      roles.push(role);
+    });
+
+    this.model.roles.reset(roles);
+
     this.model.save();
 
     return false;
@@ -91,5 +108,11 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     $("div#applicationShowModal").remove();
     // Need to change URL in case they want to open the same modal again
     Backbone.history.navigate("");
+  },
+
+  addRole: function() {
+    this.model.roles.add();
+
+    return false;
   }
 });
