@@ -7,7 +7,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     "hidden"                  : "cleanUpModal",
     "click button#add_role"   : "addRole",
     "click button#remove_role": "removeRole",
-    "change table#roles input": "storeRoleChanges"
+    "change table#roles input": "storeRoleChanges",
+    "click button#sympa_url"  : "sympaUrl"
   },
 
   initialize: function(options) {
@@ -113,8 +114,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   storeRoleChanges: function(e) {
-    var rule_id = $(e.target).parents("tr").data("role_id");
-    var role = this.model.roles.find(function(e) { return e.id == rule_id });
+    var role_id = $(e.target).parents("tr").data("role_id");
+    var role = this.model.roles.find(function(e) { return e.id == role_id });
 
     role.set({
       token: $(e.target).parents("tr").find('input[name=token]').val(),
@@ -122,5 +123,14 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       descriptor: $(e.target).parents("tr").find('input[name=descriptor]').val(),
       description: $(e.target).parents("tr").find('input[name=description]').val()
     });
+  },
+
+  sympaUrl: function(e) {
+    var role_id = $(e.target).parents("tr").data("role_id");
+    var url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id) + ".txt";
+
+    window.prompt ("Copy to clipboard: Ctrl+C, Enter", url);
+
+    return false;
   }
 });

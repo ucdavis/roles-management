@@ -18,6 +18,7 @@ class RolesController < ApplicationController
     @role = Role.find_by_id(params[:id])
 
     respond_to do |format|
+      format.text
       format.json { render json: @role }
     end
   end
