@@ -13,12 +13,15 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
   },
 
   render: function () {
+    var type = this.model.get('type');
+
     this.$el.data('entity-id', this.model.get('id'));
     this.$el.data('entity-name', this.model.get('name'));
     this.$el.html(JST['entities/item']({ entity: this.model }));
     this.$('span').html(this.model.escape('name'));
     this.$el.addClass(this.model.get('type').toLowerCase());
     this.$('.entity-details-link').attr("href", this.entityUrl());
+    if(type == "Person") this.$('.entity-remove-link i').removeClass("icon-remove").addClass("icon-minus");
 
     if(this.highlighted) {
       this.$el.css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
