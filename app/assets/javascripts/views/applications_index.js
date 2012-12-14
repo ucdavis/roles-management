@@ -143,6 +143,20 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
           var p = new DssRm.Models.Entity({ id: id, name: label, type: 'Person' });
           self.current_user.favorites.add(p);
           self.current_user.save();
+
+          // If a role is selected, the behavior is to also automatically assign the new
+          // favorite to that role
+          if(this.selected.role) {
+            var updated_favorites = this.selected.role.get('entities');
+            updated_favorites.push({ id: id, name: label });
+
+            this.selected.role.set({
+              entities: updated_favorites
+            });
+            this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
+
+            this.selected.application.save();
+          }
         }
       break;
     }
@@ -214,12 +228,14 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // list to display their current assignments.
 
     if(this.selected.role) {
-      // toggle on or off
+      // toggle on or off?
       var matched = this.selected.role.get('entities').filter(function(e) { return e.id == clicked_entity_id });
       var updated_favorites = null;
       if(matched.length > 0) {
+        // toggling off
         updated_favorites = _.without(this.selected.role.get('entities'), matched[0]);
       } else {
+        // toggling on
         updated_favorites = this.selected.role.get('entities');
         updated_favorites.push({ id: clicked_entity_id, name: clicked_entity_name });
       }
