@@ -10,6 +10,7 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     this.model.bind('change', this.render, this);
 
     this.highlighted = options.highlighted;
+    this.current_user = options.current_user;
   },
 
   render: function () {
@@ -41,12 +42,18 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
 
   removeEntity: function() {
     // This is not the same as unassigning. If somebody clicks the remove link
-    // on an entity, they are either deleting a group or attempting to delete
-    // a person.
+    // on an entity, they are either deleting a group or removing a favorite person.
     var type = this.model.get('type');
 
     if(type == "Group") {
+      // Destroy the group
       this.model.destroy();
+    } else if (type == "Person") {
+      // Don't destroy the person - merely remove them from the favorites list
+      var model_id = this.model.get('id');
+      var e = this.current_user.favorites.find(function(e) { return e.id == model_id; });
+      this.current_user.favorites.remove(e);
+      this.current_user.save();
     }
   }
 });

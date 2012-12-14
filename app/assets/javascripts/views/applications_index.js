@@ -95,6 +95,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.sidebar_entities.each(function(entity) {
       var pin = new DssRm.Views.EntityItem({
         model: entity,
+        current_user: self.current_user,
         highlighted: _.indexOf(self.selected.entities, entity.get('id')) >= 0 // true if in selected.entities
       });
       self.renderChild(pin);
