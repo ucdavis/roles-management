@@ -127,7 +127,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
   sympaUrl: function(e) {
     var role_id = $(e.target).parents("tr").data("role_id");
-    var url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id) + ".txt";
+    var url = window.location.protocol + "//" + window.location.hostname + Routes.api_role_path(role_id) + ".txt";
 
     window.prompt ("Copy to clipboard: Ctrl+C, Enter", url);
 
