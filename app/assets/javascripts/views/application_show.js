@@ -12,8 +12,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   initialize: function(options) {
-    this.model.on('add change remove sync', this.render, this);
-    this.model.roles.on('add change remove sync reset', this.render, this);
+    this.model.on('add change remove', this.render, this);
+    this.model.roles.on('add change remove', this.render, this);
 
     this.applications = options.applications;
 
@@ -29,6 +29,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
   render: function() {
     var self = this;
+
+    console.log("rendering application dialog");
 
     // Summary tab
     self.$('h3').html(this.model.escape('name'));
@@ -92,6 +94,9 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   cleanUpModal: function() {
     this.model.off('add change remove sync', this.render, this);
     this.model.roles.off('add change remove sync reset', this.render, this);
+
+    // Remove any un-saved roles
+    this.model.roles.reset( this.model.get('roles'), { silent: true } );
 
     $("div#applicationShowModal").remove();
     // Need to change URL in case they want to open the same modal again

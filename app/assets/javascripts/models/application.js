@@ -10,9 +10,6 @@ DssRm.Models.Application = Backbone.Model.extend({
   updateAttributes: function() {
     this.roles.reset(this.get('roles'), { silent: true });
     this.owners.reset(this.get('owners'), { silent: true });
-
-    console.log("updateAttributes triggered for appliation:");
-    console.log(this);
   },
 
   toJSON: function() {

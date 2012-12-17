@@ -3,7 +3,7 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
   className: "card",
 
   initialize: function(options) {
-    _.bindAll(this, "render");
+    this.model.on("add remove change destroy sync", this.render, this);
 
     this.draw_highlighted = (options.highlighted_application_id == this.model.id);
     this.highlighted_role_id = options.highlighted_role_id;
