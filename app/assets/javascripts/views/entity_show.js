@@ -16,7 +16,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     var self = this;
     var type = this.model.get('type');
 
-    this.model.bind('change', this.render, this);
+    this.model.on('change', this.render, this);
 
     this.$el.html(JST['entities/show_' + this.model.get('type').toLowerCase() ]({ model: this.model }));
 
@@ -302,7 +302,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   },
 
   cleanUpModal: function() {
-    this.model.unbind('change', this.render, this);
+    this.model.off('change', this.render, this);
 
     $("div#entityShowModal").remove();
 
@@ -336,15 +336,11 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         break;
     }
 
-    console.log(lookahead_url);
-
     $.ajax({ url: lookahead_url, data: { q: query }, type: 'GET' }).always(function(data) {
       entities = [];
       _.each(data, function(entity) {
         entities.push(entity.id + '####' + entity.name);
       });
-
-      console.log(entities);
 
       process(entities);
     });
