@@ -7,8 +7,6 @@ DssRm.Views.RoleItem = Support.CompositeView.extend({
   },
 
   initialize: function(options) {
-    _.bindAll(this, "render");
-
     this.draw_highlighted = (options.highlighted_role_id == this.model.id);
   },
 
@@ -28,7 +26,7 @@ DssRm.Views.RoleItem = Support.CompositeView.extend({
   renderRoleContents: function() {
     var self = this;
 
-    self.$('a').html(this.model.escape('descriptor'));
+    self.$('a').html(this.model.escape('name'));
     self.$el.attr("title", this.model.escape('description'));
   },
 

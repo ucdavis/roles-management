@@ -230,8 +230,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       var roles_list = self.$("ul#roles");
       roles_list.empty();
       _.each(this.model.get('roles'), function(role, i) {
-        var $role = $('<li><span id="role-descriptor"></span> (<span id="role-token"></span>) for <span id="role-application"></span></li>');
-        $role.find("span#role-descriptor").html(role.descriptor);
+        var $role = $('<li><span id="role-name"></span> (<span id="role-token"></span>) for <span id="role-application"></span></li>');
+        $role.find("span#role-name").html(role.name);
         $role.find("span#role-token").html(role.token);
         $role.find("span#role-application").html(role.application_name);
         $role.data("role_id", role.id);

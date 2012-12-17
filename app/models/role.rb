@@ -11,7 +11,7 @@ class Role < ActiveRecord::Base
 
   belongs_to :application
 
-  attr_accessible :token, :entity_ids, :default, :descriptor, :description, :ad_path
+  attr_accessible :token, :entity_ids, :default, :name, :description, :ad_path
 
   # Needed in show.json.rabl to display a role's application's name
   def application_name
@@ -19,7 +19,7 @@ class Role < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :id => self.id, :token => self.token, :descriptor => self.descriptor, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :entities => self.entities }
+    { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :entities => self.entities }
   end
 
   def to_csv

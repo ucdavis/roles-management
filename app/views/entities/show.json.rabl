@@ -8,7 +8,7 @@ if @entity.type == "Person"
   attributes :first, :last, :email, :phone, :address, :loginid, :byline
 
   child @entity.roles => :roles do
-    attributes :id, :token, :descriptor, :description, :application_name
+    attributes :id, :token, :name, :description, :application_name
   end
 
   child @entity.favorites => :favorites do

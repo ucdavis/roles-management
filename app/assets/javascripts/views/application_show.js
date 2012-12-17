@@ -126,7 +126,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     role.set({
       token: $(e.target).parents("tr").find('input[name=token]').val(),
       default: $(e.target).parents("tr").find('input[name=default]').attr("checked") == "checked",
-      descriptor: $(e.target).parents("tr").find('input[name=descriptor]').val(),
+      name: $(e.target).parents("tr").find('input[name=name]').val(),
       description: $(e.target).parents("tr").find('input[name=description]').val()
     });
   },

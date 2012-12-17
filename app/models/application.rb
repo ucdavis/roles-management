@@ -7,7 +7,6 @@ class Application < ActiveRecord::Base
 
   before_save :set_default_properties
 
-  #validate :has_at_least_one_role
   validates :name, :presence => true
 
   attr_accessible :name, :ous_ids, :hostname, :description, :roles, :roles_attributes, :owner_ids
@@ -36,7 +35,7 @@ class Application < ActiveRecord::Base
         r = Role.new
         r.token = role[:token]
         r.default = role[:default]
-        r.descriptor = role[:descriptor]
+        r.name = role[:name]
         r.description = role[:description]
         r.entity_ids = role[:entity_ids]
         r.application_id = id
@@ -47,7 +46,7 @@ class Application < ActiveRecord::Base
         r = Role.find(role[:id])
         r.token = role[:token]
         r.default = role[:default]
-        r.descriptor = role[:descriptor]
+        r.name = role[:name]
         r.description = role[:description]
         r.entity_ids = role[:entity_ids]
         r.save
