@@ -21,7 +21,10 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     this.$el.html(JST['entities/item']({ entity: this.model }));
     this.$('span').html(this.model.escape('name'));
     this.$el.addClass(this.model.get('type').toLowerCase());
-    this.$('.entity-details-link').attr("href", this.entityUrl()).on("click", function(e) { e.stopPropagation(); // REMOVE TOOLTIP IF NEEDED });
+    this.$('.entity-details-link').attr("href", this.entityUrl()).on("click", function(e) {
+      e.stopPropagation(); // the parent is looking for a click as well
+      $(e.target).tooltip('hide'); // but stopPropagation will stop the tooltip from closing...
+    });
     if(type == "Person") this.$('.entity-remove-link i').removeClass("icon-remove").addClass("icon-minus");
 
     if(this.highlighted) {
@@ -43,7 +46,7 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
   removeEntity: function(e) {
     e.stopPropagation();
 
-    // REMOVE TOOLTIP HERE
+    $(e.target).tooltip('hide'); // stopPropagation means the tooltip won't close, so close it
 
     // This is not the same as unassigning. If somebody clicks the remove link
     // on an entity, they are either deleting a group or removing a favorite person.
