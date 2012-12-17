@@ -38,8 +38,8 @@ class Person < Entity
     [id, loginid, email, first, last]
   end
 
-  def name
-    first + " " + last
+  def byline
+    title.name + " (" + affiliations.map{ |x| x.name }.join(", ") + ")"
   end
 
   # Compute their classifications based on their title

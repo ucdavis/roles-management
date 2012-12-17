@@ -200,6 +200,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     } else if(type == "Person") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
+      self.$('h5').html(this.model.escape('byline'));
       self.$('input[name=first]').val(this.model.escape('first'));
       self.$('input[name=last]').val(this.model.escape('last'));
       self.$('input[name=email]').val(this.model.escape('email'));

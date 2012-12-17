@@ -5,7 +5,7 @@ object @entity
 attributes :id, :name, :type
 
 if @entity.type == "Person"
-  attributes :first, :last, :email, :phone, :address, :loginid
+  attributes :first, :last, :email, :phone, :address, :loginid, :byline
 
   child @entity.roles => :roles do
     attributes :id, :token, :descriptor, :description, :application_name
