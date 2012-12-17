@@ -90,7 +90,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   cleanUpModal: function() {
-    this.model.unbind('change', this.render, this);
+    this.model.off('add change remove sync', this.render, this);
+    this.model.roles.off('add change remove sync reset', this.render, this);
 
     $("div#applicationShowModal").remove();
     // Need to change URL in case they want to open the same modal again

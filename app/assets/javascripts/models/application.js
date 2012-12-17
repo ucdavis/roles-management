@@ -3,6 +3,16 @@ DssRm.Models.Application = Backbone.Model.extend({
     // Be sure to use this.roles and this.owners and not this.get('roles'), etc.
     this.roles = new DssRm.Collections.Roles(this.get('roles'));
     this.owners = new DssRm.Collections.Entities(this.get('owners'));
+
+    this.on("sync", this.updateAttributes, this);
+  },
+
+  updateAttributes: function() {
+    this.roles.reset(this.get('roles'), { silent: true });
+    this.owners.reset(this.get('owners'), { silent: true });
+
+    console.log("updateAttributes triggered for appliation:");
+    console.log(this);
   },
 
   toJSON: function() {
