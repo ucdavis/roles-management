@@ -246,6 +246,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
   save: function(e) {
     var type = this.model.get('type');
 
+    status_bar.show("Saving ...");
+
     if(type == "Group") {
       this.model.set({
         name: this.$('input[name=name]').val(),
@@ -262,7 +264,15 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       });
     }
 
-    this.model.save();
+    this.model.save({}, {
+      success: function() {
+        status_bar.hide();
+      },
+
+      error: function() {
+        status_bar.show("An error occurred while saving.", "error");
+      }
+    });
 
     return false;
   },

@@ -65,7 +65,17 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   saveApplication: function() {
     this.model.set({ name: this.$('input[name=name]').val() });
 
-    this.model.save();
+    status_bar.show("Saving application ...");
+
+    this.model.save({}, {
+      success: function() {
+        status_bar.hide();
+      },
+
+      error: function() {
+        status_bar.show("An error occurred while saving the application.", "error");
+      }
+    });
 
     return false;
   },

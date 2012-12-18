@@ -7,6 +7,7 @@
 //= require backbone-support
 //
 //= require bootstrap
+//= require status_bar
 //= require bootbox
 //= require bootstrap-modal-alert
 //= require jQuery.equalHeights

@@ -28,11 +28,19 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     var application = this.applications.get(applicationId);
     var applicationsRouter = this;
 
+    status_bar.show("Loading application ...");
+
     application.fetch({
       success: function() {
+        status_bar.hide();
+
         var view = new DssRm.Views.ApplicationShow({ model: application, applications: applicationsRouter.applications });
         applicationsRouter.currentView.renderChild(view);
         view.$el.modal();
+      },
+
+      error: function() {
+        status_bar.show("An error occurred while loading the application.", "error");
       }
     });
   },
@@ -45,11 +53,19 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
 
     var self = this;
 
+    status_bar.show("Loading ...");
+
     entity.fetch({
       success: function() {
+        status_bar.hide();
+
         var view = new DssRm.Views.EntityShow({ model: entity });
         self.currentView.renderChild(view);
         view.$el.modal();
+      },
+
+      error: function() {
+        status_bar.show("An error occurred while loading the entity.", "error");
       }
     });
   },
@@ -67,7 +83,11 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   whitelistDialog: function() {
     var self = this;
 
+    status_bar.show("Loading whitelist dialog ...");
+
     $.get(Routes.admin_api_whitelisted_ips_path(), function(ips) {
+      status_bar.hide();
+
       self.whitelisted_ips = new DssRm.Collections.WhitelistedIPs(ips);
 
       var view = new DssRm.Views.WhitelistDialog({ whitelist: self.whitelisted_ips });
