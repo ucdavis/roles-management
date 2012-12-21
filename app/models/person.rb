@@ -50,7 +50,7 @@ class Person < Entity
   def ou_ids=(ids)
     # Add any new OUs
     ids.each do |id|
-      ou = Group.find_by_id(id, :conditions => "code not null")
+      ou = Group.where(Group.arel_table[:code].not_eq(nil)).find_by_id(id)
       unless (group_memberships.include? ou) or ou.nil?
         group_memberships << ou
       end
