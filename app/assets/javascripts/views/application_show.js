@@ -30,8 +30,6 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   render: function() {
     var self = this;
 
-    console.log("rendering application dialog");
-
     // Summary tab
     self.$('h3').html(this.model.escape('name'));
     self.$('input[name=name]').val(this.model.get('name'));
