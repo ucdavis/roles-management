@@ -74,8 +74,6 @@ class Person < Entity
   end
 
   # Compute applications for which they can make assignments.
-  # These are applications they either explicitly own or
-  # applications made available on a global level.
   def manageable_applications
     apps = []
 
@@ -92,38 +90,12 @@ class Person < Entity
     apps
   end
 
-  # Compute accessible applications
-  def applications
+  # Compute applications for which they have a role.
+  def accessible_applications
     apps = []
 
     # Add apps via roles explicitly assigned
     roles.each { |role| apps << role.application }
-
-    apps
-  end
-
-  # List all available apps person does not have
-  def requestable_applications
-    apps = []
-
-    # Query all applications with an empty '.ous', implying public availability (some apps are for specific OUs only)
-    Application.includes(:application_ou_assignments).where( :application_ou_assignments => { :application_id => nil } ).each do |application|
-      unless applications.include? application
-        # App is publicly available and not already in their list
-        apps << application
-      end
-    end
-
-    # Add applications available to their OUs but to which they have no roles
-    ous.each do |ou|
-      ou.applications.each do |application|
-        application.roles.where(:default => false).each do |role|
-          unless applications.include? application
-            apps << application
-          end
-        end
-      end
-    end
 
     apps
   end
