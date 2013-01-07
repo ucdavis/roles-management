@@ -72,7 +72,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       var card = new DssRm.Views.ApplicationItem({
         model: application,
         highlighted_application_id: self.selected.application ? self.selected.application.get('id') : null,
-        highlighted_role_id: self.selected.role ? self.selected.role.get('id') : null
+        highlighted_role_id: self.selected.role ? self.selected.role.get('id') : null,
+        current_user: self.current_user
       });
       self.renderChild(card);
       self.$('#cards').append(card.el);
