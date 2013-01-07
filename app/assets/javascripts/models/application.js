@@ -19,7 +19,7 @@ DssRm.Models.Application = Backbone.Model.extend({
       var r = {};
 
       if(role.id) r.id = role.id.toString();
-      if(role.get('entities')) r.entity_ids = _.map(role.get('entities'), function(e) { return e.id });
+      if(role.entities.length > 0) r.entity_ids = role.entities.map(function(e) { return e.id });
       r.token = role.get('token');
       r.default = role.get('default');
       r.name = role.get('name');

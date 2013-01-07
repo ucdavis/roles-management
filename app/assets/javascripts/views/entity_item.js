@@ -11,6 +11,7 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
 
     this.highlighted = options.highlighted;
     this.current_user = options.current_user;
+    this.faded = options.faded;
   },
 
   render: function () {
@@ -27,9 +28,8 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     });
     if(type == "Person") this.$('.entity-remove-link i').removeClass("icon-remove").addClass("icon-minus");
 
-    if(this.highlighted) {
-      this.$el.css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
-    }
+    if(this.highlighted) this.$el.css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
+    if(this.faded) this.$el.css("opacity", "0.5");
 
     return this;
   },

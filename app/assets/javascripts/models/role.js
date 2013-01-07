@@ -2,7 +2,13 @@ DssRm.Models.Role = Backbone.Model.extend({
   urlRoot: '/roles',
 
   initialize: function() {
-    if(this.get('entities') == undefined) this.set('entities', []);
+    this.entities = new DssRm.Collections.Entities(this.get('entities'));
+    
+    this.on("change", this.updateAttributes, this);
+  },
+  
+  updateAttributes: function() {
+    this.entities.reset(this.get('entities'), { silent: true });
   },
   
   tokenize: function(str) {
