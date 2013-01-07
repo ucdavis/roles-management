@@ -102,7 +102,12 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       self.$('#pins').append(pin.el);
     });
     if(this.selected.role) {
-      this.selected.role.entities.each(function(entity) {
+      var assigned_non_subordinates = this.selected.role.entities.reject(function(e) {
+        var id = e.get('id');
+        return self.sidebar_entities.find(function(i) { return i.get('id') == id; });
+      });
+
+      _.each(assigned_non_subordinates, function(entity) {
         var pin = new DssRm.Views.EntityItem({
           model: entity,
           current_user: self.current_user,
@@ -223,7 +228,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.selected.application = this.applications.get(application_id);
     this.selected.role = this.selected.application.roles.get($(e.currentTarget).data('role-id'));
     this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
-    
+
     this.render();
   },
 

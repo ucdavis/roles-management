@@ -154,7 +154,7 @@ class Group < Entity
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :owners => self.owners, :members => self.member_tokens }
+    { :id => self.id, :name => self.name, :owners => self.owners, :members => self.member_tokens, :type => 'Group' }
   end
 
   # Returns all members via resolving group rules
