@@ -4,12 +4,14 @@ class Application < ActiveRecord::Base
   has_many :roles, :dependent => :destroy
   has_many :application_owner_assignments, :dependent => :destroy
   has_many :owners, :through => :application_owner_assignments
+  has_many :application_operator_assignments
+  has_many :operators, :through => :application_operator_assignments, :source => "entity", :dependent => :destroy
 
   before_save :set_default_properties
 
   validates :name, :presence => true
 
-  attr_accessible :name, :ous_ids, :hostname, :description, :roles, :roles_attributes, :owner_ids
+  attr_accessible :name, :ous_ids, :hostname, :description, :roles, :roles_attributes, :owner_ids, :operator_ids
 
   belongs_to :api_key
 

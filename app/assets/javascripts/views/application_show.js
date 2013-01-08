@@ -25,6 +25,13 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       theme: "facebook",
       tokenValue: "uid"
     });
+
+    this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
+      crossDomain: false,
+      defaultText: "",
+      theme: "facebook",
+      tokenValue: "uid"
+    });
   },
 
   render: function() {
