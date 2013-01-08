@@ -22,7 +22,7 @@ class Application < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :roles => self.roles, :description => self.description, :owners => self.owners }
+    { :id => self.id, :name => self.name, :roles => self.roles, :description => self.description, :owners => self.owners, :operators => self.operators }
   end
 
   # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction

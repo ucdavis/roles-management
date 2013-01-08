@@ -12,6 +12,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   initialize: function(options) {
+    var self = this;
+
     this.model.on('add change remove', this.render, this);
     this.model.roles.on('add change remove', this.render, this);
 
@@ -23,14 +25,40 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       crossDomain: false,
       defaultText: "",
       theme: "facebook",
-      tokenValue: "uid"
+      onAdd: function(item) {
+        var owners = self.model.get('owners');
+        if (! _.find(owners, function(i) { return i.id == item.id })) {
+          // onAdd is triggered by the .tokenInput("add") lines in render,
+          // so we need to ensure this actually is a new item
+          owners.push(item);
+          self.model.set('owners', owners);
+          self.model.trigger('change');
+        }
+      },
+      onDelete: function(item) {
+        var owners = _.filter(self.model.get('owners'), function(owner) { return owner.id != item.id });
+        self.model.set('owners', owners);
+      }
     });
 
     this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
       theme: "facebook",
-      tokenValue: "uid"
+      onAdd: function(item) {
+        var operators = self.model.get('operators');
+        if (! _.find(operators, function(i) { return i.id == item.id })) {
+          // onAdd is triggered by the .tokenInput("add") lines in render,
+          // so we need to ensure this actually is a new item
+          operators.push(item);
+          self.model.set('operators', operators);
+          self.model.trigger('change');
+        }
+      },
+      onDelete: function(item) {
+        var operators = _.filter(self.model.get('operators'), function(operator) { return operator.id != item.id });
+        self.model.set('operators', operators);
+      }
     });
   },
 
@@ -45,7 +73,13 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     var owners_tokeninput = self.$("input[name=owners]");
     owners_tokeninput.tokenInput("clear");
     _.each(this.model.get('owners'), function(owner) {
-      owners_tokeninput.tokenInput("add", {uid: owner.uid, name: owner.name});
+      owners_tokeninput.tokenInput("add", {id: owner.id, name: owner.name});
+    });
+
+    var operators_tokeninput = self.$("input[name=operators]");
+    operators_tokeninput.tokenInput("clear");
+    _.each(this.model.get('operators'), function(operator) {
+      operators_tokeninput.tokenInput("add", {id: operator.id, name: operator.name});
     });
 
     // Roles tab
