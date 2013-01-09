@@ -3,9 +3,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   events: {
-    "click #cards .card .role" : "selectRole",
-    "click #pins li"           : "selectEntity",
-    "click #cards"             : "deselectAll"
+    "click #cards .card .role"  : "selectRole",
+    "click #pins li"            : "selectEntity",
+    "click #cards"              : "deselectAll"
   },
 
   initialize: function(options) {
@@ -31,7 +31,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       minLength: 2,
       sorter: function(items) { return items; }, // required to keep the order given to process() in 'source'
       highlighter: function (item) {
-        var item = item.split('####')[1]; // See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+        var parts = item.split('####');
+        var item = parts[1]; // See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+        if(parts[2] !== undefined) item = item + parts[2];
         var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
         return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
           return '<strong>' + match + '</strong>'
@@ -130,7 +132,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       var exact_match_found = false;
       _.each(data, function(entity) {
         if(query.toLowerCase() == entity.name.toLowerCase()) exact_match_found = true;
-        entities.push(entity.id + '####' + entity.name);
+        entities.push(
+          entity.id + '####' + entity.name + '####' + "<i class=\"icon-search sidebar-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; DssRm.Views.ApplicationsIndex.sidebarDetails(event);\" />"
+        );
       });
 
       if(exact_match_found == false) {
@@ -276,5 +280,15 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   // Constants used in this view
   FID_ADD_PERSON: -1,
   FID_CREATE_GROUP: -2,
-  FID_CREATE_APPLICATION: -3
+  FID_CREATE_APPLICATION: -3,
+
+  // Function defined here for use in onClick.
+  // Inline event handler was required on i.sidebar-search to avoid patching
+  // Bootstrap's typeahead()
+  sidebarDetails: function(e) {
+    e.stopPropagation();
+
+    var entity_id = $(e.target).parent().parent().data("value").split("####")[0];
+    DssRm.router.showEntity(entity_id);
+  }
 });
