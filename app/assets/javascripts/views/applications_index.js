@@ -288,6 +288,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   sidebarDetails: function(e) {
     e.stopPropagation();
 
+    $("input#sidebar_search").val("");
+
     var entity_id = $(e.target).parent().parent().data("value").split("####")[0];
     DssRm.router.showEntity(entity_id);
   }
