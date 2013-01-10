@@ -33,11 +33,13 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       highlighter: function (item) {
         var parts = item.split('####');
         var item = parts[1]; // See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
-        if(parts[2] !== undefined) item = item + parts[2];
-        var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
-        return item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
-          return '<strong>' + match + '</strong>'
-        })
+        var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+        var ret = item.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+          return '<strong>' + match + '</strong>';
+        });
+        if(parts[2] !== undefined) ret = ret + parts[2];
+
+        return ret;
       },
       source: self.sidebarSearch,
       updater: function(item) { self.searchResultSelected(item, self); }
@@ -287,6 +289,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   // Bootstrap's typeahead()
   sidebarDetails: function(e) {
     e.stopPropagation();
+
+    debugger;
 
     $("input#sidebar_search").val("");
 
