@@ -14,7 +14,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // View states
     this.selected = {};
     this.selected.application = null;
-    this.selected.role = null;
+    this.selected.role_id = null;
     this.selected.entities = [];
 
     this.applications = this.options.applications;
@@ -76,7 +76,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       var card = new DssRm.Views.ApplicationItem({
         model: application,
         highlighted_application_id: self.selected.application ? self.selected.application.get('id') : null,
-        highlighted_role_id: self.selected.role ? self.selected.role.get('id') : null,
+        highlighted_role_id: self.selected.role_id ? self.selected.role_id : null,
         current_user: self.current_user
       });
       self.renderChild(card);
@@ -106,8 +106,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
     });
-    if(this.selected.role) {
-      var assigned_non_subordinates = this.selected.role.entities.reject(function(e) {
+    if(this.selected.role_id) {
+      var selected_role = this.selected.application.roles.where({id: this.selected.role_id})[0];
+      var assigned_non_subordinates = selected_role.entities.reject(function(e) {
         var id = e.get('id');
         return self.sidebar_entities.find(function(i) { return i.get('id') == id; });
       });
@@ -171,14 +172,15 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
           // If a role is selected, the behavior is to also automatically assign the new
           // favorite to that role
-          if(this.selected.role) {
-            var updated_favorites = this.selected.role.get('entities');
+          if(this.selected.role_id) {
+            var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
+            var updated_favorites = selected_role.get('entities');
             updated_favorites.push({ id: id, name: label });
 
-            this.selected.role.set({
+            selected_role.set({
               entities: updated_favorites
             });
-            this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
+            this.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
 
             this.selected.application.save();
           }
@@ -221,7 +223,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
   deselectAll: function(e) {
     this.selected.application = null;
-    this.selected.role = null;
+    this.selected.role_id = null;
     this.selected.entities = [];
 
     this.render();
@@ -233,8 +235,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     var application_id = $(e.currentTarget).parent().parent().parent().data('application-id');
 
     this.selected.application = this.applications.get(application_id);
-    this.selected.role = this.selected.application.roles.get($(e.currentTarget).data('role-id'));
-    this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
+    this.selected.role_id = $(e.currentTarget).data('role-id');
+    this.selected.entities = this.selected.application.roles.where({ id: this.selected.role_id })[0].get('entities').map(function(e) { return e.id });
 
     this.render();
   },
@@ -252,23 +254,25 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // If no application/role is selected, clicking an entity merely filters the application/role
     // list to display their current assignments.
 
-    if(this.selected.role) {
+    if(this.selected.role_id) {
+      var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
       // toggle on or off?
-      var matched = this.selected.role.get('entities').filter(function(e) { return e.id == clicked_entity_id });
+      var matched = selected_role.get('entities').filter(function(e) { return e.id == clicked_entity_id });
       var updated_favorites = null;
       if(matched.length > 0) {
         // toggling off
-        updated_favorites = _.without(this.selected.role.get('entities'), matched[0]);
+        updated_favorites = _.without(selected_role.get('entities'), matched[0]);
       } else {
         // toggling on
-        updated_favorites = this.selected.role.get('entities');
+        updated_favorites = selected_role.get('entities');
         updated_favorites.push({ id: clicked_entity_id, name: clicked_entity_name });
       }
 
-      this.selected.role.set({
+      selected_role.set({
         entities: updated_favorites
       });
-      this.selected.entities = this.selected.role.get('entities').map(function(e) { return e.id });
+      this.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
+      selected_role.trigger('change');
 
       this.selected.application.save();
     } else {

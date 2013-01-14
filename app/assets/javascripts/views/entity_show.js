@@ -138,6 +138,11 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
           self.model.set('ous', ous);
         }
       });
+
+      // this.model.get('roles')
+      // group by application_name
+      // use 'name' for token name (not 'token')
+      debugger;
     }
   },
 

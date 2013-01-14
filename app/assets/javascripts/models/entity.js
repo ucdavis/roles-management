@@ -38,10 +38,12 @@ DssRm.Models.Entity = Backbone.Model.extend({
       if(this.favorites === undefined) this.favorites = new DssRm.Collections.Entities(this.get('favorites'));
       if(this.group_ownerships === undefined) this.group_ownerships = new DssRm.Collections.Entities(this.get('group_ownerships'));
       if(this.group_operatorships === undefined) this.group_operatorships = new DssRm.Collections.Entities(this.get('group_operatorships'));
+      if(this.roles === undefined) this.roles = new DssRm.Collections.Roles(this.get('roles'));
 
       this.favorites.reset(this.get('favorites'));
       this.group_ownerships.reset(this.get('group_ownerships'));
       this.group_operatorships.reset(this.get('group_operatorships'));
+      this.roles.reset(this.get('roles'));
     }
   },
 
