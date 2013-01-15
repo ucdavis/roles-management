@@ -95,13 +95,16 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     if(this.sidebar_entities === undefined) this.sidebar_entities = new DssRm.Collections.Entities();
     this.sidebar_entities.reset(_sidebar_entities);
+    // Need group_operatorship IDs has an array when drawing EntityItem
+    var group_operatorships = this.current_user.group_operatorships.map(function(group) { return group.get('id') });
 
     this.$('#pins').empty();
     this.sidebar_entities.each(function(entity) {
       var pin = new DssRm.Views.EntityItem({
         model: entity,
         current_user: self.current_user,
-        highlighted: _.indexOf(self.selected.entities, entity.get('id')) >= 0 // true if in selected.entities
+        highlighted: _.indexOf(self.selected.entities, entity.get('id')) >= 0, // true if in selected.entities
+        read_only: _.indexOf(group_operatorships, entity.get('id')) >= 0
       });
       self.renderChild(pin);
       self.$('#pins').append(pin.el);

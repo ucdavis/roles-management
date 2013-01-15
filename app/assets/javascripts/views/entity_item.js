@@ -12,6 +12,7 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     this.highlighted = options.highlighted;
     this.current_user = options.current_user;
     this.faded = options.faded;
+    this.read_only = options.read_only;
   },
 
   render: function () {
@@ -30,6 +31,12 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
 
     if(this.highlighted) this.$el.css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
     if(this.faded) this.$el.css("opacity", "0.5");
+    if(this.read_only) {
+      this.$("i.icon-remove").hide();
+      this.$("i.icon-search").hide();
+    } else {
+      this.$("i.icon-lock").hide();
+    }
 
     return this;
   },
