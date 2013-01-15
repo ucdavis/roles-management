@@ -8,7 +8,7 @@ authorization do
     has_permission_on :admin_api_whitelisted_ips, :to => [:index, :create, :destroy]
   end
   role :access do
-    has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy]
+    has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy, :delete]
     has_permission_on :entities, :to => [:index, :show, :new, :create, :edit, :update, :destroy]
     has_permission_on :applications, :to => [:index, :show, :new, :create, :edit, :update, :destroy, :delete]
     has_permission_on :people, :to => [:index, :show, :edit, :update]
