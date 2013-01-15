@@ -170,9 +170,9 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
           //}
         });
 
-        _.each(roleset, function(role) {
-
-        });
+        //_.each(roleset, function(role) {
+        //  debugger;
+        //});
       });
 
     }
@@ -264,15 +264,16 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       });
 
       // Roles tab
-      var roles_list = self.$("ul#roles");
-      roles_list.empty();
-      _.each(this.model.get('roles'), function(role, i) {
-        var $role = $('<li><span id="role-name"></span> (<span id="role-token"></span>) for <span id="role-application"></span></li>');
-        $role.find("span#role-name").html(role.name);
-        $role.find("span#role-token").html(role.token);
-        $role.find("span#role-application").html(role.application_name);
-        $role.data("role_id", role.id);
-        roles_list.append($role);
+      $rolesTab = this.$('fieldset#roles');
+      _.each(this.model.roles.groupBy("application_name"), function(roleset) {
+        var app_name = roleset[0].get('application_name');
+        var app_id = roleset[0].get('application_id');
+
+        role_tokeninput = self.$("input[name=_token_input_" + app_id + "]");
+        role_tokeninput.tokenInput("clear");
+        _.each(roleset, function(role) {
+          role_tokeninput.tokenInput("add", {id: role.get('id'), name: role.get('name') });
+        });
       });
 
     }
