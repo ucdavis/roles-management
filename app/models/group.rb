@@ -51,24 +51,26 @@ class Group < Entity
     ids_touched = [] # We'll remove any rules that weren't touched at the end
 
     # Add/update rules
-    rule_attrs.each do |rule|
-      if (rule[:id].to_s)[0..3] == "new_"
-        # New rule
-        r = GroupRule.new
-        r.column = rule[:column]
-        r.condition = rule[:condition]
-        r.value = rule[:value]
-        r.group_id = id
-        r.save
-        ids_touched << r.id
-      else
-        # Updating a rule
-        r = GroupRule.find(rule[:id])
-        r.column = rule[:column]
-        r.condition = rule[:condition]
-        r.value = rule[:value]
-        r.save
-        ids_touched << r.id
+    unless rule_attrs.nil?
+      rule_attrs.each do |rule|
+        if (rule[:id].to_s)[0..3] == "new_"
+          # New rule
+          r = GroupRule.new
+          r.column = rule[:column]
+          r.condition = rule[:condition]
+          r.value = rule[:value]
+          r.group_id = id
+          r.save
+          ids_touched << r.id
+        else
+          # Updating a rule
+          r = GroupRule.find(rule[:id])
+          r.column = rule[:column]
+          r.condition = rule[:condition]
+          r.value = rule[:value]
+          r.save
+          ids_touched << r.id
+        end
       end
     end
 
@@ -144,9 +146,11 @@ class Group < Entity
       r_members += [r.id]
     end
 
-    ids.each do |id|
-      unless r_members.include? id
-        e_ids << id
+    unless ids.nil?
+      ids.each do |id|
+        unless r_members.include? id
+          e_ids << id
+        end
       end
     end
 
