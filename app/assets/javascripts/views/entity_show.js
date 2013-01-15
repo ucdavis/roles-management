@@ -16,6 +16,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     var self = this;
     var type = this.model.get('type');
 
+    window.debugging = self;
+
     this.model.on('change', this.render, this);
 
     this.$el.html(JST['entities/show_' + this.model.get('type').toLowerCase() ]({ model: this.model }));
@@ -154,20 +156,22 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rolesTab.find("input[name=_token_input_" + app_id + "]").tokenInput(Routes.api_roles_path() + "?app_id=" + app_id, {
           crossDomain: false,
           defaultText: "",
-          theme: "facebook"
-          //onAdd: function(item) {
-          //  var owners = self.model.get('owners');
-          //  if (! _.find(owners, function(i) { return i.id == item.id })) {
-          //    // onAdd is triggered by the .tokenInput("add") lines in render,
-          //    // so we need to ensure this actually is a new item
-          //    owners.push(item);
-          //    self.model.set('owners', owners);
-          //  }
-          //},
-          //onDelete: function(item) {
-          //  var owners = _.filter(self.model.get('owners'), function(owner) { return owner.id != item.id });
-          //  self.model.set('owners', owners);
-          //}
+          theme: "facebook",
+          onAdd: function(item) {
+            var roles = self.model.get('roles');
+            if (! _.find(roles, function(i) { return i.id == item.id })) {
+              // onAdd is triggered by the .tokenInput("add") lines in render,
+              // so we need to ensure this actually is a new item
+              roles.push(item);
+              self.model.set('roles', roles);
+              self.model.trigger('change');
+            }
+          },
+          onDelete: function(item) {
+            var roles = _.filter(self.model.get('roles'), function(role) { return role.id != item.id });
+            self.model.set('roles', roles);
+            self.model.trigger('change');
+          }
         });
 
         //_.each(roleset, function(role) {
