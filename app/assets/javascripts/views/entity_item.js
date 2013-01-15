@@ -29,7 +29,14 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     });
     if(type == "Person") this.$('.entity-remove-link i').removeClass("icon-remove").addClass("icon-minus");
 
-    if(this.highlighted) this.$el.css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
+    if(this.highlighted) {
+      if(type == "Person") {
+        this.$el.css("box-shadow", "#08C 0 0 5px").css("border", "1px solid #08C");
+      } else {
+        // Group
+        this.$el.css("box-shadow", "#468847 0 0 5px").css("border", "1px solid #468847");
+      }
+    }
     if(this.faded) this.$el.css("opacity", "0.5");
     if(this.read_only) {
       this.$("i.icon-remove").hide();
