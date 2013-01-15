@@ -139,10 +139,42 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
 
-      // this.model.get('roles')
-      // group by application_name
-      // use 'name' for token name (not 'token')
-      debugger;
+      $rolesTab = this.$('fieldset#roles');
+      _.each(this.model.roles.groupBy("application_name"), function(roleset) {
+        var app_name = roleset[0].get('application_name');
+        var app_id = roleset[0].get('application_id');
+
+        $rolesTab.append(" \
+          <p> \
+            <label for=\"_token_input_" + app_id + "\">" + app_name + "</label> \
+            <input type=\"text\" name=\"_token_input_" + app_id + "\" class=\"token_input\" /> \
+          </p>"
+        );
+
+        $rolesTab.find("input[name=_token_input_" + app_id + "]").tokenInput(Routes.api_roles_path() + "?app_id=" + app_id, {
+          crossDomain: false,
+          defaultText: "",
+          theme: "facebook"
+          //onAdd: function(item) {
+          //  var owners = self.model.get('owners');
+          //  if (! _.find(owners, function(i) { return i.id == item.id })) {
+          //    // onAdd is triggered by the .tokenInput("add") lines in render,
+          //    // so we need to ensure this actually is a new item
+          //    owners.push(item);
+          //    self.model.set('owners', owners);
+          //  }
+          //},
+          //onDelete: function(item) {
+          //  var owners = _.filter(self.model.get('owners'), function(owner) { return owner.id != item.id });
+          //  self.model.set('owners', owners);
+          //}
+        });
+
+        _.each(roleset, function(role) {
+
+        });
+      });
+
     }
   },
 
