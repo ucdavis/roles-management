@@ -5,6 +5,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
 
   events: {
     "click a#apply": "save",
+    "click a#rescan": "rescan",
     "click button#group_rule_add": "addRule",
     "click button#remove_group_rule": "removeRule",
     "change table#rules select": "storeRuleChanges",
@@ -315,6 +316,24 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         status_bar.show("An error occurred while saving.", "error");
       }
     });
+
+    return false;
+  },
+
+  rescan: function(e) {
+    var type = this.model.get('type');
+
+    status_bar.show("Scanning ...");
+
+    //this.model.save({}, {
+      //success: function() {
+        status_bar.hide();
+      //},
+
+      //error: function() {
+        //status_bar.show("An error occurred while saving.", "error");
+      //}
+    //});
 
     return false;
   },
