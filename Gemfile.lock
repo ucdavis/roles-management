@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: git://github.com/railsware/js-routes.git
-  revision: 3d0d3ac0e0ec51dbcd5b2c22a28b6c1f0d4afd46
+  revision: c81e8898337606726c20947248f1ec7bc5dad35f
   specs:
     js-routes (0.8.5)
       rails (>= 3.2)
@@ -83,13 +83,13 @@ GEM
     coffee-script-source (1.4.0)
     columnize (0.3.6)
     daemons (1.1.9)
-    debugger (1.2.3)
+    debugger (1.2.4)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.1.1)
-      debugger-ruby_core_source (~> 1.1.5)
+      debugger-ruby_core_source (~> 1.1.7)
     debugger-linecache (1.1.2)
       debugger-ruby_core_source (>= 1.1.1)
-    debugger-ruby_core_source (1.1.6)
+    debugger-ruby_core_source (1.1.7)
     delayed_job (3.0.4)
       activesupport (~> 3.0)
     delayed_job_active_record (0.3.3)
@@ -180,7 +180,7 @@ GEM
     ruby_parser (3.1.1)
       sexp_processor (~> 4.1)
     sass (3.2.5)
-    sass-rails (3.2.5)
+    sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
