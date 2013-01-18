@@ -12,7 +12,9 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     var owner_ids = this.model.owners.map(function(i) { return i.get('id'); } );
     this.owner_names = this.model.owners.map(function(i) { return i.get('name') }).join(', ');
     if(this.owner_names.length == 0) this.owner_names = "Nobody";
-    this.operator_view = ! _.contains(owner_ids, this.current_user.get('id'));
+    //this.operator_view = ! _.contains(owner_ids, this.current_user.get('id'));
+
+    this.relationship = this.model.relationship();
   },
 
   render: function() {
@@ -34,12 +36,14 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     self.$('h3').html(this.model.escape('name'));
     self.$('.card-title').attr("title", this.model.escape('description'));
     self.$('.application-link').attr("href", this.applicationUrl());
-    if(this.operator_view) {
+
+    if(this.relationship == "admin" || this.relationship == "operator") {
       self.$('h6').html('Owned by ' + this.owner_names);
       self.$('h6').show();
     } else {
       self.$('h6').hide();
     }
+    if(this.relationship == "operator") self.$('i.details').hide();
 
     if(this.model.roles.length == 0) {
       self.$('.roles').hide();

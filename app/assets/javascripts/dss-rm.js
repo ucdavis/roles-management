@@ -10,7 +10,8 @@ window.DssRm = {
     this.current_user = new DssRm.Models.Entity({
       id: data.current_user.id,
       name: data.current_user.name,
-      type: 'Person'
+      type: 'Person',
+      admin: data.current_user.admin
     });
 
     this.current_user.fetch({

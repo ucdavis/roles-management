@@ -16,6 +16,9 @@ class Person < Entity
   has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
 
+  has_many :application_operator_assignments, :foreign_key => "entity_id", :dependent => :destroy
+  has_many :application_operatorships, :through => :application_operator_assignments, :source => :application
+
   has_many :group_operator_assignments, :foreign_key => "entity_id"
   has_many :group_operatorships, :through => :group_operator_assignments, :source => :group
 
@@ -85,8 +88,12 @@ class Person < Entity
     if is_rm_admin?
       apps = Application.all
     else
-      # Add apps where they are explicitly the owners
+      # Add apps where they are owners
       application_ownerships.each do |a|
+        apps << a
+      end
+      # Add apps where they are operators
+      application_operatorships.each do |a|
         apps << a
       end
     end
@@ -116,7 +123,7 @@ class Person < Entity
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.first + " " + self.last, :type => 'Person' }
+    { :id => self.id, :name => self.first + " " + self.last, :type => 'Person', :admin => is_rm_admin? }
   end
 
   def can_administer_application?(app_id)
