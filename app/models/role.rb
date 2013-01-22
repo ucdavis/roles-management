@@ -19,7 +19,7 @@ class Role < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :entities => self.entities }
+    { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id, :description => self.description, :mandatory => self.mandatory, :default => self.default, :entities => self.entities, :ad_path => self.ad_path }
   end
 
   def to_csv

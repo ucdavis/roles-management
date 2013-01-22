@@ -106,6 +106,12 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
     status_bar.show("Saving application ...");
 
+    // Update the model silently, then save
+    this.$('input[name=ad_path]').each(function(e) {
+      console.log(e.data('role-id'));
+      console.log(e.val());
+    });
+
     this.model.save({}, {
       success: function() {
         status_bar.hide();
