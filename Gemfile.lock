@@ -28,7 +28,7 @@ GIT
 
 GIT
   remote: https://github.com/stffn/declarative_authorization.git
-  revision: 94a28ed073df844e2fb55d3d959e9a4c38859ca8
+  revision: a4d318f8155330531b4e0436320c2cc8df5594bb
   specs:
     declarative_authorization (0.5.6)
 
@@ -121,7 +121,7 @@ GEM
       thor (>= 0.14, < 2.0)
     jruby-pageant (1.1.1)
     json (1.7.6)
-    kgio (2.7.4)
+    kgio (2.8.0)
     launchy (2.1.2)
       addressable (~> 2.3)
     letter_opener (1.0.0)
