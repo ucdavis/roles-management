@@ -80,7 +80,7 @@ class Role < ActiveRecord::Base
           unless role_members.include? m[:samaccountname]
             p = Person.find_by_loginid m[:samaccountname]
             if p
-              people << p
+              entities << p
               logger.info "Adding user #{m[:samaccountname]} from AD group #{ad_path} to local group."
             else
               logger.warn "Need to add user #{m[:samaccountname]} from AD group #{ad_path} but could not be found locally."
