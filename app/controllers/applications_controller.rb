@@ -52,6 +52,7 @@ class ApplicationsController < ApplicationController
   def create
     # SECUREME: Can the current user create applications?
 
+    params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
     params[:application][:owner_ids] << current_user.id
     @application = Application.new(params[:application])
 

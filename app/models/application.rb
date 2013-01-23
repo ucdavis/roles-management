@@ -29,32 +29,34 @@ class Application < ActiveRecord::Base
   def roles_attributes=(role_attrs)
     ids_touched = [] # We'll remove any roles that weren't touched at the end
 
-    # Add/update roles
-    role_attrs.each do |role|
-      logger.info role
-      if (role[:id].to_s)[0..3] == "new_"
-        # New role
-        r = Role.new
-        r.token = role[:token]
-        r.default = role[:default]
-        r.name = role[:name]
-        r.description = role[:description]
-        r.entity_ids = role[:entity_ids]
-        r.ad_path = role[:ad_path]
-        r.application_id = id
-        r.save
-        ids_touched << r.id
-      else
-        # Updating a role
-        r = Role.find(role[:id])
-        r.token = role[:token]
-        r.default = role[:default]
-        r.name = role[:name]
-        r.description = role[:description]
-        r.entity_ids = role[:entity_ids]
-        r.ad_path = role[:ad_path]
-        r.save
-        ids_touched << r.id
+    unless role_attrs.nil?
+      # Add/update roles
+      role_attrs.each do |role|
+        logger.info role
+        if (role[:id].to_s)[0..3] == "new_"
+          # New role
+          r = Role.new
+          r.token = role[:token]
+          r.default = role[:default]
+          r.name = role[:name]
+          r.description = role[:description]
+          r.entity_ids = role[:entity_ids]
+          r.ad_path = role[:ad_path]
+          r.application_id = id
+          r.save
+          ids_touched << r.id
+        else
+          # Updating a role
+          r = Role.find(role[:id])
+          r.token = role[:token]
+          r.default = role[:default]
+          r.name = role[:name]
+          r.description = role[:description]
+          r.entity_ids = role[:entity_ids]
+          r.ad_path = role[:ad_path]
+          r.save
+          ids_touched << r.id
+        end
       end
     end
 
