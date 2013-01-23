@@ -102,14 +102,21 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   saveApplication: function() {
+    var self = this;
+
     this.model.set({ name: this.$('input[name=name]').val() });
 
     status_bar.show("Saving application ...");
 
     // Update the model silently, then save
-    this.$('input[name=ad_path]').each(function(e) {
-      console.log(e.data('role-id'));
-      console.log(e.val());
+    this.$('input[name=ad_path]').each(function(i, e) {
+      var role_id = $(e).data('role-id');
+      var value = $(e).val();
+
+      var r = self.model.roles.find(function(r) { return r.id == role_id });
+      if(r) {
+        r.set({ad_path: value}, { silent: true });
+      }
     });
 
     this.model.save({}, {

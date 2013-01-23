@@ -40,6 +40,7 @@ class Application < ActiveRecord::Base
         r.name = role[:name]
         r.description = role[:description]
         r.entity_ids = role[:entity_ids]
+        r.ad_path = role[:ad_path]
         r.application_id = id
         r.save
         ids_touched << r.id
@@ -51,6 +52,7 @@ class Application < ActiveRecord::Base
         r.name = role[:name]
         r.description = role[:description]
         r.entity_ids = role[:entity_ids]
+        r.ad_path = role[:ad_path]
         r.save
         ids_touched << r.id
       end

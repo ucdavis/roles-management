@@ -40,6 +40,7 @@ DssRm.Models.Application = Backbone.Model.extend({
       r.default = role.get('default');
       r.name = role.get('name');
       r.description = role.get('description');
+      r.ad_path = role.get('ad_path');
 
       return r;
     });
