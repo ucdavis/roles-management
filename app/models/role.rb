@@ -76,8 +76,11 @@ class Role < ActiveRecord::Base
         # Add AD people as members
         ad_members = AdSync.list_group_members(g)
         role_members = members.map{ |x| x.loginid }
+        logger.debug "Syncing AD members back to local. There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start."
         ad_members.each do |m|
+          logger.debug "Syncing back #{m[:samaccountname]}"
           unless role_members.include? m[:samaccountname]
+            logger.info "#{m[:samaccountname]} is not already in role_members, going to add ..."
             p = Person.find_by_loginid m[:samaccountname]
             if p
               entities << p
