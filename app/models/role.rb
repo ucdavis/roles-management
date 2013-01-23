@@ -55,6 +55,8 @@ class Role < ActiveRecord::Base
   def sync_ad
     require 'AdSync'
 
+    Authorization.ignore_access_control(true)
+
     unless ad_path.nil?
     logger.info "Syncing role #{id} (#{application.name} / #{token}) with AD..."
       g = AdSync.fetch_group(ad_path)
@@ -100,6 +102,8 @@ class Role < ActiveRecord::Base
     else
       logger.info "Not syncing role #{id} because no AD path is set"
     end
+
+    Authorization.ignore_access_control(false)
   end
   handle_asynchronously :sync_ad
 
