@@ -79,8 +79,12 @@ class Role < ActiveRecord::Base
         ad_members.each do |m|
           unless role_members.include? m[:samaccountname]
             p = Person.find_by_loginid m[:samaccountname]
-            people << p unless p.nil?
-            logger.info "Adding user #{m[:samaccountname]} from AD group #{ad_path} in AD."
+            if p
+              people << p
+              logger.info "Adding user #{m[:samaccountname]} from AD group #{ad_path} to local group."
+            else
+              logger.warn "Need to add user #{m[:samaccountname]} from AD group #{ad_path} but could not be found locally."
+            end
           else
             logger.info "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD."
           end
