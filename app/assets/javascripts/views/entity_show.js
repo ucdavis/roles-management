@@ -190,7 +190,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     if(type == "Group") {
       // Summary tab
       self.$('h3').html(this.model.escape('name'));
-      self.$('input[name=name]').val(this.model.escape('name'));
+      self.$('input[name=name]').val(this.model.get('name'));
       self.$('textarea[name=description]').val(this.model.escape('description'));
       self.$('span#group_member_count').html(this.model.get('members').length);
 
@@ -316,6 +316,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         status_bar.show("An error occurred while saving.", "error");
       }
     });
+
+    this.model.trigger('change');
 
     return false;
   },
