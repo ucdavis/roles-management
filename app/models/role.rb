@@ -53,61 +53,8 @@ class Role < ActiveRecord::Base
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
-    require 'ActiveDirectoryWrapper'
-
-    Authorization.ignore_access_control(true)
-
-    unless ad_path.nil?
-    logger.info "Syncing role #{id} (#{application.name} / #{token}) with AD..."
-      g = ActiveDirectoryWrapper.fetch_group(ad_path)
-
-      unless g.nil?
-        logger.info "Found group #{ad_path} in AD."
-
-        # Add members to AD
-        members.each do |member|
-          u = ActiveDirectoryWrapper.fetch_user(member.loginid)
-          unless ActiveDirectoryWrapper.in_group(u, g)
-            logger.info "Adding user #{u[:samaccountname]} to AD group #{ad_path}"
-            ActiveDirectoryWrapper.add_user_to_group(u, g)
-          else
-            logger.info "User #{u[:samaccountname]} is already in AD group #{ad_path}"
-          end
-        end
-
-        # Add AD people as members
-        ad_members = ActiveDirectoryWrapper.list_group_members(g)
-        role_members = members.map{ |x| x.loginid }
-        logger.debug "Syncing AD members back to local. There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start."
-        ad_members.each do |m|
-          logger.debug "Syncing back #{m[:samaccountname]}"
-          unless role_members.include? m[:samaccountname]
-            logger.info "#{m[:samaccountname]} is not already in role_members, going to add ..."
-            p = Person.find_by_loginid m[:samaccountname]
-            if p
-              entities << p
-              logger.info "Adding user #{m[:samaccountname]} from AD group #{ad_path} to local group."
-            else
-              logger.warn "Need to add user #{m[:samaccountname]} from AD group #{ad_path} but could not be found locally."
-            end
-          else
-            logger.info "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD."
-          end
-        end
-      else
-        logger.info "Could not find group #{ad_path} in AD."
-      end
-
-      logger.info "Done syncing role #{id} with AD."
-    else
-      logger.info "Not syncing role #{id} because no AD path is set"
-    end
-
-    Authorization.ignore_access_control(false)
-
-    return true
+    delay.Rake::Task['ad:sync_role'].invoke(id)
   end
-  handle_asynchronously :sync_ad
 
   # trigger_sync exists in Person and Group as well
   # It's purpose is to merely handle whatever needs to be done
