@@ -33,6 +33,8 @@ class Person < Entity
 
   attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_membership_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
 
+  after_save :trigger_sync
+
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
   end
@@ -146,5 +148,11 @@ class Person < Entity
   # Returns true if this user is an admin of "DSS Roles Management" itself
   def is_rm_admin?
     roles.includes(:application).where(:token => "admin", :applications => { :name => "DSS Roles Management" }).exists?
+  end
+
+  def trigger_sync
+    logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
+    roles.all.each { |role| role.trigger_sync }
+    return true
   end
 end

@@ -104,8 +104,19 @@ class Role < ActiveRecord::Base
     end
 
     Authorization.ignore_access_control(false)
+
+    return true
   end
   handle_asynchronously :sync_ad
+
+  # trigger_sync exists in Person and Group as well
+  # It's purpose is to merely handle whatever needs to be done
+  # with the syncing architecture (e.g. person changes, trigger roles to sync so
+  # Active Directory, etc. can be updated)
+  def trigger_sync
+    logger.info "Role #{id}: trigger_sync called, calling sync_ad"
+    sync_ad
+  end
 
   private
 

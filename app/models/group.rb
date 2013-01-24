@@ -23,6 +23,8 @@ class Group < Entity
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
 
+  after_save :trigger_sync
+
   # Calculates all members, including those defined via rules.
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
   # If flatten is false, any member groups will simply be returned as a group (i.e. not as the people _in_ that member group)
@@ -209,5 +211,11 @@ class Group < Entity
     end
 
     result
+  end
+
+  def trigger_sync
+    logger.info "Group #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
+    roles.all.each { |role| role.trigger_sync }
+    return true
   end
 end
