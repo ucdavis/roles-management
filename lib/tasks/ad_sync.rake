@@ -1,6 +1,6 @@
 require 'rake'
 require 'stringio'
-load 'AdSync.rb'
+load 'ActiveDirectoryWrapper.rb'
 
 namespace :ad do
   desc 'Sync the user database with Active Directory'
@@ -19,7 +19,7 @@ namespace :ad do
     log << "Started at " + timestamp_start.to_s + "\n\nWill only show changes.\n\n"
 
     # Cache group 'dss-us-auto-all' because we always need it
-    groups["dss-us-auto-all"] = AdSync.fetch_group("dss-us-auto-all")
+    groups["dss-us-auto-all"] = ActiveDirectoryWrapper.fetch_group("dss-us-auto-all")
     if groups["dss-us-auto-all"].nil?
       log << "Error: Could not load group dss-us-auto-all\n"
     end
@@ -31,16 +31,16 @@ namespace :ad do
 
       record_log << "On #{p.loginid} (#{i} of #{length})\n"
 
-      ad_user = AdSync.fetch_user(p.loginid)
+      ad_user = ActiveDirectoryWrapper.fetch_user(p.loginid)
       if ad_user.nil?
         record_log << "\tCould not find user in AD\n"
         changed = true
       end
 
       # Write them to all group (dss-us-auto-all) if necessary
-      unless AdSync.in_group(ad_user, groups["dss-us-auto-all"])
+      unless ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
         changed = true
-        if AdSync.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
+        if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
           record_log << "\tWarning: Needed to add to dss-us-auto-all but operation failed\n"
         else
           record_log << "\tAdded to dss-us-auto-all\n"
@@ -65,11 +65,11 @@ namespace :ad do
             caa = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
             # Cache group if necessary
             if groups[caa].nil?
-              groups[caa] = AdSync.fetch_group(caa)
+              groups[caa] = ActiveDirectoryWrapper.fetch_group(caa)
             end
-            unless AdSync.in_group(ad_user, groups[caa])
+            unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
               changed = true
-              if AdSync.add_user_to_group(ad_user, groups[caa]) == false
+              if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[caa]) == false
                 record_log << "\tWarning: Needed to add to #{caa} but operation failed\n"
               else
                 record_log << "\tAdded to #{caa}\n"
@@ -82,11 +82,11 @@ namespace :ad do
             ca = "dss-us-#{short_ou}-all".downcase
             # Cache group if necessary
             if groups[ca].nil?
-              groups[ca] = AdSync.fetch_group(ca)
+              groups[ca] = ActiveDirectoryWrapper.fetch_group(ca)
             end
-            unless AdSync.in_group(ad_user, groups[caa])
+            unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
               changed = true
-              if AdSync.add_user_to_group(ad_user, groups[ca]) == false
+              if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[ca]) == false
                 record_log << "\tWarning: Needed to add to #{ca} but operation failed\n"
               else
                 record_log << "\tAdded to #{ca}\n"

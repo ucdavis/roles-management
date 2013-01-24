@@ -24,10 +24,10 @@ class Admin::OpsController < Admin::BaseController
 
   def ad_path_check
     # SECUREME
-    require 'AdSync'
+    require 'ActiveDirectoryWrapper'
 
     respond_to do |format|
-      format.json { render :json => { exists: AdSync.group_exists?(params[:path]) } }
+      format.json { render :json => { exists: ActiveDirectoryWrapper.group_exists?(params[:path]) } }
     end
   end
 end

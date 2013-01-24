@@ -65,9 +65,14 @@
     },
 
     path_identifier: function(object) {
-      if (!object) {
-        return "";
+      if (object === 0) {
+	return '0';
       }
+
+      if (! object) { // null, undefined, false or ''
+	return '';
+      }
+
       if (typeof(object) == "object") {
         var property = object.to_param || object.id || object;
         if (typeof(property) == "function") {
@@ -127,23 +132,42 @@
      * and parsed route binary tree.
      * Binary tree is serialized in the following way:
      * [node type, left node, right node ]
+     *
+     *@param  {Boolean} optional  Marks the currently visited branch as optional. If set to `true`, this method will not throw when encountering a missing parameter (used in recursive calls).
      */
-    visit: function(route, options) {
+    visit: function(route, options, optional) {
       var type = route[0];
       var left = route[1];
       var right = route[2];
       switch (type) {
         case NodeTypes.GROUP:
-          return this.visit_group(left, options)
+          return this.visit(left, options, true)
         case NodeTypes.STAR:
-          return this.visit_group(left, options)
+          return this.visit(left, options, true)
         case NodeTypes.CAT:
-          return this.visit(left, options) + this.visit(right, options);
+          var leftPart = this.visit(left, options, optional),
+              rightPart = this.visit(right, options, optional);
+
+          if (optional && ! (leftPart && rightPart))
+            return '';
+
+          return leftPart + rightPart;
+        case NodeTypes.LITERAL:
+          return left;
+        case NodeTypes.SLASH:
+          return left;
+        case NodeTypes.DOT:
+          return left;
         case NodeTypes.SYMBOL:
           var value = options[left];
-          if (value) {
+
+          if (value || value === 0) {
             delete options[left];
-            return this.path_identifier(value); 
+            return this.path_identifier(value);
+          }
+
+          if (optional) {
+            return '';  // missing parameter
           } else {
             throw new ParameterMissing("Route parameter missing: " + left);
           }
@@ -152,27 +176,8 @@
          * Please send your PR if you do
          */
         //case NodeTypes.OR:
-        case NodeTypes.LITERAL:
-          return left;
-        case NodeTypes.SLASH:
-          return left;
-        case NodeTypes.DOT:
-          return left;
         default:
           throw new Error("Unknown Rails node type");
-      }
-      
-    },
-
-    visit_group: function(left, options) {
-      try {
-        return this.visit(left, options);
-      } catch(e) {
-        if (e instanceof ParameterMissing) {
-          return "";
-        } else {
-          throw e;
-        }
       }
     },
 

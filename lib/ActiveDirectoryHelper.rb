@@ -1,10 +1,10 @@
-module AdSync
+module ActiveDirectoryWrapper
   require 'active_directory'
   AD_PEOPLE_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/active_directory.yml")['ad_people']
   AD_GROUPS_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/active_directory.yml")['ad_groups']
 
   # Takes loginid as a string (e.g. 'jsmith') and returns an ActiveDirectory::User object
-  def AdSync.fetch_user(loginid)
+  def ActiveDirectoryWrapper.fetch_user(loginid)
     u = nil
 
     AD_PEOPLE_SETTINGS.each do |entry|
@@ -29,7 +29,7 @@ module AdSync
   end
 
   # Takes name as a string (e.g. 'this-that') and returns an ActiveDirectory::Group object
-  def AdSync.fetch_group(group_name)
+  def ActiveDirectoryWrapper.fetch_group(group_name)
     settings = {
         :host => AD_GROUPS_SETTINGS['host'],
         :base => AD_GROUPS_SETTINGS['base'],
@@ -53,8 +53,8 @@ module AdSync
   end
 
   # Takes name as a string (e.g. 'this-that') and returns true or false
-  def AdSync.group_exists?(group_name)
-    if AdSync.fetch_group(group_name).nil?
+  def ActiveDirectoryWrapper.group_exists?(group_name)
+    if ActiveDirectoryWrapper.fetch_group(group_name).nil?
       return false
     else
       return true
@@ -62,7 +62,7 @@ module AdSync
   end
 
   # Takes user as an ActiveDirectory::User object and group as a ActiveDirectory::Group object and returns boolean
-  def AdSync.add_user_to_group(user, group)
+  def ActiveDirectoryWrapper.add_user_to_group(user, group)
     if group.nil?
       return false
     end
@@ -85,7 +85,7 @@ module AdSync
   end
 
   # Takes group as an ActiveDirectory::Group object and returns an array of users
-  def AdSync.list_group_members(group)
+  def ActiveDirectoryWrapper.list_group_members(group)
     members = []
 
     if group.nil?
@@ -118,7 +118,7 @@ module AdSync
   end
 
   # Returns true if 'user' is in 'group' (both objects should be queried using fetch_user and fetch_group)
-  def AdSync.in_group(user, group)
+  def ActiveDirectoryWrapper.in_group(user, group)
     settings = {
         :host => AD_GROUPS_SETTINGS['host'],
         :base => AD_GROUPS_SETTINGS['base'],
@@ -147,7 +147,7 @@ module AdSync
     return false
   end
 
-  def AdSync.remove_user_from_group(user, group)
+  def ActiveDirectoryWrapper.remove_user_from_group(user, group)
     if group.nil?
       return false
     end

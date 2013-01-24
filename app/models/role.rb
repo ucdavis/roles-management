@@ -53,30 +53,30 @@ class Role < ActiveRecord::Base
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
-    require 'AdSync'
+    require 'ActiveDirectoryWrapper'
 
     Authorization.ignore_access_control(true)
 
     unless ad_path.nil?
     logger.info "Syncing role #{id} (#{application.name} / #{token}) with AD..."
-      g = AdSync.fetch_group(ad_path)
+      g = ActiveDirectoryWrapper.fetch_group(ad_path)
 
       unless g.nil?
         logger.info "Found group #{ad_path} in AD."
 
         # Add members to AD
         members.each do |member|
-          u = AdSync.fetch_user(member.loginid)
-          unless AdSync.in_group(u, g)
+          u = ActiveDirectoryWrapper.fetch_user(member.loginid)
+          unless ActiveDirectoryWrapper.in_group(u, g)
             logger.info "Adding user #{u[:samaccountname]} to AD group #{ad_path}"
-            AdSync.add_user_to_group(u, g)
+            ActiveDirectoryWrapper.add_user_to_group(u, g)
           else
             logger.info "User #{u[:samaccountname]} is already in AD group #{ad_path}"
           end
         end
 
         # Add AD people as members
-        ad_members = AdSync.list_group_members(g)
+        ad_members = ActiveDirectoryWrapper.list_group_members(g)
         role_members = members.map{ |x| x.loginid }
         logger.debug "Syncing AD members back to local. There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start."
         ad_members.each do |m|
