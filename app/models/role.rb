@@ -53,6 +53,8 @@ class Role < ActiveRecord::Base
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
+    require 'rake'
+
     delay.Rake::Task['ad:sync_role'].invoke(id)
   end
 
