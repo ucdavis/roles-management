@@ -123,7 +123,7 @@ namespace :ad do
     r = Role.find_by_id(args[:role_id])
 
     if r.nil?
-      puts "Cannot find role with ID #{args[:role_id]}"
+      Rails.logger.warn "Cannot find role with ID #{args[:role_id]}"
       next
     end
 

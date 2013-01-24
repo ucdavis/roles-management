@@ -54,8 +54,9 @@ class Role < ActiveRecord::Base
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
     require 'rake'
+    load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
-    delay.Rake::Task['ad:sync_role'].invoke(id)
+    Rake::Task['ad:sync_role'].delay.invoke(id)
   end
 
   # trigger_sync exists in Person and Group as well
