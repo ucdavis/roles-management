@@ -56,7 +56,7 @@ class Role < ActiveRecord::Base
     require 'rake'
     load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
-    Rake::Task['ad:sync_role'].delay.invoke(id)
+    Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
   end
 
   # trigger_sync exists in Person and Group as well
