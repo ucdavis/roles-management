@@ -31,7 +31,7 @@ every :day, :at => "2am" do
   rake "ldap:import"
 end
 
-# Sync with Active Directory every 24 hours at 2:15am (LDAP usually only takes 2-3 mins)
-every :day, :at => "2:15 am" do
-  rake "ad:sync"
+# Sync with Active Directory every 24 hours at 2:30am (LDAP usually only takes 2-3 mins)
+every :day, :at => "2:30 am" do
+  rake "ad:sync_all_users"
 end

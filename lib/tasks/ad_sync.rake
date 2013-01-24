@@ -4,7 +4,7 @@ load 'ActiveDirectoryWrapper.rb'
 
 namespace :ad do
   desc 'Sync the user database with Active Directory'
-  task :sync do
+  task :sync_all_users do
     Rake::Task['environment'].invoke
     notify_admins = false
 
