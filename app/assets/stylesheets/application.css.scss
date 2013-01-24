@@ -1,15 +1,21 @@
 /*
-*= require_tree .
+*= require bootstrap
+*= require bootstrap-overrides
+*= require token-input-facebook
+*= require applications
+*= require groups
 *= require_self
 */
 
 input#search_applications {
-  margin-bottom: 1.3em;
+  margin-bottom: 6px;
+  margin-top: 3px;
   margin-left: 15px;
 }
 
-input#sidebar_search {
-  margin-bottom: 1.3em;
+input#search_sidebar {
+  margin-bottom: 6px;
+  margin-top: 3px;
 }
 
 i.sidebar-details {

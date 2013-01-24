@@ -223,6 +223,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rule.data("rule_id", rule.id);
         rules_table.append($rule);
       });
+      if(this.model.get('rules').length == 0) self.$("table#rules tbody").hide();
 
       self.$("table#rules tbody tr").each(function(i, e) {
         $(e).find("input#value").typeahead({

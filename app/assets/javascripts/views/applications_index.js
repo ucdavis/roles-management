@@ -27,7 +27,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
-    this.$("#sidebar_search").typeahead({
+    this.$("#search_sidebar").typeahead({
       minLength: 2,
       sorter: function(items) { return items; }, // required to keep the order given to process() in 'source'
       highlighter: function (item) {
@@ -297,7 +297,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   sidebarDetails: function(e) {
     e.stopPropagation();
 
-    $("input#sidebar_search").val("");
+    $("input#search_sidebar").val("");
 
     var entity_id = $(e.target).parent().parent().data("value").split("####")[0];
     DssRm.router.showEntity(entity_id);

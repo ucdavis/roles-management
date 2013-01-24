@@ -33,7 +33,7 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     var self = this;
 
     self.$el.data('application-id', this.model.get('id'));
-    self.$('h3').html(this.model.escape('name'));
+    self.$('#application-name').html(this.model.escape('name'));
     self.$('.card-title').attr("title", this.model.escape('description'));
     self.$('.application-link').attr("href", this.applicationUrl());
 
