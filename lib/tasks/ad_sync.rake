@@ -1,6 +1,7 @@
 require 'rake'
 require 'stringio'
 load 'ActiveDirectoryWrapper.rb'
+load File.join(Rails.root, 'lib', 'tasks', 'import_ldap.rake')
 
 namespace :ad do
   desc 'Sync the user database with Active Directory'
@@ -164,6 +165,13 @@ namespace :ad do
               else
                 log << "Need to add user #{m[:samaccountname]} from AD group #{r.ad_path} but could not be found locally.\n"
 
+                p = Person.new
+                p.loginid = m[:samaccountname]
+                p.save
+
+                log << "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check (should occur momentarily).\n"
+
+                Delayed::Job.enqueue(DelayedRake.new("ldap:import[#{m[:samaccountname]}]"))
               end
             else
               log << "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD.\n"
