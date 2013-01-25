@@ -114,68 +114,74 @@ namespace :ad do
         WheneverMailer.adsync_report(admin.email, log.string).deliver!
       end
     end
+
+    Rails.logger.info log.string
   end
 
   desc 'Sync a role against Active Directory. May create new users as needed.'
   task :sync_role, :role_id do |t, args|
     Rake::Task['environment'].invoke
 
+    log = StringIO.new
+
     r = Role.find_by_id(args[:role_id])
 
-    if r.nil?
-      Rails.logger.warn "Cannot find role with ID #{args[:role_id]}"
-      next
-    end
+    unless r.nil?
+      require 'ActiveDirectoryWrapper'
 
-    require 'ActiveDirectoryWrapper'
+      Authorization.ignore_access_control(true)
 
-    Authorization.ignore_access_control(true)
+      unless r.ad_path.nil?
+        log << "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD...\n"
+        g = ActiveDirectoryWrapper.fetch_group(r.ad_path)
 
-    unless r.ad_path.nil?
-      Rails.logger.info "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD..."
-      g = ActiveDirectoryWrapper.fetch_group(r.ad_path)
+        unless g.nil?
+          log << "Found group #{r.ad_path} in AD.\n"
 
-      unless g.nil?
-        Rails.logger.info "Found group #{r.ad_path} in AD."
-
-        # Add members to AD
-        r.members.each do |member|
-          u = ActiveDirectoryWrapper.fetch_user(member.loginid)
-          unless ActiveDirectoryWrapper.in_group(u, g)
-            Rails.logger.info "Adding user #{u[:samaccountname]} to AD group #{r.ad_path}"
-            ActiveDirectoryWrapper.add_user_to_group(u, g)
-          else
-            Rails.logger.info "User #{u[:samaccountname]} is already in AD group #{r.ad_path}"
-          end
-        end
-
-        # Add AD people as members
-        ad_members = ActiveDirectoryWrapper.list_group_members(g)
-        role_members = r.members.map{ |x| x.loginid }
-        Rails.logger.debug "Syncing AD members back to local. There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start."
-        ad_members.each do |m|
-          Rails.logger.debug "Syncing back #{m[:samaccountname]}"
-          unless role_members.include? m[:samaccountname]
-            Rails.logger.info "#{m[:samaccountname]} is not already in role_members, going to add ..."
-            p = Person.find_by_loginid m[:samaccountname]
-            if p
-              entities << p
-              Rails.logger.info "Adding user #{m[:samaccountname]} from AD group #{r.ad_path} to local group."
+          # Add members to AD
+          r.members.each do |member|
+            u = ActiveDirectoryWrapper.fetch_user(member.loginid)
+            unless ActiveDirectoryWrapper.in_group(u, g)
+              log << "Adding user #{u[:samaccountname]} to AD group #{r.ad_path}\n"
+              ActiveDirectoryWrapper.add_user_to_group(u, g)
             else
-              Rails.logger.warn "Need to add user #{m[:samaccountname]} from AD group #{r.ad_path} but could not be found locally."
+              log << "User #{u[:samaccountname]} is already in AD group #{r.ad_path}\n"
             end
-          else
-            Rails.logger.info "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD."
           end
-        end
-      else
-        Rails.logger.info "Could not find group #{r.ad_path} in AD."
-      end
 
-      Rails.logger.info "Done syncing role #{r.id} with AD."
+          # Add AD people as members
+          ad_members = ActiveDirectoryWrapper.list_group_members(g)
+          role_members = r.members.map{ |x| x.loginid }
+          log << "Syncing AD members back to local. There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start.\n"
+          ad_members.each do |m|
+            log << "Syncing back #{m[:samaccountname]}\n"
+            unless role_members.include? m[:samaccountname]
+              log << "#{m[:samaccountname]} is not already in role_members, going to add ...\n"
+              p = Person.find_by_loginid m[:samaccountname]
+              if p
+                r.entities << p
+                log << "Adding user #{m[:samaccountname]} from AD group #{r.ad_path} to local group.\n"
+              else
+                log << "Need to add user #{m[:samaccountname]} from AD group #{r.ad_path} but could not be found locally.\n"
+
+              end
+            else
+              log << "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD.\n"
+            end
+          end
+        else
+          log << "Could not find group #{r.ad_path} in AD.\n"
+        end
+
+        log << "Done syncing role #{r.id} with AD.\n"
+      else
+        log << "Not syncing role #{r.id} because no AD path is set.\n"
+      end
     else
-      Rails.logger.info "Not syncing role #{r.id} because no AD path is set"
+      log << "Cannot find role with ID #{args[:role_id]}\n"
     end
+
+    Rails.logger.info log.string
 
     Authorization.ignore_access_control(false)
   end
