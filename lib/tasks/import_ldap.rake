@@ -278,10 +278,10 @@ namespace :ldap do
                 p.student.save!
               end
 
-              if p.changed? or (p.student and p.student.changed?)
+              #if p.changed? or (p.student and p.student.changed?)
                 # Save this record log to the master log as it contains changes
                 log << record_log.string
-              end
+              #end
             end
           end
         end
@@ -305,6 +305,8 @@ namespace :ldap do
         WheneverMailer.ldap_report(admin.email, log.string).deliver!
       end
     end
+
+    Rails.logger.info log.string
 
     Authorization.ignore_access_control(false)
   end
