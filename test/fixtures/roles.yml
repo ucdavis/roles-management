@@ -1,7 +1,4 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-admin:
-  token: MyString
-
-access:
-  token: MyString
+dssrm_access:
+  id: 1
+  token: access
+  application_id: 1
