@@ -58,13 +58,16 @@ module Authentication
   def login_required
     unless @user.nil?
       if @user == :cas_user_not_in_database
+        logger.warn "Valid CAS user is denied due to not being in RM database."
         flash[:error] = 'You have authenticated but are not allowed access.'
         redirect_to :controller => "site", :action => "access_denied"
       else
+        logger.info "Valid CAS user passes login_required."
         return true
       end
     else
       flash[:error] = 'You must authenticate with CAS to continue.'
+      logger.info "Redirecting user to CAS portal."
       store_target_location
       redirect_to CASClient::Frameworks::Rails::Filter.login_url(self)
     end
