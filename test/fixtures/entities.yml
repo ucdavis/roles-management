@@ -1,45 +1,11 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-chris:
+casuser:
   type: Person
-  first: Christopher
-  last: Thielen
-  email: cthielen@test.edu
-  loginid: cthielen
+  first: CAS
+  last: User
+  email: casuser@domain.com
+  loginid: casuser
   status: true
-  phone: 5305551212
+  phone: 8005551212
   address: 123 Test Dr
-
-scott:
-  type: Person
-  first: Scott
-  last: Dyer
-  email: sdyer@test.edu
-  loginid: sdyer
-  status: true
-  phone: 5305551313
-  address: 321 Test Ct
-
-jeremy:
-  type: Person
-  first: Jeremy
-  last: Phillips
-  email: jeremy@test.edu
-  loginid: jeremy
-  status: false
-  phone:
-  address:
-
-dssit:
-  name: "DSS IT"
-  type: Group
-  code: "0002"
-
-lands:
-  name: "College of L&S"
-  type: Group
-  code: "0001"
-
-jeremys_group:
-  name: "Jeremy's Group"
-  type: Group
