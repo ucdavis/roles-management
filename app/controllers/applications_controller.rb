@@ -1,19 +1,24 @@
 class ApplicationsController < ApplicationController
   before_filter :load_application, :only => [:show]
   filter_access_to :all
+  respond_to :html, :json
 
   # GET /applications
   def index
+    @applications = current_user.manageable_applications
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded application index (main page)."
+    respond_with @applications
   end
 
   # GET /applications/1
   def show
     # SECUREME: Can the current user see this application?
 
-    respond_to do |format|
-      format.json { render json: @application }
+    respond_with @application do |format|
       format.csv {
         require 'csv'
+
+        logger.info "#{current_user.loginid}@#{request.remote_ip}: Downloaded CSV of application, #{params[:application]}."
 
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
         csv_data = CSV.generate do |csv|
@@ -40,12 +45,9 @@ class ApplicationsController < ApplicationController
   # GET /applications/new
   def new
     # SECUREME: Can the current user try to create a new application?
-
     @application = Application.new
 
-    respond_to do |format|
-      format.json
-    end
+    respond_with @application
   end
 
   # POST /applications
@@ -56,16 +58,13 @@ class ApplicationsController < ApplicationController
     params[:application][:owner_ids] << current_user.id
     @application = Application.new(params[:application])
 
-    respond_to do |format|
-      if @application.save
-        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new application, #{params[:application]}."
-        format.html { redirect_to(@application, :notice => 'Application was successfully created.') }
-        format.json { render json: @application, status: :created, location: @application }
-      else
-        format.html { render :action => "new" }
-        format.json { render json: @application.errors, status: :unprocessable_entity }
-      end
+    if @application.save
+      logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new application, #{params[:application]}."
+    else
+      logger.warn "#{current_user.loginid}@#{request.remote_ip}: Failed to create new application, #{params[:application]}."
     end
+
+    respond_with @application
   end
 
   # PUT /applications/1
@@ -74,16 +73,11 @@ class ApplicationsController < ApplicationController
 
     @application = Application.find(params[:id])
 
-    respond_to do |format|
-      if @application.update_attributes(params[:application])
-        logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated application, #{params[:application]}."
-        format.html { redirect_to(@application, :notice => 'Application was successfully updated.') }
-        format.js { render json: @application, status: :ok }
-      else
-        format.html { render :action => "edit" }
-        format.js { render json: @application.errors, status: :unprocessable_entity }
-      end
+    if @application.update_attributes(params[:application])
+      logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated application, #{params[:application]}."
     end
+
+    respond_with @application
   end
 
   # DELETE /applications/1
@@ -95,9 +89,7 @@ class ApplicationsController < ApplicationController
 
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted application, #{params[:application]}."
 
-    respond_to do |format|
-      format.html { redirect_to(applications_url) }
-    end
+    respond_with @application
   end
 
   protected
