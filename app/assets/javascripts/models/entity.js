@@ -48,11 +48,12 @@ DssRm.Models.Entity = Backbone.Model.extend({
   },
 
   toJSON: function() {
-    var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'roles', 'favorites', 'group_memberships', 'group_ownerships', 'group_operatorships', 'ous', 'byline');
+    var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'roles', 'favorites', 'group_memberships', 'group_ownerships', 'group_operatorships', 'ous', 'byline', 'name');
     var type = this.get('type');
 
     if(type == "Group") {
       // Group-specific JSON
+      json.name = this.get('name');
       json.owner_ids = this.get('owners').map(function(owner) { return owner.id });
       json.operator_ids = this.get('operators').map(function(operator) { return operator.id });
       json.member_ids = this.get('members').map(function(member) { return member.id });

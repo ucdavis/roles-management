@@ -1,3 +1,6 @@
+# Person shares many attributes with entity.
+# Note that the 'name' field is simply self.first + " " + self.last
+# and is thus read-only. The same does not apply for groups.
 class Person < Entity
   using_access_control
 
@@ -31,7 +34,7 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :name, :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_membership_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
+  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_membership_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
 
   after_save :trigger_sync
 
@@ -82,6 +85,18 @@ class Person < Entity
     roles.reject{ |x| ! api_key_role_ids.include? x.id }
   end
 
+  # Overriden to be self.first + " " + self.last
+  # though there is a 'name' column used by Entity (for groups).
+  # Update first and last, not 'name'. Consider 'name' to be
+  # read-only
+  def name
+    name = ""
+    name = first unless first.nil?
+    name = name + " " + last unless last.nil?
+
+    return name
+  end
+
   # Compute applications for which they can make assignments.
   def manageable_applications
     apps = []
@@ -125,7 +140,7 @@ class Person < Entity
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.first + " " + self.last, :type => 'Person', :admin => is_rm_admin? }
+    { :id => self.id, :name => self.name, :type => 'Person', :admin => is_rm_admin? }
   end
 
   def can_administer_application?(app_id)
