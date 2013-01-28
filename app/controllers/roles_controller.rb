@@ -17,6 +17,10 @@ class RolesController < ApplicationController
     # SECUREME
     @role = Role.find_by_id(params[:id])
 
+    if @role.nil?
+      logger.warn "Request made for non-existent role: #{params}"
+    end
+
     respond_to do |format|
       format.text
       format.json { render json: @role }

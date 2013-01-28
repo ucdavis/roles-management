@@ -1,5 +1,7 @@
+<% unless @role.nil? %>
 <% @role.members.each do |person| %>
   <% unless person.email.nil? %>
 <%= person.email %> <%= person.name %>
   <% end %>
+<% end %>
 <% end %>
