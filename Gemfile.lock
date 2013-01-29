@@ -90,7 +90,7 @@ GEM
     debugger-linecache (1.1.2)
       debugger-ruby_core_source (>= 1.1.1)
     debugger-ruby_core_source (1.1.7)
-    delayed_job (3.0.4)
+    delayed_job (3.0.5)
       activesupport (~> 3.0)
     delayed_job_active_record (0.3.3)
       activerecord (>= 2.1.0, < 4)
@@ -177,6 +177,7 @@ GEM
     rdoc (3.12)
       json (~> 1.4)
     ruby-ldap (0.9.12)
+    ruby-prof (0.12.1)
     ruby_parser (3.1.1)
       sexp_processor (~> 4.1)
     sass (3.2.5)
@@ -248,6 +249,7 @@ DEPENDENCIES
   rails (= 3.2.11)
   rails-backbone
   ruby-ldap
+  ruby-prof
   ruby_parser
   rubycas-client!
   sass-rails (~> 3.2.3)

@@ -17,6 +17,7 @@ end
 group :development do
   gem 'letter_opener'
   gem 'debugger'
+  gem 'ruby-prof'
 end
 
 gem 'sqlite3', :groups => [:development, :test]
