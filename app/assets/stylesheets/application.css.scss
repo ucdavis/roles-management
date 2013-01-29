@@ -122,16 +122,6 @@ div#modal_container tr.fields button {
   }
 }
 
-/* UCD colors for the navbar */
-.navbar-inner {
-  background-image: -webkit-linear-gradient(bottom, #123764, #33537B);
-  background-image: -moz-linear-gradient(center bottom, rgb(18,55,100), rgb(51,83,123));
-  background-image: -o-linear-gradient(bottom, #123764, #33537B);
-  background-image: linear-gradient(bottom, #123764, #33537B);
-}
-.navbar .nav>li>a {color: #EFEFEF;}
-.navbar .nav .active > a, .navbar .nav .active > a:hover {background-color: #183C68;}
-
 .navbar-search .search-query {
   background-color: #33537B;
 }

@@ -1,3 +1,18 @@
+/* UCD colors for the navbar */
+.navbar-inner {
+  background-image: -webkit-linear-gradient(bottom, #123764, #33537B);
+  background-image: -moz-linear-gradient(center bottom, rgb(18,55,100), rgb(51,83,123));
+  background-image: -o-linear-gradient(bottom, #123764, #33537B);
+  background-image: linear-gradient(bottom, #123764, #33537B);
+}
+.navbar .nav>li>a {
+  color: #EFEFEF;
+}
+/*.navbar .nav .active > a, .navbar .nav .active > a:hover {
+  background-color: #183C68;
+}
+*/
+
 .navbar .brand {
   color: #fff;
   padding-bottom: 12px;
@@ -5,4 +20,15 @@
 
 .navbar a {
   text-shadow: none !important;
+}
+
+.navbar .nav > li > a:focus, .navbar .nav > li > a:hover {
+  color: #EFEFEF;
+}
+
+.navbar .nav li.dropdown.open > .dropdown-toggle,
+.navbar .nav li.dropdown.active > .dropdown-toggle,
+.navbar .nav li.dropdown.open.active > .dropdown-toggle {
+  color: #EFEFEF;
+  background-color: #183C68;
 }
