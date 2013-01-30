@@ -225,7 +225,11 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         $rule.data("rule_id", rule.id);
         rules_table.append($rule);
       });
-      if(this.model.get('rules').length == 0) self.$("table#rules tbody").hide();
+      if(this.model.get('rules').length == 0) {
+        self.$("table#rules tbody").hide();
+      } else {
+        self.$("table#rules tbody").show();
+      }
 
       self.$("table#rules tbody tr").each(function(i, e) {
         $(e).find("input#value").typeahead({
@@ -359,11 +363,6 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     this.model.set(
       { rules: _.reject(this.model.get('rules'), function(r) { return r.id == rule_id }) }
     );
-  },
-
-  updateOwnersFromDOM: function(item) {
-    console.log("owners updated");
-    console.log(item);
   },
 
   // Copies values off the DOM into this.model
