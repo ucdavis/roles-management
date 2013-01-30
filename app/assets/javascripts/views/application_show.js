@@ -82,7 +82,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       operators_tokeninput.tokenInput("add", {id: operator.id, name: operator.name});
     });
 
-    this.$('span#csv-download>a').attr("href", Routes.application_path(1) + ".csv");
+    this.$('span#csv-download>a').attr("href", Routes.application_path(this.model.id) + ".csv");
 
     // Roles tab
     self.$('table#roles tbody').empty();
