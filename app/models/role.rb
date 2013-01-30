@@ -56,6 +56,7 @@ class Role < ActiveRecord::Base
     require 'rake'
     load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
+    logger.info "Scheduling AD sync for role #{id}"
     Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
   end
 
