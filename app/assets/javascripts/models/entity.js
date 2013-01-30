@@ -21,9 +21,6 @@ DssRm.Models.Entity = Backbone.Model.extend({
       if(this.get('roles') === undefined) this.set('roles', []);
       if(this.get('group_memberships') === undefined) this.set('group_memberships', []);
       if(this.get('ous') === undefined) this.set('ous', []);
-    } else {
-      console.log("Unexpected entity type:");
-      console.log(this);
     }
 
     this.updateAttributes();

@@ -11,6 +11,26 @@ class EntitiesController < ApplicationController
   def show
     # SECUREME
     @entity = Entity.find(params[:id])
+
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
+
+    respond_with @entity do |format|
+      format.json #{ render json: @group }
+      format.csv {
+        require 'csv'
+
+        # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
+        csv_data = CSV.generate do |csv|
+          csv << Person.csv_header
+          @entity.members(flatten = true).each do |m|
+            csv << m.to_csv
+          end
+        end
+        send_data csv_data,
+          :type => 'text/csv; charset=iso-8859-1; header=present',
+          :disposition => "attachment; filename=" + unix_filename("#{@entity.name}")
+      }
+    end
   end
 
   def create

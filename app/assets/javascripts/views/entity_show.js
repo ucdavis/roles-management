@@ -81,9 +81,9 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
 
-      this.$el.on("keyup", "table#rules tbody tr input", function(e) {
-        console.log("keyup on tbody tr");
-      });
+      //this.$el.on("keyup", "table#rules tbody tr input", function(e) {
+        //console.log("keyup on tbody tr");
+      //});
     } else if (type == "Person") {
       this.$("input[name=favorites]").tokenInput(Routes.api_people_path(), {
         crossDomain: false,
@@ -211,6 +211,8 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       _.each(this.model.get('members'), function(member) {
         members_tokeninput.tokenInput("add", {id: member.id, name: member.name});
       });
+
+      this.$('span#csv-download>a').attr("href", Routes.entity_path(this.model.id) + ".csv");
 
       // Rules tab
       var rules_table = self.$("table#rules tbody");
