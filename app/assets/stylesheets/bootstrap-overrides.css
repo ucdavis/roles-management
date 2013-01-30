@@ -8,10 +8,6 @@
 .navbar .nav>li>a {
   color: #EFEFEF;
 }
-/*.navbar .nav .active > a, .navbar .nav .active > a:hover {
-  background-color: #183C68;
-}
-*/
 
 .navbar .brand {
   color: #fff;
@@ -31,4 +27,8 @@
 .navbar .nav li.dropdown.open.active > .dropdown-toggle {
   color: #EFEFEF;
   background-color: #183C68;
+}
+
+.modal .modal-body {
+  overflow-y: visible;
 }
