@@ -45,7 +45,7 @@ DssRm.Models.Entity = Backbone.Model.extend({
   },
 
   toJSON: function() {
-    var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'roles', 'favorites', 'group_memberships', 'group_ownerships', 'group_operatorships', 'ous', 'byline', 'name');
+    var json = _.omit(this.attributes, 'owners', 'operators', 'members', 'rules', 'id', 'roles', 'favorites', 'group_memberships', 'group_ownerships', 'group_operatorships', 'ous', 'byline', 'name', 'admin');
     var type = this.get('type');
 
     if(type == "Group") {

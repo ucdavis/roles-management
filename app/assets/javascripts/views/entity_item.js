@@ -18,11 +18,15 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
   render: function () {
     var type = this.model.get('type');
 
+    if(type == undefined) {
+      debugger;
+    }
+
     this.$el.data('entity-id', this.model.get('id'));
     this.$el.data('entity-name', this.model.get('name'));
     this.$el.html(JST['entities/item']({ entity: this.model }));
     this.$('span').html(this.model.escape('name'));
-    this.$el.addClass(this.model.get('type').toLowerCase());
+    this.$el.addClass(type.toLowerCase());
     this.$('.entity-details-link').attr("href", this.entityUrl()).on("click", function(e) {
       e.stopPropagation(); // the parent is looking for a click as well
       $(e.target).tooltip('hide'); // but stopPropagation will stop the tooltip from closing...

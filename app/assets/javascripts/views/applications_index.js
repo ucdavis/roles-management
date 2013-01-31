@@ -28,7 +28,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
     this.$("#search_sidebar").typeahead({
-      minLength: 2,
+      minLength: 3,
       sorter: function(items) { return items; }, // required to keep the order given to process() in 'source'
       highlighter: function (item) {
         var parts = item.split('####');
@@ -42,11 +42,12 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         return ret;
       },
       source: self.sidebarSearch,
-      updater: function(item) { self.searchResultSelected(item, self); }
+      updater: function(item) { self.sidebarSearchResultSelected(item, self); },
+      items: 15
     });
 
     this.$("#search_applications").typeahead({
-      minLength: 2,
+      minLength: 3,
       sorter: function(items) { return items; }, // required to keep the order given to process() in 'source'
       highlighter: function (item) {
         var item = item.split('####')[1]; // See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
@@ -58,7 +59,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       source: function(query, process) {
         self.applicationSearch(query, process, self);
       },
-      updater: function(item) { self.applicationSearchResultSelected(item, self); }
+      updater: function(item) { self.applicationSearchResultSelected(item, self); },
+      items: 15
     });
   },
 
@@ -137,7 +139,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       entities = [];
       var exact_match_found = false;
       _.each(data, function(entity) {
-        if(query.toLowerCase() == entity.name.toLowerCase()) exact_match_found = true;
+        if(query.toLowerCase() == entity.name.toLowerCase()) {
+          exact_match_found = true;
+        }
         entities.push(
           entity.id + '####' + entity.name + '####' + "<i class=\"icon-search sidebar-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; DssRm.Views.ApplicationsIndex.sidebarDetails(event);\" />"
         );
@@ -145,7 +149,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
       if(exact_match_found == false) {
         // Add the option to create a new one with this query (-1 and -2 are invalid IDs to indicate these choices)
-        entities.push(DssRm.Views.ApplicationsIndex.FID_ADD_PERSON + '####Add Person ' + query);
+        entities.push(DssRm.Views.ApplicationsIndex.FID_ADD_PERSON + '####Import Login ID ' + query);
         entities.push(DssRm.Views.ApplicationsIndex.FID_CREATE_GROUP + '####Create Group ' + query);
       }
 
@@ -153,7 +157,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     });
   },
 
-  searchResultSelected: function(item, self) {
+  sidebarSearchResultSelected: function(item, self) {
     var parts = item.split('####');
     var id = parseInt(parts[0]);
     var label = parts[1];
@@ -166,26 +170,35 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         self.current_user.group_ownerships.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
       break;
       default:
-        // Exact result selected. Add this person to their sidebar_entities as needed
-        if(self.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {
-          // Add this result
-          var p = new DssRm.Models.Entity({ id: id, name: label, type: 'Person' });
-          self.current_user.favorites.add(p);
-          self.current_user.save();
+        // Exact result selected
 
-          // If a role is selected, the behavior is to also automatically assign the new
-          // favorite to that role
-          if(this.selected.role_id) {
-            var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
-            var updated_favorites = selected_role.get('entities');
-            updated_favorites.push({ id: id, name: label });
+        // If a role is selected, the behavior is to assign to the role,
+        // and not add to favorites. Adding to favorites only happens when
+        // no role is selected.
+        if(this.selected.role_id) {
+          var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
+          var updated_entities = selected_role.get('entities');
+          updated_entities.push({ id: id, name: label });
 
-            selected_role.set({
-              entities: updated_favorites
-            });
-            this.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
+          selected_role.set({
+            entities: updated_entities
+          });
+          this.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
 
-            this.selected.application.save();
+          console.log("updated selected entities to:");
+          console.log(this.selected.entities);
+
+          debugger;
+
+          this.selected.application.roles.trigger('change');
+          this.selected.application.save();
+        } else {
+          // No role selected, so we will add this entity to their favorites
+          if(self.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {
+            // Add this result
+            var p = new DssRm.Models.Entity({ id: id, name: label, type: 'Person' });
+            self.current_user.favorites.add(p);
+            self.current_user.save();
           }
         }
       break;

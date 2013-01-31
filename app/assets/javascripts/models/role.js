@@ -4,6 +4,7 @@ DssRm.Models.Role = Backbone.Model.extend({
   initialize: function() {
     this.entities = new DssRm.Collections.Entities(this.get('entities'));
 
+    this.on("sync", this.updateAttributes, this);
     this.on("change", this.updateAttributes, this);
   },
 
