@@ -111,6 +111,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
     });
+    debugger;
     if(this.selected.role_id) {
       var selected_role = this.selected.application.roles.where({id: this.selected.role_id})[0];
       var assigned_non_subordinates = selected_role.entities.reject(function(e) {
@@ -177,20 +178,16 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         // no role is selected.
         if(this.selected.role_id) {
           var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
-          var updated_entities = selected_role.get('entities');
+          var updated_entities = _.clone(selected_role.get('entities'));
           updated_entities.push({ id: id, name: label });
 
           selected_role.set({
             entities: updated_entities
           });
           this.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
-
-          console.log("updated selected entities to:");
+          console.log("sidebar entities now:");
           console.log(this.selected.entities);
 
-          debugger;
-
-          this.selected.application.roles.trigger('change');
           this.selected.application.save();
         } else {
           // No role selected, so we will add this entity to their favorites
