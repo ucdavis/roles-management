@@ -74,7 +74,7 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
       // Destroy the group
       this.model.destroy();
     } else if (type == "Person") {
-      // Don't destroy the person - merely remove them from the favorites list
+      // Don't destroy the person - merely remove them from the favorites list or role
       var model_id = this.model.get('id');
       var e = this.current_user.favorites.find(function(e) { return e.id == model_id; });
       this.current_user.favorites.remove(e);

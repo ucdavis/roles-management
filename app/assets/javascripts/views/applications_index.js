@@ -111,9 +111,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
     });
-    debugger;
     if(this.selected.role_id) {
       var selected_role = this.selected.application.roles.where({id: this.selected.role_id})[0];
+      console.log("rendering based on selected role:");
+      console.log(selected_role);
       var assigned_non_subordinates = selected_role.entities.reject(function(e) {
         var id = e.get('id');
         return self.sidebar_entities.find(function(i) { return i.get('id') == id; });
@@ -162,6 +163,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     var parts = item.split('####');
     var id = parseInt(parts[0]);
     var label = parts[1];
+    var self = this;
 
     switch(id) {
       case DssRm.Views.ApplicationsIndex.FID_ADD_PERSON:
@@ -177,18 +179,23 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         // and not add to favorites. Adding to favorites only happens when
         // no role is selected.
         if(this.selected.role_id) {
-          var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
-          var updated_entities = _.clone(selected_role.get('entities'));
-          updated_entities.push({ id: id, name: label });
-
-          selected_role.set({
-            entities: updated_entities
+          console.log("start - selected application role cids:");
+          this.selected.application.roles.each(function(r) {
+            console.log(r.cid);
           });
-          this.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
-          console.log("sidebar entities now:");
-          console.log(this.selected.entities);
+          var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
+          console.log("selected_role has cid of " + selected_role.cid);
 
-          this.selected.application.save();
+          console.log("Adding id of " + id + " with name " + label);
+
+          var new_entity = new DssRm.Models.Entity({ id: id });
+          new_entity.fetch({
+            success: function() {
+              selected_role.entities.add(new_entity);
+              self.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
+              self.selected.application.save();
+            }
+          })
         } else {
           // No role selected, so we will add this entity to their favorites
           if(self.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {

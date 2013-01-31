@@ -4,15 +4,6 @@ DssRm.Models.Application = Backbone.Model.extend({
     this.roles = new DssRm.Collections.Roles(this.get('roles'));
     this.owners = new DssRm.Collections.Entities(this.get('owners'));
     this.operators = new DssRm.Collections.Entities(this.get('operators'));
-
-    this.on("sync", this.updateAttributes, this);
-    this.on("change", this.updateAttributes, this);
-  },
-
-  updateAttributes: function() {
-    this.roles.reset(this.get('roles'), { silent: true });
-    this.owners.reset(this.get('owners'), { silent: true });
-    this.operators.reset(this.get('operators'), { silent: true });
   },
 
   // Returns only the "highest" relationship (this order): admin, owner, operator
