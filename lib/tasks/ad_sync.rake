@@ -25,7 +25,7 @@ namespace :ad do
       log << "Error: Could not load group dss-us-auto-all\n"
     end
 
-    length = Person.all.length
+    length = Person.count
     Person.all.each_with_index do |p, i|
       record_log = StringIO.new # this log may or may not be added to the master 'log' depending on data sync states
       changed = false # flag used to indicate whether we should print 'no changes' or not for each record
