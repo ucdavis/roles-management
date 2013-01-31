@@ -13,14 +13,12 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     this.current_user = options.current_user;
     this.faded = options.faded;
     this.read_only = options.read_only;
+    this.current_role = options.current_role;
+    this.current_application = options.current_application;
   },
 
   render: function () {
     var type = this.model.get('type');
-
-    if(type == undefined) {
-      debugger;
-    }
 
     this.$el.data('entity-id', this.model.get('id'));
     this.$el.data('entity-name', this.model.get('name'));
@@ -41,7 +39,10 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
         this.$el.css("box-shadow", "#468847 0 0 5px").css("border", "1px solid #468847");
       }
     }
-    if(this.faded) this.$el.css("opacity", "0.5");
+    if(this.faded) {
+      this.$el.css("opacity", "0.6");
+      this.$("i.icon-minus").hide();
+    }
     if(this.read_only) {
       this.$("i.icon-remove").hide();
       this.$("i.icon-search").hide();
@@ -74,10 +75,10 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
       // Destroy the group
       this.model.destroy();
     } else if (type == "Person") {
-      // Don't destroy the person - merely remove them from the favorites list or role
       var model_id = this.model.get('id');
-      var e = this.current_user.favorites.find(function(e) { return e.id == model_id; });
-      this.current_user.favorites.remove(e);
+
+      var favorites_entity = this.current_user.favorites.find(function(e) { return e.id == model_id; });
+      this.current_user.favorites.remove(favorites_entity);
       this.current_user.favorites.trigger('change');
       this.current_user.save();
     }

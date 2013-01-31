@@ -255,7 +255,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       self.$('input[name=email]').val(this.model.escape('email'));
       self.$('input[name=loginid]').val(this.model.escape('loginid'));
       self.$('input[name=phone]').val(this.model.escape('phone'));
-      self.$('input[name=address]').val(this.model.escape('address'));
+      self.$('input[name=address]').val(this.model.get('address'));
 
       var favorites_tokeninput = self.$("input[name=favorites]");
       favorites_tokeninput.tokenInput("clear");

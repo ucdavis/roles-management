@@ -15,15 +15,14 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.selected = {};
     this.selected.application = null;
     this.selected.role_id = null;
-    this.selected.entities = [];
 
     this.applications = this.options.applications;
     this.current_user = this.options.current_user;
 
-    this.applications.on('change add destroy sync', this.render, this);
-    this.current_user.favorites.on('change add destroy sync', this.render, this);
-    this.current_user.group_ownerships.on('change add destroy sync', this.render, this);
-    this.current_user.group_operatorships.on('change add destroy sync', this.render, this);
+    this.applications.on('change add remove destroy sync', this.render, this);
+    this.current_user.favorites.on('change add remove destroy sync', this.render, this);
+    this.current_user.group_ownerships.on('change add remove destroy sync', this.render, this);
+    this.current_user.group_operatorships.on('change add remove destroy sync', this.render, this);
 
     this.$el.html(JST['applications/index']({ applications: this.applications }));
 
@@ -67,6 +66,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   render: function () {
     var self = this;
 
+    console.log("rendering application index");
+
     // We must ensure tooltips are closed before possibly deleting their
     // associated DOM elements
     this.$('[rel=tooltip]').each(function(i, el) {
@@ -100,32 +101,41 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // Need group_operatorship IDs has an array when drawing EntityItem
     var group_operatorships = this.current_user.group_operatorships.map(function(group) { return group.get('id') });
 
+    if(this.selected.role_id) var selected_role = this.selected.application.roles.where({id: this.selected.role_id})[0];
+
     this.$('#pins').empty();
+    console.log("rendering sidebar_entities:");
+    console.log(this.sidebar_entities);
     this.sidebar_entities.each(function(entity) {
       var pin = new DssRm.Views.EntityItem({
         model: entity,
         current_user: self.current_user,
-        highlighted: _.indexOf(self.selected.entities, entity.get('id')) >= 0, // true if in selected.entities
-        read_only: _.indexOf(group_operatorships, entity.get('id')) >= 0
+        highlighted: self.entityAssignedToCurrentRole(entity),
+        read_only: _.indexOf(group_operatorships, entity.get('id')) >= 0,
+        current_role: selected_role,
+        current_application: self.selected.application
       });
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
     });
     if(this.selected.role_id) {
-      var selected_role = this.selected.application.roles.where({id: this.selected.role_id})[0];
       console.log("rendering based on selected role:");
       console.log(selected_role);
       var assigned_non_subordinates = selected_role.entities.reject(function(e) {
         var id = e.get('id');
         return self.sidebar_entities.find(function(i) { return i.get('id') == id; });
       });
+      console.log("which has calculated assigned_non_subordinates of:");
+      console.log(assigned_non_subordinates);
 
       _.each(assigned_non_subordinates, function(entity) {
         var pin = new DssRm.Views.EntityItem({
           model: entity,
           current_user: self.current_user,
           highlighted: true,
-          faded: true
+          faded: true,
+          current_role: selected_role,
+          current_application: self.selected.application
         });
         self.renderChild(pin);
         self.$('#pins').append(pin.el);
@@ -192,10 +202,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
           new_entity.fetch({
             success: function() {
               selected_role.entities.add(new_entity);
-              self.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
               self.selected.application.save();
             }
-          })
+          });
         } else {
           // No role selected, so we will add this entity to their favorites
           if(self.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {
@@ -244,7 +253,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   deselectAll: function(e) {
     this.selected.application = null;
     this.selected.role_id = null;
-    this.selected.entities = [];
 
     this.render();
   },
@@ -256,7 +264,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     this.selected.application = this.applications.get(application_id);
     this.selected.role_id = $(e.currentTarget).data('role-id');
-    this.selected.entities = this.selected.application.roles.where({ id: this.selected.role_id })[0].get('entities').map(function(e) { return e.id });
 
     this.render();
   },
@@ -264,6 +271,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   selectEntity: function(e) {
     var clicked_entity_id = $(e.currentTarget).data('entity-id');
     var clicked_entity_name = $(e.currentTarget).data('entity-name');
+    var self = this;
 
     e.stopPropagation();
 
@@ -277,30 +285,39 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     if(this.selected.role_id) {
       var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
       // toggle on or off?
-      var matched = selected_role.get('entities').filter(function(e) { return e.id == clicked_entity_id });
-      var updated_favorites = null;
+      var matched = selected_role.entities.filter(function(e) { return e.id == clicked_entity_id });
       if(matched.length > 0) {
         // toggling off
-        updated_favorites = _.without(selected_role.get('entities'), matched[0]);
+        selected_role.entities.remove(matched[0]);
+        this.selected.application.save();
       } else {
         // toggling on
-        updated_favorites = selected_role.get('entities');
-        updated_favorites.push({ id: clicked_entity_id, name: clicked_entity_name });
+        var new_entity = new DssRm.Models.Entity({ id: clicked_entity_id });
+        new_entity.fetch({
+          success: function() {
+            selected_role.entities.add(new_entity);
+            self.selected.application.save();
+          }
+        });
       }
+    }
+  },
 
-      selected_role.set({
-        entities: updated_favorites
-      });
-      this.selected.entities = selected_role.get('entities').map(function(e) { return e.id });
-      selected_role.trigger('change');
+  entityAssignedToCurrentRole: function(e) {
+    var entity_id = e.get('id');
 
-      this.selected.application.save();
-    } else {
-      //this.selected_entities.push($(e.currentTarget).data('entity-id'));
-      //this.selected_entities = _.uniq(this.selected_entities);
+    if(this.selected.role_id) var selected_role = this.selected.application.roles.where({id: this.selected.role_id})[0];
+
+    if(selected_role) {
+      var results = selected_role.entities.find(function(i) { return i.get('id') == entity_id; });
+      if(results == undefined) {
+        return false;
+      } else {
+        return true;
+      }
     }
 
-    this.render();
+    return false;
   }
 }, {
   // Constants used in this view
