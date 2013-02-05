@@ -337,4 +337,24 @@ namespace :ldap do
       puts "This task is purposefully disabled in production mode."
     end
   end
+
+  desc 'Imports any people data from LDAP for existing local RM users who appear to be missing data (e.g. only have a login ID set).'
+  task :import_as_needed => :environment do
+    require 'rake'
+
+    log = StringIO.new
+
+    log << "Importing any LDAP data as needed (searching for any nil names)...\n"
+
+    Authorization.ignore_access_control(true)
+
+    Person.where(:first => nil).each do |p|
+      log << "\tImporting for login ID " + p.loginid + "\n"
+      Rake::Task["ldap:import"].invoke(p.loginid)
+    end
+
+    Rails.logger.info log.string
+
+    Authorization.ignore_access_control(false)
+  end
 end
