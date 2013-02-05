@@ -1,7 +1,7 @@
 require 'rake'
 require 'stringio'
 load 'ActiveDirectoryWrapper.rb'
-load File.join(Rails.root, 'lib', 'tasks', 'import_ldap.rake')
+load File.join(Rails.root, 'lib', 'tasks', 'ldap_sync.rake')
 
 namespace :ad do
   desc 'Sync the user database with Active Directory'
