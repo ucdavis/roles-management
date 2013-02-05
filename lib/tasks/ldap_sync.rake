@@ -3,6 +3,7 @@ namespace :ldap do
   task :import, :loginid do |t, args|
     require 'ldap'
     require 'stringio'
+
     notify_admins = false
 
     Rake::Task['environment'].invoke
@@ -10,6 +11,7 @@ namespace :ldap do
     Authorization.ignore_access_control(true)
 
     # Keep a log to e-mail to the admins
+    #log = IO.new(STDOUT.fileno) # for debugging
     log = StringIO.new
 
     # Include the large lot of UCD info (dept codes, title codes, etc.)
@@ -18,6 +20,13 @@ namespace :ldap do
     timestamp_start = Time.now
 
     log << "Beginning LDAP import\n\n"
+
+    # Keep a list of untouched login IDs - we'll remove items from this list as we sync.
+    # If at the end of our sync we failed to query LDAP for a user, we can manually query
+    # them by their login IDs.
+    # This happens to a small minority of users who aren't caught by the original LDAP query
+    # design but were added to RM anyway (via AD sync, manual add, etc.)
+    untouched_loginids = Person.all.map{ |x| x.loginid }
 
     #
     # STEP ONE: Connect to LDAP. Query needed data.
@@ -248,6 +257,12 @@ namespace :ldap do
               end
             end
 
+            # Remove the login ID from the untouched list (see explanation above)
+            # Even if the record is invalid, keeping them on the list only means
+            # we're going to attempt this again, so there's no use in keeping them around.
+            # We've effectively dealt with their record as best we can.
+            untouched_loginids.delete loginid # even if they don't exist, calling .delete is safe
+
             if p.valid? == false
               notify_admins = true
               record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
@@ -278,10 +293,7 @@ namespace :ldap do
                 p.student.save!
               end
 
-              #if p.changed? or (p.student and p.student.changed?)
-                # Save this record log to the master log as it contains changes
-                log << record_log.string
-              #end
+              log << record_log.string
             end
           end
         end
@@ -296,6 +308,17 @@ namespace :ldap do
     timestamp_finish = Time.now
 
     log << "LDAP import took " + (timestamp_finish - timestamp_start).to_s + "s\n"
+
+    # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
+    # Only do this if we weren't in 'single' import mode
+    if args[:loginid].nil?
+      log << "Processing #{untouched_loginids.length} untouched login IDs which exist locally but were not found in our original LDAP queries.\n"
+      untouched_loginids.each do |loginid|
+        log << "Recursively calling our import task for untouched login ID #{loginid} ...\n"
+        Rake::Task["ldap:import"].invoke(loginid) # calling our own task but this will only recurse once
+      end
+      log << "Completed untouched list.\n"
+    end
 
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
@@ -336,25 +359,5 @@ namespace :ldap do
     else
       puts "This task is purposefully disabled in production mode."
     end
-  end
-
-  desc 'Imports any people data from LDAP for existing local RM users who appear to be missing data (e.g. only have a login ID set).'
-  task :import_as_needed => :environment do
-    require 'rake'
-
-    log = StringIO.new
-
-    log << "Importing any LDAP data as needed (searching for any nil names)...\n"
-
-    Authorization.ignore_access_control(true)
-
-    Person.where(:first => nil).each do |p|
-      log << "\tImporting for login ID " + p.loginid + "\n"
-      Rake::Task["ldap:import"].invoke(p.loginid)
-    end
-
-    Rails.logger.info log.string
-
-    Authorization.ignore_access_control(false)
   end
 end
