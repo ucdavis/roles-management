@@ -23,29 +23,32 @@ class Group < Entity
 
   accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
 
+  after_save :clear_cache_if_needed
   after_save :trigger_sync
 
   # Calculates all members, including those defined via rules.
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
   # If flatten is false, any member groups will simply be returned as a group (i.e. not as the people _in_ that member group)
   def members(flatten = false)
-    members = []
+    Rails.cache.fetch("entities/members/#{flatten}/#{id}", expires_in: 30.minutes) do
+      members = []
 
-    entities.each do |e|
-      if flatten and e.type == "Group"
-        e.members(true).each do |m|
-          members << m
+      entities.each do |e|
+        if flatten and e.type == "Group"
+          e.members(true).each do |m|
+            members << m
+          end
+        else
+          members << e
         end
-      else
-        members << e
       end
+
+      # Include members via rules
+      members += rule_members
+
+      # Only return a unique list
+      members.uniq{|x| x.id}
     end
-
-    # Include members via rules
-    members += rule_members
-
-    # Only return a unique list
-    members.uniq{|x| x.id}
   end
 
   # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction
@@ -86,36 +89,40 @@ class Group < Entity
 
   # Compute accessible applications
   def applications
-    apps = []
+    Rails.cache.fetch("entities/applications/#{id}") do
+      apps = []
 
-    # Add apps via roles explicitly assigned
-    roles.each { |role| apps << role.application }
+      # Add apps via roles explicitly assigned
+      roles.each { |role| apps << role.application }
 
-    apps
+      apps
+    end
   end
 
   # Returns tokenized members, including 'via' parameter to differentiate explicitly-assigned
   # vs. rule-resolved members
   def member_tokens
-    result = []
-    explicit_members = []
-    resolved_members = []
+    Rails.cache.fetch("entities/member_tokens/#{id}", expires_in: 30.minutes) do
+      result = []
+      explicit_members = []
+      resolved_members = []
 
-    entities.each do |e|
-      explicit_members << e
+      entities.each do |e|
+        explicit_members << e
+      end
+
+      # Include members via rules
+      resolved_members += rule_members
+
+      # Unique members only
+      explicit_members = explicit_members.uniq{|x| x.id}
+      resolved_members = resolved_members.uniq{|x| x.id}
+
+      result = resolved_members.map{ |x| { :id => x.id, :name => x.name, :readonly => true, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
+      result += explicit_members.map{ |x| { :id => x.id, :name => x.name, :readonly => false, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
+
+      result
     end
-
-    # Include members via rules
-    resolved_members += rule_members
-
-    # Unique members only
-    explicit_members = explicit_members.uniq{|x| x.id}
-    resolved_members = resolved_members.uniq{|x| x.id}
-
-    result = resolved_members.map{ |x| { :id => x.id, :name => x.name, :readonly => true, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
-    result += explicit_members.map{ |x| { :id => x.id, :name => x.name, :readonly => false, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
-
-    result
   end
 
   def owner_tokens
@@ -168,54 +175,67 @@ class Group < Entity
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
   def rule_members
-    results = []
+    Rails.cache.fetch("entities/rule_members/#{id}", expires_in: 30.minutes) do
+      results = []
 
-    # Step One: Build groups out of each 'is' rule,
-    #           groupping rules of similar type together via OR
-    #           Note: we ignore the 'loginid' column as it is calculated separately
-    rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).group_by(&:column).each do |ruleset|
-      ruleset_results = []
+      # Step One: Build groups out of each 'is' rule,
+      #           groupping rules of similar type together via OR
+      #           Note: we ignore the 'loginid' column as it is calculated separately
+      rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).group_by(&:column).each do |ruleset|
+        ruleset_results = []
 
-      ruleset[1].each do |rule|
-        ruleset_results << rule.resolve
-      end
-
-      results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
-    end
-
-    # Step Two: AND all groups from step one together
-    result = results.inject(results.first) { |sum,m| sum &= m }
-
-    if result
-      # Step Three: Pass over the result from step two and
-      # remove anybody who violates an 'is not' rule
-      result = result.find_all{ |member|
-        keep = true
-        rules.where(:condition => "is not").each do |rule|
-          keep &= rule.matches(member)
+        ruleset[1].each do |rule|
+          ruleset_results << rule.resolve
         end
-        keep
-      }
-    end
 
-    # Step Four: Process any 'loginid is' rules
-    rules.where({:condition => "is", :column => "loginid"}).each do |rule|
-      if result.nil?
-        result = []
+        results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
       end
-      result << rule.resolve.at(0)
-    end
 
-    if result.nil?
-      return []
-    end
+      # Step Two: AND all groups from step one together
+      result = results.inject(results.first) { |sum,m| sum &= m }
 
-    result
+      if result
+        # Step Three: Pass over the result from step two and
+        # remove anybody who violates an 'is not' rule
+        result = result.find_all{ |member|
+          keep = true
+          rules.where(:condition => "is not").each do |rule|
+            keep &= rule.matches(member)
+          end
+          keep
+        }
+      end
+
+      # Step Four: Process any 'loginid is' rules
+      rules.where({:condition => "is", :column => "loginid"}).each do |rule|
+        if result.nil?
+          result = []
+        end
+        result << rule.resolve.at(0)
+      end
+
+      if result.nil?
+        return []
+      end
+
+      result
+    end
   end
 
   def trigger_sync
     logger.info "Group #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync }
     return true
+  end
+
+  def clear_cache_if_needed
+    if self.changed?
+      Rails.cache.delete("entities/member_tokens/#{id}")
+      Rails.cache.delete("entities/rule_members/#{id}")
+      Rails.cache.delete("entities/applications/#{id}")
+      # entities/members/#{flatten} (can be false or true), we may be storing both
+      Rails.cache.delete("entities/members/false/#{id}")
+      Rails.cache.delete("entities/members/true/#{id}")
+    end
   end
 end
