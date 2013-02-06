@@ -150,31 +150,48 @@ namespace :ad do
             end
           end
 
-          # Add AD people as members
+          # If this is our first AD sync, we will add AD entries not found locally back to our database (two-way sync),
+          # else we will remove any AD members who do not match our local database (one-way sync).
           ad_members = ActiveDirectoryWrapper.list_group_members(g)
           role_members = r.members.map{ |x| x.loginid }
-          log << "Syncing AD members back to local. There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start.\n"
-          ad_members.each do |m|
-            log << "Syncing back #{m[:samaccountname]}\n"
-            unless role_members.include? m[:samaccountname]
-              log << "#{m[:samaccountname]} is not already in role_members, going to add ...\n"
-              p = Person.find_by_loginid m[:samaccountname]
-              if p
-                r.entities << p
-                log << "Adding user #{m[:samaccountname]} from AD group #{r.ad_path} to local group.\n"
+          if r.last_ad_sync == nil
+            # Add AD entries back as local members
+            log << "Syncing AD members back to local as this is the first recorded AD sync for this role.\n"
+            log << "There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start.\n"
+            ad_members.each do |m|
+              log << "Syncing back #{m[:samaccountname]}\n"
+              unless role_members.include? m[:samaccountname]
+                log << "#{m[:samaccountname]} is not already in role_members, going to add ...\n"
+                p = Person.find_by_loginid m[:samaccountname]
+                if p
+                  r.entities << p
+                  log << "Adding user #{m[:samaccountname]} from AD group #{r.ad_path} to local group.\n"
+                else
+                  log << "Need to add user #{m[:samaccountname]} from AD group #{r.ad_path} but could not be found locally.\n"
+
+                  p = Person.new
+                  p.loginid = m[:samaccountname]
+                  p.save
+
+                  log << "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check (should occur momentarily).\n"
+
+                  Delayed::Job.enqueue(DelayedRake.new("ldap:import[#{m[:samaccountname]}]"))
+                end
               else
-                log << "Need to add user #{m[:samaccountname]} from AD group #{r.ad_path} but could not be found locally.\n"
-
-                p = Person.new
-                p.loginid = m[:samaccountname]
-                p.save
-
-                log << "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check (should occur momentarily).\n"
-
-                Delayed::Job.enqueue(DelayedRake.new("ldap:import[#{m[:samaccountname]}]"))
+                log << "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD.\n"
               end
-            else
-              log << "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD.\n"
+            end
+          else
+            # Remove AD entries which do not match our local database
+            log << "Removing any entries in AD which do not match our records (this is not the first AD sync for this role).\n"
+            ad_members.each do |m|
+              unless role_members.include? m[:samaccountname]
+                log << "#{m[:samaccountname]} is in AD but not this role. Will remove from AD ...\n"
+
+                ActiveDirectoryWrapper.remove_user_from_group(m, g)
+              else
+                log << "#{m[:samaccountname]} is in AD and this role. No action taken.\n"
+              end
             end
           end
         else
@@ -182,6 +199,8 @@ namespace :ad do
         end
 
         log << "Done syncing role #{r.id} with AD.\n"
+        r.last_ad_sync = Time.now
+        r.save
       else
         log << "Not syncing role #{r.id} because no AD path is set.\n"
       end

@@ -53,11 +53,17 @@ class Role < ActiveRecord::Base
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
-    require 'rake'
-    load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
+    # AD sync will update the role's "last_ad_sync" member. Ensure we don't
+    # end up recursively calling this after_save callback!
+    unless self.last_ad_sync_changed?
+      require 'rake'
+      load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
-    logger.info "Scheduling AD sync for role #{id}"
-    Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
+      logger.info "Scheduling AD sync for role #{id}"
+      Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
+    else
+      logger.info "Not scheduling AD sync as last_ad_sync was updated."
+    end
   end
 
   # trigger_sync exists in Person and Group as well
