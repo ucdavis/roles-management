@@ -11,7 +11,7 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
 
     this.view_state = options.view_state;
 
-    this.model.on("add remove change destroy sync", this.render, this);
+    this.model.on("change", this.render, this);
     this.view_state.on("change", this.render, this);
 
     var owner_ids = this.model.owners.map(function(i) { return i.get('id'); } );
@@ -23,7 +23,6 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     this.$el.html(JST['applications/item']({ application: this.model }));
     this.$el.attr("id", "application_" + this.model.id);
     this.$el.data('application-id', this.model.get('id'));
-    this.$('#application-name').html(this.model.escape('name'));
     this.$('.card-title').attr("title", this.model.escape('description'));
     this.$('.application-link').attr("href", this.applicationUrl());
 
@@ -41,9 +40,8 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
       this.$('.roles').show();
 
       this.model.roles.each(function(role) {
-        var $role_item = $('<div class="role"></div>')
+        var $role_item = $('<div class="role"><a href="#">name</a></div>')
         $role_item.data('role-id', role.get('id'));
-        $role_item.html(JST['roles/item']());
         $role_item.attr("rel", "tooltip");
         $role_item.find('a').html(role.escape('name'));
         $role_item.attr("title", role.escape('description'));
@@ -55,6 +53,8 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
 
   render: function() {
     var self = this;
+
+    this.$('#application-name').html(this.model.escape('name'));
 
     // Highlight this application?
     if(this.view_state.selected_application == this.model) {
