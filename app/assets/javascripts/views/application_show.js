@@ -100,6 +100,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
     this.model.save({}, {
       success: function() {
+        console.log("saved application with cid " + self.model.cid);
         status_bar.hide();
       },
 
@@ -170,6 +171,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       name: $(e.target).parents("tr").find('input[name=name]').val(),
       description: $(e.target).parents("tr").find('input[name=description]').val()
     });
+
+    return true;
   },
 
   sympaUrl: function(e) {
