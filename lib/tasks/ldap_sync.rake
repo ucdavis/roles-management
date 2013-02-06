@@ -4,7 +4,7 @@ namespace :ldap do
     require 'ldap'
     require 'stringio'
 
-    notify_admins = true
+    notify_admins = false
 
     Rake::Task['environment'].invoke
 
