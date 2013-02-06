@@ -74,7 +74,7 @@ class ApplicationsController < ApplicationController
     @application = Application.find(params[:id])
 
     if @application.update_attributes(params[:application])
-      logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated application, #{params[:application]}."
+      logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated application with params #{params[:application]}."
     end
 
     respond_with @application

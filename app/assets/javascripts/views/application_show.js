@@ -15,7 +15,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     var self = this;
 
     //this.model.on('sync', this.render, this);
-    //this.model.roles.on('add change remove sync', this.render, this);
+    this.model.roles.on('add remove', this.render, this);
 
     this.$el.html(JST['applications/show']({ application: this.model }));
 
@@ -98,8 +98,11 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       }
     });
 
+    console.log("saving for application with cid " + this.model.cid);
+
     this.model.save({}, {
       success: function() {
+        console.log("finished saving for application with cid " + self.model.cid);
         status_bar.hide();
       },
 
