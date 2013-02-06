@@ -236,9 +236,14 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   },
 
   deselectAll: function(e) {
-    this.view_state.selected_application = null;
-    this.view_state.selected_role_id = null;
-    this.view_state.trigger('change');
+    // Ensure click event isn't due to child ignoring it --
+    // we really do want only clicks on div#cards and not its
+    // children
+    if(e.target == $("div#cards").get(0)) {
+      this.view_state.selected_application = null;
+      this.view_state.selected_role_id = null;
+      this.view_state.trigger('change');
+    }
   },
 
   selectEntity: function(e) {
