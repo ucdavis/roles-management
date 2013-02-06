@@ -6,15 +6,15 @@ DssRm.Models.Application = Backbone.Model.extend({
     this.operators = new DssRm.Collections.Entities(this.get('operators'));
   },
 
-  // Returns only the "highest" relationship (this order): admin, owner, operator
+  // Returns only the "highest" relationship (this order): owner, operator, admin
   // Uses DssRm.current_user as the entity
   relationship: function() {
     var current_user_id = DssRm.current_user.get('id')
 
-    if(DssRm.current_user.get('admin')) return "admin";
-
     if(this.owners.find(function(o) { return o.id == current_user_id; } ) !== undefined) return "owner";
     if(this.operators.find(function(o) { return o.id == current_user_id; } ) !== undefined) return "operator";
+
+    if(DssRm.current_user.get('admin')) return "admin";
 
     return null;
   },

@@ -1,13 +1,8 @@
 DssRm.Routers.Applications = Support.SwappingRouter.extend({
   initialize: function(options) {
     this.el = $('#applications');
-    this.applications = options.applications;
-    this.current_user = options.current_user;
 
-    this.indexView = new DssRm.Views.ApplicationsIndex({
-      applications: this.applications,
-      current_user: this.current_user
-    });
+    this.indexView = new DssRm.Views.ApplicationsIndex();
   },
 
   routes: {
@@ -25,7 +20,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   showApplication: function(applicationId) {
-    var application = this.applications.get(applicationId);
+    var application = DssRm.applications.get(applicationId);
     var applicationsRouter = this;
 
     status_bar.show("Loading application ...");
@@ -34,7 +29,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
       success: function() {
         status_bar.hide();
 
-        var view = new DssRm.Views.ApplicationShow({ model: application, applications: applicationsRouter.applications });
+        var view = new DssRm.Views.ApplicationShow({ model: application });
         applicationsRouter.currentView.renderChild(view);
         view.$el.modal();
       },

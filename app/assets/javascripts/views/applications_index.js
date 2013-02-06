@@ -3,7 +3,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   className: "row-fluid",
 
   events: {
-    "click #cards .card .role"  : "selectRole",
     "click #pins li"            : "selectEntity",
     "click #cards"              : "deselectAll"
   },
@@ -11,20 +10,19 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   initialize: function(options) {
     var self = this;
 
-    // View states
-    this.selected = {};
-    this.selected.application = null;
-    this.selected.role_id = null;
+    // Create a view state to be shared with sub-views
+    this.view_state = {};
+    _.extend(this.view_state, Backbone.Events);
 
-    this.applications = this.options.applications;
-    this.current_user = this.options.current_user;
+    this.view_state.selected_application = null;
+    this.view_state.selected_role_id = null;
 
-    this.applications.on('change add remove destroy sync', this.render, this);
-    this.current_user.favorites.on('change add remove destroy sync', this.render, this);
-    this.current_user.group_ownerships.on('change add remove destroy sync', this.render, this);
-    this.current_user.group_operatorships.on('change add remove destroy sync', this.render, this);
+    DssRm.applications.on('change add remove destroy sync', this.render, this);
+    DssRm.current_user.favorites.on('change add remove destroy sync', this.render, this);
+    DssRm.current_user.group_ownerships.on('change add remove destroy sync', this.render, this);
+    DssRm.current_user.group_operatorships.on('change add remove destroy sync', this.render, this);
 
-    this.$el.html(JST['applications/index']({ applications: this.applications }));
+    this.$el.html(JST['applications/index']({ applications: DssRm.applications }));
 
     this.$("#search_sidebar").typeahead({
       minLength: 3,
@@ -61,12 +59,25 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       updater: function(item) { self.applicationSearchResultSelected(item, self); },
       items: 15
     });
+
+    DssRm.applications.each(function(application) {
+      self.renderCard(application);
+    });
   },
 
-  render: function () {
+  renderCard: function(application) {
     var self = this;
 
-    console.log("rendering application index");
+    var card = new DssRm.Views.ApplicationItem({
+      model: application,
+      view_state: self.view_state
+    });
+    self.renderChild(card);
+    self.$('#cards').append(card.el);
+  },
+
+  render: function() {
+    var self = this;
 
     // We must ensure tooltips are closed before possibly deleting their
     // associated DOM elements
@@ -74,22 +85,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
       if(el != undefined) $(el).tooltip('hide');
     });
 
-    this.$('#cards').empty();
-    this.applications.each(function(application) {
-      var card = new DssRm.Views.ApplicationItem({
-        model: application,
-        highlighted_application_id: self.selected.application ? self.selected.application.get('id') : null,
-        highlighted_role_id: self.selected.role_id ? self.selected.role_id : null,
-        current_user: self.current_user
-      });
-      self.renderChild(card);
-      self.$('#cards').append(card.el);
-    });
-
     var _sidebar_entities = _.union(
-      this.current_user.group_ownerships.models,
-      this.current_user.group_operatorships.models,
-      this.current_user.favorites.models);
+      DssRm.current_user.group_ownerships.models,
+      DssRm.current_user.group_operatorships.models,
+      DssRm.current_user.favorites.models);
     var _sidebar_entities = _.sortBy(_sidebar_entities, function(e) {
       var prepend = (e.get('type') == "Group") ? '1' : '2';
       var sort_num = parseInt((prepend + e.get('name').charCodeAt(0).toString()));
@@ -99,43 +98,35 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     if(this.sidebar_entities === undefined) this.sidebar_entities = new DssRm.Collections.Entities();
     this.sidebar_entities.reset(_sidebar_entities);
     // Need group_operatorship IDs has an array when drawing EntityItem
-    var group_operatorships = this.current_user.group_operatorships.map(function(group) { return group.get('id') });
+    var group_operatorships = DssRm.current_user.group_operatorships.map(function(group) { return group.get('id') });
 
-    if(this.selected.role_id) var selected_role = this.selected.application.roles.where({id: this.selected.role_id})[0];
+    if(this.view_state.selected_role_id) var selected_role = self.view_state.selected_application.roles.where({id: self.view_state.selected_role_id})[0];
 
     this.$('#pins').empty();
-    console.log("rendering sidebar_entities:");
-    console.log(this.sidebar_entities);
     this.sidebar_entities.each(function(entity) {
       var pin = new DssRm.Views.EntityItem({
         model: entity,
-        current_user: self.current_user,
         highlighted: self.entityAssignedToCurrentRole(entity),
         read_only: _.indexOf(group_operatorships, entity.get('id')) >= 0,
         current_role: selected_role,
-        current_application: self.selected.application
+        current_application: self.view_state.selected_application
       });
       self.renderChild(pin);
       self.$('#pins').append(pin.el);
     });
-    if(this.selected.role_id) {
-      console.log("rendering based on selected role:");
-      console.log(selected_role);
+    if(self.view_state.selected_role_id) {
       var assigned_non_subordinates = selected_role.entities.reject(function(e) {
         var id = e.get('id');
         return self.sidebar_entities.find(function(i) { return i.get('id') == id; });
       });
-      console.log("which has calculated assigned_non_subordinates of:");
-      console.log(assigned_non_subordinates);
 
       _.each(assigned_non_subordinates, function(entity) {
         var pin = new DssRm.Views.EntityItem({
           model: entity,
-          current_user: self.current_user,
           highlighted: true,
           faded: true,
           current_role: selected_role,
-          current_application: self.selected.application
+          current_application: self.view_state.selected_application
         });
         self.renderChild(pin);
         self.$('#pins').append(pin.el);
@@ -180,7 +171,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         alert("Currently unsupported.");
       break;
       case DssRm.Views.ApplicationsIndex.FID_CREATE_GROUP:
-        self.current_user.group_ownerships.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
+        DssRm.current_user.group_ownerships.create({ name: label.slice(13), type: 'Group' }); // slice(13) is removing the "Create Group " prefix
       break;
       default:
         // Exact result selected
@@ -188,21 +179,14 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         // If a role is selected, the behavior is to assign to the role,
         // and not add to favorites. Adding to favorites only happens when
         // no role is selected.
-        if(this.selected.role_id) {
-          console.log("start - selected application role cids:");
-          this.selected.application.roles.each(function(r) {
-            console.log(r.cid);
-          });
-          var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
-          console.log("selected_role has cid of " + selected_role.cid);
-
-          console.log("Adding id of " + id + " with name " + label);
+        if(this.view_state.selected_role_id) {
+          var selected_role = this.view_state.selected_application.roles.where({ id: self.view_state.selected_role_id })[0];
 
           var new_entity = new DssRm.Models.Entity({ id: id });
           new_entity.fetch({
             success: function() {
               selected_role.entities.add(new_entity);
-              self.selected.application.save();
+              self.view_state.selected_application.save();
             }
           });
         } else {
@@ -210,8 +194,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
           if(self.sidebar_entities.find(function(e) { return e.id === id }) === undefined) {
             // Add this result
             var p = new DssRm.Models.Entity({ id: id, name: label, type: 'Person' });
-            self.current_user.favorites.add(p);
-            self.current_user.save();
+            DssRm.current_user.favorites.add(p);
+            DssRm.current_user.save();
           }
         }
       break;
@@ -222,7 +206,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     entities = [];
     var exact_match_found = false;
 
-    self.applications.each(function(app) {
+    DssRm.applications.each(function(app) {
       if(app) {
         if(~app.get('name').toLowerCase().indexOf(query.toLowerCase())) {
           if(app.get('name').toLowerCase() == query.toLowerCase()) exact_match_found = true;
@@ -245,27 +229,15 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     switch(id) {
       case DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION:
-        self.applications.create({ name: label.slice(7) }); // slice(7) is removing the "Create " prefix
+        DssRm.applications.create({ name: label.slice(7) }); // slice(7) is removing the "Create " prefix
       break;
     }
   },
 
   deselectAll: function(e) {
-    this.selected.application = null;
-    this.selected.role_id = null;
-
-    this.render();
-  },
-
-  selectRole: function(e) {
-    e.stopPropagation();
-
-    var application_id = $(e.currentTarget).parent().parent().parent().data('application-id');
-
-    this.selected.application = this.applications.get(application_id);
-    this.selected.role_id = $(e.currentTarget).data('role-id');
-
-    this.render();
+    this.view_state.selected_application = null;
+    this.view_state.selected_role_id = null;
+    this.view_state.trigger('change');
   },
 
   selectEntity: function(e) {
@@ -282,21 +254,21 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // If no application/role is selected, clicking an entity merely filters the application/role
     // list to display their current assignments.
 
-    if(this.selected.role_id) {
-      var selected_role = this.selected.application.roles.where({ id: this.selected.role_id })[0];
+    if(self.view_state.selected_role_id) {
+      var selected_role = self.view_state.selected_application.roles.where({ id: self.view_state.selected_role_id })[0];
       // toggle on or off?
       var matched = selected_role.entities.filter(function(e) { return e.id == clicked_entity_id });
       if(matched.length > 0) {
         // toggling off
         selected_role.entities.remove(matched[0]);
-        this.selected.application.save();
+        self.view_state.selected_application.save();
       } else {
         // toggling on
         var new_entity = new DssRm.Models.Entity({ id: clicked_entity_id });
         new_entity.fetch({
           success: function() {
             selected_role.entities.add(new_entity);
-            self.selected.application.save();
+            self.view_state.selected_application.save();
           }
         });
       }
@@ -305,8 +277,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
   entityAssignedToCurrentRole: function(e) {
     var entity_id = e.get('id');
+    var self = this;
 
-    if(this.selected.role_id) var selected_role = this.selected.application.roles.where({id: this.selected.role_id})[0];
+    if(this.view_state.selected_role_id) var selected_role = this.view_state.selected_application.roles.where({id: self.view_state.selected_role_id})[0];
 
     if(selected_role) {
       var results = selected_role.entities.find(function(i) { return i.get('id') == entity_id; });

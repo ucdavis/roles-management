@@ -16,7 +16,7 @@ window.DssRm = {
 
     this.current_user.fetch({
       success: function(current_user) {
-        self.router = new DssRm.Routers.Applications({ applications: self.applications, current_user: self.current_user });
+        self.router = new DssRm.Routers.Applications();
         if (!Backbone.history.started) {
           Backbone.history.start();
           Backbone.history.started = true;
