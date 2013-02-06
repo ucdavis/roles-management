@@ -17,6 +17,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.view_state.selected_application = null;
     this.view_state.selected_role_id = null;
 
+    this.view_state.on("change", this.render, this);
     DssRm.applications.on('change add remove destroy sync', this.render, this);
     DssRm.current_user.favorites.on('change add remove destroy sync', this.render, this);
     DssRm.current_user.group_ownerships.on('change add remove destroy sync', this.render, this);
@@ -254,14 +255,14 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // If no application/role is selected, clicking an entity merely filters the application/role
     // list to display their current assignments.
 
-    if(self.view_state.selected_role_id) {
-      var selected_role = self.view_state.selected_application.roles.where({ id: self.view_state.selected_role_id })[0];
+    if(this.view_state.selected_role_id) {
+      var selected_role = this.view_state.selected_application.roles.where({ id: this.view_state.selected_role_id })[0];
       // toggle on or off?
       var matched = selected_role.entities.filter(function(e) { return e.id == clicked_entity_id });
       if(matched.length > 0) {
         // toggling off
         selected_role.entities.remove(matched[0]);
-        self.view_state.selected_application.save();
+        this.view_state.selected_application.save();
       } else {
         // toggling on
         var new_entity = new DssRm.Models.Entity({ id: clicked_entity_id });
