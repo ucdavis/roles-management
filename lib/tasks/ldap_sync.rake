@@ -324,7 +324,7 @@ namespace :ldap do
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
     if notify_admins
       admin_role_id = Application.find_by_name("DSS Roles Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-      Role.find_by_id(admin_role_id).people.each do |admin|
+      Role.find_by_id(admin_role_id).entities.each do |admin|
         WheneverMailer.ldap_report(admin.email, log.string).deliver!
       end
     end
