@@ -200,6 +200,7 @@ namespace :ad do
 
         log << "Done syncing role #{r.id} with AD.\n"
         r.last_ad_sync = Time.now
+        r.skip_next_sync = true
         r.save
       else
         log << "Not syncing role #{r.id} because no AD path is set.\n"

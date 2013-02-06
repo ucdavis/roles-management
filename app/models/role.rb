@@ -7,11 +7,13 @@ class Role < ActiveRecord::Base
 
   has_many :role_assignments, :dependent => :destroy
   has_many :entities, :through => :role_assignments
+  before_save :clear_last_sync_if_path_changed
   after_save :sync_ad
 
   belongs_to :application
 
   attr_accessible :token, :entity_ids, :default, :name, :description, :ad_path
+  attr_accessor :skip_next_sync
 
   # Needed in show.json.rabl to display a role's application's name
   def application_name
@@ -55,14 +57,15 @@ class Role < ActiveRecord::Base
   def sync_ad
     # AD sync will update the role's "last_ad_sync" member. Ensure we don't
     # end up recursively calling this after_save callback!
-    unless self.last_ad_sync_changed?
+    unless self.skip_next_sync
       require 'rake'
       load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
       logger.info "Scheduling AD sync for role #{id}"
       Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
     else
-      logger.info "Not scheduling AD sync as last_ad_sync was updated."
+      logger.info "Not scheduling AD sync as skip_next_sync was set."
+      self.skip_next_sync = false
     end
   end
 
@@ -79,6 +82,12 @@ class Role < ActiveRecord::Base
 
   # No changes can be made to this role unless the user owns the associated application
   def must_own_associated_application
-    logger.error "Implementation needed."
+    logger.error "SECUREME: Implementation needed."
+  end
+
+  def clear_last_sync_if_path_changed
+    if self.ad_path_changed?
+      self.last_ad_sync = nil
+    end
   end
 end
