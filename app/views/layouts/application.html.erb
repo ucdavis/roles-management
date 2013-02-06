@@ -46,9 +46,28 @@
     </div><!-- /navbar-inner -->
   </div><!-- /navbar -->
 
-  <div id="main-body" class="container-fluid">
-	  <%= yield %>
-  </div><!-- /.container-fluid -->
+  <div id="main-body" class="container-fluid"><%= yield %></div>
+
+  <div id="loading-backdrop" />
+
+  <script type="text/json" id="bootstrap">
+    {
+      "current_user": <%= current_user.to_json %>,
+      "applications": <%= @applications.to_json %>
+    }
+  </script>
+
+  <%= content_for :javascript do -%>
+    <script type="text/javascript">
+      $(function () {
+        var div = $('<div></div>');
+        div.html($('#bootstrap').text());
+        var data = JSON.parse(div.text());
+
+        DssRm.initialize(data);
+      });
+    </script>
+  <% end %>
 
   <%= javascript_include_tag "application" %>
   <%= yield :javascript %>

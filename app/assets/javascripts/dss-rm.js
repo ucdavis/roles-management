@@ -3,6 +3,7 @@ window.DssRm = {
   Collections: {},
   Views: {},
   Routers: {},
+
   initialize: function(data) {
     var self = this;
 
@@ -14,13 +15,20 @@ window.DssRm = {
       admin: data.current_user.admin
     });
 
+    self.router = new DssRm.Routers.Applications();
+    if (!Backbone.history.started) {
+      Backbone.history.start();
+      Backbone.history.started = true;
+    }
+
     this.current_user.fetch({
-      success: function(current_user) {
-        self.router = new DssRm.Routers.Applications();
-        if (!Backbone.history.started) {
-          Backbone.history.start();
-          Backbone.history.started = true;
-        }
+      success: function() {
+        $("#loading-backdrop").fadeOut();
+      },
+
+      error: function() {
+        $("#loading-backdrop").fadeOut();
+        console.log("Unable to fetch current user. Probably an invalid access attempt.");
       }
     });
 
