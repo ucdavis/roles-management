@@ -4,7 +4,7 @@ namespace :ldap do
     require 'ldap'
     require 'stringio'
 
-    notify_admins = false
+    notify_admins = true
 
     Rake::Task['environment'].invoke
 
@@ -323,7 +323,7 @@ namespace :ldap do
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
     if notify_admins
-      admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+      admin_role_id = Application.find_by_name("DSS Roles Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
       Role.find_by_id(admin_role_id).people.each do |admin|
         WheneverMailer.ldap_report(admin.email, log.string).deliver!
       end
