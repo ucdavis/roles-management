@@ -23,6 +23,8 @@ set :scm, "git"
 set :repository, "git@github.com:cthielen/#{application}.git"
 set :branch, "master"
 
+set :test_log, "logs/capistrano.test.log"
+
 default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
 
@@ -30,6 +32,17 @@ after "deploy", "deploy:cleanup" # keep only the last 5 releases
 after "deploy", "deploy:migrations" # run any pending migrations
 
 namespace :deploy do
+  before 'deploy:update_code' do
+    puts "--> Running tests, please wait ..."
+    unless system "bundle exec rake > #{test_log} 2>&1" #' > /dev/null'
+      puts "--> Tests failed. Run `cat #{test_log}` to see what went wrong."
+      exit
+    else
+      puts "--> Tests passed"
+      system "rm #{test_log}"
+    end
+  end
+
   %w[start stop restart].each do |command|
     desc "#{command} unicorn server"
     task command, roles: :app, except: {no_release: true} do
