@@ -17,48 +17,22 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
     this.model.on('add change remove', this.render, this);
     this.model.roles.on('add change remove', this.render, this);
 
-    this.applications = options.applications;
-
     this.$el.html(JST['applications/show']({ application: this.model }));
 
     this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
       theme: "facebook",
-      onAdd: function(item) {
-        var owners = self.model.get('owners');
-        if (! _.find(owners, function(i) { return i.id == item.id })) {
-          // onAdd is triggered by the .tokenInput("add") lines in render,
-          // so we need to ensure this actually is a new item
-          owners.push(item);
-          self.model.set('owners', owners);
-          self.model.trigger('change');
-        }
-      },
-      onDelete: function(item) {
-        var owners = _.filter(self.model.get('owners'), function(owner) { return owner.id != item.id });
-        self.model.set('owners', owners);
-      }
+      onAdd: function(item) { self.model.owners.add(item) },
+      onDelete: function(item) { self.model.owners.remove(item) }
     });
 
     this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
       crossDomain: false,
       defaultText: "",
       theme: "facebook",
-      onAdd: function(item) {
-        var operators = self.model.get('operators');
-        if (! _.find(operators, function(i) { return i.id == item.id })) {
-          // onAdd is triggered by the .tokenInput("add") lines in render,
-          // so we need to ensure this actually is a new item
-          operators.push(item);
-          self.model.set('operators', operators);
-          self.model.trigger('change');
-        }
-      },
-      onDelete: function(item) {
-        var operators = _.filter(self.model.get('operators'), function(operator) { return operator.id != item.id });
-        self.model.set('operators', operators);
-      }
+      onAdd: function(item) { self.model.operators.add(item) },
+      onDelete: function(item) { self.model.operators.remove(item) }
     });
   },
 
@@ -106,11 +80,14 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   saveApplication: function() {
     var self = this;
 
-    this.model.set({ name: this.$('input[name=name]').val() });
-
     status_bar.show("Saving application ...");
 
     // Update the model silently, then save
+    this.model.set({
+      name: this.$('input[name=name]').val(),
+      description: this.$('input[name=description]').val()
+    }, { silent: true });
+
     this.$('input[name=ad_path]').each(function(i, e) {
       var role_id = $(e).data('role-id');
       var value = $(e).val();
