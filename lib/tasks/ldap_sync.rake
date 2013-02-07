@@ -225,7 +225,7 @@ namespace :ldap do
         loginid = entry.get_values('uid').to_s[2..-3]
       else
         # Give up
-        log << "Warning: Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s + "\n"
+        record_log << "Warning: Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s + "\n"
         return nil
       end
     else
