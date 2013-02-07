@@ -114,42 +114,26 @@ namespace :ldap do
             # We've effectively dealt with their record as best we can.
             untouched_loginids.delete p.loginid unless p.nil?
 
-            if (p.valid? == false) or (p == nil)
-              notify_admins = true
-              if p
-                record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
-                record_log << "\tReason(s):\n"
-                p.errors.messages.each do |field,reason|
-                  record_log << "\t\tField #{field} #{reason}\n"
-                end
-              end
-            else
-              if p.changed? == false
-                record_log << "\tNo standard record changes for #{p.loginid}\n"
-              else
-                record_log << "\tUpdating the following for #{p.loginid}:\n"
-                p.changes.each do |field,changes|
-                  record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
-                end
-              end
-              p.save!
+            record_and_save_if_needed(p, record_log)
 
-              if p.student
-                if p.student.changed? == false
-                  record_log << "\tStudent record exists but there are no changes for #{p.loginid}\n"
-                else
-                  record_log << "\tUpdating the following student records for #{p.loginid}:\n"
-                  p.student.changes.each do |field,changes|
-                    record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
-                  end
-                end
-                p.student.save!
-              end
-
-              log << record_log.string
-            end
+            log << record_log.string
           end
         end
+      end
+
+      # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
+      # Only do this if we weren't in 'single' import mode
+      if args[:loginid].nil?
+        log << "Processing #{untouched_loginids.length} untouched login IDs which exist locally but were not found in our original LDAP queries.\n"
+        untouched_loginids.each do |loginid|
+          conn.search(ldap_settings['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, '(uid=' + loginid + ')') do |entry|
+            record_log = StringIO.new
+            p = process_ldap_record(entry, record_log)
+            record_and_save_if_needed(p, record_log)
+            log << record_log.string
+          end
+        end
+        log << "Completed untouched list.\n"
       end
     end
 
@@ -161,17 +145,6 @@ namespace :ldap do
     timestamp_finish = Time.now
 
     log << "LDAP import took " + (timestamp_finish - timestamp_start).to_s + "s\n"
-
-    # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
-    # Only do this if we weren't in 'single' import mode
-    if args[:loginid].nil?
-      log << "Processing #{untouched_loginids.length} untouched login IDs which exist locally but were not found in our original LDAP queries.\n"
-      untouched_loginids.each do |loginid|
-        log << "Recursively calling our import task for untouched login ID #{loginid} ...\n"
-        Rake::Task["ldap:import"].invoke(loginid) # calling our own task but this will only recurse once
-      end
-      log << "Completed untouched list.\n"
-    end
 
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
@@ -370,5 +343,39 @@ namespace :ldap do
     end
 
     return p
+  end
+
+  def record_and_save_if_needed(p, record_log)
+    if (p.valid? == false) or (p == nil)
+      if p
+        record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
+        record_log << "\tReason(s):\n"
+        p.errors.messages.each do |field,reason|
+          record_log << "\t\tField #{field} #{reason}\n"
+        end
+      end
+    else
+      if p.changed? == false
+        record_log << "\tNo standard record changes for #{p.loginid}\n"
+      else
+        record_log << "\tUpdating the following for #{p.loginid}:\n"
+        p.changes.each do |field,changes|
+          record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
+        end
+      end
+      p.save!
+
+      if p.student
+        if p.student.changed? == false
+          record_log << "\tStudent record exists but there are no changes for #{p.loginid}\n"
+        else
+          record_log << "\tUpdating the following student records for #{p.loginid}:\n"
+          p.student.changes.each do |field,changes|
+            record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
+          end
+        end
+        p.student.save!
+      end
+    end
   end
 end
