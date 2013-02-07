@@ -101,7 +101,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // Need group_operatorship IDs has an array when drawing EntityItem
     var group_operatorships = DssRm.current_user.group_operatorships.map(function(group) { return group.get('id') });
 
-    if(this.view_state.selected_role_id) var selected_role = self.view_state.selected_application.roles.where({id: self.view_state.selected_role_id})[0];
+    if(this.view_state.selected_role_id) var selected_role = self.view_state.selected_application.roles.where({id: parseInt(self.view_state.selected_role_id)})[0];
 
     this.$('#pins').empty();
     this.sidebar_entities.each(function(entity) {
