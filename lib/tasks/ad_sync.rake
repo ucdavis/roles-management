@@ -1,12 +1,10 @@
 require 'rake'
 require 'stringio'
 load 'ActiveDirectoryWrapper.rb'
-load File.join(Rails.root, 'lib', 'tasks', 'ldap_sync.rake')
 
 namespace :ad do
   desc 'Sync the user database with Active Directory'
-  task :sync_all_users do
-    Rake::Task['environment'].invoke
+  task :sync_all_users => :environment do
     notify_admins = false
 
     # Keep a log to e-mail to the admins
@@ -120,9 +118,7 @@ namespace :ad do
   end
 
   desc 'Sync a role against Active Directory. May create new users as needed.'
-  task :sync_role, :role_id do |t, args|
-    Rake::Task['environment'].invoke
-
+  task :sync_role, [:role_id] => :environment do |t, args|
     log = StringIO.new
 
     r = Role.find_by_id(args[:role_id])
