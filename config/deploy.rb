@@ -23,7 +23,7 @@ set :scm, "git"
 set :repository, "git@github.com:cthielen/#{application}.git"
 set :branch, "master"
 
-set :test_log, "logs/capistrano.test.log"
+set :test_log, "log/capistrano.test.log"
 
 default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
