@@ -181,7 +181,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
         // and not add to favorites. Adding to favorites only happens when
         // no role is selected.
         if(this.view_state.selected_role_id) {
-          var selected_role = this.view_state.selected_application.roles.where({ id: self.view_state.selected_role_id })[0];
+          var selected_role = this.view_state.selected_application.roles.where({ id: parseInt(self.view_state.selected_role_id) })[0];
 
           var new_entity = new DssRm.Models.Entity({ id: id });
           new_entity.fetch({
@@ -261,7 +261,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     // list to display their current assignments.
 
     if(this.view_state.selected_role_id) {
-      var selected_role = this.view_state.selected_application.roles.where({ id: this.view_state.selected_role_id })[0];
+      var selected_role = this.view_state.selected_application.roles.where({ id: parseInt(this.view_state.selected_role_id) })[0];
       // toggle on or off?
       var matched = selected_role.entities.filter(function(e) { return e.id == clicked_entity_id });
       if(matched.length > 0) {
@@ -285,7 +285,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     var entity_id = e.get('id');
     var self = this;
 
-    if(this.view_state.selected_role_id) var selected_role = this.view_state.selected_application.roles.where({id: self.view_state.selected_role_id})[0];
+    if(this.view_state.selected_role_id) var selected_role = this.view_state.selected_application.roles.where({id: parseInt(self.view_state.selected_role_id) })[0];
 
     if(selected_role) {
       var results = selected_role.entities.find(function(i) { return i.get('id') == entity_id; });
