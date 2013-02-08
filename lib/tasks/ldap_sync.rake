@@ -346,7 +346,7 @@ namespace :ldap do
   end
 
   def record_and_save_if_needed(p, record_log)
-    if (p.valid? == false) or (p == nil)
+    if (p == nil) or (p.valid? == false)
       if p
         record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
         record_log << "\tReason(s):\n"
