@@ -53,9 +53,6 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
 
     this.$('#application-name').html(this.model.escape('name'));
 
-    console.log("rendering application item for cid " + this.model.cid);
-    console.log(this.model);
-
     // Highlight this application?
     if(this.view_state.selected_application == this.model) {
       this.$el.css("box-shadow", "#08C 0 0 10px").css("border", "1px solid #08C");
@@ -78,12 +75,6 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     // Remove any roles in the DOM not in our model anymore
     var roles_to_remove = _.difference(roles_in_dom, roles_in_model);
 
-    console.log("roles to remove is:");
-    console.log(roles_to_remove);
-    console.log("roles in dom then roles in model:");
-    console.log(roles_in_dom);
-    console.log(roles_in_model);
-
     _.each(roles_to_remove, function(r) {
       var to_remove = self.$('.roles').find("div.role[data-role-id=" + r + "]");
       $(to_remove).remove();
@@ -97,10 +88,7 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
         var role = self.model.roles.get(r);
         var $role_item = self.renderRoleItem(role);
         self.$('.roles').append($role_item);
-        console.log("adding for " + r);
-        console.log(role);
       }
-      //debugger;
     });
 
     return this;
