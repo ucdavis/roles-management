@@ -77,7 +77,9 @@ class ApplicationsController < ApplicationController
       logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated application with params #{params[:application]}."
     end
 
-    respond_with @application
+    respond_with @application do |format|
+      format.json { render :json => @application } # A new role may have been created, so we need to render out to reveal the new ID
+    end
   end
 
   # DELETE /applications/1

@@ -11,6 +11,8 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
 
     this.view_state = options.view_state;
 
+    // change - ?
+    // sync - for when application_show adds/removes roles
     this.model.on("change sync", this.render, this);
     this.view_state.on("change", this.render, this);
 
@@ -76,6 +78,12 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     // Remove any roles in the DOM not in our model anymore
     var roles_to_remove = _.difference(roles_in_dom, roles_in_model);
 
+    console.log("roles to remove is:");
+    console.log(roles_to_remove);
+    console.log("roles in dom then roles in model:");
+    console.log(roles_in_dom);
+    console.log(roles_in_model);
+
     _.each(roles_to_remove, function(r) {
       var to_remove = self.$('.roles').find("div.role[data-role-id=" + r + "]");
       $(to_remove).remove();
@@ -84,11 +92,14 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     // Add any roles to the DOM mentioned in our model
     var roles_to_add = _.difference(roles_in_model, roles_in_dom);
     _.each(roles_to_add, function(r) {
-      var role = self.model.roles.get(r);
-      var $role_item = self.renderRoleItem(role);
-      self.$('.roles').append($role_item);
-      console.log("adding for " + r);
-      console.log(role);
+      // Avoid rendering roles not yet synced, i.e. those with IDs like "new_243087234"
+      if(isNaN(parseInt(r)) == false) {
+        var role = self.model.roles.get(r);
+        var $role_item = self.renderRoleItem(role);
+        self.$('.roles').append($role_item);
+        console.log("adding for " + r);
+        console.log(role);
+      }
       //debugger;
     });
 

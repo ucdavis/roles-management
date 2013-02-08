@@ -14,7 +14,6 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   initialize: function(options) {
     var self = this;
 
-    //this.model.on('sync', this.render, this);
     this.model.roles.on('add remove', this.render, this);
 
     this.$el.html(JST['applications/show']({ application: this.model }));
@@ -58,6 +57,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
     this.$('span#csv-download>a').attr("href", Routes.application_path(this.model.id) + ".csv");
 
+    console.log("application_show: rendering an application with no. roles:" + this.model.roles.length);
+
     // Roles tab
     self.$('table#roles tbody').empty();
     this.model.roles.each(function(role) {
@@ -100,18 +101,22 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
     console.log("saving for application with cid " + this.model.cid);
 
+    console.log("number of roles before saivng:" + this.model.roles.length);
+
     this.model.save({}, {
       success: function() {
         console.log("finished saving for application with cid " + self.model.cid);
+        console.log("number of roles after saivng:" + self.model.roles.length);
         status_bar.hide();
+        self.render();
       },
 
       error: function() {
         status_bar.show("An error occurred while saving the application.", "error");
-      }
-    });
+      },
 
-    this.render();
+      wait: true
+    });
 
     return false;
   },
@@ -138,11 +143,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
   },
 
   cleanUpModal: function() {
-    this.model.off('add change remove sync', this.render, this);
-    this.model.roles.off('add change remove sync reset', this.render, this);
-
-    // Remove any un-saved roles
-    this.model.roles.reset( this.model.get('roles'), { silent: true } );
+    this.model.roles.off('add remove', this.render, this);
 
     $("div#applicationShowModal").remove();
     // Need to change URL in case they want to open the same modal again

@@ -4,6 +4,11 @@ DssRm.Models.Application = Backbone.Model.extend({
     this.roles = new DssRm.Collections.Roles(this.get('roles'));
     this.owners = new DssRm.Collections.Entities(this.get('owners'));
     this.operators = new DssRm.Collections.Entities(this.get('operators'));
+
+    this.on('sync', function() {
+      // Adding a new role will reveal a proper ID only after the server gives us one on save
+      this.roles.reset(this.get('roles'));
+    }, this);
   },
 
   // Returns only the "highest" relationship (this order): owner, operator, admin
