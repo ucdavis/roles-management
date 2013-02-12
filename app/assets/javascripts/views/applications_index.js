@@ -18,24 +18,13 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     this.view_state.selected_role_id = null;
 
     this.view_state.on("change", this.render, this);
-    DssRm.applications.on('change add remove destroy sync reset', this.render, this);
-    // DssRm.current_user.favorites.on('all', function(a, b, c) {
-    //   console.log(a);
-    //   console.log(b);
-    //   console.log(c);
-    // }, this);
-    DssRm.current_user.favorites.on('change add remove destroy sync reset', function(f, e, i) {
-      this.render();
-    }, this);
-    DssRm.current_user.group_ownerships.on('change add remove destroy sync reset', function(e) {
-      console.log("applications_index: caught " + e + " for current_user.group_ownerships. calling render");
-      console.log(e);
-      this.render();
-    }, this);
-    DssRm.current_user.group_operatorships.on('change add remove destroy sync reset', function(e) {
-      console.log("applications_index: caught " + e + " for current_user.group_operatorships. calling render");
-      this.render();
-    }, this);
+
+    DssRm.applications.on('add', function(o) { self.renderCard(o) }, this);
+    DssRm.applications.on('remove', function(o) { self.$('#cards').find('.card#application_' + o.id).remove() }, this);
+
+    DssRm.current_user.favorites.on('change add remove destroy sync reset', this.render, this);
+    DssRm.current_user.group_ownerships.on('change add remove destroy sync reset', this.render, this);
+    DssRm.current_user.group_operatorships.on('change add remove destroy sync reset', this.render, this);
 
     this.$el.html(JST['applications/index']({ applications: DssRm.applications }));
 
@@ -94,8 +83,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
   render: function() {
     var self = this;
 
-    console.log("applications_index: render");
-
     // We must ensure tooltips are closed before possibly deleting their
     // associated DOM elements
     this.$('[rel=tooltip]').each(function(i, el) {
@@ -120,7 +107,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     if(this.view_state.selected_role_id) var selected_role = self.view_state.selected_application.roles.where({id: parseInt(self.view_state.selected_role_id)})[0];
 
     this.$('#pins').empty();
-    console.log("applications_index: rendering " + this.sidebar_entities.length + " sidebar entities");
     this.sidebar_entities.each(function(entity) {
       var pin = new DssRm.Views.EntityItem({
         model: entity,
@@ -247,7 +233,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
 
     switch(id) {
       case DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION:
-        DssRm.applications.create({ name: label.slice(7) }); // slice(7) is removing the "Create " prefix
+        var name = label.slice(7); // slice(7) is removing the "Create " prefix
+        DssRm.applications.create({ name: name, owners: [{ id: DssRm.current_user.id, name: DssRm.current_user.get('name'), type: "Person" } ] }, { wait: true });
       break;
     }
   },

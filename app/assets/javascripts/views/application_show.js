@@ -57,8 +57,6 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
     this.$('span#csv-download>a').attr("href", Routes.application_path(this.model.id) + ".csv");
 
-    console.log("application_show: rendering an application with no. roles:" + this.model.roles.length);
-
     // Roles tab
     self.$('table#roles tbody').empty();
     this.model.roles.each(function(role) {
@@ -99,14 +97,8 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       }
     });
 
-    console.log("saving for application with cid " + this.model.cid);
-
-    console.log("number of roles before saivng:" + this.model.roles.length);
-
     this.model.save({}, {
       success: function() {
-        console.log("finished saving for application with cid " + self.model.cid);
-        console.log("number of roles after saivng:" + self.model.roles.length);
         status_bar.hide();
         self.render();
       },
@@ -134,6 +126,9 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
         // dismiss the dialog
         self.$(".modal-header a.close").trigger("click");
+
+        // Ensure applications_index is updated
+
       } else {
         // do nothing - do not delete
       }

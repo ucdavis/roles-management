@@ -28,14 +28,6 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     this.$('.card-title').attr("title", this.model.escape('description'));
     this.$('.application-link').attr("href", this.applicationUrl());
 
-    if(this.relationship == "admin" || this.relationship == "operator") {
-      this.$('h6').html('Owned by ' + this.owner_names);
-      this.$('h6').show();
-    } else {
-      this.$('h6').hide();
-    }
-    if(this.relationship == "operator") this.$('i.details').hide();
-
     if(this.model.roles.length == 0) {
       this.$('.roles').hide();
     } else {
@@ -52,6 +44,14 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     var self = this;
 
     this.$('#application-name').html(this.model.escape('name'));
+
+    if(this.relationship == "admin" || this.relationship == "operator") {
+      this.$('h6').html('Owned by ' + this.owner_names);
+      this.$('h6').show();
+    } else {
+      this.$('h6').hide();
+    }
+    if(this.relationship == "operator") this.$('i.details').hide();
 
     // Highlight this application?
     if(this.view_state.selected_application == this.model) {

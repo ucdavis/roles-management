@@ -55,7 +55,7 @@ class ApplicationsController < ApplicationController
     # SECUREME: Can the current user create applications?
 
     params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
-    params[:application][:owner_ids] << current_user.id
+    params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id
     @application = Application.new(params[:application])
 
     if @application.save
