@@ -41,8 +41,14 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
   },
 
   showEntity: function(uid) {
-    // Search for this entity (we use the current_user collections for events-sake)
-    var entity = new DssRm.Models.Entity({ id: uid });
+    // Search DssRm.current_user objects first
+    // We'd prefer not to create new objects and would like events like name
+    // changes to propagate
+    var entity = DssRm.current_user.favorites.get(uid);
+    if(entity == undefined) entity = DssRm.current_user.group_ownerships.get(uid);
+    if(entity == undefined) entity = DssRm.current_user.group_operatorships.get(uid);
+    // Fetch it as a last resort - we won't get event updates
+    if(entity == undefined) entity = new DssRm.Models.Entity({ id: uid });
 
     var self = this;
 

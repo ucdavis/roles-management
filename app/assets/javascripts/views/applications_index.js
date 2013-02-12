@@ -24,11 +24,12 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     //   console.log(b);
     //   console.log(c);
     // }, this);
-    DssRm.current_user.favorites.on('remove change add remove destroy sync reset', function(f, e, i) {
+    DssRm.current_user.favorites.on('change add remove destroy sync reset', function(f, e, i) {
       this.render();
     }, this);
     DssRm.current_user.group_ownerships.on('change add remove destroy sync reset', function(e) {
       console.log("applications_index: caught " + e + " for current_user.group_ownerships. calling render");
+      console.log(e);
       this.render();
     }, this);
     DssRm.current_user.group_operatorships.on('change add remove destroy sync reset', function(e) {

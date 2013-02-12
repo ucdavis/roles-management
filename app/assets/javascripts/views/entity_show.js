@@ -17,8 +17,6 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     var self = this;
     var type = this.model.get('type');
 
-    window.debugging = self;
-
     this.model.on('change', this.render, this);
 
     this.$el.html(JST['entities/show_' + this.model.get('type').toLowerCase() ]({ model: this.model }));
@@ -80,10 +78,6 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
           self.model.set('members', members);
         }
       });
-
-      //this.$el.on("keyup", "table#rules tbody tr input", function(e) {
-        //console.log("keyup on tbody tr");
-      //});
     } else if (type == "Person") {
       this.$("input[name=favorites]").tokenInput(Routes.api_people_path(), {
         crossDomain: false,
@@ -324,6 +318,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
       }
     });
 
+    console.log("saving entity with cid:" + this.model.cid);
     this.model.trigger('change');
 
     return false;
