@@ -1,4 +1,5 @@
 DSSRM::Application.routes.draw do
+  get "site/welcome"
   get "site/logout"
   get "site/access_denied"
   get "site/about"
@@ -19,25 +20,25 @@ DSSRM::Application.routes.draw do
     resources :api_whitelisted_ips
   end
 
-  namespace "api" do
-    resources :people
+  # namespace "api" do
+  #   resources :people
 
-    resources :groups
-    resources :ous
-    resources :titles
-    resources :roles
+  #   resources :groups
+  #   resources :ous
+  #   resources :titles
+  #   resources :roles
 
-    resources :applications
+  #   resources :applications
 
-    get "search", :controller => "custom"
-    post "resolve", :controller => "custom"
+  #   get "search", :controller => "custom"
+  #   post "resolve", :controller => "custom"
 
-    # Used on the site/index details modal group rule constructor, possibly elsewhere
-    get "loginid", :controller => "custom"
-    get "major", :controller => "custom"
-    get "affiliation", :controller => "custom"
-    get "ou", :controller => "custom"
-  end
+  #   # Used on the site/index details modal group rule constructor, possibly elsewhere
+  #   get "loginid", :controller => "custom"
+  #   get "major", :controller => "custom"
+  #   get "affiliation", :controller => "custom"
+  #   get "ou", :controller => "custom"
+  # end
 
-  root :to => 'applications#index'
+  root :to => 'site#welcome'
 end

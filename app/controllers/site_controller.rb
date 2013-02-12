@@ -1,4 +1,7 @@
 class SiteController < ApplicationController
+  def welcome
+  end
+
   def access_denied
     logger.info "#{request.remote_ip}: Loaded access denied page."
   end
