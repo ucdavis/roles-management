@@ -1,5 +1,16 @@
 class SiteController < ApplicationController
+  layout 'site'
+
   def welcome
+  end
+
+  def faq
+  end
+
+  def contact
+  end
+
+  def request_access
   end
 
   def access_denied

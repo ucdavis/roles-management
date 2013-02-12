@@ -1,6 +1,8 @@
 module ApplicationHelper
+  include Authentication
+
   def _has_role?(role)
-    unless ((defined? current_user) == nil) || (current_user == :cas_user_not_in_database)
+    unless current_user == :cas_user_not_in_database
       if impersonating?
         # We assume anybody impersonating is an admin and has every role anyway ...
         yield if block_given?

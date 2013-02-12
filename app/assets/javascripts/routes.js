@@ -309,9 +309,21 @@
   site_access_denied_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"access_denied",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// site_contact => /site/contact(.:format)
+  site_contact_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"contact",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// site_faq => /site/faq(.:format)
+  site_faq_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"faq",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // site_logout => /site/logout(.:format)
   site_logout_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"logout",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// site_request_access => /site/request_access(.:format)
+  site_request_access_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"request_access",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // site_welcome => /site/welcome(.:format)
   site_welcome_path: function(options) {

@@ -2,6 +2,9 @@ DSSRM::Application.routes.draw do
   get "site/welcome"
   get "site/logout"
   get "site/access_denied"
+  get "site/faq"
+  get "site/contact"
+  get "site/request_access"
   get "site/about"
 
   resources :applications

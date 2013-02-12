@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+	<title>Roles Management</title>
+
+  <%= stylesheet_link_tag "application" %>
+  <%= stylesheet_link_tag "site" %>
+</head>
+<body>
+
+  <div class="container-narrow">
+    <div class="masthead">
+      <ul class="nav nav-pills pull-right">
+        <li class="active"><%= link_to 'Welcome', site_welcome_path %></li>
+        <li><%= link_to 'FAQ', site_faq_path %></li>
+        <li><%= link_to 'Contact', site_contact_path %></li>
+      </ul>
+      <h3 class="muted">Roles Management</h3>
+    </div>
+
+    <hr />
+
+    <%= yield %>
+
+    <hr />
+
+  </div>
+
+</body>
+</html>
