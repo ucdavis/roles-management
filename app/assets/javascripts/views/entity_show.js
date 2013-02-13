@@ -410,7 +410,11 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     $.ajax({ url: lookahead_url, data: { q: query }, type: 'GET' }).always(function(data) {
       entities = [];
       _.each(data, function(entity) {
-        entities.push(entity.id + '####' + entity.name);
+        if(lookahead_type == 'loginid') {
+          entities.push(entity.id + '####' + entity.loginid);
+        } else {
+          entities.push(entity.id + '####' + entity.name);
+        }
       });
 
       process(entities);
