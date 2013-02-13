@@ -140,7 +140,7 @@ class Person < Entity
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Person', :admin => is_rm_admin? }
+    { :id => self.id, :name => self.name, :type => 'Person', :loginid => self.loginid, :admin => is_rm_admin? }
   end
 
   def can_administer_application?(app_id)
