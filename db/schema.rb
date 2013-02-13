@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130206064347) do
+ActiveRecord::Schema.define(:version => 20130213232752) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(:version => 20130206064347) do
     t.string   "secret"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "name"
   end
 
   create_table "api_whitelisted_ips", :force => true do |t|

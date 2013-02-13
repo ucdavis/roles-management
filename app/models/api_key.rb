@@ -1,8 +1,10 @@
 class ApiKey < ActiveRecord::Base
   using_access_control
 
-  before_save :ensure_secret_exists
+  validates :name, :presence => true
+  validates_uniqueness_of :secret
 
+  before_save :ensure_secret_exists
   has_many :applications
 
   def ensure_secret_exists

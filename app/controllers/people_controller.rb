@@ -18,4 +18,10 @@ class PeopleController < ApplicationController
 
     respond_with @people
   end
+
+  def show
+    @person = People.find(params[:id])
+
+    respond_with(@person)
+  end
 end

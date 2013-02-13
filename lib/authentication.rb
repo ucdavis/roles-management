@@ -25,13 +25,13 @@ module Authentication
     end
 
     # Check if HTTP Auth is being attempted.
-    authenticate_with_http_basic { |user, password|
-      key = ApiKey.find_by_secret(password)
+    authenticate_with_http_basic { |name, secret|
+      key = ApiKey.find_by_name_and_secret(name, secret)
 
       if key
         logger.info "API authenticated via application key"
         session[:api_key] = key
-        session[:user_id] = user
+        session[:user_id] = name
         session[:auth_via] = :api_key
         Authorization.current_user = :api_key
         return
@@ -79,8 +79,6 @@ module Authentication
 
         redirect_to :controller => "site", :action => "access_denied"
       end
-    else
-      logger.debug "require_authentication: cas_user does not exist in session. This should never happen."
     end
   end
 
