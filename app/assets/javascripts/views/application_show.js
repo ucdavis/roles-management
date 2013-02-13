@@ -18,7 +18,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
     this.$el.html(JST['applications/show']({ application: this.model }));
 
-    this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
+    this.$("input[name=owners]").tokenInput(Routes.people_path(), {
       crossDomain: false,
       defaultText: "",
       theme: "facebook",
@@ -26,7 +26,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
       onDelete: function(item) { self.model.owners.remove(item) }
     });
 
-    this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
+    this.$("input[name=operators]").tokenInput(Routes.people_path(), {
       crossDomain: false,
       defaultText: "",
       theme: "facebook",
@@ -177,7 +177,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend({
 
   sympaUrl: function(e) {
     var role_id = $(e.target).parents("tr").data("role_id");
-    var url = window.location.protocol + "//" + window.location.hostname + Routes.api_role_path(role_id) + ".txt";
+    var url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id) + ".txt";
 
     window.prompt ("Copy to clipboard: Ctrl+C, Enter", url);
 

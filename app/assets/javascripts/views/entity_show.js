@@ -22,7 +22,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     this.$el.html(JST['entities/show_' + this.model.get('type').toLowerCase() ]({ model: this.model }));
 
     if(type == "Group") {
-      this.$("input[name=owners]").tokenInput(Routes.api_people_path(), {
+      this.$("input[name=owners]").tokenInput(Routes.people_path(), {
         crossDomain: false,
         defaultText: "",
         theme: "facebook",
@@ -41,7 +41,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
 
-      this.$("input[name=operators]").tokenInput(Routes.api_people_path(), {
+      this.$("input[name=operators]").tokenInput(Routes.people_path(), {
         crossDomain: false,
         defaultText: "",
         theme: "facebook",
@@ -60,7 +60,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
 
-      this.$("input[name=members]").tokenInput(Routes.api_people_path(), {
+      this.$("input[name=members]").tokenInput(Routes.people_path(), {
         crossDomain: false,
         defaultText: "",
         theme: "facebook",
@@ -79,7 +79,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
     } else if (type == "Person") {
-      this.$("input[name=favorites]").tokenInput(Routes.api_people_path(), {
+      this.$("input[name=favorites]").tokenInput(Routes.people_path(), {
         crossDomain: false,
         defaultText: "",
         theme: "facebook",
@@ -98,7 +98,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
 
-      this.$("input[name=groups]").tokenInput(Routes.api_groups_path(), {
+      this.$("input[name=groups]").tokenInput(Routes.groups_path(), {
         crossDomain: false,
         defaultText: "",
         theme: "facebook",
@@ -117,7 +117,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
         }
       });
 
-      this.$("input[name=ous]").tokenInput(Routes.api_ous_path(), {
+      this.$("input[name=ous]").tokenInput(Routes.ous_path(), {
         crossDomain: false,
         defaultText: "",
         theme: "facebook",
@@ -148,7 +148,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
           </p>"
         );
 
-        $rolesTab.find("input[name=_token_input_" + app_id + "]").tokenInput(Routes.api_roles_path() + "?app_id=" + app_id, {
+        $rolesTab.find("input[name=_token_input_" + app_id + "]").tokenInput(Routes.roles_path() + "?application_id=" + app_id, {
           crossDomain: false,
           defaultText: "",
           theme: "facebook",
@@ -381,29 +381,29 @@ DssRm.Views.EntityShow = Support.CompositeView.extend({
     Backbone.history.navigate("");
   },
 
-  // Populates the sidebar search with results via async call to Routes.api_search_path()
+  // Populates the sidebar search with results via async call
   ruleSearch: function(query, process, e) {
     var lookahead_type = this.$element.parents("tr").find("td:first select").val();
     var lookahead_url = "";
 
     switch(lookahead_type) {
       case 'major':
-        lookahead_url = Routes.api_major_path();
+        lookahead_url = Routes.majors_path();
         break;
       case 'ou':
-        lookahead_url = Routes.api_ous_path();
+        lookahead_url = Routes.ous_path();
         break;
       case 'loginid':
-        lookahead_url = Routes.api_loginid_path();
+        lookahead_url = Routes.people_path();
         break;
       case 'title':
-        lookahead_url = Routes.api_titles_path();
+        lookahead_url = Routes.titles_path();
         break;
       case 'affiliation':
-        lookahead_url = Routes.api_affiliation_path();
+        lookahead_url = Routes.affiliations_path();
         break;
       case 'classification':
-        lookahead_url = Routes.api_classifications_path();
+        lookahead_url = Routes.classifications_path();
         break;
     }
 

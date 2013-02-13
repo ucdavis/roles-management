@@ -1,12 +1,19 @@
 class EntitiesController < ApplicationController
+  include DatabaseExtensions
   filter_access_to :all
   respond_to :json
 
-  #def index
-    #@entities = Person.all #current_user.manageable_ids
+  def index
+    # SECUREME
+    if params[:q]
+      upper_q = params[:q].upcase
+      @entities = Entity.where("upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
+    else
+      @entities = Entity.all
+    end
 
-    #respond_with @entities
-  #end
+    respond_with @entities
+  end
 
   def show
     # SECUREME

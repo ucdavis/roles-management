@@ -17,9 +17,14 @@ authorization do
     has_permission_on :group_rules, :to => [:create, :delete, :update]
     has_permission_on :group_operator_assignments, :to => [:create, :delete]
     has_permission_on :application_owner_assignments, :to => [:create, :delete]
-    has_permission_on :roles, :to => [:create, :update, :delete]
+    has_permission_on :roles, :to => [:index, :show, :create, :update, :delete]
     has_permission_on :person_favorite_assignments, :to => [:create, :update, :delete]
     has_permission_on :application_owner_assignments, :to => [:create, :update, :delete]
     has_permission_on :application_operator_assignments, :to => [:create, :update, :delete]
+    has_permission_on :ous, :to => [:index]
+    has_permission_on :majors, :to => [:index]
+    has_permission_on :titles, :to => [:index]
+    has_permission_on :classifications, :to => [:index]
+    has_permission_on :affiliations, :to => [:index]
   end
 end

@@ -140,9 +140,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     return this;
   },
 
-  // Populates the sidebar search with results via async call to Routes.api_search_path()
+  // Populates the sidebar search with results via async call
   sidebarSearch: function(query, process) {
-    $.ajax({ url: Routes.api_search_path(), data: { q: query }, type: 'GET' }).always(function(data) {
+    $.ajax({ url: Routes.entities_path(), data: { q: query }, type: 'GET' }).always(function(data) {
       entities = [];
       var exact_match_found = false;
       _.each(data, function(entity) {

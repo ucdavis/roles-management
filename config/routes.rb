@@ -9,9 +9,14 @@ DSSRM::Application.routes.draw do
 
   resources :applications
   resources :entities
-
-  post "/roles/assign", :controller => "role_assignments", :action => "create"
-  delete "/roles/unassign", :controller => "role_assignments", :action => "destroy"
+  resources :people
+  resources :groups
+  resources :ous
+  resources :roles
+  resources :majors
+  resources :titles
+  resources :affiliations
+  resources :classifications
 
   namespace "admin" do
     get "dialogs/impersonate"
@@ -22,26 +27,6 @@ DSSRM::Application.routes.draw do
 
     resources :api_whitelisted_ips
   end
-
-  # namespace "api" do
-  #   resources :people
-
-  #   resources :groups
-  #   resources :ous
-  #   resources :titles
-  #   resources :roles
-
-  #   resources :applications
-
-  #   get "search", :controller => "custom"
-  #   post "resolve", :controller => "custom"
-
-  #   # Used on the site/index details modal group rule constructor, possibly elsewhere
-  #   get "loginid", :controller => "custom"
-  #   get "major", :controller => "custom"
-  #   get "affiliation", :controller => "custom"
-  #   get "ou", :controller => "custom"
-  # end
 
   root :to => 'site#welcome'
 end

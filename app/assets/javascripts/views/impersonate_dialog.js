@@ -30,7 +30,7 @@ DssRm.Views.ImpersonateDialog = Support.CompositeView.extend({
 
     if(loginid.length < 3) return;
 
-    $.get(Routes.api_loginid_path() + "?q=" + loginid, function(results) {
+    $.get(Routes.people_path() + "?q=" + loginid, function(results) {
       if(_.find(results, function(r) { return r.name == loginid } ) !== undefined) {
         // Write 'Ok' and enable the impersonate button
         $("#impersonateDialogModal span#loginid_status").html("<span style='color: #00aa00;'>Ok</span>");
