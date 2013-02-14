@@ -1,11 +1,15 @@
-class ApiKey < ActiveRecord::Base
+class ApiKeyUser < ActiveRecord::Base
   using_access_control
 
-  validates :name, :presence => true
-  validates_uniqueness_of :secret
+  validates :name, :uniqueness => true, :presence => true
+  validates :secret, :uniqueness => true, :presence => true
 
   before_save :ensure_secret_exists
   has_many :applications
+
+  def role_symbols
+    [:access]
+  end
 
   def ensure_secret_exists
     if secret.nil?

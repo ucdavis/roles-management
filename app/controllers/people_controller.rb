@@ -20,7 +20,7 @@ class PeopleController < ApplicationController
   end
 
   def show
-    @person = People.find(params[:id])
+    @person = Person.find_by_loginid(params[:id])
 
     respond_with(@person)
   end

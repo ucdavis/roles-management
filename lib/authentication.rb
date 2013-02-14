@@ -15,7 +15,6 @@ module Authentication
     # Check if the IP is whitelisted for API access (used with Sympa)
     if ApiWhitelistedIp.find_by_address(request.remote_ip)
       logger.info "API authenticated via whitelist IP: #{request.remote_ip}"
-      session[:api_key] = nil
       session[:user_id] = nil
       session[:auth_via] = :whitelisted_ip
       Authorization.current_user = :whitelisted_ip
@@ -26,14 +25,13 @@ module Authentication
 
     # Check if HTTP Auth is being attempted.
     authenticate_with_http_basic { |name, secret|
-      key = ApiKey.find_by_name_and_secret(name, secret)
+      @api_user = ApiKeyUser.find_by_name_and_secret(name, secret)
 
-      if key
+      if @api_user
         logger.info "API authenticated via application key"
-        session[:api_key] = key
         session[:user_id] = name
         session[:auth_via] = :api_key
-        Authorization.current_user = :api_key
+        Authorization.current_user = @api_user
         return
       end
 
@@ -60,7 +58,6 @@ module Authentication
 
       if @user
         # Valid user found through CAS.
-        session[:api_key] = nil
         session[:user_id] = @user.id
         session[:auth_via] = :cas
         Authorization.current_user = @user
@@ -70,7 +67,6 @@ module Authentication
         return
       else
         # Proper CAS request but user not in our database.
-        session[:api_key] = nil
         session[:user_id] = nil
         session[:auth_via] = nil
 
