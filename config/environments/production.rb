@@ -65,6 +65,9 @@ DSSRM::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
+  # Force SSL in production
+  config.force_ssl = true
+
   # Use local sendmail
   config.action_mailer.delivery_method = :sendmail
   config.action_mailer.perform_deliveries = true
