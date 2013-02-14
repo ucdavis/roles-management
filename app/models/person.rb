@@ -125,7 +125,7 @@ class Person < Entity
     # Add apps via roles explicitly assigned
     roles.each { |role| apps << role.application }
 
-    apps
+    apps.uniq{ |a| a.id }
   end
 
   # ACL symbols
