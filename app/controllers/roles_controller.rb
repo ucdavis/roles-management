@@ -15,6 +15,8 @@ class RolesController < ApplicationController
 
   def show
     @role = Role.find_by_id(params[:id])
-    respond_with @role
+    respond_with(@role) do |format|
+      format.text
+    end
   end
 end
