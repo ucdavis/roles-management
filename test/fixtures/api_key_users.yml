@@ -1,0 +1,3 @@
+apiuser:
+  name: apiuser
+  secret: 123456
