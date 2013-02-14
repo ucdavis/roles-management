@@ -21,10 +21,10 @@ class RolesControllerTest < ActionController::TestCase
     assert body.include?('entities'), 'JSON response should include entities'
   end
 
-  test ".txt output should work for a particular role"
+  test ".txt output should work for a particular role" do
     grant_whitelisted_access
 
     get :show, :format => :txt, :id => '1'
 
-  do
+  end
 end
