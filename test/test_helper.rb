@@ -22,4 +22,8 @@ class ActiveSupport::TestCase
       assert p.role_symbols.length > 0, "current_user should have just been assigned a role for this test"
     end
   end
+
+  def grant_whitelisted_access
+    @request.env['REMOTE_ADDR'] = '1.2.3.4'
+  end
 end

@@ -13,8 +13,6 @@ class RolesControllerTest < ActionController::TestCase
 
     body = JSON.parse(response.body)
 
-    puts body
-
     assert body.include?('id'), 'JSON response does not include id field'
     assert body.include?('token'), 'JSON response does not include token field'
     assert body.include?('name'), 'JSON response does not include name field'
@@ -22,4 +20,11 @@ class RolesControllerTest < ActionController::TestCase
     assert body.include?('description'), 'JSON response should include description'
     assert body.include?('entities'), 'JSON response should include entities'
   end
+
+  test ".txt output should work for a particular role"
+    grant_whitelisted_access
+
+    get :show, :format => :txt, :id => '1'
+
+  do
 end

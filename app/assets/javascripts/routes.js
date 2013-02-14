@@ -245,18 +245,6 @@
   applications_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"applications",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// authorization_rules => /authorization_rules(.:format)
-  authorization_rules_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"authorization_rules",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// authorization_usages => /authorization_usages(.:format)
-  authorization_usages_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"authorization_usages",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// change_authorization_rules => /authorization_rules/change(.:format)
-  change_authorization_rules_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"authorization_rules",false]],[7,"/",false]],[6,"change",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
 // classification => /classifications/:id(.:format)
   classification_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"classifications",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -316,10 +304,6 @@
 // entity => /entities/:id(.:format)
   entity_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"entities",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// graph_authorization_rules => /authorization_rules/graph(.:format)
-  graph_authorization_rules_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"authorization_rules",false]],[7,"/",false]],[6,"graph",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // group => /groups/:id(.:format)
   group_path: function(_id, options) {
@@ -397,10 +381,6 @@
   person_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"people",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// rails_info_properties => /rails/info/properties(.:format)
-  rails_info_properties_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"rails",false]],[7,"/",false]],[6,"info",false]],[7,"/",false]],[6,"properties",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
 // role => /roles/:id(.:format)
   role_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -440,10 +420,6 @@
 // site_welcome => /site/welcome(.:format)
   site_welcome_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"welcome",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// suggest_change_authorization_rules => /authorization_rules/suggest_change(.:format)
-  suggest_change_authorization_rules_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"authorization_rules",false]],[7,"/",false]],[6,"suggest_change",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // title => /titles/:id(.:format)
   title_path: function(_id, options) {

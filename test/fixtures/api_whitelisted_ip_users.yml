@@ -1,0 +1,4 @@
+whitelisted_user:
+  id: 1
+  address: 1.2.3.4
+  reason: Testing
