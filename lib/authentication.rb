@@ -12,12 +12,13 @@ module Authentication
   def require_authentication
     return if session[:auth_via]
 
+    @whitelisted_user = ApiWhitelistedIpUser.find_by_address(request.remote_ip)
     # Check if the IP is whitelisted for API access (used with Sympa)
-    if ApiWhitelistedIp.find_by_address(request.remote_ip)
+    if @whitelisted_user
       logger.info "API authenticated via whitelist IP: #{request.remote_ip}"
-      session[:user_id] = nil
+      session[:user_id] = request.remote_ip
       session[:auth_via] = :whitelisted_ip
-      Authorization.current_user = :whitelisted_ip
+      Authorization.current_user = @whitelisted_user
       return
     else
       logger.debug "require_authentication: Not on the API whitelist."
