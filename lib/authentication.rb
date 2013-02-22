@@ -40,7 +40,9 @@ module Authentication
       # Note that they will only get 'access denied' if they supplied a name and
       # failed. If they supplied nothing for HTTP Auth, this block will get passed
       # over.
-      raise ActionController::RoutingError.new('Access denied')
+      render :text => "Invalid API key.", :status => 401
+      return
+      #raise ActionController::RoutingError.new('Access denied')
     }
 
     logger.debug "Passed over HTTP Auth."
