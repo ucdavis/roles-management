@@ -10,7 +10,18 @@ module Authentication
   # Ensure session[:auth_via] exists.
   # This is populated by a whitelisted IP request, a CAS redirect or a HTTP Auth request
   def require_authentication
-    return if session[:auth_via]
+    if session[:auth_via]
+      case session[:auth_via]
+      when :whitelisted_ip
+        Authorization.current_user = ApiWhitelistedIpUser.find_by_address(session[:user_id])
+      when :api_key
+        Authorization.current_user = ApiKeyUser.find_by_name(session[:user_id])
+      when :cas
+        Authorization.current_user = Person.find_by_id(session[:user_id])
+      end
+      logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{Authorization.current_user}"
+      return
+    end
 
     @whitelisted_user = ApiWhitelistedIpUser.find_by_address(request.remote_ip)
     # Check if the IP is whitelisted for API access (used with Sympa)

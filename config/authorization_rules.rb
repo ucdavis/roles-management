@@ -6,6 +6,8 @@ authorization do
     has_permission_on :admin_ops, :to => [:ad_path_check]
     has_permission_on :api_whitelisted_ips, :to => [:create, :delete]
     has_permission_on :admin_api_whitelisted_ips, :to => [:index, :create, :destroy]
+    has_permission_on :api_key_users, :to => [:create, :delete]
+    has_permission_on :admin_api_keys, :to => [:index, :create, :destroy]
   end
   role :access do
     has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy, :delete]

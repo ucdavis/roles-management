@@ -4,7 +4,7 @@ class ApiKeyUser < ActiveRecord::Base
   validates :name, :uniqueness => true, :presence => true
   validates :secret, :uniqueness => true, :presence => true
 
-  before_save :ensure_secret_exists
+  before_validation :ensure_secret_exists
   has_many :applications
 
   def role_symbols

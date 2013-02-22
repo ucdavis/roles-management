@@ -11,6 +11,7 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
     "entities/:uid"    : "showEntity",
     "impersonate"      : "impersonateDialog",
     "unimpersonate"    : "unimpersonate",
+    "api-keys"         : "apiKeysDialog",
     "whitelist"        : "whitelistDialog",
     "about"            : "aboutDialog"
   },
@@ -77,6 +78,22 @@ DssRm.Routers.Applications = Support.SwappingRouter.extend({
 
   unimpersonate: function() {
     window.location.href = Routes.admin_ops_unimpersonate_path();
+  },
+  
+  apiKeysDialog: function() {
+    var self = this;
+
+    status_bar.show("Loading API keys dialog ...");
+
+    $.get(Routes.admin_api_keys_path(), function(keys) {
+      status_bar.hide();
+
+      self.api_keys = new DssRm.Collections.ApiKeys(keys);
+
+      var view = new DssRm.Views.ApiKeysDialog({ api_keys: self.api_keys });
+      self.currentView.renderChild(view);
+      view.$el.modal();
+    });
   },
 
   whitelistDialog: function() {

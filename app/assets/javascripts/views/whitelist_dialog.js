@@ -14,7 +14,7 @@ DssRm.Views.WhitelistDialog = Support.CompositeView.extend({
 
     this.whitelist = options.whitelist;
 
-    this.whitelist.on('change add destroy sync', this.render, this);
+    this.whitelist.on('sync remove', this.render, this);
   },
 
   render: function() {
@@ -34,6 +34,8 @@ DssRm.Views.WhitelistDialog = Support.CompositeView.extend({
     var self = this;
     var new_address = $(e.currentTarget).find("input[name=address]").val();
     var new_reason = $(e.currentTarget).find("input[name=reason]").val();
+    this.$('form#new-address input[name=address]').val(""); // clear the input
+    this.$('form#new-address input[name=reason]').val("");
 
     this.whitelist.create({ address: new_address, reason: new_reason });
 
@@ -48,8 +50,6 @@ DssRm.Views.WhitelistDialog = Support.CompositeView.extend({
 
     this.whitelist.remove(model);
 
-    this.whitelist.trigger('sync');
-
     return false;
   },
 
@@ -60,17 +60,3 @@ DssRm.Views.WhitelistDialog = Support.CompositeView.extend({
     Backbone.history.navigate("");
   }
 });
-
-  // Address was created. Keep the view up-to-date by adding the corresponding table row
-  //$("form#new-address").bind("ajax:success", function(event, data, status, xhr) {
-    //var address = data.api_whitelisted_ip;
-    // Add the row
-    //$("table#addresses tbody tr:last").after("<tr><td>" + address.address + "</td><td>" + address.reason + "</td><td><a href=\"/admin/api_whitelisted_ips/" + address.id + "\" data-confirm=\"Are you sure?\" data-method=\"delete\" data-remote=\"true\" rel=\"nofollow\">Remove</a></td></tr>");
-    // Clear out the input
-    //$("form#new-address #address_address").val("");
-  //});
-
-  // Address was deleted. Keep the view up-to-date by deleting the corresponding table row
-  //$("table#addresses tbody").on("ajax:success", "tr td a", function(event, data, status, xhr) {
-    //$(this).parent().parent().remove();
-  //});
