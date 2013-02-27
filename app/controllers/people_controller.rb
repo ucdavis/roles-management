@@ -24,4 +24,12 @@ class PeopleController < ApplicationController
 
     respond_with(@person)
   end
+  
+  
+  def update
+    @person = Person.find(params[:id])
+    @person.update_attributes(params[:person].except(:id, :name, :roles))
+
+    respond_with(@person)
+  end
 end

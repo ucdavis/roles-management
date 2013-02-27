@@ -2,10 +2,12 @@
 
 <div id="loading-backdrop" />
 
+<!-- current_user_madin is merely for UI purposes - backend performs its own checks -->
 <script type="text/json" id="bootstrap">
   {
-    "current_user": <%= current_user.to_json %>,
-    "applications": <%= @applications.to_json %>
+    "current_user"      : <%= current_user.to_json %>,
+    "applications"      : <%= @applications.to_json %>,
+    "current_user_admin": <%= current_user.is_rm_admin? %>
   }
 </script>
 

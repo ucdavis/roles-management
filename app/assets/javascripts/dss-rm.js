@@ -12,7 +12,7 @@ window.DssRm = {
       id: data.current_user.id,
       name: data.current_user.name,
       type: 'Person',
-      admin: data.current_user.admin
+      admin: data.current_user_admin
     });
 
     self.router = new DssRm.Routers.Applications();
