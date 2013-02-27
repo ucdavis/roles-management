@@ -16,7 +16,7 @@ end
 
 group :development do
   gem 'letter_opener'
-  gem 'debugger'
+  #gem 'debugger'
   gem 'ruby-prof'
 end
 
