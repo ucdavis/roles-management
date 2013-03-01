@@ -1,0 +1,67 @@
+RM API Documentation
+====================
+Version 0.5
+Updated 2013-02-13
+Christopher Thielen (cmthielen@ucdavis.edu)
+
+Notes
+-----
+This document assumes a working instance of RM is available at
+roles.dss.ucdavis.edu. Please substitute this address for the proper
+one if need be.
+
+Introduction and REST
+---------------------
+The API for Roles Management (RM) is based on RESTful JSON. REST differs
+from other API mechanisms like SOAP in that it is typically resource-based,
+not strongly-bound and not based around class definitions. The difference in
+these approaches is simple to illustrate:
+
+SOAP-style:
+  API end-point: http://application.dev/soap/
+
+  Function call:
+    User u = getUser((int)userId) // encoded via XML
+
+RESTful JSON:
+  HTTP GET http://application.dev/user/userId
+  (result is returned as JSON)
+
+The RESTful design was created by the W3C around the same time as HTTP 1.1
+and utilizes the full set of HTTP verbs: HTTP GET to get a resource,
+HTTP DELETE to remove a resource, HTTP POST to create a new resource,
+HTTP PUT to update an existing resource, etc.
+
+Resource-Types
+--------------
+The available resources in this version of the API are:
+
+  * people
+    Represents an individual.
+  * groups
+    Represents a group.
+  * entities
+    Represents either a person or a group. Useful when
+    you want to query both (e.g. sending messages).
+  * roles
+    Represents roles.
+  * applications
+    Represents applications.
+
+Authentication
+--------------
+All API calls must be authenticated. This requires a valid API key. Request
+an API key from the RM System Administrator. The API key consists of the name
+of your application and a randomly generated string.
+
+To authenticate, send this exact name and password using standard HTTP Auth
+over SSL.
+
+Examples
+--------
+1. Getting information about a person using their login ID (assumed to
+   be "joe"):
+
+  HTTP GET http://roles.dss.ucdavis.edu/people/joe
+
+2. Updating an individual's name:
