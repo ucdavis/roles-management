@@ -1,7 +1,13 @@
-/*#sidebar {
+#sidebar-container {
   position: fixed;
   width: inherit;
-}*/
+  height: 100%;
+}
+
+#sidebar {
+  overflow-y: scroll;
+  height: 85%;
+}
 
 .modal input#sympa_url {
   cursor: text;
