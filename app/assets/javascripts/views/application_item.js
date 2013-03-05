@@ -28,22 +28,18 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend({
     this.$('.card-title').attr("title", this.model.escape('description'));
     this.$('.application-link').attr("href", this.applicationUrl());
 
-    if(this.model.roles.length == 0) {
-      this.$('.roles').hide();
-    } else {
-      this.$('.roles').show();
-
-      this.model.roles.each(function(role) {
-        var $role_item = self.renderRoleItem(role);
-        self.$('.roles').append($role_item);
-      });
-    }
+    this.model.roles.each(function(role) {
+      var $role_item = self.renderRoleItem(role);
+      self.$('.roles').append($role_item);
+    });
   },
 
   render: function() {
     var self = this;
 
     this.$('#application-name').html(this.model.escape('name'));
+    
+    this.model.roles.length ? this.$('.roles').show() : this.$('.roles').hide();
 
     if(this.relationship == "admin" || this.relationship == "operator") {
       this.$('h6').html('Owned by ' + this.owner_names);
