@@ -4,3 +4,7 @@
 <p>
   <b>If you believe this is an error</b>, please contact your supervisor or IT support.
 </p>
+
+<% unless session[:impersonate].nil? %>
+  <p><br /><b>Looks like you could use the <%= link_to "unimpersonate link", admin_ops_unimpersonate_url %>.</b></p>
+<% end %>
