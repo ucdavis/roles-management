@@ -12,7 +12,7 @@ class Admin::OpsController < Admin::BaseController
       session[:impersonate] = params[:loginid]
     end
 
-    redirect_to root_url
+    redirect_to applications_url
   end
 
   def unimpersonate
@@ -21,7 +21,7 @@ class Admin::OpsController < Admin::BaseController
 
     session.delete(:impersonate)
 
-    redirect_to root_url
+    redirect_to applications_url
   end
 
   def ad_path_check

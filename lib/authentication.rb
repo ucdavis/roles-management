@@ -1,10 +1,19 @@
 module Authentication
+  # Returns the current_user, which may be 'false' if impersonation is active
   def current_user
     if session[:impersonate]
       Person.find_by_loginid(session[:impersonate])
     else
       Person.find_by_id(session[:user_id])
     end
+  end
+  
+  # Returns the 'actual' user - usually this matches current_user but when
+  # impersonating, it will return the human doing the impersonating, not the
+  # account they are pretending to be. Useful for determining if actions like
+  # 'un-impersonate' should be made available.
+  def actual_user
+    Person.find_by_id(session[:user_id])
   end
 
   # Ensure session[:auth_via] exists.
