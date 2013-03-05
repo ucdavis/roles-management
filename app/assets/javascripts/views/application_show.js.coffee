@@ -3,7 +3,7 @@ DssRm.Views.ApplicationShow = Support.CompositeView.extend(
   events:
     "click a#apply": "saveApplication"
     "click a#delete": "deleteApplication"
-    hidden: "cleanUpModal"
+    "hidden": "cleanUpModal"
     "click button#add_role": "addRole"
     "click button#remove_role": "removeRole"
     "change table#roles input": "storeRoleChanges"

@@ -339,9 +339,21 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
     #}
     #});
     false
-    
+
   deleteEntity: ->
-    console.log "test"
+    self = this
+    
+    self.$el.fadeOut()
+    
+    bootbox.confirm "Are you sure you want to delete " + @model.escape("name") + "?", (result) ->
+      self.$el.fadeIn()
+      if result
+        # delete the application and dismiss the dialog
+        self.model.destroy()
+        
+        # dismiss the dialog
+        self.$(".modal-header a.close").trigger "click"
+
     false
 
   addRule: (e) ->
