@@ -10,7 +10,6 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     this.model.bind('change', this.render, this);
 
     this.highlighted = options.highlighted;
-    this.current_user = options.current_user;
     this.faded = options.faded;
     this.read_only = options.read_only;
     this.current_role = options.current_role;
@@ -77,10 +76,10 @@ DssRm.Views.EntityItem = Support.CompositeView.extend({
     } else if (type == "Person") {
       var model_id = this.model.get('id');
 
-      var favorites_entity = this.current_user.favorites.find(function(e) { return e.id == model_id; });
-      this.current_user.favorites.remove(favorites_entity);
-      this.current_user.favorites.trigger('change');
-      this.current_user.save();
+      var favorites_entity = DssRm.current_user.favorites.find(function(e) { return e.id == model_id; });
+      DssRm.current_user.favorites.remove(favorites_entity);
+      DssRm.current_user.favorites.trigger('change');
+      DssRm.current_user.save();
     }
   }
 });
