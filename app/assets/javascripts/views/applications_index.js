@@ -107,16 +107,22 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
     if(this.view_state.selected_role_id) var selected_role = self.view_state.selected_application.roles.where({id: parseInt(self.view_state.selected_role_id)})[0];
 
     this.$('#pins').empty();
+    this.$('#highlighted_pins').empty();
     this.sidebar_entities.each(function(entity) {
+      var highlighted = self.entityAssignedToCurrentRole(entity);
       var pin = new DssRm.Views.EntityItem({
         model: entity,
-        highlighted: self.entityAssignedToCurrentRole(entity),
+        highlighted: highlighted,
         read_only: _.indexOf(group_operatorships, entity.get('id')) >= 0,
         current_role: selected_role,
         current_application: self.view_state.selected_application
       });
       self.renderChild(pin);
-      self.$('#pins').append(pin.el);
+      if(highlighted) {
+        self.$('#highlighted_pins').append(pin.el);
+      } else {
+        self.$('#pins').append(pin.el);
+      }
     });
     if(self.view_state.selected_role_id) {
       var assigned_non_subordinates = selected_role.entities.reject(function(e) {
@@ -133,7 +139,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend({
           current_application: self.view_state.selected_application
         });
         self.renderChild(pin);
-        self.$('#pins').append(pin.el);
+        self.$('#highlighted_pins').append(pin.el);
       });
     }
 
