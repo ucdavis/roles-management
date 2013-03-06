@@ -45,7 +45,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       source: self.sidebarSearch
       updater: (item) ->
         self.sidebarSearchResultSelected item, self
-        ""
+        "" # bootstrap places our return value in the input element and we just want it to clear, so return ""
         
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
 
