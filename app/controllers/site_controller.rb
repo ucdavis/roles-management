@@ -1,5 +1,6 @@
 class SiteController < ApplicationController
   layout 'site'
+  respond_to :html
 
   def welcome
   end
