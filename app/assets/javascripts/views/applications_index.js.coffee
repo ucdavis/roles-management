@@ -14,6 +14,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     @view_state.selected_application = null
     @view_state.selected_role_id = null
     @view_state.on "change", @render, this
+
     DssRm.applications.on "add", ((o) ->
       self.renderCard o
     ), this
@@ -23,7 +24,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     DssRm.current_user.favorites.on "change add remove destroy sync reset", @render, this
     DssRm.current_user.group_ownerships.on "change add remove destroy sync reset", @render, this
     DssRm.current_user.group_operatorships.on "change add remove destroy sync reset", @render, this
+
     @$el.html JST["applications/index"](applications: DssRm.applications)
+
     @$("#search_sidebar").typeahead
       minLength: 3
       sorter: (items) -> # required to keep the order given to process() in 'source'
@@ -42,6 +45,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       source: self.sidebarSearch
       updater: (item) ->
         self.sidebarSearchResultSelected item, self
+        ""
         
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
 
@@ -183,9 +187,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         DssRm.current_user.group_ownerships.create
           name: label.slice(13) # slice(13) is removing the "Create Group " prefix
           type: "Group"
-
       else
-        
         # Exact result selected
         
         # If a role is selected, the behavior is to assign to the role,
