@@ -103,6 +103,6 @@ module Authentication
 
   # Returns true if we're currently impersonating another user
   def impersonating?
-    false
+    session[:impersonate] ? true : false
   end
 end
