@@ -27,6 +27,30 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
 
     @$el.html JST["applications/index"](applications: DssRm.applications)
 
+    @$("#search_applications").typeahead
+      minLength: 3
+      sorter: (items) -> # required to keep the order given to process() in 'source'
+        items
+
+      highlighter: (item) ->
+        parts = item.split("####")
+        item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+        query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
+        ret = item.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
+          "<strong>" + match + "</strong>"
+        )
+        ret = ret + parts[2]  if parts[2] isnt `undefined`
+        ret
+
+      source: self.applicationSearch
+
+      updater: (item) ->
+        self.applicationSearchResultSelected item, self
+        "" # bootstrap places our return value in the input element and we just want it to clear, so return ""
+
+      items: 15
+
+
     @$("#search_sidebar").typeahead
       minLength: 3
       sorter: (items) -> # required to keep the order given to process() in 'source'
@@ -49,25 +73,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
 
-
-    @$("#search_applications").typeahead
-      minLength: 3
-      sorter: (items) -> # required to keep the order given to process() in 'source'
-        items
-
-      highlighter: (item) ->
-        item = item.split("####")[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
-        query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
-        item.replace new RegExp("(" + query + ")", "ig"), ($1, match) ->
-          "<strong>" + match + "</strong>"
-
-      source: (query, process) ->
-        self.applicationSearch query, process, self
-
-      updater: (item) ->
-        self.applicationSearchResultSelected item, self
-
-      items: 15
 
     DssRm.applications.each (application) ->
       self.renderCard application
@@ -216,7 +221,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
             DssRm.current_user.favorites.add p
             DssRm.current_user.save()
 
-  applicationSearch: (query, process, self) ->
+  applicationSearch: (query, process) ->
     entities = []
     exact_match_found = false
     DssRm.applications.each (app) ->
@@ -225,7 +230,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
           exact_match_found = true  if app.get("name").toLowerCase() is query.toLowerCase()
           entities.push app.get("id") + "####" + app.get("name")
 
-    
     # Add the option to create a new one with this query
     entities.push DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION + "####Create " + query  if exact_match_found is false
     process entities
