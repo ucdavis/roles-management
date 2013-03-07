@@ -31,7 +31,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       minLength: 3
       sorter: (items) -> # required to keep the order given to process() in 'source'
         items
-
+    
       highlighter: (item) ->
         parts = item.split("####")
         item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
@@ -41,13 +41,12 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         )
         ret = ret + parts[2]  if parts[2] isnt `undefined`
         ret
-
+    
       source: self.applicationSearch
-
       updater: (item) ->
         self.applicationSearchResultSelected item, self
         "" # bootstrap places our return value in the input element and we just want it to clear, so return ""
-
+    
       items: 15
 
 
@@ -232,6 +231,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
 
     # Add the option to create a new one with this query
     entities.push DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION + "####Create " + query  if exact_match_found is false
+
     process entities
 
   applicationSearchResultSelected: (item, self) ->
