@@ -2,8 +2,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
   tagName: "div"
   className: "row-fluid"
   events:
-    "click #pins li": "selectEntity"
-    "click #cards": "deselectAll"
+    "click #pins li"            : "selectEntity"
+    "click #highlighted_pins li": "selectEntity"
+    "click #cards"              : "deselectAll"
 
   initialize: (options) ->
     self = this
@@ -21,6 +22,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     DssRm.applications.on "remove", ((o) ->
       self.$("#cards").find(".card#application_" + o.id).remove()
     ), this
+    DssRm.applications.on "change", @render, this # for toggling sidebar entities on and off roles
     DssRm.current_user.favorites.on "change add remove destroy sync reset", @render, this
     DssRm.current_user.group_ownerships.on "change add remove destroy sync reset", @render, this
     DssRm.current_user.group_operatorships.on "change add remove destroy sync reset", @render, this
@@ -272,7 +274,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
   selectEntity: (e) ->
     clicked_entity_id = $(e.currentTarget).data("entity-id")
     clicked_entity_name = $(e.currentTarget).data("entity-name")
-    self = this
     e.stopPropagation()
     
     # Behavior of selecting an entity changes depending on whether an application/role
@@ -288,18 +289,17 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       matched = selected_role.entities.filter((e) ->
         e.id is clicked_entity_id
       )
+
       if matched.length > 0
-        
         # toggling off
         selected_role.entities.remove matched[0]
         @view_state.selected_application.save()
       else
-        
         # toggling on
         new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
-        new_entity.fetch success: ->
+        new_entity.fetch success: =>
           selected_role.entities.add new_entity
-          self.view_state.selected_application.save()
+          @view_state.selected_application.save()
 
 
   entityAssignedToCurrentRole: (e) ->
