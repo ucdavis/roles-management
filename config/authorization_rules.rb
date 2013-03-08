@@ -4,7 +4,7 @@ authorization do
     has_permission_on :admin_dialogs, :to => [:impersonate, :ip_whitelist]
     has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate]
     has_permission_on :admin_ops, :to => [:ad_path_check]
-    has_permission_on :api_whitelisted_ips, :to => [:create, :delete]
+    has_permission_on :api_whitelisted_ip_users, :to => [:create, :delete]
     has_permission_on :admin_api_whitelisted_ips, :to => [:index, :create, :destroy]
     has_permission_on :api_key_users, :to => [:create, :delete]
     has_permission_on :admin_api_keys, :to => [:index, :create, :destroy]
