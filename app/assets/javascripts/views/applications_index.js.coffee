@@ -41,7 +41,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         )
         ret = ret + parts[2]  if parts[2] isnt `undefined`
         ret
-    
+          
       source: self.applicationSearch
       updater: (item) ->
         self.applicationSearchResultSelected item, self
@@ -221,18 +221,25 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
             DssRm.current_user.save()
 
   applicationSearch: (query, process) ->
-    entities = []
-    exact_match_found = false
-    DssRm.applications.each (app) ->
-      if app
-        if ~app.get("name").toLowerCase().indexOf(query.toLowerCase())
-          exact_match_found = true  if app.get("name").toLowerCase() is query.toLowerCase()
-          entities.push app.get("id") + "####" + app.get("name")
-
-    # Add the option to create a new one with this query
-    entities.push DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION + "####Create " + query  if exact_match_found is false
-
-    process entities
+    # I have no idea why we must delay ever so slightly.
+    # Bootstrap v2.3.1 takes source: ["red", "black"] just fine
+    # but source: function() { return ["red", black"] }, i.e. this
+    # exact function without the timeout, doesn't seem to work. The dropdown
+    # is populated but stays display: none
+    setTimeout( () ->
+      entities = []
+      exact_match_found = false
+      DssRm.applications.each (app) ->
+        if app
+          if ~app.get("name").toLowerCase().indexOf(query.toLowerCase())
+            exact_match_found = true  if app.get("name").toLowerCase() is query.toLowerCase()
+            entities.push app.get("id") + "####" + app.get("name")
+    
+      # Add the option to create a new one with this query
+      entities.push DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION + "####Create " + query  if exact_match_found is false
+    
+      process entities
+    , 10)
 
   applicationSearchResultSelected: (item, self) ->
     parts = item.split("####")
