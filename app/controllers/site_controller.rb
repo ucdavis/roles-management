@@ -16,6 +16,7 @@ class SiteController < ApplicationController
 
   def access_denied
     logger.info "#{request.remote_ip}: Loaded access denied page."
+    render :status => :forbidden
   end
 
   def logout
