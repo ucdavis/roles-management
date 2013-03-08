@@ -35,6 +35,12 @@
   -webkit-column-count: auto;
   -webkit-column-width: 335px;
   -webkit-column-gap: 10px;
+  -moz-column-count: auto;
+  -moz-column-width: 335px;
+  -moz-column-gap: 10px;
+  column-count: auto;
+  column-gap: 10px;
+  column-width: 335px;
 }
 
 .card {
