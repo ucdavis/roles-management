@@ -4,7 +4,14 @@ module Authentication
     if session[:impersonate]
       Person.find_by_loginid(session[:impersonate])
     else
-      Person.find_by_id(session[:user_id])
+      case session[:auth_via]
+      when :whitelisted_ip
+        return ApiWhitelistedIpUser.find_by_address(session[:user_id])
+      when :api_key
+        return ApiKeyUser.find_by_name(session[:user_id])
+      when :cas
+        return Person.find_by_id(session[:user_id])
+      end
     end
   end
   

@@ -5,8 +5,8 @@ class ApplicationsController < ApplicationController
 
   # GET /applications
   def index
-    @applications = current_user.manageable_applications
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded application index (main page)."
+    @applications = current_user.manageable_applications unless not defined? current_user.manageable_applications
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
     respond_with @applications
   end
 

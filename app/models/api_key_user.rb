@@ -7,6 +7,10 @@ class ApiKeyUser < ActiveRecord::Base
   before_validation :ensure_secret_exists
   has_many :applications
 
+  def log_identifier
+    "API Key(#{name})"
+  end
+
   def role_symbols
     [:access]
   end

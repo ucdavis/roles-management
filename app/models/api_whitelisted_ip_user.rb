@@ -3,6 +3,11 @@ class ApiWhitelistedIpUser < ActiveRecord::Base
 
   attr_accessible :address, :reason
 
+  def log_identifier
+    "Whitelisted(#{address})"
+  end
+
+  # Whitelisted API users are automatically given regular access
   def role_symbols
     [:access]
   end

@@ -41,6 +41,10 @@ class Person < Entity
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
   end
+  
+  def log_identifier
+    loginid
+  end
 
   def to_csv
     [id, loginid, email, first, last]
