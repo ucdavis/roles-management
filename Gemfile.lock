@@ -28,9 +28,9 @@ GIT
 
 GIT
   remote: https://github.com/stffn/declarative_authorization.git
-  revision: a4d318f8155330531b4e0436320c2cc8df5594bb
+  revision: 549a8d384e10cd7be5df4edcd5695893634fcf03
   specs:
-    declarative_authorization (0.5.6)
+    declarative_authorization (0.5.7)
 
 GEM
   remote: http://rubygems.org/
@@ -159,10 +159,10 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ruby-ldap (0.9.12)
-    ruby-prof (0.12.2)
+    ruby-prof (0.13.0)
     ruby_parser (3.1.1)
       sexp_processor (~> 4.1)
-    sass (3.2.6)
+    sass (3.2.7)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -175,7 +175,7 @@ GEM
       tilt (~> 1.1, != 1.3.0)
     sqlite3 (1.3.7)
     thor (0.17.0)
-    tilt (1.3.4)
+    tilt (1.3.5)
     treetop (1.4.12)
       polyglot
       polyglot (>= 0.3.1)
