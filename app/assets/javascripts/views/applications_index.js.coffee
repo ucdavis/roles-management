@@ -2,9 +2,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
   tagName: "div"
   className: "row-fluid"
   events:
-    "click #pins li"            : "selectEntity"
-    "click #highlighted_pins li": "selectEntity"
-    "click #cards"              : "deselectAll"
+    "click #pins li"             : "selectEntity"
+    "click #highlighted_pins li" : "selectEntity"
+    "click #cards"               : "deselectAll"
 
   initialize: (options) ->
     self = this
@@ -12,8 +12,12 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     # Create a view state to be shared with sub-views
     @view_state = {}
     _.extend @view_state, Backbone.Events
+    # 'selected' implies actions will be performed upon the object (as expected)
+    # whereas 'focused' merely indicates whether it's shaded or not (used by the search bars)
     @view_state.selected_application = null
     @view_state.selected_role_id = null
+    @view_state.focused_application_id = null
+    @view_state.focused_entity_id = null
     @view_state.on "change", @render, this
 
     DssRm.applications.on "add", ((o) ->
@@ -28,6 +32,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     DssRm.current_user.group_operatorships.on "change add remove destroy sync reset", @render, this
 
     @$el.html JST["applications/index"](applications: DssRm.applications)
+    
+    @$("#search_applications").on "change", (e) =>
+      @view_state.focused_application_id = null
 
     @$("#search_applications").typeahead
       minLength: 3
@@ -47,7 +54,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       source: self.applicationSearch
       updater: (item) ->
         self.applicationSearchResultSelected item, self
-        "" # bootstrap places our return value in the input element and we just want it to clear, so return ""
     
       items: 15
 
@@ -259,6 +265,9 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
           ]
         ,
           wait: true
+      else
+        @view_state.focused_application_id = id
+    label
 
 
   deselectAll: (e) ->

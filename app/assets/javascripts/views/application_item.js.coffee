@@ -5,7 +5,6 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend(
     "click .role": "selectRole"
 
   initialize: (options) ->
-    self = this
     @view_state = options.view_state
     
     # change - ?
@@ -25,13 +24,16 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend(
     @$el.data "application-id", @model.get("id")
     @$(".card-title").attr "title", @model.escape("description")
     @$(".application-link").attr "href", @applicationUrl()
-    @model.roles.each (role) ->
-      $role_item = self.renderRoleItem(role)
-      self.$(".roles").append $role_item
+    @model.roles.each (role) =>
+      $role_item = @renderRoleItem(role)
+      @$(".roles").append $role_item
 
 
   render: ->
     self = this
+    
+    console.log "rendering application item"
+    
     @$("#application-name").html @model.escape("name")
     (if @model.roles.length then @$(".roles").show() else @$(".roles").hide())
     if @relationship is "admin" or @relationship is "operator"
