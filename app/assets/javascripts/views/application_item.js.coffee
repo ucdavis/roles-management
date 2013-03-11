@@ -30,10 +30,6 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend(
 
 
   render: ->
-    self = this
-    
-    console.log "rendering application item"
-    
     @$("#application-name").html @model.escape("name")
     (if @model.roles.length then @$(".roles").show() else @$(".roles").hide())
     if @relationship is "admin" or @relationship is "operator"
@@ -49,15 +45,24 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend(
     else
       @$el.css("box-shadow", "0 1px 3px rgba(0, 0, 0, 0.3)").css "border", "1px solid #CCC"
     
+    # Shade/unshade this application? (based on @view_state focus)
+    if @view_state.focused_application_id
+      if @view_state.focused_application_id is @model.id
+        @$el.css "opacity", "1.0"
+      else
+        @$el.css "opacity", "0.4"
+    else
+      @$el.css "opacity", "1.0"
+    
     # Highlight, add or remove any roles?
     roles_in_dom = []
     roles_in_model = @model.roles.map((r) ->
       r.id
     )
-    @$(".roles>.role").each (i, r) ->
+    @$(".roles>.role").each (i, r) =>
       role_id = $(r).attr("data-role-id")
       roles_in_dom.push parseInt(role_id)
-      if role_id is self.view_state.selected_role_id
+      if role_id is @view_state.selected_role_id
         $(r).css("box-shadow", "#08C 0 0 5px").css "border", "1px solid #08C"
       else
         $(r).css("box-shadow", "none").css "border", "1px solid #bce8f1"
@@ -65,20 +70,19 @@ DssRm.Views.ApplicationItem = Support.CompositeView.extend(
     
     # Remove any roles in the DOM not in our model anymore
     roles_to_remove = _.difference(roles_in_dom, roles_in_model)
-    _.each roles_to_remove, (r) ->
-      to_remove = self.$(".roles").find("div.role[data-role-id=" + r + "]")
+    _.each roles_to_remove, (r) =>
+      to_remove = @$(".roles").find("div.role[data-role-id=" + r + "]")
       $(to_remove).remove()
 
     
     # Add any roles to the DOM mentioned in our model
     roles_to_add = _.difference(roles_in_model, roles_in_dom)
-    _.each roles_to_add, (r) ->
-      
+    _.each roles_to_add, (r) =>
       # Avoid rendering roles not yet synced, i.e. those with IDs like "new_243087234"
       if isNaN(parseInt(r)) is false
-        role = self.model.roles.get(r)
-        $role_item = self.renderRoleItem(role)
-        self.$(".roles").append $role_item
+        role = @model.roles.get(r)
+        $role_item = @renderRoleItem(role)
+        @$(".roles").append $role_item
 
     this
 

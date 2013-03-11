@@ -20,11 +20,13 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     @view_state.focused_entity_id = null
     @view_state.on "change", @render, this
 
-    DssRm.applications.on "add", ((o) ->
-      self.renderCard o
+    window.view_state = @view_state
+
+    DssRm.applications.on "add", ((o) =>
+      @renderCard o
     ), this
-    DssRm.applications.on "remove", ((o) ->
-      self.$("#cards").find(".card#application_" + o.id).remove()
+    DssRm.applications.on "remove", ((o) =>
+      @$("#cards").find(".card#application_" + o.id).remove()
     ), this
     DssRm.applications.on "change", @render, this # for toggling sidebar entities on and off roles
     DssRm.current_user.favorites.on "change add remove destroy sync reset", @render, this
@@ -33,8 +35,19 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
 
     @$el.html JST["applications/index"](applications: DssRm.applications)
     
-    @$("#search_applications").on "change", (e) =>
-      @view_state.focused_application_id = null
+    # @$("#search_applications").on "focus", (e) ->
+    #   $(this).select() focus is apparently blocked by bootstrap's typeahead?
+    
+    @$("#search_applications").on "keyup", (e) =>
+      entry = $(e.target).val()
+      app = DssRm.applications.find( (i) -> i.get('name') == entry )
+      
+      if app
+        @view_state.focused_application_id = app.id
+      else
+        @view_state.focused_application_id = null
+      
+      @view_state.trigger "change"
 
     @$("#search_applications").typeahead
       minLength: 3
@@ -81,18 +94,17 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
 
 
-    DssRm.applications.each (application) ->
-      self.renderCard application
+    DssRm.applications.each (application) =>
+      @renderCard application
 
 
   renderCard: (application) ->
-    self = this
     card = new DssRm.Views.ApplicationItem(
       model: application
-      view_state: self.view_state
+      view_state: @view_state
     )
-    self.renderChild card
-    self.$("#cards").append card.el
+    @renderChild card
+    @$("#cards").append card.el
 
   render: ->
     self = this
@@ -117,7 +129,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
       group.get "id"
     )
-    selected_role = self.view_state.selected_application.roles.where(id: parseInt(self.view_state.selected_role_id))[0]  if @view_state.selected_role_id
+    selected_role = @view_state.selected_application.roles.where(id: parseInt(self.view_state.selected_role_id))[0]  if @view_state.selected_role_id
 
     @$("#pins").empty()
     @$("#highlighted_pins").empty()
@@ -138,23 +150,22 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       else
         @$("#pins").append pin.el
 
-    if self.view_state.selected_role_id
-      assigned_non_subordinates = selected_role.entities.reject((e) ->
+    if @view_state.selected_role_id
+      assigned_non_subordinates = selected_role.entities.reject((e) =>
         id = e.get("id")
-        self.sidebar_entities.find (i) ->
+        @sidebar_entities.find (i) ->
           i.get("id") is id
-
       )
-      _.each assigned_non_subordinates, (entity) ->
+      _.each assigned_non_subordinates, (entity) =>
         pin = new DssRm.Views.EntityItem(
           model: entity
           highlighted: true
           faded: true
           current_role: selected_role
-          current_application: self.view_state.selected_application
+          current_application: @view_state.selected_application
         )
-        self.renderChild pin
-        self.$("#highlighted_pins").append pin.el
+        @renderChild pin
+        @$("#highlighted_pins").append pin.el
 
     this
 
@@ -260,18 +271,19 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
           name: name
           owners: [
             id: DssRm.current_user.id
-            name: DssRm.current_user.get("name")
+            name: DssRm.current_user.target("name")
             type: "Person"
           ]
         ,
           wait: true
       else
         @view_state.focused_application_id = id
+        @view_state.trigger "change"
+        
     label
 
 
   deselectAll: (e) ->
-    
     # Ensure click event isn't due to child ignoring it --
     # we really do want only clicks on div#cards and not its
     # children
