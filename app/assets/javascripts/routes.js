@@ -453,9 +453,9 @@
   site_request_access_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"request_access",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// site_welcome => /site/welcome(.:format)
+// site_welcome => /site/welcome
   site_welcome_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"welcome",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  return Utils.build_path([], [], [2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"welcome",false]], arguments);
   },
 // suggest_change_authorization_rules => /authorization_rules/suggest_change(.:format)
   suggest_change_authorization_rules_path: function(options) {
