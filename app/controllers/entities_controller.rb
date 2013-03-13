@@ -76,6 +76,8 @@ class EntitiesController < ApplicationController
         entity.destroy
 
         render :nothing => true
+      else
+        render :status => :forbidden
       end
     end
   end
