@@ -1,5 +1,5 @@
 DSSRM::Application.routes.draw do
-  get "site/welcome"
+  get "site/welcome", :format => false, :defaults => { :format => 'html' }
   get "site/logout"
   get "site/access_denied"
   get "site/faq"
