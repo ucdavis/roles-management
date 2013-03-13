@@ -7,11 +7,10 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     "click #cards"               : "deselectAll"
 
   initialize: (options) ->
-    self = this
-    
     # Create a view state to be shared with sub-views
     @view_state = {}
     _.extend @view_state, Backbone.Events
+    
     # 'selected' implies actions will be performed upon the object (as expected)
     # whereas 'focused' merely indicates whether it's shaded or not (used by the search bars)
     @view_state.selected_application = null
@@ -19,8 +18,12 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     @view_state.focused_application_id = null
     @view_state.focused_entity_id = null
     @view_state.on "change", @render, this
+    
+    @sidebar_entities = new DssRm.Collections.Entities()
 
-    window.view_state = @view_state
+    DssRm.current_user.favorites.on "change add remove destroy sync reset", @rebuildSidebarEntities, this
+    DssRm.current_user.group_ownerships.on "change add remove destroy sync reset", @rebuildSidebarEntities, this
+    DssRm.current_user.group_operatorships.on "change add remove destroy sync reset", @rebuildSidebarEntities, this
 
     DssRm.applications.on "add", ((o) =>
       @renderCard o
@@ -64,12 +67,24 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         ret = ret + parts[2]  if parts[2] isnt `undefined`
         ret
           
-      source: self.applicationSearch
-      updater: (item) ->
-        self.applicationSearchResultSelected item, self
+      source: @applicationSearch
+      updater: (item) =>
+        @applicationSearchResultSelected item, @
     
       items: 15
 
+    
+    @$("#search_sidebar").on "keyup", (e) =>
+      entry = $(e.target).val()
+      entity = @sidebar_entities.find( (i) -> i.get('name') == entry )
+      
+      if entity
+        @view_state.focused_entity_id = entity.id
+      else
+        @view_state.focused_entity_id = null
+      
+      @view_state.trigger "change"
+      
 
     @$("#search_sidebar").typeahead
       minLength: 3
@@ -86,16 +101,37 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         ret = ret + parts[2]  if parts[2] isnt `undefined`
         ret
 
-      source: self.sidebarSearch
-      updater: (item) ->
-        self.sidebarSearchResultSelected item, self
-        "" # bootstrap places our return value in the input element and we just want it to clear, so return ""
+      source: @sidebarSearch
+      updater: (item) =>
+        @sidebarSearchResultSelected item, @
         
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
 
 
     DssRm.applications.each (application) =>
       @renderCard application
+  
+  rebuildSidebarEntities: ->
+    # Build sidebar entities from the user's ownerships, operatorships, and favorites
+    _sidebar_entities = _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
+    # Sort so that groups come first
+    _sidebar_entities = _.sortBy(_sidebar_entities, (e) ->
+      prepend = (if (e.get("type") is "Group") then "1" else "2")
+      sort_num = parseInt((prepend + e.get("name").charCodeAt(0).toString()))
+      sort_num
+    )
+    @sidebar_entities.reset _sidebar_entities
+
+
+  render: ->
+    # We must ensure tooltips are closed before possibly deleting their
+    # associated DOM elements
+    @$("[rel=tooltip]").each (i, el) ->
+      $(el).tooltip "hide" unless el is `undefined`
+
+    @renderSidebar()
+
+    @
 
 
   renderCard: (application) ->
@@ -106,30 +142,13 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     @renderChild card
     @$("#cards").append card.el
 
-  render: ->
-    self = this
-    
-    # We must ensure tooltips are closed before possibly deleting their
-    # associated DOM elements
-    @$("[rel=tooltip]").each (i, el) ->
-      $(el).tooltip "hide"  unless el is `undefined`
 
-    # Build sidebar entities from the user's ownerships, operatorships, and favorites
-    _sidebar_entities = _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
-    # Sort so that groups come first
-    _sidebar_entities = _.sortBy(_sidebar_entities, (e) ->
-      prepend = (if (e.get("type") is "Group") then "1" else "2")
-      sort_num = parseInt((prepend + e.get("name").charCodeAt(0).toString()))
-      sort_num
-    )
-    @sidebar_entities = new DssRm.Collections.Entities()  if @sidebar_entities is `undefined`
-    @sidebar_entities.reset _sidebar_entities
-    
+  renderSidebar: ->
     # Need group_operatorship IDs has an array when drawing EntityItem
     group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
       group.get "id"
     )
-    selected_role = @view_state.selected_application.roles.where(id: parseInt(self.view_state.selected_role_id))[0]  if @view_state.selected_role_id
+    selected_role = @view_state.selected_application.roles.where(id: parseInt(@view_state.selected_role_id))[0]  if @view_state.selected_role_id
 
     @$("#pins").empty()
     @$("#highlighted_pins").empty()
@@ -166,9 +185,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         )
         @renderChild pin
         @$("#highlighted_pins").append pin.el
-
-    this
-
+  
   
   # Populates the sidebar search with results via async call
   sidebarSearch: (query, process) ->
@@ -179,7 +196,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       type: "GET"
     ).always (data) ->
       entities = []
-      entities.push DssRm.Views.ApplicationsIndex.FID_FILTER_TERM + "####Filter to " + query
       exact_match_found = false
       _.each data, (entity) ->
         # We have to manually enforce a length on the sidebar search as we'll be adding terms toward the end
@@ -202,8 +218,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     label = parts[1]
     self = this
     switch id
-      when DssRm.Views.ApplicationsIndex.FID_FILTER_TERM
-        alert "Support coming soon."
       when DssRm.Views.ApplicationsIndex.FID_ADD_PERSON
         alert "Currently unsupported."
       when DssRm.Views.ApplicationsIndex.FID_CREATE_GROUP
@@ -238,6 +252,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
             )
             DssRm.current_user.favorites.add p
             DssRm.current_user.save()
+    
+    label
 
   applicationSearch: (query, process) ->
     # I have no idea why we must delay ever so slightly.
@@ -342,7 +358,6 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
   FID_ADD_PERSON: -1
   FID_CREATE_GROUP: -2
   FID_CREATE_APPLICATION: -3
-  FID_FILTER_TERM: -4
   SIDEBAR_MAX_LENGTH: 15
   
   # Function defined here for use in onClick.
