@@ -9,8 +9,9 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     
     # change - ?
     # sync - for when application_show adds/removes roles
-    @model.on "change sync", @render, this
-    @view_state.on "change", @render, this
+    @listenTo @model, "change sync", @render
+    @listenTo @view_state, "change", @render
+    
     owner_ids = @model.owners.map((i) ->
       i.get "id"
     )
@@ -40,14 +41,14 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$("i.details").hide()  if @relationship is "operator"
     
     # Highlight this application?
-    if @view_state.selected_application is @model
+    if @view_state.get 'selected_application' is @model
       @$el.css("box-shadow", "#08C 0 0 10px").css "border", "1px solid #08C"
     else
       @$el.css("box-shadow", "0 1px 3px rgba(0, 0, 0, 0.3)").css "border", "1px solid #CCC"
     
     # Shade/unshade this application? (based on @view_state focus)
-    if @view_state.focused_application_id
-      if @view_state.focused_application_id is @model.id
+    if @view_state.get 'focused_application_id'
+      if @view_state.get 'focused_application_id' is @model.id
         @$el.css "opacity", "1.0"
       else
         @$el.css "opacity", "0.4"
@@ -62,7 +63,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$(".roles>.role").each (i, r) =>
       role_id = $(r).attr("data-role-id")
       roles_in_dom.push parseInt(role_id)
-      if role_id is @view_state.selected_role_id
+      if role_id is @view_state.get 'selected_role_id'
         $(r).css("box-shadow", "#08C 0 0 5px").css "border", "1px solid #08C"
       else
         $(r).css("box-shadow", "none").css "border", "1px solid #bce8f1"
@@ -100,7 +101,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
   selectRole: (e) ->
     e.stopPropagation()
     application_id = $(e.currentTarget).parent().parent().parent().data("application-id")
-    @view_state.selected_application = DssRm.applications.get(application_id)
-    @view_state.selected_role_id = $(e.currentTarget).attr("data-role-id")
-    @view_state.trigger "change"
+    @view_state.set
+      selected_application: DssRm.applications.get(application_id)
+      selected_role_id: $(e.currentTarget).attr("data-role-id")
 )

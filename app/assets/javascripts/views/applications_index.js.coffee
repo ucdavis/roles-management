@@ -10,9 +10,11 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     # Create a view state to be shared with sub-views
     @view_state = new DssRm.Models.ViewState()
     
+    window.view_state = @view_state
+    
     # 'selected' implies actions will be performed upon the object (as expected)
     # whereas 'focused' merely indicates whether it's shaded or not (used by the search bars)
-    @view_state.on "change", @render, this
+    @listenTo @view_state, "change", @render
     
     @sidebar_entities = new DssRm.Collections.Entities()
 
@@ -45,11 +47,9 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
       app = DssRm.applications.find( (i) -> i.get('name') == entry )
       
       if app
-        @view_state.focused_application_id = app.id
+        @view_state.set focused_application_id: app.id
       else
-        @view_state.focused_application_id = null
-      
-      @view_state.trigger "change"
+        @view_state.set focused_application_id: null
 
     @$("#search_applications").typeahead
       minLength: 3
@@ -72,22 +72,19 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     
       items: 15
 
-    # @$("#search_applications").off "focus"
-    # @$("#search_applications").on "focus", (e) ->
-    #   $(this).select()
-    #   typeahead = $(e.target).data('typeahead')
-    #   typeahead.focused = true;
+    @$("#search_applications").off("focus").on "focus", (e) ->
+      $(this).select()
+      typeahead = $(e.target).data('typeahead')
+      typeahead.focused = true;
     
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
       entity = @sidebar_entities.find( (i) -> i.get('name') == entry )
       
       if entity
-        @view_state.focused_entity_id = entity.id
+        @view_state.set focused_entity_id: entity.id
       else
-        @view_state.focused_entity_id = null
-      
-      @view_state.trigger "change"
+        @view_state.set focused_entity_id: null
       
 
     @$("#search_sidebar").typeahead
@@ -160,7 +157,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
       group.get "id"
     )
-    selected_role = @view_state.selected_application.roles.where(id: parseInt(@view_state.selected_role_id))[0]  if @view_state.selected_role_id
+    selected_role = @view_state.getSelectedRole()
 
     @$("#pins").empty()
     @$("#highlighted_pins").empty()
@@ -171,7 +168,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
         highlighted: highlighted
         read_only: _.indexOf(group_operatorships, entity.get("id")) >= 0
         current_role: selected_role
-        current_application: @view_state.selected_application
+        current_application: @view_state.get 'selected_application'
       )
       
       pin.render()
@@ -181,7 +178,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
       else
         @$("#pins").append pin.el
 
-    if @view_state.selected_role_id
+    if selected_role
       assigned_non_subordinates = selected_role.entities.reject((e) =>
         id = e.get("id")
         @sidebar_entities.find (i) ->
@@ -193,7 +190,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
           highlighted: true
           faded: true
           current_role: selected_role
-          current_application: @view_state.selected_application
+          current_application: @view_state.get 'selected_application'
         )
         pin.render()
         @$("#highlighted_pins").append pin.el
@@ -242,12 +239,12 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
         # If a role is selected, the behavior is to assign to the role,
         # and not add to favorites. Adding to favorites only happens when
         # no role is selected.
-        if @view_state.selected_role_id
-          selected_role = @view_state.selected_application.roles.where(id: parseInt(@view_state.selected_role_id))[0]
+        if @view_state.get 'selected_role_id'
+          selected_role = @view_state.get('selected_application').roles.where(id: parseInt(@view_state.get 'selected_role_id'))[0]
           new_entity = new DssRm.Models.Entity(id: id)
           new_entity.fetch success: =>
             selected_role.entities.add new_entity
-            @view_state.selected_application.save()
+            @view_state.get('selected_application').save()
 
         else
           # No role selected, so we will add this entity to their favorites
@@ -315,9 +312,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     # we really do want only clicks on div#cards and not its
     # children
     if e.target is $("div#cards").get(0)
-      @view_state.selected_application = null
-      @view_state.selected_role_id = null
-      @view_state.trigger "change"
+      @view_state.deselectAll()
 
   selectEntity: (e) ->
     clicked_entity_id = $(e.currentTarget).data("entity-id")
@@ -330,8 +325,8 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     # that entity from that application/role.
     # If no application/role is selected, clicking an entity merely filters the application/role
     # list to display their current assignments.
-    if @view_state.selected_role_id
-      selected_role = @view_state.selected_application.roles.where(id: parseInt(@view_state.selected_role_id))[0]
+    if @view_state.get 'selected_role_id'
+      selected_role = @view_state.get('selected_application').roles.where(id: parseInt(@view_state.get 'selected_role_id'))[0]
       
       # toggle on or off?
       matched = selected_role.entities.filter((e) ->
@@ -341,19 +336,20 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
       if matched.length > 0
         # toggling off
         selected_role.entities.remove matched[0]
-        @view_state.selected_application.save()
+        @view_state.get('selected_application').save()
       else
         # toggling on
         new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
         new_entity.fetch success: =>
           selected_role.entities.add new_entity
-          @view_state.selected_application.save()
+          @view_state.get('selected_application').save()
 
 
+  # Returns true if the given entity 'e' is assigned to the current role
   entityAssignedToCurrentRole: (e) ->
     entity_id = e.get("id")
 
-    selected_role = @view_state.selected_application.roles.where(id: parseInt(@view_state.selected_role_id))[0]  if @view_state.selected_role_id
+    selected_role = @view_state.getSelectedRole()
     if selected_role
       results = selected_role.entities.find((i) ->
         i.get("id") is entity_id
