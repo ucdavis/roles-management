@@ -37,7 +37,8 @@ gem 'rails-backbone'
 gem 'jquery-rails'
 gem 'ejs'
 
-gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
+gem 'declarative_authorization', "~> 0.5.7"
+#gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
 
 # For MS Active Directory support
 gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'

@@ -26,12 +26,6 @@ GIT
     rubycas-client (2.3.9)
       activesupport
 
-GIT
-  remote: https://github.com/stffn/declarative_authorization.git
-  revision: 549a8d384e10cd7be5df4edcd5695893634fcf03
-  specs:
-    declarative_authorization (0.5.7)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -81,6 +75,7 @@ GEM
       execjs
     coffee-script-source (1.6.1)
     daemons (1.1.9)
+    declarative_authorization (0.5.7)
     delayed_job (3.0.5)
       activesupport (~> 3.0)
     delayed_job_active_record (0.4.3)
@@ -199,7 +194,7 @@ DEPENDENCIES
   capistrano
   coffee-rails (~> 3.2.1)
   daemons
-  declarative_authorization!
+  declarative_authorization (~> 0.5.7)
   delayed_job_active_record
   dynamic_form
   ejs
