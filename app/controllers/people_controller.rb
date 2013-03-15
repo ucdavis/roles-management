@@ -21,6 +21,7 @@ class PeopleController < ApplicationController
 
   def show
     @person = Person.find_by_loginid(params[:id])
+    @person = Person.find_by_id(params[:id]) unless @person
 
     respond_with(@person)
   end
