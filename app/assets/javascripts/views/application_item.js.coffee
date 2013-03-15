@@ -15,10 +15,6 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     owner_ids = @model.owners.map((i) ->
       i.get "id"
     )
-    @owner_names = @model.owners.map((i) ->
-      i.get "name"
-    ).join(", ")
-    @owner_names = "Nobody" if @owner_names.length is 0
     @relationship = @model.relationship()
     @$el.html JST["applications/item"](application: @model)
     @$el.attr "id", "application_" + @model.id
@@ -31,14 +27,24 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
 
 
   render: ->
+    # Name
     @$("#application-name").html @model.escape("name")
+    
+    # Roles area needed?
     (if @model.roles.length then @$(".roles").show() else @$(".roles").hide())
+
+    # Owner names text
+    @owner_names = @model.owners.map((i) ->
+      i.get "name"
+    ).join(", ")
+    @owner_names = "Nobody" if @owner_names.length is 0
+    
     if @relationship is "admin" or @relationship is "operator"
       @$("h6").html "Owned by " + @owner_names
       @$("h6").show()
     else
       @$("h6").hide()
-    @$("i.details").hide()  if @relationship is "operator"
+    @$("i.details").hide() if @relationship is "operator"
     
     # Highlight this application?
     if @view_state.get 'selected_application' == @model
