@@ -68,9 +68,9 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
       r.id
     )
     @$(".roles>.role").each (i, r) =>
-      role_id = $(r).attr("data-role-id")
-      roles_in_dom.push parseInt(role_id)
-      if role_id is @view_state.get 'selected_role_id'
+      role_id = parseInt($(r).attr("data-role-id"))
+      roles_in_dom.push role_id
+      if role_id is @view_state.getSelectedRoleId()
         $(r).css("box-shadow", "#08C 0 0 5px").css "border", "1px solid #08C"
       else
         $(r).css("box-shadow", "none").css "border", "1px solid #bce8f1"
@@ -107,8 +107,21 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
 
   selectRole: (e) ->
     e.stopPropagation()
+    
     application_id = $(e.currentTarget).parent().parent().parent().data("application-id")
-    @view_state.set
-      selected_application: DssRm.applications.get(application_id)
-      selected_role_id: $(e.currentTarget).attr("data-role-id")
+    role_id = parseInt($(e.currentTarget).attr("data-role-id"))
+    
+    application = DssRm.applications.get(application_id)
+    role = application.roles.get(role_id)
+    
+    status_bar.show "Fetching role details ..."
+    role.fetch
+      success: =>
+        status_bar.hide()
+        
+        @view_state.set
+          selected_application: application
+          selected_role: role
+      error: ->
+        status_bar.show "An error occurred while fetching information about the role.", "error"
 )

@@ -150,7 +150,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
       group.get "id"
     )
-    selected_role = @view_state.getSelectedRole()
+    selected_role = @view_state.get 'selected_role'
 
     @$("#pins").empty()
     @$("#highlighted_pins").empty()
@@ -232,13 +232,12 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
         # If a role is selected, the behavior is to assign to the role,
         # and not add to favorites. Adding to favorites only happens when
         # no role is selected.
-        if @view_state.get 'selected_role_id'
-          selected_role = @view_state.get('selected_application').roles.where(id: parseInt(@view_state.get 'selected_role_id'))[0]
+        selected_role = @view_state.get 'selected_role'
+        if selected_role
           new_entity = new DssRm.Models.Entity(id: id)
           new_entity.fetch success: =>
             selected_role.entities.add new_entity
             @view_state.get('selected_application').save()
-
         else
           # No role selected, so we will add this entity to their favorites
           if @sidebar_entities.find((e) ->
@@ -317,9 +316,8 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     # that entity from that application/role.
     # If no application/role is selected, clicking an entity merely filters the application/role
     # list to display their current assignments.
-    if @view_state.get 'selected_role_id'
-      selected_role = @view_state.get('selected_application').roles.where(id: parseInt(@view_state.get 'selected_role_id'))[0]
-      
+    selected_role = @view_state.get 'selected_role'
+    if selected_role
       # toggle on or off?
       matched = selected_role.entities.filter((e) ->
         e.id is clicked_entity_id
@@ -341,10 +339,10 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
   entityAssignedToCurrentRole: (e) ->
     entity_id = e.get("id")
 
-    selected_role = @view_state.getSelectedRole()
+    selected_role = @view_state.get 'selected_role'
     if selected_role
       results = selected_role.entities.find((i) ->
-        i.get("id") is entity_id
+        i.get('id') is entity_id
       )
       if results is `undefined`
         return false
