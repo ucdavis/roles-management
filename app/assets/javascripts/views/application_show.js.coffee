@@ -138,7 +138,7 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
     false
 
   removeRole: (e) ->
-    role_id = $(e.target).parents("tr").data("role_id")
+    role_id = parseInt($(e.target).parents("tr").data("role_id"))
     role = @model.roles.find((r) ->
       r.id is role_id
     )
@@ -152,7 +152,6 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
     )
     role.set
       token: $(e.target).parents("tr").find("input[name=token]").val()
-      default: $(e.target).parents("tr").find("input[name=default]").attr("checked") is "checked"
       name: $(e.target).parents("tr").find("input[name=name]").val()
       description: $(e.target).parents("tr").find("input[name=description]").val()
 

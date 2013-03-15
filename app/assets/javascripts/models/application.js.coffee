@@ -35,7 +35,6 @@ DssRm.Models.Application = Backbone.Model.extend(
           e.id
         )
       r.token = role.get("token")
-      r["default"] = role.get("default")
       r.name = role.get("name")
       r.description = role.get("description")
       r.ad_path = role.get("ad_path")

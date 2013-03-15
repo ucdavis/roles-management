@@ -18,7 +18,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @owner_names = @model.owners.map((i) ->
       i.get "name"
     ).join(", ")
-    @owner_names = "Nobody"  if @owner_names.length is 0
+    @owner_names = "Nobody" if @owner_names.length is 0
     @relationship = @model.relationship()
     @$el.html JST["applications/item"](application: @model)
     @$el.attr "id", "application_" + @model.id

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130214025836) do
+ActiveRecord::Schema.define(:version => 20130315200349) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -159,7 +159,6 @@ ActiveRecord::Schema.define(:version => 20130214025836) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "application_id"
-    t.boolean  "default",        :default => false
     t.string   "name"
     t.string   "description"
     t.boolean  "mandatory"

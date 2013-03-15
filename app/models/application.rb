@@ -37,7 +37,6 @@ class Application < ActiveRecord::Base
           # New role
           r = Role.new
           r.token = role[:token]
-          r.default = role[:default]
           r.name = role[:name]
           r.description = role[:description]
           r.entity_ids = role[:entity_ids]
@@ -49,7 +48,6 @@ class Application < ActiveRecord::Base
           # Updating a role
           r = Role.find(role[:id])
           r.token = role[:token]
-          r.default = role[:default]
           r.name = role[:name]
           r.description = role[:description]
           r.entity_ids = role[:entity_ids]

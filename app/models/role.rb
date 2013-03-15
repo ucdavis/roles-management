@@ -12,7 +12,7 @@ class Role < ActiveRecord::Base
 
   belongs_to :application
 
-  attr_accessible :token, :entity_ids, :default, :name, :description, :ad_path
+  attr_accessible :token, :entity_ids, :name, :description, :ad_path
   attr_accessor :skip_next_sync
 
   # Needed in show.json.rabl to display a role's application's name
@@ -22,7 +22,7 @@ class Role < ActiveRecord::Base
 
   def as_json(options={})
     { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id,
-      :description => self.description, :mandatory => self.mandatory, :default => self.default,
+      :description => self.description, :mandatory => self.mandatory,
       :entities => self.entities.map{ |e| { type: e.type, id: e.id, name: e.name } }, :ad_path => self.ad_path }
   end
 
