@@ -1,4 +1,4 @@
-DssRm.Views.EntityItem = Support.CompositeView.extend(
+DssRm.Views.EntityItem = Backbone.View.extend(
   tagName: "li"
   events:
     "click a>i": "patchTooltipBehavior"

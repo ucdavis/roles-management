@@ -4,7 +4,6 @@
 //= require underscore
 //= require json2
 //= require backbone
-//= require backbone-support
 //
 //= require bootstrap
 //= require status_bar

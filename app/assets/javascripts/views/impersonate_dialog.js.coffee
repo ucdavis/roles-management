@@ -1,4 +1,4 @@
-DssRm.Views.ImpersonateDialog = Support.CompositeView.extend(
+DssRm.Views.ImpersonateDialog = Backbone.View.extend(
   tagName: "div"
   className: "modal"
   id: "impersonateDialogModal"
@@ -23,27 +23,26 @@ DssRm.Views.ImpersonateDialog = Support.CompositeView.extend(
 
   checkLoginID: (e) ->
     loginid = $(e.currentTarget).val()
-    self = this
-    return  if loginid.length < 3
-    $.get Routes.people_path() + "?q=" + loginid, (results) ->
+
+    return if loginid.length < 3
+
+    $.get Routes.people_path() + "?q=" + loginid, (results) =>
       if _.find(results, (r) ->
         r.loginid is loginid
       ) isnt `undefined`
-        
         # Write 'Ok' and enable the impersonate button
         $("#impersonateDialogModal span#loginid_status").html "<span style='color: #00aa00;'>Ok</span>"
         $(".modal-footer a.btn-primary").attr("disabled", false).removeClass "disabled"
-        self.impersonate_user = loginid
+        @impersonate_user = loginid
       else
-        
         # Write 'Not Found' and disable the impersonate button
         $("#impersonateDialogModal span#loginid_status").html "<span style='color: #aa0000;'>Not found</span>"
         $(".modal-footer a.btn-primary").attr("disabled", true).addClass "disabled"
-        self.impersonate_user = null
+        @impersonate_user = null
 
 
   cleanUpModal: ->
-    $("div#impersonateDialogModal").remove()
+    @remove
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate ""

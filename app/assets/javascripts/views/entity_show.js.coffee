@@ -1,7 +1,8 @@
-DssRm.Views.EntityShow = Support.CompositeView.extend(
+DssRm.Views.EntityShow = Backbone.View.extend(
   tagName: "div"
   className: "modal"
   id: "entityShowModal"
+  
   events:
     "click a#apply": "save"
     "click a#rescan": "rescan"
@@ -13,206 +14,194 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
     "click #delete": "deleteEntity"
 
   initialize: ->
-    self = this
     type = @model.get("type")
-    @model.on "change", @render, this
+    @listenTo @model, "change", @render
+    
     @$el.html JST["entities/show_" + @model.get("type").toLowerCase()](model: @model)
     if type is "Group"
       @$("input[name=owners]").tokenInput Routes.people_path(),
         crossDomain: false
         defaultText: ""
         theme: "facebook"
-        onAdd: (item) ->
-          owners = self.model.get("owners")
+        onAdd: (item) =>
+          owners = @model.get("owners")
           unless _.find(owners, (i) ->
             i.id is item.id
           )
-            
             # onAdd is triggered by the .tokenInput("add") lines in render,
             # so we need to ensure this actually is a new item
             owners.push item
-            self.model.set "owners", owners
-
-        onDelete: (item) ->
-          owners = _.filter(self.model.get("owners"), (owner) ->
+            @model.set "owners", owners
+      
+        onDelete: (item) =>
+          owners = _.filter(@model.get("owners"), (owner) ->
             owner.id isnt item.id
           )
-          self.model.set "owners", owners
+          @model.set "owners", owners
 
       @$("input[name=operators]").tokenInput Routes.people_path(),
         crossDomain: false
         defaultText: ""
         theme: "facebook"
-        onAdd: (item) ->
-          operators = self.model.get("operators")
+        onAdd: (item) =>
+          operators = @model.get("operators")
           unless _.find(operators, (i) ->
             i.id is item.id
           )
-            
             # onAdd is triggered by the .tokenInput("add") lines in render,
             # so we need to ensure this actually is a new item
             operators.push item
-            self.model.set "operators", operators
+            @model.set "operators", operators
 
-        onDelete: (item) ->
-          operators = _.filter(self.model.get("operators"), (operator) ->
+        onDelete: (item) =>
+          operators = _.filter(@model.get("operators"), (operator) ->
             operator.id isnt item.id
           )
-          self.model.set "operators", operators
+          @model.set "operators", operators
 
       @$("input[name=members]").tokenInput Routes.people_path(),
         crossDomain: false
         defaultText: ""
         theme: "facebook"
-        onAdd: (item) ->
-          members = self.model.get("members")
+        onAdd: (item) =>
+          members = @model.get("members")
           unless _.find(members, (i) ->
             i.id is item.id
           )
-            
             # onAdd is triggered by the .tokenInput("add") lines in render,
             # so we need to ensure this actually is a new item
             members.push item
-            self.model.set "members", members
+            @model.set "members", members
 
-        onDelete: (item) ->
-          members = _.filter(self.model.get("members"), (member) ->
+        onDelete: (item) =>
+          members = _.filter(@model.get("members"), (member) ->
             member.id isnt item.id
           )
-          self.model.set "members", members
+          @model.set "members", members
 
     else if type is "Person"
       @$("input[name=favorites]").tokenInput Routes.people_path(),
         crossDomain: false
         defaultText: ""
         theme: "facebook"
-        onAdd: (item) ->
-          favorites = self.model.get("favorites")
+        onAdd: (item) =>
+          favorites = @model.get("favorites")
           unless _.find(favorites, (i) ->
             i.id is item.id
           )
-            
             # onAdd is triggered by the .tokenInput("add") lines in render,
             # so we need to ensure this actually is a new item
             favorites.push item
-            self.model.set "favorites", favorites
+            @model.set "favorites", favorites
 
-        onDelete: (item) ->
-          favorites = _.filter(self.model.get("favorites"), (favorite) ->
+        onDelete: (item) =>
+          favorites = _.filter(@model.get("favorites"), (favorite) ->
             favorite.id isnt item.id
           )
-          self.model.set "favorites", favorites
+          @model.set "favorites", favorites
 
       @$("input[name=groups]").tokenInput Routes.groups_path(),
         crossDomain: false
         defaultText: ""
         theme: "facebook"
-        onAdd: (item) ->
-          group_memberships = self.model.get("group_memberships")
+        onAdd: (item) =>
+          group_memberships = @model.get("group_memberships")
           unless _.find(group_memberships, (i) ->
             i.id is item.id
           )
-            
             # onAdd is triggered by the .tokenInput("add") lines in render,
             # so we need to ensure this actually is a new item
             group_memberships.push item
-            self.model.set "group_memberships", group_memberships
+            @model.set "group_memberships", group_memberships
 
-        onDelete: (item) ->
-          group_memberships = _.filter(self.model.get("group_memberships"), (group) ->
+        onDelete: (item) =>
+          group_memberships = _.filter(@model.get("group_memberships"), (group) ->
             group.id isnt item.id
           )
-          self.model.set "group_memberships", group_memberships
+          @model.set "group_memberships", group_memberships
 
       @$("input[name=ous]").tokenInput Routes.ous_path(),
         crossDomain: false
         defaultText: ""
         theme: "facebook"
-        onAdd: (item) ->
-          ous = self.model.get("ous")
+        onAdd: (item) =>
+          ous = @model.get("ous")
           unless _.find(ous, (i) ->
             i.id is item.id
           )
-            
             # onAdd is triggered by the .tokenInput("add") lines in render,
             # so we need to ensure this actually is a new item
             ous.push item
-            self.model.set "ous", ous
+            @model.set "ous", ous
 
-        onDelete: (item) ->
-          ous = _.filter(self.model.get("ous"), (ou) ->
+        onDelete: (item) =>
+          ous = _.filter(@model.get("ous"), (ou) ->
             ou.id isnt item.id
           )
-          self.model.set "ous", ous
+          @model.set "ous", ous
 
       $rolesTab = @$("fieldset#roles")
-      _.each @model.roles.groupBy("application_name"), (roleset) ->
+      _.each @model.roles.groupBy("application_name"), (roleset) =>
         app_name = roleset[0].get("application_name")
         app_id = roleset[0].get("application_id")
-        $rolesTab.append "           <p>             <label for=\"_token_input_" + app_id + "\">" + app_name + "</label>             <input type=\"text\" name=\"_token_input_" + app_id + "\" class=\"token_input\" />           </p>"
+        $rolesTab.append "<p><label for=\"_token_input_" + app_id + "\">" + app_name + "</label><input type=\"text\" name=\"_token_input_" + app_id + "\" class=\"token_input\" /></p>"
         $rolesTab.find("input[name=_token_input_" + app_id + "]").tokenInput Routes.roles_path() + "?application_id=" + app_id,
           crossDomain: false
           defaultText: ""
           theme: "facebook"
-          onAdd: (item) ->
-            roles = self.model.get("roles")
+          onAdd: (item) =>
+            roles = @model.get("roles")
             unless _.find(roles, (i) ->
               i.id is item.id
             )
-              
               # onAdd is triggered by the .tokenInput("add") lines in render,
               # so we need to ensure this actually is a new item
               roles.push item
-              self.model.set "roles", roles
-              self.model.trigger "change"
+              @model.set "roles", roles
+              @model.trigger "change"
 
-          onDelete: (item) ->
-            roles = _.filter(self.model.get("roles"), (role) ->
+          onDelete: (item) =>
+            roles = _.filter(@model.get("roles"), (role) ->
               role.id isnt item.id
             )
-            self.model.set "roles", roles
-            self.model.trigger "change"
-
-
+            @model.set "roles", roles
+            @model.trigger "change"
 
   render: ->
-    self = this
     type = @model.get("type")
+
     if type is "Group"
-      
       # Summary tab
-      self.$("h3").html @model.escape("name")
-      self.$("input[name=name]").val @model.get("name")
-      self.$("textarea[name=description]").val @model.escape("description")
-      self.$("span#group_member_count").html @model.get("members").length
-      owners_tokeninput = self.$("input[name=owners]")
+      @$("h3").html @model.escape("name")
+      @$("input[name=name]").val @model.get("name")
+      @$("textarea[name=description]").val @model.escape("description")
+      @$("span#group_member_count").html @model.get("members").length
+      
+      owners_tokeninput = @$("input[name=owners]")
       owners_tokeninput.tokenInput "clear"
       _.each @model.get("owners"), (owner) ->
         owners_tokeninput.tokenInput "add",
           id: owner.id
           name: owner.name
 
-
-      operators_tokeninput = self.$("input[name=operators]")
+      operators_tokeninput = @$("input[name=operators]")
       operators_tokeninput.tokenInput "clear"
       _.each @model.get("operators"), (operator) ->
         operators_tokeninput.tokenInput "add",
           id: operator.id
           name: operator.name
 
-
-      members_tokeninput = self.$("input[name=members]")
+      members_tokeninput = @$("input[name=members]")
       members_tokeninput.tokenInput "clear"
       _.each @model.get("members"), (member) ->
         members_tokeninput.tokenInput "add",
           id: member.id
           name: member.name
 
-
       @$("span#csv-download>a").attr "href", Routes.entity_path(@model.id) + ".csv"
       
       # Rules tab
-      rules_table = self.$("table#rules tbody")
+      rules_table = @$("table#rules tbody")
       rules_table.empty()
       _.each @model.get("rules"), (rule, i) ->
         $rule = $(JST["entities/group_rule"]())
@@ -223,10 +212,10 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
         rules_table.append $rule
 
       if @model.get("rules").length is 0
-        self.$("table#rules tbody").hide()
+        @$("table#rules tbody").hide()
       else
-        self.$("table#rules tbody").show()
-      self.$("table#rules tbody tr").each (i, e) ->
+        @$("table#rules tbody").show()
+      @$("table#rules tbody tr").each (i, e) ->
         $(e).find("input#value").typeahead
           minLength: 2
           sorter: (items) -> # required to keep the order given to process() in 'source'
@@ -238,24 +227,22 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
             item.replace new RegExp("(" + query + ")", "ig"), ($1, match) ->
               "<strong>" + match + "</strong>"
 
-
-          source: self.ruleSearch
-          updater: (item) ->
-            self.ruleSearchResultSelected item, self
-
+          source: @ruleSearch
+          updater: (item) =>
+            @ruleSearchResultSelected item, @
 
     else if type is "Person"
-      
       # Summary tab
-      self.$("h3").html @model.escape("name")
-      self.$("h5").html @model.escape("byline")
-      self.$("input[name=first]").val @model.escape("first")
-      self.$("input[name=last]").val @model.escape("last")
-      self.$("input[name=email]").val @model.escape("email")
-      self.$("input[name=loginid]").val @model.escape("loginid")
-      self.$("input[name=phone]").val @model.escape("phone")
-      self.$("input[name=address]").val @model.get("address")
-      favorites_tokeninput = self.$("input[name=favorites]")
+      @$("h3").html @model.escape("name")
+      @$("h5").html @model.escape("byline")
+      @$("input[name=first]").val @model.escape("first")
+      @$("input[name=last]").val @model.escape("last")
+      @$("input[name=email]").val @model.escape("email")
+      @$("input[name=loginid]").val @model.escape("loginid")
+      @$("input[name=phone]").val @model.escape("phone")
+      @$("input[name=address]").val @model.get("address")
+      
+      favorites_tokeninput = @$("input[name=favorites]")
       favorites_tokeninput.tokenInput "clear"
       _.each @model.get("favorites"), (favorite) ->
         favorites_tokeninput.tokenInput "add",
@@ -263,7 +250,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
           name: favorite.name
 
 
-      groups_tokeninput = self.$("input[name=groups]")
+      groups_tokeninput = @$("input[name=groups]")
       groups_tokeninput.tokenInput "clear"
       _.each @model.get("group_memberships"), (group) ->
         groups_tokeninput.tokenInput "add",
@@ -271,7 +258,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
           name: group.name
 
 
-      ous_tokeninput = self.$("input[name=ous]")
+      ous_tokeninput = @$("input[name=ous]")
       ous_tokeninput.tokenInput "clear"
       _.each @model.get("ous"), (ou) ->
         ous_tokeninput.tokenInput "add",
@@ -279,20 +266,17 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
           name: ou.name
 
 
-      
       # Roles tab
       $rolesTab = @$("fieldset#roles")
-      _.each @model.roles.groupBy("application_name"), (roleset) ->
+      _.each @model.roles.groupBy("application_name"), (roleset) =>
         app_name = roleset[0].get("application_name")
         app_id = roleset[0].get("application_id")
-        role_tokeninput = self.$("input[name=_token_input_" + app_id + "]")
+        role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
         role_tokeninput.tokenInput "clear"
         _.each roleset, (role) ->
           role_tokeninput.tokenInput "add",
             id: role.get("id")
             name: role.get("name")
-
-
 
     this
 
@@ -341,18 +325,16 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
     false
 
   deleteEntity: ->
-    self = this
+    @$el.fadeOut()
     
-    self.$el.fadeOut()
-    
-    bootbox.confirm "Are you sure you want to delete " + @model.escape("name") + "?", (result) ->
-      self.$el.fadeIn()
+    bootbox.confirm "Are you sure you want to delete " + @model.escape("name") + "?", (result) =>
+      @$el.fadeIn()
       if result
         # delete the application and dismiss the dialog
-        self.model.destroy()
+        @model.destroy()
         
         # dismiss the dialog
-        self.$(".modal-header a.close").trigger "click"
+        @$(".modal-header a.close").trigger "click"
 
     false
 
@@ -390,8 +372,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
     )
 
   cleanUpModal: ->
-    @model.off "change", @render, this
-    $("div#entityShowModal").remove()
+    @remove
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate ""
@@ -431,7 +412,7 @@ DssRm.Views.EntityShow = Support.CompositeView.extend(
       process entities
 
 
-  ruleSearchResultSelected: (item, self) ->
+  ruleSearchResultSelected: (item) ->
     parts = item.split("####")
     id = parseInt(parts[0])
     label = parts[1]

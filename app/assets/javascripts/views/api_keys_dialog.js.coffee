@@ -1,4 +1,4 @@
-DssRm.Views.ApiKeysDialog = Support.CompositeView.extend(
+DssRm.Views.ApiKeysDialog = Backbone.View.extend(
   tagName: "div"
   className: "modal"
   id: "apiKeysDialogModal"
@@ -10,14 +10,13 @@ DssRm.Views.ApiKeysDialog = Support.CompositeView.extend(
   initialize: (options) ->
     @$el.html JST["application/api_keys_dialog"]()
     @api_keys = options.api_keys
-    @api_keys.on "sync remove", @render, this
+    @listenTo @api_keys, "sync remove", @render
 
   render: ->
     @$("tbody").empty()
     @api_keys.each (key) =>
       row = $("<tr><td>" + key.escape("name") + "</td><td>" + key.escape("secret") + "</td><td><a href=\"#\" id=\"delete-key\">Remove</a></td></tr>")
       $(row).data "key-id", key.escape("id")
-      console.log "rendering key with id:" + key.get("id")
       @$("tbody").append row
 
     this
@@ -36,7 +35,7 @@ DssRm.Views.ApiKeysDialog = Support.CompositeView.extend(
     false
 
   cleanUpModal: ->
-    $("div#apiKeysDialogModal").remove()
+    @remove
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate ""

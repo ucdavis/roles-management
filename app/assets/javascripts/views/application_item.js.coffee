@@ -1,4 +1,4 @@
-DssRm.Views.ApplicationItem = Support.CompositeView.extend(
+DssRm.Views.ApplicationItem = Backbone.View.extend(
   tagName: "div"
   className: "card"
   events:

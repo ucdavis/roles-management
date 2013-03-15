@@ -1,4 +1,4 @@
-DssRm.Views.ApplicationShowAD = Support.CompositeView.extend({
+DssRm.Views.ApplicationShowAD = Backbone.View.extend({
   tagName: "span",
 
   render: function () {

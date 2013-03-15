@@ -1,4 +1,4 @@
-DssRm.Views.ApplicationShowRole = Support.CompositeView.extend({
+DssRm.Views.ApplicationShowRole = Backbone.View.extend({
   tagName: "tr",
   className: "fields",
   

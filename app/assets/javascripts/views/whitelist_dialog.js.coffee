@@ -1,4 +1,4 @@
-DssRm.Views.WhitelistDialog = Support.CompositeView.extend(
+DssRm.Views.WhitelistDialog = Backbone.View.extend(
   tagName: "div"
   className: "modal"
   id: "whitelistDialogModal"
@@ -42,7 +42,7 @@ DssRm.Views.WhitelistDialog = Support.CompositeView.extend(
     false
 
   cleanUpModal: ->
-    $("div#whitelistDialogModal").remove()
+    @remove
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate ""

@@ -1,4 +1,4 @@
-DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
+DssRm.Views.ApplicationsIndex = Backbone.View.extend(
   tagName: "div"
   className: "row-fluid"
   events:
@@ -21,10 +21,17 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     
     @sidebar_entities = new DssRm.Collections.Entities()
 
-    DssRm.current_user.favorites.on "change add remove destroy sync reset", @rebuildSidebarEntities, this
-    DssRm.current_user.group_ownerships.on "change add remove destroy sync reset", @rebuildSidebarEntities, this
-    DssRm.current_user.group_operatorships.on "change add remove destroy sync reset", @rebuildSidebarEntities, this
+    DssRm.current_user.favorites.on "reset", @buildSidebarEntities, this
+    DssRm.current_user.group_ownerships.on "reset", @buildSidebarEntities, this
+    DssRm.current_user.group_operatorships.on "reset", @buildSidebarEntities, this
 
+    DssRm.current_user.favorites.on "add", @addToSidebarEntities, this
+    DssRm.current_user.favorites.on "remove", @removeFromSidebarEntities, this
+    DssRm.current_user.group_ownerships.on "add", @addToSidebarEntities, this
+    DssRm.current_user.group_ownerships.on "remove", @removeFromSidebarEntities, this
+    DssRm.current_user.group_operatorships.on "add", @addToSidebarEntities, this
+    DssRm.current_user.group_operatorships.on "remove", @removeFromSidebarEntities, this
+    
     DssRm.applications.on "add", ((o) =>
       @renderCard o
     ), this
@@ -111,16 +118,25 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     DssRm.applications.each (application) =>
       @renderCard application
   
-  rebuildSidebarEntities: ->
-    # Build sidebar entities from the user's ownerships, operatorships, and favorites
+  
+  buildSidebarEntities: ->
+    # Populate with the user's ownerships, operatorships, and favorites
     _sidebar_entities = _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
-    # Sort so that groups come first
+    # Sort groups to be first
     _sidebar_entities = _.sortBy(_sidebar_entities, (e) ->
       prepend = (if (e.get("type") is "Group") then "1" else "2")
       sort_num = parseInt((prepend + e.get("name").charCodeAt(0).toString()))
       sort_num
     )
     @sidebar_entities.reset _sidebar_entities
+  
+  
+  addToSidebarEntities: (model, collection, options) ->
+    @sidebar_entities.add model
+
+
+  removeFromSidebarEntities: (model, collection, options) ->
+    @sidebar_entities.remove model
 
 
   render: ->
@@ -138,8 +154,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
     card = new DssRm.Views.ApplicationItem(
       model: application
       view_state: @view_state
-    )
-    @renderChild card
+    ).render()
     @$("#cards").append card.el
 
 
@@ -162,7 +177,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         current_application: @view_state.selected_application
       )
       
-      @renderChild pin
+      pin.render()
       
       if highlighted
         @$("#highlighted_pins").append pin.el
@@ -183,7 +198,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
           current_role: selected_role
           current_application: @view_state.selected_application
         )
-        @renderChild pin
+        pin.render()
         @$("#highlighted_pins").append pin.el
   
   
@@ -212,11 +227,11 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       process entities
 
 
-  sidebarSearchResultSelected: (item, self) ->
+  sidebarSearchResultSelected: (item) ->
     parts = item.split("####")
     id = parseInt(parts[0])
     label = parts[1]
-    self = this
+
     switch id
       when DssRm.Views.ApplicationsIndex.FID_ADD_PERSON
         alert "Currently unsupported."
@@ -231,16 +246,15 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
         # and not add to favorites. Adding to favorites only happens when
         # no role is selected.
         if @view_state.selected_role_id
-          selected_role = @view_state.selected_application.roles.where(id: parseInt(self.view_state.selected_role_id))[0]
+          selected_role = @view_state.selected_application.roles.where(id: parseInt(@view_state.selected_role_id))[0]
           new_entity = new DssRm.Models.Entity(id: id)
-          new_entity.fetch success: ->
+          new_entity.fetch success: =>
             selected_role.entities.add new_entity
-            self.view_state.selected_application.save()
+            @view_state.selected_application.save()
 
         else
-          
           # No role selected, so we will add this entity to their favorites
-          if self.sidebar_entities.find((e) ->
+          if @sidebar_entities.find((e) ->
             e.id is id
           ) is `undefined`
             
@@ -276,7 +290,7 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
       process entities
     , 10)
 
-  applicationSearchResultSelected: (item, self) ->
+  applicationSearchResultSelected: (item) ->
     parts = item.split("####")
     id = parseInt(parts[0])
     label = parts[1]
@@ -341,8 +355,8 @@ DssRm.Views.ApplicationsIndex = Support.CompositeView.extend(
 
   entityAssignedToCurrentRole: (e) ->
     entity_id = e.get("id")
-    self = this
-    selected_role = @view_state.selected_application.roles.where(id: parseInt(self.view_state.selected_role_id))[0]  if @view_state.selected_role_id
+
+    selected_role = @view_state.selected_application.roles.where(id: parseInt(@view_state.selected_role_id))[0]  if @view_state.selected_role_id
     if selected_role
       results = selected_role.entities.find((i) ->
         i.get("id") is entity_id

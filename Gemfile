@@ -36,7 +36,6 @@ gem 'pg'
 gem 'rails-backbone'
 gem 'jquery-rails'
 gem 'ejs'
-gem 'backbone-support'
 
 gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
 

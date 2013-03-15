@@ -1,120 +1,79 @@
-DssRm.Routers.Applications = Support.SwappingRouter.extend({
-  initialize: function(options) {
-    this.el = $('#applications');
+DssRm.Routers.Applications = Backbone.Router.extend(
+  initialize: (options) ->
+    @el = $("#applications")
+    @indexView = new DssRm.Views.ApplicationsIndex()
+    @indexView.render()
 
-    this.indexView = new DssRm.Views.ApplicationsIndex();
-  },
+  routes:
+    "": "index"
+    "applications/:id": "showApplication"
+    "entities/:uid": "showEntity"
+    "impersonate": "impersonateDialog"
+    "unimpersonate": "unimpersonate"
+    "api-keys": "apiKeysDialog"
+    "whitelist": "whitelistDialog"
+    "about": "aboutDialog"
 
-  routes: {
-    ""                 : "index",
-    "applications/:id" : "showApplication",
-    "entities/:uid"    : "showEntity",
-    "impersonate"      : "impersonateDialog",
-    "unimpersonate"    : "unimpersonate",
-    "api-keys"         : "apiKeysDialog",
-    "whitelist"        : "whitelistDialog",
-    "about"            : "aboutDialog"
-  },
+  index: ->
+    @el.html(@indexView.el)
 
-  index: function() {
-    this.swap(this.indexView);
-  },
+  showApplication: (applicationId) ->
+    status_bar.show "Loading application ..."
 
-  showApplication: function(applicationId) {
-    var application = DssRm.applications.get(applicationId);
-    var applicationsRouter = this;
+    application = DssRm.applications.get(applicationId)
+    application.fetch
+      success: ->
+        status_bar.hide()
+        new DssRm.Views.ApplicationShow(model: application).render().$el.modal()
+        
+      error: ->
+        status_bar.show "An error occurred while loading the application.", "error"
 
-    status_bar.show("Loading application ...");
 
-    application.fetch({
-      success: function() {
-        status_bar.hide();
+  showEntity: (uid) ->
+    status_bar.show "Loading ..."
 
-        var view = new DssRm.Views.ApplicationShow({ model: application });
-        applicationsRouter.currentView.renderChild(view);
-        view.$el.modal();
-      },
+    # Search DssRm.current_user objects first
+    # We'd prefer not to create new objects and would like events like name
+    # changes to propagate
+    entity = DssRm.current_user.favorites.get(uid)
+    entity = DssRm.current_user.group_ownerships.get(uid)  if entity is `undefined`
+    entity = DssRm.current_user.group_operatorships.get(uid)  if entity is `undefined`
+    
+    # Fetch it as a last resort - we won't get event updates
+    entity = new DssRm.Models.Entity(id: uid)  if entity is `undefined`
+    
+    entity.fetch
+      success: =>
+        status_bar.hide()
+        new DssRm.Views.EntityShow(model: entity).render().$el.modal()
 
-      error: function() {
-        status_bar.show("An error occurred while loading the application.", "error");
-      }
-    });
-  },
+      error: ->
+        status_bar.show "An error occurred while loading the entity.", "error"
 
-  showEntity: function(uid) {
-    // Search DssRm.current_user objects first
-    // We'd prefer not to create new objects and would like events like name
-    // changes to propagate
-    var entity = DssRm.current_user.favorites.get(uid);
-    if(entity == undefined) entity = DssRm.current_user.group_ownerships.get(uid);
-    if(entity == undefined) entity = DssRm.current_user.group_operatorships.get(uid);
-    // Fetch it as a last resort - we won't get event updates
-    if(entity == undefined) entity = new DssRm.Models.Entity({ id: uid });
 
-    var self = this;
+  impersonateDialog: ->
+    new DssRm.Views.ImpersonateDialog().render().$el.modal()
 
-    status_bar.show("Loading ...");
+  unimpersonate: ->
+    window.location.href = Routes.admin_ops_unimpersonate_path()
 
-    entity.fetch({
-      success: function() {
-        status_bar.hide();
+  apiKeysDialog: ->
+    status_bar.show "Loading API keys dialog ..."
 
-        var view = new DssRm.Views.EntityShow({ model: entity });
-        self.currentView.renderChild(view);
-        view.$el.modal();
-      },
+    $.get Routes.admin_api_keys_path(), (keys) =>
+      status_bar.hide()
+      api_keys = new DssRm.Collections.ApiKeys(keys)
+      new DssRm.Views.ApiKeysDialog(api_keys: api_keys).render().$el.modal()
 
-      error: function() {
-        status_bar.show("An error occurred while loading the entity.", "error");
-      }
-    });
-  },
+  whitelistDialog: ->
+    status_bar.show "Loading whitelist dialog ..."
 
-  impersonateDialog: function() {
-    var view = new DssRm.Views.ImpersonateDialog();
-    this.currentView.renderChild(view);
-    view.$el.modal();
-  },
+    $.get Routes.admin_api_whitelisted_ips_path(), (ips) =>
+      status_bar.hide()
+      whitelisted_ips = new DssRm.Collections.WhitelistedIPs(ips)
+      new DssRm.Views.WhitelistDialog(whitelist: whitelisted_ips).render().$el.modal()
 
-  unimpersonate: function() {
-    window.location.href = Routes.admin_ops_unimpersonate_path();
-  },
-  
-  apiKeysDialog: function() {
-    var self = this;
-
-    status_bar.show("Loading API keys dialog ...");
-
-    $.get(Routes.admin_api_keys_path(), function(keys) {
-      status_bar.hide();
-
-      self.api_keys = new DssRm.Collections.ApiKeys(keys);
-
-      var view = new DssRm.Views.ApiKeysDialog({ api_keys: self.api_keys });
-      self.currentView.renderChild(view);
-      view.$el.modal();
-    });
-  },
-
-  whitelistDialog: function() {
-    var self = this;
-
-    status_bar.show("Loading whitelist dialog ...");
-
-    $.get(Routes.admin_api_whitelisted_ips_path(), function(ips) {
-      status_bar.hide();
-
-      self.whitelisted_ips = new DssRm.Collections.WhitelistedIPs(ips);
-
-      var view = new DssRm.Views.WhitelistDialog({ whitelist: self.whitelisted_ips });
-      self.currentView.renderChild(view);
-      view.$el.modal();
-    });
-  },
-
-  aboutDialog: function() {
-    var view = new DssRm.Views.AboutDialog();
-    this.currentView.renderChild(view);
-    view.$el.modal();
-  }
-});
+  aboutDialog: ->
+    new DssRm.Views.AboutDialog().render().$el.modal()
+)

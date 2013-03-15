@@ -1,4 +1,4 @@
-DssRm.Views.AboutDialog = Support.CompositeView.extend(
+DssRm.Views.AboutDialog = Backbone.View.extend(
   tagName: "div"
   className: "modal"
   id: "aboutDialogModal"
@@ -13,7 +13,7 @@ DssRm.Views.AboutDialog = Support.CompositeView.extend(
     this
 
   cleanUpModal: ->
-    $("div#aboutDialogModal").remove()
+    @remove
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate ""
