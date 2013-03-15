@@ -10,4 +10,11 @@ DssRm.Models.ViewState = Backbone.Model.extend(
     @set selected_role_id: null
     @set focused_application_id: null
     @set focused_entity_id: null
+  
+  # Attempts to set focused_application_id based on search string 'term'
+  focusApplicationByTerm: (term) ->
+    if DssRm.applications.find( (i) -> i.get('name') == term )
+      @set focused_application_id: app.id
+    else
+      @set focused_application_id: null
 )

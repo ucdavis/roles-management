@@ -44,12 +44,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     
     @$("#search_applications").on "keyup", (e) =>
       entry = $(e.target).val()
-      app = DssRm.applications.find( (i) -> i.get('name') == entry )
-      
-      if app
-        @view_state.set focused_application_id: app.id
-      else
-        @view_state.set focused_application_id: null
+      @view_state.focusApplicationByTerm entry
 
     @$("#search_applications").typeahead
       minLength: 3
