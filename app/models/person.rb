@@ -144,7 +144,7 @@ class Person < Entity
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :role_ids => self.role_ids, :roles => self.roles.map{ |r| { id: r.id, token: r.token, name: r.name, application_id: r.application_id } } }
+    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :roles => self.roles.map{ |r| { id: r.id, token: r.token, name: r.name, application_id: r.application_id } } }
   end
 
   def can_administer_application?(app_id)
