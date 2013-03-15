@@ -10,8 +10,6 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     # Create a view state to be shared with sub-views
     @view_state = new DssRm.Models.ViewState()
     
-    window.view_state = @view_state
-    
     # 'selected' implies actions will be performed upon the object (as expected)
     # whereas 'focused' merely indicates whether it's shaded or not (used by the search bars)
     @listenTo @view_state, "change", @render
@@ -296,8 +294,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
         ,
           wait: true
       else
-        @view_state.focused_application_id = id
-        @view_state.trigger "change"
+        @view_state.set focused_application_id: id
         
     label
 

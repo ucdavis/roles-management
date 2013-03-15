@@ -41,14 +41,15 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$("i.details").hide()  if @relationship is "operator"
     
     # Highlight this application?
-    if @view_state.get 'selected_application' is @model
+    if @view_state.get 'selected_application' == @model
       @$el.css("box-shadow", "#08C 0 0 10px").css "border", "1px solid #08C"
     else
       @$el.css("box-shadow", "0 1px 3px rgba(0, 0, 0, 0.3)").css "border", "1px solid #CCC"
     
     # Shade/unshade this application? (based on @view_state focus)
-    if @view_state.get 'focused_application_id'
-      if @view_state.get 'focused_application_id' is @model.id
+    focused_application_id = @view_state.get 'focused_application_id'
+    if focused_application_id
+      if focused_application_id is @model.id
         @$el.css "opacity", "1.0"
       else
         @$el.css "opacity", "0.4"
