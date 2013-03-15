@@ -8,15 +8,10 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
 
   initialize: (options) ->
     # Create a view state to be shared with sub-views
-    @view_state = {}
-    _.extend @view_state, Backbone.Events
+    @view_state = new DssRm.Models.ViewState()
     
     # 'selected' implies actions will be performed upon the object (as expected)
     # whereas 'focused' merely indicates whether it's shaded or not (used by the search bars)
-    @view_state.selected_application = null
-    @view_state.selected_role_id = null
-    @view_state.focused_application_id = null
-    @view_state.focused_entity_id = null
     @view_state.on "change", @render, this
     
     @sidebar_entities = new DssRm.Collections.Entities()
@@ -44,9 +39,6 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     DssRm.current_user.group_operatorships.on "change add remove destroy sync reset", @render, this
 
     @$el.html JST["applications/index"](applications: DssRm.applications)
-    
-    # @$("#search_applications").on "focus", (e) ->
-    #   $(this).select() focus is apparently blocked by bootstrap's typeahead?
     
     @$("#search_applications").on "keyup", (e) =>
       entry = $(e.target).val()
@@ -80,6 +72,11 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     
       items: 15
 
+    # @$("#search_applications").off "focus"
+    # @$("#search_applications").on "focus", (e) ->
+    #   $(this).select()
+    #   typeahead = $(e.target).data('typeahead')
+    #   typeahead.focused = true;
     
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
