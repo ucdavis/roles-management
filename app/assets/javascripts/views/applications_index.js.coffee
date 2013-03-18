@@ -333,6 +333,8 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
         new_entity.fetch success: =>
           selected_role.entities.add new_entity
           @view_state.get('selected_application').save()
+      
+      @view_state.trigger('change')
 
 
   # Returns true if the given entity 'e' is assigned to the current role
