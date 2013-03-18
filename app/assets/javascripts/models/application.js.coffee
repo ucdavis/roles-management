@@ -1,12 +1,10 @@
 DssRm.Models.Application = Backbone.Model.extend(
   initialize: ->
-    
     # Be sure to use this.roles and this.owners and not this.get('roles'), etc.
     @roles = new DssRm.Collections.Roles(@get("roles"))
     @owners = new DssRm.Collections.Entities(@get("owners"))
     @operators = new DssRm.Collections.Entities(@get("operators"))
     @on "sync", (->
-      
       # Adding a new role will reveal a proper ID only after the server gives us one on save
       @roles.reset @get("roles")
     ), this
@@ -46,5 +44,9 @@ DssRm.Models.Application = Backbone.Model.extend(
     json.operator_ids = @operators.map((operator) ->
       operator.id
     )
+    
+    console.log "saving application #{@id}"
+    console.log "  with #{@entities.length} entities"
+    
     json
 )

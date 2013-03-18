@@ -326,15 +326,17 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
       if matched.length > 0
         # toggling off
         selected_role.entities.remove matched[0]
-        @view_state.get('selected_application').save()
+        @view_state.get('selected_application').save
+          success: =>
+            @view_state.trigger('change')
       else
         # toggling on
         new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
         new_entity.fetch success: =>
           selected_role.entities.add new_entity
-          @view_state.get('selected_application').save()
-      
-      @view_state.trigger('change')
+          @view_state.get('selected_application').save
+            success: =>
+                @view_state.trigger('change')
 
 
   # Returns true if the given entity 'e' is assigned to the current role
