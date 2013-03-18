@@ -4,11 +4,10 @@ DssRm.Models.Application = Backbone.Model.extend(
     @roles = new DssRm.Collections.Roles(@get("roles"))
     @owners = new DssRm.Collections.Entities(@get("owners"))
     @operators = new DssRm.Collections.Entities(@get("operators"))
-    @on "sync", (->
+    
+    @on "sync", =>
       # Adding a new role will reveal a proper ID only after the server gives us one on save
       @roles.reset @get("roles")
-    ), this
-
   
   # Returns only the "highest" relationship (this order): owner, operator, admin
   # Uses DssRm.current_user as the entity

@@ -135,6 +135,7 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
   addRole: ->
     # the false ID simply needs to be unique in case the 'remove' button is hit - our backend will provide a proper ID on saving
     @model.roles.add id: "new_" + Math.round((new Date()).getTime())
+    
     false
 
   removeRole: (e) ->

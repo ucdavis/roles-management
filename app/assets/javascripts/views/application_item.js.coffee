@@ -47,7 +47,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$("i.details").hide() if @relationship is "operator"
     
     # Highlight this application?
-    if @view_state.get 'selected_application' == @model
+    if @view_state.getSelectedApplication() == @model
       @$el.css("box-shadow", "#08C 0 0 10px").css "border", "1px solid #08C"
     else
       @$el.css("box-shadow", "0 1px 3px rgba(0, 0, 0, 0.3)").css "border", "1px solid #CCC"
@@ -70,7 +70,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$(".roles>.role").each (i, r) =>
       role_id = parseInt($(r).attr("data-role-id"))
       roles_in_dom.push role_id
-      if role_id is @view_state.getSelectedRoleId()
+      if role_id is @view_state.get('selected_role_id')
         $(r).css("box-shadow", "#08C 0 0 5px").css "border", "1px solid #08C"
       else
         $(r).css("box-shadow", "none").css "border", "1px solid #bce8f1"
@@ -120,8 +120,8 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
         status_bar.hide()
         
         @view_state.set
-          selected_application: application
-          selected_role: role
+          selected_application_id: application_id
+          selected_role_id: role_id
       error: ->
         status_bar.show "An error occurred while fetching information about the role.", "error"
 )

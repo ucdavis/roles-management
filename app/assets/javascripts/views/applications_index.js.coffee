@@ -5,7 +5,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     "click #pins li"             : "selectEntity"
     "click #highlighted_pins li" : "selectEntity"
     "click #cards"               : "deselectAll"
-
+    
   initialize: (options) ->
     # Create a view state to be shared with sub-views
     @view_state = new DssRm.Models.ViewState()
@@ -150,8 +150,8 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
       group.get "id"
     )
-    selected_role = @view_state.get 'selected_role'
-
+    selected_role = @view_state.getSelectedRole()
+    
     @$("#pins").empty()
     @$("#highlighted_pins").empty()
     @sidebar_entities.each (entity) =>
@@ -161,7 +161,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
         highlighted: highlighted
         read_only: _.indexOf(group_operatorships, entity.get("id")) >= 0
         current_role: selected_role
-        current_application: @view_state.get 'selected_application'
+        current_application: @view_state.getSelectedApplication()
       )
       
       pin.render()
@@ -183,7 +183,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
           highlighted: true
           faded: true
           current_role: selected_role
-          current_application: @view_state.get 'selected_application'
+          current_application: @view_state.getSelectedApplication()
         )
         pin.render()
         @$("#highlighted_pins").append pin.el
@@ -232,12 +232,12 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
         # If a role is selected, the behavior is to assign to the role,
         # and not add to favorites. Adding to favorites only happens when
         # no role is selected.
-        selected_role = @view_state.get 'selected_role'
+        selected_role = @view_state.getSelectedRole()
         if selected_role
           new_entity = new DssRm.Models.Entity(id: id)
           new_entity.fetch success: =>
             selected_role.entities.add new_entity
-            @view_state.get('selected_application').save()
+            @view_state.getSelectedApplication().save()
         else
           # No role selected, so we will add this entity to their favorites
           if @sidebar_entities.find((e) ->
@@ -308,6 +308,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
   selectEntity: (e) ->
     clicked_entity_id = $(e.currentTarget).data("entity-id")
     clicked_entity_name = $(e.currentTarget).data("entity-name")
+    
     e.stopPropagation()
     
     # Behavior of selecting an entity changes depending on whether an application/role
@@ -316,7 +317,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
     # that entity from that application/role.
     # If no application/role is selected, clicking an entity merely filters the application/role
     # list to display their current assignments.
-    selected_role = @view_state.get 'selected_role'
+    selected_role = @view_state.getSelectedRole()
     if selected_role
       # toggle on or off?
       matched = selected_role.entities.filter((e) ->
@@ -326,24 +327,27 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
       if matched.length > 0
         # toggling off
         selected_role.entities.remove matched[0]
-        @view_state.get('selected_application').save
+        @view_state.getSelectedApplication().save(
           success: =>
             @view_state.trigger('change')
+        )
       else
         # toggling on
         new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
         new_entity.fetch success: =>
           selected_role.entities.add new_entity
-          @view_state.get('selected_application').save
+          app = @view_state.getSelectedApplication()
+          app.save(
             success: =>
                 @view_state.trigger('change')
+          )
 
 
   # Returns true if the given entity 'e' is assigned to the current role
   entityAssignedToCurrentRole: (e) ->
     entity_id = e.get("id")
 
-    selected_role = @view_state.get 'selected_role'
+    selected_role = @view_state.getSelectedRole()
     if selected_role
       results = selected_role.entities.find((i) ->
         i.get('id') is entity_id
