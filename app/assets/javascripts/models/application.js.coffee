@@ -45,8 +45,5 @@ DssRm.Models.Application = Backbone.Model.extend(
       operator.id
     )
     
-    console.log "saving application #{@id}"
-    console.log "  with #{@entities.length} entities"
-    
     json
 )
