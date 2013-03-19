@@ -20,4 +20,25 @@ class ApplicationsControllerTest < ActionController::TestCase
     assert_response :success
     assert_not_nil assigns(:applications)
   end
+
+  test "JSON request should include certain attributes" do
+    grant_test_user_basic_access
+
+    get :show, :format => :json, :id => '1'
+
+    body = JSON.parse(response.body)
+
+    assert body.include?('id'), 'JSON response does not include id field'
+    assert body.include?('name'), 'JSON response does not include name field'
+    assert body.include?('roles'), 'JSON response should include roles'
+    
+    # body['roles'] should include entities which include name and id (for frontend interface role assignment, applicaiton saving, and new role creation saving (temp ID -> real ID), etc.)
+    body['roles'].each do |r|
+      assert r["entities"], "JSON response's 'roles' section should include an 'entities' section"
+      r["entities"].each do |e|
+        assert e["id"], "JSON response's 'roles' section's 'entities' should include an ID"
+        assert e["name"], "JSON response's 'roles' section's 'entities' should include a name"
+      end
+    end
+  end
 end
