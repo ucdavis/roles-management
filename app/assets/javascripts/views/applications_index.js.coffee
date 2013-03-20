@@ -287,7 +287,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
           name: name
           owners: [
             id: DssRm.current_user.id
-            name: DssRm.current_user.target("name")
+            name: DssRm.current_user.get("name")
             type: "Person"
           ]
         ,
