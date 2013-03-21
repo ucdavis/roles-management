@@ -1,7 +1,7 @@
 RM API Documentation
 ====================
-Version 0.5
-Updated 2013-02-13
+Version 0.6
+Updated 2013-03-21
 Christopher Thielen (cmthielen@ucdavis.edu)
 
 Notes
@@ -56,6 +56,19 @@ of your application and a randomly generated string.
 
 To authenticate, send this exact name and password using standard HTTP Auth
 over SSL.
+
+Nomenclature
+------------
+A few notes on language usage:
+
+RM refers to 'entities' and 'members' when referencing those associated with
+a role or application. The important difference in the terms is that 'entities'
+refers to both groups and people whereas 'members' refers to people and group
+members calculated together and flattened out. For example, if a role has
+one person assigned and one group (containing two additional people) assigned,
+'entities' will have two objects in it: the one person and the one group, while
+'members' will have three people objects in it: the one person and the two
+extracted from the group. Feel free to use whichever suits your needs.
 
 Examples
 --------

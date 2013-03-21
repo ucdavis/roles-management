@@ -22,8 +22,12 @@ class Application < ActiveRecord::Base
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :roles => self.roles.map{ |r| { id: r.id, description: r.description, token: r.token, name: r.name, entities: r.entities.map { |e| { id: e.id, name: e.name } } } }, :description => self.description,
-      :owners => self.owners.map{ |o| { name: o.name, id: o.id } }, :operators => self.operators.map{ |o| { name: o.name, id: o.id } } }
+    { :id => self.id, :name => self.name,
+      :roles => self.roles.map{ |r| { id: r.id, description: r.description, token: r.token, name: r.name,
+                                      entities: r.entities.map { |e| { id: e.id, name: e.name, type: e.type } },
+                                      members: r.members.map { |m| { id: m.id, name: m.name }  } } },
+      :description => self.description, :owners => self.owners.map{ |o| { name: o.name, id: o.id } },
+      :operators => self.operators.map{ |o| { name: o.name, id: o.id } } }
   end
 
   # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction
