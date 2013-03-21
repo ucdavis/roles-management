@@ -1,0 +1,7 @@
+role_assignment1:
+  role_id: 1
+  entity_id: 1
+
+role_assignment2:
+  role_id: 1
+  entity_id: 2

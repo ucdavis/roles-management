@@ -1,4 +1,5 @@
 casuser:
+  id: 1
   type: Person
   first: CAS
   last: User
@@ -7,3 +8,9 @@ casuser:
   status: true
   phone: 8005551212
   address: 123 Test Dr
+
+groupA:
+  id: 2
+  type: Group
+  name: Group A
+  description: Your basic group
