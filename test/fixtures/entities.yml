@@ -14,3 +14,31 @@ groupA:
   type: Group
   name: Group A
   description: Your basic group
+
+group_memberA:
+  id: 3
+  type: Person
+  first: Bob
+  last: Groupmember
+  email: bob@domain.com
+  loginid: bob
+  status: true
+  phone: 8005551212
+  address: 234 Test Dr
+
+group_memberB:
+  id: 4
+  type: Person
+  first: George
+  last: Groupmember
+  email: george@domain.com
+  loginid: george
+  status: true
+  phone: 8005551212
+  address: 345 Test Dr
+
+groupB:
+  id: 5
+  type: Group
+  name: Group B
+  description: I'm a member of Group A!
