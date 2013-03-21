@@ -30,10 +30,15 @@ class ApplicationsControllerTest < ActionController::TestCase
 
     assert body.include?('id'), 'JSON response does not include id field'
     assert body.include?('name'), 'JSON response does not include name field'
+    assert body.include?('description'), 'JSON response does not include description field'
     assert body.include?('roles'), 'JSON response should include roles'
     
     # body['roles'] should include entities which include name and id (for frontend interface role assignment, applicaiton saving, and new role creation saving (temp ID -> real ID), etc.)
     body['roles'].each do |r|
+      assert r["id"], "JSON response's 'roles' section should include an ID field"
+      assert r["name"], "JSON response's 'roles' section should include a name field"
+      assert r["token"], "JSON response's 'roles' section should include a token field"
+      assert r["description"], "JSON response's 'roles' section should include a description field"
       assert r["entities"], "JSON response's 'roles' section should include an 'entities' section"
       assert r["members"], "JSON response's 'roles' section should include a 'members' section"
       r["entities"].each do |e|
@@ -46,5 +51,18 @@ class ApplicationsControllerTest < ActionController::TestCase
         assert m["name"], "JSON response's 'roles' section's 'members' should include a name"
       end
     end
+
+    assert body["owners"], "JSON response should include an 'owners' section"
+    body["owners"].each do |o|
+      assert o["id"], "JSON response's 'owners' section's 'members' should include an ID"
+      assert o["name"], "JSON response's 'owners' section's 'members' should include a name"
+    end
+
+    assert body["operators"], "JSON response should include an 'operators' section"    
+    body["operators"].each do |o|
+      assert o["id"], "JSON response's 'roles' section's 'members' should include an ID"
+      assert o["name"], "JSON response's 'roles' section's 'members' should include a name"
+    end
+    
   end
 end

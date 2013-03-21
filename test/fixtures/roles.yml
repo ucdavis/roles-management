@@ -1,4 +1,6 @@
 dssrm_access:
   id: 1
+  name: Access
+  description: Provides basic access
   token: access
   application_id: 1
