@@ -30,6 +30,7 @@ class RolesControllerTest < ActionController::TestCase
     body['members'].each do |m|
       assert m["id"], "JSON response's 'roles' section's 'members' should include an ID"
       assert m["name"], "JSON response's 'roles' section's 'members' should include a name"
+      assert m["loginid"], "JSON response's 'roles' section's 'members' should include their login ID"
     end
   end
 
@@ -37,6 +38,5 @@ class RolesControllerTest < ActionController::TestCase
     grant_whitelisted_access
 
     get :show, :format => :txt, :id => '1'
-
   end
 end

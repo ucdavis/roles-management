@@ -50,6 +50,7 @@ class ApplicationsControllerTest < ActionController::TestCase
       r["members"].each do |m|
         assert m["id"], "JSON response's 'roles' section's 'members' should include an ID"
         assert m["name"], "JSON response's 'roles' section's 'members' should include a name"
+        assert m["loginid"], "JSON response's 'roles' section's 'members' should include their login ID"
       end
     end
 
@@ -64,6 +65,5 @@ class ApplicationsControllerTest < ActionController::TestCase
       assert o["id"], "JSON response's 'roles' section's 'members' should include an ID"
       assert o["name"], "JSON response's 'roles' section's 'members' should include a name"
     end
-    
   end
 end
