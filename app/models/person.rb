@@ -1,6 +1,9 @@
 # Person shares many attributes with entity.
 # Note that the 'name' field is simply self.first + " " + self.last
 # and is thus read-only. The same does not apply for groups.
+#
+# 'roles' refers only to explicit roles. Use method 'all_roles' to include
+# those assigned via group membership.
 class Person < Entity
   using_access_control
 
@@ -34,7 +37,8 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_membership_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
+  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_membership_ids, :ou_ids,
+                  :group_ownership_ids, :group_operatorship_ids
 
   after_save :trigger_sync
 
@@ -78,6 +82,16 @@ class Person < Entity
         group_memberships.delete(ou.id)
       end
     end
+  end
+  
+  # Calculates all roles for an individual - explicitly assigned + those via group membership, including group rules
+  def all_roles
+    computed_roles = []
+    computed_roles = roles
+    group_memberships.each do |membership|
+      computed_roles += membership.roles
+    end
+    computed_roles
   end
 
   def roles_by_application(application_id)
@@ -144,7 +158,8 @@ class Person < Entity
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :roles => self.roles.map{ |r| { id: r.id, token: r.token, name: r.name, application_id: r.application_id } } }
+    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid,
+      :roles => self.all_roles.map{ |r| { id: r.id, token: r.token, name: r.name, application_id: r.application_id } } }
   end
 
   def can_administer_application?(app_id)
