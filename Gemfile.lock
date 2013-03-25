@@ -7,9 +7,9 @@ GIT
 
 GIT
   remote: git://github.com/railsware/js-routes.git
-  revision: 4c3684167664e6a276a4c8c516c0f7f71b01a9b9
+  revision: df1a733d63458aa2843e3a56d79fcefc2c262295
   specs:
-    js-routes (0.8.7)
+    js-routes (0.8.8)
       rails (>= 3.2)
 
 GIT
@@ -21,9 +21,9 @@ GIT
 
 GIT
   remote: https://github.com/rubycas/rubycas-client.git
-  revision: c28832fc77ef2281c4d0ce569374b0135eabf7af
+  revision: 0bdd87d4d7ca29a49e0a77a9adbc5a5c175e618e
   specs:
-    rubycas-client (2.3.9)
+    rubycas-client (2.3.10.rc1)
       activesupport
 
 GEM
@@ -73,7 +73,7 @@ GEM
     coffee-script (2.2.0)
       coffee-script-source
       execjs
-    coffee-script-source (1.6.1)
+    coffee-script-source (1.6.2)
     daemons (1.1.9)
     declarative_authorization (0.5.7)
     delayed_job (3.0.5)
@@ -91,7 +91,7 @@ GEM
     highline (1.6.16)
     hike (1.2.1)
     i18n (0.6.4)
-    jbuilder (1.0.2)
+    jbuilder (1.2.0)
       activesupport (>= 3.0.0)
     journey (1.0.4)
     jquery-rails (2.1.4)
@@ -109,7 +109,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.21)
-    multi_json (1.7.0)
+    multi_json (1.7.2)
     net-ldap (0.3.1)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
@@ -149,19 +149,19 @@ GEM
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
     raindrops (0.10.0)
-    rake (10.0.3)
+    rake (10.0.4)
     rdoc (3.12.2)
       json (~> 1.4)
     ruby-ldap (0.9.12)
     ruby-prof (0.13.0)
-    ruby_parser (3.1.1)
+    ruby_parser (3.1.2)
       sexp_processor (~> 4.1)
     sass (3.2.7)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
       tilt (~> 1.3)
-    sexp_processor (4.1.5)
+    sexp_processor (4.2.0)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
