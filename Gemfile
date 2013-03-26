@@ -19,10 +19,6 @@ group :development do
   gem 'ruby-prof'
 end
 
-group :test do
-  gem 'jasmine'
-end
-
 gem 'sqlite3', :groups => [:development, :test]
 
 # Deploy with Capistrano
@@ -64,3 +60,8 @@ gem 'whenever'
 # For background processing
 gem 'delayed_job_active_record'
 gem 'daemons'
+
+group :development, :test do
+  gem 'jasminerice'
+  gem 'guard-jasmine'
+end

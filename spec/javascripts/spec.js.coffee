@@ -1,0 +1,9 @@
+#= require jquery
+#= require underscore
+#= require json2
+#= require backbone
+#= require dss-rm
+#= require models/view_state
+#= require views/applications_index
+#= require collections/entities
+#= require_tree .

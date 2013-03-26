@@ -1,4 +1,4 @@
-DssRm.Views.ApplicationsIndex = Backbone.View.extend(
+@DssRm.Views.ApplicationsIndex = Backbone.View.extend(
   tagName: "div"
   className: "row-fluid"
   events:
