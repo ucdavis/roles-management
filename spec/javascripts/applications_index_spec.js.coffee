@@ -1,5 +1,6 @@
 describe "ApplicationsIndex", ->
   it "displays application cards and sidebar entities", ->
-    jasmine.log DssRm
+    data = getJSONFixture('current_user.json')
+    jasmine.log data
     @indexView = new DssRm.Views.ApplicationsIndex()
-    #@indexView.render()
+    @indexView.render()

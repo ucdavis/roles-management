@@ -62,6 +62,6 @@ gem 'delayed_job_active_record'
 gem 'daemons'
 
 group :development, :test do
-  gem 'jasminerice'
+  gem 'jasminerice', :git => 'git://github.com/bradphelan/jasminerice.git'
   gem 'guard-jasmine'
 end

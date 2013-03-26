@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/bradphelan/jasminerice.git
+  revision: f404da53bb05d0f0f01976182cbc95e918d4cf70
+  specs:
+    jasminerice (0.1.0)
+      coffee-rails
+
+GIT
   remote: git://github.com/nessche/net-ssh.git
   revision: 21dde273463f5aae11dcad34dfb3feb08dc81375
   specs:
@@ -103,14 +110,9 @@ GEM
       guard (>= 1.1.0)
       multi_json
       thor
-    haml (4.0.1)
-      tilt
     highline (1.6.16)
     hike (1.2.1)
     i18n (0.6.4)
-    jasminerice (0.0.10)
-      coffee-rails
-      haml
     jbuilder (1.2.0)
       activesupport (>= 3.0.0)
     journey (1.0.4)
@@ -229,7 +231,7 @@ DEPENDENCIES
   ejs
   exception_notification
   guard-jasmine
-  jasminerice
+  jasminerice!
   jbuilder
   jquery-rails
   js-routes!
