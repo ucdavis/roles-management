@@ -4,6 +4,10 @@
 #= require backbone
 #= require dss-rm
 #= require models/view_state
+#= require models/application
+#= require models/role
 #= require views/applications_index
 #= require collections/entities
+#= require collections/applications
+#= require collections/roles
 #= require_tree .
