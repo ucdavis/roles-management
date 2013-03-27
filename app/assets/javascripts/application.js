@@ -9,7 +9,6 @@
 //= require status_bar
 //= require bootbox
 //= require bootstrap-modal-alert
-//= require jQuery.equalHeights
 //= require jquery.tokeninput
 //= require routes
 //= require jquery.masonry
