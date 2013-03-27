@@ -159,9 +159,15 @@ class Person < Entity
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid,
-      :roles => self.all_roles.map{ |r| { id: r.id, token: r.token, name: r.name, application_id: r.application_id } } }
+      :roles => self.all_roles.map{ |r| { id: r.id, token: r.token, name: r.name, application_id: r.application_id } },
+      :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
+      :group_memberships => { :non_ous => self.group_memberships.map{ |e| { id: e.id, name: e.name, type: e.type } },
+                              :ous => self.group_memberships.ous.map{ |e| { id: e.id, name: e.name, type: e.type } } },
+      :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
+      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } }
+    }
   end
-
+  
   def can_administer_application?(app_id)
     applications.collect{ |x| x.id }.include? app_id
   end

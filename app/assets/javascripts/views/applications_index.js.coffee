@@ -15,6 +15,7 @@
     @listenTo @view_state, "change", @render
     
     @sidebar_entities = new DssRm.Collections.Entities()
+    @buildSidebarEntities()
 
     DssRm.current_user.favorites.on "reset", @buildSidebarEntities, this
     DssRm.current_user.group_ownerships.on "reset", @buildSidebarEntities, this

@@ -25,10 +25,10 @@ DssRm.Models.Entity = Backbone.Model.extend(
   updateAttributes: ->
     type = @get("type")
     if type is "Person"
-      @favorites = new DssRm.Collections.Entities(@get("favorites"))  if @favorites is `undefined`
-      @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships"))  if @group_ownerships is `undefined`
-      @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships"))  if @group_operatorships is `undefined`
-      @roles = new DssRm.Collections.Roles(@get("roles"))  if @roles is `undefined`
+      @favorites = new DssRm.Collections.Entities(@get("favorites")) if @favorites is `undefined`
+      @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
+      @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships")) if @group_operatorships is `undefined`
+      @roles = new DssRm.Collections.Roles(@get("roles")) if @roles is `undefined`
       @favorites.reset @get("favorites")
       @group_ownerships.reset @get("group_ownerships")
       @group_operatorships.reset @get("group_operatorships")
