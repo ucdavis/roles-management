@@ -1,64 +1,66 @@
-<div class="modal-header">
-  <a class="close" data-dismiss="modal">×</a>
-  <h3>name</h3>
-  <h5>byline</h5>
-</div>
-<div class="modal-body">
-  <div class="tabbable tabs-left">
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
-      <li><a href="#roles" data-toggle="tab">Roles</a></li>
-    </ul>
-    <div class="tab-content">
-      <form>
-
-        <fieldset class="tab-pane active" id="summary">
-          <label for="first">Name</label>
-          <input type="text" name="first" class="text small" /> <input type="text" name="last" class="text small" />
-          <br />
-          <span style="display: inline-block;">
-            <label for="email">E-Mail</label>
-            <input type="text" name="email" class="text small" />
-          </span>
-          <span style="display: inline-block;">
-            <label for="loginid">Login ID</label>
-            <input type="text" name="loginid" class="text small" />
-          </span>
-          <br />
-          <span style="display: inline-block;">
-            <label for="phone">Phone</label>
-            <input type="text" name="phone" class="text" />
-          </span>
-          <span style="display: inline-block;">
-            <label for="address">Address</label>
-            <input type="text" name="address" class="text" />
-          </span>
-          <br />
-
-          <p>
-            <label for="favorites">Favorites</label>
-            <input type="text" name="favorites" class="token_input" />
-          </p>
-
-          <label for="group_tokens">Groups</label>
-          <p>
-            <input type="text" name="groups" class="token_input" />
-          </p>
-
-          <label for="ou_tokens">Organizational Units</label>
-          <p>
-            <input type="text" name="ous" class="token_input" />
-          </p>
-        </fieldset>
-        <fieldset class="tab-pane" id="roles">roles</fieldset>
-      </form>
-    </div>
-  </div> <!-- /tabbable -->
-</div>
-<div class="modal-footer">
-  <div style="float: left;">
-    <a href="#" class="btn" id="rescan">Rescan</a>
+<div class="modal" id="entityShowModal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>name</h3>
+    <h5>byline</h5>
   </div>
-  <a href="#" class="btn" data-dismiss="modal">Close</a>
-  <a href="#" class="btn btn-primary" id="apply">Apply</a>
+  <div class="modal-body">
+    <div class="tabbable tabs-left">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#roles" data-toggle="tab">Roles</a></li>
+      </ul>
+      <div class="tab-content">
+        <form>
+
+          <fieldset class="tab-pane active" id="summary">
+            <label for="first">Name</label>
+            <input type="text" name="first" class="text small" /> <input type="text" name="last" class="text small" />
+            <br />
+            <span style="display: inline-block;">
+              <label for="email">E-Mail</label>
+              <input type="text" name="email" class="text small" />
+            </span>
+            <span style="display: inline-block;">
+              <label for="loginid">Login ID</label>
+              <input type="text" name="loginid" class="text small" />
+            </span>
+            <br />
+            <span style="display: inline-block;">
+              <label for="phone">Phone</label>
+              <input type="text" name="phone" class="text" />
+            </span>
+            <span style="display: inline-block;">
+              <label for="address">Address</label>
+              <input type="text" name="address" class="text" />
+            </span>
+            <br />
+
+            <p>
+              <label for="favorites">Favorites</label>
+              <input type="text" name="favorites" class="token_input" />
+            </p>
+
+            <label for="group_tokens">Groups</label>
+            <p>
+              <input type="text" name="groups" class="token_input" />
+            </p>
+
+            <label for="ou_tokens">Organizational Units</label>
+            <p>
+              <input type="text" name="ous" class="token_input" />
+            </p>
+          </fieldset>
+          <fieldset class="tab-pane" id="roles">roles</fieldset>
+        </form>
+      </div>
+    </div> <!-- /tabbable -->
+  </div>
+  <div class="modal-footer">
+    <div style="float: left;">
+      <a href="#" class="btn" id="rescan">Rescan</a>
+    </div>
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+    <a href="#" class="btn btn-primary" id="apply">Apply</a>
+  </div>
 </div>

@@ -1,5 +1,6 @@
 DssRm.Views.ApplicationShow = Backbone.View.extend(
   tagName: "div"
+  
   events:
     "click a#apply": "saveApplication"
     "click a#delete": "deleteApplication"

@@ -1,7 +1,5 @@
 DssRm.Views.EntityShow = Backbone.View.extend(
   tagName: "div"
-  className: "modal"
-  id: "entityShowModal"
   
   events:
     "click a#apply": "save"
@@ -372,9 +370,7 @@ DssRm.Views.EntityShow = Backbone.View.extend(
     )
 
   cleanUpModal: ->
-    console.log "cleaning modal"
-    console.log @$el
-    @remove
+    @remove()
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate ""
