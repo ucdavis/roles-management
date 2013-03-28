@@ -13,7 +13,7 @@
 
     $('body').append(status_bar.$el);
 
-    status_bar.initialize = true;
+    status_bar.initialized = true;
   },
 
   // Displays the status bar

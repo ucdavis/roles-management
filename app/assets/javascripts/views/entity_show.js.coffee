@@ -372,6 +372,8 @@ DssRm.Views.EntityShow = Backbone.View.extend(
     )
 
   cleanUpModal: ->
+    console.log "cleaning modal"
+    console.log @$el
     @remove
     
     # Need to change URL in case they want to open the same modal again
