@@ -34,7 +34,8 @@ class GroupsControllerTest < ActionController::TestCase
     body['members'].each do |m|
       assert m["id"], "JSON response's 'members' section should include an ID"
       assert m["name"], "JSON response's 'members' section should include a name"
-      assert m["loginid"], "JSON response's 'members' section should include the login ID"
+      # loginid may be nil if the member is a group, so check for existence, not value
+      assert m.has_key?("loginid"), "JSON response's 'members' section should include the login ID"
     end
     
   end
