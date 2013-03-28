@@ -15,6 +15,7 @@ after "deploy:restart", "deploy:prime_cache"
 server "169.237.120.176", :web, :app, :db, primary: true
 
 set :application, "dss-rm"
+set :url, "https://roles.dss.ucdavis.edu/"
 set :user, "deployer"
 set :deploy_to, "/home/#{user}/apps/#{application}"
 set :deploy_via, :remote_cache
@@ -83,6 +84,6 @@ namespace :deploy do
 
   desc "Prime cache using curl"
   task :prime_cache, roles: :web do
-    run "curl http://#{application} >& /dev/null"
+    run "curl #{url} >& /dev/null"
   end
 end
