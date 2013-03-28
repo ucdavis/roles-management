@@ -198,7 +198,7 @@ DssRm.Views.EntityShow = Backbone.View.extend(
           id: member.id
           name: member.name
 
-      @$("span#csv-download>a").attr "href", Routes.entity_path(@model.id) + ".csv"
+      @$("span#csv-download>a").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
       
       # Rules tab
       rules_table = @$("table#rules tbody")

@@ -53,7 +53,7 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
         id: operator.id
         name: operator.name
 
-    @$("span#csv-download>a").attr "href", Routes.application_path(@model.id) + ".csv"
+    @$("span#csv-download>a").attr "href", Routes.application_path(@model.id, {format: 'csv'})
     
     # Roles tab
     @$("table#roles tbody").empty()
@@ -160,7 +160,7 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
 
   sympaUrl: (e) ->
     role_id = $(e.target).parents("tr").data("role_id")
-    url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id) + ".txt"
+    url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id, {format: 'txt'})
     window.prompt "Copy to clipboard: Ctrl+C, Enter", url
     false
 )
