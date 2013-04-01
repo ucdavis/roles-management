@@ -8,6 +8,9 @@ class GroupRule < ActiveRecord::Base
   validate :must_own_group
 
   belongs_to :group
+  
+  after_save :clear_cache_if_needed
+  before_destroy Proc.new { |model| model.clear_cache_if_needed(true) }
 
   # Needed by 'Group' when calculating rules
   def GroupRule.valid_columns
@@ -160,11 +163,25 @@ class GroupRule < ActiveRecord::Base
     str.html_safe
   end
 
+  def clear_cache_if_needed(force_clear = false)
+    if self.changed? or force_clear
+      logger.debug "Clearing cache for group #{group_id} because of change in rule #{id}"
+      Rails.cache.delete("entities/member_tokens/#{group_id}")
+      Rails.cache.delete("entities/rule_members/#{group_id}")
+      # entities/members/#{flatten} (can be false or true), we may be storing both
+      Rails.cache.delete("entities/members/false/#{group_id}")
+      Rails.cache.delete("entities/members/true/#{group_id}")
+      return true
+    else
+      return false
+    end
+  end
+
   private
 
   # Group rules cannot be changed if the current user does not own
   # the associated group.
   def must_own_group
-    logger.error "Implementation needed."
+    logger.error "Implementation needed for group ownership security check in group rule callback."
   end
 end

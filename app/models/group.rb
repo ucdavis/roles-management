@@ -4,7 +4,9 @@ class Group < Entity
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
-  has_and_belongs_to_many :entities
+  has_and_belongs_to_many :entities,
+                          :after_add => Proc.new { |model| model.clear_cache_if_needed(true) },
+                          :after_remove => Proc.new { |model| model.clear_cache_if_needed(true) }
 
   has_many :role_assignments, :foreign_key => "entity_id"
   has_many :roles, :through => :role_assignments, :dependent => :destroy
@@ -148,13 +150,15 @@ class Group < Entity
   def member_ids=(ids)
     # We'll build these lists and assign them at the end
     e_ids = []
+    logger.info "member_ids= start, self.entity_ids is:"
+    logger.info self.entity_ids
 
     # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
     r_members = []
     rule_members.each do |r|
       r_members += [r.id]
     end
-
+    
     unless ids.nil?
       ids.each do |id|
         unless r_members.include? id
@@ -164,6 +168,8 @@ class Group < Entity
     end
 
     self.entity_ids = e_ids
+    logger.info "member_ids= end, self.entity_ids is:"
+    logger.info self.entity_ids
   end
 
   def as_json(options={})
@@ -228,14 +234,19 @@ class Group < Entity
     return true
   end
 
-  def clear_cache_if_needed
-    if self.changed?
+  def clear_cache_if_needed(force_clear = false)
+    if self.changed? or force_clear
+      logger.debug "Clearing cache for group #{id}"
       Rails.cache.delete("entities/member_tokens/#{id}")
       Rails.cache.delete("entities/rule_members/#{id}")
       Rails.cache.delete("entities/applications/#{id}")
       # entities/members/#{flatten} (can be false or true), we may be storing both
       Rails.cache.delete("entities/members/false/#{id}")
       Rails.cache.delete("entities/members/true/#{id}")
+      return true
+    else
+      logger.debug "Not clearing cache for group #{id}, nothing has changed. Associations may still clear cache."
+      return false
     end
   end
 end
