@@ -131,7 +131,7 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
     @remove()
     
     # Need to change URL in case they want to open the same modal again
-    Backbone.history.navigate ""
+    Backbone.history.navigate "index"
 
   addRole: ->
     # the false ID simply needs to be unique in case the 'remove' button is hit - our backend will provide a proper ID on saving

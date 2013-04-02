@@ -45,5 +45,5 @@ DssRm.Views.ImpersonateDialog = Backbone.View.extend(
     @remove
     
     # Need to change URL in case they want to open the same modal again
-    Backbone.history.navigate ""
+    Backbone.history.navigate "index"
 )

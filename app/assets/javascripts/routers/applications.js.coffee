@@ -3,6 +3,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     @el = $("#applications")
     @indexView = new DssRm.Views.ApplicationsIndex()
     @indexView.render()
+    @el.html(@indexView.el)
 
   routes:
     "": "index"
@@ -15,7 +16,6 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     "about": "aboutDialog"
 
   index: ->
-    @el.html(@indexView.el)
 
   showApplication: (applicationId) ->
     status_bar.show "Loading application ..."
