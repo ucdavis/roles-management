@@ -6,6 +6,10 @@ DSSRM::Application.routes.draw do
   get "site/contact"
   get "site/request_access"
   get "site/about"
+  
+  # Note: 'search' queries external databases. For an internal search, use index action with GET parameter 'q=...'
+  get "people/search", :controller => "people", :action => "search"
+  post "people/import", :controller => "people", :action => "import"
 
   resources :applications
   resources :entities

@@ -1,7 +1,8 @@
 namespace :ldap do
+  load 'LdapHelper.rb'
+  
   desc 'Runs the LDAP import. Takes approx. 5-10 mins.'
   task :import, [:loginid] => :environment do |t, args|
-    require 'ldap'
     require 'stringio'
 
     notify_admins = false
@@ -29,14 +30,8 @@ namespace :ldap do
     #
     # STEP ONE: Connect to LDAP. Query needed data.
     #
-
-    # Retrieve LDAP passwords from config/ldap.yml
-    ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
-
-    # Connect to LDAP
-    conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )
-    conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
-    conn.bind(dn = ldap_settings['base_dn'], password = ldap_settings['base_pw'] )
+    ldap = LdapHelper.new
+    ldap.connect
 
     log << "Connected to ldap.ucdavis.edu on port 636, LDAP protocol version 3.\n\n"
 
@@ -103,7 +98,7 @@ namespace :ldap do
     Person.transaction do
       for f in filters
         unless f.length == 0
-          conn.search(ldap_settings['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, f) do |entry|
+          ldap.search(f) do |entry|
             record_log = StringIO.new # this log may or may not be added to the master 'log' depending on data sync states
 
             p = process_ldap_record(entry, record_log)
@@ -114,7 +109,7 @@ namespace :ldap do
             # We've effectively dealt with their record as best we can.
             untouched_loginids.delete p.loginid unless p.nil?
 
-            record_and_save_if_needed(p, record_log)
+            log_and_save_if_needed(p, record_log)
 
             log << record_log.string
           end
@@ -126,10 +121,10 @@ namespace :ldap do
       if args[:loginid].nil?
         log << "Processing #{untouched_loginids.length} untouched login IDs which exist locally but were not found in our original LDAP queries.\n"
         untouched_loginids.each do |loginid|
-          conn.search(ldap_settings['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, '(uid=' + loginid + ')') do |entry|
+          ldap.search('(uid=' + loginid + ')') do |entry|
             record_log = StringIO.new
             p = process_ldap_record(entry, record_log)
-            record_and_save_if_needed(p, record_log)
+            log_and_save_if_needed(p, record_log)
             log << record_log.string
           end
         end
@@ -138,7 +133,7 @@ namespace :ldap do
     end
 
     # Disconnect
-    conn.unbind
+    ldap.disconnect
 
     log << "Finished LDAP import.\n"
 
@@ -345,7 +340,7 @@ namespace :ldap do
     return p
   end
 
-  def record_and_save_if_needed(p, record_log)
+  def log_and_save_if_needed(p, record_log)
     if (p == nil) or (p.valid? == false)
       if p
         record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
