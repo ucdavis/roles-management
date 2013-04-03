@@ -18,6 +18,7 @@ class LdapHelper
   # Requires a block be passed:
   #   search("ldap_query").do |p| ... end
   def search(term)
+    Rails.logger.debug "LdapHelper searching for '#{term}'"
     @conn.search(LDAP_SETTINGS['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, term) do |result|
       yield result
     end

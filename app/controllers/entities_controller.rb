@@ -22,7 +22,7 @@ class EntitiesController < ApplicationController
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
 
     respond_with @entity do |format|
-      format.json #{ render json: @group }
+      format.json
       format.csv {
         require 'csv'
 
