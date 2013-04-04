@@ -222,7 +222,9 @@
 
     switch id
       when DssRm.Views.ApplicationsIndex.FID_ADD_PERSON
-        alert "Currently unsupported."
+        DssRm.router.navigate "import/" + label.slice(14), {trigger: true} # slice(14) is removing the "Import Person " prefix
+        label = ""
+        
       when DssRm.Views.ApplicationsIndex.FID_CREATE_GROUP
         DssRm.current_user.group_ownerships.create
           name: label.slice(13) # slice(13) is removing the "Create Group " prefix

@@ -8,7 +8,9 @@ authorization do
     has_permission_on :admin_api_whitelisted_ips, :to => [:index, :create, :destroy]
     has_permission_on :api_key_users, :to => [:create, :delete]
     has_permission_on :admin_api_keys, :to => [:index, :create, :destroy]
-    has_permission_on :people, :to => [:search, :import]
+    has_permission_on :people, :to => [:search, :import, :create]
+    has_permission_on :affiliation_assignments, :to => [:create]
+    has_permission_on :students, :to => [:create]
   end
   role :access do
     has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy, :delete]

@@ -9,6 +9,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     "": "index"
     "applications/:id": "showApplication"
     "entities/:uid": "showEntity"
+    "import/:term": "importPersonDialog"
     "impersonate": "impersonateDialog"
     "unimpersonate": "unimpersonate"
     "api-keys": "apiKeysDialog"
@@ -51,6 +52,8 @@ DssRm.Routers.Applications = Backbone.Router.extend(
       error: ->
         status_bar.show "An error occurred while loading the entity.", "error"
 
+  importPersonDialog: (term) ->
+    new DssRm.Views.ImportPersonDialog(term: term).render().$el.modal()
 
   impersonateDialog: ->
     new DssRm.Views.ImpersonateDialog().render().$el.modal()

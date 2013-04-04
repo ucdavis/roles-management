@@ -41,6 +41,8 @@ class PeopleController < ApplicationController
   # If you wish to search the internal databases, use index with GET parameter q=..., e.g. /people?q=somebody
   def search
     load 'LdapHelper.rb'
+    require 'ostruct'
+    
     @results = []
     
     if params[:q]
@@ -48,7 +50,7 @@ class PeopleController < ApplicationController
       ldap.connect
     
       ldap.search("(uid=" + params[:q] + "*)") do |result|
-        p = Person.new
+        p = OpenStruct.new
 
         p.loginid = result.get_values('uid')[0]
         p.first = result.get_values('givenName')[0]
@@ -60,9 +62,12 @@ class PeopleController < ApplicationController
         end
         p.address = result.get_values('street').to_s[2..-3]
         p.name = result.get_values('displayName')[0]
+        p.imported = Person.exists?(:loginid => p.loginid)
         
         @results << p
       end
+      
+      ldap.disconnect
     end
     
     respond_with @results
@@ -70,6 +75,26 @@ class PeopleController < ApplicationController
   
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
+    load 'LdapHelper.rb'
+    load 'LdapPersonHelper.rb'
     
+    logger.info "#{current_user.loginid}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
+    
+    if params[:loginid]
+      ldap = LdapHelper.new
+      ldap.connect
+      
+      ldap.search("(uid=" + params[:loginid] + ")") do |result|
+        log = StringIO.new
+        @p = LdapPersonHelper.create_or_update_person_from_ldap(result, log)
+        Rails.logger.info log.string
+      end
+      
+      ldap.disconnect
+    end
+    
+    @p.save
+    
+    respond_with @p
   end
 end

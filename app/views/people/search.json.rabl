@@ -1,3 +1,3 @@
 object @results
 
-attributes :name, :loginid, :email
+attributes :name, :loginid, :email, :imported
