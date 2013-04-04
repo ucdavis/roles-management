@@ -11,6 +11,7 @@ authorization do
     has_permission_on :people, :to => [:search, :import, :create]
     has_permission_on :affiliation_assignments, :to => [:create]
     has_permission_on :students, :to => [:create]
+    has_permission_on :titles, :to => [:create]
   end
   role :access do
     has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy, :delete]
