@@ -184,16 +184,16 @@ namespace :ad do
             end
           else
             # Remove AD entries which do not match our local database
-            # log << "Removing any entries in AD which do not match our records (this is not the first AD sync for this role).\n"
-            # ad_members.each do |m|
-            #   unless role_members.include? m[:samaccountname]
-            #     log << "#{m[:samaccountname]} is in AD but not this role. Will remove from AD ...\n"
-            # 
-            #     ActiveDirectoryWrapper.remove_user_from_group(m, g)
-            #   else
-            #     log << "#{m[:samaccountname]} is in AD and this role. No action taken.\n"
-            #   end
-            # end
+            log << "Removing any entries in AD which do not match our records (this is not the first AD sync for this role).\n"
+            ad_members.each do |m|
+              unless role_members.include? m[:samaccountname]
+                log << "#{m[:samaccountname]} is in AD but not this role. Will remove from AD ...\n"
+            
+                ActiveDirectoryWrapper.remove_user_from_group(m, g)
+              else
+                log << "#{m[:samaccountname]} is in AD and this role. No action taken.\n"
+              end
+            end
           end
         else
           log << "Could not find group #{r.ad_path} in AD.\n"
