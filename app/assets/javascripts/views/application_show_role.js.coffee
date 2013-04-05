@@ -14,7 +14,7 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
     @$("input[name=description]").val @model.escape("description")
     @$el.data "role_id", @model.escape("id")
 
-    this
+    @
 
   autofillEmptyToken: (e) ->
     roleName = $(e.target).val()
