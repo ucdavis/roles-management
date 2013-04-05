@@ -36,6 +36,7 @@ class Person < Entity
   belongs_to :major
 
   validates :loginid, :presence => true, :uniqueness => true
+  validate :first_or_last_presence
 
   attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_membership_ids, :ou_ids,
                   :group_ownership_ids, :group_operatorship_ids
@@ -194,5 +195,11 @@ class Person < Entity
     logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync }
     return true
+  end
+  
+  def first_or_last_presence
+    unless self.name.length > 0
+      errors.add(:name, "first or last must be set")
+    end
   end
 end
