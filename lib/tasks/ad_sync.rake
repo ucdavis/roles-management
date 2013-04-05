@@ -167,11 +167,16 @@ namespace :ad do
 
                   p = Person.new
                   p.loginid = m[:samaccountname]
+                  p.first = p.loginid # we need the name set to something so it will show up in the sidebar correctly
+                                      # Person.name is overriden to be Person.first + " " + Person.last, so set 'first', not 'name'
                   p.save
 
                   log << "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check (should occur momentarily).\n"
 
                   Delayed::Job.enqueue(DelayedRake.new("ldap:import[#{m[:samaccountname]}]"))
+                  
+                  # Ensure role has this individual
+                  r.entities << p
                 end
               else
                 log << "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD.\n"
