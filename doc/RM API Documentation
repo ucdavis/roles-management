@@ -18,13 +18,13 @@ not strongly-bound and not based around class definitions. The difference in
 these approaches is simple to illustrate:
 
 SOAP-style:
-  API end-point: http://application.dev/soap/
+  API end-point: https://application.dev/soap/
 
   Function call:
     User u = getUser((int)userId) // encoded via XML
 
 RESTful JSON:
-  HTTP GET http://application.dev/user/userId
+  HTTP GET https://application.dev/user/userId
   (result is returned as JSON)
 
 The RESTful design was created by the W3C around the same time as HTTP 1.1
@@ -72,9 +72,24 @@ extracted from the group. Feel free to use whichever suits your needs.
 
 Examples
 --------
+The following examples demonstrate the API using the popular CLI tool 'curl',
+similar to 'wget'. The purpose of the tool is simply to make network requests.
+
 1. Getting information about a person using their login ID (assumed to
    be "joe"):
 
-  HTTP GET http://roles.dss.ucdavis.edu/people/joe
+  HTTP GET https://roles.dss.ucdavis.edu/people/joe
 
-2. Updating an individual's name:
+  curl --user "username:password" https://roles.dss.ucdavis.edu/people/cthielen.json
+  
+  {"id":13688,"name":"Christopher Thielen","type":"Person","loginid":"cthielen","role_ids":[1,2,31,22,21],"roles":[{"id":1,"token":"access","name":"Access","application_id":1},{"id":2,"token":"admin","name":"Administrative Rights","application_id":1},{"id":31,"token":"access","name":"Access","application_id":27},{"id":22,"token":"admin","name":"Administrate","application_id":21},{"id":21,"token":"access","name":"Access","application_id":21}]}
+  
+
+2. Getting information about an application (including its roles):
+
+  (1 is the application ID)
+  HTTP GET https://roles.dss.ucdavis.edu/applications/1.json
+
+  curl --user "username:password" https://roles.dss.ucdavis.edu/applications/1.json
+  
+  {"id":1,"name":"DSS Roles Management","roles":[{"id":1,"token":"access","name":"Access","application_id":1,"description":"Allow access to this application","mandatory":null,"default":1,"entities":[{"type":"Person","id":110,"name":"Alan Lai"},{"type":"Person","id":13704,"name":"Carmina Caselli"},{"type":"Person","id":13689,"name":"Jeremy Phillips"},{"type":"Person","id":13688,"name":"Christopher Thielen"},{"type":"Person","id":13907,"name":"Obada Kadri"}],"ad_path":null},{"id":2,"token":"admin","name":"Administrative Rights","application_id":1,"description":"Administrative Rights","mandatory":null,"default":0,"entities":[{"type":"Person","id":13689,"name":"Jeremy Phillips"},{"type":"Person","id":13688,"name":"Christopher Thielen"}],"ad_path":null}],"description":"No description given","owners":[],"operators":[]}
