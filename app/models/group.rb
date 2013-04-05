@@ -32,7 +32,7 @@ class Group < Entity
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
   # If flatten is false, any member groups will simply be returned as a group (i.e. not as the people _in_ that member group)
   def members(flatten = false)
-    Rails.cache.fetch("entities/members/#{flatten}/#{id}", expires_in: 30.minutes) do
+    Rails.cache.fetch("entities/members/#{flatten}/#{id}") do
       members = []
 
       entities.each do |e|
@@ -104,7 +104,7 @@ class Group < Entity
   # Returns tokenized members, including 'via' parameter to differentiate explicitly-assigned
   # vs. rule-resolved members
   def member_tokens
-    Rails.cache.fetch("entities/member_tokens/#{id}", expires_in: 30.minutes) do
+    Rails.cache.fetch("entities/member_tokens/#{id}") do
       result = []
       explicit_members = []
       resolved_members = []
@@ -181,7 +181,7 @@ class Group < Entity
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
   def rule_members
-    Rails.cache.fetch("entities/rule_members/#{id}", expires_in: 30.minutes) do
+    Rails.cache.fetch("entities/rule_members/#{id}") do
       results = []
 
       # Step One: Build groups out of each 'is' rule,
