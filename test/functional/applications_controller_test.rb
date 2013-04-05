@@ -40,6 +40,8 @@ class ApplicationsControllerTest < ActionController::TestCase
       assert r["name"], "JSON response's 'roles' section should include a name field"
       assert r["token"], "JSON response's 'roles' section should include a token field"
       assert r["description"], "JSON response's 'roles' section should include a description field"
+      # ad_path may be nil so check for existence not value
+      assert r.has_key?("ad_path"), "JSON response's 'roles' section should include an ad_path field"
       assert r["entities"], "JSON response's 'roles' section should include an 'entities' section"
       assert r["members"], "JSON response's 'roles' section should include a 'members' section"
       r["entities"].each do |e|
