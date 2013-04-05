@@ -6,14 +6,22 @@ class Role < ActiveRecord::Base
   validate :must_own_associated_application
 
   has_many :role_assignments, :dependent => :destroy
-  has_many :entities, :through => :role_assignments
+  has_many :entities, :through => :role_assignments,
+                      :after_add => Proc.new{ |r| r.entities_changed = true },
+                      :after_remove => Proc.new{ |r| r.entities_changed = true }
   before_save :clear_last_sync_if_path_changed
   after_save :sync_ad
+  after_initialize :init
 
   belongs_to :application
 
   attr_accessible :token, :entity_ids, :name, :description, :ad_path
-  attr_accessor :skip_next_sync
+  attr_accessor :skip_next_sync # flag which may be set by manipulating code to avoid an AD sync
+  attr_accessor :entities_changed # flag used by has_many :entities add/remove to force a role sync
+  
+  def init
+    self.entities_changed = false # hokey way of setting a default value
+  end
 
   # Needed in show.json.rabl to display a role's application's name
   def application_name
@@ -61,13 +69,17 @@ class Role < ActiveRecord::Base
     # AD sync will update the role's "last_ad_sync" member. Ensure we don't
     # end up recursively calling this after_save callback!
     unless self.skip_next_sync
-      require 'rake'
-      load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
+      if self.ad_path_changed? || self.entities_changed
+        require 'rake'
+        load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
-      logger.info "Scheduling AD sync for role #{id}"
-      Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
+        logger.info "Scheduling AD sync for role #{id}"
+        Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
+      else
+        logger.info "Not syncing AD as ad_path_changed? is #{self.ad_path_changed?} or entities_changed is #{self.entities_changed}"
+      end
     else
-      logger.info "Not scheduling AD sync as skip_next_sync was set."
+      logger.info "Not scheduling AD sync for role #{id} as skip_next_sync was set."
       self.skip_next_sync = false
     end
   end
