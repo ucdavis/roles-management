@@ -8,10 +8,6 @@ authorization do
     has_permission_on :admin_api_whitelisted_ips, :to => [:index, :create, :destroy]
     has_permission_on :api_key_users, :to => [:create, :delete]
     has_permission_on :admin_api_keys, :to => [:index, :create, :destroy]
-    has_permission_on :people, :to => [:search, :import, :create]
-    has_permission_on :affiliation_assignments, :to => [:create]
-    has_permission_on :students, :to => [:create]
-    has_permission_on :titles, :to => [:create]
   end
   role :access do
     has_permission_on :groups, :to => [:index, :show, :new, :create, :edit, :update, :destroy, :delete]
@@ -32,5 +28,9 @@ authorization do
     has_permission_on :titles, :to => [:index]
     has_permission_on :classifications, :to => [:index]
     has_permission_on :affiliations, :to => [:index]
+    has_permission_on :people, :to => [:search, :import, :create]
+    has_permission_on :affiliation_assignments, :to => [:create, :update]
+    has_permission_on :students, :to => [:create, :update]
+    has_permission_on :titles, :to => [:create, :update]
   end
 end
