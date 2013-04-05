@@ -56,6 +56,8 @@ namespace :user do
   task :revoke_admin, :arg1 do |t, args|
     Rake::Task['environment'].invoke
 
+    Authorization.ignore_access_control(true)
+
     args.each do |arg|
       puts "Revoking admin from #{arg[1]}..."
       entity_id = Person.find_by_loginid(arg[1]).id
@@ -67,5 +69,26 @@ namespace :user do
         puts "#{arg[1]} is not set as admin."
       end
     end
+    
+    Authorization.ignore_access_control(false)
+  end
+  
+  # This task is designed to clean up bad syncs. We shouldn't be running it often.
+  desc 'Set names for users without LDAP information.'
+  task :set_name_without_ldap do |t, args|
+    Rake::Task['environment'].invoke
+    
+    Authorization.ignore_access_control(true)
+    
+    puts "Setting names for #{Person.where(:first => nil).count} people ..."
+    
+    Person.where(:first => nil).each do |p|
+      p.first = p.loginid
+      p.save
+    end
+    
+    puts "done."
+    
+    Authorization.ignore_access_control(false)
   end
 end
