@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+<title>class GroupRule - Rails Application Documentation</title>
+
+<link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="./js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
+
+
+<body id="top" class="class">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="./index.html">Home</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>app/models/group_rule.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    <nav id="parent-class-section" class="section">
+  <h3 class="section-header">Parent</h3>
+  
+  <p class="link">ActiveRecord::Base
+  
+</nav>
+
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li><a href="#method-c-valid_columns">::valid_columns</a>
+    
+    <li><a href="#method-i-clear_cache_if_needed">#clear_cache_if_needed</a>
+    
+    <li><a href="#method-i-matches">#matches</a>
+    
+    <li><a href="#method-i-print_formatted">#print_formatted</a>
+    
+    <li><a href="#method-i-resolve">#resolve</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="./doc/README_FOR_APP.html">README_FOR_APP</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./Admin.html">Admin</a>
+  
+    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+  
+    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+  
+    <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
+  
+    <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
+  
+    <li><a href="./Affiliation.html">Affiliation</a>
+  
+    <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
+  
+    <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
+  
+    <li><a href="./ApiWhitelistedIpUser.html">ApiWhitelistedIpUser</a>
+  
+    <li><a href="./Application.html">Application</a>
+  
+    <li><a href="./ApplicationController.html">ApplicationController</a>
+  
+    <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
+  
+    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+  
+    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+  
+    <li><a href="./ApplicationsController.html">ApplicationsController</a>
+  
+    <li><a href="./Authentication.html">Authentication</a>
+  
+    <li><a href="./Classification.html">Classification</a>
+  
+    <li><a href="./ClassificationsController.html">ClassificationsController</a>
+  
+    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
+  
+    <li><a href="./DelayedRake.html">DelayedRake</a>
+  
+    <li><a href="./EntitiesController.html">EntitiesController</a>
+  
+    <li><a href="./Entity.html">Entity</a>
+  
+    <li><a href="./Group.html">Group</a>
+  
+    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+  
+    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+  
+    <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupsController.html">GroupsController</a>
+  
+    <li><a href="./GroupsHelper.html">GroupsHelper</a>
+  
+    <li><a href="./LdapHelper.html">LdapHelper</a>
+  
+    <li><a href="./LdapPersonHelper.html">LdapPersonHelper</a>
+  
+    <li><a href="./Major.html">Major</a>
+  
+    <li><a href="./MajorsController.html">MajorsController</a>
+  
+    <li><a href="./OusController.html">OusController</a>
+  
+    <li><a href="./PeopleController.html">PeopleController</a>
+  
+    <li><a href="./Person.html">Person</a>
+  
+    <li><a href="./PersonFavoriteAssignment.html">PersonFavoriteAssignment</a>
+  
+    <li><a href="./Role.html">Role</a>
+  
+    <li><a href="./RoleAssignment.html">RoleAssignment</a>
+  
+    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
+  
+    <li><a href="./RolesController.html">RolesController</a>
+  
+    <li><a href="./SafeFilename.html">SafeFilename</a>
+  
+    <li><a href="./SiteController.html">SiteController</a>
+  
+    <li><a href="./Student.html">Student</a>
+  
+    <li><a href="./StudentLevel.html">StudentLevel</a>
+  
+    <li><a href="./Title.html">Title</a>
+  
+    <li><a href="./TitlesController.html">TitlesController</a>
+  
+    <li><a href="./UcdLookups.html">UcdLookups</a>
+  
+    <li><a href="./WheneverMailer.html">WheneverMailer</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="class">class GroupRule</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    <!-- Methods -->
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Class Methods</h3>
+
+    
+      <div id="method-c-valid_columns" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">valid_columns</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Needed by &#39;Group&#39; when calculating rules</p>
+          
+
+          
+          <div class="method-source-code" id="valid_columns-source">
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 16</span>
+<span class="ruby-keyword">def</span> <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">valid_columns</span>
+  <span class="ruby-identifier">@@valid_columns</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- valid_columns-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- valid_columns-method -->
+
+    
+    </section><!-- public-class-method-details -->
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-clear_cache_if_needed" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">clear_cache_if_needed</span><span
+            class="method-args">(force_clear = false)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="clear_cache_if_needed-source">
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 166</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">clear_cache_if_needed</span>(<span class="ruby-identifier">force_clear</span> = <span class="ruby-keyword">false</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">changed?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">force_clear</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> <span class="ruby-node">&quot;Clearing cache for group #{group_id} because of change in rule #{id}&quot;</span>
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/member_tokens/#{group_id}&quot;</span>)
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/rule_members/#{group_id}&quot;</span>)
+    <span class="ruby-comment"># entities/members/#{flatten} (can be false or true), we may be storing both</span>
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/members/false/#{group_id}&quot;</span>)
+    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/members/true/#{group_id}&quot;</span>)
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- clear_cache_if_needed-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- clear_cache_if_needed-method -->
+
+    
+      <div id="method-i-matches" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">matches</span><span
+            class="method-args">(person)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Returns true if the given person satisfies the rule</p>
+          
+
+          
+          <div class="method-source-code" id="matches-source">
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 117</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">matches</span>(<span class="ruby-identifier">person</span>)
+  <span class="ruby-comment"># &#39;cond&#39; is a boolean representing this rule&#39;s &#39;is&#39; or &#39;is not&#39;</span>
+  <span class="ruby-identifier">cond</span> = (<span class="ruby-identifier">condition</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;is&quot;</span>)
+  <span class="ruby-identifier">matched</span> = <span class="ruby-keyword">nil</span>
+
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">column</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;title&quot;</span>
+    <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">title</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Title</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;major&quot;</span>
+    <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">major</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Major</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;affiliation&quot;</span>
+    <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">affiliations</span>.<span class="ruby-identifier">include?</span> <span class="ruby-constant">Affiliation</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;ou&quot;</span>
+    <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">ous</span>.<span class="ruby-identifier">include?</span> <span class="ruby-constant">Group</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;classification&quot;</span>
+    <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">classification</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Classification</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;loginid&quot;</span>
+    <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">loginid</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">value</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">cond</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">matched</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- matches-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- matches-method -->
+
+    
+      <div id="method-i-print_formatted" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">print_formatted</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="print_formatted-source">
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 140</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">print_formatted</span>
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">column</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;title&#39;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-string">&quot;&lt;b&gt;Title&lt;/b&gt; &quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;loginid&#39;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-string">&quot;&lt;b&gt;Login ID&lt;/b&gt; &quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;major&#39;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-string">&quot;&lt;b&gt;Major&lt;/b&gt; &quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;affiliation&#39;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-string">&quot;&lt;b&gt;Affiliation&lt;/b&gt; &quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;classification&#39;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-string">&quot;&lt;b&gt;Classification&lt;/b&gt; &quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">condition</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;is&#39;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;is &quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;is not&#39;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;is not &quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">str</span> = <span class="ruby-identifier">str</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;&lt;b&gt;&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;&lt;/b&gt;&quot;</span>
+
+  <span class="ruby-identifier">str</span>.<span class="ruby-identifier">html_safe</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- print_formatted-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- print_formatted-method -->
+
+    
+      <div id="method-i-resolve" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">resolve</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Resolve (discern) the rule and return a UID and name for the person</p>
+          
+
+          
+          <div class="method-source-code" id="resolve-source">
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 21</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">resolve</span>
+  <span class="ruby-identifier">p</span> = []
+
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">column</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;title&quot;</span>
+    <span class="ruby-identifier">ps</span> = <span class="ruby-constant">Person</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:title_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Title</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>))
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">condition</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is&quot;</span>
+      <span class="ruby-identifier">p</span> = <span class="ruby-identifier">p</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ps</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is not&quot;</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot; -- &#39;title is not&#39; will not be resolved within GroupRule&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-comment"># unsupported</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Unsupported condition for title in group rule.&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;major&quot;</span>
+    <span class="ruby-identifier">major</span> = <span class="ruby-constant">Major</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">major</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">ps</span> = <span class="ruby-identifier">major</span>.<span class="ruby-identifier">people</span>
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">condition</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is&quot;</span>
+        <span class="ruby-identifier">p</span> = <span class="ruby-identifier">p</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ps</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is not&quot;</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot; -- &#39;major is not&#39; will not be resolved within GroupRule&quot;</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-comment"># unsupported</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Unsupported condition for major in group rule.&quot;</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;affiliation&quot;</span>
+    <span class="ruby-identifier">affiliation</span> = <span class="ruby-constant">Affiliation</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">affiliation</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">ps</span> = <span class="ruby-identifier">affiliation</span>.<span class="ruby-identifier">people</span>
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">condition</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is&quot;</span>
+        <span class="ruby-identifier">p</span> = <span class="ruby-identifier">p</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ps</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is not&quot;</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot; -- &#39;affiliation is not&#39; will not be resolved within GroupRule&quot;</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-comment"># unsupported</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Unsupported condition for affiliation in group rule.&quot;</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;ou&quot;</span>
+    <span class="ruby-identifier">ou</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ou</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">ps</span> = <span class="ruby-identifier">ou</span>.<span class="ruby-identifier">members</span>
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">condition</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is&quot;</span>
+        <span class="ruby-identifier">p</span> = <span class="ruby-identifier">p</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ps</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is not&quot;</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot; -- &#39;OU is not&#39; will not be resolved within GroupRule&quot;</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-comment"># unsupported</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Unsupported condition for OU in group rule.&quot;</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;OU not found&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;classification&quot;</span>
+    <span class="ruby-identifier">classification</span> = <span class="ruby-constant">Classification</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">classification</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">nil</span>
+      <span class="ruby-identifier">title_ids</span> = <span class="ruby-constant">Title</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">classification</span>.<span class="ruby-identifier">title_ids</span>)
+      <span class="ruby-identifier">ps</span> = <span class="ruby-constant">Person</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:title_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">title_ids</span>)
+      <span class="ruby-keyword">case</span> <span class="ruby-identifier">condition</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is&quot;</span>
+        <span class="ruby-identifier">p</span> = <span class="ruby-identifier">p</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ps</span>
+      <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is not&quot;</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot; -- &#39;classification is not&#39; will not be resolved within GroupRule&quot;</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-comment"># unsupported</span>
+        <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Unsupported condition for classification in group rule.&quot;</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Classification not found&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;loginid&quot;</span>
+    <span class="ruby-identifier">ps</span> = <span class="ruby-constant">Person</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:loginid</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">value</span>) <span class="ruby-comment">#.collect{|x| [&quot;1&quot; + x.id.to_s, x.name]}</span>
+    <span class="ruby-keyword">case</span> <span class="ruby-identifier">condition</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is&quot;</span>
+      <span class="ruby-identifier">p</span> = <span class="ruby-identifier">p</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">ps</span>
+    <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;is not&quot;</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot; -- &#39;loginid is not&#39; will not be resolved within GroupRule&quot;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-comment"># unsupported</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-string">&quot;Unsupported condition for loginid in group rule.&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-comment"># Undefined column</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-node">&quot; -- unknown rule type (#{column})&quot;</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">p</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- resolve-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- resolve-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.12.2.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+
