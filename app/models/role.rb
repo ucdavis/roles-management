@@ -69,7 +69,7 @@ class Role < ActiveRecord::Base
     # AD sync will update the role's "last_ad_sync" member. Ensure we don't
     # end up recursively calling this after_save callback!
     unless self.skip_next_sync
-      if (self.ad_path_changed? || self.entities_changed) && (self.ad_path.length > 0)
+      if (self.ad_path_changed? || self.entities_changed) && self.ad_path
         require 'rake'
         load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
