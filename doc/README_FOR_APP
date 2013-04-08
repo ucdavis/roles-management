@@ -1,2 +1,67 @@
-Use this README file to introduce your application and point to useful places in the API for learning more.
-Run "rake doc:app" to generate API documentation for your models, controllers, helpers, and libraries.
+== DSS Roles Management
+
+Roles Management (RM) is a people, roles, and application management web
+application developed by the UC Davis Division of Social Science.
+
+The purpose of DSS RM is to allow anyone with subordinate employees and
+virtual appliances (file servers, mailing lists, web applications) to
+manage and assign their people and groups whatever permissions they wish
+without requiring the help of IT.
+
+== Requirements
+
+RM was written for Ruby 1.9 and Rails 3.2 and is deployed using Unicorn and
+PostgreSQL. It has been tested on Apache and Nginix and should run fine on
+Linux, Mac OS X, and Windows. It has not been tested with Microsoft's
+IronRuby, and as of this writing, IronRuby does not support Ruby 1.9, which
+is a requirement for this application.
+
+== Deployment
+
+RM is designed to be re-deployable in any organization, though there are a few
+matters of configuration that need to be attended to:
+
+config/database.yml.example
+	Move this file to config/database.yml and set the appropriate values.
+
+config/api_keys.yml.example
+	Move this file to config/api_keys.yml and set the appropriate values.
+
+config/ldap.yml.example
+  Move this file to config/ldap.yml and set the appropriate values.
+
+config/active_directory.yml.example
+  Move this file to config/active_directory.yml and set the appropriate values.
+
+config/environment.rb
+	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If
+  you decide to remove CAS, also remove the before_filter in
+	app/controllers/application_controller.rb.
+
+config/deploy.rb
+	You'll likely want to set this to your own Capistrano setup or delete it
+	if you do not use Capistrano.
+
+config/schedule.rb
+  This file controls when cron jobs run to sync databases. It is currently
+  set up to do so at night, but you should change the time in this file if
+  you'd like anything else.
+
+You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
+in case this README neglects any configuration details.
+
+== Technical Notes
+=== Mandatory vs Default Roles
+A role (permission template) has both a default and mandatory boolean.
+
+If a role is default, that implies any person or group assigned to that
+application or belonging to an OU or group assigned to that application will
+take that permission automatically. This behavior is reversed when default is
+turned off.
+
+If a role is mandatory, it will _not_ appear to the user, and _will_ be
+assigned. This is mostly used for the "access" role, representing the implied
+role a person or group gains when they are assigned to that application.
+
+== Authors
+Christopher Thielen (cmthielen@ucdavis.edu)
