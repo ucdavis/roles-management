@@ -116,6 +116,28 @@
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 2px;
+    
+    .role {
+      padding: 2px 4px 2px;
+      color: #3A87AD;
+      border: 1px solid #BCE8F1;
+      vertical-align: middle;
+      white-space: nowrap;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      background-color: #D9EDF7;
+      margin: 3px 3px 5px;
+      list-style-type: none;
+      cursor: pointer;
+
+      a:hover {
+        text-decoration: inherit;
+        color: #08C;
+        text-shadow: inherit;
+        /*cursor: default;*/
+      }
+    }
   }
 }
 
