@@ -62,9 +62,6 @@ class EntitiesController < ApplicationController
 
     @entity.update_attributes(params[:entity])
     
-    logger.info "entity updated, rendering this:"
-    logger.info @entity.members.inspect
-
     render "show"
   end
 

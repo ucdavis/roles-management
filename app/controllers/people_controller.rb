@@ -29,10 +29,14 @@ class PeopleController < ApplicationController
   end
   
   def update
-    @person = Person.find(params[:id])
-    @person.update_attributes(params[:person].except(:id, :name, :roles))
+    if params[:id] and params[:person]
+      @person = Person.find(params[:id])
+      @person.update_attributes(params[:person].except(:id, :name, :roles))
 
-    respond_with(@person)
+      respond_with @person
+    else
+      respond_with 422
+    end
   end
   
   ## Non-RESTful ACTIONS

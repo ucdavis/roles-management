@@ -4,12 +4,14 @@ require 'test_helper'
 class PeopleControllerTest < ActionController::TestCase
   setup do
     CASClient::Frameworks::Rails::Filter.fake("casuser")
+    
+    @person = entities(:casuser)
   end
 
   # loginid required for: impersonate dialog, group rule "loginid is"
   # id, name, loginid, email, roles included as per published API spec
   # Should also respond to /people/loginid.json
-  test "JSON request should include certain attributes" do
+  test 'JSON request should include certain attributes' do
     grant_test_user_basic_access
 
     get :show, :format => :json, :id => 'casuser'
@@ -29,6 +31,10 @@ class PeopleControllerTest < ActionController::TestCase
       assert r["name"], "JSON response's 'roles' section should include a name"
       assert r["application_id"], "JSON response's 'roles' section should include an application_id"
     end
-
+  end
+  
+  test "should update person" do
+    put :update, id: @person, format: :json, person: { first: @person.first, last: @person.last, loginid: @person.loginid }
+    assert_response :success
   end
 end
