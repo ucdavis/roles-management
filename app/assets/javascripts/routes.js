@@ -517,20 +517,20 @@
   if (!options){ options = {}; }
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"people",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// people_import => /people/import(.:format)
-  people_import_path: function(options) {
+// people_search => /people/search/:term(.:format)
+  people_search_path: function(_term, options) {
   if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"people",false]],[7,"/",false]],[6,"import",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// people_search => /people/search(.:format)
-  people_search_path: function(options) {
-  if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"people",false]],[7,"/",false]],[6,"search",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  return Utils.build_path(["term"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"people",false]],[7,"/",false]],[6,"search",false]],[7,"/",false]],[3,"term",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // person => /people/:id(.:format)
   person_path: function(_id, options) {
   if (!options){ options = {}; }
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"people",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// person_import => /people/import/:loginid(.:format)
+  person_import_path: function(_loginid, options) {
+  if (!options){ options = {}; }
+  return Utils.build_path(["loginid"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"people",false]],[7,"/",false]],[6,"import",false]],[7,"/",false]],[3,"loginid",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // rails_info_properties => /rails/info/properties(.:format)
   rails_info_properties_path: function(options) {
