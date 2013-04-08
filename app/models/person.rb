@@ -56,11 +56,9 @@ class Person < Entity
   end
 
   def byline
-    unless title.nil?
-      title.name + " (" + affiliations.map{ |x| x.name }.join(", ") + ")"
-    else
-      "(" + affiliations.map{ |x| x.name }.join(", ") + ")"
-    end
+    byline = title.name unless title.nil?
+    byline += " (" + affiliations.map{ |x| x.name }.join(", ") + ")" if affiliations.count > 0
+    byline
   end
 
   # Compute their classifications based on their title
