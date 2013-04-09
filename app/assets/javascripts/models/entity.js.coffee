@@ -38,7 +38,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
     json = _.omit(@attributes, "owners", "operators", "members", "rules", "id", "roles", "favorites", "group_memberships", "group_ownerships", "group_operatorships", "ous", "byline", "name", "admin")
     type = @get("type")
     if type is "Group"
-      
       # Group-specific JSON
       json.name = @get("name")
       json.owner_ids = @get("owners").map((owner) ->
@@ -57,7 +56,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
         value: rule.value
       )
     else if type is "Person"
-      
       # Person-specific JSON
       json.role_ids = @get("roles").map((role) ->
         role.id
@@ -65,7 +63,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.favorite_ids = @favorites.map((favorite) ->
         favorite.id
       )
-      json.group_membership_ids = @get("group_memberships").map((group) ->
+      json.group_membership_ids = _.union(@get("group_memberships").ous, @get("group_memberships").non_ous).map((group) ->
         group.id
       )
       json.group_ownership_ids = @group_ownerships.map((group) ->
@@ -73,9 +71,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
       )
       json.group_operatorship_ids = @group_operatorships.map((group) ->
         group.id
-      )
-      json.ou_ids = @get("ous").map((ou) ->
-        ou.id
       )
     entity: json
 )

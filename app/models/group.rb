@@ -173,7 +173,11 @@ class Group < Entity
   end
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :owners => self.owners, :operators => self.operators, :members => self.member_tokens, :type => 'Group' }
+    { :id => self.id, :name => self.name, :type => 'Group',
+      :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
+      :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
+      :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
 
   # Returns all members via resolving group rules

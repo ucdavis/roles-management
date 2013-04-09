@@ -38,11 +38,11 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     # We'd prefer not to create new objects and would like events like name
     # changes to propagate
     entity = DssRm.current_user.favorites.get(uid)
-    entity = DssRm.current_user.group_ownerships.get(uid)  if entity is `undefined`
-    entity = DssRm.current_user.group_operatorships.get(uid)  if entity is `undefined`
+    entity = DssRm.current_user.group_ownerships.get(uid) if entity is `undefined`
+    entity = DssRm.current_user.group_operatorships.get(uid) if entity is `undefined`
     
     # Fetch it as a last resort - we won't get event updates
-    entity = new DssRm.Models.Entity(id: uid)  if entity is `undefined`
+    entity = new DssRm.Models.Entity(id: uid) if entity is `undefined`
     
     entity.fetch
       success: =>

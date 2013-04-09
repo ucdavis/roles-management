@@ -66,22 +66,22 @@ class Person < Entity
     title.classifications
   end
 
-  def ou_ids=(ids)
-    # Add any new OUs
-    ids.each do |id|
-      ou = Group.where(Group.arel_table[:code].not_eq(nil)).find_by_id(id)
-      unless (group_memberships.include? ou) or ou.nil?
-        group_memberships << ou
-      end
-    end
-
-    # Remove any OUs not mentioned (ou_ids= behavior is to always give the complete list)
-    group_memberships.ous.each do |ou|
-      unless ids.include? ou.id
-        group_memberships.delete(ou.id)
-      end
-    end
-  end
+  # def ou_ids=(ids)
+  #   # Add any new OUs
+  #   ids.each do |id|
+  #     ou = Group.where(Group.arel_table[:code].not_eq(nil)).find_by_id(id)
+  #     unless (group_memberships.include? ou) or ou.nil?
+  #       group_memberships << ou
+  #     end
+  #   end
+  # 
+  #   # Remove any OUs not mentioned (ou_ids= behavior is to always give the complete list)
+  #   group_memberships.ous.each do |ou|
+  #     unless ids.include? ou.id
+  #       group_memberships.delete(ou.id)
+  #     end
+  #   end
+  # end
   
   # Calculates all roles for an individual - explicitly assigned + those via group membership, including group rules
   def all_roles
@@ -155,12 +155,15 @@ class Person < Entity
 
     syms
   end
-
+  
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid,
-      :roles => self.all_roles.map{ |r| { id: r.id, token: r.token, name: r.name, application_id: r.application_id } },
+      :first => self.first, :last => self.last, :email => self.email, :phone => self.phone, :address => self.address,
+      :byline => self.byline,
+      :roles => self.all_roles.map{ |r| { id: r.id, token: r.token, name: r.name, description: r.description,
+                                          application_name: r.application_name, application_id: r.application_id } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      :group_memberships => { :non_ous => self.group_memberships.map{ |e| { id: e.id, name: e.name, type: e.type } },
+      :group_memberships => { :non_ous => self.group_memberships.non_ous.map{ |e| { id: e.id, name: e.name, type: e.type } },
                               :ous => self.group_memberships.ous.map{ |e| { id: e.id, name: e.name, type: e.type } } },
       :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
       :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } }

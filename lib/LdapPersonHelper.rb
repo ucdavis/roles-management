@@ -24,10 +24,10 @@ module LdapPersonHelper
       loginid = eduPersonPrincipalName.slice(0, eduPersonPrincipalName.index("@"))
     end
 
-    record_log << "Processing LDAP record for #{loginid}\n" unless record_log.nil?
-
     # Find or create the Person object
     p = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
+
+    record_log << "Processing LDAP record for #{loginid} (ID: #{p.id})\n" unless record_log.nil?
 
     p.first = entry.get_values('givenName')[0]
     p.last = entry.get_values('sn')[0]

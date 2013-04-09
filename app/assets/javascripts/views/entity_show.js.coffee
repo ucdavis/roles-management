@@ -104,16 +104,17 @@ DssRm.Views.EntityShow = Backbone.View.extend(
         theme: "facebook"
         onAdd: (item) =>
           group_memberships = @model.get("group_memberships")
-          unless _.find(group_memberships, (i) ->
+          unless _.find(group_memberships.non_ous, (i) ->
             i.id is item.id
           )
             # onAdd is triggered by the .tokenInput("add") lines in render,
             # so we need to ensure this actually is a new item
-            group_memberships.push item
+            group_memberships.non_ous.push item
             @model.set "group_memberships", group_memberships
 
         onDelete: (item) =>
-          group_memberships = _.filter(@model.get("group_memberships"), (group) ->
+          group_memberships = @model.get("group_memberships")
+          group_memberships.non_ous = _.filter(@model.get("group_memberships").non_ous, (group) ->
             group.id isnt item.id
           )
           @model.set "group_memberships", group_memberships
@@ -123,20 +124,21 @@ DssRm.Views.EntityShow = Backbone.View.extend(
         defaultText: ""
         theme: "facebook"
         onAdd: (item) =>
-          ous = @model.get("ous")
-          unless _.find(ous, (i) ->
-            i.id is item.id
+          group_memberships = @model.get("group_memberships")
+          unless _.find(group_memberships.ous, (ou) ->
+            ou.id is item.id
           )
             # onAdd is triggered by the .tokenInput("add") lines in render,
             # so we need to ensure this actually is a new item
-            ous.push item
-            @model.set "ous", ous
+            group_memberships.ous.push item
+            @model.set "group_memberships", group_memberships
 
         onDelete: (item) =>
-          ous = _.filter(@model.get("ous"), (ou) ->
+          group_memberships = @model.get("group_memberships")
+          group_memberships.ous= _.filter(@model.get("group_memberships").ous, (ou) ->
             ou.id isnt item.id
           )
-          @model.set "ous", ous
+          @model.set "group_memberships", group_memberships
 
       $rolesTab = @$("fieldset#roles")
       _.each @model.roles.groupBy("application_name"), (roleset) =>
@@ -250,7 +252,7 @@ DssRm.Views.EntityShow = Backbone.View.extend(
 
       groups_tokeninput = @$("input[name=groups]")
       groups_tokeninput.tokenInput "clear"
-      _.each @model.get("group_memberships"), (group) ->
+      _.each @model.get("group_memberships").non_ous, (group) ->
         groups_tokeninput.tokenInput "add",
           id: group.id
           name: group.name
@@ -258,7 +260,7 @@ DssRm.Views.EntityShow = Backbone.View.extend(
 
       ous_tokeninput = @$("input[name=ous]")
       ous_tokeninput.tokenInput "clear"
-      _.each @model.get("ous"), (ou) ->
+      _.each @model.get("group_memberships").ous, (ou) ->
         ous_tokeninput.tokenInput "add",
           id: ou.id
           name: ou.name
@@ -307,19 +309,16 @@ DssRm.Views.EntityShow = Backbone.View.extend(
     false
 
   rescan: (e) ->
-    type = @model.get("type")
-    status_bar.show "Scanning ..."
+    status_bar.show "Re-scanning ..."
     
-    #this.model.save({}, {
-    #success: function() {
-    status_bar.hide()
+    @model.fetch
+      url: Routes.person_import_path @model.get('loginid')
+      type: 'POST'
+      success: (data) ->
+        status_bar.hide()
+      failure: (data) ->
+        status_bar.show "An error occurred while re-scanning.", "error"
     
-    #},
-    
-    #error: function() {
-    #status_bar.show("An error occurred while saving.", "error");
-    #}
-    #});
     false
 
   deleteEntity: ->
