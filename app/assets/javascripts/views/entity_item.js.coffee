@@ -5,12 +5,14 @@ DssRm.Views.EntityItem = Backbone.View.extend(
     "click a.entity-remove-link": "removeEntity"
 
   initialize: (options) ->
-    @model.bind "change", @render, this
+    @view_state = options.view_state
+
+    @listenTo @model, "change", @render
+    @listenTo @view_state, "change", @render
+    
     @highlighted = options.highlighted
     @faded = options.faded
     @read_only = options.read_only
-    @current_role = options.current_role
-    @current_application = options.current_application
 
   render: ->
     type = @model.get("type")

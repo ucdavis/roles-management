@@ -159,10 +159,9 @@
       highlighted = @entityAssignedToCurrentRole(entity)
       pin = new DssRm.Views.EntityItem(
         model: entity
+        view_state: @view_state
         highlighted: highlighted
         read_only: _.indexOf(group_operatorships, entity.get("id")) >= 0
-        current_role: selected_role
-        current_application: @view_state.getSelectedApplication()
       )
       
       pin.render()
@@ -181,10 +180,9 @@
       _.each assigned_non_subordinates, (entity) =>
         pin = new DssRm.Views.EntityItem(
           model: entity
+          view_state: @view_state
           highlighted: true
           faded: true
-          current_role: selected_role
-          current_application: @view_state.getSelectedApplication()
         )
         pin.render()
         @$("#highlighted_pins").append pin.el
@@ -242,12 +240,11 @@
             selected_role.entities.add new_entity
             @view_state.getSelectedApplication().save()
         else
-          # No role selected, so we will add this entity to their favorites
+          # No role selected, either add entity to their favorites or highlight
           if @sidebar_entities.find((e) ->
             e.id is id
           ) is `undefined`
-            
-            # Add this result
+            # Add to favorites
             p = new DssRm.Models.Entity(
               id: id
               name: label
@@ -255,6 +252,11 @@
             )
             DssRm.current_user.favorites.add p
             DssRm.current_user.save()
+            
+            return ""
+          else
+            # Already in favorites - highlight the result
+            @view_state.set focused_entity_id: id
     
     label
 
