@@ -1,5 +1,13 @@
-<td><input type="text" name="name" size="11" /></td>
-<td><input type="text" name="token" size="5" /></td>
-<td><input type="text" name="description" size="13" id="role-description" /></td>
+<td><input type="text" name="name" class="input-small" size="11" /></td>
+<td><input type="text" name="token" class="input-small" size="5" /></td>
+<td><input type="text" name="description" class="input-large" size="10" id="role-description" /></td>
 <td><button class="btn btn-danger" id="remove_role">Remove</button></td>
-<td><button class="btn" id="sympa_url"><i class="icon-share"></i></button></td>
+<td>
+  <div class="btn-group">
+    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-share"></i></button>
+    <ul class="dropdown-menu dropdown-right">
+      <li><a href="#" id="plainText">Plain Text</a></li>
+      <li><a href="#" id="syncAD">Sync AD</a></li>
+    </ul>
+  </div>
+</td>

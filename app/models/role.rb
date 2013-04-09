@@ -16,8 +16,9 @@ class Role < ActiveRecord::Base
   belongs_to :application
 
   attr_accessible :token, :entity_ids, :name, :description, :ad_path
-  attr_accessor :skip_next_sync # flag which may be set by manipulating code to avoid an AD sync
+  attr_accessor :skip_next_sync  # flag which may be set by manipulating code to avoid an AD sync
   attr_accessor :entities_changed # flag used by has_many :entities add/remove to force a role sync
+  attr_accessor :force_sync       # flag used to force a sync on save or explicit call to Role.sync_ad
   
   def init
     self.entities_changed = false # hokey way of setting a default value
@@ -68,18 +69,18 @@ class Role < ActiveRecord::Base
   def sync_ad
     # AD sync will update the role's "last_ad_sync" member. Ensure we don't
     # end up recursively calling this after_save callback!
-    unless self.skip_next_sync
-      if (self.ad_path_changed? || self.entities_changed) && self.ad_path
+    if (self.skip_next_sync != true) || (self.force_sync == true)
+      if (self.ad_path_changed? || self.entities_changed || (self.force_sync == true)) && self.ad_path
         require 'rake'
         load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
         logger.info "Scheduling AD sync for role #{id}"
         Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
       else
-        logger.info "Not syncing AD as ad_path_changed? is #{self.ad_path_changed?} or entities_changed is #{self.entities_changed}"
+        logger.info "Not syncing AD as ad_path_changed? is #{self.ad_path_changed?}, entities_changed is #{self.entities_changed}, force_sync is #{self.force_sync}, or AD path may be blank '#{self.ad_path}'."
       end
     else
-      logger.info "Not scheduling AD sync for role #{id} as skip_next_sync was set."
+      logger.info "Not scheduling AD sync for role #{id} as skip_next_sync was set #{self.skip_next_sync} and force_sync was unset #{self.force_sync}."
       self.skip_next_sync = false
     end
   end

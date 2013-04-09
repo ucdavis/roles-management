@@ -542,6 +542,11 @@
   if (!options){ options = {}; }
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// role_sync => /roles/:role_id/sync(.:format)
+  role_sync_path: function(_role_id, options) {
+  if (!options){ options = {}; }
+  return Utils.build_path(["role_id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"roles",false]],[7,"/",false]],[3,"role_id",false]],[7,"/",false]],[6,"sync",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // roles => /roles(.:format)
   roles_path: function(options) {
   if (!options){ options = {}; }

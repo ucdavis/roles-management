@@ -16,7 +16,9 @@ DSSRM::Application.routes.draw do
   resources :people
   resources :groups
   resources :ous
-  resources :roles
+  resources :roles do
+    get "sync" # HTTP GET as we queue this request - we cannot return data immediately
+  end
   resources :majors
   resources :titles
   resources :affiliations

@@ -12,8 +12,6 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
   initialize: (options) ->
     @listenTo @model.roles, "add remove", @render
     
-    console.log @model
-    
     @$el.html JST["applications/show"](application: @model)
     @$("input[name=owners]").tokenInput Routes.people_path(),
       crossDomain: false

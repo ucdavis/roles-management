@@ -19,4 +19,13 @@ class RolesController < ApplicationController
       format.text
     end
   end
+  
+  # Forces a role to sync
+  def sync
+    @role = Role.find_by_id(params[:role_id])
+    @role.force_sync = true
+    @role.sync_ad
+    
+    respond_with :ok
+  end
 end

@@ -28,3 +28,16 @@
   color: #EFEFEF;
   background-color: #183C68;
 }
+
+.dropdown-menu.dropdown-right {
+    left: auto;
+    right: 0;
+    &::before {
+      left: auto !important;
+      right: 9px;
+    }
+    &::after {
+      left: auto !important;
+      right: 10px;
+    }
+}
