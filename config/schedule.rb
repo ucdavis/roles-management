@@ -26,12 +26,12 @@ every :reboot do
   envcommand 'script/delayed_job restart'
 end
 
-# Run LDAP import updater every 24 hours at 2am
-every :day, :at => "2am" do
+# Run LDAP import updater every hour
+every 1.hours do
   rake "ldap:import"
 end
 
 # Sync with Active Directory every 24 hours at 2:30am (LDAP usually only takes 2-3 mins)
-every :day, :at => "2:30 am" do
+every 8.hours do
   rake "ad:sync_all_users"
 end
