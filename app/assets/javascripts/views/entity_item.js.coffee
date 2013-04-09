@@ -10,8 +10,6 @@ DssRm.Views.EntityItem = Backbone.View.extend(
     @listenTo @model, "change", @render
     @listenTo @view_state, "change", @render
     
-    @highlighted = options.highlighted
-    @faded = options.faded
     @read_only = options.read_only
 
   render: ->
@@ -26,14 +24,14 @@ DssRm.Views.EntityItem = Backbone.View.extend(
       $(e.target).tooltip "hide" # but stopPropagation will stop the tooltip from closing...
 
     @$(".entity-remove-link i").removeClass("icon-remove").addClass "icon-minus"  if type is "Person"
-    if @highlighted
+
+    if @assignedToCurrentRole()
       if type is "Person"
         @$el.css("box-shadow", "#08C 0 0 5px").css "border", "1px solid #08C"
-      else
-        
-        # Group
+      else # is Group
         @$el.css("box-shadow", "#468847 0 0 5px").css "border", "1px solid #468847"
-    if @faded
+
+    if @assignedToCurrentUser()
       @$el.css "opacity", "0.6"
       @$("i.icon-minus").hide()
     if @read_only
@@ -70,4 +68,25 @@ DssRm.Views.EntityItem = Backbone.View.extend(
       DssRm.current_user.favorites.remove favorites_entity
       DssRm.current_user.favorites.trigger "change"
       DssRm.current_user.save()
+  
+  # Returns true if the given entity 'e' is assigned to the current role
+  assignedToCurrentRole: ->
+    selected_role = @view_state.getSelectedRole()
+    if selected_role
+      results = selected_role.entities.find((i) =>
+        i.get('id') is @model.get('id')
+      )
+      if results is `undefined`
+        return false
+      else
+        return true
+    false
+  
+  # True if in current_user's favorites, group ownerships, or group operatorships
+  assignedToCurrentUser: ->
+    _current_user_entities = _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
+    
+    return !_.find(_current_user_entities, (i) =>
+      return i.get("id") is @model.get('id')
+    )
 )

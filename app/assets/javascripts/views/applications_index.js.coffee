@@ -156,17 +156,15 @@
     @$("#pins").empty()
     @$("#highlighted_pins").empty()
     @sidebar_entities.each (entity) =>
-      highlighted = @entityAssignedToCurrentRole(entity)
       pin = new DssRm.Views.EntityItem(
         model: entity
         view_state: @view_state
-        highlighted: highlighted
         read_only: _.indexOf(group_operatorships, entity.get("id")) >= 0
       )
       
       pin.render()
       
-      if highlighted
+      if pin.assignedToCurrentRole()
         @$("#highlighted_pins").append pin.el
       else
         @$("#pins").append pin.el
@@ -181,8 +179,6 @@
         pin = new DssRm.Views.EntityItem(
           model: entity
           view_state: @view_state
-          highlighted: true
-          faded: true
         )
         pin.render()
         @$("#highlighted_pins").append pin.el
@@ -346,22 +342,6 @@
             success: =>
                 @view_state.trigger('change')
           )
-
-
-  # Returns true if the given entity 'e' is assigned to the current role
-  entityAssignedToCurrentRole: (e) ->
-    entity_id = e.get("id")
-
-    selected_role = @view_state.getSelectedRole()
-    if selected_role
-      results = selected_role.entities.find((i) ->
-        i.get('id') is entity_id
-      )
-      if results is `undefined`
-        return false
-      else
-        return true
-    false
 ,
   
   # Constants used in this view
