@@ -8,7 +8,6 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
     "click button#add_role": "addRole"
     "click button#remove_role": "removeRole"
     "change table#roles input": "storeRoleChanges"
-    "click button#sympa_url": "sympaUrl"
 
   initialize: (options) ->
     @listenTo @model.roles, "add remove", @render
@@ -160,10 +159,4 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
       description: $(e.target).parents("tr").find("input[name=description]").val()
 
     true
-
-  sympaUrl: (e) ->
-    role_id = $(e.target).parents("tr").data("role_id")
-    url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id, {format: 'txt'})
-    window.prompt "Copy to clipboard: Ctrl+C, Enter", url
-    false
 )

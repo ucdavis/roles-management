@@ -3,6 +3,7 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
   className: "fields"
   events:
     "blur input[name=name]": "autofillEmptyToken"
+    "click button#sympa_url": "sympaUrl"
 
   render: ->
     @$el.html JST["applications/show_role"](role: @model)
@@ -24,4 +25,11 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
       $tokenInput.trigger "change"
 
     true
+  
+  sympaUrl: (e) ->
+    role_id = $(e.target).parents("tr").data("role_id")
+    url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id, {format: 'txt'})
+    window.open url
+    #window.prompt "Copy to clipboard: Ctrl+C, Enter", url
+    false
 )
