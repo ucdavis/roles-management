@@ -147,28 +147,27 @@
 
 
   renderSidebar: ->
-    # Need group_operatorship IDs has an array when drawing EntityItem
-    group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
-      group.get "id"
-    )
     selected_role = @view_state.getSelectedRole()
     
     @$("#pins").empty()
     @$("#highlighted_pins").empty()
+    
+    # Render sidebar entities (favorites, etc.)
     @sidebar_entities.each (entity) =>
       pin = new DssRm.Views.EntityItem(
         model: entity
         view_state: @view_state
-        read_only: _.indexOf(group_operatorships, entity.get("id")) >= 0
       )
       
       pin.render()
       
+      # Might need to move them around if a role is selected ...
       if pin.assignedToCurrentRole()
         @$("#highlighted_pins").append pin.el
       else
         @$("#pins").append pin.el
 
+    # If a role is selected, we have extra rendering to do ...
     if selected_role
       assigned_non_subordinates = selected_role.entities.reject((e) =>
         id = e.get("id")

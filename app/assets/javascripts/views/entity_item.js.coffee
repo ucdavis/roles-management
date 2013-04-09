@@ -9,8 +9,6 @@ DssRm.Views.EntityItem = Backbone.View.extend(
 
     @listenTo @model, "change", @render
     @listenTo @view_state, "change", @render
-    
-    @read_only = options.read_only
 
   render: ->
     type = @model.get("type")
@@ -34,7 +32,7 @@ DssRm.Views.EntityItem = Backbone.View.extend(
     if @assignedToCurrentUser()
       @$el.css "opacity", "0.6"
       @$("i.icon-minus").hide()
-    if @read_only
+    if @isReadOnly()
       @$("i.icon-remove").hide()
       @$("i.icon-search").hide()
     else
@@ -89,4 +87,13 @@ DssRm.Views.EntityItem = Backbone.View.extend(
     return !_.find(_current_user_entities, (i) =>
       return i.get("id") is @model.get('id')
     )
+  
+  # Returns true if the current_user only operates the group (and does not own it)
+  isReadOnly: ->
+    # Need group_operatorship IDs has an array when drawing EntityItem
+    group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
+      group.get "id"
+    )
+    
+    return _.indexOf(group_operatorships, @model.get("id")) >= 0
 )
