@@ -56,7 +56,7 @@ class Person < Entity
   end
 
   def byline
-    byline = title.name unless title.nil?
+    byline = title.nil? ? "" : title.name
     byline += " (" + affiliations.map{ |x| x.name }.join(", ") + ")" if affiliations.count > 0
     byline
   end
@@ -66,23 +66,6 @@ class Person < Entity
     title.classifications
   end
 
-  # def ou_ids=(ids)
-  #   # Add any new OUs
-  #   ids.each do |id|
-  #     ou = Group.where(Group.arel_table[:code].not_eq(nil)).find_by_id(id)
-  #     unless (group_memberships.include? ou) or ou.nil?
-  #       group_memberships << ou
-  #     end
-  #   end
-  # 
-  #   # Remove any OUs not mentioned (ou_ids= behavior is to always give the complete list)
-  #   group_memberships.ous.each do |ou|
-  #     unless ids.include? ou.id
-  #       group_memberships.delete(ou.id)
-  #     end
-  #   end
-  # end
-  
   # Calculates all roles for an individual - explicitly assigned + those via group membership, including group rules
   def all_roles
     computed_roles = []
