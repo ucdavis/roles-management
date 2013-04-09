@@ -7,11 +7,17 @@ class Role < ActiveRecord::Base
 
   has_many :role_assignments, :dependent => :destroy
   has_many :entities, :through => :role_assignments,
-                      :after_add => Proc.new{ |r| r.entities_changed = true },
-                      :after_remove => Proc.new{ |r| r.entities_changed = true }
+                      :after_add => Proc.new{ |r|
+                                               r.entities_changed = true
+                                               r.clear_cache_if_needed(force_clear = true)
+                                             },
+                      :after_remove => Proc.new{ |r|
+                                                 r.entities_changed = true
+                                                 r.clear_cache_if_needed(force_clear = true)
+                                               }
   before_save :clear_last_sync_if_path_changed
+  after_save :clear_cache_if_needed
   after_save :sync_ad
-  after_initialize :init
 
   belongs_to :application
 
@@ -20,10 +26,6 @@ class Role < ActiveRecord::Base
   attr_accessor :entities_changed # flag used by has_many :entities add/remove to force a role sync
   attr_accessor :force_sync       # flag used to force a sync on save or explicit call to Role.sync_ad
   
-  def init
-    self.entities_changed = false # hokey way of setting a default value
-  end
-
   # Needed in show.json.rabl to display a role's application's name
   def application_name
     application.name
@@ -50,18 +52,20 @@ class Role < ActiveRecord::Base
   # members takes all people and all people from groups (flattens the group)
   # and returns them as a list.
   def members
-    all = []
+    Rails.cache.fetch("roles/members/#{id}") do
+      all = []
 
-    # Add all people
-    all += entities.where(:type => "Person")
+      # Add all people
+      all += entities.where(:type => "Person")
 
-    # Add all (flattened) groups
-    entities.where(:type => "Group").each do |group|
-      all += group.members(true)
+      # Add all (flattened) groups
+      entities.where(:type => "Group").each do |group|
+        all += group.members(true)
+      end
+
+      # Return a unique list
+      all.uniq{ |x| x.id }
     end
-
-    # Return a unique list
-    all.uniq{ |x| x.id }
   end
 
   # Syncronizes with AD
@@ -69,8 +73,8 @@ class Role < ActiveRecord::Base
   def sync_ad
     # AD sync will update the role's "last_ad_sync" member. Ensure we don't
     # end up recursively calling this after_save callback!
-    if (self.skip_next_sync != true) || (self.force_sync == true)
-      if (self.ad_path_changed? || self.entities_changed || (self.force_sync == true)) && self.ad_path
+    if (self.skip_next_sync != true) || self.force_sync
+      if (self.ad_path_changed? || self.entities_changed || self.force_sync) && self.ad_path
         require 'rake'
         load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
@@ -92,6 +96,17 @@ class Role < ActiveRecord::Base
   def trigger_sync
     logger.info "Role #{id}: trigger_sync called, calling sync_ad"
     sync_ad
+  end
+
+  def clear_cache_if_needed(force_clear = false)
+    if self.changed? or force_clear
+      logger.debug "Clearing cache for role #{id}"
+      Rails.cache.delete("roles/members/#{id}")
+      return true
+    else
+      logger.debug "Not clearing cache for role #{id}, nothing has changed. Associations may still clear cache."
+      return false
+    end
   end
 
   private
