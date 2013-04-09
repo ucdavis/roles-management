@@ -311,10 +311,17 @@ DssRm.Views.EntityShow = Backbone.View.extend(
   rescan: (e) ->
     status_bar.show "Re-scanning ..."
     
+    # Disable all form elements while rescanning
+    $('.modal-body form').children().each (i, el) ->
+      $(el).attr("disabled", true)
+    
     @model.fetch
       url: Routes.person_import_path @model.get('loginid')
       type: 'POST'
       success: (data) ->
+        # Re-enable all form elements
+        $('.modal-body form').children().each (i, el) ->
+          $(el).attr("disabled", false)
         status_bar.hide()
       failure: (data) ->
         status_bar.show "An error occurred while re-scanning.", "error"
