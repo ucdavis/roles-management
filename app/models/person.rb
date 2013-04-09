@@ -11,7 +11,11 @@ class Person < Entity
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
 
-  has_and_belongs_to_many :group_memberships, :class_name => "Group", :foreign_key => "entity_id", :join_table => :entities_groups, :uniq => true
+  has_and_belongs_to_many :group_memberships,
+                          :class_name => "Group",
+                          :foreign_key => "entity_id",
+                          :join_table => :entities_groups,
+                          :uniq => true
 
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments
