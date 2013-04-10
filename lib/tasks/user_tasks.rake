@@ -61,7 +61,7 @@ namespace :user do
     args.each do |arg|
       puts "Revoking admin from #{arg[1]}..."
       entity_id = Person.find_by_loginid(arg[1]).id
-      role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+      role_id = Application.find_by_name("DSS Roles Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
       ra = RoleAssignment.find_by_role_id_and_entity_id(role_id, entity_id)
       unless ra.nil?
         ra.destroy
