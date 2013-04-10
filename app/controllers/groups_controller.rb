@@ -1,5 +1,5 @@
 class GroupsController < ApplicationController
-  filter_access_to :all
+  filter_access_to :all, :attribute_check => true
   respond_to :json
 
   # Used by the API and various Group-only token inputs

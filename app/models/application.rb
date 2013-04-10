@@ -4,7 +4,7 @@ class Application < ActiveRecord::Base
   has_many :roles, :dependent => :destroy
   has_many :application_owner_assignments, :dependent => :destroy
   has_many :owners, :through => :application_owner_assignments
-  has_many :application_operator_assignments
+  has_many :application_operator_assignments, :dependent => :destroy
   has_many :operators, :through => :application_operator_assignments, :source => "entity", :dependent => :destroy
 
   before_save :set_default_properties
@@ -18,7 +18,7 @@ class Application < ActiveRecord::Base
   accepts_nested_attributes_for :roles, :allow_destroy => true
 
   def self.csv_header
-    "Role,ID,Login ID, Email, First, Last".split(',')
+    "Role,ID,Login ID,Email,First,Last".split(',')
   end
 
   def as_json(options={})

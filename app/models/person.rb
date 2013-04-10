@@ -102,6 +102,8 @@ class Person < Entity
   end
 
   # Compute applications for which they can make assignments.
+  # Defined to be all applications for admins, else
+  # it is the list of applications they own or can operate.
   def manageable_applications
     apps = []
 
@@ -176,7 +178,8 @@ class Person < Entity
 
   # Returns true if this user is an admin of "DSS Roles Management" itself
   def is_rm_admin?
-    roles.includes(:application).where(:token => "admin", :applications => { :name => "DSS Roles Management" }).exists?
+    #roles.includes(:application).where(:token => "admin", :applications => { :name => "DSS Roles Management" }).exists?
+    role_symbols.include? :admin
   end
 
   def trigger_sync

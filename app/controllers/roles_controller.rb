@@ -1,5 +1,5 @@
 class RolesController < ApplicationController
-  filter_access_to :all
+  filter_access_to :all, :attribute_check => true
   respond_to :json
 
   # Optionally takes application_id parameter to filter index to only roles from that application

@@ -1,13 +1,16 @@
 class ApplicationsController < ApplicationController
   before_filter :load_application, :only => [:show]
-  filter_access_to :all
-  respond_to :html, :json
+  filter_access_to :all, :attribute_check => true
+  filter_access_to :index, :attribute_check => true, :load_method => :load_applications
+  respond_to :json
 
   # GET /applications
   def index
-    @applications = current_user.manageable_applications unless not defined? current_user.manageable_applications
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
-    respond_with @applications
+    
+    respond_with @applications do |format|
+      format.html
+    end
   end
 
   # GET /applications/1
@@ -97,11 +100,11 @@ class ApplicationsController < ApplicationController
   protected
 
   def load_application
-    if permitted_to?(:show, :applications)
-      @application = Application.find(params[:id])
-    else
-      @application = nil
-      logger.info "#{current_user.loginid}@#{request.remote_ip}: Tried loading an application without permission."
-    end
+    @application = Application.with_permissions_to(:read).find(params[:id])
+  end
+
+  def load_applications
+    #current_user.manageable_applications unless not defined? current_user.manageable_applications
+    @applications = Application.with_permissions_to(:read)
   end
 end
