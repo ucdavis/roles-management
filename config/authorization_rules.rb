@@ -1,12 +1,9 @@
 authorization do
   role :admin do
-    has_permission_on :admin_dialogs, :to => [:impersonate, :ip_whitelist]
-    has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate, :ad_path_check]
-    has_permission_on :api_whitelisted_ip_users, :to => [:create, :delete]
-    has_permission_on :admin_api_whitelisted_ips, :to => [:index, :create, :delete]
-    has_permission_on :api_key_users, :to => [:create, :delete]
-    has_permission_on :admin_api_keys, :to => [:index, :create, :delete]
-    has_permission_on :roles, :to => [:sync]
+    # For creating/deleting applications
+    has_permission_on :applications, :to => [:create, :delete]
+    has_permission_on :application_owner_assignments, :to => [:create, :delete]
+    has_permission_on :roles, :to => [:create, :delete]
   end
   
   role :access do
@@ -20,6 +17,12 @@ authorization do
     # Owners can read and update their own applications
     has_permission_on :applications, :to => [:read, :update] do
       if_attribute :owners => contains { user }
+    end
+    # NOTE: 'access' role cannot create or destroy applications
+    
+    # Allow creating/updating/reading of roles which belong to an application they own
+    has_permission_on :roles, :to => [:read, :update, :create, :delete] do
+      if_attribute :application => { :owners => contains { user } }
     end
     
     has_permission_on :people, :to => :read

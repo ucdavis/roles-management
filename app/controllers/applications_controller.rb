@@ -1,5 +1,6 @@
 class ApplicationsController < ApplicationController
-  before_filter :load_application, :only => [:show]
+  before_filter :load_application, :only => :show
+  before_filter :new_application_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_applications
   respond_to :json
@@ -56,11 +57,6 @@ class ApplicationsController < ApplicationController
   # POST /applications
   def create
     # SECUREME: Can the current user create applications?
-
-    params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
-    params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id
-    @application = Application.new(params[:application])
-
     if @application.save
       logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new application, #{params[:application]}."
     else
@@ -106,5 +102,11 @@ class ApplicationsController < ApplicationController
   def load_applications
     #current_user.manageable_applications unless not defined? current_user.manageable_applications
     @applications = Application.with_permissions_to(:read)
+  end
+  
+  def new_application_from_params
+    params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
+    params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id
+    @application = Application.new(params[:application])
   end
 end

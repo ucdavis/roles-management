@@ -270,8 +270,9 @@
             exact_match_found = true  if app.get("name").toLowerCase() is query.toLowerCase()
             entities.push app.get("id") + "####" + app.get("name")
     
-      # Add the option to create a new one with this query
-      entities.push DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION + "####Create " + query  if exact_match_found is false
+      if DssRm.admin_logged_in()
+        # Add the option to create a new one with this query
+        entities.push DssRm.Views.ApplicationsIndex.FID_CREATE_APPLICATION + "####Create " + query  if exact_match_found is false
     
       process entities
     , 10)

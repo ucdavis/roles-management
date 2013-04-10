@@ -55,6 +55,9 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
 
     @$("span#csv-download>a").attr "href", Routes.application_path(@model.id, {format: 'csv'})
     
+    if DssRm.admin_logged_in()
+      @$('a#delete').show()
+    
     # Roles tab
     @$("table#roles tbody").empty()
     @model.roles.each (role) =>

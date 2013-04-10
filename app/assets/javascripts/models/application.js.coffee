@@ -12,12 +12,12 @@ DssRm.Models.Application = Backbone.Model.extend(
   # Returns only the "highest" relationship (this order): owner, operator, admin
   # Uses DssRm.current_user as the entity
   relationship: ->
-    return "admin"  if DssRm.current_user.get("admin")
+    return "admin" if DssRm.admin_logged_in()
     current_user_id = DssRm.current_user.get("id")
-    return "owner"  if @owners.find((o) ->
+    return "owner" if @owners.find((o) ->
       o.id is current_user_id
     ) isnt `undefined`
-    return "operator"  if @operators.find((o) ->
+    return "operator" if @operators.find((o) ->
       o.id is current_user_id
     ) isnt `undefined`
     null

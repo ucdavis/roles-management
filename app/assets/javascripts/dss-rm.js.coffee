@@ -18,4 +18,6 @@ window.DssRm =
     
     # Enable tooltips
     $("body").tooltip selector: "[rel=tooltip]"
-    
+  
+  admin_logged_in: ->
+    DssRm.current_user.get 'admin'
