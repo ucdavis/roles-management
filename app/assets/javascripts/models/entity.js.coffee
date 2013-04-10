@@ -22,6 +22,25 @@ DssRm.Models.Entity = Backbone.Model.extend(
     @updateAttributes()
     @on "change", @updateAttributes, this
 
+  # Returns only the "highest" relationship (this order): admin, owner, operator
+  # Does not return anything if not admin, owner, or operator on purpose
+  # Uses DssRm.current_user as the entity
+  # Only applicable to entities of type 'Group', not 'Person'
+  relationship: ->
+    type = @get("type")
+    
+    if type is "Group"
+      return "admin" if DssRm.admin_logged_in()
+      current_user_id = DssRm.current_user.get("id")
+      return "owner" if _.find(@get("owners"), (o) ->
+        o.id is current_user_id
+      ) isnt `undefined`
+      return "operator" if _.find(@get("operators"), (o) ->
+        o.id is current_user_id
+      ) isnt `undefined`
+
+    null
+
   updateAttributes: ->
     type = @get("type")
     if type is "Person"

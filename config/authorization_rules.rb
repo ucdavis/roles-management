@@ -25,7 +25,7 @@ authorization do
       if_attribute :application => { :owners => contains { user } }
     end
     
-    # Owning/operating applications requires reading entities
+    # Owning/operating applications requires reading :entities
     # Create/delete role_assignments for applications they own
     has_permission_on :role_assignments, :to => [:create, :delete] do
       if_attribute :role => { :application => { :owners => contains { user } } }
@@ -51,6 +51,25 @@ authorization do
     # Allow managing of their own favorites
     has_permission_on :person_favorite_assignments, :to => [:create, :delete] do
       if_attribute :owner_id => is { user.id }
+    end
+    
+    # Allow creating groups
+    has_permission_on :entities, :to => :create do
+      if_attribute :type => is { 'Group' }
+    end
+    has_permission_on :groups, :to => :create
+    has_permission_on :group_owner_assignments, :to => :create do
+      if_attribute :entity_id => is { user.id }
+    end
+    # Allow deleting groups they own
+    has_permission_on :entities, :to => :delete do
+      if_attribute :owners => contains { user }
+    end
+    has_permission_on :groups, :to => :delete do
+      if_attribute :owners => contains { user }
+    end
+    has_permission_on :group_owner_assignments, :to => :delete do
+      if_attribute :entity_id => is { user.id }
     end
   end
 end

@@ -200,6 +200,9 @@ DssRm.Views.EntityShow = Backbone.View.extend(
 
       @$("span#csv-download>a").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
       
+      if DssRm.admin_logged_in() || @model.relationship()
+        @$("#delete").show()
+      
       # Rules tab
       rules_table = @$("table#rules tbody")
       rules_table.empty()

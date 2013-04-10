@@ -1,5 +1,7 @@
 class EntitiesController < ApplicationController
   include DatabaseExtensions
+  
+  before_filter :new_entity_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_entities
   respond_to :json
@@ -36,18 +38,13 @@ class EntitiesController < ApplicationController
 
   def create
     # SECUREME
-    # Only allow "Group" and "Person" to be constantized for security
-    if (params[:entity][:type] == "Group") || (params[:entity][:type] == "Person")
-      @entity = params[:entity][:type].constantize.new(params[:entity])
+    @entity.save
 
-      @entity.save
-
-      if params[:entity][:type] == "Group"
-        @entity.owners << current_user
-      end
-
-      render "entities/show"
+    if params[:entity][:type] == "Group"
+      @entity.owners << current_user
     end
+
+    respond_with @entity
   end
 
   def update
@@ -74,6 +71,17 @@ class EntitiesController < ApplicationController
       else
         render :status => :forbidden
       end
+    end
+  end
+  
+  protected
+  
+  def new_entity_from_params
+    # Only allow "Group" and "Person" to be constantized for security
+    if (params[:entity][:type] == "Group") || (params[:entity][:type] == "Person")
+      @entity = params[:entity][:type].constantize.new(params[:entity])
+    else
+      @entity = nil
     end
   end
   

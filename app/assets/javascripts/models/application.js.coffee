@@ -9,7 +9,7 @@ DssRm.Models.Application = Backbone.Model.extend(
       # Adding a new role will reveal a proper ID only after the server gives us one on save
       @roles.reset @get("roles")
   
-  # Returns only the "highest" relationship (this order): owner, operator, admin
+  # Returns only the "highest" relationship (this order): admin, owner, operator
   # Uses DssRm.current_user as the entity
   relationship: ->
     return "admin" if DssRm.admin_logged_in()
