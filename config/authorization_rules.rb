@@ -25,6 +25,19 @@ authorization do
       if_attribute :application => { :owners => contains { user } }
     end
     
+    # Owning/operating applications requires reading entities
+    has_permission_on :entities, :to => :show do
+      if_permitted_to :update, :applications
+    end
+    # Create/delete role_assignments for applications they own
+    has_permission_on :role_assignments, :to => [:create, :delete] do
+      if_attribute :role => { :application => { :owners => contains { user } } }
+    end
+    # Create/delete role_assignments for applications they operate
+    has_permission_on :role_assignments, :to => [:create, :delete] do
+      if_attribute :role => { :application => { :operators => contains { user } } }
+    end
+    
     has_permission_on :people, :to => :read
     # You can only update your own details
     has_permission_on :people, :to => :update do
