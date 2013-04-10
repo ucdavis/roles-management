@@ -1,17 +1,11 @@
 class EntitiesController < ApplicationController
   include DatabaseExtensions
   filter_access_to :all, :attribute_check => true
+  filter_access_to :index, :attribute_check => true, :load_method => :load_entities
   respond_to :json
 
   def index
     # SECUREME
-    if params[:q]
-      upper_q = params[:q].upcase
-      @entities = Entity.where("upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
-    else
-      @entities = Entity.all
-    end
-
     respond_with @entities
   end
 
@@ -80,6 +74,17 @@ class EntitiesController < ApplicationController
       else
         render :status => :forbidden
       end
+    end
+  end
+  
+  private
+  
+  def load_entities
+    if params[:q]
+      upper_q = params[:q].upcase
+      @entities = Entity.where("upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
+    else
+      @entities = Entity.all
     end
   end
 end

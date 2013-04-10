@@ -26,9 +26,6 @@ authorization do
     end
     
     # Owning/operating applications requires reading entities
-    has_permission_on :entities, :to => :show do
-      if_permitted_to :update, :applications
-    end
     # Create/delete role_assignments for applications they own
     has_permission_on :role_assignments, :to => [:create, :delete] do
       if_attribute :role => { :application => { :owners => contains { user } } }
@@ -38,10 +35,22 @@ authorization do
       if_attribute :role => { :application => { :operators => contains { user } } }
     end
     
+    # Allow viewing/searching of individuals
+    has_permission_on :entities, :to => [:index, :show]
+    
     has_permission_on :people, :to => :read
     # You can only update your own details
     has_permission_on :people, :to => :update do
       if_attribute :id => is { user.id }
+    end
+    # We need this duplicated permission due to entities/people being polymorphic
+    has_permission_on :entities, :to => :update do
+      if_attribute :id => is { user.id }
+    end
+    
+    # Allow managing of their own favorites
+    has_permission_on :person_favorite_assignments, :to => [:create, :delete] do
+      if_attribute :owner_id => is { user.id }
     end
   end
 end

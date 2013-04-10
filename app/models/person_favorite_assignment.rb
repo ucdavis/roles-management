@@ -1,17 +1,10 @@
 class PersonFavoriteAssignment < ActiveRecord::Base
   using_access_control
 
-  validates_uniqueness_of :favorite_id, :scope => [:person_id, :favorite_id]
-  #validate :cannot_favorite_self
+  validates_uniqueness_of :owner_id, :scope => [:person_id, :owner_id]
 
-  belongs_to :favorite, :class_name => "Person", :foreign_key => "person_id"
+  # favorite is the owner
+  belongs_to :owner, :class_name => "Person", :foreign_key => "id"
+  # person is the person being favored
   belongs_to :person, :class_name => "Person"
-
-  private
-
-  # def cannot_favorite_self
-  #   if person_id == favorite_id
-  #     errors.add(:favorite_id, "Cannot favorite self")
-  #   end
-  # end
 end

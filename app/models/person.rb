@@ -20,8 +20,8 @@ class Person < Entity
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments
 
-  has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "favorite_id"
-  has_many :favorites, :through => :favorite_relationships, :source => :favorite
+  has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "owner_id"
+  has_many :favorites, :through => :favorite_relationships, :source => :person
 
   has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
