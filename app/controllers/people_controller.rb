@@ -1,6 +1,7 @@
 class PeopleController < ApplicationController
   include DatabaseExtensions
   filter_access_to :all, :attribute_check => true
+  filter_access_to :index, :attribute_check => true, :load_method => :load_people
   respond_to :json
 
   ## RESTful ACTIONS
@@ -8,16 +9,6 @@ class PeopleController < ApplicationController
   # Used by the API and various Person-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
-    if params[:q]
-      upper_q = params[:q].upcase
-
-      @people = Person.where("upper(loginid) like ? or upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
-
-      @people.map()
-    else
-      @people = Person.all
-    end
-
     respond_with @people
   end
 
@@ -100,5 +91,19 @@ class PeopleController < ApplicationController
     @p.save
     
     respond_with @p
+  end
+  
+  private
+  
+  def load_people
+    if params[:q]
+      upper_q = params[:q].upcase
+
+      @people = Person.where("upper(loginid) like ? or upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
+
+      @people.map()
+    else
+      @people = Person.all
+    end
   end
 end
