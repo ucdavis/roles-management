@@ -62,13 +62,13 @@ authorization do
       if_attribute :entity_id => is { user.id }
     end
     # Allow deleting groups they own
-    has_permission_on :entities, :to => :delete do
+    has_permission_on :entities, :to => [:update, :delete] do
       if_attribute :owners => contains { user }
     end
     has_permission_on :groups, :to => [:update, :delete] do
       if_attribute :owners => contains { user }
     end
-    has_permission_on :group_owner_assignments, :to => [:update, :delete] do
+    has_permission_on :group_owner_assignments, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end
   end
