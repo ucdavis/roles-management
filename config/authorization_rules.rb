@@ -4,6 +4,10 @@ authorization do
     has_permission_on :applications, :to => [:create, :delete]
     has_permission_on :application_owner_assignments, :to => [:create, :delete]
     has_permission_on :roles, :to => [:create, :delete]
+    
+    # For API keys
+    has_permission_on :admin_api_key_users, :to => :manage
+    has_permission_on :api_key_users, :to => :manage
   end
   
   role :access do

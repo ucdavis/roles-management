@@ -32,7 +32,7 @@ DSSRM::Application.routes.draw do
     get "ad_path_check", :controller => "ops", :action => "ad_path_check"
 
     resources :api_whitelisted_ips
-    resources :api_keys
+    resources :api_key_users
   end
 
   root :to => 'site#welcome'

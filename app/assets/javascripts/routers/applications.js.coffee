@@ -63,8 +63,8 @@ DssRm.Routers.Applications = Backbone.Router.extend(
 
   apiKeysDialog: ->
     status_bar.show "Loading API keys dialog ..."
-
-    $.get Routes.admin_api_keys_path(), (keys) =>
+    
+    $.get Routes.admin_api_key_users_path(), (keys) =>
       status_bar.hide()
       api_keys = new DssRm.Collections.ApiKeys(keys)
       new DssRm.Views.ApiKeysDialog(api_keys: api_keys).render().$el.modal()

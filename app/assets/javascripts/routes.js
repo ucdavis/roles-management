@@ -262,15 +262,15 @@
   if (!options){ options = {}; }
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"ad_path_check",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// admin_api_key => /admin/api_keys/:id(.:format)
-  admin_api_key_path: function(_id, options) {
+// admin_api_key_user => /admin/api_key_users/:id(.:format)
+  admin_api_key_user_path: function(_id, options) {
   if (!options){ options = {}; }
-  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_keys",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_key_users",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// admin_api_keys => /admin/api_keys(.:format)
-  admin_api_keys_path: function(options) {
+// admin_api_key_users => /admin/api_key_users(.:format)
+  admin_api_key_users_path: function(options) {
   if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_keys",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_key_users",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // admin_api_whitelisted_ip => /admin/api_whitelisted_ips/:id(.:format)
   admin_api_whitelisted_ip_path: function(_id, options) {
@@ -342,10 +342,10 @@
   if (!options){ options = {}; }
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"classifications",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// edit_admin_api_key => /admin/api_keys/:id/edit(.:format)
-  edit_admin_api_key_path: function(_id, options) {
+// edit_admin_api_key_user => /admin/api_key_users/:id/edit(.:format)
+  edit_admin_api_key_user_path: function(_id, options) {
   if (!options){ options = {}; }
-  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_keys",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_key_users",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // edit_admin_api_whitelisted_ip => /admin/api_whitelisted_ips/:id/edit(.:format)
   edit_admin_api_whitelisted_ip_path: function(_id, options) {
@@ -442,10 +442,10 @@
   if (!options){ options = {}; }
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"majors",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
-// new_admin_api_key => /admin/api_keys/new(.:format)
-  new_admin_api_key_path: function(options) {
+// new_admin_api_key_user => /admin/api_key_users/new(.:format)
+  new_admin_api_key_user_path: function(options) {
   if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_keys",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_key_users",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // new_admin_api_whitelisted_ip => /admin/api_whitelisted_ips/new(.:format)
   new_admin_api_whitelisted_ip_path: function(options) {

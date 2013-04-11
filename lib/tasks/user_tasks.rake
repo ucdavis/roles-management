@@ -35,24 +35,36 @@ namespace :user do
     end
   end
 
-  desc 'Adds admin token to user (admin RM usage).'
+  desc 'Adds admin token to user (admin RM usage) and regular access if needed.'
+  # Note: permissions for admins simply expand normal permissions, so an admin user
+  #       must be granted both 'access' and 'admin', not simply 'admin'.
   task :grant_admin, :arg1 do |t, args|
     Rake::Task['environment'].invoke
 
     Authorization.ignore_access_control(true)
 
     args.each do |arg|
+      p = Person.find_by_loginid(arg[1])
+      a = Application.find_by_name("DSS Roles Management")
       puts "Granting admin to #{arg[1]}..."
       ra = RoleAssignment.new
-      ra.role_id = Application.find_by_name("DSS Roles Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-      ra.entity_id = Person.find_by_loginid(arg[1]).id
+      ra.role_id = a.roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+      ra.entity_id = p.id
       ra.save!
+      
+      # Ensure they have the 'access' role as well
+      if p.roles.where(:application_id => a.id).where(:token => "access").length == 0
+        ra = RoleAssignment.new
+        ra.role_id = a.roles.find(:first, :conditions => [ "lower(token) = 'access'" ]).id
+        ra.entity_id = p.id
+        ra.save!
+      end
     end
 
     Authorization.ignore_access_control(false)
   end
 
-  desc 'Revokes admin from user (separate from regular access).'
+  desc 'Revokes admin from user (will keep regular access).'
   task :revoke_admin, :arg1 do |t, args|
     Rake::Task['environment'].invoke
 
