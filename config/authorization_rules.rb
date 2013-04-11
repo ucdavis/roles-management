@@ -71,6 +71,9 @@ authorization do
     has_permission_on :group_owner_assignments, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end
+    
+    # Allow searching/importing of people
+    has_permission_on :people, :to => [:search, :import]
   end
 end
 

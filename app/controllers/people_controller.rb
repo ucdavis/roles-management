@@ -2,6 +2,7 @@ class PeopleController < ApplicationController
   include DatabaseExtensions
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_people
+  filter_access_to [:search, :import], :attribute_check => false
   respond_to :json
 
   ## RESTful ACTIONS
@@ -40,11 +41,11 @@ class PeopleController < ApplicationController
     
     @results = []
     
-    if params[:q]
+    if params[:term]
       ldap = LdapHelper.new
       ldap.connect
     
-      ldap.search("(uid=" + params[:q] + "*)") do |result|
+      ldap.search("(uid=" + params[:term] + "*)") do |result|
         p = OpenStruct.new
 
         p.loginid = result.get_values('uid')[0]
@@ -74,21 +75,27 @@ class PeopleController < ApplicationController
     load 'LdapPersonHelper.rb'
     
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
+
+    # We allow creating people (and titles, etc.) for the purpose of import.
+    # User must still have authorization for people#import
+    Authorization.ignore_access_control(true)
     
     if params[:loginid]
       ldap = LdapHelper.new
       ldap.connect
-      
+    
       ldap.search("(uid=" + params[:loginid] + ")") do |result|
         log = StringIO.new
         @p = LdapPersonHelper.create_or_update_person_from_ldap(result, log)
         Rails.logger.info log.string
       end
-      
+    
       ldap.disconnect
     end
-    
+  
     @p.save
+    
+    Authorization.ignore_access_control(false)
     
     respond_with @p
   end

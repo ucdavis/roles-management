@@ -38,8 +38,8 @@ DssRm.Views.ImportPersonDialog = Backbone.View.extend(
     # Disable the form. renderResults will re-enable it.
     @$('.form-search').children().each (i, el) ->
       $(el).prop "disabled", true
-      
-    $.get(Routes.people_search_path() + "?q=" + @term, (data) =>
+    
+    $.get(Routes.people_search_path(@term), (data) =>
       @results.reset data
     )
   
@@ -85,8 +85,7 @@ DssRm.Views.ImportPersonDialogResult = Backbone.View.extend(
     
     $.ajax
       type: "POST"
-      url: Routes.people_import_path()
-      data: { loginid: @person.get('loginid') }
+      url: Routes.person_import_path(@person.get('loginid'))
       success: (data) =>
         @person.set 'imported', true
       error: (data) =>
