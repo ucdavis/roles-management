@@ -134,7 +134,9 @@ class Person < Entity
     apps.uniq{ |a| a.id }
   end
 
-  # ACL symbols
+  # Returns a list of symbols as required by the authorization layer (declarative_authorization gem).
+  # Currently only have :access and :admin. Note that an :admin user will have both due to :admin
+  # being merely an extension on top of permissions already granted via :access.
   def role_symbols
     syms = []
 
