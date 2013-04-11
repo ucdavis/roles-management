@@ -8,6 +8,9 @@ authorization do
     # For API keys
     has_permission_on :admin_api_key_users, :to => :manage
     has_permission_on :api_key_users, :to => :manage
+    
+    # For impersonating
+    has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate]
   end
   
   role :access do
