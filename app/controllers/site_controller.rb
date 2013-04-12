@@ -14,6 +14,8 @@ class SiteController < ApplicationController
   def request_access
   end
   
+  # Check for HTTP 200 at /status.json for application issues
+  # Use this for future checks
   def status
     respond_to do |format|
       format.json { render :json => { status: 'ok' } }
