@@ -13,6 +13,12 @@ class SiteController < ApplicationController
 
   def request_access
   end
+  
+  def status
+    respond_to do |format|
+      format.json { render :json => { status: 'ok' } }
+    end
+  end
 
   def access_denied
     logger.info "#{request.remote_ip}: Loaded access denied page."
