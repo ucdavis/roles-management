@@ -11,6 +11,10 @@ authorization do
     
     # For impersonating
     has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate]
+    
+    # For whitelisted IP users
+    has_permission_on :admin_api_whitelisted_ip_users, :to => :manage
+    has_permission_on :api_whitelisted_ip_users, :to => :manage
   end
   
   role :access do

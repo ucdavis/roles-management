@@ -72,7 +72,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
   whitelistDialog: ->
     status_bar.show "Loading whitelist dialog ..."
 
-    $.get Routes.admin_api_whitelisted_ips_path(), (ips) =>
+    $.get Routes.admin_api_whitelisted_ip_users_path(), (ips) =>
       status_bar.hide()
       whitelisted_ips = new DssRm.Collections.WhitelistedIPs(ips)
       new DssRm.Views.WhitelistDialog(whitelist: whitelisted_ips).render().$el.modal()

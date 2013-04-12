@@ -26,7 +26,7 @@ DssRm.Views.ImpersonateDialog = Backbone.View.extend(
 
     return if loginid.length < 3
 
-    $.get Routes.people_path() + "?q=" + loginid, (results) =>
+    $.get Routes.people_path() + "?q=" + loginid, (results, b, c) =>
       if _.find(results, (r) ->
         r.loginid is loginid
       ) isnt `undefined`
