@@ -2,17 +2,15 @@ require 'test_helper'
 
 # These tests are run using the fake CAS user 'casuser'
 class RolesControllerTest < ActionController::TestCase
-  setup do
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
-  end
-
   test "JSON request should include certain attributes" do
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    
     grant_test_user_admin_access
-
+  
     get :show, :format => :json, :id => '1'
-
+  
     body = JSON.parse(response.body)
-
+  
     assert body.include?('id'), 'JSON response does not include id field'
     assert body.include?('token'), 'JSON response does not include token field'
     assert body.include?('name'), 'JSON response does not include name field'
@@ -38,5 +36,7 @@ class RolesControllerTest < ActionController::TestCase
     grant_whitelisted_access
 
     get :show, :format => :txt, :id => '1'
+    
+    assert_response :success
   end
 end

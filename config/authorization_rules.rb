@@ -19,6 +19,11 @@ authorization do
     has_permission_on :api_whitelisted_ip_users, :to => :manage
   end
   
+  # API whitelisted users are not quite admins. Grant specific access here
+  role :api_whitelist do
+    has_permission_on :roles, :to => :read
+  end
+  
   role :access do
     # Allow access to the main page
     has_permission_on :applications, :to => :index

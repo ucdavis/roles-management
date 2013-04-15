@@ -9,6 +9,6 @@ class ApiWhitelistedIpUser < ActiveRecord::Base
 
   # Whitelisted API users are automatically given regular access
   def role_symbols
-    [:access]
+    [:access, :api_whitelist]
   end
 end
