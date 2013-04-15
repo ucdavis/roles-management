@@ -33,5 +33,5 @@ DSSRM::Application.routes.draw do
     resources :api_key_users
   end
 
-  root :to => 'site#welcome'
+  root :to => redirect("/welcome")
 end
