@@ -4,3 +4,10 @@ dssrm_access:
   description: Provides basic access
   token: access
   application_id: 1
+
+dssrm_admin:
+  id: 2
+  name: Administrate
+  description: Provides administrator (super user / root) access
+  token: admin
+  application_id: 1

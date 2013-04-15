@@ -23,7 +23,7 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "JSON request should include certain attributes" do
-    grant_test_user_basic_access
+    grant_test_user_admin_access
 
     get :show, :format => :json, :id => '1'
 

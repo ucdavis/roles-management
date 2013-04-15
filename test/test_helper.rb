@@ -19,7 +19,24 @@ class ActiveSupport::TestCase
       r = Application.find_by_name("DSS Roles Management").roles.find_by_token("access")
       assert r, "DSS Roles Management 'access' token appears to be missing"
       p.roles << r
-      assert p.role_symbols.length > 0, "current_user should have just been assigned a role for this test"
+      assert p.role_symbols.length >= 1, "current_user should have just been assigned a role for this test"
+    end
+  end
+  
+  # Gives test user 'casuser' the admin access role for RM
+  # Note: This also grants the 'access' token as well, as 'admin' privileges are
+  #       a superset of those permissions.
+  def grant_test_user_admin_access
+    without_access_control do
+      p = Person.find_by_loginid("casuser")
+      a = Application.find_by_name("DSS Roles Management")
+      r_access = a.roles.find_by_token("access")
+      assert r_access, "DSS Roles Management 'access' token appears to be missing"
+      p.roles << r_access
+      r_admin = a.roles.find_by_token("admin")
+      assert r_admin, "DSS Roles Management 'admin' token appears to be missing"
+      p.roles << r_admin
+      assert p.role_symbols.length >= 2, "current_user should have just been assigned two roles for this test"
     end
   end
 

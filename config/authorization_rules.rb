@@ -1,9 +1,11 @@
 authorization do
   role :admin do
     # For creating/deleting applications
-    has_permission_on :applications, :to => [:create, :delete]
-    has_permission_on :application_owner_assignments, :to => [:create, :delete]
-    has_permission_on :roles, :to => [:create, :delete]
+    has_permission_on :applications, :to => :manage
+    has_permission_on :application_owner_assignments, :to => :manage
+    has_permission_on :roles, :to => :manage
+    has_permission_on :groups, :to => :manage
+    has_permission_on :people, :to => :manage
     
     # For API keys
     has_permission_on :admin_api_key_users, :to => :manage

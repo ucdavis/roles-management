@@ -1,5 +1,6 @@
 class PeopleController < ApplicationController
   include DatabaseExtensions
+  before_filter :load_person, :only => :show
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_people
   filter_access_to [:search, :import], :attribute_check => false
@@ -14,9 +15,6 @@ class PeopleController < ApplicationController
   end
 
   def show
-    @person = Person.find_by_loginid(params[:id])
-    @person = Person.find_by_id(params[:id]) unless @person
-
     respond_with(@person)
   end
   
@@ -101,6 +99,11 @@ class PeopleController < ApplicationController
   end
   
   private
+  
+  def load_person
+    @person = Person.find_by_loginid(params[:id])
+    @person = Person.find_by_id(params[:id]) unless @person
+  end
   
   def load_people
     if params[:q]

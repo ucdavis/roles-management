@@ -12,7 +12,7 @@ class PeopleControllerTest < ActionController::TestCase
   # id, name, loginid, email, roles included as per published API spec
   # Should also respond to /people/loginid.json
   test 'JSON request should include certain attributes' do
-    grant_test_user_basic_access
+    grant_test_user_admin_access
 
     get :show, :format => :json, :id => 'casuser'
 
