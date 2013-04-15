@@ -1,19 +1,11 @@
 class SiteController < ApplicationController
   layout 'site'
   respond_to :html
+  skip_before_filter :authenticate, :only => [:status, :welcome, :access_denied]
 
   def welcome
   end
 
-  def faq
-  end
-
-  def contact
-  end
-
-  def request_access
-  end
-  
   # Check for HTTP 200 at /status.json for application issues
   # Use this for future checks
   def status

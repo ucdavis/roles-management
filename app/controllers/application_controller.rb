@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   helper :all
   protect_from_forgery
 
-  before_filter :require_authentication, :except => [:welcome, :faq, :contact, :request_access, :access_denied]
+  before_filter :authenticate
 
   protected
 

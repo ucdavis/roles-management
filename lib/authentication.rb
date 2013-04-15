@@ -25,7 +25,7 @@ module Authentication
 
   # Ensure session[:auth_via] exists.
   # This is populated by a whitelisted IP request, a CAS redirect or a HTTP Auth request
-  def require_authentication
+  def authenticate
     if session[:auth_via]
       case session[:auth_via]
       when :whitelisted_ip
@@ -48,7 +48,7 @@ module Authentication
       Authorization.current_user = @whitelisted_user
       return
     else
-      logger.debug "require_authentication: Not on the API whitelist."
+      logger.debug "authenticate: Not on the API whitelist."
     end
 
     # Check if HTTP Auth is being attempted.
@@ -81,7 +81,7 @@ module Authentication
     CASClient::Frameworks::Rails::Filter.filter(self)
 
     if session[:cas_user]
-      logger.debug "require_authentication: cas_user exists in session."
+      logger.debug "authenticate: cas_user exists in session."
 
       # CAS session exists. Valid user account?
       @user = Person.find_by_loginid(session[:cas_user])

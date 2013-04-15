@@ -252,6 +252,16 @@
   Utils.namespace(window, "Routes");
 
   window.Routes = {
+// about => /about(.:format)
+  about_path: function(options) {
+  if (!options){ options = {}; }
+  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"about",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// access_denied => /access_denied(.:format)
+  access_denied_path: function(options) {
+  if (!options){ options = {}; }
+  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"access_denied",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // admin => /admin/ops/impersonate/:loginid(.:format)
   admin_path: function(_loginid, options) {
   if (!options){ options = {}; }
@@ -432,6 +442,11 @@
   if (!options){ options = {}; }
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"jasmine",false]],[7,"/",false]],[6,"spec",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// logout => /logout(.:format)
+  logout_path: function(options) {
+  if (!options){ options = {}; }
+  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"logout",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // major => /majors/:id(.:format)
   major_path: function(_id, options) {
   if (!options){ options = {}; }
@@ -557,40 +572,10 @@
   if (!options){ options = {}; }
   return Utils.build_path([], [], [7,"/",false], arguments);
   },
-// site_about => /site/about(.:format)
-  site_about_path: function(options) {
+// status => /status(.:format)
+  status_path: function(options) {
   if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"about",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// site_access_denied => /site/access_denied(.:format)
-  site_access_denied_path: function(options) {
-  if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"access_denied",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// site_contact => /site/contact(.:format)
-  site_contact_path: function(options) {
-  if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"contact",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// site_faq => /site/faq(.:format)
-  site_faq_path: function(options) {
-  if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"faq",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// site_logout => /site/logout(.:format)
-  site_logout_path: function(options) {
-  if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"logout",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// site_request_access => /site/request_access(.:format)
-  site_request_access_path: function(options) {
-  if (!options){ options = {}; }
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"request_access",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// site_welcome => /site/welcome
-  site_welcome_path: function(options) {
-  if (!options){ options = {}; }
-  return Utils.build_path([], [], [2,[2,[2,[7,"/",false],[6,"site",false]],[7,"/",false]],[6,"welcome",false]], arguments);
+  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"status",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // suggest_change_authorization_rules => /authorization_rules/suggest_change(.:format)
   suggest_change_authorization_rules_path: function(options) {
@@ -606,6 +591,11 @@
   titles_path: function(options) {
   if (!options){ options = {}; }
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"titles",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// welcome => /welcome
+  welcome_path: function(options) {
+  if (!options){ options = {}; }
+  return Utils.build_path([], [], [2,[7,"/",false],[6,"welcome",false]], arguments);
   }}
 ;
 
