@@ -1,6 +1,5 @@
 @DssRm.Views.ApplicationsIndex = Backbone.View.extend(
   tagName: "div"
-  className: "row-fluid"
   events:
     "click #pins li"             : "selectEntity"
     "click #highlighted_pins li" : "selectEntity"

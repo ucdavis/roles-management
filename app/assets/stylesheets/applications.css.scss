@@ -1,12 +1,17 @@
-#sidebar-container {
+#sidebar-container, #cards-container {
   position: fixed;
   width: inherit;
   height: 100%;
 }
 
+#cards-container {
+  overflow-y: scroll;
+  height: 88%;
+}
+
 #sidebar {
   overflow-y: scroll;
-  height: 85%;
+  height: 88%;
 }
 
 .modal input#sympa_url {

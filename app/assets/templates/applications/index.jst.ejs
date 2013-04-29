@@ -1,16 +1,26 @@
-<div class="span9">
-  <input class="input-xxlarge search-query" type="text" id="search_applications" placeholder="Search applications…" autocomplete="off" />
+<div class="row-fluid" style="position: fixed; z-index: 500;">
+  <div class="span9">
+    <input class="input-xxlarge search-query" type="text" id="search_applications" placeholder="Search applications…" autocomplete="off" />
+  </div>
 
-  <div id="cards" class="disable-text-select"></div>
+  <div class="span3">
+    <input class="input-large search-query" id="search_sidebar" placeholder="Search people and groups…" type="text" autocomplete="off" />
+  </div>
 </div>
 
-<div class="span3">
-  <div id="sidebar-container">
-    <div id="sidebar">
-      <input class="input-large search-query" id="search_sidebar" placeholder="Search people and groups…" type="text" autocomplete="off" />
-
-      <ul id="highlighted_pins" class="pins disable-text-select"></ul>
-      <ul id="pins" class="pins disable-text-select"></ul>
+<div class="row-fluid" style="padding-top: 40px;">
+  <div class="span9">
+    <div id="cards-container">
+      <div id="cards" class="disable-text-select"></div>
     </div>
-  </div> <!-- #sidebar-container -->
+  </div>
+
+  <div class="span3">
+    <div id="sidebar-container">
+      <div id="sidebar">
+        <ul id="highlighted_pins" class="pins disable-text-select"></ul>
+        <ul id="pins" class="pins disable-text-select"></ul>
+      </div>
+    </div> <!-- #sidebar-container -->
+  </div>
 </div>
