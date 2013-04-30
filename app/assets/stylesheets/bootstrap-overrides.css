@@ -41,3 +41,7 @@
       right: 10px;
     }
 }
+
+form label {
+  font-weight: bold;
+}
