@@ -16,8 +16,9 @@ window.DssRm =
       Backbone.history.start()
       Backbone.history.started = true
     
-    # Enable tooltips
-    $("body").tooltip selector: "[rel=tooltip]"
+    # Enable tooltips globally
+    $("body").tooltip
+      selector: '[rel=tooltip]'
   
   admin_logged_in: ->
     DssRm.current_user.get 'admin'

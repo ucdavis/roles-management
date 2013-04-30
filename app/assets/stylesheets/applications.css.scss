@@ -4,12 +4,7 @@
   height: 100%;
 }
 
-#cards-container {
-  overflow-y: scroll;
-  height: 88%;
-}
-
-#sidebar {
+#sidebar, #cards-overflow-wrapper {
   overflow-y: scroll;
   height: 88%;
 }

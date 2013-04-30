@@ -1,4 +1,4 @@
-<div class="row-fluid" style="position: fixed; z-index: 500;">
+<div class="row-fluid" style="position: fixed;">
   <div class="span9">
     <input class="input-xxlarge search-query" type="text" id="search_applications" placeholder="Search applications…" autocomplete="off" />
   </div>
@@ -11,7 +11,9 @@
 <div class="row-fluid" style="padding-top: 40px;">
   <div class="span9">
     <div id="cards-container">
-      <div id="cards" class="disable-text-select"></div>
+      <div id="cards-overflow-wrapper">
+        <div id="cards" class="disable-text-select"></div>
+      </div>
     </div>
   </div>
 

@@ -20,7 +20,7 @@ DssRm.Views.EntityItem = Backbone.View.extend(
     
     @$(".entity-details-link").attr("href", @entityUrl()).on "click", (e) ->
       e.stopPropagation() # the parent is looking for a click as well
-      $(e.target).tooltip "hide" # but stopPropagation will stop the tooltip from closing...
+      #$(e.target).tooltip "hide" # but stopPropagation will stop the tooltip from closing...
 
     @$(".entity-remove-link i").removeClass("icon-remove").addClass "icon-minus"  if type is "Person"
 
@@ -51,11 +51,11 @@ DssRm.Views.EntityItem = Backbone.View.extend(
   
   # This is necessary to fix a bug in tooltips (as of Bootstrap 2.1.1)
   patchTooltipBehavior: (e) ->
-    $(e.currentTarget).tooltip "hide"
+    #$(e.currentTarget).tooltip "hide"
 
   removeEntity: (e) ->
     e.stopPropagation()
-    $(e.target).tooltip "hide" # stopPropagation means the tooltip won't close, so close it
+    #$(e.target).tooltip "hide" # stopPropagation means the tooltip won't close, so close it
     
     # This is not the same as unassigning. If somebody clicks the remove link
     # on an entity, they are either deleting a group or removing a favorite person.

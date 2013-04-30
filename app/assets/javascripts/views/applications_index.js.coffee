@@ -130,7 +130,7 @@
     # We must ensure tooltips are closed before possibly deleting their
     # associated DOM elements
     @$("[rel=tooltip]").each (i, el) ->
-      $(el).tooltip "hide" unless el is `undefined`
+      #$(el).tooltip "hide" unless el is `undefined`
 
     @renderSidebar()
 
