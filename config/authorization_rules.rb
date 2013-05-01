@@ -52,6 +52,10 @@ authorization do
     has_permission_on :role_assignments, :to => [:create, :delete] do
       if_attribute :role => { :application => { :operators => contains { user } } }
     end
+    # Read roles if they are operators for that application
+    has_permission_on :roles, :to => [:show] do
+      if_attribute :application => { :operators => contains { user } }
+    end
     
     # Allow viewing/searching of individuals
     has_permission_on :entities, :to => [:index, :show]
