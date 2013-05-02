@@ -36,11 +36,19 @@ authorization do
     has_permission_on :applications, :to => [:read, :update] do
       if_attribute :owners => contains { user }
     end
+    # Operators can read and update their assigned applications
+    has_permission_on :applications, :to => [:read, :update] do
+      if_attribute :operators => contains { user }
+    end
     # NOTE: 'access' role cannot create or destroy applications
     
     # Allow creating/updating/reading of roles which belong to an application they own
     has_permission_on :roles, :to => [:read, :update, :create, :delete] do
       if_attribute :application => { :owners => contains { user } }
+    end
+    # Allow updating/reading of roles which belong to an application they operator
+    has_permission_on :roles, :to => [:read, :update] do
+      if_attribute :application => { :operators => contains { user } }
     end
     
     # Owning/operating applications requires reading :entities
