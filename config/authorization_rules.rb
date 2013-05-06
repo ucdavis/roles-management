@@ -101,6 +101,12 @@ authorization do
     has_permission_on :group_owner_assignments, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end
+    has_permission_on :group_operator_assignments, :to => [:create, :update, :delete] do
+      if_attribute :group => { :owners => contains { user } }
+    end
+    has_permission_on :group_operator_assignments, :to => [:create, :update, :delete] do
+      if_attribute :group => { :operators => contains { user } }
+    end
     
     # Allow searching/importing of people
     has_permission_on :people, :to => [:search, :import]

@@ -27,6 +27,12 @@ GIT
       net-ldap (>= 0.1.1)
 
 GIT
+  remote: git://github.com/stffn/declarative_authorization.git
+  revision: 549a8d384e10cd7be5df4edcd5695893634fcf03
+  specs:
+    declarative_authorization (0.5.7)
+
+GIT
   remote: https://github.com/rubycas/rubycas-client.git
   revision: 0bdd87d4d7ca29a49e0a77a9adbc5a5c175e618e
   specs:
@@ -85,7 +91,6 @@ GEM
       execjs
     coffee-script-source (1.6.2)
     daemons (1.1.9)
-    declarative_authorization (0.5.7)
     delayed_job (3.0.5)
       activesupport (~> 3.0)
     delayed_job_active_record (0.4.4)
@@ -234,7 +239,7 @@ DEPENDENCIES
   capistrano
   coffee-rails (~> 3.2.1)
   daemons
-  declarative_authorization (~> 0.5.7)
+  declarative_authorization!
   delayed_job_active_record
   dynamic_form
   ejs

@@ -30,13 +30,13 @@ class DssRm.Views.GroupShow extends Backbone.View
           # onAdd is triggered by the .tokenInput("add") lines in render,
           # so we need to ensure this actually is a new item
           owners.push item
-          @model.set "owners", owners
+          @model.set "owners", owners, {silent: true}
     
       onDelete: (item) =>
         owners = _.filter(@model.get("owners"), (owner) ->
           owner.id isnt item.id
         )
-        @model.set "owners", owners
+        @model.set "owners", owners, {silent: true}
 
     @$("input[name=operators]").tokenInput Routes.people_path(),
       crossDomain: false
@@ -51,13 +51,13 @@ class DssRm.Views.GroupShow extends Backbone.View
           # onAdd is triggered by the .tokenInput("add") lines in render,
           # so we need to ensure this actually is a new item
           operators.push item
-          @model.set "operators", operators
+          @model.set "operators", operators, {silent: true}
 
       onDelete: (item) =>
         operators = _.filter(@model.get("operators"), (operator) ->
           operator.id isnt item.id
         )
-        @model.set "operators", operators
+        @model.set "operators", operators, {silent: true}
 
     @$("input[name=members]").tokenInput Routes.people_path(),
       crossDomain: false
@@ -72,13 +72,13 @@ class DssRm.Views.GroupShow extends Backbone.View
           # onAdd is triggered by the .tokenInput("add") lines in render,
           # so we need to ensure this actually is a new item
           members.push item
-          @model.set "members", members
+          @model.set "members", members, {silent: true}
 
       onDelete: (item) =>
         members = _.filter(@model.get("members"), (member) ->
           member.id isnt item.id
         )
-        @model.set "members", members
+        @model.set "members", members, {silent: true}
 
   render: ->
     readonly = @model.isReadOnly()
@@ -154,18 +154,17 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   save: (e) ->
     status_bar.show "Saving ..."
-    @model.set
+
+    @model.save
       name: @$("input[name=name]").val()
       description: @$("textarea[name=description]").val()
-
-    @model.save {},
+    ,
       success: ->
         status_bar.hide()
-
       error: ->
         status_bar.show "An error occurred while saving.", "error"
-
-    @model.trigger "change"
+      silent: true
+    
     false
 
   deleteEntity: ->

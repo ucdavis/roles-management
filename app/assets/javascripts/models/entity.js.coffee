@@ -19,6 +19,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @set "roles", []  if @get("roles") is `undefined`
       @set "group_memberships", []  if @get("group_memberships") is `undefined`
       @set "ous", []  if @get("ous") is `undefined`
+    
     @updateAttributes()
     @on "change", @updateAttributes, this
 
@@ -48,6 +49,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
 
   updateAttributes: ->
     type = @get("type")
+    
     if type is "Person"
       @favorites = new DssRm.Collections.Entities(@get("favorites")) if @favorites is `undefined`
       @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
