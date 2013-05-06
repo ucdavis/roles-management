@@ -103,6 +103,8 @@ class DssRm.Views.PersonShow extends Backbone.View
           @model.trigger "change"
 
   render: ->
+    readonly = @model.isReadOnly()
+    
     @$("h3").html @model.escape("name")
     @$("h5").html @model.escape("byline")
 
@@ -120,6 +122,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       favorites_tokeninput.tokenInput "add",
         id: favorite.id
         name: favorite.name
+        readonly: readonly
 
     groups_tokeninput = @$("input[name=groups]")
     groups_tokeninput.tokenInput "clear"
@@ -127,6 +130,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       groups_tokeninput.tokenInput "add",
         id: group.id
         name: group.name
+        readonly: readonly
 
     ous_tokeninput = @$("input[name=ous]")
     ous_tokeninput.tokenInput "clear"
@@ -134,6 +138,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       ous_tokeninput.tokenInput "add",
         id: ou.id
         name: ou.name
+        readonly: readonly
 
     # Roles tab
     $rolesTab = @$("fieldset#roles")
@@ -146,10 +151,10 @@ class DssRm.Views.PersonShow extends Backbone.View
         role_tokeninput.tokenInput "add",
           id: role.get("id")
           name: role.get("name")
+          readonly: readonly
 
     if @model.isReadOnly()
       @$('input').readonly()
-      @$('.token-input-list-facebook').readonly()
 
     @
 
