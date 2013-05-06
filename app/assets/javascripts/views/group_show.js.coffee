@@ -13,14 +13,15 @@ class DssRm.Views.GroupShow extends Backbone.View
     "click #delete": "deleteEntity"
 
   initialize: ->
-    @listenTo @model, "change", @render
-    
     @$el.html JST["entities/show_group"](model: @model)
+    @listenTo @model, "change", @render
+    readonly = @model.isReadOnly()
     
     @$("input[name=owners]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
+      disabled: readonly
       onAdd: (item) =>
         owners = @model.get("owners")
         unless _.find(owners, (i) ->
@@ -41,6 +42,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       crossDomain: false
       defaultText: ""
       theme: "facebook"
+      disabled: readonly
       onAdd: (item) =>
         operators = @model.get("operators")
         unless _.find(operators, (i) ->
@@ -61,6 +63,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       crossDomain: false
       defaultText: ""
       theme: "facebook"
+      disabled: readonly
       onAdd: (item) =>
         members = @model.get("members")
         unless _.find(members, (i) ->
@@ -78,6 +81,8 @@ class DssRm.Views.GroupShow extends Backbone.View
         @model.set "members", members
 
   render: ->
+    readonly = @model.isReadOnly()
+    
     # Summary tab
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
@@ -140,6 +145,10 @@ class DssRm.Views.GroupShow extends Backbone.View
         source: @ruleSearch
         updater: (item) =>
           @ruleSearchResultSelected item, @
+    
+    if readonly
+      @$('.token-input-list-facebook').readonly()
+      @$('input').readonly()
 
     @
 

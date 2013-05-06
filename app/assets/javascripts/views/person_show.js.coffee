@@ -158,7 +158,7 @@ class DssRm.Views.PersonShow extends Backbone.View
           name: role.get("name")
           readonly: readonly
 
-    if @model.isReadOnly()
+    if readonly
       @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
 
