@@ -30,4 +30,5 @@ $.fn.extend
       $(@).css('cursor', 'auto')
       $(@).css('background-color', 'transparent')
       $(@).css('color', '#000')
+      $(@).find('.token-input-delete-token-facebook').hide()
       

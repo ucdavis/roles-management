@@ -12,7 +12,6 @@
       </ul>
       <div class="tab-content">
         <form>
-
           <fieldset class="tab-pane active" id="summary">
             <label for="first">Name</label>
             <input type="text" name="first" class="text small" /> <input type="text" name="last" class="text small" />
@@ -51,7 +50,7 @@
               <input type="text" name="ous" class="token_input" />
             </p>
           </fieldset>
-          <fieldset class="tab-pane" id="roles">roles</fieldset>
+          <fieldset class="tab-pane" id="roles"></fieldset>
         </form>
       </div>
     </div> <!-- /tabbable -->
@@ -60,7 +59,11 @@
     <div style="float: left;">
       <a href="#" class="btn" id="rescan">Rescan</a>
     </div>
-    <a href="#" class="btn" data-dismiss="modal">Close</a>
-    <a href="#" class="btn btn-primary" id="apply">Apply</a>
+    <% if(model.isReadOnly()) { %>
+      <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
+    <% } else { %>
+      <a href="#" class="btn" data-dismiss="modal">Close</a>
+      <a href="#" class="btn btn-primary" id="apply">Apply</a>
+    <% } %>
   </div>
 </div>

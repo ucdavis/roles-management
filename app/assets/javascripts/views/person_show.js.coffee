@@ -10,9 +10,8 @@ class DssRm.Views.PersonShow extends Backbone.View
     "click #delete": "deleteEntity"
 
   initialize: ->
-    @listenTo @model, "change", @render
-    
     @$el.html JST["entities/show_person"](model: @model)
+    @listenTo @model, "change", @render
     
     @$("input[name=favorites]").tokenInput Routes.people_path(),
       crossDomain: false
@@ -104,9 +103,10 @@ class DssRm.Views.PersonShow extends Backbone.View
           @model.trigger "change"
 
   render: ->
-    # Summary tab
     @$("h3").html @model.escape("name")
     @$("h5").html @model.escape("byline")
+
+    # Summary tab
     @$("input[name=first]").val @model.escape("first")
     @$("input[name=last]").val @model.escape("last")
     @$("input[name=email]").val @model.escape("email")
@@ -121,7 +121,6 @@ class DssRm.Views.PersonShow extends Backbone.View
         id: favorite.id
         name: favorite.name
 
-
     groups_tokeninput = @$("input[name=groups]")
     groups_tokeninput.tokenInput "clear"
     _.each @model.get("group_memberships").non_ous, (group) ->
@@ -129,14 +128,12 @@ class DssRm.Views.PersonShow extends Backbone.View
         id: group.id
         name: group.name
 
-
     ous_tokeninput = @$("input[name=ous]")
     ous_tokeninput.tokenInput "clear"
     _.each @model.get("group_memberships").ous, (ou) ->
       ous_tokeninput.tokenInput "add",
         id: ou.id
         name: ou.name
-
 
     # Roles tab
     $rolesTab = @$("fieldset#roles")
@@ -150,26 +147,32 @@ class DssRm.Views.PersonShow extends Backbone.View
           id: role.get("id")
           name: role.get("name")
 
+    if @model.isReadOnly()
+      @$('input').readonly()
+      @$('.token-input-list-facebook').readonly()
+
     @
 
   save: (e) ->
-    status_bar.show "Saving ..."
-    @model.set
-      first: @$("input[name=first]").val()
-      last: @$("input[name=last]").val()
-      email: @$("input[name=email]").val()
-      loginid: @$("input[name=loginid]").val()
-      phone: @$("input[name=phone]").val()
-      address: @$("input[name=address]").val()
+    unless @model.isReadOnly()
+      status_bar.show "Saving ..."
+      @model.set
+        first: @$("input[name=first]").val()
+        last: @$("input[name=last]").val()
+        email: @$("input[name=email]").val()
+        loginid: @$("input[name=loginid]").val()
+        phone: @$("input[name=phone]").val()
+        address: @$("input[name=address]").val()
 
-    @model.save {},
-      success: ->
-        status_bar.hide()
+      @model.save {},
+        success: ->
+          status_bar.hide()
 
-      error: ->
-        status_bar.show "An error occurred while saving.", "error"
+        error: ->
+          status_bar.show "An error occurred while saving.", "error"
 
-    @model.trigger "change"
+      @model.trigger "change"
+
     false
 
   rescan: (e) ->
@@ -193,16 +196,17 @@ class DssRm.Views.PersonShow extends Backbone.View
     false
 
   deleteEntity: ->
-    @$el.fadeOut()
+    unless @model.isReadOnly()
+      @$el.fadeOut()
     
-    bootbox.confirm "Are you sure you want to delete " + @model.escape("name") + "?", (result) =>
-      @$el.fadeIn()
-      if result
-        # delete the application and dismiss the dialog
-        @model.destroy()
+      bootbox.confirm "Are you sure you want to delete " + @model.escape("name") + "?", (result) =>
+        @$el.fadeIn()
+        if result
+          # delete the application and dismiss the dialog
+          @model.destroy()
         
-        # dismiss the dialog
-        @$(".modal-header a.close").trigger "click"
+          # dismiss the dialog
+          @$(".modal-header a.close").trigger "click"
 
     false
 

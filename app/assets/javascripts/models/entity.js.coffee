@@ -40,6 +40,11 @@ DssRm.Models.Entity = Backbone.Model.extend(
       ) isnt `undefined`
 
     null
+  
+  # Returns true if DssRm.current_user cannot modify this entity
+  isReadOnly: ->
+    if @relationship() is 'admin' or @relationship() is 'owner' then return false
+    true
 
   updateAttributes: ->
     type = @get("type")
