@@ -12,11 +12,13 @@ class DssRm.Views.PersonShow extends Backbone.View
   initialize: ->
     @$el.html JST["entities/show_person"](model: @model)
     @listenTo @model, "change", @render
+    readonly = @model.isReadOnly()
     
     @$("input[name=favorites]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
+      disabled: readonly
       onAdd: (item) =>
         favorites = @model.get("favorites")
         unless _.find(favorites, (i) ->
@@ -37,6 +39,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       crossDomain: false
       defaultText: ""
       theme: "facebook"
+      disabled: readonly
       onAdd: (item) =>
         group_memberships = @model.get("group_memberships")
         unless _.find(group_memberships.non_ous, (i) ->
@@ -58,6 +61,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       crossDomain: false
       defaultText: ""
       theme: "facebook"
+      disabled: readonly
       onAdd: (item) =>
         group_memberships = @model.get("group_memberships")
         unless _.find(group_memberships.ous, (ou) ->
@@ -84,6 +88,7 @@ class DssRm.Views.PersonShow extends Backbone.View
         crossDomain: false
         defaultText: ""
         theme: "facebook"
+        disabled: readonly
         onAdd: (item) =>
           roles = @model.get("roles")
           unless _.find(roles, (i) ->
@@ -154,6 +159,7 @@ class DssRm.Views.PersonShow extends Backbone.View
           readonly: readonly
 
     if @model.isReadOnly()
+      @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
 
     @

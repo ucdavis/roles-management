@@ -34,7 +34,7 @@ GIT
       activesupport
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     SyslogLogger (2.0)
     actionmailer (3.2.13)
