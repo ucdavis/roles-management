@@ -12,7 +12,6 @@ end
 
 group :production do
   gem 'SyslogLogger'
-  gem 'yui-compressor'
 end
 
 group :development do

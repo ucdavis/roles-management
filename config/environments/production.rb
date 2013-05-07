@@ -62,9 +62,6 @@ DSSRM::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
   
-  # Use strong CSS compression via YUI
-  config.assets.css_compressor = :yui
-
   # Force SSL in production
   config.force_ssl = true
 
