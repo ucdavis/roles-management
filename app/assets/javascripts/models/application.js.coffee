@@ -46,3 +46,8 @@ DssRm.Models.Application = Backbone.Model.extend(
     
     json
 )
+
+DssRm.Collections.Applications = Backbone.Collection.extend(
+  model: DssRm.Models.Application
+  url: "/applications"
+)

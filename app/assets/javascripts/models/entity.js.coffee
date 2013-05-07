@@ -100,3 +100,10 @@ DssRm.Models.Entity = Backbone.Model.extend(
       )
     entity: json
 )
+
+DssRm.Collections.Entities = Backbone.Collection.extend(
+  model: DssRm.Models.Entity
+  url: "/entities"
+)
+
+DssRm.Collections.Owners = Backbone.Collection.extend(model: DssRm.Models.Entity)

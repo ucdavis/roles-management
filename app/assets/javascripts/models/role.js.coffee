@@ -11,3 +11,8 @@ DssRm.Models.Role = Backbone.Model.extend(
   tokenize: (str) ->
     String(str).replace(RegExp(" ", "g"), "-").replace(/'/g, "").replace(/"/g, "").toLowerCase()
 )
+
+DssRm.Collections.Roles = Backbone.Collection.extend(
+  model: DssRm.Models.Role
+  url: "/roles"
+)

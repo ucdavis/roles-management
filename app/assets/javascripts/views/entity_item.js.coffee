@@ -1,7 +1,6 @@
 DssRm.Views.EntityItem = Backbone.View.extend(
   tagName: "li"
   events:
-    "click a>i": "patchTooltipBehavior"
     "click a.entity-remove-link": "removeEntity"
 
   initialize: (options) ->
@@ -22,15 +21,17 @@ DssRm.Views.EntityItem = Backbone.View.extend(
       e.stopPropagation() # the parent is looking for a click as well
       #$(e.target).tooltip "hide" # but stopPropagation will stop the tooltip from closing...
 
-    @$(".entity-remove-link i").removeClass("icon-remove").addClass "icon-minus"  if type is "Person"
+    @$(".entity-remove-link i").removeClass("icon-remove").addClass "icon-minus" if type is "Person"
 
-    if @assignedToCurrentRole() || @isFocused() # highlight this entity
+    # highlight this entity
+    if @assignedToCurrentRole() || @isFocused()
       if type is "Person"
         @$el.css("box-shadow", "#08C 0 0 5px").css "border", "1px solid #08C"
       else # is Group
         @$el.css("box-shadow", "#468847 0 0 5px").css "border", "1px solid #468847"
 
-    if !@assignedToCurrentUser() # change actionable icons depending on ownership
+    # change actionable icons depending on ownership
+    if !@assignedToCurrentUser()
       @$("i.icon-minus").hide()
 
     focused_entity_id = @view_state.get('focused_entity_id')
@@ -47,11 +48,6 @@ DssRm.Views.EntityItem = Backbone.View.extend(
 
   entityUrl: ->
     "#" + "/entities/" + @model.get("id")
-
-  
-  # This is necessary to fix a bug in tooltips (as of Bootstrap 2.1.1)
-  patchTooltipBehavior: (e) ->
-    #$(e.currentTarget).tooltip "hide"
 
   removeEntity: (e) ->
     e.stopPropagation()
@@ -96,6 +92,9 @@ DssRm.Views.EntityItem = Backbone.View.extend(
   
   # Returns true if the current_user only operates the group (and does not own it)
   isReadOnly: ->
+    if @model.get('name') == 'Group17'
+      console.log @model.relationship()
+    
     # Need group_operatorship IDs has an array when drawing EntityItem
     group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
       group.get "id"
