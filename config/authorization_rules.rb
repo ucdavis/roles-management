@@ -24,6 +24,14 @@ authorization do
     has_permission_on :roles, :to => :read
   end
   
+  # API key users are not quite admins. Grant specific access here
+  role :api_key do
+    has_permission_on :roles, :to => :read
+    has_permission_on :applications, :to => :read
+    has_permission_on :groups, :to => :read
+    has_permission_on :people, :to => :read
+  end
+  
   role :access do
     # Allow access to the main page
     has_permission_on :applications, :to => :index

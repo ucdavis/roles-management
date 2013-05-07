@@ -157,7 +157,8 @@ class Person < Entity
       :group_memberships => { :non_ous => self.group_memberships.non_ous.map{ |e| { id: e.id, name: e.name, type: e.type } },
                               :ous => self.group_memberships.ous.map{ |e| { id: e.id, name: e.name, type: e.type } } },
       :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
-      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } }
+      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } },
+      :role_ids => self.role_ids
     }
   end
   

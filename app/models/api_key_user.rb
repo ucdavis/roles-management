@@ -12,7 +12,7 @@ class ApiKeyUser < ActiveRecord::Base
   end
 
   def role_symbols
-    [:access]
+    [:access, :api_key]
   end
 
   def ensure_secret_exists
