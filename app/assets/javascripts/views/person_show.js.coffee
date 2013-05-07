@@ -161,6 +161,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     if readonly
       @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
+      @$('textarea').readonly()
 
     @
 

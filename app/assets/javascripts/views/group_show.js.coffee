@@ -149,6 +149,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     if readonly
       @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
+      @$('textarea').readonly()
 
     @
 

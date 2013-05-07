@@ -98,6 +98,13 @@ authorization do
     has_permission_on :groups, :to => [:update, :delete] do
       if_attribute :owners => contains { user }
     end
+    # Allow updating groups they operate
+    has_permission_on :entities, :to => [:update] do
+      if_attribute :operators => contains { user }
+    end
+    has_permission_on :groups, :to => [:update] do
+      if_attribute :operators => contains { user }
+    end
     has_permission_on :group_owner_assignments, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end

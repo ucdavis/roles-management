@@ -48,8 +48,12 @@ class EntitiesController < ApplicationController
   end
 
   def update
-    # SECUREME
-    @entity = Entity.find(params[:id])
+    # declarative_authorization requires we not use polymorphism *headache*
+    if params[:entity][:type] == "Group"
+      @entity = Group.with_permissions_to(:update).find(params[:id])
+    elsif params[:entity][:type] == "Person"
+      @entity = Person.with_permissions_to(:update).find(params[:id])
+    end
 
     @entity.update_attributes(params[:entity])
     
