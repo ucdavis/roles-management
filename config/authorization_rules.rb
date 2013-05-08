@@ -5,6 +5,7 @@ authorization do
     has_permission_on :application_owner_assignments, :to => :manage
     has_permission_on :roles, :to => :manage
     has_permission_on :groups, :to => :manage
+    has_permission_on :group_rules, :to => :manage
     has_permission_on :people, :to => :manage
     
     # For API keys
