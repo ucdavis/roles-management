@@ -60,7 +60,9 @@ class Person < Entity
   end
 
   def byline
-    byline = title.nil? ? "" : title.name
+    byline = ""
+    unless title.nil?
+      byline = title.name
     byline += " (" + affiliations.map{ |x| x.name }.join(", ") + ")" if affiliations.count > 0
     byline
   end
