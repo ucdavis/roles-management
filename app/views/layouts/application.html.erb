@@ -20,9 +20,9 @@
       <div class="container-fluid">
         <%= link_to "Roles Management", applications_url, :class => "brand" %>
         <div class="nav-collapse">
-          <% _has_role? :admin do %>
           <ul class="nav pull-right">
             <li class="dropdown">
+              <% _has_role? :admin do %>
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrate <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <% unless session[:impersonate].nil? %>
@@ -39,10 +39,10 @@
                 <li class="divider"></li>
                 <li><a href="#about">About…</a></li>
               </ul>
+              <% end %>
               <%= li_link_with_class({:title => 'Log out', :controller => 'site', :action => 'logout'}) %>
             </li>
           </ul>
-          <% end %>
         </div><!-- /.nav-collapse -->
       </div>
     </div><!-- /navbar-inner -->
