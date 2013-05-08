@@ -21,6 +21,17 @@ class GroupsController < ApplicationController
     respond_with @group
   end
   
+  def update
+    if params[:id] and params[:group]
+      @group = Group.find(params[:id])
+      @group.update_attributes(params[:group].except(:id))
+
+      respond_with @group
+    else
+      respond_with 422
+    end
+  end
+  
   def show
     @group = Group.find(params[:id])
     
