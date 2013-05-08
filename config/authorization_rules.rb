@@ -29,6 +29,7 @@ authorization do
     has_permission_on :roles, :to => :manage
     has_permission_on :applications, :to => :manage
     has_permission_on :groups, :to => :manage
+    has_permission_on :group_rules, :to => :manage
     has_permission_on :people, :to => :manage
   end
   

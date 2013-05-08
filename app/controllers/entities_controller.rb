@@ -7,12 +7,10 @@ class EntitiesController < ApplicationController
   respond_to :json
 
   def index
-    # SECUREME
     respond_with @entities
   end
 
   def show
-    # SECUREME
     @entity = Entity.find(params[:id])
 
     logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
@@ -37,7 +35,6 @@ class EntitiesController < ApplicationController
   end
 
   def create
-    # SECUREME
     @entity.save
 
     if params[:entity][:type] == "Group"
@@ -61,7 +58,6 @@ class EntitiesController < ApplicationController
   end
 
   def destroy
-    # SECUREME
     entity = Entity.find(params[:id])
 
     if entity.type == "Group"

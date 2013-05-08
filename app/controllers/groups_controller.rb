@@ -1,4 +1,5 @@
 class GroupsController < ApplicationController
+  before_filter :new_group_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   respond_to :json
 
@@ -15,8 +16,6 @@ class GroupsController < ApplicationController
   end
   
   def create
-    @group = Group.new(params[:group])
-
     @group.save
     respond_with @group
   end
@@ -24,7 +23,11 @@ class GroupsController < ApplicationController
   def update
     if params[:id] and params[:group]
       @group = Group.find(params[:id])
-      @group.update_attributes(params[:group].except(:id))
+      
+      # ActiveResource (for API access) sends us members, operators, etc.
+      # API access will have to rely on other methods for assocating objects with a group, e.g.
+      # setting GroupRule.group_id instead of trying Group.rules << GroupRule.
+      @group.update_attributes(params[:group].except(:id, :members, :operators, :owners, :rules))
 
       respond_with @group
     else
@@ -33,8 +36,18 @@ class GroupsController < ApplicationController
   end
   
   def show
-    @group = Group.find(params[:id])
+    respond_with @group
+  end
+  
+  def destroy
+    @group.destroy
     
     respond_with @group
+  end
+  
+  protected
+  
+  def new_group_from_params
+    @group = Group.new(params[:group])
   end
 end

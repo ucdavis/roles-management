@@ -5,7 +5,6 @@ class GroupRule < ActiveRecord::Base
 
   validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => @@valid_columns
-  validate :must_own_group
 
   belongs_to :group
   
@@ -141,6 +140,8 @@ class GroupRule < ActiveRecord::Base
     case column
     when 'title'
       str = "<b>Title</b> "
+    when 'ou'
+      str = "<b>OU</b> "
     when 'loginid'
       str = "<b>Login ID</b> "
     when 'major'
@@ -175,13 +176,5 @@ class GroupRule < ActiveRecord::Base
     else
       return false
     end
-  end
-
-  private
-
-  # Group rules cannot be changed if the current user does not own
-  # the associated group.
-  def must_own_group
-    logger.error "Implementation needed for group ownership security check in group rule callback."
   end
 end

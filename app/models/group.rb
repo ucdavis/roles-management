@@ -23,7 +23,9 @@ class Group < Entity
 
   attr_accessible :name, :description, :type, :member_ids, :owner_ids, :operator_ids, :rules_attributes
 
-  accepts_nested_attributes_for :rules, :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? }, :allow_destroy => true
+  accepts_nested_attributes_for :rules,
+                                :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? },
+                                :allow_destroy => true
 
   after_save :clear_cache_if_needed
   after_save :trigger_sync
