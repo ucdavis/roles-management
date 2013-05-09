@@ -90,7 +90,8 @@ class EntitiesController < ApplicationController
   def load_entities
     if params[:q]
       upper_q = params[:q].upcase
-      @entities = Entity.where("upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
+      # Note: we search login IDs here too in case somebody is doing an entity-search but wants to find people by login ID
+      @entities = Entity.where("upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ? or upper(loginid) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
     else
       @entities = Entity.all
     end
