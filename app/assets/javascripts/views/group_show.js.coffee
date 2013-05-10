@@ -7,8 +7,6 @@ class DssRm.Views.GroupShow extends Backbone.View
     "click a#apply": "save"
     "click button#group_rule_add": "addRule"
     "click button#remove_group_rule": "removeRule"
-    "change table#rules select": "storeRuleChanges"
-    "change table#rules input": "storeRuleChanges"
     "hidden": "cleanUpModal"
     "click #delete": "deleteEntity"
 
@@ -37,10 +35,6 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   render: ->
     readonly = @model.isReadOnly()
-    
-    if @model.get('name') == "Group11"
-      console.log 'render:'
-      console.log @model
     
     # Summary tab
     @$("h3").html @model.escape("name")
@@ -164,19 +158,18 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   
   # Copies values off the DOM into this.model
-  storeRuleChanges: (e) ->
-    return
-    rule_id = $(e.target).parents("tr").data("rule_id")
-    column = $(e.target).parents("tr").children("td:nth-child(1)").find("select").val()
-    condition = $(e.target).parents("tr").children("td:nth-child(2)").find("select").val()
-    value = $(e.target).parents("tr").children("td:nth-child(3)").find("input").val()
-    @model.set rules: _.map(@model.get("rules"), (r) ->
-      if r.id is rule_id
-        r.column = column
-        r.condition = condition
-        r.value = value
-      r
-    )
+  # storeRuleChanges: (e) ->
+  #   rule_id = $(e.target).parents("tr").data("rule_id")
+  #   column = $(e.target).parents("tr").children("td:nth-child(1)").find("select").val()
+  #   condition = $(e.target).parents("tr").children("td:nth-child(2)").find("select").val()
+  #   value = $(e.target).parents("tr").children("td:nth-child(3)").find("input").val()
+  #   @model.set rules: _.map(@model.get("rules"), (r) ->
+  #     if r.id is rule_id
+  #       r.column = column
+  #       r.condition = condition
+  #       r.value = value
+  #     r
+  #   )
 
   cleanUpModal: ->
     @remove()

@@ -8,9 +8,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
   initialize: ->
     type = @get("type")
     
-    if type is "Group" and (@get("name") == "Group11")
-      debugger
-    
     # Some attribtues may or may not exist depending on how this model was initialized.
     # Ensure needed attributes exist, even if blank.
     if type is "Group"
@@ -63,9 +60,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_ownerships.reset @get("group_ownerships")
       @group_operatorships.reset @get("group_operatorships")
       @roles.reset @get("roles")
-    
-    if type is "Group" and (@get("name") == "Group11")
-      debugger
 
   toJSON: ->
     json = _.omit(@attributes, "owners", "operators", "members", "rules", "id", "roles", "favorites", "group_memberships", "group_ownerships", "group_operatorships", "ous", "byline", "name", "admin")
