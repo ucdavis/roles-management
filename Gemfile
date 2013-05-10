@@ -32,7 +32,6 @@ gem 'dynamic_form'
 
 gem 'pg'
 
-gem 'rails-backbone'
 gem 'jquery-rails'
 gem 'ejs'
 

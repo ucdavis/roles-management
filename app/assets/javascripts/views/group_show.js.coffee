@@ -30,6 +30,7 @@ class DssRm.Views.GroupShow extends Backbone.View
           # onAdd is triggered by the .tokenInput("add") lines in render,
           # so we need to ensure this actually is a new item
           owners.push item
+          console.log 'tokeninput onAdd is setting model owners'
           @model.set "owners", owners, {silent: true}
     
       onDelete: (item) =>
@@ -83,6 +84,10 @@ class DssRm.Views.GroupShow extends Backbone.View
   render: ->
     readonly = @model.isReadOnly()
     
+    if @model.get('name') == "Group11"
+      console.log 'render:'
+      console.log @model
+    
     # Summary tab
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
@@ -95,21 +100,21 @@ class DssRm.Views.GroupShow extends Backbone.View
       owners_tokeninput.tokenInput "add",
         id: owner.id
         name: owner.name
-
+    
     operators_tokeninput = @$("input[name=operators]")
     operators_tokeninput.tokenInput "clear"
     _.each @model.get("operators"), (operator) ->
       operators_tokeninput.tokenInput "add",
         id: operator.id
         name: operator.name
-
+    
     members_tokeninput = @$("input[name=members]")
     members_tokeninput.tokenInput "clear"
     _.each @model.get("members"), (member) ->
       members_tokeninput.tokenInput "add",
         id: member.id
         name: member.name
-
+    
     @$("span#csv-download>a").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
     
     if DssRm.admin_logged_in() || @model.relationship()
@@ -125,7 +130,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       $rule.find("td:nth-child(3) input").val rule.value
       $rule.data "rule_id", rule.id
       rules_table.append $rule
-
+    
     if @model.get("rules").length is 0
       @$("table#rules tbody").hide()
     else
@@ -135,13 +140,13 @@ class DssRm.Views.GroupShow extends Backbone.View
         minLength: 2
         sorter: (items) -> # required to keep the order given to process() in 'source'
           items
-
+    
         highlighter: (item) ->
           item = item.split("####")[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
           query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
           item.replace new RegExp("(" + query + ")", "ig"), ($1, match) ->
             "<strong>" + match + "</strong>"
-
+    
         source: @ruleSearch
         updater: (item) =>
           @ruleSearchResultSelected item, @
@@ -192,7 +197,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       value: ""
       id: "new_" + Math.round((new Date()).getTime())
 
-    @model.set rules: updated_rules
+    @model.set "rules": updated_rules
 
   removeRule: (e) ->
     rule_id = $(e.target).parents("tr").data("rule_id")
@@ -203,6 +208,7 @@ class DssRm.Views.GroupShow extends Backbone.View
   
   # Copies values off the DOM into this.model
   storeRuleChanges: (e) ->
+    return
     rule_id = $(e.target).parents("tr").data("rule_id")
     column = $(e.target).parents("tr").children("td:nth-child(1)").find("select").val()
     condition = $(e.target).parents("tr").children("td:nth-child(2)").find("select").val()

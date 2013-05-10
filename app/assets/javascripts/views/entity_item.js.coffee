@@ -95,13 +95,13 @@ DssRm.Views.EntityItem = Backbone.View.extend(
     # Need group_operatorship IDs has an array when drawing EntityItem
     group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
       group.get "id"
-    )    
+    )
     has_operatorship = _.indexOf(group_operatorships, @model.get("id")) >= 0
 
     # Need group_operatorship IDs has an array when drawing EntityItem
     group_ownerships = DssRm.current_user.group_ownerships.map((group) ->
       group.get "id"
-    )    
+    )
     has_ownership = _.indexOf(group_ownerships, @model.get("id")) >= 0
     
     return !(has_operatorship or has_ownership)
