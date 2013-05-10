@@ -62,7 +62,7 @@ class Group < Entity
     # Add/update rules
     unless rule_attrs.nil?
       rule_attrs.each do |rule|
-        if (rule[:id].to_s)[0..3] == "new_"
+        if rule[:id] == nil
           # New rule
           r = GroupRule.new
           r.column = rule[:column]
@@ -152,8 +152,6 @@ class Group < Entity
   def member_ids=(ids)
     # We'll build these lists and assign them at the end
     e_ids = []
-    logger.info "member_ids= start, self.entity_ids is:"
-    logger.info self.entity_ids
 
     # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
     r_members = []
@@ -170,8 +168,6 @@ class Group < Entity
     end
 
     self.entity_ids = e_ids
-    logger.info "member_ids= end, self.entity_ids is:"
-    logger.info self.entity_ids
   end
 
   def as_json(options={})

@@ -32,6 +32,8 @@ class DssRm.Views.GroupShow extends Backbone.View
       defaultText: ""
       theme: "facebook"
       disabled: readonly
+    
+    @renderRules()
 
   render: ->
     readonly = @model.isReadOnly()
@@ -68,21 +70,24 @@ class DssRm.Views.GroupShow extends Backbone.View
     if DssRm.admin_logged_in() || @model.relationship()
       @$("#delete").show()
     
-    # Rules tab
+    if readonly
+      @$('.token-input-list-facebook').readonly()
+      @$('input').readonly()
+      @$('textarea').readonly()
+    
+    @
+  
+  renderRules: ->
     rules_table = @$("table#rules tbody")
     rules_table.empty()
-    _.each @model.get("rules"), (rule, i) ->
-      $rule = $(JST["entities/group_rule"]())
-      $rule.find("td:nth-child(1) select").val rule.column
-      $rule.find("td:nth-child(2) select").val rule.condition
-      $rule.find("td:nth-child(3) input").val rule.value
-      $rule.data "rule_id", rule.id
-      rules_table.append $rule
+    _.each @model.get("rules"), (rule, i) =>
+      rules_table.append @renderRule(rule)
     
     if @model.get("rules").length is 0
       @$("table#rules tbody").hide()
     else
       @$("table#rules tbody").show()
+    
     @$("table#rules tbody tr").each (i, e) ->
       $(e).find("input#value").typeahead
         minLength: 2
@@ -99,12 +104,18 @@ class DssRm.Views.GroupShow extends Backbone.View
         updater: (item) =>
           @ruleSearchResultSelected item, @
     
-    if readonly
-      @$('.token-input-list-facebook').readonly()
-      @$('input').readonly()
-      @$('textarea').readonly()
-
     @
+  
+  # Renders a single rule. Does not add to DOM.
+  renderRule: (rule) ->
+    $rule = $(JST["entities/group_rule"]())
+    
+    $rule.data "rule_id", rule.id
+    $rule.find("td:nth-child(1) select").val rule.column
+    $rule.find("td:nth-child(2) select").val rule.condition
+    $rule.find("td:nth-child(3) input").val rule.value
+    
+    return $rule
 
   save: (e) ->
     status_bar.show 'Saving ...'
@@ -115,6 +126,12 @@ class DssRm.Views.GroupShow extends Backbone.View
       owners: @$('input[name=owners]').tokenInput('get')
       operators: @$('input[name=operators]').tokenInput('get')
       members: @$('input[name=members]').tokenInput('get')
+      rules: _.map($('table#rules>tbody>tr'), (el, i) ->
+        id: $(el).data('rule_id')
+        column: $(el).find("#column").val(),
+        condition: $(el).find("#condition").val(),
+        value: $(el).find("#value").val()
+      )
     ,
       success: ->
         status_bar.hide()
@@ -139,44 +156,25 @@ class DssRm.Views.GroupShow extends Backbone.View
     false
 
   addRule: (e) ->
-    updated_rules = _.clone(@model.get("rules"))
-    
-    # the false ID simply needs to be unique in case the 'remove' button is hit - our backend will provide a proper ID on saving
-    updated_rules.push
-      column: "ou"
-      condition: "is"
-      value: ""
-      id: "new_" + Math.round((new Date()).getTime())
-
-    @model.set "rules": updated_rules
+    rules_table = @$("table#rules tbody")
+    rules_table.append @renderRule({ id: null, column: null, condition: null, value: null })
 
   removeRule: (e) ->
     rule_id = $(e.target).parents("tr").data("rule_id")
-    @model.set rules: _.reject(@model.get("rules"), (r) ->
-      r.id is rule_id
-    )
-
-  
-  # Copies values off the DOM into this.model
-  # storeRuleChanges: (e) ->
-  #   rule_id = $(e.target).parents("tr").data("rule_id")
-  #   column = $(e.target).parents("tr").children("td:nth-child(1)").find("select").val()
-  #   condition = $(e.target).parents("tr").children("td:nth-child(2)").find("select").val()
-  #   value = $(e.target).parents("tr").children("td:nth-child(3)").find("input").val()
-  #   @model.set rules: _.map(@model.get("rules"), (r) ->
-  #     if r.id is rule_id
-  #       r.column = column
-  #       r.condition = condition
-  #       r.value = value
-  #     r
-  #   )
+    @model.set
+      rules: _.reject(@model.get("rules"), (r) ->
+        r.id is rule_id
+      )
+    ,
+      silent: true
+    
+    $(e.target).parents("tr").remove()
 
   cleanUpModal: ->
     @remove()
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
-
   
   # Populates the sidebar search with results via async call
   ruleSearch: (query, process, e) ->
