@@ -22,64 +22,18 @@ class DssRm.Views.GroupShow extends Backbone.View
       defaultText: ""
       theme: "facebook"
       disabled: readonly
-      onAdd: (item) =>
-        owners = @model.get("owners")
-        unless _.find(owners, (i) ->
-          i.id is item.id
-        )
-          # onAdd is triggered by the .tokenInput("add") lines in render,
-          # so we need to ensure this actually is a new item
-          owners.push item
-          console.log 'tokeninput onAdd is setting model owners'
-          @model.set "owners", owners, {silent: true}
-    
-      onDelete: (item) =>
-        owners = _.filter(@model.get("owners"), (owner) ->
-          owner.id isnt item.id
-        )
-        @model.set "owners", owners, {silent: true}
 
     @$("input[name=operators]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
       disabled: readonly
-      onAdd: (item) =>
-        operators = @model.get("operators")
-        unless _.find(operators, (i) ->
-          i.id is item.id
-        )
-          # onAdd is triggered by the .tokenInput("add") lines in render,
-          # so we need to ensure this actually is a new item
-          operators.push item
-          @model.set "operators", operators, {silent: true}
-
-      onDelete: (item) =>
-        operators = _.filter(@model.get("operators"), (operator) ->
-          operator.id isnt item.id
-        )
-        @model.set "operators", operators, {silent: true}
 
     @$("input[name=members]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
       disabled: readonly
-      onAdd: (item) =>
-        members = @model.get("members")
-        unless _.find(members, (i) ->
-          i.id is item.id
-        )
-          # onAdd is triggered by the .tokenInput("add") lines in render,
-          # so we need to ensure this actually is a new item
-          members.push item
-          @model.set "members", members, {silent: true}
-
-      onDelete: (item) =>
-        members = _.filter(@model.get("members"), (member) ->
-          member.id isnt item.id
-        )
-        @model.set "members", members, {silent: true}
 
   render: ->
     readonly = @model.isReadOnly()
@@ -159,16 +113,19 @@ class DssRm.Views.GroupShow extends Backbone.View
     @
 
   save: (e) ->
-    status_bar.show "Saving ..."
+    status_bar.show 'Saving ...'
 
     @model.save
-      name: @$("input[name=name]").val()
-      description: @$("textarea[name=description]").val()
+      name: @$('input[name=name]').val()
+      description: @$('textarea[name=description]').val()
+      owners: @$('input[name=owners]').tokenInput('get')
+      operators: @$('input[name=operators]').tokenInput('get')
+      members: @$('input[name=members]').tokenInput('get')
     ,
       success: ->
         status_bar.hide()
       error: ->
-        status_bar.show "An error occurred while saving.", "error"
+        status_bar.show 'An error occurred while saving.', 'error'
       silent: true
     
     false
@@ -176,7 +133,7 @@ class DssRm.Views.GroupShow extends Backbone.View
   deleteEntity: ->
     @$el.fadeOut()
     
-    bootbox.confirm "Are you sure you want to delete " + @model.escape("name") + "?", (result) =>
+    bootbox.confirm 'Are you sure you want to delete ' + @model.escape('name') + '?', (result) =>
       @$el.fadeIn()
       if result
         # delete the application and dismiss the dialog
