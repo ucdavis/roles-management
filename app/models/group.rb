@@ -42,7 +42,7 @@ class Group < Entity
 
       entities.all.each do |e|
         if flatten and e.type == "Group"
-          e.members(true).all.each do |m|
+          e.members(true).each do |m|
             members << m
           end
         else
