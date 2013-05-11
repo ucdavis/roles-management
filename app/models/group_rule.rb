@@ -61,7 +61,7 @@ class GroupRule < ActiveRecord::Base
         end
       end
     when "ou"
-      ou = Group.find_by_name(value)
+      ou = Group.ous.includes(:entities).find_by_name(value)
       unless ou == nil
         ps = ou.members
         case condition

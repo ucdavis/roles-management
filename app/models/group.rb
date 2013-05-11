@@ -17,7 +17,10 @@ class Group < Entity
   has_many :group_operator_assignments
   has_many :operators, :through => :group_operator_assignments, :source => "entity", :dependent => :destroy
 
-  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
+  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy,
+           :after_add => Proc.new { |model| model.clear_cache_if_needed(true) },
+           :after_remove => Proc.new { |model| model.clear_cache_if_needed(true) }
+  
 
   validates :name, :presence => true
 
@@ -37,9 +40,9 @@ class Group < Entity
     Rails.cache.fetch("entities/members/#{flatten}/#{id}") do
       members = []
 
-      entities.each do |e|
+      entities.all.each do |e|
         if flatten and e.type == "Group"
-          e.members(true).each do |m|
+          e.members(true).all.each do |m|
             members << m
           end
         else
@@ -51,7 +54,7 @@ class Group < Entity
       members += rule_members
 
       # Only return a unique list
-      members.uniq{|x| x.id}
+      members.uniq{ |x| x.id }
     end
   end
 
@@ -189,7 +192,7 @@ class Group < Entity
       # Step One: Build groups out of each 'is' rule,
       #           groupping rules of similar type together via OR
       #           Note: we ignore the 'loginid' column as it is calculated separately
-      rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).group_by(&:column).each do |ruleset|
+      rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).all.group_by(&:column).each do |ruleset|
         ruleset_results = []
 
         ruleset[1].each do |rule|
@@ -207,7 +210,7 @@ class Group < Entity
         # remove anybody who violates an 'is not' rule
         result = result.find_all{ |member|
           keep = true
-          rules.where(:condition => "is not").each do |rule|
+          rules.where(:condition => "is not").all.each do |rule|
             keep &= rule.matches(member)
           end
           keep
@@ -215,7 +218,7 @@ class Group < Entity
       end
 
       # Step Four: Process any 'loginid is' rules
-      rules.where({:condition => "is", :column => "loginid"}).each do |rule|
+      rules.where({:condition => "is", :column => "loginid"}).all.each do |rule|
         if result.nil?
           result = []
         end
