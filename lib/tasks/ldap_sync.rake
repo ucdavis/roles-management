@@ -11,146 +11,133 @@ namespace :ldap do
     Authorization.ignore_access_control(true)
 
     # Keep a log to e-mail to the admins
-    log = StringIO.new
+    strio = StringIO.new
+    log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
+    
+    log.tagged "ldap:import" do
+      # Include the large lot of UCD info (dept codes, title codes, etc.)
+      load 'UcdLookups.rb'
 
-    # Include the large lot of UCD info (dept codes, title codes, etc.)
-    load 'UcdLookups.rb'
+      timestamp_start = Time.now
 
-    timestamp_start = Time.now
+      # Keep a list of untouched login IDs - we'll remove items from this list as we sync.
+      # If at the end of our sync we failed to query LDAP for a user, we can manually query
+      # them by their login IDs.
+      # This happens to a small minority of users who aren't caught by the original LDAP query
+      # design but were added to RM anyway (via AD sync, manual add, etc.)
+      untouched_loginids = Person.all.map{ |x| x.loginid }
 
-    log << "Beginning LDAP import\n\n"
+      #
+      # STEP ONE: Connect to LDAP. Query needed data.
+      #
+      ldap = LdapHelper.new
+      ldap.connect
 
-    # Keep a list of untouched login IDs - we'll remove items from this list as we sync.
-    # If at the end of our sync we failed to query LDAP for a user, we can manually query
-    # them by their login IDs.
-    # This happens to a small minority of users who aren't caught by the original LDAP query
-    # design but were added to RM anyway (via AD sync, manual add, etc.)
-    untouched_loginids = Person.all.map{ |x| x.loginid }
+      log.info "Connected to ldap.ucdavis.edu on port 636, LDAP protocol version 3."
 
-    #
-    # STEP ONE: Connect to LDAP. Query needed data.
-    #
-    ldap = LdapHelper.new
-    ldap.connect
+      people = {}
+      filters = []
 
-    log << "Connected to ldap.ucdavis.edu on port 636, LDAP protocol version 3.\n\n"
+      # If they specified a loginid, only import them, otherwise, do everybody
+      unless args[:loginid].nil?
+        # Specified a loginid
+        manualFilter = []
+        manualFilter << '(uid=' + args[:loginid] + ')'
 
-    people = {}
+        log.info "Will use query: " + manualFilter.join(",")
 
-    log << "Using the following LDAP queries:\n"
+        filters = manualFilter
+      else
+        # Did not specify a loginid - import everyone
 
-    filters = []
+        # Build needed LDAP filters
+        # Staff filter
+        staffFilter = '(&(ucdPersonAffiliation=staff*)(|'
+        for d in UcdLookups::DEPT_CODES.keys()
+          staffFilter = staffFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
+        end
+        staffFilter = staffFilter + '))'
 
-    # If they specified a loginid, only import them, otherwise, do everybody
-    unless args[:loginid].nil?
-      # Specified a loginid
-      manualFilter = []
-      manualFilter << '(uid=' + args[:loginid] + ')'
+        log.info "Will use query: " + staffFilter
 
-      log << "\t" + manualFilter.join(",") + "\n"
+        # Faculty filter
+        facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
+        for d in UcdLookups::DEPT_CODES.keys()
+            facultyFilter = facultyFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
+        end
+        facultyFilter = facultyFilter + '))'
 
-      filters = manualFilter
-    else
-      # Did not specify a loginid - import everyone
+        log.info "Will use query: " + facultyFilter
 
-      # Build needed LDAP filters
-      # Staff filter
-      staffFilter = '(&(ucdPersonAffiliation=staff*)(|'
-      for d in UcdLookups::DEPT_CODES.keys()
-        staffFilter = staffFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
+        # Student filter
+        studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
+        for m in UcdLookups::MAJORS.keys()
+             studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
+        end
+        studentFilter = studentFilter + '))'
+
+        log.info "Will use query: " + studentFilter
+
+        # Manual filter
+        manualFilter = []
+        for m in UcdLookups::MANUAL_INCLUDES
+          manualFilter << '(uid=' + m + ')'
+        end
+
+        log.info "Will use query: " + manualFilter.join(",")
+
+        filters = [staffFilter,facultyFilter,studentFilter] + manualFilter
       end
-      staffFilter = staffFilter + '))'
 
-      log << "\t" + staffFilter + "\n"
+      # Query LDAP
+      Person.transaction do
+        for f in filters
+          unless f.length == 0
+            ldap.search(f) do |entry|
+              p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
 
-      # Faculty filter
-      facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
-      for d in UcdLookups::DEPT_CODES.keys()
-          facultyFilter = facultyFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
-      end
-      facultyFilter = facultyFilter + '))'
+              # Remove the login ID from the untouched list (see explanation above)
+              # Even if the record is invalid, keeping them on the list only means
+              # we're going to attempt this again, so there's no use in keeping them around.
+              # We've effectively dealt with their record as best we can.
+              untouched_loginids.delete p.loginid unless p.nil?
 
-      log << "\t" + facultyFilter + "\n"
+              log_and_save_if_needed(p, log)
+            end
+          end
+        end
 
-      # Student filter
-      studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
-      for m in UcdLookups::MAJORS.keys()
-           studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
-      end
-      studentFilter = studentFilter + '))'
-
-      log << "\t" + studentFilter + "\n"
-
-      # Manual filter
-      manualFilter = []
-      for m in UcdLookups::MANUAL_INCLUDES
-        manualFilter << '(uid=' + m + ')'
-      end
-
-      log << "\t" + manualFilter.join(",") + "\n"
-
-      filters = [staffFilter,facultyFilter,studentFilter] + manualFilter
-    end
-
-    log << "\n"
-
-    # Query LDAP
-    Person.transaction do
-      for f in filters
-        unless f.length == 0
-          ldap.search(f) do |entry|
-            record_log = StringIO.new # this log may or may not be added to the master 'log' depending on data sync states
-
-            p = LdapPersonHelper.create_or_update_person_from_ldap(entry, record_log)
-
-            # Remove the login ID from the untouched list (see explanation above)
-            # Even if the record is invalid, keeping them on the list only means
-            # we're going to attempt this again, so there's no use in keeping them around.
-            # We've effectively dealt with their record as best we can.
-            untouched_loginids.delete p.loginid unless p.nil?
-
-            log_and_save_if_needed(p, record_log)
-
-            log << record_log.string
+        # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
+        # Only do this if we weren't in 'single' import mode
+        if args[:loginid].nil?
+          log.info "Processing #{untouched_loginids.length} additional login IDs existing locally but not found in the above LDAP queries."
+          untouched_loginids.each do |loginid|
+            ldap.search('(uid=' + loginid + ')') do |entry|
+              p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
+              log_and_save_if_needed(p, log)
+            end
           end
         end
       end
 
-      # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
-      # Only do this if we weren't in 'single' import mode
-      if args[:loginid].nil?
-        log << "Processing #{untouched_loginids.length} untouched login IDs which exist locally but were not found in our original LDAP queries.\n"
-        untouched_loginids.each do |loginid|
-          ldap.search('(uid=' + loginid + ')') do |entry|
-            record_log = StringIO.new
-            p = LdapPersonHelper.create_or_update_person_from_ldap(entry, record_log)
-            log_and_save_if_needed(p, record_log)
-            log << record_log.string
-          end
-        end
-        log << "Completed untouched list.\n"
-      end
+      # Disconnect
+      ldap.disconnect
+
+      timestamp_finish = Time.now
+
+      log.info "Finished LDAP import. Time elapsed: " + (timestamp_finish - timestamp_start).to_s + " seconds"
     end
-
-    # Disconnect
-    ldap.disconnect
-
-    log << "Finished LDAP import.\n"
-
-    timestamp_finish = Time.now
-
-    log << "LDAP import took " + (timestamp_finish - timestamp_start).to_s + "s\n"
 
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
     if notify_admins
       admin_role_id = Application.find_by_name("DSS Roles Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
       Role.find_by_id(admin_role_id).entities.each do |admin|
-        WheneverMailer.ldap_report(admin.email, log.string).deliver!
+        WheneverMailer.ldap_report(admin.email, strio.string).deliver!
       end
     end
 
-    Rails.logger.info log.string
+    Rails.logger.info strio.string
 
     Authorization.ignore_access_control(false)
   end
@@ -182,33 +169,32 @@ namespace :ldap do
     end
   end
 
-  def log_and_save_if_needed(p, record_log)
+  def log_and_save_if_needed(p, log)
     if (p == nil) or (p.valid? == false)
       if p
-        record_log << "\tUnable to create or update persion with loginid #{p.loginid}\n"
-        record_log << "\tReason(s):\n"
+        log.warn "Unable to create or update persion with loginid #{p.loginid}. Reason(s): "
         p.errors.messages.each do |field,reason|
-          record_log << "\t\tField #{field} #{reason}\n"
+          log.warn "\tField #{field} #{reason}"
         end
       end
     else
       if p.changed? == false
-        record_log << "\tNo standard record changes for #{p.loginid}\n"
+        log.info "No standard record changes for #{p.loginid}"
       else
-        record_log << "\tUpdating the following for #{p.loginid}:\n"
+        log.info "Updating the following for #{p.loginid}:"
         p.changes.each do |field,changes|
-          record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
+          log.info "\t#{field}: #{changes[0]} -> #{changes[1]}"
         end
       end
       p.save!
 
       if p.student
         if p.student.changed? == false
-          record_log << "\tStudent record exists but there are no changes for #{p.loginid}\n"
+          log.info "Student record exists but there are no changes for #{p.loginid}"
         else
-          record_log << "\tUpdating the following student records for #{p.loginid}:\n"
+          log.info "Updating the following student records for #{p.loginid}:"
           p.student.changes.each do |field,changes|
-            record_log << "\t\t#{field}: #{changes[0]} -> #{changes[1]}\n"
+            log.info "\t#{field}: #{changes[0]} -> #{changes[1]}"
           end
         end
         p.student.save!
