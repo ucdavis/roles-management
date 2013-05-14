@@ -142,12 +142,17 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
     false
 
   removeRole: (e) ->
-    role_id = parseInt($(e.target).parents("tr").data("role_id"))
+    e.preventDefault()
+    
+    role_id = $(e.target).parents("tr").data("role_id")
+    
+    unless role_id.substring(0, 4) == "new_"
+      role_id = parseInt(role_id)
+
     role = @model.roles.find((r) ->
       r.id is role_id
     )
     @model.roles.remove role
-    false
 
   storeRoleChanges: (e) ->
     role_id = $(e.target).parents("tr").data("role_id")

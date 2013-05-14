@@ -56,10 +56,10 @@ class Role < ActiveRecord::Base
       all = []
 
       # Add all people
-      all += entities.where(:type => "Person")
+      all += entities.where(:type => "Person").all
 
       # Add all (flattened) groups
-      entities.where(:type => "Group").each do |group|
+      entities.where(:type => "Group").all.each do |group|
         all += group.members(true)
       end
 

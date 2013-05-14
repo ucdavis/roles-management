@@ -9,6 +9,8 @@ authorization do
     has_permission_on :people, :to => :manage
     has_permission_on :application_operator_assignments, :to => :manage
     has_permission_on :role_assignments, :to => :manage
+    has_permission_on :group_owner_assignments, :to => :manage
+    has_permission_on :group_operator_assignments, :to => :manage
     
     # For API keys
     has_permission_on :admin_api_key_users, :to => :manage
