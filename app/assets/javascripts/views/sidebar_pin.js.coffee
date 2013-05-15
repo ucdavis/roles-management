@@ -1,7 +1,7 @@
 DssRm.Views.SidebarPin = Backbone.View.extend(
   tagName: "li"
   events:
-    "click a.entity-unfavorite-link": "unfavoriteEntity"
+    "click a.entity-favorite-link": "toggleEntityFavorite"
 
   initialize: (options) ->
     @listenTo @model, "change", @render
@@ -26,9 +26,13 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     if !@assignedToCurrentUser()
       @$("i.icon-minus").hide()
     
+    # Is this pin unrelated to the current_user? Make it appear faded and ensure the option is to 'favorite' it, not unfavorite it
     focused_entity_id = DssRm.view_state.get('focused_entity_id')
     if !@assignedToCurrentUser() || ((focused_entity_id > 0) && (focused_entity_id != @model.get('id')))
       @$el.css "opacity", "0.6"
+      @$('a.entity-favorite-link>i').removeClass('icon-star').addClass('icon-star-empty').attr('title', 'Favorite')
+    else
+      @$('a.entity-favorite-link>i').addClass('icon-star').removeClass('icon-star-empty').attr('title', 'Unfavorite')
     
     if @model.isReadOnly()
       @$("i.icon-remove").hide()
@@ -43,15 +47,20 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
   entityUrl: ->
     "#" + "/entities/" + @model.get("id")
 
-  unfavoriteEntity: (e) ->
+  toggleEntityFavorite: (e) ->
     e.stopPropagation()
     
     model_id = @model.get("id")
     favorites_entity = DssRm.current_user.favorites.find((e) ->
       e.id is model_id
     )
-    DssRm.current_user.favorites.remove favorites_entity
-    #DssRm.current_user.favorites.trigger "change"
+    if favorites_entity
+      # Unfavoriting
+      DssRm.current_user.favorites.remove favorites_entity
+    else
+      # Favoriting
+      DssRm.current_user.favorites.add @model
+    
     DssRm.current_user.save()
   
   # Returns true if the given entity 'e' is assigned to the current role
