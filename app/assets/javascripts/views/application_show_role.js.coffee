@@ -7,7 +7,7 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
     'click #syncAD'        : 'syncAD'
 
   render: ->
-    @$el.html JST["applications/show_role"](role: @model)
+    @$el.html JST["templates/applications/show_role"](role: @model)
     @$("input[name=token]").val @model.escape("token")
     
     # If this is a new role, we will attempt to automatically generate a token

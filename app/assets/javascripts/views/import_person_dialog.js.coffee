@@ -14,7 +14,7 @@ DssRm.Views.ImportPersonDialog = Backbone.View.extend(
     @results = new DssRm.Collections.ImportPersonDialogResults()
     @listenTo @results, 'reset', @renderResults
     
-    @$el.html JST["application/import_person_dialog"]()
+    @$el.html JST["templates/application/import_person_dialog"]()
 
   render: ->
     # Set the search box to the desired term.

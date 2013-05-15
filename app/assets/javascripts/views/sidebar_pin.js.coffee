@@ -7,7 +7,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @listenTo @model, "change", @render
     @listenTo DssRm.view_state, "change", @render
 
-    @$el.html JST["entities/item"](entity: @model)
+    @$el.html JST["templates/entities/item"](entity: @model)
     @$el.data "entity-id", @model.get("id")
     @$el.addClass @model.get("type").toLowerCase()
 

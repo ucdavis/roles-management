@@ -4,7 +4,7 @@ DssRm.Views.ApplicationsIndex = Backbone.View.extend(
   className: "row-fluid"
   
   initialize: (options) ->
-    @$el.html JST["applications/index"]()
+    @$el.html JST["templates/applications/index"]()
     
     @cards = new DssRm.Views.ApplicationsIndexCards()
     @sidebar = new DssRm.Views.ApplicationsIndexSidebar()

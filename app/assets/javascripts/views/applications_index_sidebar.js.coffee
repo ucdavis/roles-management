@@ -7,21 +7,19 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     "click #highlighted_pins li" : "selectEntity"
   
   initialize: (options) ->
-    @$el.html JST["applications/sidebar"]()
+    @$el.html JST["templates/applications/sidebar"]()
     
     @sidebar_entities = new DssRm.Collections.Entities()
-    @buildSidebarEntities()
+    @buildSidebar()
     
-    DssRm.current_user.favorites.on "reset", @buildSidebarEntities, this
-    DssRm.current_user.group_ownerships.on "reset", @buildSidebarEntities, this
-    DssRm.current_user.group_operatorships.on "reset", @buildSidebarEntities, this
-
-    DssRm.current_user.favorites.on "add", @addToSidebarEntities, this
-    DssRm.current_user.favorites.on "remove", @removeFromSidebarEntities, this
-    DssRm.current_user.group_ownerships.on "add", @addToSidebarEntities, this
-    DssRm.current_user.group_ownerships.on "remove", @removeFromSidebarEntities, this
-    DssRm.current_user.group_operatorships.on "add", @addToSidebarEntities, this
-    DssRm.current_user.group_operatorships.on "remove", @removeFromSidebarEntities, this
+    @sidebar_entities.on "add remove", @render, this
+    
+    DssRm.current_user.favorites.on "add", @addToSidebar, this
+    DssRm.current_user.favorites.on "remove", @removeFromSidebar, this
+    DssRm.current_user.group_ownerships.on "add", @addToSidebar, this
+    DssRm.current_user.group_ownerships.on "remove", @removeFromSidebar, this
+    DssRm.current_user.group_operatorships.on "add", @addToSidebar, this
+    DssRm.current_user.group_operatorships.on "remove", @removeFromSidebar, this
     
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
@@ -51,13 +49,16 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
   
   render: ->
-    @$("#pins").empty()
-    @$("#highlighted_pins").empty()
+    pins_frag = document.createDocumentFragment()
+    highlighted_pins_frag = document.createDocumentFragment()
     
     # Render sidebar entities (favorites, etc.)
-    @sidebar_entities.each (entity) =>
-      pin = @renderSidebarPin(entity)
-      @insertSidebarPinInDOM(pin)
+    @sidebar_entities.each (view) =>
+      pin = view.get('view')
+      if pin.assignedToCurrentRole()
+        highlighted_pins_frag.appendChild pin.el
+      else
+        pins_frag.appendChild pin.el
 
     selected_role = DssRm.view_state.getSelectedRole()
     if selected_role
@@ -69,25 +70,73 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       )
       _.each assigned_non_subordinates, (entity) =>
         pin = @renderSidebarPin(entity)
-        @insertSidebarPinInDOM(pin)
+        highlighted_pins_frag.appendChild pin.el
+    
+    @$('#pins').html pins_frag
+    @$("#highlighted_pins").html highlighted_pins_frag
     
     @
   
   # Renders a single sidebar pin and renders the object. Does not add to DOM.
   renderSidebarPin: (entity) ->
-    pin = new DssRm.Views.SidebarPin(
-      model: entity
-    )
-    
+    pin = new DssRm.Views.SidebarPin { model: entity }
     pin.render()
-
-  # Takes an existing, rendering sidebar pin and places it in the correct spot in the DOM
-  insertSidebarPinInDOM: (pin) ->
-    if pin.assignedToCurrentRole()
-      @$("#highlighted_pins").append pin.el
-    else
-      @$("#pins").append pin.el
   
+  # Rebuilds all data and views related to the sidebar but does not render.
+  buildSidebar: ->
+    # Populate with the user's ownerships, operatorships, and favorites
+    @sidebar_entities.reset _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
+
+    # Render a view for each entity
+    @sidebar_entities.each (el) =>
+      el.set 'view', @renderSidebarPin(el)
+  
+  addToSidebar: (model, collection, options) ->
+    @sidebar_entities.add
+      id: model.get('id')
+      name: model.get('name')
+      view: @renderSidebarPin(model)
+
+  removeFromSidebar: (model, collection, options) ->
+    @sidebar_entities.remove model
+  
+  selectEntity: (e) ->
+    clicked_entity_id = $(e.currentTarget).data("entity-id")
+    clicked_entity_name = $(e.currentTarget).data("entity-name")
+    
+    e.stopPropagation()
+    
+    # Behavior of selecting an entity changes depending on whether an application/role
+    # is selected or not.
+    # If an application/role is selected, toggling an entity associates or disassociates
+    # that entity from that application/role.
+    # If no application/role is selected, clicking an entity merely filters the application/role
+    # list to display their current assignments.
+    selected_role = DssRm.view_state.getSelectedRole()
+    if selected_role
+      # toggle on or off?
+      matched = selected_role.entities.filter((e) ->
+        e.id is clicked_entity_id
+      )
+
+      if matched.length > 0
+        # toggling off
+        selected_role.entities.remove matched[0]
+        DssRm.view_state.getSelectedApplication().save(
+          success: =>
+            DssRm.view_state.trigger('change')
+        )
+      else
+        # toggling on
+        new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
+        new_entity.fetch success: =>
+          selected_role.entities.add new_entity
+          app = DssRm.view_state.getSelectedApplication()
+          app.save(
+            success: =>
+                DssRm.view_state.trigger('change')
+          )
+
   # Populates the sidebar search with results via async call
   sidebarSearch: (query, process) ->
     $.ajax(
@@ -111,7 +160,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         entities.push DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP + "####Create Group " + query
 
       process entities
-
 
   sidebarSearchResultSelected: (item) ->
     parts = item.split("####")
@@ -159,62 +207,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
             DssRm.view_state.set focused_entity_id: id
     
     label
-  
-  buildSidebarEntities: ->
-    # Populate with the user's ownerships, operatorships, and favorites
-    _sidebar_entities = _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
-    # Sort groups to be first
-    _sidebar_entities = _.sortBy(_sidebar_entities, (e) ->
-      prepend = (if (e.get("type") is "Group") then "1" else "2")
-      sort_num = parseInt((prepend + e.get("name").charCodeAt(0).toString()))
-      sort_num
-    )
-    @sidebar_entities.reset _sidebar_entities
-  
-  addToSidebarEntities: (model, collection, options) ->
-    @sidebar_entities.add model
-    @render()
 
-  removeFromSidebarEntities: (model, collection, options) ->
-    @sidebar_entities.remove model
-    @render()
-  
-  selectEntity: (e) ->
-    clicked_entity_id = $(e.currentTarget).data("entity-id")
-    clicked_entity_name = $(e.currentTarget).data("entity-name")
-    
-    e.stopPropagation()
-    
-    # Behavior of selecting an entity changes depending on whether an application/role
-    # is selected or not.
-    # If an application/role is selected, toggling an entity associates or disassociates
-    # that entity from that application/role.
-    # If no application/role is selected, clicking an entity merely filters the application/role
-    # list to display their current assignments.
-    selected_role = DssRm.view_state.getSelectedRole()
-    if selected_role
-      # toggle on or off?
-      matched = selected_role.entities.filter((e) ->
-        e.id is clicked_entity_id
-      )
-
-      if matched.length > 0
-        # toggling off
-        selected_role.entities.remove matched[0]
-        DssRm.view_state.getSelectedApplication().save(
-          success: =>
-            DssRm.view_state.trigger('change')
-        )
-      else
-        # toggling on
-        new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
-        new_entity.fetch success: =>
-          selected_role.entities.add new_entity
-          app = DssRm.view_state.getSelectedApplication()
-          app.save(
-            success: =>
-                DssRm.view_state.trigger('change')
-          )
 ,
   # Constants used in this view
   FID_ADD_PERSON: -1

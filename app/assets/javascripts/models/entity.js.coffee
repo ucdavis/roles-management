@@ -22,7 +22,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
     
     @updateAttributes()
     @on "change", @updateAttributes, this
-
+  
   # Returns only the "highest" relationship (this order): admin, owner, operator
   # Does not return anything if not admin, owner, or operator on purpose
   # Uses DssRm.current_user as the entity
@@ -106,6 +106,13 @@ DssRm.Models.Entity = Backbone.Model.extend(
 DssRm.Collections.Entities = Backbone.Collection.extend(
   model: DssRm.Models.Entity
   url: "/entities"
+  
+  # Sort groups before people, then alphabetical by name
+  comparator: (entity) ->
+    if entity.get("type") is "Group"
+      return '1' + entity.get("name")
+    else
+      return '2' + entity.get("name")
 )
 
 DssRm.Collections.Owners = Backbone.Collection.extend(model: DssRm.Models.Entity)

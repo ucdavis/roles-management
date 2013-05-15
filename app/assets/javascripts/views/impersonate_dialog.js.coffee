@@ -10,7 +10,7 @@ DssRm.Views.ImpersonateDialog = Backbone.View.extend(
 
   initialize: ->
     @impersonate_user = null
-    @$el.html JST["application/impersonate_dialog"]()
+    @$el.html JST["templates/application/impersonate_dialog"]()
     
   postInitialize: ->
     @$("input#loginid").focus()

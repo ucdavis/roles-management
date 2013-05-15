@@ -6,7 +6,7 @@ DssRm.Views.AboutDialog = Backbone.View.extend(
     "hidden": "cleanUpModal"
 
   initialize: ->
-    @$el.html JST["application/about_dialog"]()
+    @$el.html JST["templates/application/about_dialog"]()
 
   render: ->
     @$("span#last_updated").html window.application_last_updated

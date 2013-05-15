@@ -11,7 +11,6 @@
 //= require bootstrap-modal-alert
 //= require jquery.tokeninput
 //= require routes
-//= require jquery.masonry
 //
 //= require dss-rm
 //
@@ -19,5 +18,5 @@
 //= require_tree ./models
 //= require_tree ./views
 //= require_tree ./routers
-//= require_tree ../templates
+//= require_tree ./templates
 //= require_tree .

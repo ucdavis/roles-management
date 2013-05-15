@@ -11,7 +11,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     "click #delete": "deleteEntity"
 
   initialize: ->
-    @$el.html JST["entities/show_group"](model: @model)
+    @$el.html JST["templates/entities/show_group"](model: @model)
     @listenTo @model, "change", @render
     readonly = @model.isReadOnly()
     

@@ -10,7 +10,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     "click #delete": "deleteEntity"
 
   initialize: ->
-    @$el.html JST["entities/show_person"](model: @model)
+    @$el.html JST["templates/entities/show_person"](model: @model)
     @listenTo @model, "change", @render
     readonly = @model.isReadOnly()
     

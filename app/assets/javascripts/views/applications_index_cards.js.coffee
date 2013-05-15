@@ -6,7 +6,7 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
     "click #cards" : "deselectAll"
   
   initialize: (options) ->
-    @$el.html JST["applications/cards"]()
+    @$el.html JST["templates/applications/cards"]()
     
     DssRm.applications.on "add", ((o) =>
       @$('#cards').append(@renderCard(o).el)
@@ -43,8 +43,12 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
       typeahead.focused = true;
   
   render: ->
+    frag = document.createDocumentFragment()
+    
     DssRm.applications.each (application) =>
-      @$('#cards').append @renderCard(application).el
+      frag.appendChild @renderCard(application).el
+    
+    @$('#cards').append frag
     @
   
   renderCard: (application) ->

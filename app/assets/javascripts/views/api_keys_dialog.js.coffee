@@ -8,7 +8,7 @@ DssRm.Views.ApiKeysDialog = Backbone.View.extend(
     "click a#delete-key": "removeApiKey"
 
   initialize: (options) ->
-    @$el.html JST["application/api_keys_dialog"]()
+    @$el.html JST["templates/application/api_keys_dialog"]()
     @api_keys = options.api_keys
     @listenTo @api_keys, "sync remove", @render
 

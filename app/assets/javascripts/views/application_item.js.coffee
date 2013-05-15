@@ -14,7 +14,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
       i.get "id"
     )
     @relationship = @model.relationship()
-    @$el.html JST["applications/item"](application: @model)
+    @$el.html JST["templates/applications/item"](application: @model)
     @$el.attr "id", "application_" + @model.id
     @$el.data "application-id", @model.get("id")
     @$(".card-title").attr "title", @model.escape("description")

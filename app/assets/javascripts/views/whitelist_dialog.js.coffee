@@ -8,7 +8,7 @@ DssRm.Views.WhitelistDialog = Backbone.View.extend(
     "click a#remove_ip": "removeAddress"
 
   initialize: (options) ->
-    @$el.html JST["application/whitelist_dialog"]()
+    @$el.html JST["templates/application/whitelist_dialog"]()
     @whitelist = options.whitelist
     @whitelist.on "sync remove", @render, this
 
