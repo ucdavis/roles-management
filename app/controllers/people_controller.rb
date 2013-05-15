@@ -83,10 +83,10 @@ class PeopleController < ApplicationController
       ldap.connect
     
       ldap.search("(uid=" + params[:loginid] + ")") do |result|
-        log = StringIO.new
-        @p = LdapPersonHelper.create_or_update_person_from_ldap(result, log)
-        Rails.logger.info log.string
+        @p = LdapPersonHelper.create_or_update_person_from_ldap(result, Rails.logger)
       end
+      
+      logger.debug @p.inspect
     
       ldap.disconnect
     end

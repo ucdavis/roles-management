@@ -24,11 +24,22 @@ module LdapPersonHelper
       loginid = eduPersonPrincipalName.slice(0, eduPersonPrincipalName.index("@"))
     end
     
+    # We need 'p' outside the scope of log.tagged later
+    p = nil
+    
     log.tagged loginid do
-      # Find or create the Person object
-      p = Person.find_by_loginid(loginid) || Person.create(:loginid => loginid)
+      log.info "Processing LDAP record for #{loginid}" unless log.nil?
 
-      log.info "Processing LDAP record for #{loginid} (ID: #{p.id})" unless log.nil?
+      # Find or create the Person object
+      p = Person.find_or_initialize_by_loginid(loginid)
+
+      if log
+        if p.new_record?
+          log.info "Creating new person record (#{loginid} is not already in our database)."
+        else
+          log.info "Updating existing person record (#{loginid} is in our database)."
+        end
+      end
 
       p.first = entry.get_values('givenName')[0]
       p.last = entry.get_values('sn')[0]
@@ -38,8 +49,13 @@ module LdapPersonHelper
         p.phone = p.phone.sub("+1 ", "").gsub(" ", "") # clean up number
       end
       p.address = entry.get_values('street').to_s[2..-3]
-      p.status = true
       p.name = entry.get_values('displayName')[0]
+
+      if p.new_record?
+        # Only turn this individual on if they're new - we don't want to override
+        # a disabled individual just because we're updating their information from LDAP.
+        p.status = true
+      end
 
       # A person may have multiple affiliations
       entry.get_values('ucdPersonAffiliation').each do |affiliation_name|
@@ -140,7 +156,7 @@ module LdapPersonHelper
         else
           # Dept code doesn't exist
           unless ucdAppointmentDepartmentCode.nil?
-            log.warn "Could not find a deptartment code translation for " + ucdAppointmentDepartmentCode unless log.nil?
+            log.warn "Could not find a department code translation for " + ucdAppointmentDepartmentCode unless log.nil?
           end
         end
       end
