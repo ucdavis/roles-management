@@ -33,7 +33,7 @@ class Role < ActiveRecord::Base
 
   def as_json(options={})
     { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id,
-      :description => self.description, :mandatory => self.mandatory,
+      :description => self.description,
       :entities => self.entities.map{ |e| { type: e.type, id: e.id, name: e.name } }, :ad_path => self.ad_path,
       :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } } }
   end

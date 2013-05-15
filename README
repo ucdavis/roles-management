@@ -50,18 +50,5 @@ config/schedule.rb
 You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
 in case this README neglects any configuration details.
 
-== Technical Notes
-=== Mandatory vs Default Roles
-A role (permission template) has both a default and mandatory boolean.
-
-If a role is default, that implies any person or group assigned to that
-application or belonging to an OU or group assigned to that application will
-take that permission automatically. This behavior is reversed when default is
-turned off.
-
-If a role is mandatory, it will _not_ appear to the user, and _will_ be
-assigned. This is mostly used for the "access" role, representing the implied
-role a person or group gains when they are assigned to that application.
-
 == Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
