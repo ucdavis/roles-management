@@ -12,14 +12,18 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     @sidebar_entities = new DssRm.Collections.Entities()
     @buildSidebar()
     
+    # Re-render the sidebar when favorites, etc. are added/removed
     @sidebar_entities.on "add remove", @render, this
-    
+
+    # Intelligently handle adjusting @sidebar_entities
     DssRm.current_user.favorites.on "add", @addToSidebar, this
     DssRm.current_user.favorites.on "remove", @removeFromSidebar, this
     DssRm.current_user.group_ownerships.on "add", @addToSidebar, this
     DssRm.current_user.group_ownerships.on "remove", @removeFromSidebar, this
     DssRm.current_user.group_operatorships.on "add", @addToSidebar, this
     DssRm.current_user.group_operatorships.on "remove", @removeFromSidebar, this
+    
+    DssRm.view_state.on "change:selected_role_id", @render, this
     
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
