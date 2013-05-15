@@ -112,7 +112,7 @@ namespace :ad do
     
     log.tagged "ad:sync_role" do
       log.tagged "role:#{args[:role_id]}" do
-        r = Role.find_by_id(args[:role_id])
+        r = Role.includes(:entities).find_by_id(args[:role_id])
 
         unless r.nil?
           require 'ActiveDirectoryWrapper'
