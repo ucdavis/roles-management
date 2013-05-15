@@ -2,7 +2,7 @@ module LdapPersonHelper
   # Processes ldap_record and returns an un-saved person object,
   # whether loaded from the database or new.
   # May create titles, OUs, along the way (and save them).
-  # Optionally pass a StringIO-compatible object for record_log.
+  # Optionally pass log.
   #   We provide this as the LDAP import task generates a special log for e-mailing, else
   #   Rails.logger would suffice.
   def LdapPersonHelper.create_or_update_person_from_ldap(entry, log = nil)
@@ -17,7 +17,7 @@ module LdapPersonHelper
         loginid = entry.get_values('uid').to_s[2..-3]
       else
         # Give up
-        log.warn "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s unless record_log.nil?
+        log.warn "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s unless log.nil?
         return nil
       end
     else
