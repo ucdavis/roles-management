@@ -17,32 +17,32 @@ DssRm.Views.EntityItem = Backbone.View.extend(
     @$("span").html @model.escape("name")
     @$el.addClass type.toLowerCase()
     
-    @$(".entity-details-link").attr("href", @entityUrl()).on "click", (e) ->
-      e.stopPropagation() # the parent is looking for a click as well
-      #$(e.target).tooltip "hide" # but stopPropagation will stop the tooltip from closing...
-
     @$(".entity-remove-link i").removeClass("icon-remove").addClass "icon-minus" if type is "Person"
-
+    
     # highlight this entity
     if @assignedToCurrentRole() || @isFocused()
       if type is "Person"
         @$el.css("box-shadow", "#08C 0 0 5px").css "border", "1px solid #08C"
       else # is Group
         @$el.css("box-shadow", "#468847 0 0 5px").css "border", "1px solid #468847"
-
+    
     # change actionable icons depending on ownership
     if !@assignedToCurrentUser()
       @$("i.icon-minus").hide()
-
+    
     focused_entity_id = @view_state.get('focused_entity_id')
     if !@assignedToCurrentUser() || ((focused_entity_id > 0) && (focused_entity_id != @model.get('id')))
       @$el.css "opacity", "0.6"
     
-    if @isReadOnly()
+    if @model.isReadOnly()
+      console.log 'entity item is read only'
       @$("i.icon-remove").hide()
       @$("i.icon-search").hide()
     else
+      console.log 'entity item is not read only'
       @$("i.icon-lock").hide()
+      @$(".entity-details-link").attr("href", @entityUrl()).on "click", (e) ->
+        e.stopPropagation() # the parent is looking for a click as well
     
     @
 
@@ -90,21 +90,21 @@ DssRm.Views.EntityItem = Backbone.View.extend(
       return i.get("id") is @model.get('id')
     )
   
-  # Returns true if the current_user only operates the group (and does not own it)
-  isReadOnly: ->
-    # Need group_operatorship IDs has an array when drawing EntityItem
-    group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
-      group.get "id"
-    )
-    has_operatorship = _.indexOf(group_operatorships, @model.get("id")) >= 0
-
-    # Need group_operatorship IDs has an array when drawing EntityItem
-    group_ownerships = DssRm.current_user.group_ownerships.map((group) ->
-      group.get "id"
-    )
-    has_ownership = _.indexOf(group_ownerships, @model.get("id")) >= 0
-    
-    return !(has_operatorship or has_ownership)
+  # # Returns true if the current_user only operates the group (and does not own it)
+  # isReadOnly: ->
+  #   # Need group_operatorship IDs has an array when drawing EntityItem
+  #   group_operatorships = DssRm.current_user.group_operatorships.map((group) ->
+  #     group.get "id"
+  #   )
+  #   has_operatorship = _.indexOf(group_operatorships, @model.get("id")) >= 0
+  # 
+  #   # Need group_operatorship IDs has an array when drawing EntityItem
+  #   group_ownerships = DssRm.current_user.group_ownerships.map((group) ->
+  #     group.get "id"
+  #   )
+  #   has_ownership = _.indexOf(group_ownerships, @model.get("id")) >= 0
+  #   
+  #   return !(has_operatorship or has_ownership)
   
   isFocused: ->
     return @view_state.get('focused_entity_id') == @model.id

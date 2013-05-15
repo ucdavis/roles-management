@@ -28,10 +28,11 @@ DssRm.Models.Entity = Backbone.Model.extend(
   # Uses DssRm.current_user as the entity
   # Only applicable to entities of type 'Group', not 'Person'
   relationship: ->
+    return "admin" if DssRm.admin_logged_in()
+
     type = @get("type")
     
     if type is "Group"
-      return "admin" if DssRm.admin_logged_in()
       current_user_id = DssRm.current_user.get("id")
       return "owner" if _.find(@get("owners"), (o) ->
         o.id is current_user_id
