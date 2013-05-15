@@ -23,7 +23,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     DssRm.current_user.group_operatorships.on "add", @addToSidebar, this
     DssRm.current_user.group_operatorships.on "remove", @removeFromSidebar, this
     
-    DssRm.view_state.on "change:selected_role_id", @render, this
+    DssRm.view_state.on "change", @render, this
     
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
@@ -110,12 +110,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     
     e.stopPropagation()
     
-    # Behavior of selecting an entity changes depending on whether an application/role
-    # is selected or not.
-    # If an application/role is selected, toggling an entity associates or disassociates
-    # that entity from that application/role.
-    # If no application/role is selected, clicking an entity merely filters the application/role
-    # list to display their current assignments.
+    # If a role is selected, toggle the entity's association with that role.
+    # If no role is selected, merely filter the application/role list to display their assignments.
     selected_role = DssRm.view_state.getSelectedRole()
     if selected_role
       # toggle on or off?
@@ -126,20 +122,18 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       if matched.length > 0
         # toggling off
         selected_role.entities.remove matched[0]
-        DssRm.view_state.getSelectedApplication().save(
+        DssRm.view_state.getSelectedApplication().save {},
           success: =>
             DssRm.view_state.trigger('change')
-        )
       else
         # toggling on
         new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
         new_entity.fetch success: =>
           selected_role.entities.add new_entity
           app = DssRm.view_state.getSelectedApplication()
-          app.save(
+          app.save {},
             success: =>
-                DssRm.view_state.trigger('change')
-          )
+              DssRm.view_state.trigger('change')
 
   # Populates the sidebar search with results via async call
   sidebarSearch: (query, process) ->
@@ -180,19 +174,19 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
           name: label.slice(13) # slice(13) is removing the "Create Group " prefix
           type: "Group"
       else
-        # Exact result selected
-        
-        # If a role is selected, the behavior is to assign to the role,
-        # and not add to favorites. Adding to favorites only happens when
-        # no role is selected.
+        # Specific entity selected.
+        # If a role is selected, so assign the result to that role,
+        # and do not add to favorites.
         selected_role = DssRm.view_state.getSelectedRole()
         if selected_role
-          new_entity = new DssRm.Models.Entity(id: id)
-          new_entity.fetch success: =>
-            selected_role.entities.add new_entity
+          entity_to_assign = new DssRm.Models.Entity(id: id)
+          entity_to_assign.fetch success: =>
+            selected_role.entities.add entity_to_assign
             DssRm.view_state.getSelectedApplication().save()
+            @render() # need to update the sidebar and we don't listen to either of the above
         else
-          # No role selected, either add entity to their favorites or highlight
+          # No role selected, either add entity to their favorites (default behavior)
+          # or highlight the result if they're already a favorite.
           if @sidebar_entities.find((e) ->
             e.id is id
           ) is `undefined`
