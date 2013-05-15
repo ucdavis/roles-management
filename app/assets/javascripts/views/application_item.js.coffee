@@ -5,12 +5,10 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     "click .role": "selectRole"
 
   initialize: (options) ->
-    @view_state = options.view_state
-    
     # change - ?
     # sync - for when application_show adds/removes roles
     @listenTo @model, "change sync", @render
-    @listenTo @view_state, "change", @render
+    @listenTo DssRm.view_state, "change", @render
     
     owner_ids = @model.owners.map((i) ->
       i.get "id"
@@ -24,7 +22,6 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @model.roles.each (role) =>
       $role_item = @renderRoleItem(role)
       @$(".roles").append $role_item
-
 
   render: ->
     # Name
@@ -47,13 +44,13 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$("i.details").hide() if @relationship is "operator"
     
     # Highlight this application?
-    if @view_state.getSelectedApplication() == @model
+    if DssRm.view_state.getSelectedApplication() == @model
       @$el.css("box-shadow", "#08C 0 0 10px").css "border", "1px solid #08C"
     else
       @$el.css("box-shadow", "0 1px 3px rgba(0, 0, 0, 0.3)").css "border", "1px solid #CCC"
     
-    # Shade/unshade this application? (based on @view_state focus)
-    focused_application_id = @view_state.get 'focused_application_id'
+    # Shade/unshade this application? (based on DssRm.view_state focus)
+    focused_application_id = DssRm.view_state.get 'focused_application_id'
     if focused_application_id
       if focused_application_id is @model.id
         @$el.css "opacity", "1.0"
@@ -70,7 +67,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$(".roles>.role").each (i, r) =>
       role_id = parseInt($(r).attr("data-role-id"))
       roles_in_dom.push role_id
-      if role_id is @view_state.get('selected_role_id')
+      if role_id is DssRm.view_state.get('selected_role_id')
         $(r).css("box-shadow", "#08C 0 0 5px").css "border", "1px solid #08C"
       else
         $(r).css("box-shadow", "none").css "border", "1px solid #bce8f1"
@@ -81,7 +78,6 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     _.each roles_to_remove, (r) =>
       to_remove = @$(".roles").find("div.role[data-role-id=" + r + "]")
       $(to_remove).remove()
-
     
     # Add any roles to the DOM mentioned in our model
     roles_to_add = _.difference(roles_in_model, roles_in_dom)
@@ -92,7 +88,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
         $role_item = @renderRoleItem(role)
         @$(".roles").append $role_item
 
-    this
+    @
 
   renderRoleItem: (role) ->
     $role_item = $("<div class=\"role\"><a href=\"#\">name</a></div>")
@@ -119,7 +115,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
       success: =>
         status_bar.hide()
         
-        @view_state.set
+        DssRm.view_state.set
           selected_application_id: application_id
           selected_role_id: role_id
       error: ->

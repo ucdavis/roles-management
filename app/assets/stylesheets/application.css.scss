@@ -5,6 +5,7 @@
 *= require token-input-overrides
 *= require applications
 *= require groups
+*= require sidebar
 *= require_self
 */
 
@@ -33,21 +34,6 @@ input#search_applications {
   margin-bottom: 6px;
   margin-top: 3px;
   margin-left: 15px;
-}
-
-input#search_sidebar {
-  margin-bottom: 6px;
-  margin-top: 3px;
-}
-
-i.sidebar-details {
-  float: right;
-  margin-left: 15px;
-  margin-top: 2px;
-}
-
-input#search_people_groups {
-  width: 87%;
 }
 
 #main-body {
@@ -133,18 +119,6 @@ div#modal_container tr.fields button {
   border: 1px solid #151515;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1),0 1px 0px rgba(255, 255, 255, 0.15);
   padding: 4px 9px;
-}
-
-#highlighted_results>li {
-  margin-bottom: 6px;
-}
-#highlighted_results>li[data-pin-type="group"] {
-  box-shadow: #468847 0px 0px 5px;
-  border: 1px solid #468847;
-}
-#highlighted_results>li[data-pin-type="person"] {
-  box-shadow: #3A87AD 0px 0px 5px;
-  border: 1px solid #3A87AD;
 }
 
 div#entityShowModal #corner_summary {

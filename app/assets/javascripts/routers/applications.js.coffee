@@ -1,9 +1,7 @@
 DssRm.Routers.Applications = Backbone.Router.extend(
   initialize: (options) ->
-    @el = $("#applications")
-    @indexView = new DssRm.Views.ApplicationsIndex()
-    @indexView.render()
-    @el.html(@indexView.el)
+    @indexView = new DssRm.Views.ApplicationsIndex().render()
+    $("#applications").replaceWith @indexView.el
 
   routes:
     "": "index"
