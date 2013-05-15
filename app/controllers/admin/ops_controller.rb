@@ -4,28 +4,25 @@ class Admin::OpsController < Admin::BaseController
 
   # GET /admin/ops/impersonate/[loginid]
   def impersonate
-    # SECUREME
     @person = Person.find_by_loginid(params[:loginid])
 
     unless @person.nil?
       logger.info "#{actual_user.loginid}@#{request.remote_ip}: Impersonating #{params[:loginid]}."
-      session[:impersonate] = params[:loginid]
+      session[:impersonation_id] = @person.id
     end
 
     redirect_to applications_url
   end
 
   def unimpersonate
-    # SECUREME
-    logger.info "#{actual_user.loginid}@#{request.remote_ip}: Un-impersonating #{session[:impersonate]}."
+    logger.info "#{actual_user.loginid}@#{request.remote_ip}: Un-impersonating #{session[:impersonation_id]}."
 
-    session.delete(:impersonate)
+    session.delete(:impersonation_id)
 
     redirect_to applications_url
   end
 
   def ad_path_check
-    # SECUREME
     require 'ActiveDirectoryWrapper'
 
     respond_to do |format|

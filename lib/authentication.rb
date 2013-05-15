@@ -1,8 +1,8 @@
 module Authentication
   # Returns the current_user, which may be 'false' if impersonation is active
   def current_user
-    if session[:impersonate]
-      Person.find_by_loginid(session[:impersonate])
+    if impersonating?
+      return Person.find_by_id(session[:impersonation_id])
     else
       case session[:auth_via]
       when :whitelisted_ip
@@ -33,7 +33,11 @@ module Authentication
       when :api_key
         Authorization.current_user = ApiKeyUser.find_by_name(session[:user_id])
       when :cas
-        Authorization.current_user = Person.find_by_id(session[:user_id])
+        if impersonating?
+          Authorization.current_user = Person.find_by_id(session[:impersonation_id])
+        else
+          Authorization.current_user = Person.find_by_id(session[:user_id])
+        end
       end
       logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{Authorization.current_user}"
       return
@@ -110,6 +114,6 @@ module Authentication
 
   # Returns true if we're currently impersonating another user
   def impersonating?
-    session[:impersonate] ? true : false
+    session[:impersonation_id] ? true : false
   end
 end

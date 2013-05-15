@@ -25,7 +25,7 @@
               <% _has_role? :admin do %>
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrate <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <% unless session[:impersonate].nil? %>
+                <% unless session[:impersonation_id].nil? %>
                   <li><a href="#unimpersonate">Unimpersonate</a></li>
                 <% else %>
                   <li><a href="#impersonate">Impersonate…</a></li>
