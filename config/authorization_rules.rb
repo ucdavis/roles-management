@@ -3,6 +3,7 @@ authorization do
     # For creating/deleting applications
     has_permission_on :applications, :to => :manage
     has_permission_on :entities, :to => :manage
+    has_permission_on :person_favorite_assignments, :to => :manage
     has_permission_on :application_owner_assignments, :to => :manage
     has_permission_on :roles, :to => :manage
     has_permission_on :groups, :to => :manage
