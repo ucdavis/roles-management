@@ -19,23 +19,23 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
       entry = $(e.target).val()
       DssRm.view_state.focusApplicationByTerm entry
 
-    @$("#search_applications").typeahead
-      minLength: 3
-      sorter: (items) -> # required to keep the order given to process() in 'source'
-        items
-      highlighter: (item) ->
-        parts = item.split("####")
-        item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
-        query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
-        ret = item.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
-          "<strong>" + match + "</strong>"
-        )
-        ret = ret + parts[2]  if parts[2] isnt `undefined`
-        ret
-      source: @applicationSearch
-      updater: (item) =>
-        @applicationSearchResultSelected item, @
-      items: 15
+    # @$("#search_applications").typeahead
+    #   minLength: 3
+    #   sorter: (items) -> # required to keep the order given to process() in 'source'
+    #     items
+    #   highlighter: (item) ->
+    #     parts = item.split("####")
+    #     item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+    #     query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
+    #     ret = item.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
+    #       "<strong>" + match + "</strong>"
+    #     )
+    #     ret = ret + parts[2]  if parts[2] isnt `undefined`
+    #     ret
+    #   source: @applicationSearch
+    #   updater: (item) =>
+    #     @applicationSearchResultSelected item, @
+    #   items: 15
     
     @$("#search_applications").off("focus").on "focus", (e) ->
       $(this).select()

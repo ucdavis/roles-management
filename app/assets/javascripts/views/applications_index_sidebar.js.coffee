@@ -31,23 +31,23 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       else
         DssRm.view_state.set focused_entity_id: null
     
-    @$("#search_sidebar").typeahead
-      minLength: 3
-      sorter: (items) -> # required to keep the order given to process() in 'source'
-        items
-      highlighter: (item) ->
-        parts = item.split("####")
-        item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
-        query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
-        ret = item.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
-          "<strong>" + match + "</strong>"
-        )
-        ret = ret + parts[2]  if parts[2] isnt `undefined`
-        ret
-      source: @sidebarSearch
-      updater: (item) =>
-        @sidebarSearchResultSelected item, @
-      items: 15 # we enforce a limit on this but the bootstrap default is still too low
+    # @$("#search_sidebar").typeahead
+    #   minLength: 3
+    #   sorter: (items) -> # required to keep the order given to process() in 'source'
+    #     items
+    #   highlighter: (item) ->
+    #     parts = item.split("####")
+    #     item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+    #     query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
+    #     ret = item.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
+    #       "<strong>" + match + "</strong>"
+    #     )
+    #     ret = ret + parts[2]  if parts[2] isnt `undefined`
+    #     ret
+    #   source: @sidebarSearch
+    #   updater: (item) =>
+    #     @sidebarSearchResultSelected item, @
+    #   items: 15 # we enforce a limit on this but the bootstrap default is still too low
   
   render: ->
     pins_frag = document.createDocumentFragment()
