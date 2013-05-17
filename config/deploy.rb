@@ -84,6 +84,6 @@ namespace :deploy do
 
   desc "Prime cache using curl"
     task :prime_cache, roles: :web do
-      run "curl #{url} >/dev/null 2>&1"
+      run "curl #{url} >/dev/null 2>&1; true"
     end
 end
