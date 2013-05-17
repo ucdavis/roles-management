@@ -26,13 +26,16 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     if !@assignedToCurrentUser()
       @$("i.icon-minus").hide()
     
-    # Is this pin unrelated to the current_user? Make it appear faded and ensure the option is to 'favorite' it, not unfavorite it
+    # Is this pin unrelated to the current_user? Make it appear faded
     focused_entity_id = DssRm.view_state.get('focused_entity_id')
     if !@assignedToCurrentUser() || ((focused_entity_id > 0) && (focused_entity_id != @model.get('id')))
       @$el.css "opacity", "0.6"
-      @$('a.entity-favorite-link>i').removeClass('icon-star').addClass('icon-star-empty').attr('title', 'Favorite')
-    else
+    
+    # Is this entity a favorite?
+    if @favoritedByCurrentUser()
       @$('a.entity-favorite-link>i').addClass('icon-star').removeClass('icon-star-empty').attr('title', 'Unfavorite')
+    else
+      @$('a.entity-favorite-link>i').removeClass('icon-star').addClass('icon-star-empty').attr('title', 'Favorite')
     
     if @model.isReadOnly()
       @$("i.icon-remove").hide()
@@ -75,12 +78,18 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
       else
         return true
     false
-  
+    
   # True if in current_user's favorites, group ownerships, or group operatorships
   assignedToCurrentUser: ->
     _current_user_entities = _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
     
     return _.find(_current_user_entities, (i) =>
+      return i.get("id") is @model.get('id')
+    )
+  
+  # Returns true if this entity is favorited by the current user
+  favoritedByCurrentUser: ->
+    return _.find(DssRm.current_user.favorites.models, (i) =>
       return i.get("id") is @model.get('id')
     )
   

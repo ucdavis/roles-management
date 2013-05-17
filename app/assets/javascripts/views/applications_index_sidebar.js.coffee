@@ -13,15 +13,12 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     @buildSidebar()
     
     # Re-render the sidebar when favorites, etc. are added/removed
-    @sidebar_entities.on "add remove", @render, this
+    @sidebar_entities.on "reset", @render, this
 
     # Intelligently handle adjusting @sidebar_entities
-    DssRm.current_user.favorites.on "add", @addToSidebar, this
-    DssRm.current_user.favorites.on "remove", @removeFromSidebar, this
-    DssRm.current_user.group_ownerships.on "add", @addToSidebar, this
-    DssRm.current_user.group_ownerships.on "remove", @removeFromSidebar, this
-    DssRm.current_user.group_operatorships.on "add", @addToSidebar, this
-    DssRm.current_user.group_operatorships.on "remove", @removeFromSidebar, this
+    DssRm.current_user.favorites.on "add remove", @buildSidebar, this
+    DssRm.current_user.group_ownerships.on "add remove", @buildSidebar, this
+    DssRm.current_user.group_operatorships.on "add remove", @buildSidebar, this
     
     DssRm.view_state.on "change", @render, this
     
@@ -191,13 +188,13 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
             e.id is id
           ) is `undefined`
             # Add to favorites
-            p = new DssRm.Models.Entity(
+            e = new DssRm.Models.Entity(
               id: id
               name: label
-              type: "Person"
             )
-            DssRm.current_user.favorites.add p
-            DssRm.current_user.save()
+            e.fetch success: =>
+              DssRm.current_user.favorites.add e
+              DssRm.current_user.save()
             
             return ""
           else

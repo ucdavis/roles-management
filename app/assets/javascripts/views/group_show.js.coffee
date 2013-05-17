@@ -108,7 +108,7 @@ class DssRm.Views.GroupShow extends Backbone.View
   
   # Renders a single rule. Does not add to DOM.
   renderRule: (rule) ->
-    $rule = $(JST["entities/group_rule"]())
+    $rule = $(JST["templates/entities/group_rule"]())
     
     $rule.data "rule_id", rule.id
     $rule.find("td:nth-child(1) select").val rule.column
