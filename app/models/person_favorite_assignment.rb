@@ -6,5 +6,5 @@ class PersonFavoriteAssignment < ActiveRecord::Base
   # favorite is the owner
   belongs_to :owner, :class_name => "Person", :foreign_key => "id"
   # person is the person being favored
-  belongs_to :person, :class_name => "Person"
+  belongs_to :entity #, :class_name => "Person"
 end

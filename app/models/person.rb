@@ -21,7 +21,7 @@ class Person < Entity
   has_many :roles, :through => :role_assignments
 
   has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "owner_id"
-  has_many :favorites, :through => :favorite_relationships, :source => :person
+  has_many :favorites, :through => :favorite_relationships, :source => :entity
 
   has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
   has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
@@ -166,26 +166,8 @@ class Person < Entity
     }
   end
   
-  def can_administer_application?(app_id)
-    applications.collect{ |x| x.id }.include? app_id
-  end
-
-  # SECUREME: Does it matter that this computes based on favorites now?
-  def can_administer_person?(person_id)
-    favorites.collect{ |x| x.id }.include? person_id
-  end
-
-  def can_administer_group?(group_id)
-    group_memberships.collect{ |x| x.id }.include? group_id
-  end
-
-  def can_administer_role?(role_id)
-    applications.collect{|x| x.role_ids}.flatten.include? role_id
-  end
-
   # Returns true if this user is an admin of "DSS Roles Management" itself
   def is_rm_admin?
-    #roles.includes(:application).where(:token => "admin", :applications => { :name => "DSS Roles Management" }).exists?
     role_symbols.include? :admin
   end
 
