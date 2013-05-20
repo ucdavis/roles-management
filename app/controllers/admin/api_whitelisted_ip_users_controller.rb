@@ -14,7 +14,7 @@ class Admin::ApiWhitelistedIpUsersController < ApplicationController
     # SECUREME
     respond_to do |format|
       if @api_whitelisted_ip_user.save
-        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new whitelisted IP address, #{params[:api_whitelisted_ip]}."
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new whitelisted IP address, #{params[:api_whitelisted_ip]}."
         format.json { render json: @api_whitelisted_ip_user, status: :created }
       else
         format.json { render json: @api_whitelisted_ip_user.errors, status: :unprocessable_entity }
@@ -28,7 +28,7 @@ class Admin::ApiWhitelistedIpUsersController < ApplicationController
     @address = ApiWhitelistedIpUser.find(params[:id])
     @address.destroy
 
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted whitelisted IP address, #{params[:address]}."
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted whitelisted IP address, #{params[:address]}."
 
     respond_to do |format|
       format.json { head :no_content }

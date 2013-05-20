@@ -72,7 +72,7 @@ class PeopleController < ApplicationController
     load 'LdapHelper.rb'
     load 'LdapPersonHelper.rb'
     
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
 
     # We allow creating people (and titles, etc.) for the purpose of import.
     # User must still have authorization for people#import

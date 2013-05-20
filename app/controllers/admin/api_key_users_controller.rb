@@ -13,7 +13,7 @@ class Admin::ApiKeyUsersController < ApplicationController
     # SECUREME
     respond_to do |format|
       if @api_key_user.save
-        logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new API key, #{params[:api_key]}."
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new API key, #{params[:api_key]}."
         format.json { render json: @api_key_user, status: :created }
       else
         format.json { render json: @api_key_user.errors, status: :unprocessable_entity }
@@ -26,7 +26,7 @@ class Admin::ApiKeyUsersController < ApplicationController
     @api_key = ApiKeyUser.find(params[:id])
     @api_key.destroy
 
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted API key, #{params[:api_key]}."
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted API key, #{params[:api_key]}."
 
     respond_to do |format|
       format.json { head :no_content }

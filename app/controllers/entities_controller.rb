@@ -13,7 +13,7 @@ class EntitiesController < ApplicationController
   def show
     @entity = Entity.find(params[:id])
 
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
 
     respond_with @entity do |format|
       format.json
@@ -61,16 +61,11 @@ class EntitiesController < ApplicationController
     entity = Entity.find(params[:id])
 
     if entity.type == "Group"
-      if entity.owners.include? current_user
-        logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted entity, #{entity}."
+      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted entity, #{entity}."
 
-        # Must own the group to delete it
-        entity.destroy
+      entity.destroy
 
-        render :nothing => true
-      else
-        render :status => :forbidden
-      end
+      render :nothing => true
     end
   end
   

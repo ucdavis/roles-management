@@ -22,7 +22,7 @@ class ApplicationsController < ApplicationController
       format.csv {
         require 'csv'
 
-        logger.info "#{current_user.loginid}@#{request.remote_ip}: Downloaded CSV of application, #{params[:application]}."
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Downloaded CSV of application, #{params[:application]}."
 
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
         csv_data = CSV.generate do |csv|
@@ -58,9 +58,9 @@ class ApplicationsController < ApplicationController
   def create
     # SECUREME: Can the current user create applications?
     if @application.save
-      logger.info "#{current_user.loginid}@#{request.remote_ip}: Created new application, #{params[:application]}."
+      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new application, #{params[:application]}."
     else
-      logger.warn "#{current_user.loginid}@#{request.remote_ip}: Failed to create new application, #{params[:application]}."
+      logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to create new application, #{params[:application]}."
     end
 
     respond_with @application
@@ -73,7 +73,7 @@ class ApplicationsController < ApplicationController
     @application = Application.find(params[:id])
 
     if @application.update_attributes(params[:application])
-      logger.info "#{current_user.loginid}@#{request.remote_ip}: Updated application with params #{params[:application]}."
+      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
     end
 
     respond_with @application do |format|
@@ -88,7 +88,7 @@ class ApplicationsController < ApplicationController
     @application = Application.find(params[:id])
     @application.destroy
 
-    logger.info "#{current_user.loginid}@#{request.remote_ip}: Deleted application, #{params[:application]}."
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted application, #{params[:application]}."
 
     respond_with @application
   end
