@@ -72,28 +72,34 @@ class PeopleController < ApplicationController
     load 'LdapHelper.rb'
     load 'LdapPersonHelper.rb'
     
-    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
+    logger.tagged "people#import" do
+      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
 
-    # We allow creating people (and titles, etc.) for the purpose of import.
-    # User must still have authorization for people#import
-    Authorization.ignore_access_control(true)
+      # We allow creating people (and titles, etc.) for the purpose of import.
+      # User must still have authorization for people#import
+      Authorization.ignore_access_control(true)
     
-    if params[:loginid]
-      ldap = LdapHelper.new
-      ldap.connect
+      if params[:loginid]
+        ldap = LdapHelper.new
+        ldap.connect
     
-      ldap.search("(uid=" + params[:loginid] + ")") do |result|
-        @p = LdapPersonHelper.create_or_update_person_from_ldap(result, Rails.logger)
-      end
+        ldap.search("(uid=" + params[:loginid] + ")") do |result|
+          @p = LdapPersonHelper.create_or_update_person_from_ldap(result, Rails.logger)
+        end
       
-      logger.debug @p.inspect
+        logger.debug @p.inspect
     
-      ldap.disconnect
+        ldap.disconnect
+      end
+
+      if @p
+        @p.save
+      else
+        logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
+      end
+    
+      Authorization.ignore_access_control(false)
     end
-  
-    @p.save
-    
-    Authorization.ignore_access_control(false)
     
     respond_with @p
   end
