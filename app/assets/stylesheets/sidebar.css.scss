@@ -76,9 +76,19 @@ ul.pins {
 
 .tt-dropdown-menu {
   h4 {
-    margin-left: 10px;
+    text-align: center;
     margin-top: 5px;
     margin-bottom: 5px;
-    color: #777;
+    color: #000;
+  }
+  
+  hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  button {
+    width: 70%;
+    margin: 10px;
   }
 }
