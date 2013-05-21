@@ -7,6 +7,7 @@
 //
 //= require bootstrap
 //= require typeahead
+//= require hogan-2.0.0
 //= require status_bar
 //= require bootbox
 //= require bootstrap-modal-alert

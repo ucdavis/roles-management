@@ -16,30 +16,47 @@
   NodeTypes = {"GROUP":1,"CAT":2,"SYMBOL":3,"OR":4,"STAR":5,"LITERAL":6,"SLASH":7,"DOT":8};
 
   Utils = {
-    serialize: function(obj) {
-      var i, key, prop, result, s, val, _i, _len;
+    serialize: function(object, prefix) {
+      var element, i, key, prop, result, s, _i, _len;
 
-      if (!obj) {
+      if (prefix == null) {
+        prefix = null;
+      }
+      if (!object) {
         return "";
       }
+      if (!prefix && !(this.get_object_type(object) === "object")) {
+        throw new Error("Url parameters should be a javascript hash");
+      }
       if (window.jQuery) {
-        result = window.jQuery.param(obj);
+        result = window.jQuery.param(object);
         return (!result ? "" : result);
       }
       s = [];
-      for (key in obj) {
-        if (!__hasProp.call(obj, key)) continue;
-        prop = obj[key];
-        if (prop != null) {
-          if (this.getObjectType(prop) === "array") {
-            for (i = _i = 0, _len = prop.length; _i < _len; i = ++_i) {
-              val = prop[i];
-              s.push("" + key + (encodeURIComponent("[]")) + "=" + (encodeURIComponent(val.toString())));
-            }
-          } else {
-            s.push("" + key + "=" + (encodeURIComponent(prop.toString())));
+      switch (this.get_object_type(object)) {
+        case "array":
+          for (i = _i = 0, _len = object.length; _i < _len; i = ++_i) {
+            element = object[i];
+            s.push(this.serialize(element, prefix + "[]"));
           }
-        }
+          break;
+        case "object":
+          for (key in object) {
+            if (!__hasProp.call(object, key)) continue;
+            prop = object[key];
+            if (!(prop != null)) {
+              continue;
+            }
+            if (prefix != null) {
+              key = "" + prefix + "[" + key + "]";
+            }
+            s.push(this.serialize(prop, key));
+          }
+          break;
+        default:
+          if (object) {
+            s.push("" + (encodeURIComponent(prefix.toString())) + "=" + (encodeURIComponent(object.toString())));
+          }
       }
       if (!s.length) {
         return "";
@@ -82,7 +99,7 @@
       var ret_value;
 
       ret_value = {};
-      if (args.length > number_of_params && this.getObjectType(args[args.length - 1]) === "object") {
+      if (args.length > number_of_params && this.get_object_type(args[args.length - 1]) === "object") {
         ret_value = args.pop();
       }
       return ret_value;
@@ -97,9 +114,9 @@
         return "";
       }
       property = object;
-      if (this.getObjectType(object) === "object") {
+      if (this.get_object_type(object) === "object") {
         property = object.to_param || object.id || object;
-        if (this.getObjectType(property) === "function") {
+        if (this.get_object_type(property) === "function") {
           property = property.call(object);
         }
       }
@@ -108,7 +125,7 @@
     clone: function(obj) {
       var attr, copy, key;
 
-      if ((obj == null) || "object" !== this.getObjectType(obj)) {
+      if ((obj == null) || "object" !== this.get_object_type(obj)) {
         return obj;
       }
       copy = obj.constructor();
@@ -194,7 +211,7 @@
         return this.visit(route, parameters, optional);
       }
       parameters[left] = (function() {
-        switch (this.getObjectType(value)) {
+        switch (this.get_object_type(value)) {
           case "array":
             return value.join("/");
           default:
@@ -227,7 +244,7 @@
       }
       return this._classToTypeCache;
     },
-    getObjectType: function(obj) {
+    get_object_type: function(obj) {
       var strType;
 
       if (window.jQuery && (window.jQuery.type != null)) {
@@ -387,6 +404,11 @@
   if (!options){ options = {}; }
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"groups",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// edit_group_rule => /group_rules/:id/edit(.:format)
+  edit_group_rule_path: function(_id, options) {
+  if (!options){ options = {}; }
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"group_rules",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // edit_major => /majors/:id/edit(.:format)
   edit_major_path: function(_id, options) {
   if (!options){ options = {}; }
@@ -431,6 +453,16 @@
   group_path: function(_id, options) {
   if (!options){ options = {}; }
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"groups",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// group_rule => /group_rules/:id(.:format)
+  group_rule_path: function(_id, options) {
+  if (!options){ options = {}; }
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"group_rules",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// group_rules => /group_rules(.:format)
+  group_rules_path: function(options) {
+  if (!options){ options = {}; }
+  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"group_rules",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // groups => /groups(.:format)
   groups_path: function(options) {
@@ -491,6 +523,11 @@
   new_group_path: function(options) {
   if (!options){ options = {}; }
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"groups",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// new_group_rule => /group_rules/new(.:format)
+  new_group_rule_path: function(options) {
+  if (!options){ options = {}; }
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"group_rules",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // new_major => /majors/new(.:format)
   new_major_path: function(options) {

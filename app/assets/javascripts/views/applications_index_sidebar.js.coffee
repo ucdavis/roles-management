@@ -31,6 +31,29 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       else
         DssRm.view_state.set focused_entity_id: null
     
+    @$("#search_sidebar").typeahead [
+      name: 'sidebar-people'
+      remote:
+        url: Routes.people_path() + "?q=%QUERY"
+        filter: @sidebarSearch
+      limit: 8
+      header: '<h4>People</h4>'
+      footer: '<center><button class="btn btn-mini">Import Person</button></center>'
+      template: [
+        '<p>{{value}}</p>'
+      ].join('')
+      engine: Hogan
+    ,
+      name: 'sidebar-groups'
+      remote:
+        url: Routes.groups_path() + "?q=%QUERY"
+        filter: @sidebarSearch
+      limit: 8
+      header: '<h4>Groups</h4>'
+    ]
+      #template: '<p><strong>{{value}}</strong> – {{year}}</p>'
+      #engine: Hogan
+    
     # @$("#search_sidebar").typeahead
     #   minLength: 3
     #   sorter: (items) -> # required to keep the order given to process() in 'source'
@@ -132,29 +155,26 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
             success: =>
               DssRm.view_state.trigger('change')
 
-  # Populates the sidebar search with results via async call
-  sidebarSearch: (query, process) ->
-    $.ajax(
-      url: Routes.entities_path()
-      data:
-        q: query
-      type: "GET"
-    ).always (data) ->
-      entities = []
-      exact_match_found = false
-      _.each data, (entity) ->
-        # We have to manually enforce a length on the sidebar search as we'll be adding terms toward the end
-        # and don't want them cut off if the search results list is long
-        if entities.length < (DssRm.Views.ApplicationsIndexSidebar.SIDEBAR_MAX_LENGTH - 2)
-          exact_match_found = true if query.toLowerCase() is entity.name.toLowerCase()
-          entities.push entity.id + "####" + entity.name + "####" + "<i class=\"icon-search sidebar-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; DssRm.Views.ApplicationsIndex.sidebarDetails(event);\" />"
+  sidebarSearch: (results) ->
+    entities = []
+    query = $('#search_sidebar').val() # typeahead.js should really pass the query ...
+    
+    _.each results, (entity) =>
+      entities.push
+        id: entity.id
+        # The following bit highlights the matched part of the name in <strong>
+        value: entity.name # entity.name.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
+ #          "<strong>" + match + "</strong>"
+ #        )
+    
+    entities.push
+      id: DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
+      value: "Import Person " + query
+    entities.push
+      id: DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
+      value: "Create Group " + query
 
-      if exact_match_found is false
-        # Add the option to create a new one with this query (-1 and -2 are invalid IDs to indicate these choices)
-        entities.push DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON + "####Import Person " + query
-        entities.push DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP + "####Create Group " + query
-
-      process entities
+    return entities
 
   sidebarSearchResultSelected: (item) ->
     parts = item.split("####")
@@ -203,11 +223,82 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     
     label
 
+  # # Populates the sidebar search with results via async call
+  # sidebarSearch: (query, process) ->
+  #   $.ajax(
+  #     url: Routes.entities_path()
+  #     data:
+  #       q: query
+  #     type: "GET"
+  #   ).always (data) ->
+  #     entities = []
+  #     exact_match_found = false
+  #     _.each data, (entity) ->
+  #       # We have to manually enforce a length on the sidebar search as we'll be adding terms toward the end
+  #       # and don't want them cut off if the search results list is long
+  #       if entities.length < (DssRm.Views.ApplicationsIndexSidebar.SIDEBAR_MAX_LENGTH - 2)
+  #         exact_match_found = true if query.toLowerCase() is entity.name.toLowerCase()
+  #         entities.push entity.id + "####" + entity.name + "####" + "<i class=\"icon-search sidebar-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; DssRm.Views.ApplicationsIndex.sidebarDetails(event);\" />"
+  # 
+  #     if exact_match_found is false
+  #       # Add the option to create a new one with this query (-1 and -2 are invalid IDs to indicate these choices)
+  #       entities.push DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON + "####Import Person " + query
+  #       entities.push DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP + "####Create Group " + query
+  # 
+  #     process entities
+  # 
+  # sidebarSearchResultSelected: (item) ->
+  #   parts = item.split("####")
+  #   id = parseInt(parts[0])
+  #   label = parts[1]
+  # 
+  #   switch id
+  #     when DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
+  #       DssRm.router.navigate "import/" + label.slice(14), {trigger: true} # slice(14) is removing the "Import Person " prefix
+  #       label = ""
+  #       
+  #     when DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
+  #       DssRm.current_user.group_ownerships.create
+  #         name: label.slice(13) # slice(13) is removing the "Create Group " prefix
+  #         type: "Group"
+  #     else
+  #       # Specific entity selected.
+  #       # If a role is selected, so assign the result to that role,
+  #       # and do not add to favorites.
+  #       selected_role = DssRm.view_state.getSelectedRole()
+  #       if selected_role
+  #         entity_to_assign = new DssRm.Models.Entity(id: id)
+  #         entity_to_assign.fetch success: =>
+  #           selected_role.entities.add entity_to_assign
+  #           DssRm.view_state.getSelectedApplication().save()
+  #           @render() # need to update the sidebar and we don't listen to either of the above
+  #       else
+  #         # No role selected, either add entity to their favorites (default behavior)
+  #         # or highlight the result if they're already a favorite.
+  #         if @sidebar_entities.find((e) ->
+  #           e.id is id
+  #         ) is `undefined`
+  #           # Add to favorites
+  #           e = new DssRm.Models.Entity(
+  #             id: id
+  #             name: label
+  #           )
+  #           e.fetch success: =>
+  #             DssRm.current_user.favorites.add e
+  #             DssRm.current_user.save()
+  #           
+  #           return ""
+  #         else
+  #           # Already in favorites - highlight the result
+  #           DssRm.view_state.set focused_entity_id: id
+  #   
+  #   label
+
 ,
   # Constants used in this view
   FID_ADD_PERSON: -1
   FID_CREATE_GROUP: -2
-  SIDEBAR_MAX_LENGTH: 15
+  #SIDEBAR_MAX_LENGTH: 15
   
   # Function defined here for use in onClick.
   # Inline event handler was required on i.sidebar-search to avoid patching
