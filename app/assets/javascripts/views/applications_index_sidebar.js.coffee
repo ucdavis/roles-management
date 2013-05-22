@@ -145,7 +145,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
               DssRm.view_state.trigger('change')
 
   sidebarSearch: (results) ->
-    debugger
     entities = []
     query = $('#search_sidebar').val() # typeahead.js should really pass the query ...
     
