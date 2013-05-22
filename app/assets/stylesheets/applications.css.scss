@@ -2,6 +2,7 @@
   position: fixed;
   width: inherit;
   height: 100%;
+  z-index: -1;
 }
 
 #sidebar, #cards-overflow-wrapper {
