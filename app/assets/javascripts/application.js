@@ -6,7 +6,6 @@
 //= require backbone
 //
 //= require bootstrap
-//= require typeahead
 //= require status_bar
 //= require bootbox
 //= require bootstrap-modal-alert

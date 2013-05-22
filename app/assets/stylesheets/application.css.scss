@@ -1,6 +1,5 @@
 /*
 *= require bootstrap
-*= require typeahead.js-bootstrap
 *= require bootstrap-overrides
 *= require token-input-facebook
 *= require token-input-overrides
@@ -17,6 +16,18 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+#loading-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000000;
+  opacity: 0.8;
+  filter: alpha(opacity=80);
 }
 
 input#search_applications {
