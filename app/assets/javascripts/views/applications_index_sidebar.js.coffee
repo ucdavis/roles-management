@@ -5,6 +5,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   events:
     "click #pins li"             : "selectEntity"
     "click #highlighted_pins li" : "selectEntity"
+    "typeahead:selected"         : "searchResultSelected"
   
   initialize: (options) ->
     @$el.html JST["templates/applications/sidebar"]()
@@ -38,9 +39,9 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         filter: @sidebarSearch
       limit: 8
       header: '<h4>People</h4>'
-      footer: '<center><button class="btn btn-mini">Import Person</button></center>'
+      footer: '<center><i style="color: #aaa; font-size: 8pt;">Don\'t see them above?</i><br /><button class="btn btn-mini">Continue Search</button></center>'
       template: [
-        '<p>{{value}}</p>'
+        '<p>{{{value_str}}}</p>'
       ].join('')
       engine: Hogan
     ,
@@ -49,10 +50,10 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         url: Routes.groups_path() + "?q=%QUERY"
         filter: @sidebarSearch
       limit: 8
-      header: '<hr><h4>Groups</h4>'
-      footer: '<center><button class="btn btn-mini">Create Group</button></center>'
+      header: '<hr style="" /><h4>Groups</h4>'
+      footer: '<center><i style="color: #aaa; font-size: 8pt;">Want a new group by that name?</i><br /><button class="btn btn-mini">Create Group</button></center>'
       template: [
-        '<p>{{value}}</p>'
+        '<p>{{{value_str}}}</p>'
       ].join('')
       engine: Hogan
     ]
@@ -94,11 +95,13 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   # Rebuilds all data and views related to the sidebar but does not render.
   buildSidebar: ->
     # Populate with the user's ownerships, operatorships, and favorites
-    @sidebar_entities.reset _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
+    @sidebar_entities.reset _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models), { silent: true } # don't trigger 'reset' yet - we need to render the views below first
 
     # Render a view for each entity
     @sidebar_entities.each (el) =>
       el.set 'view', @renderSidebarPin(el)
+    
+    @sidebar_entities.trigger 'reset'
   
   addToSidebar: (model, collection, options) ->
     @sidebar_entities.add
@@ -147,59 +150,42 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     _.each results, (entity) =>
       entities.push
         id: entity.id
+        value: entity.name
         # The following bit highlights the matched part of the name in <strong>
-        value: entity.name # entity.name.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
- #          "<strong>" + match + "</strong>"
- #        )
+        value_str: entity.name.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
+          "<strong>" + match + "</strong>"
+        )
     
     return entities
 
-  sidebarSearchResultSelected: (item) ->
-    parts = item.split("####")
-    id = parseInt(parts[0])
-    label = parts[1]
+  searchResultSelected: (e, selected) ->
+    # If a role is selected, assign the result to that role,
+    # and do not add to favorites.
+    selected_role = DssRm.view_state.getSelectedRole()
+    if selected_role
+      entity_to_assign = new DssRm.Models.Entity(id: selected.id)
+      entity_to_assign.fetch success: =>
+        selected_role.entities.add entity_to_assign
+        DssRm.view_state.getSelectedApplication().save()
+        @render() # need to update the sidebar and we don't listen to either of the above
+    else
+      # No role selected, either add entity to their favorites (default behavior)
+      # or highlight the result if they're already a favorite.
+      if @sidebar_entities.find((e) ->
+        e.id is selected.id
+      ) is `undefined`
+        # Add to favorites
+        e = new DssRm.Models.Entity(
+          id: selected.id
+          name: selected.value
+        )
 
-    switch id
-      when DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
-        DssRm.router.navigate "import/" + label.slice(14), {trigger: true} # slice(14) is removing the "Import Person " prefix
-        label = ""
-        
-      when DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
-        DssRm.current_user.group_ownerships.create
-          name: label.slice(13) # slice(13) is removing the "Create Group " prefix
-          type: "Group"
+        e.fetch success: =>
+          DssRm.current_user.favorites.add e
+          DssRm.current_user.save()
       else
-        # Specific entity selected.
-        # If a role is selected, so assign the result to that role,
-        # and do not add to favorites.
-        selected_role = DssRm.view_state.getSelectedRole()
-        if selected_role
-          entity_to_assign = new DssRm.Models.Entity(id: id)
-          entity_to_assign.fetch success: =>
-            selected_role.entities.add entity_to_assign
-            DssRm.view_state.getSelectedApplication().save()
-            @render() # need to update the sidebar and we don't listen to either of the above
-        else
-          # No role selected, either add entity to their favorites (default behavior)
-          # or highlight the result if they're already a favorite.
-          if @sidebar_entities.find((e) ->
-            e.id is id
-          ) is `undefined`
-            # Add to favorites
-            e = new DssRm.Models.Entity(
-              id: id
-              name: label
-            )
-            e.fetch success: =>
-              DssRm.current_user.favorites.add e
-              DssRm.current_user.save()
-            
-            return ""
-          else
-            # Already in favorites - highlight the result
-            DssRm.view_state.set focused_entity_id: id
-    
-    label
+        # Already in favorites - highlight the result
+        DssRm.view_state.set focused_entity_id: selected.id
 
   # sidebarSearchResultSelected: (item) ->
   #   parts = item.split("####")
