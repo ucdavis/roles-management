@@ -135,3 +135,20 @@ div#entityShowModal #corner_summary #group_member_count {
   font-size: 20pt;
   color: #333;
 }
+
+#get-support {
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+  position: fixed;
+  bottom: 2%;
+  left: 1%;
+  border-radius: 3px;
+  padding: 3px;
+  background-color: #fff;
+  border: 1px solid #999;
+  
+  &:hover {
+    opacity: 1.0;
+    filter: alpha(opacity=100);    
+  };
+}
