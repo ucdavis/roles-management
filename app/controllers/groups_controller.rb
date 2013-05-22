@@ -48,7 +48,7 @@ class GroupsController < ApplicationController
   
   def load_groups
     if params[:q]
-      @groups = Group.where("upper(name) like ?", "%#{params[:q].upcase}%")
+      @groups = Group.where("upper(name) like ? and code is null", "%#{params[:q].upcase}%")
     else
       @groups = Group.all
     end

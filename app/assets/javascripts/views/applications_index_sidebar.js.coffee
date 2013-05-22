@@ -49,14 +49,29 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         url: Routes.groups_path() + "?q=%QUERY"
         filter: @sidebarSearch
       limit: 8
-      header: '<hr><h4>Groups</h4>'
-      footer: '<center><button class="btn btn-mini">Create Group</button></center>'
-      template: [
-        '<p>{{value}}</p>'
-      ].join('')
-      engine: Hogan
+      header: '<h4>Groups</h4>'
     ]
+      #template: '<p><strong>{{value}}</strong> – {{year}}</p>'
+      #engine: Hogan
     
+    # @$("#search_sidebar").typeahead
+    #   minLength: 3
+    #   sorter: (items) -> # required to keep the order given to process() in 'source'
+    #     items
+    #   highlighter: (item) ->
+    #     parts = item.split("####")
+    #     item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+    #     query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
+    #     ret = item.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
+    #       "<strong>" + match + "</strong>"
+    #     )
+    #     ret = ret + parts[2]  if parts[2] isnt `undefined`
+    #     ret
+    #   source: @sidebarSearch
+    #   updater: (item) =>
+    #     @sidebarSearchResultSelected item, @
+    #   items: 15 # we enforce a limit on this but the bootstrap default is still too low
+  
   render: ->
     pins_frag = document.createDocumentFragment()
     highlighted_pins_frag = document.createDocumentFragment()
@@ -152,6 +167,13 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
  #          "<strong>" + match + "</strong>"
  #        )
     
+    entities.push
+      id: DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
+      value: "Import Person " + query
+    entities.push
+      id: DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
+      value: "Create Group " + query
+
     return entities
 
   sidebarSearchResultSelected: (item) ->
@@ -201,6 +223,30 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     
     label
 
+  # # Populates the sidebar search with results via async call
+  # sidebarSearch: (query, process) ->
+  #   $.ajax(
+  #     url: Routes.entities_path()
+  #     data:
+  #       q: query
+  #     type: "GET"
+  #   ).always (data) ->
+  #     entities = []
+  #     exact_match_found = false
+  #     _.each data, (entity) ->
+  #       # We have to manually enforce a length on the sidebar search as we'll be adding terms toward the end
+  #       # and don't want them cut off if the search results list is long
+  #       if entities.length < (DssRm.Views.ApplicationsIndexSidebar.SIDEBAR_MAX_LENGTH - 2)
+  #         exact_match_found = true if query.toLowerCase() is entity.name.toLowerCase()
+  #         entities.push entity.id + "####" + entity.name + "####" + "<i class=\"icon-search sidebar-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; DssRm.Views.ApplicationsIndex.sidebarDetails(event);\" />"
+  # 
+  #     if exact_match_found is false
+  #       # Add the option to create a new one with this query (-1 and -2 are invalid IDs to indicate these choices)
+  #       entities.push DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON + "####Import Person " + query
+  #       entities.push DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP + "####Create Group " + query
+  # 
+  #     process entities
+  # 
   # sidebarSearchResultSelected: (item) ->
   #   parts = item.split("####")
   #   id = parseInt(parts[0])
@@ -252,6 +298,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   # Constants used in this view
   FID_ADD_PERSON: -1
   FID_CREATE_GROUP: -2
+  #SIDEBAR_MAX_LENGTH: 15
   
   # Function defined here for use in onClick.
   # Inline event handler was required on i.sidebar-search to avoid patching
