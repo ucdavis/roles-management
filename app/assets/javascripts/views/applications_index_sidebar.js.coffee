@@ -86,11 +86,13 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   # Rebuilds all data and views related to the sidebar but does not render.
   buildSidebar: ->
     # Populate with the user's ownerships, operatorships, and favorites
-    @sidebar_entities.reset _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
+    @sidebar_entities.reset _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models), { silent: true } # we need to build the views below before triggering 'reset'
 
     # Render a view for each entity
     @sidebar_entities.each (el) =>
       el.set 'view', @renderSidebarPin(el)
+    
+    @sidebar_entities.trigger 'reset'
   
   addToSidebar: (model, collection, options) ->
     @sidebar_entities.add
