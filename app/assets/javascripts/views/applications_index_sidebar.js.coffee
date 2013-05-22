@@ -6,6 +6,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     "click #pins li"             : "selectEntity"
     "click #highlighted_pins li" : "selectEntity"
     "typeahead:selected"         : "searchResultSelected"
+    "click #continue_search"     : "importPerson"
   
   initialize: (options) ->
     @$el.html JST["templates/applications/sidebar"]()
@@ -36,10 +37,10 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       name: 'sidebar-people'
       remote:
         url: Routes.people_path() + "?q=%QUERY"
-        filter: (results) =>
-          @sidebarSearch 'people', results
+        filter: @sidebarSearch
       limit: 8
       header: '<h4>People</h4>'
+      footer: '<center><i style="color: #aaa; font-size: 8pt;">Don\'t see them above?</i><br /><button class="btn btn-mini" id="continue_search">Continue Search</button></center>'
       template: [
         '<p>{{{value_str}}}</p>'
       ].join('')
@@ -48,10 +49,10 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       name: 'sidebar-groups'
       remote:
         url: Routes.groups_path() + "?q=%QUERY"
-        filter: (results) =>
-          @sidebarSearch 'groups', results
+        filter: @sidebarSearch
       limit: 8
       header: '<hr style="" /><h4>Groups</h4>'
+      footer: '<center><i style="color: #aaa; font-size: 8pt;">Want a new group by that name?</i><br /><button class="btn btn-mini">Create Group</button></center>'
       template: [
         '<p>{{{value_str}}}</p>'
       ].join('')
@@ -143,7 +144,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
             success: =>
               DssRm.view_state.trigger('change')
 
-  sidebarSearch: (type, results) ->
+  sidebarSearch: (results) ->
+    debugger
     entities = []
     query = $('#search_sidebar').val() # typeahead.js should really pass the query ...
     
@@ -156,59 +158,43 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
           "<strong>" + match + "</strong>"
         )
     
-    unless results.length
-      if type == 'people'
-        entities.push
-          id: DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
-          value_str: '<center><button class="btn btn-mini" id="import_person">Import Person</button></center>'
-          value: query
-      else
-        entities.push
-          id: DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
-          value_str: '<center><button class="btn btn-mini">Create Group</button></center>'
-          value: query
-    
     return entities
 
   searchResultSelected: (e, selected) ->
-    switch selected.id
-      when DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
-        @importPerson(selected.value)
-      when DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
-        @createNewGroup(selected.value)
-      else
-        # If a role is selected, assign the result to that role,
-        # and do not add to favorites.
-        selected_role = DssRm.view_state.getSelectedRole()
-        if selected_role
-          entity_to_assign = new DssRm.Models.Entity(id: selected.id)
-          entity_to_assign.fetch success: =>
-            selected_role.entities.add entity_to_assign
-            DssRm.view_state.getSelectedApplication().save()
-            @render() # need to update the sidebar and we don't listen to either of the above
-        else
-          # No role selected, either add entity to their favorites (default behavior)
-          # or highlight the result if they're already a favorite.
-          if @sidebar_entities.find((e) ->
-            e.id is selected.id
-          ) is `undefined`
-            # Add to favorites
-            e = new DssRm.Models.Entity(
-              id: selected.id
-              name: selected.value
-            )
+    # If a role is selected, assign the result to that role,
+    # and do not add to favorites.
+    selected_role = DssRm.view_state.getSelectedRole()
+    if selected_role
+      entity_to_assign = new DssRm.Models.Entity(id: selected.id)
+      entity_to_assign.fetch success: =>
+        selected_role.entities.add entity_to_assign
+        DssRm.view_state.getSelectedApplication().save()
+        @render() # need to update the sidebar and we don't listen to either of the above
+    else
+      # No role selected, either add entity to their favorites (default behavior)
+      # or highlight the result if they're already a favorite.
+      if @sidebar_entities.find((e) ->
+        e.id is selected.id
+      ) is `undefined`
+        # Add to favorites
+        e = new DssRm.Models.Entity(
+          id: selected.id
+          name: selected.value
+        )
 
-            e.fetch success: =>
-              DssRm.current_user.favorites.add e
-              DssRm.current_user.save()
-          else
-            # Already in favorites - highlight the result
-            DssRm.view_state.set focused_entity_id: selected.id
+        e.fetch success: =>
+          DssRm.current_user.favorites.add e
+          DssRm.current_user.save()
+      else
+        # Already in favorites - highlight the result
+        DssRm.view_state.set focused_entity_id: selected.id
   
-  importPerson: (query) ->
+  importPerson: ->
+    query = $("#search_sidebar").val() # typeahead.js needs a better way than this
     DssRm.router.navigate "import/" + query, { trigger: true }
   
-  createNewGroup: (query) ->
+  createNewGroup: ->
+    query = $("#search_sidebar").val() # typeahead.js needs a better way than this
     DssRm.current_user.group_ownerships.create
       name: query
       type: "Group"
