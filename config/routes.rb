@@ -5,7 +5,7 @@ DSSRM::Application.routes.draw do
   get "/about" => 'site#about'
   get "/status" => "site#status"
   
-  # This 'search' queries LDAP. For internal search, use index action with GET parameter q=...
+  # Note: 'search' queries external databases. For an internal search, use index action with GET parameter 'q=...'
   get "people/search/:term" => "people#search", :as => :people_search
   post "people/import/:loginid" => "people#import", :as => :person_import
 
