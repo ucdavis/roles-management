@@ -7,12 +7,16 @@ authorization do
     has_permission_on :application_owner_assignments, :to => :manage
     has_permission_on :roles, :to => :manage
     has_permission_on :groups, :to => :manage
+    has_permission_on :ous, :to => :manage
     has_permission_on :group_rules, :to => :manage
     has_permission_on :people, :to => [:manage, :search]
     has_permission_on :application_operator_assignments, :to => :manage
     has_permission_on :role_assignments, :to => :manage
     has_permission_on :group_owner_assignments, :to => :manage
     has_permission_on :group_operator_assignments, :to => :manage
+    has_permission_on :affiliations, :to => :manage
+    has_permission_on :majors, :to => :manage
+    has_permission_on :titles, :to => :manage
     
     # For API keys
     has_permission_on :admin_api_key_users, :to => :manage
@@ -43,6 +47,12 @@ authorization do
   role :access do
     # Allow access to the main page
     has_permission_on :applications, :to => :index
+
+    # Needed for group rule typeahead lookups
+    has_permission_on :ous, :to => :read
+    has_permission_on :affiliations, :to => :read
+    has_permission_on :majors, :to => :read
+    has_permission_on :titles, :to => :read
     
     # Operators can read applications
     has_permission_on :applications, :to => :read do
