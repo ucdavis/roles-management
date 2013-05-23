@@ -8,7 +8,7 @@ authorization do
     has_permission_on :roles, :to => :manage
     has_permission_on :groups, :to => :manage
     has_permission_on :group_rules, :to => :manage
-    has_permission_on :people, :to => :manage
+    has_permission_on :people, :to => [:manage, :search]
     has_permission_on :application_operator_assignments, :to => :manage
     has_permission_on :role_assignments, :to => :manage
     has_permission_on :group_owner_assignments, :to => :manage
