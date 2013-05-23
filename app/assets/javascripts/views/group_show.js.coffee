@@ -36,6 +36,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     @renderRules()
 
   render: ->
+    console.log "group render called"
     readonly = @model.isReadOnly()
     
     # Summary tab
@@ -78,6 +79,8 @@ class DssRm.Views.GroupShow extends Backbone.View
     @
   
   renderRules: ->
+    console.log "render rules called"
+    
     rules_table = @$("table#rules tbody")
     rules_table.empty()
     _.each @model.get("rules"), (rule, i) =>
@@ -108,6 +111,8 @@ class DssRm.Views.GroupShow extends Backbone.View
   
   # Renders a single rule. Does not add to DOM.
   renderRule: (rule) ->
+    console.log "render rule called"
+    
     $rule = $(JST["templates/entities/group_rule"]())
     
     $rule.data "rule_id", rule.id
@@ -157,7 +162,9 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   addRule: (e) ->
     rules_table = @$("table#rules tbody")
+    rules_table.show() # it will be hidden if there are no rules already
     rules_table.append @renderRule({ id: null, column: null, condition: null, value: null })
+    console.log "addRule called"
 
   removeRule: (e) ->
     rule_id = $(e.target).parents("tr").data("rule_id")
