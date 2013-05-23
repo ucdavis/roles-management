@@ -1,17 +1,12 @@
 class GroupsController < ApplicationController
   before_filter :new_group_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
+  filter_access_to :index, :attribute_check => true, :load_method => :load_groups
   respond_to :json
 
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
-    if params[:q]
-      @groups = Group.where("upper(name) like ? and code is null", "%#{params[:q].upcase}%")
-    else
-      @groups = Group.all
-    end
-
     respond_with @groups
   end
   
@@ -49,5 +44,15 @@ class GroupsController < ApplicationController
   
   def new_group_from_params
     @group = Group.new(params[:group])
+  end
+  
+  private
+  
+  def load_groups
+    if params[:q]
+      @groups = Group.where("upper(name) like ? and code is null", "%#{params[:q].upcase}%")
+    else
+      @groups = Group.all
+    end
   end
 end

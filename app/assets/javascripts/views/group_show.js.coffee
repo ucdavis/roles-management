@@ -88,22 +88,6 @@ class DssRm.Views.GroupShow extends Backbone.View
     else
       @$("table#rules tbody").show()
     
-    # @$("table#rules tbody tr").each (i, e) ->
-    #   $(e).find("input#value").typeahead
-    #     minLength: 2
-    #     sorter: (items) -> # required to keep the order given to process() in 'source'
-    #       items
-    # 
-    #     highlighter: (item) ->
-    #       item = item.split("####")[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
-    #       query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
-    #       item.replace new RegExp("(" + query + ")", "ig"), ($1, match) ->
-    #         "<strong>" + match + "</strong>"
-    # 
-    #     source: @ruleSearch
-    #     updater: (item) =>
-    #       @ruleSearchResultSelected item, @
-    
     @
   
   # Renders a single rule. Does not add to DOM.
@@ -133,6 +117,8 @@ class DssRm.Views.GroupShow extends Backbone.View
     return $rule
 
   save: (e) ->
+    e.preventDefault()
+    
     status_bar.show 'Saving ...'
 
     @model.save
@@ -152,9 +138,7 @@ class DssRm.Views.GroupShow extends Backbone.View
         status_bar.hide()
       error: ->
         status_bar.show 'An error occurred while saving.', 'error'
-      silent: true
-    
-    false
+      #silent: true
 
   deleteEntity: ->
     @$el.fadeOut()
