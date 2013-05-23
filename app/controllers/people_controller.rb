@@ -43,22 +43,24 @@ class PeopleController < ApplicationController
       ldap = LdapHelper.new
       ldap.connect
     
-      ldap.search("(uid=" + params[:term] + "*)") do |result|
-        p = OpenStruct.new
-
-        p.loginid = result.get_values('uid')[0]
-        p.first = result.get_values('givenName')[0]
-        p.last = result.get_values('sn')[0]
-        p.email = result.get_values('mail').to_s[2..-3]
-        p.phone = result.get_values('telephoneNumber').to_s[2..-3]
-        unless p.phone.nil?
-          p.phone = p.phone.sub("+1 ", "").gsub(" ", "") # clean up number
-        end
-        p.address = result.get_values('street').to_s[2..-3]
-        p.name = result.get_values('displayName')[0]
-        p.imported = Person.exists?(:loginid => p.loginid)
+      ldap.search("(|(uid=#{params[:term]}*)(cn=#{params[:term]}*)(sn=#{params[:term]}*))") do |result|
+        if result.get_values('uid')
+          p = OpenStruct.new
         
-        @results << p
+          p.loginid = result.get_values('uid')[0]
+          p.first = result.get_values('givenName')[0]
+          p.last = result.get_values('sn')[0]
+          p.email = result.get_values('mail').to_s[2..-3]
+          p.phone = result.get_values('telephoneNumber').to_s[2..-3]
+          unless p.phone.nil?
+            p.phone = p.phone.sub("+1 ", "").gsub(" ", "") # clean up number
+          end
+          p.address = result.get_values('street').to_s[2..-3]
+          p.name = result.get_values('displayName')[0]
+          p.imported = Person.exists?(:loginid => p.loginid)
+        
+          @results << p
+        end
       end
       
       ldap.disconnect
