@@ -63,7 +63,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @roles.reset @get("roles")
 
   toJSON: ->
-    json = _.omit(@attributes, "owners", "operators", "members", "rules", "id", "roles", "favorites", "group_memberships", "group_ownerships", "group_operatorships", "ous", "byline", "name", "admin")
+    json = _.omit(@attributes, "owners", "operators", "members", "rules", "id", "roles", "favorites", "group_memberships", "group_ownerships", "group_operatorships", "ous", "byline", "name", "admin", "view")
     type = @get("type")
     if type is "Group"
       # Group-specific JSON
