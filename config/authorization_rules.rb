@@ -72,6 +72,12 @@ authorization do
     has_permission_on :roles, :to => [:read, :update, :create, :delete] do
       if_attribute :application => { :owners => contains { user } }
     end
+    has_permission_on :application_owner_assignments, :to => [:read, :update, :create, :delete] do
+      if_attribute :application => { :owners => contains { user } }
+    end
+    has_permission_on :application_operator_assignments, :to => [:read, :update, :create, :delete] do
+      if_attribute :application => { :owners => contains { user } }
+    end
     # Allow updating/reading of roles which belong to an application they operator
     has_permission_on :roles, :to => [:read, :update] do
       if_attribute :application => { :operators => contains { user } }
