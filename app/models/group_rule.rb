@@ -168,7 +168,6 @@ class GroupRule < ActiveRecord::Base
     if self.changed? or force_clear
       logger.debug "Clearing cache for group #{group_id} because of change in rule #{id}"
       Rails.cache.delete("entities/member_tokens/#{group_id}")
-      Rails.cache.delete("entities/rule_members/#{group_id}")
       # entities/members/#{flatten} (can be false or true), we may be storing both
       Rails.cache.delete("entities/members/false/#{group_id}")
       Rails.cache.delete("entities/members/true/#{group_id}")

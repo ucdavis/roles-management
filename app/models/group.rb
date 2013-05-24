@@ -186,51 +186,49 @@ class Group < Entity
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
   def rule_members
-    Rails.cache.fetch("entities/rule_members/#{id}") do
-      results = []
+    results = []
 
-      # Step One: Build groups out of each 'is' rule,
-      #           groupping rules of similar type together via OR
-      #           Note: we ignore the 'loginid' column as it is calculated separately
-      rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).all.group_by(&:column).each do |ruleset|
-        ruleset_results = []
+    # Step One: Build groups out of each 'is' rule,
+    #           groupping rules of similar type together via OR
+    #           Note: we ignore the 'loginid' column as it is calculated separately
+    rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).all.group_by(&:column).each do |ruleset|
+      ruleset_results = []
 
-        ruleset[1].each do |rule|
-          ruleset_results << rule.resolve
-        end
-
-        results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
+      ruleset[1].each do |rule|
+        ruleset_results << rule.resolve
       end
 
-      # Step Two: AND all groups from step one together
-      result = results.inject(results.first) { |sum,m| sum &= m }
-
-      if result
-        # Step Three: Pass over the result from step two and
-        # remove anybody who violates an 'is not' rule
-        result = result.find_all{ |member|
-          keep = true
-          rules.where(:condition => "is not").all.each do |rule|
-            keep &= rule.matches(member)
-          end
-          keep
-        }
-      end
-
-      # Step Four: Process any 'loginid is' rules
-      rules.where({:condition => "is", :column => "loginid"}).all.each do |rule|
-        if result.nil?
-          result = []
-        end
-        result << rule.resolve.at(0)
-      end
-
-      if result.nil?
-        return []
-      end
-
-      result
+      results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
     end
+
+    # Step Two: AND all groups from step one together
+    result = results.inject(results.first) { |sum,m| sum &= m }
+
+    if result
+      # Step Three: Pass over the result from step two and
+      # remove anybody who violates an 'is not' rule
+      result = result.find_all{ |member|
+        keep = true
+        rules.where(:condition => "is not").all.each do |rule|
+          keep &= rule.matches(member)
+        end
+        keep
+      }
+    end
+
+    # Step Four: Process any 'loginid is' rules
+    rules.where({:condition => "is", :column => "loginid"}).all.each do |rule|
+      if result.nil?
+        result = []
+      end
+      result << rule.resolve.at(0)
+    end
+
+    if result.nil?
+      return []
+    end
+
+    result
   end
 
   def trigger_sync
@@ -243,7 +241,6 @@ class Group < Entity
     if self.changed? or force_clear
       logger.debug "Clearing cache for group #{id}"
       Rails.cache.delete("entities/member_tokens/#{id}")
-      Rails.cache.delete("entities/rule_members/#{id}")
       Rails.cache.delete("entities/applications/#{id}")
       # entities/members/#{flatten} (can be false or true), we may be storing both
       Rails.cache.delete("entities/members/false/#{id}")
