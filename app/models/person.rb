@@ -81,6 +81,7 @@ class Person < Entity
     group_memberships.each do |membership|
       computed_roles += membership.roles
     end
+    
     computed_roles
   end
 
@@ -126,16 +127,6 @@ class Person < Entity
     end
 
     apps
-  end
-
-  # Compute applications for which they have a role.
-  def accessible_applications
-    apps = []
-
-    # Add apps via roles explicitly assigned
-    roles.each { |role| apps << role.application }
-
-    apps.uniq{ |a| a.id }
   end
 
   # Returns a list of symbols as required by the authorization layer (declarative_authorization gem).
