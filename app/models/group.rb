@@ -1,12 +1,17 @@
 class Group < Entity
   using_access_control
 
+  #need to really triple-check that this file works correctly, member_ids= and everything with the new calculated groups
+
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
-  has_and_belongs_to_many :entities,
-                          :after_add => Proc.new { |model| model.clear_cache_if_needed(true) },
-                          :after_remove => Proc.new { |model| model.clear_cache_if_needed(true) }
+  has_many :group_member_assignments, :foreign_key => "group_id"
+  has_many :entities,
+           :through => :group_member_assignments,
+           :source => "entity",
+           :after_add => Proc.new { |model| model.clear_cache_if_needed(true) },
+           :after_remove => Proc.new { |model| model.clear_cache_if_needed(true) }
 
   has_many :role_assignments, :foreign_key => "entity_id"
   has_many :roles, :through => :role_assignments, :dependent => :destroy
@@ -18,9 +23,14 @@ class Group < Entity
   has_many :operators, :through => :group_operator_assignments, :source => "entity", :dependent => :destroy
 
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy,
-           :after_add => Proc.new { |model| model.clear_cache_if_needed(true) },
-           :after_remove => Proc.new { |model| model.clear_cache_if_needed(true) }
-  
+           :after_add => Proc.new { |model|
+             model.clear_cache_if_needed(true)
+             model.recalculate_members
+           },
+           :after_remove => Proc.new { |model|
+             model.clear_cache_if_needed(true)
+             model.recalculate_members
+           }
 
   validates :name, :presence => true
 
@@ -32,8 +42,18 @@ class Group < Entity
 
   after_save :clear_cache_if_needed
   after_save :trigger_sync
+  
+  def as_json(options={})
+    { :id => self.id, :name => self.name, :type => 'Group',
+      :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
+      :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
+      :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :explicit_members => self.group_member_assignments.uncalculated.entity.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :calculated_members => self.group_member_assignments.calculated.entity.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
+  end
 
-  # Calculates all members, including those defined via rules.
+  # Returns all members, both explicitly assigned and via rules.
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
   # If flatten is false, any member groups will simply be returned as a group (i.e. not as the people _in_ that member group)
   def members(flatten = false)
@@ -49,9 +69,6 @@ class Group < Entity
           members << e
         end
       end
-
-      # Include members via rules
-      members += rule_members
 
       # Only return a unique list
       members.uniq{ |x| x.id }
@@ -106,32 +123,6 @@ class Group < Entity
     end
   end
 
-  # Returns tokenized members, including 'via' parameter to differentiate explicitly-assigned
-  # vs. rule-resolved members
-  def member_tokens
-    Rails.cache.fetch("entities/member_tokens/#{id}") do
-      result = []
-      explicit_members = []
-      resolved_members = []
-
-      entities.each do |e|
-        explicit_members << e
-      end
-
-      # Include members via rules
-      resolved_members += rule_members
-
-      # Unique members only
-      explicit_members = explicit_members.uniq{|x| x.id}
-      resolved_members = resolved_members.uniq{|x| x.id}
-
-      result = resolved_members.map{ |x| { :id => x.id, :name => x.name, :readonly => true, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
-      result += explicit_members.map{ |x| { :id => x.id, :name => x.name, :readonly => false, :loginid => ((defined? x.loginid) ? x.loginid : nil ) } }.sort {|a,b| a[:name] <=> b[:name] }
-
-      result
-    end
-  end
-
   def owner_tokens
     owner_ids
   end
@@ -172,20 +163,14 @@ class Group < Entity
 
     self.entity_ids = e_ids
   end
-
-  def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Group',
-      :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
-      :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
-  end
-
-  # Returns all members via resolving group rules
+  
+  # Calculates (and resets) all group_members based on rules.
+  # Will delete any group_member_assignment flagged as calculated and rebuild
+  # from rules.
   # This algorithm starts with an empty set, then runs all 'is'
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
-  def rule_members
+  def recalculate_members
     results = []
 
     # Step One: Build groups out of each 'is' rule,
@@ -224,11 +209,18 @@ class Group < Entity
       result << rule.resolve.at(0)
     end
 
-    if result.nil?
-      return []
-    end
+    # Remove previous calculated group member assignments
+    GroupMemberAssignment.calculated.where(:group_id => id).destroy_all
 
-    result
+    # Reset calculated group member assignments with the results of this algorithm
+    results = results.flatten
+    results.each do |r|
+      gma = GroupMemberAssignment.new
+      gma.group_id = id
+      gma.entity_id = r.id
+      gma.calculated = true
+      gma.save!
+    end unless result.nil?
   end
 
   def trigger_sync
@@ -240,7 +232,6 @@ class Group < Entity
   def clear_cache_if_needed(force_clear = false)
     if self.changed? or force_clear
       logger.debug "Clearing cache for group #{id}"
-      Rails.cache.delete("entities/member_tokens/#{id}")
       Rails.cache.delete("entities/applications/#{id}")
       # entities/members/#{flatten} (can be false or true), we may be storing both
       Rails.cache.delete("entities/members/false/#{id}")
