@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'debugger'
 
 class GroupTest < ActiveSupport::TestCase
   def setup
@@ -25,8 +24,7 @@ class GroupTest < ActiveSupport::TestCase
     test_flatten_count = 0
     test_flatten_count += group.group_member_assignments.select{ |m| m.entity.type == "Person"}.count
     group.group_member_assignments.select{ |m| m.entity.type == "Group"}.each do |g|
-      debugger
-      test_flatten_count += g.members(true).count
+      test_flatten_count += g.entity.members(true).count
     end
     
     assert test_flatten_count == flattened_members_count, "test flattening and Group.members(:flatten = true) should match count"
