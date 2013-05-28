@@ -17,7 +17,6 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$el.html JST["templates/applications/item"](application: @model)
     @$el.attr "id", "application_" + @model.id
     @$el.data "application-id", @model.get("id")
-    @$(".card-title").attr "title", @model.escape("description")
     @$(".application-link").attr "href", @applicationUrl()
     @model.roles.each (role) =>
       $role_item = @renderRoleItem(role)
@@ -26,6 +25,9 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
   render: ->
     # Name
     @$("#application-name").html @model.escape("name")
+    
+    # Update/render tooltips
+    @$(".card-title").attr "title", @model.get("description")
     
     # Roles area needed?
     (if @model.roles.length then @$(".roles").show() else @$(".roles").hide())
