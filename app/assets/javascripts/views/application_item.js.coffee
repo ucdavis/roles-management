@@ -97,7 +97,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     $role_item.attr "data-role-id", role.get("id")
     $role_item.attr "rel", "tooltip"
     $role_item.find("a").html role.escape("name")
-    $role_item.attr "title", role.escape("description")
+    $role_item.attr "title", role.get("description")
     $role_item
 
   applicationUrl: ->
