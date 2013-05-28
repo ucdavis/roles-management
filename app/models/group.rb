@@ -4,10 +4,8 @@ class Group < Entity
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
-  has_many :group_member_assignments, :foreign_key => "group_id"
-  has_many :entities,
-           :through => :group_member_assignments,
-           :source => "entity",
+  has_many :group_member_assignments,
+           :foreign_key => "group_id",
            :after_add => Proc.new { |model| model.clear_cache_if_needed(true) },
            :after_remove => Proc.new { |model| model.clear_cache_if_needed(true) }
 
@@ -32,7 +30,7 @@ class Group < Entity
 
   validates :name, :presence => true
 
-  attr_accessible :name, :description, :type, :member_ids, :owner_ids, :operator_ids, :rules_attributes
+  attr_accessible :name, :description, :type, :explicit_member_ids, :owner_ids, :operator_ids, :rules_attributes
 
   accepts_nested_attributes_for :rules,
                                 :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? },
@@ -46,8 +44,8 @@ class Group < Entity
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
-      :explicit_members => self.group_member_assignments.uncalculated.entity.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
-      :calculated_members => self.group_member_assignments.calculated.entity.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :explicit_members => self.group_member_assignments.uncalculated.map{ |m| { id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid } },
+      :calculated_members => self.group_member_assignments.calculated.map{ |m| { id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid } },
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
 
@@ -58,7 +56,9 @@ class Group < Entity
     Rails.cache.fetch("entities/members/#{flatten}/#{id}") do
       members = []
 
-      entities.all.each do |e|
+      group_member_assignments.all.each do |gma|
+        e = gma.entity
+        
         if flatten and e.type == "Group"
           e.members(true).each do |m|
             members << m
@@ -120,27 +120,22 @@ class Group < Entity
       apps
     end
   end
-
-  # def member_ids=(ids)
-  #   # We'll build these lists and assign them at the end
-  #   e_ids = []
-  # 
-  #   # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
-  #   r_members = []
-  #   rule_members.each do |r|
-  #     r_members += [r.id]
-  #   end
-  #   
-  #   unless ids.nil?
-  #     ids.each do |id|
-  #       unless r_members.include? id
-  #         e_ids << id
-  #       end
-  #     end
-  #   end
-  # 
-  #   self.entity_ids = e_ids
-  # end
+  
+  # Sets entity_ids without destroying calculated members
+  def explicit_member_ids=(ids)
+    unless ids.nil?
+      # Remember which members come from rules to avoid duplicates
+      r_members = group_member_assignments.calculated.entity.map{ |m| m.id }
+    
+      ids.each do |id|
+        unless r_members.include? id
+          e_ids << id
+        end
+      end
+      
+      self.entity_ids = e_ids
+    end
+  end
   
   # Calculates (and resets) all group_members based on rules.
   # Will delete any group_member_assignment flagged as calculated and rebuild
