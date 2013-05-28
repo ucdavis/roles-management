@@ -85,15 +85,6 @@ class Person < Entity
     computed_roles
   end
 
-  def roles_by_application(application_id)
-    Role.includes(:role_assignments).where(:application_id => application_id, :role_assignments => { :entity_id => self.id } ).map{ |x| x.token }
-  end
-
-  def roles_by_api_key(api_key_id)
-    api_key_role_ids = Application.find_by_api_key_id(api_key_id).roles.map { |x| x.id }
-    roles.reject{ |x| ! api_key_role_ids.include? x.id }
-  end
-
   # Overriden to be self.first + " " + self.last
   # though there is a 'name' column used by Entity (for groups).
   # Update first and last, not 'name'. Consider 'name' to be
@@ -104,29 +95,6 @@ class Person < Entity
     name = name + " " + last unless last.nil?
 
     return name
-  end
-
-  # Compute applications for which they can make assignments.
-  # Defined to be all applications for admins, else
-  # it is the list of applications they own or can operate.
-  def manageable_applications
-    apps = []
-
-    # Admins can see all applications
-    if is_rm_admin?
-      apps = Application.all
-    else
-      # Add apps where they are owners
-      application_ownerships.each do |a|
-        apps << a
-      end
-      # Add apps where they are operators
-      application_operatorships.each do |a|
-        apps << a
-      end
-    end
-
-    apps
   end
 
   # Returns a list of symbols as required by the authorization layer (declarative_authorization gem).
@@ -157,11 +125,6 @@ class Person < Entity
     }
   end
   
-  # Returns true if this user is an admin of "DSS Roles Management" itself
-  def is_rm_admin?
-    role_symbols.include? :admin
-  end
-
   def trigger_sync
     logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync }

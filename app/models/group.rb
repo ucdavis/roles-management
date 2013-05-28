@@ -1,8 +1,6 @@
 class Group < Entity
   using_access_control
 
-  #need to really triple-check that this file works correctly, member_ids= and everything with the new calculated groups
-
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
@@ -123,46 +121,26 @@ class Group < Entity
     end
   end
 
-  def owner_tokens
-    owner_ids
-  end
-
-  def owner_tokens=(ids)
-    self.owner_ids = ids.split(",")
-  end
-
-  def operator_tokens
-    operator_ids
-  end
-
-  def operator_tokens=(ids)
-    self.operator_ids = ids.split(",")
-  end
-
-  def entities_tokens=(ids)
-    self.entity_ids = ids.split(",")
-  end
-
-  def member_ids=(ids)
-    # We'll build these lists and assign them at the end
-    e_ids = []
-
-    # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
-    r_members = []
-    rule_members.each do |r|
-      r_members += [r.id]
-    end
-    
-    unless ids.nil?
-      ids.each do |id|
-        unless r_members.include? id
-          e_ids << id
-        end
-      end
-    end
-
-    self.entity_ids = e_ids
-  end
+  # def member_ids=(ids)
+  #   # We'll build these lists and assign them at the end
+  #   e_ids = []
+  # 
+  #   # Determine which members come from rules so we don't add them to the explicit list (causes dupes)
+  #   r_members = []
+  #   rule_members.each do |r|
+  #     r_members += [r.id]
+  #   end
+  #   
+  #   unless ids.nil?
+  #     ids.each do |id|
+  #       unless r_members.include? id
+  #         e_ids << id
+  #       end
+  #     end
+  #   end
+  # 
+  #   self.entity_ids = e_ids
+  # end
   
   # Calculates (and resets) all group_members based on rules.
   # Will delete any group_member_assignment flagged as calculated and rebuild

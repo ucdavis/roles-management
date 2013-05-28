@@ -100,7 +100,6 @@ class ApplicationsController < ApplicationController
   end
 
   def load_applications
-    #current_user.manageable_applications unless not defined? current_user.manageable_applications
     @applications = Application.with_permissions_to(:read)
   end
   
