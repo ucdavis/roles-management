@@ -13,7 +13,8 @@ DssRm.Models.Entity = Backbone.Model.extend(
     if type is "Group"
       @set "owners", []  if @get("owners") is `undefined`
       @set "operators", []  if @get("operators") is `undefined`
-      @set "members", []  if @get("members") is `undefined`
+      @set "calculated_members", []  if @get("calculated_members") is `undefined`
+      @set "explicit_members", []  if @get("explicit_members") is `undefined`
       @set "rules", []  if @get("rules") is `undefined`
     else if type is "Person"
       @set "roles", []  if @get("roles") is `undefined`
@@ -63,20 +64,21 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @roles.reset @get("roles")
 
   toJSON: ->
-    json = _.omit(@attributes, "owners", "operators", "members", "rules", "id", "roles", "favorites", "group_memberships", "group_ownerships", "group_operatorships", "ous", "byline", "name", "admin", "view")
-    
     type = @get("type")
     if type is "Group"
+      json = {}
       # Group-specific JSON
       json.name = @get("name")
+      json.type = "Group"
+      json.description = @get("description")
       json.owner_ids = @get("owners").map((owner) ->
         owner.id
       )
       json.operator_ids = @get("operators").map((operator) ->
         operator.id
       )
-      json.member_ids = @get("members").map((member) ->
-        member.id
+      json.explicit_member_ids = @get("explicit_members").map((explicit_member) ->
+        explicit_member.id
       )
       json.rules_attributes = @get("rules").map((rule) ->
         id: rule.id
@@ -85,7 +87,18 @@ DssRm.Models.Entity = Backbone.Model.extend(
         value: rule.value
       )
     else if type is "Person"
+      json = {} 
+      
       # Person-specific JSON
+      json.type = "Person"
+      
+      json.first = @get("first")
+      json.last = @get("last")
+      json.address = @get("address")
+      json.email = @get("email")
+      json.loginid = @get("loginid")
+      json.phone = @get("phone")
+      
       json.role_ids = @get("roles").map((role) ->
         role.id
       )
@@ -101,6 +114,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.group_operatorship_ids = @group_operatorships.map((group) ->
         group.id
       )
+    
     entity: json
 )
 
