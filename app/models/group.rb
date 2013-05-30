@@ -143,12 +143,12 @@ class Group < Entity
       end
 
       # Step Two: AND all groups from step one together
-      result = results.inject(results.first) { |sum,m| sum &= m }
+      results = results.inject(results.first) { |sum,m| sum &= m }
 
-      if result
+      if results
         # Step Three: Pass over the result from step two and
         # remove anybody who violates an 'is not' rule
-        result = result.find_all{ |member|
+        results = results.find_all{ |member|
           keep = true
           rules.where(:condition => "is not").all.each do |rule|
             keep &= rule.matches(member)
@@ -156,21 +156,24 @@ class Group < Entity
           keep
         }
       end
-
+      
       # Step Four: Process any 'loginid is' rules
       rules.where({:condition => "is", :column => "loginid"}).all.each do |rule|
-        if result.nil?
-          result = []
+        if results.nil?
+          results = []
         end
-        result << rule.resolve.at(0)
+        results << rule.resolve.at(0)
       end
 
       # Remove previous calculated group member assignments
       calculated_members.destroy_all
 
       # Reset calculated group member assignments with the results of this algorithm
-      results = results.flatten
-      self.calculated_member_ids = results.map{ |m| m.id } unless result.nil?
+      unless results.nil?
+        results = results.flatten
+        results = results.uniq{ |r| r.id }
+        self.calculated_member_ids = results.map{ |m| m.id }
+      end
       
       results.nil? ? num_found = 0 : num_found = results.length
       logger.info "Found #{num_found} members"
