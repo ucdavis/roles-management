@@ -11,8 +11,12 @@ class Person < Entity
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
 
+  # explicit - they were directly assigned to that group
+  # calculated - they are in the group because they match a group rule
   has_many :group_explicit_member_assignments, :foreign_key => "entity_id"
+  has_many :explicit_groups, :through => :group_explicit_member_assignments, :source => :group
   has_many :group_calculated_member_assignments, :foreign_key => "entity_id"
+  has_many :calculated_groups, :through => :group_calculated_member_assignments, :source => :group
 
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments
@@ -39,8 +43,7 @@ class Person < Entity
   validates :loginid, :presence => true, :uniqueness => true
   validate :first_or_last_presence
 
-  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :group_membership_ids, :ou_ids,
-                  :group_ownership_ids, :group_operatorship_ids
+  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :explicit_group_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
 
   after_save :trigger_sync
 
@@ -75,11 +78,11 @@ class Person < Entity
   def all_roles
     computed_roles = []
     computed_roles = roles
-    group_explicit_member_assignments.each do |membership|
-      computed_roles += membership.group.roles
+    explicit_groups.each do |group|
+      computed_roles += group.roles
     end
-    group_calculated_member_assignments.each do |membership|
-      computed_roles += membership.group.roles
+    calculated_groups.each do |group|
+      computed_roles += group.roles
     end
     
     computed_roles
@@ -117,7 +120,9 @@ class Person < Entity
       :roles => self.all_roles.map{ |r| { id: r.id, token: r.token, name: r.name, description: r.description,
                                           application_name: r.application_name, application_id: r.application_id } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      :group_memberships => self.group_explicit_member_assignments.map{ |a| { id: a.group.id, name: a.group.name, type: a.group.type, explicit: true } } + self.group_explicit_member_assignments.map{ |a| { id: a.group.id, name: a.group.name, type: a.group.type, explicit: false } },
+      :explicit_group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, explicit: true } },
+      :calculated_group_memberships => self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, explicit: true } },
+      :group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, explicit: true } } + self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, explicit: false } },
       :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
       :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } },
       :role_ids => self.role_ids
