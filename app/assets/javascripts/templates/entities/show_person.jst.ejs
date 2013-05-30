@@ -59,11 +59,8 @@
     <div style="float: left;">
       <a href="#" class="btn" id="rescan">Rescan</a>
     </div>
-    <% if(model.isReadOnly()) { %>
-      <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
-    <% } else { %>
-      <a href="#" class="btn" data-dismiss="modal">Close</a>
-      <a href="#" class="btn btn-primary" id="apply">Apply</a>
+    <% if( !model.isReadOnly()) { %>
+      <a href="#" class="btn btn-primary" id="apply">Apply Changes</a>
     <% } %>
   </div>
 </div>

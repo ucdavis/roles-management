@@ -8,8 +8,8 @@ class GroupRule < ActiveRecord::Base
 
   belongs_to :group
   
-  after_save :clear_cache_if_needed
-  before_destroy Proc.new { |model| model.clear_cache_if_needed(true) }
+  #after_save :clear_cache_if_needed
+  #before_destroy Proc.new { |model| model.clear_cache_if_needed(true) }
 
   # Needed by 'Group' when calculating rules
   def GroupRule.valid_columns
@@ -61,7 +61,7 @@ class GroupRule < ActiveRecord::Base
         end
       end
     when "ou"
-      ou = Group.ous.includes(:entities).find_by_name(value)
+      ou = Group.ous.includes(:explicit_members).includes(:calculated_members).find_by_name(value)
       unless ou == nil
         ps = ou.members
         case condition
@@ -164,15 +164,13 @@ class GroupRule < ActiveRecord::Base
     str.html_safe
   end
 
-  def clear_cache_if_needed(force_clear = false)
-    if self.changed? or force_clear
-      logger.debug "Clearing cache for group #{group_id} because of change in rule #{id}"
-      # entities/members/#{flatten} (can be false or true), we may be storing both
-      Rails.cache.delete("entities/members/false/#{group_id}")
-      Rails.cache.delete("entities/members/true/#{group_id}")
-      return true
-    else
-      return false
-    end
-  end
+  # def clear_cache_if_needed(force_clear = false)
+  #   if self.changed? or force_clear
+  #     logger.debug "Clearing cache for group #{group_id} because of change in rule #{id}"
+  #     # Rails.cache.delete statements go here
+  #     return true
+  #   else
+  #     return false
+  #   end
+  # end
 end

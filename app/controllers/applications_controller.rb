@@ -41,7 +41,7 @@ class ApplicationsController < ApplicationController
         end
         send_data csv_data,
           :type => 'text/csv; charset=iso-8859-1; header=present',
-          :disposition => "attachment; filename=rm_application_#{@application.to_param}.csv"
+          :disposition => "attachment; filename=" + unix_filename("#{@application.name}")
       }
     end
   end

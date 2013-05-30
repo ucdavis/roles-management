@@ -60,12 +60,17 @@ class DssRm.Views.GroupShow extends Backbone.View
     
     members_tokeninput = @$("input[name=members]")
     members_tokeninput.tokenInput "clear"
-    _.each @model.get("members"), (member) ->
+    _.each @model.get("explicit_members"), (member) ->
       members_tokeninput.tokenInput "add",
         id: member.id
         name: member.name
+    _.each @model.get("calculated_members"), (member) ->
+      members_tokeninput.tokenInput "add",
+        id: member.id
+        name: member.name
+        calculated: true
     
-    @$("span#csv-download>a").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
+    @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
     
     if DssRm.admin_logged_in() || @model.relationship()
       @$("#delete").show()
@@ -121,12 +126,20 @@ class DssRm.Views.GroupShow extends Backbone.View
     
     status_bar.show 'Saving ...'
 
+    # tokenInput('get') contains both explicit and calculated members.
+    # Calculatedness is indicated by a flag inserted at render time.
+    # Filter the list down to only explicit members - these are the only ones we save.
+    # The others come from rules.
+    explicit_tokeninput_members = _.filter(@$('input[name=members]').tokenInput('get'), (m) ->
+      m.calculated != true
+    )
+
     @model.save
       name: @$('input[name=name]').val()
       description: @$('textarea[name=description]').val()
       owners: @$('input[name=owners]').tokenInput('get')
       operators: @$('input[name=operators]').tokenInput('get')
-      members: @$('input[name=members]').tokenInput('get')
+      explicit_members: explicit_tokeninput_members
       rules: _.map($('table#rules>tbody>tr'), (el, i) ->
         id: $(el).data('rule_id')
         column: $(el).find("#column").val(),
@@ -138,7 +151,6 @@ class DssRm.Views.GroupShow extends Backbone.View
         status_bar.hide()
       error: ->
         status_bar.show 'An error occurred while saving.', 'error'
-      #silent: true
 
   deleteEntity: ->
     @$el.fadeOut()
@@ -208,7 +220,6 @@ class DssRm.Views.GroupShow extends Backbone.View
           entities.push entity.id + "####" + entity.name
 
       process entities
-
 
   ruleSearchResultSelected: (item) ->
     parts = item.split("####")

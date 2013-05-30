@@ -11,11 +11,8 @@ class Person < Entity
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
 
-  has_many :group_member_assignments, :foreign_key => "entity_id"
-  has_many :group_memberships,
-           :through => :group_member_assignments,
-           :source => :group,
-           :uniq => true
+  has_many :group_explicit_member_assignments, :foreign_key => "entity_id"
+  has_many :group_calculated_member_assignments, :foreign_key => "entity_id"
 
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments
@@ -78,13 +75,16 @@ class Person < Entity
   def all_roles
     computed_roles = []
     computed_roles = roles
-    group_memberships.each do |membership|
-      computed_roles += membership.roles
+    group_explicit_member_assignments.each do |membership|
+      computed_roles += membership.group.roles
+    end
+    group_calculated_member_assignments.each do |membership|
+      computed_roles += membership.group.roles
     end
     
     computed_roles
   end
-
+  
   # Overriden to be self.first + " " + self.last
   # though there is a 'name' column used by Entity (for groups).
   # Update first and last, not 'name'. Consider 'name' to be
@@ -117,8 +117,7 @@ class Person < Entity
       :roles => self.all_roles.map{ |r| { id: r.id, token: r.token, name: r.name, description: r.description,
                                           application_name: r.application_name, application_id: r.application_id } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      :group_memberships => { :non_ous => self.group_memberships.non_ous.map{ |e| { id: e.id, name: e.name, type: e.type } },
-                              :ous => self.group_memberships.ous.map{ |e| { id: e.id, name: e.name, type: e.type } } },
+      :group_memberships => self.group_explicit_member_assignments.map{ |a| { id: a.group.id, name: a.group.name, type: a.group.type, explicit: true } } + self.group_explicit_member_assignments.map{ |a| { id: a.group.id, name: a.group.name, type: a.group.type, explicit: false } },
       :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
       :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } },
       :role_ids => self.role_ids

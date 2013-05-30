@@ -53,7 +53,7 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
         id: operator.id
         name: operator.name
 
-    @$("span#csv-download>a").attr "href", Routes.application_path(@model.id, {format: 'csv'})
+    @$("a#csv-download").attr "href", Routes.application_path(@model.id, {format: 'csv'})
     
     if DssRm.admin_logged_in()
       @$('a#delete').show()

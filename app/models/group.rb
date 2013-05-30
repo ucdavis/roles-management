@@ -4,10 +4,10 @@ class Group < Entity
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
-  has_many :group_member_assignments,
-           :foreign_key => "group_id",
-           :after_add => Proc.new { |model| model.clear_cache_if_needed(true) },
-           :after_remove => Proc.new { |model| model.clear_cache_if_needed(true) }
+  has_many :explicit_member_assignments, :class_name => "GroupExplicitMemberAssignment"
+  has_many :explicit_members, :through => :explicit_member_assignments, :source => :entity
+  has_many :calculated_member_assignments, :class_name => "GroupCalculatedMemberAssignment"
+  has_many :calculated_members, :through => :calculated_member_assignments, :source => :entity
 
   has_many :role_assignments, :foreign_key => "entity_id"
   has_many :roles, :through => :role_assignments, :dependent => :destroy
@@ -18,15 +18,7 @@ class Group < Entity
   has_many :group_operator_assignments
   has_many :operators, :through => :group_operator_assignments, :source => "entity", :dependent => :destroy
 
-  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy,
-           :after_add => Proc.new { |model|
-             model.clear_cache_if_needed(true)
-             model.recalculate_members
-           },
-           :after_remove => Proc.new { |model|
-             model.clear_cache_if_needed(true)
-             model.recalculate_members
-           }
+  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
 
   validates :name, :presence => true
 
@@ -36,7 +28,6 @@ class Group < Entity
                                 :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? },
                                 :allow_destroy => true
 
-  after_save :clear_cache_if_needed
   after_save :trigger_sync
   
   def as_json(options={})
@@ -44,8 +35,8 @@ class Group < Entity
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
-      :explicit_members => self.group_member_assignments.uncalculated.map{ |m| { id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid } },
-      :calculated_members => self.group_member_assignments.calculated.map{ |m| { id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid } },
+      :explicit_members => self.explicit_members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :calculated_members => self.calculated_members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
 
@@ -53,24 +44,29 @@ class Group < Entity
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
   # If flatten is false, any member groups will simply be returned as a group (i.e. not as the people _in_ that member group)
   def members(flatten = false)
-    Rails.cache.fetch("entities/members/#{flatten}/#{id}") do
-      members = []
+    members = []
 
-      group_member_assignments.all.each do |gma|
-        e = gma.entity
-        
-        if flatten and e.type == "Group"
-          e.members(true).each do |m|
-            members << m
-          end
-        else
-          members << e
+    explicit_members.all.each do |e|
+      if flatten and e.type == "Group"
+        e.members(true).each do |m|
+          members << m
         end
+      else
+        members << e
       end
-
-      # Only return a unique list
-      members.uniq{ |x| x.id }
     end
+    calculated_members.all.each do |e|
+      if flatten and e.type == "Group"
+        e.members(true).each do |m|
+          members << m
+        end
+      else
+        members << e
+      end
+    end
+
+    # Only return a unique list
+    members.uniq{ |x| x.id }
   end
 
   # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction
@@ -107,112 +103,83 @@ class Group < Entity
         r.destroy
       end
     end
+    
+    recalculate_members
   end
 
   # Compute accessible applications
   def applications
-    Rails.cache.fetch("entities/applications/#{id}") do
-      apps = []
+    apps = []
 
-      # Add apps via roles explicitly assigned
-      roles.each { |role| apps << role.application }
+    # Add apps via roles explicitly assigned
+    roles.each { |role| apps << role.application }
 
-      apps
-    end
-  end
-  
-  # Sets entity_ids without destroying calculated members
-  def explicit_member_ids=(ids)
-    unless ids.nil?
-      # Remember which members come from rules to avoid duplicates
-      r_members = group_member_assignments.calculated.entity.map{ |m| m.id }
-    
-      ids.each do |id|
-        unless r_members.include? id
-          e_ids << id
-        end
-      end
-      
-      self.entity_ids = e_ids
-    end
+    apps
   end
   
   # Calculates (and resets) all group_members based on rules.
-  # Will delete any group_member_assignment flagged as calculated and rebuild
+  # Will delete any *_member_assignment flagged as calculated and rebuild
   # from rules.
   # This algorithm starts with an empty set, then runs all 'is'
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
   def recalculate_members
-    results = []
+    Rails.logger.tagged "Group #{id}" do
+      results = []
+      
+      logger.info "Recalculating members..."
 
-    # Step One: Build groups out of each 'is' rule,
-    #           groupping rules of similar type together via OR
-    #           Note: we ignore the 'loginid' column as it is calculated separately
-    rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).all.group_by(&:column).each do |ruleset|
-      ruleset_results = []
+      # Step One: Build groups out of each 'is' rule,
+      #           groupping rules of similar type together via OR
+      #           Note: we ignore the 'loginid' column as it is calculated separately
+      rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).all.group_by(&:column).each do |ruleset|
+        ruleset_results = []
 
-      ruleset[1].each do |rule|
-        ruleset_results << rule.resolve
-      end
-
-      results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
-    end
-
-    # Step Two: AND all groups from step one together
-    result = results.inject(results.first) { |sum,m| sum &= m }
-
-    if result
-      # Step Three: Pass over the result from step two and
-      # remove anybody who violates an 'is not' rule
-      result = result.find_all{ |member|
-        keep = true
-        rules.where(:condition => "is not").all.each do |rule|
-          keep &= rule.matches(member)
+        ruleset[1].each do |rule|
+          ruleset_results << rule.resolve
         end
-        keep
-      }
-    end
 
-    # Step Four: Process any 'loginid is' rules
-    rules.where({:condition => "is", :column => "loginid"}).all.each do |rule|
-      if result.nil?
-        result = []
+        results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
       end
-      result << rule.resolve.at(0)
+
+      # Step Two: AND all groups from step one together
+      result = results.inject(results.first) { |sum,m| sum &= m }
+
+      if result
+        # Step Three: Pass over the result from step two and
+        # remove anybody who violates an 'is not' rule
+        result = result.find_all{ |member|
+          keep = true
+          rules.where(:condition => "is not").all.each do |rule|
+            keep &= rule.matches(member)
+          end
+          keep
+        }
+      end
+
+      # Step Four: Process any 'loginid is' rules
+      rules.where({:condition => "is", :column => "loginid"}).all.each do |rule|
+        if result.nil?
+          result = []
+        end
+        result << rule.resolve.at(0)
+      end
+
+      # Remove previous calculated group member assignments
+      calculated_members.destroy_all
+
+      # Reset calculated group member assignments with the results of this algorithm
+      results = results.flatten
+      self.calculated_member_ids = results.map{ |m| m.id } unless result.nil?
+      
+      results.nil? ? num_found = 0 : num_found = results.length
+      logger.info "Found #{num_found} members"
     end
-
-    # Remove previous calculated group member assignments
-    GroupMemberAssignment.calculated.where(:group_id => id).destroy_all
-
-    # Reset calculated group member assignments with the results of this algorithm
-    results = results.flatten
-    results.each do |r|
-      gma = GroupMemberAssignment.new
-      gma.group_id = id
-      gma.entity_id = r.id
-      gma.calculated = true
-      gma.save!
-    end unless result.nil?
   end
 
   def trigger_sync
     logger.info "Group #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync }
     return true
-  end
-
-  def clear_cache_if_needed(force_clear = false)
-    if self.changed? or force_clear
-      logger.debug "Clearing cache for group #{id}"
-      Rails.cache.delete("entities/applications/#{id}")
-      # entities/members/#{flatten} (can be false or true), we may be storing both
-      Rails.cache.delete("entities/members/false/#{id}")
-      Rails.cache.delete("entities/members/true/#{id}")
-      return true
-    else
-      logger.debug "Not clearing cache for group #{id}, nothing has changed. Associations may still clear cache."
-      return false
-    end
   end
 end

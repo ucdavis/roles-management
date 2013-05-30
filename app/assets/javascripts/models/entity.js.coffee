@@ -19,7 +19,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
     else if type is "Person"
       @set "roles", []  if @get("roles") is `undefined`
       @set "group_memberships", []  if @get("group_memberships") is `undefined`
-      @set "ous", []  if @get("ous") is `undefined`
     
     @updateAttributes()
     @on "change", @updateAttributes, this
@@ -105,7 +104,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.favorite_ids = @favorites.map((favorite) ->
         favorite.id
       )
-      json.group_membership_ids = _.union(@get("group_memberships").ous, @get("group_memberships").non_ous).map((group) ->
+      json.group_membership_ids = @get("group_memberships").map((group) ->
         group.id
       )
       json.group_ownership_ids = @group_ownerships.map((group) ->

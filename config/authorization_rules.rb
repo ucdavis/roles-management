@@ -14,7 +14,8 @@ authorization do
     has_permission_on :role_assignments, :to => :manage
     has_permission_on :group_owner_assignments, :to => :manage
     has_permission_on :group_operator_assignments, :to => :manage
-    has_permission_on :group_member_assignments, :to => :manage
+    has_permission_on :group_explicit_member_assignments, :to => :manage
+    has_permission_on :group_calculated_member_assignments, :to => :manage
     has_permission_on :affiliations, :to => :manage
     has_permission_on :majors, :to => :manage
     has_permission_on :titles, :to => :manage
@@ -141,7 +142,10 @@ authorization do
     has_permission_on :group_owner_assignments, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end
-    has_permission_on :group_member_assignments, :to => [:create, :update, :delete] do
+    has_permission_on :group_explicit_member_assignments, :to => [:create, :update, :delete] do
+      if_attribute :group => { :owners => contains { user } }
+    end
+    has_permission_on :group_calculated_member_assignments, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end
     has_permission_on :group_operator_assignments, :to => [:create, :update, :delete] do
@@ -150,7 +154,10 @@ authorization do
     has_permission_on :group_operator_assignments, :to => [:create, :update, :delete] do
       if_attribute :group => { :operators => contains { user } }
     end
-    has_permission_on :group_member_assignments, :to => [:create, :update, :delete] do
+    has_permission_on :group_explicit_member_assignments, :to => [:create, :update, :delete] do
+      if_attribute :group => { :operators => contains { user } }
+    end
+    has_permission_on :group_calculated_member_assignments, :to => [:create, :update, :delete] do
       if_attribute :group => { :operators => contains { user } }
     end
     

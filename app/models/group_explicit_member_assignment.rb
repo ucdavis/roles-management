@@ -1,8 +1,5 @@
-class GroupMemberAssignment < ActiveRecord::Base
+class GroupExplicitMemberAssignment < ActiveRecord::Base
   using_access_control
-
-  scope :calculated, where(:calculated => true)
-  scope :uncalculated, where(:calculated => false)
 
   validates_presence_of :group, :entity
   validate :group_cannot_join_itself

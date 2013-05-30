@@ -27,7 +27,6 @@
           <label>Members</label>
           <p id="members">
             <input type="text" name="members" class="token_input" />
-            <span id="csv-download"><a href="#">Download as CSV</a></span>
           </p>
         </fieldset>
         <fieldset class="tab-pane" id="rules">
@@ -51,7 +50,12 @@
   </div>
   <div class="modal-footer">
     <a href="#" class="btn btn-danger" style="float: left; display: none;" id="delete">Delete Group</a>
-    <a href="#" class="btn" data-dismiss="modal">Close</a>
-    <a href="#" class="btn btn-primary" id="apply">Apply</a>
+    <div class="btn-group">
+      <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks"></i></button>
+      <ul class="dropdown-menu">
+        <li><a href="#" id="csv-download">Download CSV</a></li>
+      </ul>
+    </div>
+    <a href="#" class="btn btn-primary" id="apply">Apply Changes</a>
   </div>
 </div>

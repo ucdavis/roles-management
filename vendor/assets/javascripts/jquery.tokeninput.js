@@ -32,7 +32,7 @@ var DEFAULT_SETTINGS = {
     animateDropdown: true,
     placeholder: null,
     theme: null,
-    zindex: 9999,
+    zindex: 1100,
     resultsLimit: null,
 
     enableHTML: false,
@@ -485,7 +485,7 @@ $.TokenList = function (input, url_or_data, settings) {
     this.clear = function() {
         token_list.children("li").each(function() {
             if ($(this).children("input").length === 0) {
-                delete_token($(this));
+                delete_token($(this), false);
             }
         });
     };
@@ -734,7 +734,11 @@ $.TokenList = function (input, url_or_data, settings) {
     }
 
     // Delete a token from the token list
-    function delete_token (token) {
+    function delete_token (token, interactive) {
+        // Differentiates between programtic delete_token and user delete_token
+        // User actions would need to show the display hint, et all
+        interactive = typeof interactive !== 'undefined' ? interactive : true;
+        
         // Remove the id from the saved list
         var token_data = $.data(token.get(0), "tokeninput");
         var callback = $(input).data("settings").onDelete;
@@ -747,7 +751,7 @@ $.TokenList = function (input, url_or_data, settings) {
         selected_token = null;
 
         // Show the input box and give it focus again
-        focus_with_timeout(input_box);
+        if(interactive) focus_with_timeout(input_box);
 
         // Remove this token from the saved list
         saved_tokens = saved_tokens.slice(0,index).concat(saved_tokens.slice(index+1));
@@ -796,7 +800,7 @@ $.TokenList = function (input, url_or_data, settings) {
         dropdown
             .css({
                 position: "absolute",
-                top: token_list.offset().top + token_list[0].getBoundingClientRect().height,
+                top: token_list.offset().top + token_list.outerHeight(),
                 left: token_list.offset().left,
                 width: token_list.width(),
                 'z-index': $(input).data("settings").zindex
