@@ -19,6 +19,9 @@ class GroupRule < ActiveRecord::Base
   # Resolve (discern) the rule and return a UID and name for the person
   def resolve
     p = []
+    
+    # Ignore blank rules
+    return p if value == ""
 
     case column
     when "title"

@@ -32,8 +32,6 @@ class DssRm.Views.GroupShow extends Backbone.View
       defaultText: ""
       theme: "facebook"
       disabled: readonly
-    
-    @renderRules()
 
   render: ->
     readonly = @model.isReadOnly()
@@ -60,15 +58,17 @@ class DssRm.Views.GroupShow extends Backbone.View
     
     members_tokeninput = @$("input[name=members]")
     members_tokeninput.tokenInput "clear"
-    _.each @model.get("explicit_members"), (member) ->
-      members_tokeninput.tokenInput "add",
-        id: member.id
-        name: member.name
     _.each @model.get("calculated_members"), (member) ->
       members_tokeninput.tokenInput "add",
         id: member.id
         name: member.name
         calculated: true
+        class: "calculated"
+    _.each @model.get("explicit_members"), (member) ->
+      members_tokeninput.tokenInput "add",
+        id: member.id
+        name: member.name
+        class: "explicit"
     
     @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
     
@@ -80,6 +80,8 @@ class DssRm.Views.GroupShow extends Backbone.View
       @$('input').readonly()
       @$('textarea').readonly()
     
+    @renderRules()
+    
     @
   
   renderRules: ->
@@ -89,9 +91,9 @@ class DssRm.Views.GroupShow extends Backbone.View
       rules_table.append @renderRule(rule)
     
     if @model.get("rules").length is 0
-      @$("table#rules tbody").hide()
+      rules_table.hide()
     else
-      @$("table#rules tbody").show()
+      rules_table.show()
     
     @
   
@@ -134,17 +136,20 @@ class DssRm.Views.GroupShow extends Backbone.View
       m.calculated != true
     )
 
+    # Note: the _.filter() on rules is to avoid saving empty rules (rules with no value set)
     @model.save
       name: @$('input[name=name]').val()
       description: @$('textarea[name=description]').val()
       owners: @$('input[name=owners]').tokenInput('get')
       operators: @$('input[name=operators]').tokenInput('get')
       explicit_members: explicit_tokeninput_members
-      rules: _.map($('table#rules>tbody>tr'), (el, i) ->
+      rules: _.filter(_.map($('table#rules>tbody>tr'), (el, i) ->
         id: $(el).data('rule_id')
         column: $(el).find("#column").val(),
         condition: $(el).find("#condition").val(),
         value: $(el).find("#value").val()
+      ), (r) ->
+        r.value != ""
       )
     ,
       success: ->

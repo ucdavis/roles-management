@@ -1,3 +1,29 @@
 .modal table tr td input#group_rules_attributes_new_rules_value {
   width: 350px;
 }
+
+.modal button#group_rule_add {
+  width: 200px;
+  margin-top: 1em;
+  margin-left: 165px;
+}
+
+ul.token-input-list-facebook li.calculated {
+  background-color: #DFF0D8;
+  border-color: #D6E9C6;
+  color: #468847;
+  
+  .token-input-delete-token-facebook {
+    color: #468847;
+  }
+}
+
+ul.token-input-list-facebook li.explicit {
+  background-color: #D9EDF7;
+  border-color: #BCE8F1;
+  color: #3A87AD;
+
+  .token-input-delete-token-facebook {
+    color: #3A87AD;
+  }
+}
