@@ -4,7 +4,7 @@ class DssRm.Views.PersonShow extends Backbone.View
   tagName: "div"
   
   events:
-    "click a#apply": "save"
+    "click #apply": "save"
     "click a#rescan": "rescan"
     "hidden": "cleanUpModal"
     "click #delete": "deleteEntity"
@@ -167,7 +167,9 @@ class DssRm.Views.PersonShow extends Backbone.View
 
   save: (e) ->
     unless @model.isReadOnly()
-      status_bar.show "Saving ..."
+      
+      @$('#apply').attr('disabled', 'disabled').html('Saving ...')
+      
       @model.set
         first: @$("input[name=first]").val()
         last: @$("input[name=last]").val()
@@ -178,10 +180,10 @@ class DssRm.Views.PersonShow extends Backbone.View
 
       @model.save {},
         success: ->
-          status_bar.hide()
+          @$('#apply').removeAttr('disabled').html('Apply Changes')
 
         error: ->
-          status_bar.show "An error occurred while saving.", "error"
+          @$('#apply').addClass('btn-danger').html('Error')
 
       @model.trigger "change"
 

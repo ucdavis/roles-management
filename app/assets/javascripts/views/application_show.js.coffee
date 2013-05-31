@@ -2,7 +2,7 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
   tagName: "div"
   
   events:
-    "click a#apply": "saveApplication"
+    "click #apply": "save"
     "click a#delete": "deleteApplication"
     "hidden": "cleanUpModal"
     "click button#add_role": "addRole"
@@ -75,8 +75,8 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
 
     this
 
-  saveApplication: ->
-    status_bar.show "Saving application ..."
+  save: ->
+    @$('#apply').attr('disabled', 'disabled').html('Saving ...')
     
     # Update the model silently, then save
     @model.set
@@ -99,11 +99,11 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
 
     @model.save {},
       success: =>
-        status_bar.hide()
+        @$('#apply').removeAttr('disabled').html('Apply Changes')
         @render()
 
       error: ->
-        status_bar.show "An error occurred while saving the application.", "error"
+        @$('#apply').addClass('btn-danger').html('Error')
 
       wait: true
 

@@ -4,7 +4,7 @@ class DssRm.Views.GroupShow extends Backbone.View
   tagName: "div"
   
   events:
-    "click a#apply": "save"
+    "click #apply": "save"
     "click button#group_rule_add": "addRule"
     "click button#remove_group_rule": "removeRule"
     "hidden": "cleanUpModal"
@@ -126,7 +126,7 @@ class DssRm.Views.GroupShow extends Backbone.View
   save: (e) ->
     e.preventDefault()
     
-    status_bar.show 'Saving ...'
+    @$('#apply').attr('disabled', 'disabled').html('Saving ...')
 
     # tokenInput('get') contains both explicit and calculated members.
     # Calculatedness is indicated by a flag inserted at render time.
@@ -153,9 +153,9 @@ class DssRm.Views.GroupShow extends Backbone.View
       )
     ,
       success: ->
-        status_bar.hide()
+        @$('#apply').removeAttr('disabled').html('Apply Changes')
       error: ->
-        status_bar.show 'An error occurred while saving.', 'error'
+        @$('#apply').addClass('btn-danger').html('Error')
 
   deleteEntity: ->
     @$el.fadeOut()

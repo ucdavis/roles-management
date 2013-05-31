@@ -58,3 +58,9 @@
 form label {
   font-weight: bold;
 }
+
+.modal-footer {
+  .dropdown-menu li a {
+    text-align: left;
+  }
+}
