@@ -39,6 +39,10 @@ class Group < Entity
       :calculated_members => self.calculated_members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
+  
+  def ou?
+    code != nil
+  end
 
   # Returns all members, both explicitly assigned and via rules.
   # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
