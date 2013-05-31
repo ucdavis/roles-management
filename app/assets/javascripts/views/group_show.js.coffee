@@ -12,7 +12,7 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   initialize: ->
     @$el.html JST["templates/entities/show_group"](model: @model)
-    @listenTo @model, "change", @render
+    @listenTo @model, "sync", @render
     readonly = @model.isReadOnly()
     
     @$("input[name=owners]").tokenInput Routes.people_path(),
@@ -32,6 +32,27 @@ class DssRm.Views.GroupShow extends Backbone.View
       defaultText: ""
       theme: "facebook"
       disabled: readonly
+      onAdd: (item) =>
+        # Any members added via this interaction will be explicit members
+        @model.set('explicit_members', @model.get('explicit_members').push
+          id: item.id
+          loginid: item.loginid
+          name: item.name
+        )
+      onDelete: (item) =>
+        # Did they delete an explicit member or calculated method?
+        # Calculated members being deleted require a new rule be created
+        if item.calculated
+          # Calculated member requires we make a new rule
+          $rule = @addRule()
+          $rule.find('select#column').val('loginid')
+          $rule.find('select#condition').val('is not')
+          $rule.find('input#value').val(item.loginid)
+        else
+          # Explicit member is simply removed from the list, no rule needed
+          @model.set('explicit_members', _.filter(@model.get('explicit_members'), (m) =>
+            m.id != item.id
+          ))
 
   render: ->
     readonly = @model.isReadOnly()
@@ -62,12 +83,14 @@ class DssRm.Views.GroupShow extends Backbone.View
       members_tokeninput.tokenInput "add",
         id: member.id
         name: member.name
+        loginid: member.loginid
         calculated: true
         class: "calculated"
     _.each @model.get("explicit_members"), (member) ->
       members_tokeninput.tokenInput "add",
         id: member.id
         name: member.name
+        loginid: member.loginid
         class: "explicit"
     
     @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
@@ -171,10 +194,13 @@ class DssRm.Views.GroupShow extends Backbone.View
 
     false
 
+  # Renders a new rule and returns jQuery object
   addRule: (e) ->
     rules_table = @$("table#rules tbody")
     rules_table.show() # it will be hidden if there are no rules already
-    rules_table.append @renderRule({ id: null, column: null, condition: null, value: null })
+    $rule = @renderRule({ id: null, column: null, condition: null, value: null })
+    rules_table.append $rule
+    return $rule
 
   removeRule: (e) ->
     rule_id = $(e.target).parents("tr").data("rule_id")
