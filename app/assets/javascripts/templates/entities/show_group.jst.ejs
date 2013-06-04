@@ -7,19 +7,20 @@
     <div class="tabbable tabs-left">
       <ul class="nav nav-tabs">
         <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#relations" data-toggle="tab">Relations</a></li>
         <li><a href="#rules" data-toggle="tab">Rules</a></li>
       </ul>
       <div class="tab-content">
-        <form>
-
-        <fieldset class="tab-pane active" id="summary">
+        <div class="tab-pane active" id="summary">
           <span id="corner_summary">
             <span id="group_member_count">count</span><br />members
           </span>
           <label>Name</label>
-          <input type="text" class="input-xxlarge" name="name" />
+          <input type="text" class="input-xlarge" name="name" />
           <label>Description</label>
           <textarea name="description" class="input-xxlarge" rows="3"></textarea>
+        </div>
+        <div class="tab-pane" id="relations">
           <label>Owners</label>
           <input type="text" name="owners" class="token_input" />
           <label>Operators</label>
@@ -28,13 +29,13 @@
           <p id="members">
             <input type="text" name="members" class="token_input" />
           </p>
-        </fieldset>
-        <fieldset class="tab-pane" id="rules">
+        </div>
+        <div class="tab-pane" id="rules">
           <table id="rules">
             <thead>
               <tr>
                 <th class="input-medium">Column</th>
-                <th class="input-small">Condition</th>
+                <th class="input-mini">Condition</th>
                 <th class="input-xlarge">Value</th>
                 <th><!-- Actions --></th>
               </tr>
@@ -43,8 +44,7 @@
           </table>
 
           <p><button class="btn" id="group_rule_add" type="button">Add Rule</button></p>
-        </fieldset>
-        </form>
+        </div>
       </div>
     </div> <!-- /tabbable -->
   </div>

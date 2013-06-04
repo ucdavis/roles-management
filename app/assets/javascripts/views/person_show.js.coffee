@@ -12,22 +12,21 @@ class DssRm.Views.PersonShow extends Backbone.View
   initialize: ->
     @$el.html JST["templates/entities/show_person"](model: @model)
     @listenTo @model, "change", @render
-    readonly = @model.isReadOnly()
+    @readonly = @model.isReadOnly()
     
+    @initializeRelationsTab()
+    @initializeRolesTab()
+  
+  initializeRelationsTab: ->
     @$("input[name=favorites]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
-      disabled: readonly
+      disabled: @readonly
       onAdd: (item) =>
         favorites = @model.get("favorites")
-        unless _.find(favorites, (i) ->
-          i.id is item.id
-        )
-          # onAdd is triggered by the .tokenInput("add") lines in render,
-          # so we need to ensure this actually is a new item
-          favorites.push item
-          @model.set "favorites", favorites
+        favorites.push item
+        @model.set "favorites", favorites
 
       onDelete: (item) =>
         favorites = _.filter(@model.get("favorites"), (favorite) ->
@@ -39,16 +38,11 @@ class DssRm.Views.PersonShow extends Backbone.View
       crossDomain: false
       defaultText: ""
       theme: "facebook"
-      disabled: readonly
+      disabled: @readonly
       onAdd: (item) =>
         group_memberships = @model.get("group_memberships")
-        unless _.find(group_memberships.non_ous, (i) ->
-          i.id is item.id
-        )
-          # onAdd is triggered by the .tokenInput("add") lines in render,
-          # so we need to ensure this actually is a new item
-          group_memberships.non_ous.push item
-          @model.set "group_memberships", group_memberships
+        group_memberships.non_ous.push item
+        @model.set "group_memberships", group_memberships
 
       onDelete: (item) =>
         group_memberships = @model.get("group_memberships")
@@ -61,16 +55,11 @@ class DssRm.Views.PersonShow extends Backbone.View
       crossDomain: false
       defaultText: ""
       theme: "facebook"
-      disabled: readonly
+      disabled: @readonly
       onAdd: (item) =>
         group_memberships = @model.get("group_memberships")
-        unless _.find(group_memberships.ous, (ou) ->
-          ou.id is item.id
-        )
-          # onAdd is triggered by the .tokenInput("add") lines in render,
-          # so we need to ensure this actually is a new item
-          group_memberships.ous.push item
-          @model.set "group_memberships", group_memberships
+        group_memberships.ous.push item
+        @model.set "group_memberships", group_memberships
 
       onDelete: (item) =>
         group_memberships = @model.get("group_memberships")
@@ -79,7 +68,8 @@ class DssRm.Views.PersonShow extends Backbone.View
         )
         @model.set "group_memberships", group_memberships
 
-    $rolesTab = @$("fieldset#roles")
+  initializeRolesTab: ->
+    $rolesTab = @$("div#roles")
     _.each @model.roles.groupBy("application_name"), (roleset) =>
       app_name = roleset[0].get("application_name")
       app_id = roleset[0].get("application_id")
@@ -88,17 +78,12 @@ class DssRm.Views.PersonShow extends Backbone.View
         crossDomain: false
         defaultText: ""
         theme: "facebook"
-        disabled: readonly
+        disabled: @readonly
         onAdd: (item) =>
           roles = @model.get("roles")
-          unless _.find(roles, (i) ->
-            i.id is item.id
-          )
-            # onAdd is triggered by the .tokenInput("add") lines in render,
-            # so we need to ensure this actually is a new item
-            roles.push item
-            @model.set "roles", roles
-            @model.trigger "change"
+          roles.push item
+          @model.set "roles", roles
+          @model.trigger "change"
 
         onDelete: (item) =>
           roles = _.filter(@model.get("roles"), (role) ->
@@ -108,8 +93,6 @@ class DssRm.Views.PersonShow extends Backbone.View
           @model.trigger "change"
 
   render: ->
-    readonly = @model.isReadOnly()
-    
     @$("h3").html @model.escape("name")
     @$("h5").html @model.escape("byline")
 
@@ -123,30 +106,30 @@ class DssRm.Views.PersonShow extends Backbone.View
     
     favorites_tokeninput = @$("input[name=favorites]")
     favorites_tokeninput.tokenInput "clear"
-    _.each @model.get("favorites"), (favorite) ->
+    _.each @model.get("favorites"), (favorite) =>
       favorites_tokeninput.tokenInput "add",
         id: favorite.id
         name: favorite.name
-        readonly: readonly
+        readonly: @readonly
 
     groups_tokeninput = @$("input[name=groups]")
     groups_tokeninput.tokenInput "clear"
-    _.each @model.get("group_memberships").non_ous, (group) ->
+    _.each @model.get("group_memberships").non_ous, (group) =>
       groups_tokeninput.tokenInput "add",
         id: group.id
         name: group.name
-        readonly: readonly
+        readonly: @readonly
 
     ous_tokeninput = @$("input[name=ous]")
     ous_tokeninput.tokenInput "clear"
-    _.each @model.get("group_memberships").ous, (ou) ->
+    _.each @model.get("group_memberships").ous, (ou) =>
       ous_tokeninput.tokenInput "add",
         id: ou.id
         name: ou.name
-        readonly: readonly
+        readonly: @readonly
 
     # Roles tab
-    $rolesTab = @$("fieldset#roles")
+    $rolesTab = @$("div#roles")
     _.each @model.roles.groupBy("application_name"), (roleset) =>
       app_name = roleset[0].get("application_name")
       app_id = roleset[0].get("application_id")
@@ -156,9 +139,9 @@ class DssRm.Views.PersonShow extends Backbone.View
         role_tokeninput.tokenInput "add",
           id: role.get("id")
           name: role.get("name")
-          readonly: readonly
+          readonly: @readonly
 
-    if readonly
+    if @readonly
       @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
       @$('textarea').readonly()
@@ -193,7 +176,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     status_bar.show "Re-scanning ..."
     
     # Disable all form elements while rescanning
-    $('.modal-body form').children().each (i, el) ->
+    $('.modal-body div.tab-content').children().each (i, el) ->
       $(el).attr("disabled", true)
     
     @model.fetch
@@ -201,7 +184,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       type: 'POST'
       success: (data) ->
         # Re-enable all form elements
-        $('.modal-body form').children().each (i, el) ->
+        $('.modal-body div.tab-content').children().each (i, el) ->
           $(el).attr("disabled", false)
         status_bar.hide()
       failure: (data) ->

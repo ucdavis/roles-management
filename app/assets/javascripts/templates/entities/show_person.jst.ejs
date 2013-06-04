@@ -8,50 +8,60 @@
     <div class="tabbable tabs-left">
       <ul class="nav nav-tabs">
         <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#relations" data-toggle="tab">Relations</a></li>
         <li><a href="#roles" data-toggle="tab">Roles</a></li>
       </ul>
       <div class="tab-content">
-        <form>
-          <fieldset class="tab-pane active" id="summary">
+        <div class="tab-pane fade in active" id="summary">
+          <span style="display: inline-block;">
             <label for="first">Name</label>
             <input type="text" name="first" class="text small" /> <input type="text" name="last" class="text small" />
-            <br />
-            <span style="display: inline-block;">
-              <label for="email">E-Mail</label>
-              <input type="text" name="email" class="text small" />
-            </span>
-            <span style="display: inline-block;">
-              <label for="loginid">Login ID</label>
-              <input type="text" name="loginid" class="text small" />
-            </span>
-            <br />
-            <span style="display: inline-block;">
-              <label for="phone">Phone</label>
-              <input type="text" name="phone" class="text" />
-            </span>
-            <span style="display: inline-block;">
-              <label for="address">Address</label>
-              <input type="text" name="address" class="text" />
-            </span>
-            <br />
+          </span>
+          
+          <br />
+          
+          <span style="display: inline-block;">
+            <label for="loginid">Login ID</label>
+            <input type="text" name="loginid" class="text input-small" />
+          </span>
+          <span style="display: inline-block;">
+            <label for="email">E-Mail</label>
+            <input type="text" name="email" class="text small" />
+          </span>
 
-            <p>
-              <label for="favorites">Favorites</label>
-              <input type="text" name="favorites" class="token_input" />
-            </p>
+          <br />
 
-            <label for="group_tokens">Group Memberships</label>
-            <p>
-              <input type="text" name="groups" class="token_input" />
-            </p>
+          <span style="display: inline-block;">
+            <label for="phone">Phone</label>
+            <input type="text" name="phone" class="text input-medium" />
+          </span>
+          <span style="display: inline-block;">
+            <label for="address">Address</label>
+            <input type="text" name="address" class="text input-xlarge" />
+          </span>
+        </div>
+        <div class="tab-pane fade" id="relations">
+          <p>
+            <label for="favorites">Favorites</label>
+            <input type="text" name="favorites" class="token_input" />
+          </p>
 
-            <label for="ou_tokens">Organizational Units</label>
-            <p>
-              <input type="text" name="ous" class="token_input" />
-            </p>
-          </fieldset>
-          <fieldset class="tab-pane" id="roles"></fieldset>
-        </form>
+          <label for="group_ownership_tokens">Group Ownerships</label>
+          <p>
+            <input type="text" name="group_ownerships" class="token_input" />
+          </p>
+
+          <label for="group_tokens">Group Memberships</label>
+          <p>
+            <input type="text" name="groups" class="token_input" />
+          </p>
+
+          <label for="ou_tokens">Organizational Units</label>
+          <p>
+            <input type="text" name="ous" class="token_input" />
+          </p>
+        </div>
+        <div class="tab-pane fade" id="roles"></div>
       </div>
     </div> <!-- /tabbable -->
   </div>

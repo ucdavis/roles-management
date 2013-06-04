@@ -9,7 +9,7 @@
 //= require status_bar
 //= require bootbox
 //= require bootstrap-modal-alert
-//= require jquery.tokeninput
+//= require jquery.tokeninput-modified
 //= require routes
 //
 //= require dss-rm
