@@ -133,5 +133,5 @@
 /* Required to avoid overflow issues with typeahead dropdowns in the group rule interface being cut off by short windows. */
 /* Won't be fixed in Bootstrap until v3. */
 #entityShowModal > .modal-body {
-  overflow-y: visible;
+//  overflow-y: visible;
 }

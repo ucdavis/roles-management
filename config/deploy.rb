@@ -35,14 +35,14 @@ after "deploy", "deploy:migrations" # run any pending migrations
 
 namespace :deploy do
   before 'deploy:update_code' do
-    # puts "--> Running tests, please wait ..."
-    # unless system "bundle exec rake > #{test_log} 2>&1" #' > /dev/null'
-    #   puts "--> Tests failed. Run `cat #{test_log}` to see what went wrong."
-    #   exit
-    # else
-    #   puts "--> Tests passed"
-    #   system "rm #{test_log}"
-    # end
+    puts "--> Running tests, please wait ..."
+    unless system "bundle exec rake > #{test_log} 2>&1" #' > /dev/null'
+      puts "--> Tests failed. Run `cat #{test_log}` to see what went wrong."
+      exit
+    else
+      puts "--> Tests passed"
+      system "rm #{test_log}"
+    end
   end
 
   %w[start stop restart].each do |command|
