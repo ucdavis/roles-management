@@ -52,7 +52,7 @@ class Role < ActiveRecord::Base
   # members takes all people and all people from groups (flattens the group)
   # and returns them as a list.
   def members
-    Rails.cache.fetch("roles/members/#{id}") do
+    #Rails.cache.fetch("roles/members/#{id}") do
       all = []
 
       # Add all people
@@ -65,7 +65,7 @@ class Role < ActiveRecord::Base
 
       # Return a unique list
       all.uniq{ |x| x.id }
-    end
+      #end
   end
 
   # Syncronizes with AD
@@ -101,7 +101,8 @@ class Role < ActiveRecord::Base
   def clear_cache_if_needed(force_clear = false)
     if self.changed? or force_clear
       logger.debug "Clearing cache for role #{id}"
-      Rails.cache.delete("roles/members/#{id}")
+      # Disabling role member cache until it can be recalculated on group change
+      #Rails.cache.delete("roles/members/#{id}")
       return true
     else
       logger.debug "Not clearing cache for role #{id}, nothing has changed. Associations may still clear cache."
