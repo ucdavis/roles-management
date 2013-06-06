@@ -4,11 +4,12 @@ class DssRm.Views.GroupShow extends Backbone.View
   tagName: "div"
   
   events:
-    "click #apply": "save"
-    "click button#group_rule_add": "addRule"
-    "click button#remove_group_rule": "removeRule"
-    "hidden": "cleanUpModal"
-    "click #delete": "deleteEntity"
+    "click #apply"                   : "save"
+    "click button#group_rule_add"    : "addRule"
+    "click button#remove_group_rule" : "removeRule"
+    "hidden"                         : "cleanUpModal"
+    "click #delete"                  : "deleteEntity"
+    "shown"                          : "adjustOverflow"
 
   initialize: ->
     @$el.html JST["templates/entities/show_group"](model: @model)
@@ -257,3 +258,14 @@ class DssRm.Views.GroupShow extends Backbone.View
     id = parseInt(parts[0])
     label = parts[1]
     label
+  
+  # Due to a bug in Bootstrap 2.x modals, we need to adjust
+  # the overflow to be off when using tokeninput tabs but
+  # on when using typeahead tabs
+  adjustOverflow: (e) ->
+    switch $(e.target).attr('href')
+      when '#rules'
+        @$('.modal-body').css('overflow-y', 'visible')
+      else
+        @$('.modal-body').css('overflow-y', 'hidden')
+  
