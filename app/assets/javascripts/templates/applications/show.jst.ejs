@@ -7,13 +7,14 @@
     <div class="tabbable tabs-left">
       <ul class="nav nav-tabs">
         <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+        <li><a href="#relations" data-toggle="tab">Relations</a></li>
         <li><a href="#roles" data-toggle="tab">Roles</a></li>
         <li><a href="#ad" data-toggle="tab">Active Directory</a></li>
       </ul>
       <div class="tab-content">
         <form>
 
-        <fieldset class="tab-pane active" id="summary">
+        <fieldset class="tab-pane active fade in" id="summary">
           <label>Name</label>
           <input type="text" name="name" />
           <label>Description</label>
@@ -23,7 +24,10 @@
           <label>Operators</label>
           <input type="text" name="operators" class="token_input" />
         </fieldset>
-        <fieldset class="tab-pane" id="roles">
+        <fieldset class="tab-pane fade" id="relations">
+
+        </fieldset>
+        <fieldset class="tab-pane fade" id="roles">
           <table id="roles">
             <thead>
               <tr>
@@ -38,7 +42,7 @@
           </table>
           <p><button class="btn" id="add_role">Add Role</button></p>
         </fieldset>
-        <fieldset class="tab-pane" id="ad">
+        <fieldset class="tab-pane fade" id="ad">
           <div id="ad_fields"></div>
           <p>
             <small>The group name is appended after the base AD path configured by the administrator.</small>
