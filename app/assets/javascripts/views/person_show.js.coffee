@@ -24,49 +24,64 @@ class DssRm.Views.PersonShow extends Backbone.View
       theme: "facebook"
       disabled: @readonly
       onAdd: (item) =>
-        favorites = @model.get("favorites")
-        favorites.push item
-        @model.set "favorites", favorites
+        @model.set "favorites", @model.get("favorites").push(item)
 
       onDelete: (item) =>
-        favorites = _.filter(@model.get("favorites"), (favorite) ->
+        @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
           favorite.id isnt item.id
         )
-        @model.set "favorites", favorites
 
-    @$("input[name=groups]").tokenInput Routes.groups_path(),
+    @$("input[name=group_ownership_tokens]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
       disabled: @readonly
-      onAdd: (item) =>
-        group_memberships = @model.get("group_memberships")
-        group_memberships.non_ous.push item
-        @model.set "group_memberships", group_memberships
+      # onAdd: (item) =>
+      #   @model.set "favorites", @model.get("favorites").push(item)
+      # 
+      # onDelete: (item) =>
+      #   @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
+      #     favorite.id isnt item.id
+      #   )
 
-      onDelete: (item) =>
-        group_memberships = @model.get("group_memberships")
-        group_memberships.non_ous = _.filter(@model.get("group_memberships").non_ous, (group) ->
-          group.id isnt item.id
-        )
-        @model.set "group_memberships", group_memberships
-
-    @$("input[name=ous]").tokenInput Routes.ous_path(),
+    @$("input[name=group_operatorship_tokens]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
       disabled: @readonly
-      onAdd: (item) =>
-        group_memberships = @model.get("group_memberships")
-        group_memberships.ous.push item
-        @model.set "group_memberships", group_memberships
+      # onAdd: (item) =>
+      #   @model.set "favorites", @model.get("favorites").push(item)
+      # 
+      # onDelete: (item) =>
+      #   @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
+      #     favorite.id isnt item.id
+      #   )
 
-      onDelete: (item) =>
-        group_memberships = @model.get("group_memberships")
-        group_memberships.ous= _.filter(@model.get("group_memberships").ous, (ou) ->
-          ou.id isnt item.id
-        )
-        @model.set "group_memberships", group_memberships
+    @$("input[name=non_ou_group_membership_tokens]").tokenInput Routes.people_path(),
+      crossDomain: false
+      defaultText: ""
+      theme: "facebook"
+      disabled: @readonly
+      # onAdd: (item) =>
+      #   @model.set "favorites", @model.get("favorites").push(item)
+      # 
+      # onDelete: (item) =>
+      #   @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
+      #     favorite.id isnt item.id
+      #   )
+
+    @$("input[name=ou_group_membership_tokens]").tokenInput Routes.people_path(),
+      crossDomain: false
+      defaultText: ""
+      theme: "facebook"
+      disabled: @readonly
+      # onAdd: (item) =>
+      #   @model.set "favorites", @model.get("favorites").push(item)
+      # 
+      # onDelete: (item) =>
+      #   @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
+      #     favorite.id isnt item.id
+      #   )
 
   initializeRolesTab: ->
     $rolesTab = @$("div#roles")
@@ -95,6 +110,8 @@ class DssRm.Views.PersonShow extends Backbone.View
   render: ->
     @$("h3").html @model.escape("name")
     @$("h5").html @model.escape("byline")
+    
+    console.log @model
 
     # Summary tab
     @$("input[name=first]").val @model.escape("first")
@@ -112,21 +129,37 @@ class DssRm.Views.PersonShow extends Backbone.View
         name: favorite.name
         readonly: @readonly
 
-    groups_tokeninput = @$("input[name=groups]")
-    groups_tokeninput.tokenInput "clear"
-    _.each @model.get("group_memberships").non_ous, (group) =>
-      groups_tokeninput.tokenInput "add",
-        id: group.id
-        name: group.name
+    group_ownership_tokens_tokeninput = @$("input[name=group_ownership_tokens]")
+    group_ownership_tokens_tokeninput.tokenInput "clear"
+    @model.group_ownerships.each (group) =>
+      group_ownership_tokens_tokeninput.tokenInput "add",
+        id: group.get('id')
+        name: group.get('name')
         readonly: @readonly
 
-    ous_tokeninput = @$("input[name=ous]")
-    ous_tokeninput.tokenInput "clear"
-    _.each @model.get("group_memberships").ous, (ou) =>
-      ous_tokeninput.tokenInput "add",
-        id: ou.id
-        name: ou.name
-        readonly: @readonly
+    group_operatorship_tokens_tokeninput = @$("input[name=group_operatorship_tokens]")
+    group_operatorship_tokens_tokeninput.tokenInput "clear"
+    # _.each @model.get("favorites"), (favorite) =>
+    #   favorites_tokeninput.tokenInput "add",
+    #     id: favorite.id
+    #     name: favorite.name
+    #     readonly: @readonly
+
+    non_ou_group_membership_tokens_tokeninput = @$("input[name=non_ou_group_membership_tokens]")
+    non_ou_group_membership_tokens_tokeninput.tokenInput "clear"
+    # _.each @model.get("favorites"), (favorite) =>
+    #   favorites_tokeninput.tokenInput "add",
+    #     id: favorite.id
+    #     name: favorite.name
+    #     readonly: @readonly
+
+    ou_group_membership_tokens_tokeninput = @$("input[name=ou_group_membership_tokens]")
+    ou_group_membership_tokens_tokeninput.tokenInput "clear"
+    # _.each @model.get("favorites"), (favorite) =>
+    #   favorites_tokeninput.tokenInput "add",
+    #     id: favorite.id
+    #     name: favorite.name
+    #     readonly: @readonly
 
     # Roles tab
     $rolesTab = @$("div#roles")

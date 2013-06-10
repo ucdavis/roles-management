@@ -121,7 +121,7 @@ class Person < Entity
                                           application_name: r.application_name, application_id: r.application_id } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
       :explicit_group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } },
-      :calculated_group_memberships => self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } },
+      :calculated_group_memberships => self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
       :group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } } + self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
       :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
       :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } },

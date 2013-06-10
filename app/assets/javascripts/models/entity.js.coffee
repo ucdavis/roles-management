@@ -19,6 +19,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
     else if type is "Person"
       @set "roles", []  if @get("roles") is `undefined`
       @set "explicit_group_memberships", []  if @get("explicit_group_memberships") is `undefined`
+      @set "calculated_group_memberships", []  if @get("calculated_group_memberships") is `undefined`
     
     @updateAttributes()
     @on "change", @updateAttributes, this
@@ -53,10 +54,13 @@ DssRm.Models.Entity = Backbone.Model.extend(
     
     if type is "Person"
       # What happens here when a user has a favorite that they also own? the group has two CIDs?
+      # Ensure collections exist
       @favorites = new DssRm.Collections.Entities(@get("favorites")) if @favorites is `undefined`
       @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
       @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships")) if @group_operatorships is `undefined`
       @roles = new DssRm.Collections.Roles(@get("roles")) if @roles is `undefined`
+      
+      # Reset their data
       @favorites.reset @get("favorites")
       @group_ownerships.reset @get("group_ownerships")
       @group_operatorships.reset @get("group_operatorships")
@@ -107,12 +111,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.explicit_group_ids = @get("explicit_group_memberships").map((group) ->
         group.id
       )
-      json.group_ownership_ids = @group_ownerships.map((group) ->
-        group.id
-      )
-      json.group_operatorship_ids = @group_operatorships.map((group) ->
-        group.id
-      )
+      # We don't include calculated group IDs as those do not come from entities (but rather group rules)
     
     entity: json
 )
