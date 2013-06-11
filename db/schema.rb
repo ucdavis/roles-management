@@ -31,6 +31,12 @@ ActiveRecord::Schema.define(:version => 20130529233812) do
     t.string   "name"
   end
 
+  create_table "api_users", :force => true do |t|
+    t.integer  "api_key_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "api_whitelisted_ip_users", :force => true do |t|
     t.string   "address"
     t.datetime "created_at", :null => false

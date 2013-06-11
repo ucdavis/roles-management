@@ -45,7 +45,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     entity.fetch
       success: =>
         status_bar.hide()
-        new DssRm.Views.EntityShow(entity).render().$el.modal()
+        new DssRm.Views.EntityShow(entity).entityView.$el.modal()
 
       error: ->
         status_bar.show "An error occurred while loading the entity.", "error"

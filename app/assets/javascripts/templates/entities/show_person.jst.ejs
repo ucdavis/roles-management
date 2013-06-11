@@ -1,81 +1,79 @@
-<div class="modal" id="entityShowModal">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>name</h3>
-    <h5>byline</h5>
-  </div>
-  <div class="modal-body">
-    <div class="tabbable tabs-left">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
-        <li><a href="#relations" data-toggle="tab">Relations</a></li>
-        <li><a href="#roles" data-toggle="tab">Roles</a></li>
-      </ul>
-      <div class="tab-content">
-        <div class="tab-pane fade in active" id="summary">
-          <span style="display: inline-block;">
-            <label for="first">Name</label>
-            <input type="text" name="first" class="text small" /> <input type="text" name="last" class="text small" />
-          </span>
-          
-          <br />
-          
-          <span style="display: inline-block;">
-            <label for="loginid">Login ID</label>
-            <input type="text" name="loginid" class="text input-small" />
-          </span>
-          <span style="display: inline-block;">
-            <label for="email">E-Mail</label>
-            <input type="text" name="email" class="text small" />
-          </span>
+<div class="modal-header">
+  <a class="close" data-dismiss="modal">×</a>
+  <h3>name</h3>
+  <h5>byline</h5>
+</div>
+<div class="modal-body">
+  <div class="tabbable tabs-left">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+      <li><a href="#relations" data-toggle="tab">Relations</a></li>
+      <li><a href="#roles" data-toggle="tab">Roles</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane fade in active" id="summary">
+        <span style="display: inline-block;">
+          <label for="first">Name</label>
+          <input type="text" name="first" class="text small" /> <input type="text" name="last" class="text small" />
+        </span>
+        
+        <br />
+        
+        <span style="display: inline-block;">
+          <label for="loginid">Login ID</label>
+          <input type="text" name="loginid" class="text input-small" />
+        </span>
+        <span style="display: inline-block;">
+          <label for="email">E-Mail</label>
+          <input type="text" name="email" class="text small" />
+        </span>
 
-          <br />
+        <br />
 
-          <span style="display: inline-block;">
-            <label for="phone">Phone</label>
-            <input type="text" name="phone" class="text input-medium" />
-          </span>
-          <span style="display: inline-block;">
-            <label for="address">Address</label>
-            <input type="text" name="address" class="text input-xlarge" />
-          </span>
-        </div>
-        <div class="tab-pane fade" id="relations">
-          <label for="favorites">Favorites</label>
-          <p>
-            <input type="text" name="favorites" class="token_input" />
-          </p>
-
-          <label for="group_ownership_tokens">Group Ownerships</label>
-          <p>
-            <input type="text" name="group_ownership_tokens" class="token_input" />
-          </p>
-
-          <label for="group_operatorship_tokens">Group Operatorships</label>
-          <p>
-            <input type="text" name="group_operatorship_tokens" class="token_input" />
-          </p>
-
-          <label for="non_ou_group_membership_tokens">Group Memberships</label>
-          <p>
-            <input type="text" name="non_ou_group_membership_tokens" class="token_input" />
-          </p>
-
-          <label for="ou_group_membership_tokens">Organizational Units</label>
-          <p>
-            <input type="text" name="ou_group_membership_tokens" class="token_input" />
-          </p>
-        </div>
-        <div class="tab-pane fade" id="roles"></div>
+        <span style="display: inline-block;">
+          <label for="phone">Phone</label>
+          <input type="text" name="phone" class="text input-medium" />
+        </span>
+        <span style="display: inline-block;">
+          <label for="address">Address</label>
+          <input type="text" name="address" class="text input-xlarge" />
+        </span>
       </div>
-    </div> <!-- /tabbable -->
-  </div>
-  <div class="modal-footer">
-    <div style="float: left;">
-      <a href="#" class="btn" id="rescan">Rescan</a>
+      <div class="tab-pane fade" id="relations">
+        <label for="favorites">Favorites</label>
+        <p>
+          <input type="text" name="favorites" class="token_input" />
+        </p>
+
+        <label for="group_ownership_tokens">Group Ownerships</label>
+        <p>
+          <input type="text" name="group_ownership_tokens" class="token_input" />
+        </p>
+
+        <label for="group_operatorship_tokens">Group Operatorships</label>
+        <p>
+          <input type="text" name="group_operatorship_tokens" class="token_input" />
+        </p>
+
+        <label for="non_ou_group_membership_tokens">Group Memberships</label>
+        <p>
+          <input type="text" name="non_ou_group_membership_tokens" class="token_input" />
+        </p>
+
+        <label for="ou_group_membership_tokens">Organizational Units</label>
+        <p>
+          <input type="text" name="ou_group_membership_tokens" class="token_input" />
+        </p>
+      </div>
+      <div class="tab-pane fade" id="roles"></div>
     </div>
-    <% if( !model.isReadOnly()) { %>
-      <button class="btn btn-primary" id="apply">Apply Changes</button>
-    <% } %>
+  </div> <!-- /tabbable -->
+</div>
+<div class="modal-footer">
+  <div style="float: left;">
+    <a href="#" class="btn" id="rescan">Rescan</a>
   </div>
+  <% if( !model.isReadOnly()) { %>
+    <button class="btn btn-primary" id="apply">Apply Changes</button>
+  <% } %>
 </div>

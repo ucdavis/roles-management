@@ -1,61 +1,59 @@
-<div class="modal" id="entityShowModal">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>name</h3>
-  </div>
-  <div class="modal-body">
-    <div class="tabbable tabs-left">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
-        <li><a href="#relations" data-toggle="tab">Relations</a></li>
-        <li><a href="#rules" data-toggle="tab">Rules</a></li>
-      </ul>
-      <div class="tab-content">
-        <div class="tab-pane active fade in" id="summary">
-          <span id="corner_summary">
-            <span id="group_member_count">count</span><br />members
-          </span>
-          <label>Name</label>
-          <input type="text" class="input-xlarge" name="name" />
-          <label>Description</label>
-          <textarea name="description" class="input-xxlarge" rows="3"></textarea>
-        </div>
-        <div class="tab-pane fade" id="relations">
-          <label>Owners</label>
-          <input type="text" name="owners" class="token_input" />
-          <label>Operators</label>
-          <input type="text" name="operators" class="token_input" />
-          <label>Members</label>
-          <p id="members">
-            <input type="text" name="members" class="token_input" />
-          </p>
-        </div>
-        <div class="tab-pane fade" id="rules">
-          <table id="rules">
-            <thead>
-              <tr>
-                <th class="input-medium">Column</th>
-                <th class="input-mini">Condition</th>
-                <th class="input-xlarge">Value</th>
-                <th><!-- Actions --></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-
-          <p><button class="btn" id="group_rule_add" type="button">Add Rule</button></p>
-        </div>
+<div class="modal-header">
+  <a class="close" data-dismiss="modal">×</a>
+  <h3>name</h3>
+</div>
+<div class="modal-body">
+  <div class="tabbable tabs-left">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+      <li><a href="#relations" data-toggle="tab">Relations</a></li>
+      <li><a href="#rules" data-toggle="tab">Rules</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active fade in" id="summary">
+        <span id="corner_summary">
+          <span id="group_member_count">count</span><br />members
+        </span>
+        <label>Name</label>
+        <input type="text" class="input-xlarge" name="name" />
+        <label>Description</label>
+        <textarea name="description" class="input-xxlarge" rows="3"></textarea>
       </div>
-    </div> <!-- /tabbable -->
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn btn-danger" style="float: left; display: none;" id="delete">Delete Group</a>
-    <div class="btn-group">
-      <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks"></i></button>
-      <ul class="dropdown-menu">
-        <li><a href="#" id="csv-download"><i class="icon-download-alt"></i> Download CSV</a></li>
-      </ul>
+      <div class="tab-pane fade" id="relations">
+        <label>Owners</label>
+        <input type="text" name="owners" class="token_input" />
+        <label>Operators</label>
+        <input type="text" name="operators" class="token_input" />
+        <label>Members</label>
+        <p id="members">
+          <input type="text" name="members" class="token_input" />
+        </p>
+      </div>
+      <div class="tab-pane fade" id="rules">
+        <table id="rules">
+          <thead>
+            <tr>
+              <th class="input-medium">Column</th>
+              <th class="input-mini">Condition</th>
+              <th class="input-xlarge">Value</th>
+              <th><!-- Actions --></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <p><button class="btn" id="group_rule_add" type="button">Add Rule</button></p>
+      </div>
     </div>
-    <button class="btn btn-primary" id="apply">Apply Changes</button>
+  </div> <!-- /tabbable -->
+</div>
+<div class="modal-footer">
+  <a href="#" class="btn btn-danger" style="float: left; display: none;" id="delete">Delete Group</a>
+  <div class="btn-group">
+    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks"></i></button>
+    <ul class="dropdown-menu">
+      <li><a href="#" id="csv-download"><i class="icon-download-alt"></i> Download CSV</a></li>
+    </ul>
   </div>
+  <button class="btn btn-primary" id="apply">Apply Changes</button>
 </div>

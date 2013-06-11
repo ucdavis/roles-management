@@ -2,6 +2,8 @@ DssRm.Views.PersonShow ||= {}
 
 class DssRm.Views.PersonShow extends Backbone.View
   tagName: "div"
+  className: "modal"
+  id: "entityShowModal"
   
   events:
     "click #apply": "save"
@@ -11,7 +13,7 @@ class DssRm.Views.PersonShow extends Backbone.View
 
   initialize: ->
     @$el.html JST["templates/entities/show_person"](model: @model)
-    @listenTo @model, "change", @render
+    @listenTo @model, "sync", @render
     @readonly = @model.isReadOnly()
     
     @initializeRelationsTab()
@@ -85,6 +87,7 @@ class DssRm.Views.PersonShow extends Backbone.View
 
   initializeRolesTab: ->
     $rolesTab = @$("div#roles")
+
     _.each @model.roles.groupBy("application_name"), (roleset) =>
       app_name = roleset[0].get("application_name")
       app_id = roleset[0].get("application_id")
@@ -129,21 +132,21 @@ class DssRm.Views.PersonShow extends Backbone.View
         name: favorite.name
         readonly: @readonly
 
-    group_ownership_tokens_tokeninput = @$("input[name=group_ownership_tokens]")
-    group_ownership_tokens_tokeninput.tokenInput "clear"
-    @model.group_ownerships.each (group) =>
-      group_ownership_tokens_tokeninput.tokenInput "add",
-        id: group.get('id')
-        name: group.get('name')
+    group_ownership_tokeninput = @$("input[name=group_ownership_tokens]")
+    group_ownership_tokeninput.tokenInput "clear"
+    @model.group_ownerships.each (ownership) =>
+      group_ownership_tokeninput.tokenInput "add",
+        id: ownership.get('id')
+        name: ownership.get('name')
         readonly: @readonly
 
-    group_operatorship_tokens_tokeninput = @$("input[name=group_operatorship_tokens]")
-    group_operatorship_tokens_tokeninput.tokenInput "clear"
-    # _.each @model.get("favorites"), (favorite) =>
-    #   favorites_tokeninput.tokenInput "add",
-    #     id: favorite.id
-    #     name: favorite.name
-    #     readonly: @readonly
+    group_operatorship_tokeninput = @$("input[name=group_operatorship_tokens]")
+    group_operatorship_tokeninput.tokenInput "clear"
+    @model.group_operatorships.each (operatorship) =>
+      group_operatorship_tokeninput.tokenInput "add",
+        id: operatorship.get('id')
+        name: operatorship.get('name')
+        readonly: @readonly
 
     non_ou_group_membership_tokens_tokeninput = @$("input[name=non_ou_group_membership_tokens]")
     non_ou_group_membership_tokens_tokeninput.tokenInput "clear"
@@ -182,8 +185,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     @
 
   save: (e) ->
-    unless @model.isReadOnly()
-      
+    unless @model.isReadOnly()      
       @$('#apply').attr('disabled', 'disabled').html('Saving ...')
       
       @model.set

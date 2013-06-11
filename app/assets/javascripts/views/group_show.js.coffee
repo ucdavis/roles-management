@@ -2,6 +2,8 @@ DssRm.Views.GroupShow ||= {}
 
 class DssRm.Views.GroupShow extends Backbone.View
   tagName: "div"
+  className: "modal"
+  id: "entityShowModal"
   
   events:
     "click #apply"                   : "save"
