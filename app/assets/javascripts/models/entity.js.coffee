@@ -1,3 +1,6 @@
+# Nested attributes for people are BB collections while groups used
+# vanilla attributes. The former is easier to use but requires you stick
+# to a strict pattern. This difference should probably be reconciled.
 DssRm.Models.Entity = Backbone.Model.extend(
   url: ->
     if @get("id")
@@ -16,13 +19,10 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @set "calculated_members", []  if @get("calculated_members") is `undefined`
       @set "explicit_members", []  if @get("explicit_members") is `undefined`
       @set "rules", []  if @get("rules") is `undefined`
-    else if type is "Person"
-      @set "roles", []  if @get("roles") is `undefined`
-      @set "explicit_group_memberships", []  if @get("explicit_group_memberships") is `undefined`
-      @set "calculated_group_memberships", []  if @get("calculated_group_memberships") is `undefined`
     
-    @updateAttributes()
-    @on "change", @updateAttributes, this
+    @resetNestedCollections()
+    
+    @on "sync", @resetNestedCollections, this
   
   # Returns only the "highest" relationship (this order): admin, owner, operator
   # Does not return anything if not admin, owner, or operator on purpose
@@ -49,22 +49,68 @@ DssRm.Models.Entity = Backbone.Model.extend(
     if @relationship() is 'admin' or @relationship() is 'owner' then return false
     true
 
-  updateAttributes: ->
+  resetNestedCollections: ->
     type = @get("type")
     
     if type is "Person"
-      # What happens here when a user has a favorite that they also own? the group has two CIDs?
-      # Ensure collections exist
+      # FIXME: What happens here when a user has a favorite that they also own? the group has two CIDs?
+      #        Then updating one won't update the other - or does that matter? Or will it if we always
+      #        save via the user?
+      
+      # Ensure nested collections exist
       @favorites = new DssRm.Collections.Entities(@get("favorites")) if @favorites is `undefined`
       @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
       @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships")) if @group_operatorships is `undefined`
+      @group_memberships = new Backbone.Collection(@get("group_memberships")) if @group_memberships is `undefined`
       @roles = new DssRm.Collections.Roles(@get("roles")) if @roles is `undefined`
       
-      # Reset their data
+      # Reset nested collection data
       @favorites.reset @get("favorites")
       @group_ownerships.reset @get("group_ownerships")
       @group_operatorships.reset @get("group_operatorships")
+      @group_memberships.reset @get("group_memberships")
       @roles.reset @get("roles")
+      
+      # Enforce the design pattern by removing from @attributes what is represented in a nested collection
+      delete @attributes.favorites
+      delete @attributes.group_ownerships
+      delete @attributes.group_operatorships
+      delete @attributes.group_memberships
+      delete @attributes.roles
+  
+  # Returns only explicit group memberships (valid only for Person entity, not Group)
+  explicitGroupMemberships: ->
+    unless @group_memberships
+      return []
+    
+    @group_memberships.filter( (group) ->
+      group.get('explicit') == true
+    )
+
+  # Returns only calculated group memberships (valid only for Person entity, not Group)
+  calculatedGroupMemberships: ->
+    unless @group_memberships
+      return []
+
+    @group_memberships.filter( (group) ->
+      group.get('explicit') == false
+    )
+  
+  ouGroupMemberships: ->
+    unless @group_memberships
+      return []
+
+    @group_memberships.filter( (group) ->
+      group.get('ou') == true
+    )
+  
+  nonOuGroupMemberships: ->
+    unless @group_memberships
+      return []
+
+    @group_memberships.filter( (group) ->
+      group.get('ou') == false
+    )
 
   toJSON: ->
     type = @get("type")
@@ -102,16 +148,17 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.loginid = @get("loginid")
       json.phone = @get("phone")
       
-      json.role_ids = @get("roles").map((role) ->
+      json.role_ids = @roles.map((role) ->
         role.id
       )
       json.favorite_ids = @favorites.map((favorite) ->
         favorite.id
       )
-      json.explicit_group_ids = @get("explicit_group_memberships").map((group) ->
+      # Only save explicit group memberships - calculated (non-explicit) come from group rules
+      # and cannot be controlled by the Person object
+      json.explicit_group_ids = @explicitGroupMemberships().map((group) ->
         group.id
       )
-      # We don't include calculated group IDs as those do not come from entities (but rather group rules)
     
     entity: json
 )

@@ -33,7 +33,7 @@ class DssRm.Views.PersonShow extends Backbone.View
           favorite.id isnt item.id
         )
 
-    @$("input[name=group_ownership_tokens]").tokenInput Routes.people_path(),
+    @$("input[name=group_ownerships]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
@@ -46,7 +46,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       #     favorite.id isnt item.id
       #   )
 
-    @$("input[name=group_operatorship_tokens]").tokenInput Routes.people_path(),
+    @$("input[name=group_operatorships]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
@@ -59,7 +59,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       #     favorite.id isnt item.id
       #   )
 
-    @$("input[name=non_ou_group_membership_tokens]").tokenInput Routes.people_path(),
+    @$("input[name=non_ou_group_memberships]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
@@ -72,7 +72,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       #     favorite.id isnt item.id
       #   )
 
-    @$("input[name=ou_group_membership_tokens]").tokenInput Routes.people_path(),
+    @$("input[name=ou_group_memberships]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
@@ -98,17 +98,16 @@ class DssRm.Views.PersonShow extends Backbone.View
         theme: "facebook"
         disabled: @readonly
         onAdd: (item) =>
-          roles = @model.get("roles")
-          roles.push item
-          @model.set "roles", roles
-          @model.trigger "change"
+          console.log 'roles onAdd called'
+          # roles = @model.get("roles")
+          # roles.push item
+          # @model.set "roles", roles
 
         onDelete: (item) =>
-          roles = _.filter(@model.get("roles"), (role) ->
-            role.id isnt item.id
-          )
-          @model.set "roles", roles
-          @model.trigger "change"
+          # roles = _.filter(@model.get("roles"), (role) ->
+          #   role.id isnt item.id
+          # )
+          # @model.set "roles", roles
 
   render: ->
     @$("h3").html @model.escape("name")
@@ -126,13 +125,13 @@ class DssRm.Views.PersonShow extends Backbone.View
     
     favorites_tokeninput = @$("input[name=favorites]")
     favorites_tokeninput.tokenInput "clear"
-    _.each @model.get("favorites"), (favorite) =>
+    @model.favorites.each (favorite) =>
       favorites_tokeninput.tokenInput "add",
-        id: favorite.id
-        name: favorite.name
+        id: favorite.get('id')
+        name: favorite.get('name')
         readonly: @readonly
-
-    group_ownership_tokeninput = @$("input[name=group_ownership_tokens]")
+        
+    group_ownership_tokeninput = @$("input[name=group_ownerships]")
     group_ownership_tokeninput.tokenInput "clear"
     @model.group_ownerships.each (ownership) =>
       group_ownership_tokeninput.tokenInput "add",
@@ -140,43 +139,47 @@ class DssRm.Views.PersonShow extends Backbone.View
         name: ownership.get('name')
         readonly: @readonly
 
-    group_operatorship_tokeninput = @$("input[name=group_operatorship_tokens]")
+    group_operatorship_tokeninput = @$("input[name=group_operatorships]")
     group_operatorship_tokeninput.tokenInput "clear"
     @model.group_operatorships.each (operatorship) =>
       group_operatorship_tokeninput.tokenInput "add",
         id: operatorship.get('id')
         name: operatorship.get('name')
         readonly: @readonly
+    
+    non_ou_group_membership_tokeninput = @$("input[name=non_ou_group_memberships]")
+    non_ou_group_membership_tokeninput.tokenInput "clear"
+    _.each @model.nonOuGroupMemberships(), (membership) =>
+      non_ou_group_membership_tokeninput.tokenInput "add",
+        id: membership.get('id')
+        name: membership.get('name')
+        readonly: @readonly || not membership.get('explicit')
+        class: (if membership.get('explicit') then "" else "calculated")
 
-    non_ou_group_membership_tokens_tokeninput = @$("input[name=non_ou_group_membership_tokens]")
-    non_ou_group_membership_tokens_tokeninput.tokenInput "clear"
-    # _.each @model.get("favorites"), (favorite) =>
-    #   favorites_tokeninput.tokenInput "add",
-    #     id: favorite.id
-    #     name: favorite.name
-    #     readonly: @readonly
-
-    ou_group_membership_tokens_tokeninput = @$("input[name=ou_group_membership_tokens]")
-    ou_group_membership_tokens_tokeninput.tokenInput "clear"
-    # _.each @model.get("favorites"), (favorite) =>
-    #   favorites_tokeninput.tokenInput "add",
-    #     id: favorite.id
-    #     name: favorite.name
-    #     readonly: @readonly
+    ou_group_membership_tokeninput = @$("input[name=ou_group_memberships]")
+    ou_group_membership_tokeninput.tokenInput "clear"
+    _.each @model.ouGroupMemberships(), (membership) =>
+      ou_group_membership_tokeninput.tokenInput "add",
+        id: membership.get('id')
+        name: membership.get('name')
+        readonly: @readonly || not membership.get('explicit')
+        class: (if membership.get('explicit') then "" else "calculated")
 
     # Roles tab
     $rolesTab = @$("div#roles")
+    $rolesTab.empty()
     _.each @model.roles.groupBy("application_name"), (roleset) =>
       app_name = roleset[0].get("application_name")
       app_id = roleset[0].get("application_id")
-      role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
-      role_tokeninput.tokenInput "clear"
-      _.each roleset, (role) ->
-        role_tokeninput.tokenInput "add",
-          id: role.get("id")
-          name: role.get("name")
-          readonly: @readonly
-
+      
+      # role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
+#       role_tokeninput.tokenInput "clear"
+#       _.each roleset, (role) ->
+#         role_tokeninput.tokenInput "add",
+#           id: role.get("id")
+#           name: role.get("name")
+#           readonly: @readonly
+    
     if @readonly
       @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
@@ -202,8 +205,6 @@ class DssRm.Views.PersonShow extends Backbone.View
 
         error: ->
           @$('#apply').addClass('btn-danger').html('Error')
-
-      @model.trigger "change"
 
     false
 
