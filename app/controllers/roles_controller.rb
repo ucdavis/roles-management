@@ -1,20 +1,15 @@
 class RolesController < ApplicationController
+  before_filter :load_role, :only => :show
   filter_access_to :all, :attribute_check => true
+  filter_access_to :index, :attribute_check => true, :load_method => :load_roles
   respond_to :json
 
   # Optionally takes application_id parameter to filter index to only roles from that application
   def index
-    if params[:application_id]
-      @roles = Role.where(:application_id => params[:application_id])
-    else
-      @roles = Role.all
-    end
-
     respond_with @roles
   end
 
   def show
-    @role = Role.find_by_id(params[:id])
     respond_with(@role) do |format|
       format.text
     end
@@ -27,5 +22,19 @@ class RolesController < ApplicationController
     @role.sync_ad
     
     respond_with :ok
+  end
+  
+  private
+  
+  def load_role
+    @role = Role.find_by_id(params[:id])
+  end
+  
+  def load_roles
+    if params[:application_id]
+      @roles = Role.where(:application_id => params[:application_id])
+    else
+      @roles = Role.all
+    end
   end
 end
