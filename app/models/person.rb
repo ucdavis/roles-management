@@ -76,16 +76,16 @@ class Person < Entity
 
   # Calculates all roles for an individual - explicitly assigned + those via group membership, including group rules
   def all_roles
-    computed_roles = []
-    computed_roles = roles
+    all_roles = roles.map { |r| { id: r.id, token: r.token, application_name: r.application_name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: true } }
+
     explicit_groups.each do |group|
-      computed_roles += group.roles
+      all_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application_name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: false } }
     end
     calculated_groups.each do |group|
-      computed_roles += group.roles
+      all_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application_name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: false } }
     end
     
-    computed_roles
+    all_roles
   end
   
   # Overriden to be self.first + " " + self.last
@@ -117,8 +117,8 @@ class Person < Entity
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid,
       :first => self.first, :last => self.last, :email => self.email, :phone => self.phone, :address => self.address,
       :byline => self.byline,
-      :roles => self.all_roles.map{ |r| { id: r.id, token: r.token, name: r.name, description: r.description,
-                                          application_name: r.application_name, application_id: r.application_id } },
+      :roles => self.all_roles.map{ |r| { role_id: r[:id], token: r[:token], name: r[:name], description: r[:description],
+                                          application_name: r[:application_name], application_id: r[:application_id], explicit: r[:explicit] } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
       :explicit_group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } },
       :calculated_group_memberships => self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },

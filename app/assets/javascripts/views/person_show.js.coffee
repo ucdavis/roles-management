@@ -89,7 +89,11 @@ class DssRm.Views.PersonShow extends Backbone.View
     $rolesTab = @$("div#roles")
     $rolesTab.empty()
     
+    console.log 'resetting roles tab'
+    console.log @model.roles.length
+    
     _.each @model.roles.groupBy("application_name"), (roleset) =>
+      console.log roleset
       app_name = roleset[0].get("application_name")
       app_id = roleset[0].get("application_id")
       $rolesTab.append "<p><label for=\"_token_input_" + app_id + "\">" + app_name + "</label><input type=\"text\" name=\"_token_input_" + app_id + "\" class=\"token_input\" /></p>"
@@ -98,23 +102,12 @@ class DssRm.Views.PersonShow extends Backbone.View
         defaultText: ""
         theme: "facebook"
         disabled: @readonly
-        onAdd: (item) =>
-          console.log 'roles onAdd called'
-          # roles = @model.get("roles")
-          # roles.push item
-          # @model.set "roles", roles
-
-        onDelete: (item) =>
-          # roles = _.filter(@model.get("roles"), (role) ->
-          #   role.id isnt item.id
-          # )
-          # @model.set "roles", roles
+        onAdd: (item) => @model.roles.add item
+        onDelete: (item) => @model.roles.remove item
 
   render: ->
     @$("h3").html @model.escape("name")
     @$("h5").html @model.escape("byline")
-    
-    console.log @model
 
     # Summary tab
     @$("input[name=first]").val @model.escape("first")
@@ -178,7 +171,8 @@ class DssRm.Views.PersonShow extends Backbone.View
         role_tokeninput.tokenInput "add",
           id: role.get("id")
           name: role.get("name")
-          readonly: @readonly
+          readonly: @readonly || not role.get('explicit')
+          class: (if role.get('explicit') then "" else "calculated")
     
     if @readonly
       @$('.token-input-list-facebook').readonly()
@@ -188,6 +182,8 @@ class DssRm.Views.PersonShow extends Backbone.View
     @
 
   save: (e) ->
+    e.preventDefault()
+    
     unless @model.isReadOnly()      
       @$('#apply').attr('disabled', 'disabled').html('Saving ...')
       
@@ -205,8 +201,6 @@ class DssRm.Views.PersonShow extends Backbone.View
 
         error: ->
           @$('#apply').addClass('btn-danger').html('Error')
-
-    false
 
   rescan: (e) ->
     status_bar.show "Re-scanning ..."
