@@ -87,6 +87,7 @@ class DssRm.Views.PersonShow extends Backbone.View
 
   resetRolesTab: ->
     $rolesTab = @$("div#roles")
+    $rolesTab.empty()
     
     _.each @model.roles.groupBy("application_name"), (roleset) =>
       app_name = roleset[0].get("application_name")
