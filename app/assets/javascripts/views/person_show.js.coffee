@@ -13,11 +13,11 @@ class DssRm.Views.PersonShow extends Backbone.View
 
   initialize: ->
     @$el.html JST["templates/entities/show_person"](model: @model)
+    @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
     @readonly = @model.isReadOnly()
     
     @initializeRelationsTab()
-    @initializeRolesTab()
   
   initializeRelationsTab: ->
     @$("input[name=favorites]").tokenInput Routes.people_path(),
@@ -85,9 +85,9 @@ class DssRm.Views.PersonShow extends Backbone.View
       #     favorite.id isnt item.id
       #   )
 
-  initializeRolesTab: ->
+  resetRolesTab: ->
     $rolesTab = @$("div#roles")
-
+    
     _.each @model.roles.groupBy("application_name"), (roleset) =>
       app_name = roleset[0].get("application_name")
       app_id = roleset[0].get("application_id")
@@ -167,18 +167,17 @@ class DssRm.Views.PersonShow extends Backbone.View
 
     # Roles tab
     $rolesTab = @$("div#roles")
-    $rolesTab.empty()
     _.each @model.roles.groupBy("application_name"), (roleset) =>
       app_name = roleset[0].get("application_name")
       app_id = roleset[0].get("application_id")
       
-      # role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
-#       role_tokeninput.tokenInput "clear"
-#       _.each roleset, (role) ->
-#         role_tokeninput.tokenInput "add",
-#           id: role.get("id")
-#           name: role.get("name")
-#           readonly: @readonly
+      role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
+      role_tokeninput.tokenInput "clear"
+      _.each roleset, (role) ->
+        role_tokeninput.tokenInput "add",
+          id: role.get("id")
+          name: role.get("name")
+          readonly: @readonly
     
     if @readonly
       @$('.token-input-list-facebook').readonly()
