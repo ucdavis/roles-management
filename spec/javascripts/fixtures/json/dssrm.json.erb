@@ -1,7 +1,7 @@
 <% current_user = Person.find_by_loginid("cthielen") %>
-<% @applications = current_user.manageable_applications %>
+<% @applications = Application.with_permissions_to(:read) %>
 {
   "current_user"      : <%= current_user.to_json.html_safe %>,
   "applications"      : <%= @applications.to_json.html_safe %>,
-  "current_user_admin": <%= current_user.is_rm_admin? %>
+  "current_user_admin": <%= current_user.role_symbols.include? :admin %>
 }
