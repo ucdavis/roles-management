@@ -114,6 +114,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
 
   toJSON: ->
     type = @get("type")
+    
     if type is "Group"
       json = {}
       # Group-specific JSON

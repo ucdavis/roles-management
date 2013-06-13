@@ -28,7 +28,6 @@ DssRm.Routers.Applications = Backbone.Router.extend(
       error: ->
         status_bar.show "An error occurred while loading the application.", "error"
 
-
   showEntity: (uid) ->
     status_bar.show "Loading ..."
 
