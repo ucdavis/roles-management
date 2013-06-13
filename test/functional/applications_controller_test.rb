@@ -7,7 +7,7 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "valid cas user with no roles should get denied" do
-    Authorization.current_user.roles.delete_all # ensure they have no roles
+    Authorization.current_user.explicit_roles.delete_all # ensure they have no roles
     assert Authorization.current_user.role_symbols.length == 0, "current_user should not have had any roles for this test"
     get :index
     assert_redirected_to(:controller => "site", :action => "access_denied")

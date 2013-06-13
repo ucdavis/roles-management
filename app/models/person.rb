@@ -19,7 +19,7 @@ class Person < Entity
   has_many :calculated_groups, :through => :group_calculated_member_assignments, :source => :group
 
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :roles, :through => :role_assignments
+  has_many :explicit_roles, :through => :role_assignments, :source => :role
 
   has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "owner_id"
   has_many :favorites, :through => :favorite_relationships, :source => :entity
@@ -43,7 +43,7 @@ class Person < Entity
   validates :loginid, :presence => true, :uniqueness => true
   validate :first_or_last_presence
 
-  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_ids, :favorite_ids, :explicit_group_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
+  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :explicit_role_ids, :favorite_ids, :explicit_group_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
 
   after_save :trigger_sync
 
@@ -76,7 +76,7 @@ class Person < Entity
 
   # Calculates all roles for an individual - explicitly assigned + those via group membership, including group rules
   def all_roles
-    all_roles = roles.map { |r| { id: r.id, token: r.token, application_name: r.application_name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: true } }
+    all_roles = explicit_roles.map { |r| { id: r.id, token: r.token, application_name: r.application_name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: true } }
 
     explicit_groups.each do |group|
       all_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application_name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: false } }
@@ -106,7 +106,7 @@ class Person < Entity
   def role_symbols
     syms = []
 
-    roles.where(:id => Application.find_by_name("DSS Roles Management").roles).each do |role|
+    explicit_roles.where(:id => Application.find_by_name("DSS Roles Management").roles).each do |role|
       syms << role.token.underscore.to_sym
     end
 
@@ -124,14 +124,13 @@ class Person < Entity
       :calculated_group_memberships => self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
       :group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } } + self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
       :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
-      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } },
-      :role_ids => self.role_ids
+      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } }
     }
   end
   
   def trigger_sync
-    logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
-    roles.all.each { |role| role.trigger_sync }
+    logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{explicit_roles.length} roles"
+    explicit_roles.all.each { |role| role.trigger_sync }
     return true
   end
   
