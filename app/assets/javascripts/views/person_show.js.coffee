@@ -89,11 +89,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     $rolesTab = @$("div#roles")
     $rolesTab.empty()
     
-    console.log 'resetting roles tab'
-    console.log @model.roles.length
-    
     _.each @model.roles.groupBy("application_name"), (roleset) =>
-      console.log roleset
       app_name = roleset[0].get("application_name")
       app_id = roleset[0].get("application_id")
       $rolesTab.append "<p><label for=\"_token_input_" + app_id + "\">" + app_name + "</label><input type=\"text\" name=\"_token_input_" + app_id + "\" class=\"token_input\" /></p>"
