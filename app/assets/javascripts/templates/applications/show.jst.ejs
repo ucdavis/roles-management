@@ -1,65 +1,63 @@
-<div class="modal" id="applicationShowModal">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>name</h3>
-  </div>
-  <div class="modal-body">
-    <div class="tabbable tabs-left">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
-        <li><a href="#relations" data-toggle="tab">Relations</a></li>
-        <li><a href="#roles" data-toggle="tab">Roles</a></li>
-        <li><a href="#ad" data-toggle="tab">Active Directory</a></li>
-      </ul>
-      <div class="tab-content">
-        <form>
+<div class="modal-header">
+  <a class="close" data-dismiss="modal">×</a>
+  <h3>name</h3>
+</div>
+<div class="modal-body">
+  <div class="tabbable tabs-left">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+      <li><a href="#relations" data-toggle="tab">Relations</a></li>
+      <li><a href="#roles" data-toggle="tab">Roles</a></li>
+      <li><a href="#ad" data-toggle="tab">Active Directory</a></li>
+    </ul>
+    <div class="tab-content">
+      <form>
 
-        <fieldset class="tab-pane active fade in" id="summary">
-          <label>Name</label>
-          <input type="text" name="name" />
-          <label>Description</label>
-          <input type="text" name="description" class="span8" />
-          <label>Owners</label>
-          <input type="text" name="owners" class="token_input" />
-          <label>Operators</label>
-          <input type="text" name="operators" class="token_input" />
-        </fieldset>
-        <fieldset class="tab-pane fade" id="relations">
+      <fieldset class="tab-pane active fade in" id="summary">
+        <label>Name</label>
+        <input type="text" name="name" />
+        <label>Description</label>
+        <input type="text" name="description" class="span8" />
+        <label>Owners</label>
+        <input type="text" name="owners" class="token_input" />
+        <label>Operators</label>
+        <input type="text" name="operators" class="token_input" />
+      </fieldset>
+      <fieldset class="tab-pane fade" id="relations">
 
-        </fieldset>
-        <fieldset class="tab-pane fade" id="roles">
-          <table id="roles">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Token</th>
-                <th>Description</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-          <p><button class="btn" id="add_role">Add Role</button></p>
-        </fieldset>
-        <fieldset class="tab-pane fade" id="ad">
-          <div id="ad_fields"></div>
-          <p>
-            <small>The group name is appended after the base AD path configured by the administrator.</small>
-          </p>
-        </fieldset>
-        </form>
-      </div>
-    </div> <!-- /tabbable -->
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn btn-danger" style="float: left; display: none;" id="delete">Delete Application</a>
-    <div class="btn-group">
-      <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks"></i></button>
-      <ul class="dropdown-menu">
-        <li><a href="#" id="csv-download"><i class="icon-download-alt"></i> Download CSV</a></li>
-      </ul>
+      </fieldset>
+      <fieldset class="tab-pane fade" id="roles">
+        <table id="roles">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Token</th>
+              <th>Description</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p><button class="btn" id="add_role">Add Role</button></p>
+      </fieldset>
+      <fieldset class="tab-pane fade" id="ad">
+        <div id="ad_fields"></div>
+        <p>
+          <small>The group name is appended after the base AD path configured by the administrator.</small>
+        </p>
+      </fieldset>
+      </form>
     </div>
-    <button class="btn btn-primary" id="apply">Apply Changes</button>
+  </div> <!-- /tabbable -->
+</div>
+<div class="modal-footer">
+  <a href="#" class="btn btn-danger" style="float: left; display: none;" id="delete">Delete Application</a>
+  <div class="btn-group">
+    <button class="btn dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks"></i></button>
+    <ul class="dropdown-menu">
+      <li><a href="#" id="csv-download"><i class="icon-download-alt"></i> Download CSV</a></li>
+    </ul>
   </div>
+  <button class="btn btn-primary" id="apply">Apply Changes</button>
 </div>

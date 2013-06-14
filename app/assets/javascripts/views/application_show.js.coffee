@@ -1,5 +1,7 @@
 DssRm.Views.ApplicationShow = Backbone.View.extend(
   tagName: "div"
+  id: "applicationShowModal"
+  className: "modal"
   
   events:
     "click #apply": "save"
