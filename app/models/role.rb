@@ -1,3 +1,8 @@
+# A role has both 'entities' and 'members'.
+# Ultimately, 'entities' is the only model assigned to a role.
+# An entity is either a Person or Group.
+# 'Members' refers only to people and is calculated by flattening
+# groups down to people.
 class Role < ActiveRecord::Base
   using_access_control
 
@@ -52,20 +57,18 @@ class Role < ActiveRecord::Base
   # members takes all people and all people from groups (flattens the group)
   # and returns them as a list.
   def members
-    #Rails.cache.fetch("roles/members/#{id}") do
-      all = []
+    all = []
 
-      # Add all people
-      all += entities.where(:type => "Person").all
+    # Add all people
+    all += entities.where(:type => "Person").all
 
-      # Add all (flattened) groups
-      entities.where(:type => "Group").all.each do |group|
-        all += group.members(true)
-      end
+    # Add all (flattened) groups
+    entities.where(:type => "Group").all.each do |group|
+      all += group.members(true)
+    end
 
-      # Return a unique list
-      all.uniq{ |x| x.id }
-      #end
+    # Return a unique list
+    all.uniq{ |x| x.id }
   end
 
   # Syncronizes with AD
