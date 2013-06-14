@@ -22,6 +22,14 @@ window.DssRm =
     # Enable tooltips globally
     $("body").tooltip
       selector: '[rel=tooltip]'
+    
+    # Prevent body scrolling when modal is open
+    $("body").on "shown", (e) ->
+      if $(e.target).attr('class').indexOf("modal") != -1
+        $("body").css('overflow', 'hidden')
+    $("body").on "hidden", (e) ->
+      if $(e.target).attr('class').indexOf("modal") != -1
+        $("body").css('overflow', 'visible')
   
   admin_logged_in: ->
     DssRm.current_user.get 'admin'
