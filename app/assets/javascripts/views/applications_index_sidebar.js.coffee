@@ -75,6 +75,14 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     
     @$('#pins').html pins_frag
     @$("#highlighted_pins").html highlighted_pins_frag
+
+    # Sidebar pins are clickable if a role is selected, else not.
+    if selected_role
+      $("ul#highlighted_pins li").css('cursor', 'pointer')
+      $("ul#pins li").css('cursor', 'pointer')
+    else
+      $("ul#highlighted_pins li").css('cursor', 'default')
+      $("ul#pins li").css('cursor', 'default')
     
     @
   
