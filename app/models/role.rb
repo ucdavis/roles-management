@@ -31,11 +31,6 @@ class Role < ActiveRecord::Base
   attr_accessor :entities_changed # flag used by has_many :entities add/remove to force a role sync
   attr_accessor :force_sync       # flag used to force a sync on save or explicit call to Role.sync_ad
   
-  # Needed in show.json.rabl to display a role's application's name
-  def application_name
-    application.name
-  end
-
   def as_json(options={})
     { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id,
       :description => self.description,

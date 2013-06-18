@@ -149,9 +149,10 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.loginid = @get("loginid")
       json.phone = @get("phone")
       
-      console.log @roles
-      json.role_ids = @roles.map((role) ->
-        role.get('role_id')
+      json.explicit_role_ids = @roles.filter((role) ->
+        role.get('explicit') == true
+      ).map((role) ->
+        role.id
       )
       json.favorite_ids = @favorites.map((favorite) ->
         favorite.id
