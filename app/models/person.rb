@@ -46,7 +46,25 @@ class Person < Entity
   attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :explicit_role_ids, :favorite_ids, :explicit_group_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
 
   after_save :trigger_sync
-
+  
+  def as_json(options={})
+    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid,
+      :first => self.first, :last => self.last, :email => self.email, :phone => self.phone, :address => self.address,
+      :byline => self.byline,
+      # :roles => self.all_roles.map{ |r| { id: r[:id], token: r[:token], name: r[:name], description: r[:description],
+      #                                     application_name: r[:application_name], application_id: r[:application_id], explicit: r[:explicit] } },
+      :explicit_roles => self.explicit_roles.map{ |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id,
+                                                         name: r.name, description: r.description } },
+      :calculated_roles => self.calculated_roles,
+      :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
+      :explicit_group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } },
+      :calculated_group_memberships => self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
+      :group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } } + self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
+      :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
+      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } }
+    }
+  end
+  
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
   end
@@ -75,17 +93,17 @@ class Person < Entity
   end
 
   # Calculates all roles for an individual - explicitly assigned + those via group membership, including group rules
-  def all_roles
-    all_roles = explicit_roles.map { |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: true } }
+  def calculated_roles
+    calculated_roles = []
 
     explicit_groups.each do |group|
-      all_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: false } }
+      calculated_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id, name: r.name, description: r.description } }
     end
     calculated_groups.each do |group|
-      all_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id, name: r.name, description: r.description, ad_path: r.ad_path, explicit: false } }
+      calculated_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id, name: r.name, description: r.description } }
     end
     
-    all_roles
+    calculated_roles
   end
   
   # Overriden to be self.first + " " + self.last
@@ -111,21 +129,6 @@ class Person < Entity
     end
 
     syms
-  end
-  
-  def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid,
-      :first => self.first, :last => self.last, :email => self.email, :phone => self.phone, :address => self.address,
-      :byline => self.byline,
-      :roles => self.all_roles.map{ |r| { id: r[:id], token: r[:token], name: r[:name], description: r[:description],
-                                          application_name: r[:application_name], application_id: r[:application_id], explicit: r[:explicit] } },
-      :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      :explicit_group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } },
-      :calculated_group_memberships => self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
-      :group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } } + self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
-      :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
-      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } }
-    }
   end
   
   def trigger_sync
