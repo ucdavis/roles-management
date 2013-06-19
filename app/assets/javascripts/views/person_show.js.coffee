@@ -17,6 +17,8 @@ class DssRm.Views.PersonShow extends Backbone.View
     @listenTo @model, "sync", @render
     @readonly = @model.isReadOnly()
     
+    window.person = @model
+    
     @initializeRelationsTab()
   
   initializeRelationsTab: ->

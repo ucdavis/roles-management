@@ -43,7 +43,8 @@ class Person < Entity
   validates :loginid, :presence => true, :uniqueness => true
   validate :first_or_last_presence
 
-  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :explicit_role_ids, :favorite_ids, :explicit_group_ids, :ou_ids, :group_ownership_ids, :group_operatorship_ids
+  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_assignment_ids, :favorite_ids, :group_membership_ids,
+                  :ou_ids, :group_ownership_ids, :group_operatorship_ids
 
   after_save :trigger_sync
   
@@ -51,15 +52,10 @@ class Person < Entity
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid,
       :first => self.first, :last => self.last, :email => self.email, :phone => self.phone, :address => self.address,
       :byline => self.byline,
-      # :roles => self.all_roles.map{ |r| { id: r[:id], token: r[:token], name: r[:name], description: r[:description],
-      #                                     application_name: r[:application_name], application_id: r[:application_id], explicit: r[:explicit] } },
-      :explicit_roles => self.explicit_roles.map{ |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id,
-                                                         name: r.name, description: r.description } },
-      :calculated_roles => self.calculated_roles,
+      :role_assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.calculated, role_id: a.role.id, token: a.role.token, application_name: a.role.application.name,
+                                                            application_id: a.role.application_id, name: a.role.name, description: a.role.description } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      :explicit_group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } },
-      :calculated_group_memberships => self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
-      :group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: true } } + self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, explicit: false } },
+      :group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, calculated: false } } + self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, calculated: true } },
       :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
       :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } }
     }

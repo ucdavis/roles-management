@@ -62,21 +62,24 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
       @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships")) if @group_operatorships is `undefined`
       @group_memberships = new Backbone.Collection(@get("group_memberships")) if @group_memberships is `undefined`
-      @roles = new DssRm.Collections.Roles(@get("roles")) if @roles is `undefined`
+      @explicit_roles = new DssRm.Collections.Roles(@get("explicit_roles")) if @explicit_roles is `undefined`
+      @calculated_roles = new DssRm.Collections.Roles(@get("calculated_roles")) if @calculated_roles is `undefined`
       
       # Reset nested collection data
       @favorites.reset @get("favorites")
       @group_ownerships.reset @get("group_ownerships")
       @group_operatorships.reset @get("group_operatorships")
       @group_memberships.reset @get("group_memberships")
-      @roles.reset @get("roles")
+      @explicit_roles.reset @get("explicit_roles")
+      @calculated_roles.reset @get("calculated_roles")
       
       # Enforce the design pattern by removing from @attributes what is represented in a nested collection
       delete @attributes.favorites
       delete @attributes.group_ownerships
       delete @attributes.group_operatorships
       delete @attributes.group_memberships
-      delete @attributes.roles
+      delete @attributes.explicit_roles
+      delete @attributes.calculated_roles
   
   # Returns only explicit group memberships (valid only for Person entity, not Group)
   explicitGroupMemberships: ->

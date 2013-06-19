@@ -11,23 +11,21 @@ class Role < ActiveRecord::Base
   validate :must_own_associated_application
 
   has_many :role_assignments, :dependent => :destroy
+
   has_many :entities, :through => :role_assignments,
                       :after_add => Proc.new{ |r|
                                                r.entities_changed = true
-                                               r.clear_cache_if_needed(force_clear = true)
                                              },
                       :after_remove => Proc.new{ |r|
                                                  r.entities_changed = true
-                                                 r.clear_cache_if_needed(force_clear = true)
                                                }
   before_save :clear_last_sync_if_path_changed
-  after_save :clear_cache_if_needed
   after_save :sync_ad
 
   belongs_to :application
 
   attr_accessible :token, :entity_ids, :name, :description, :ad_path
-  attr_accessor :skip_next_sync  # flag which may be set by manipulating code to avoid an AD sync
+  attr_accessor :skip_next_sync   # flag which may be set by manipulating code to avoid an AD sync
   attr_accessor :entities_changed # flag used by has_many :entities add/remove to force a role sync
   attr_accessor :force_sync       # flag used to force a sync on save or explicit call to Role.sync_ad
   
@@ -94,18 +92,6 @@ class Role < ActiveRecord::Base
   def trigger_sync
     logger.info "Role #{id}: trigger_sync called, calling sync_ad"
     sync_ad
-  end
-
-  def clear_cache_if_needed(force_clear = false)
-    if self.changed? or force_clear
-      logger.debug "Clearing cache for role #{id}"
-      # Disabling role member cache until it can be recalculated on group change
-      #Rails.cache.delete("roles/members/#{id}")
-      return true
-    else
-      logger.debug "Not clearing cache for role #{id}, nothing has changed. Associations may still clear cache."
-      return false
-    end
   end
 
   private
