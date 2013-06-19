@@ -1,4 +1,4 @@
-class ApplicationOperatorAssignment < ActiveRecord::Base
+class ApplicationOperatorship < ActiveRecord::Base
   using_access_control
 
   validates_presence_of :application, :entity

@@ -4,17 +4,17 @@ class Group < Entity
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
-  has_many :member_assignments, :class_name => "GroupMemberAssignment"
-  has_many :members, :through => :member_assignments, :source => :entity
+  has_many :group_memberships
+  has_many :members, :through => :group_memberships, :source => :entity
 
   has_many :role_assignments, :foreign_key => "entity_id"
   has_many :roles, :through => :role_assignments, :dependent => :destroy
 
-                                has_many :group_owner_assignments
-  has_many :owners, :through => :group_owner_assignments, :source => "entity", :dependent => :destroy
+  has_many :group_ownerships
+  has_many :owners, :through => :group_ownerships, :dependent => :destroy, :source => "entity"
 
-  has_many :group_operator_assignments
-  has_many :operators, :through => :group_operator_assignments, :source => "entity", :dependent => :destroy
+  has_many :group_operatorships
+  has_many :operators, :through => :group_operatorships, :dependent => :destroy, :source => "entity"
 
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
 
@@ -32,7 +32,7 @@ class Group < Entity
     { :id => self.id, :name => self.name, :type => 'Group',
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :member_assignments => self.member_assignments.map{ |a| { id: a.id, member_id: a.entity.id, name: a.entity.name, loginid: a.entity.loginid, calculated: a.calculated } },
+      :memberships => self.group_memberships.map{ |a| { id: a.id, member_id: a.entity.id, name: a.entity.name, loginid: a.entity.loginid, calculated: a.calculated } },
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
   

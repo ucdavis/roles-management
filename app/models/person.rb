@@ -11,30 +11,22 @@ class Person < Entity
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
 
-  # explicit - they were directly assigned to that group
-  # calculated - they are in the group because they match a group rule
-  has_many :group_explicit_member_assignments, :foreign_key => "entity_id"
-  has_many :explicit_groups, :through => :group_explicit_member_assignments, :source => :group
-  has_many :group_calculated_member_assignments, :foreign_key => "entity_id"
-  has_many :calculated_groups, :through => :group_calculated_member_assignments, :source => :group
+  has_many :group_memberships, :foreign_key => "entity_id"
+  has_many :groups, :through => :group_memberships, :source => :group
 
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :explicit_roles, :through => :role_assignments, :source => :role
+  has_many :roles, :through => :role_assignments, :source => :role
 
   has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "owner_id"
   has_many :favorites, :through => :favorite_relationships, :source => :entity
 
-  has_many :application_owner_assignments, :foreign_key => "owner_id", :dependent => :destroy
-  has_many :application_ownerships, :through => :application_owner_assignments, :source => :application
+  has_many :application_ownerships, :foreign_key => "owner_id", :dependent => :destroy
 
-  has_many :application_operator_assignments, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :application_operatorships, :through => :application_operator_assignments, :source => :application
+  has_many :application_operatorships, :foreign_key => "entity_id", :dependent => :destroy
 
-  has_many :group_operator_assignments, :foreign_key => "entity_id"
-  has_many :group_operatorships, :through => :group_operator_assignments, :source => :group
+  has_many :group_operatorships, :foreign_key => "entity_id"
 
-  has_many :group_owner_assignments, :foreign_key => "entity_id"
-  has_many :group_ownerships, :through => :group_owner_assignments, :source => :group
+  has_many :group_ownerships, :foreign_key => "entity_id"
 
   has_one :student
 
@@ -49,15 +41,14 @@ class Person < Entity
   after_save :trigger_sync
   
   def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid,
-      :first => self.first, :last => self.last, :email => self.email, :phone => self.phone, :address => self.address,
-      :byline => self.byline,
+    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
+      :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline,
       :role_assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.calculated, role_id: a.role.id, token: a.role.token, application_name: a.role.application.name,
                                                             application_id: a.role.application_id, name: a.role.name, description: a.role.description } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      :group_memberships => self.explicit_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, calculated: false } } + self.calculated_groups.map{ |g| { id: g.id, name: g.name, type: g.type, ou: g.ou?, calculated: true } },
-      :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, name: o.name, type: o.type } },
-      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, name: o.name, type: o.type } }
+      :group_memberships => self.group_memberships.map{ |m| { id: m.id, group_id: m.group.id, name: m.group.name, ou: m.group.ou?, calculated: m.calculated } },
+      :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } },
+      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } }
     }
   end
   

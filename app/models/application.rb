@@ -2,10 +2,10 @@ class Application < ActiveRecord::Base
   using_access_control
 
   has_many :roles, :dependent => :destroy
-  has_many :application_owner_assignments, :dependent => :destroy
-  has_many :owners, :through => :application_owner_assignments
-  has_many :application_operator_assignments, :dependent => :destroy
-  has_many :operators, :through => :application_operator_assignments, :source => "entity", :dependent => :destroy
+  has_many :application_ownerships, :dependent => :destroy
+  has_many :owners, :through => :application_ownerships
+  has_many :application_operatorships, :dependent => :destroy
+  has_many :operators, :through => :application_operatorships, :source => "entity", :dependent => :destroy
 
   before_save :set_default_properties
 

@@ -1,4 +1,4 @@
-class ApplicationOwnerAssignment < ActiveRecord::Base
+class ApplicationOwnership < ActiveRecord::Base
   using_access_control
 
   belongs_to :application
