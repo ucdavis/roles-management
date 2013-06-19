@@ -30,7 +30,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       theme: "facebook"
       disabled: readonly
 
-    @$("input[name=members]").tokenInput Routes.people_path(),
+    @$("input[name=memberships]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
@@ -64,37 +64,32 @@ class DssRm.Views.GroupShow extends Backbone.View
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
     @$("textarea[name=description]").val @model.escape("description")
-    @$("span#group_member_count").html @model.get("members").length
+    @$("span#group_member_count").html @model.memberships.length
     
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
-    _.each @model.get("owners"), (owner) ->
+    @model.owners.each (owner) ->
       owners_tokeninput.tokenInput "add",
-        id: owner.id
-        name: owner.name
+        id: owner.get('id')
+        name: owner.get('name')
     
     operators_tokeninput = @$("input[name=operators]")
     operators_tokeninput.tokenInput "clear"
-    _.each @model.get("operators"), (operator) ->
+    @model.operators.each (operator) ->
       operators_tokeninput.tokenInput "add",
-        id: operator.id
-        name: operator.name
+        id: operator.get('id')
+        name: operator.get('name')
     
-    members_tokeninput = @$("input[name=members]")
+    members_tokeninput = @$("input[name=memberships]")
     members_tokeninput.tokenInput "clear"
-    _.each @model.get("calculated_members"), (member) ->
+    @model.memberships.each (membership) ->
       members_tokeninput.tokenInput "add",
-        id: member.id
-        name: member.name
-        loginid: member.loginid
-        calculated: true
-        class: "calculated"
-    _.each @model.get("explicit_members"), (member) ->
-      members_tokeninput.tokenInput "add",
-        id: member.id
-        name: member.name
-        loginid: member.loginid
-        class: "explicit"
+        id: membership.id
+        member_id: membership.get('member_id')
+        name: membership.get('name')
+        loginid: membership.get('loginid')
+        calculated: membership.get('calculated')
+        class: (if membership.get('calculated') then "calculated" else "")
     
     @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
     
@@ -113,10 +108,10 @@ class DssRm.Views.GroupShow extends Backbone.View
   renderRules: ->
     rules_table = @$("table#rules tbody")
     rules_table.empty()
-    _.each @model.get("rules"), (rule, i) =>
+    @model.rules.each (rule, i) =>
       rules_table.append @renderRule(rule)
     
-    if @model.get("rules").length is 0
+    if @model.rules.length is 0
       rules_table.hide()
     else
       rules_table.show()
@@ -127,10 +122,10 @@ class DssRm.Views.GroupShow extends Backbone.View
   renderRule: (rule) ->
     $rule = $(JST["templates/entities/group_rule"]())
     
-    $rule.data "rule_id", rule.id
-    $rule.find("td:nth-child(1) select").val rule.column
-    $rule.find("td:nth-child(2) select").val rule.condition
-    $rule.find("td:nth-child(3) input").val rule.value
+    $rule.data "rule_id", rule.get('id')
+    $rule.find("td:nth-child(1) select").val rule.get('column')
+    $rule.find("td:nth-child(2) select").val rule.get('condition')
+    $rule.find("td:nth-child(3) input").val rule.get('value')
     
     $rule.find("td:nth-child(3) input").typeahead
       minLength: 2
@@ -158,7 +153,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     # Calculatedness is indicated by a flag inserted at render time.
     # Filter the list down to only explicit members - these are the only ones we save.
     # The others come from rules.
-    explicit_tokeninput_members = _.filter(@$('input[name=members]').tokenInput('get'), (m) ->
+    explicit_tokeninput_members = _.filter(@$('input[name=memberships]').tokenInput('get'), (m) ->
       m.calculated != true
     )
 

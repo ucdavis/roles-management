@@ -48,10 +48,10 @@ class Group < Entity
     members.all.each do |e|
       if e.type == "Group"
         e.flattened_members.each do |m|
-          members << m
+          results << m
         end
       else
-        members << e
+        results << e
       end
     end
 

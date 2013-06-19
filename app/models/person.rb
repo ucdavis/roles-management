@@ -111,7 +111,7 @@ class Person < Entity
   def role_symbols
     syms = []
 
-    explicit_roles.where(:id => Application.find_by_name("DSS Roles Management").roles).each do |role|
+    roles.where(:id => Application.find_by_name("DSS Roles Management").roles).each do |role|
       syms << role.token.underscore.to_sym
     end
 

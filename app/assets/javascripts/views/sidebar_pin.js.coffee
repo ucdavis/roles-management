@@ -9,10 +9,9 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
 
     @$el.html JST["templates/entities/item"](entity: @model)
     @$el.data "entity-id", @model.get("id")
-    @$el.addClass @model.get("type").toLowerCase()
+    @$el.addClass @model.typeAsString()
 
   render: ->
-    type = @model.get("type")
     @$el.data "entity-name", @model.get("name")
     @$("span").html @model.escape("name")
     
@@ -48,7 +47,11 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @
 
   entityUrl: ->
-    "#" + "/entities/" + @model.get("id")
+    if @model.get("group_id")
+      id = @model.get("group_id")
+    else
+      id = @model.get("id")
+    "#" + "/entities/" + id
 
   toggleEntityFavorite: (e) ->
     e.stopPropagation()

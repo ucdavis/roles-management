@@ -1,3 +1,8 @@
+@EntityTypes =
+  unknown : 0
+  person  : 1
+  group   : 2
+
 # Nested attributes for people are BB collections while groups used
 # vanilla attributes. The former is easier to use but requires you stick
 # to a strict pattern. This difference should probably be reconciled.
@@ -9,20 +14,27 @@ DssRm.Models.Entity = Backbone.Model.extend(
       "/entities"
 
   initialize: ->
-    type = @get("type")
-    
-    # Some attribtues may or may not exist depending on how this model was initialized.
-    # Ensure needed attributes exist, even if blank.
-    if type is "Group"
-      @set "owners", []  if @get("owners") is `undefined`
-      @set "operators", []  if @get("operators") is `undefined`
-      @set "calculated_members", []  if @get("calculated_members") is `undefined`
-      @set "explicit_members", []  if @get("explicit_members") is `undefined`
-      @set "rules", []  if @get("rules") is `undefined`
-    
     @resetNestedCollections()
-    
     @on "sync", @resetNestedCollections, this
+  
+  type: ->
+    if @get("type")
+      result = @get("type").toLowerCase()
+    else if @get("group_id")
+      result = "group"
+    
+    if result == "person"
+      return EntityTypes.person
+    else if result == "group"
+      return EntityTypes.group
+    
+    return EntityTypes.unknown
+  
+  typeAsString: ->
+    if @type() is EntityTypes.group
+      return "group"
+    if @type() is EntityTypes.person
+      return "person"
   
   # Returns only the "highest" relationship (this order): admin, owner, operator
   # Does not return anything if not admin, owner, or operator on purpose
@@ -31,9 +43,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
   relationship: ->
     return "admin" if DssRm.admin_logged_in()
 
-    type = @get("type")
-    
-    if type is "Group"
+    if @type() is EntityTypes.group
       current_user_id = DssRm.current_user.get("id")
       return "owner" if _.find(@get("owners"), (o) ->
         o.id is current_user_id
@@ -50,53 +60,62 @@ DssRm.Models.Entity = Backbone.Model.extend(
     true
 
   resetNestedCollections: ->
-    type = @get("type")
-    
-    if type is "Person"
-      # FIXME: What happens here when a user has a favorite that they also own? the group has two CIDs?
-      #        Then updating one won't update the other - or does that matter? Or will it if we always
-      #        save via the user?
+    if @type() is EntityTypes.group
+      @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
+      @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
+      @memberships = new DssRm.Collections.Entities(@get("memberships")) if @memberships is `undefined`
+      @rules = new DssRm.Collections.Entities(@get("rules")) if @rules is `undefined`
+
+      # Reset nested collection data
+      @owners.reset @get("owners")
+      @operators.reset @get("operators")
+      @memberships.reset @get("memberships")
+      @rules.reset @get("rules")
       
+      # Enforce the design pattern by removing from @attributes what is represented in a nested collection
+      delete @attributes.owners
+      delete @attributes.operators
+      delete @attributes.memberships
+      delete @attributes.rules
+    
+    if @type() is EntityTypes.person
       # Ensure nested collections exist
       @favorites = new DssRm.Collections.Entities(@get("favorites")) if @favorites is `undefined`
       @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
       @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships")) if @group_operatorships is `undefined`
       @group_memberships = new Backbone.Collection(@get("group_memberships")) if @group_memberships is `undefined`
-      @explicit_roles = new DssRm.Collections.Roles(@get("explicit_roles")) if @explicit_roles is `undefined`
-      @calculated_roles = new DssRm.Collections.Roles(@get("calculated_roles")) if @calculated_roles is `undefined`
+      @role_assignments = new DssRm.Collections.Roles(@get("role_assignments")) if @role_assignments is `undefined`
       
       # Reset nested collection data
       @favorites.reset @get("favorites")
       @group_ownerships.reset @get("group_ownerships")
       @group_operatorships.reset @get("group_operatorships")
       @group_memberships.reset @get("group_memberships")
-      @explicit_roles.reset @get("explicit_roles")
-      @calculated_roles.reset @get("calculated_roles")
+      @role_assignments.reset @get("role_assignments")
       
       # Enforce the design pattern by removing from @attributes what is represented in a nested collection
       delete @attributes.favorites
       delete @attributes.group_ownerships
       delete @attributes.group_operatorships
       delete @attributes.group_memberships
-      delete @attributes.explicit_roles
-      delete @attributes.calculated_roles
+      delete @attributes.role_assignments
   
   # Returns only explicit group memberships (valid only for Person entity, not Group)
-  explicitGroupMemberships: ->
-    unless @group_memberships
+  uncalculatedGroupMemberships: ->
+    if @type() != EntityTypes.person
       return []
     
     @group_memberships.filter( (group) ->
-      group.get('explicit') == true
+      group.get('calculated') == false
     )
 
   # Returns only calculated group memberships (valid only for Person entity, not Group)
   calculatedGroupMemberships: ->
-    unless @group_memberships
+    if @type() != EntityTypes.person
       return []
 
     @group_memberships.filter( (group) ->
-      group.get('explicit') == false
+      group.get('calculated') == true
     )
   
   ouGroupMemberships: ->
@@ -116,9 +135,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
     )
 
   toJSON: ->
-    type = @get("type")
-    
-    if type is "Group"
+    if @type() is EntityTypes.group
       json = {}
       # Group-specific JSON
       json.name = @get("name")
@@ -139,7 +156,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
         condition: rule.condition
         value: rule.value
       )
-    else if type is "Person"
+    else if @type() is EntityTypes.person
       json = {} 
       
       # Person-specific JSON
@@ -175,7 +192,7 @@ DssRm.Collections.Entities = Backbone.Collection.extend(
   
   # Sort groups before people, then alphabetical by name
   comparator: (entity) ->
-    if entity.get("type") is "Group"
+    if entity.type() is EntityTypes.group
       return '1' + entity.get("name")
     else
       return '2' + entity.get("name")
