@@ -4,15 +4,13 @@ class Group < Entity
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
-  has_many :explicit_member_assignments, :class_name => "GroupExplicitMemberAssignment"
-  has_many :explicit_members, :through => :explicit_member_assignments, :source => :entity
-  has_many :calculated_member_assignments, :class_name => "GroupCalculatedMemberAssignment"
-  has_many :calculated_members, :through => :calculated_member_assignments, :source => :entity
+  has_many :member_assignments, :class_name => "GroupMemberAssignment"
+  has_many :members, :through => :member_assignments, :source => :entity
 
   has_many :role_assignments, :foreign_key => "entity_id"
   has_many :roles, :through => :role_assignments, :dependent => :destroy
 
-  has_many :group_owner_assignments
+                                has_many :group_owner_assignments
   has_many :owners, :through => :group_owner_assignments, :source => "entity", :dependent => :destroy
 
   has_many :group_operator_assignments
@@ -34,9 +32,7 @@ class Group < Entity
     { :id => self.id, :name => self.name, :type => 'Group',
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
-      :explicit_members => self.explicit_members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
-      :calculated_members => self.calculated_members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :member_assignments => self.member_assignments.map{ |a| { id: a.id, member_id: a.entity.id, name: a.entity.name, loginid: a.entity.loginid, calculated: a.calculated } },
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
   
@@ -44,24 +40,14 @@ class Group < Entity
     code != nil
   end
 
-  # Returns all members, both explicitly assigned and via rules.
-  # If flatten is set to true, child groups are resolved recursively until only a list of people remains.
-  # If flatten is false, any member groups will simply be returned as a group (i.e. not as the people _in_ that member group)
-  def members(flatten = false)
-    members = []
+  # Returns all members, both explicitly assigned and calculated via rules.
+  # Recurses groups all the way down to return a list of _only_people_.
+  def flattened_members
+    results = []
 
-    explicit_members.all.each do |e|
-      if flatten and e.type == "Group"
-        e.members(true).each do |m|
-          members << m
-        end
-      else
-        members << e
-      end
-    end
-    calculated_members.all.each do |e|
-      if flatten and e.type == "Group"
-        e.members(true).each do |m|
+    members.all.each do |e|
+      if e.type == "Group"
+        e.flattened_members.each do |m|
           members << m
         end
       else
@@ -70,7 +56,7 @@ class Group < Entity
     end
 
     # Only return a unique list
-    members.uniq{ |x| x.id }
+    results.uniq{ |x| x.id }
   end
 
   # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction

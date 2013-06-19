@@ -1,4 +1,4 @@
-class GroupExplicitMemberAssignment < ActiveRecord::Base
+class GroupMemberAssignment < ActiveRecord::Base
   using_access_control
 
   validates_presence_of :group, :entity

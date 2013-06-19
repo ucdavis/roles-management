@@ -57,7 +57,7 @@ class Role < ActiveRecord::Base
 
     # Add all (flattened) groups
     entities.where(:type => "Group").all.each do |group|
-      all += group.members(true)
+      all += group.flattened_members
     end
 
     # Return a unique list
