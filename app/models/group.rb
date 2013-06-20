@@ -165,8 +165,8 @@ class Group < Entity
       unless results.nil?
         results = results.flatten
         results = results.uniq{ |r| r.id }
-        uncalculated_group_membership_ids = group_memberships.where(:calculated => false).map{ |m| m.id }
-        self.group_membership_ids = uncalculated_group_membership_ids + results.map{ |m| m.id }
+        uncalculated_group_member_ids = group_memberships.where(:calculated => false).map{ |m| m.entity.id }
+        self.member_ids = uncalculated_group_member_ids + results.map{ |m| m.id }
       end
       
       results.nil? ? num_found = 0 : num_found = results.length
