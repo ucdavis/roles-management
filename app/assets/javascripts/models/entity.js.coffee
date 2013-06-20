@@ -141,14 +141,14 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.name = @get("name")
       json.type = "Group"
       json.description = @get("description")
-      json.owner_ids = @get("owners").map((owner) ->
+      json.owner_ids = @owners.map((owner) ->
         owner.id
       )
-      json.operator_ids = @get("operators").map((operator) ->
+      json.operator_ids = @operators.map((operator) ->
         operator.id
       )
-      json.explicit_member_ids = @get("explicit_members").map((explicit_member) ->
-        explicit_member.id
+      json.membership_ids = @memberships.map((member) ->
+        member.id
       )
       json.rules_attributes = @get("rules").map((rule) ->
         id: rule.id
@@ -169,10 +169,8 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.loginid = @get("loginid")
       json.phone = @get("phone")
       
-      json.explicit_role_ids = @roles.filter((role) ->
-        role.get('explicit') == true
-      ).map((role) ->
-        role.id
+      json.role_assignment_ids = @role_assignments.map((assignment) ->
+        assignment.id
       )
       json.favorite_ids = @favorites.map((favorite) ->
         favorite.id

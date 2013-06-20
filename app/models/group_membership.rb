@@ -1,8 +1,14 @@
 class GroupMembership < ActiveRecord::Base
   using_access_control
+  @@destroy_calculated_membership_flag = false
+  
+  def self.destroy_calculated_membership_flag=(val)
+    @@destroy_calculated_membership_flag = val
+  end
 
   validates_presence_of :group, :entity
   validate :group_cannot_join_itself
+  before_destroy :cannot_destroy_calculated_membership_without_flag
 
   belongs_to :group
   belongs_to :entity
@@ -14,5 +20,26 @@ class GroupMembership < ActiveRecord::Base
     if !group.blank? and group == entity
       errors[:base] << "Group cannot join with itself"
     end
+  end
+  
+  def cannot_destroy_calculated_membership_without_flag
+    unless defined? @@destroy_calculated_membership_flag
+      errors.add(:calculated, "can't destroy a calculated membership without flag")
+      return false
+    end
+    
+    if calculated and not @@destroy_calculated_membership_flag
+      errors.add(:calculated, "can't destroy a calculated group membership without flag properly set")
+      return false
+    end
+  end
+end
+
+def destroying_calculated_group_membership
+  begin
+    GroupMembership.destroy_calculated_membership_flag = true
+    yield
+  ensure
+    GroupMembership.destroy_calculated_membership_flag = false
   end
 end

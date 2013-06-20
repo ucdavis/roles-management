@@ -61,7 +61,7 @@ class Group < Entity
 
   # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction
   def rules_attributes=(rule_attrs)
-    ids_touched = [] # We'll remove any rules that weren't touched at the end
+    ids_touched = [] # Remove untouched rules at the end
 
     # Add/update rules
     unless rule_attrs.nil?
