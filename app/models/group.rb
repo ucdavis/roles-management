@@ -1,21 +1,18 @@
+# Group shares many attributes with entity.
 class Group < Entity
   using_access_control
 
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
-  has_many :group_memberships
+  has_many :group_memberships, :dependent => :destroy
   has_many :members, :through => :group_memberships, :source => :entity
-
-  has_many :role_assignments, :foreign_key => "entity_id"
-  has_many :roles, :through => :role_assignments, :dependent => :destroy
-
-  has_many :group_ownerships
-  has_many :owners, :through => :group_ownerships, :dependent => :destroy, :source => "entity"
-
-  has_many :group_operatorships
-  has_many :operators, :through => :group_operatorships, :dependent => :destroy, :source => "entity"
-
+  has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
+  has_many :roles, :through => :role_assignments
+  has_many :group_ownerships, :dependent => :destroy
+  has_many :owners, :through => :group_ownerships, :source => "entity"
+  has_many :group_operatorships, :dependent => :destroy
+  has_many :operators, :through => :group_operatorships, :source => "entity"
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
 
   validates :name, :presence => true

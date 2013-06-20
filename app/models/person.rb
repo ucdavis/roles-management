@@ -1,35 +1,23 @@
 # Person shares many attributes with entity.
 # Note that the 'name' field is simply self.first + " " + self.last
 # and is thus read-only. The same does not apply for groups.
-#
-# 'roles' refers only to explicit roles. Use method 'all_roles' to include
-# those assigned via group membership.
 class Person < Entity
   using_access_control
 
   belongs_to :title
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
-
   has_many :group_memberships, :foreign_key => "entity_id"
   has_many :groups, :through => :group_memberships, :source => :group
-
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments, :source => :role
-
   has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "owner_id"
   has_many :favorites, :through => :favorite_relationships, :source => :entity
-
   has_many :application_ownerships, :foreign_key => "owner_id", :dependent => :destroy
-
   has_many :application_operatorships, :foreign_key => "entity_id", :dependent => :destroy
-
   has_many :group_operatorships, :foreign_key => "entity_id"
-
   has_many :group_ownerships, :foreign_key => "entity_id"
-
   has_one :student
-
   belongs_to :major
 
   validates :loginid, :presence => true, :uniqueness => true
@@ -43,27 +31,28 @@ class Person < Entity
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
       :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline,
-      :role_assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.calculated, role_id: a.role.id, token: a.role.token, application_name: a.role.application.name,
-                                                            application_id: a.role.application_id, name: a.role.name, description: a.role.description } },
+      :role_assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.calculated, role_id: a.role.id, token: a.role.token, application_name: a.role.application.name, application_id: a.role.application_id, name: a.role.name, description: a.role.description } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
       :group_memberships => self.group_memberships.map{ |m| { id: m.id, group_id: m.group.id, name: m.group.name, ou: m.group.ou?, calculated: m.calculated } },
       :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } },
       :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } }
     }
   end
-  
+
+  # For CSV export
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
   end
+  def to_csv
+    [id, loginid, email, first, last]
+  end
   
+  # Returns identifying string for logging purposes. Other classes implement this method too.
   def log_identifier
     loginid
   end
 
-  def to_csv
-    [id, loginid, email, first, last]
-  end
-
+  # Calculates 'byline' for a Person, e.g. "PROGRAMMER V (staff:career)"
   def byline
     if title and title.name
       byline = title.name
@@ -109,7 +98,10 @@ class Person < Entity
     roles.all.each { |role| role.trigger_sync }
     return true
   end
+
+  private
   
+  # Validators.
   def first_or_last_presence
     unless self.name.length > 0
       errors.add(:name, "first or last must be set")
