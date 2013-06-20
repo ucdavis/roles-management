@@ -64,7 +64,7 @@ class GroupRule < ActiveRecord::Base
         end
       end
     when "ou"
-      ou = Group.ous.includes(:explicit_members).includes(:calculated_members).find_by_name(value)
+      ou = Group.ous.includes(:members).find_by_name(value)
       unless ou == nil
         ps = ou.members
         case condition
@@ -129,7 +129,7 @@ class GroupRule < ActiveRecord::Base
     when "affiliation"
       matched = person.affiliations.include? Affiliation.find_by_name(value)
     when "ou"
-      matched = person.explicit_groups.ous.include? Group.find_by_name(value)
+      matched = person.groups.ous.include? Group.find_by_name(value)
     when "classification"
       matched = person.classification == Classification.find_by_name(value)
     when "loginid"

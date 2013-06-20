@@ -20,7 +20,7 @@ class Group < Entity
 
   validates :name, :presence => true
 
-  attr_accessible :name, :description, :type, :explicit_member_ids, :owner_ids, :operator_ids, :rules_attributes
+  attr_accessible :name, :description, :type, :membership_ids, :owner_ids, :operator_ids, :rules_attributes
 
   accepts_nested_attributes_for :rules,
                                 :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? },
@@ -38,6 +38,10 @@ class Group < Entity
   
   def ou?
     code != nil
+  end
+  
+  def membership_ids=(ids)
+    group_membership_ids = ids
   end
 
   # Returns all members, both explicitly assigned and calculated via rules.
@@ -156,13 +160,16 @@ class Group < Entity
       end
 
       # Remove previous calculated group member assignments
-      calculated_members.destroy_all
+      destroying_calculated_group_membership do
+        group_memberships.where(:calculated => true).destroy_all
+      end
 
       # Reset calculated group member assignments with the results of this algorithm
       unless results.nil?
         results = results.flatten
         results = results.uniq{ |r| r.id }
-        self.calculated_member_ids = results.map{ |m| m.id }
+        uncalculated_group_membership_ids = group_memberships.where(:calculated => false).map{ |m| m.id }
+        self.group_membership_ids = uncalculated_group_membership_ids + results.map{ |m| m.id }
       end
       
       results.nil? ? num_found = 0 : num_found = results.length

@@ -175,10 +175,14 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.favorite_ids = @favorites.map((favorite) ->
         favorite.id
       )
-      # Only save explicit group memberships - calculated (non-explicit) come from group rules
-      # and cannot be controlled by the Person object
-      json.explicit_group_ids = @explicitGroupMemberships().map((group) ->
-        group.id
+      json.group_membership_ids = @group_memberships.map((membership) ->
+        membership.id
+      )
+      json.group_operatorship_ids = @group_operatorships.map((operatorship) ->
+        operatorship.id
+      )
+      json.group_ownership_ids = @group_ownerships.map((ownership) ->
+        ownership.id
       )
     
     entity: json

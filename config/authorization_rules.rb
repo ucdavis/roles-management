@@ -4,18 +4,17 @@ authorization do
     has_permission_on :applications, :to => :manage
     has_permission_on :entities, :to => :manage
     has_permission_on :person_favorite_assignments, :to => :manage
-    has_permission_on :application_owner_assignments, :to => :manage
+    has_permission_on :application_ownerships, :to => :manage
     has_permission_on :roles, :to => :manage
     has_permission_on :groups, :to => :manage
     has_permission_on :ous, :to => :manage
     has_permission_on :group_rules, :to => :manage
     has_permission_on :people, :to => [:manage, :search]
-    has_permission_on :application_operator_assignments, :to => :manage
+    has_permission_on :application_operatorships, :to => :manage
     has_permission_on :role_assignments, :to => :manage
-    has_permission_on :group_owner_assignments, :to => :manage
-    has_permission_on :group_operator_assignments, :to => :manage
-    has_permission_on :group_explicit_member_assignments, :to => :manage
-    has_permission_on :group_calculated_member_assignments, :to => :manage
+    has_permission_on :group_ownerships, :to => :manage
+    has_permission_on :group_operatorships, :to => :manage
+    has_permission_on :group_memberships, :to => :manage
     has_permission_on :affiliations, :to => :manage
     has_permission_on :majors, :to => :manage
     has_permission_on :titles, :to => :manage
@@ -74,10 +73,10 @@ authorization do
     has_permission_on :roles, :to => [:read, :update, :create, :delete] do
       if_attribute :application => { :owners => contains { user } }
     end
-    has_permission_on :application_owner_assignments, :to => [:read, :update, :create, :delete] do
+    has_permission_on :application_ownerships, :to => [:read, :update, :create, :delete] do
       if_attribute :application => { :owners => contains { user } }
     end
-    has_permission_on :application_operator_assignments, :to => [:read, :update, :create, :delete] do
+    has_permission_on :application_operatorships, :to => [:read, :update, :create, :delete] do
       if_attribute :application => { :owners => contains { user } }
     end
     # Allow updating/reading of roles which belong to an application they operator
@@ -139,25 +138,19 @@ authorization do
     has_permission_on :groups, :to => [:update] do
       if_attribute :operators => contains { user }
     end
-    has_permission_on :group_owner_assignments, :to => [:create, :update, :delete] do
+    has_permission_on :group_ownerships, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end
-    has_permission_on :group_explicit_member_assignments, :to => [:create, :update, :delete] do
+    has_permission_on :group_memberships, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end
-    has_permission_on :group_calculated_member_assignments, :to => [:create, :update, :delete] do
+    has_permission_on :group_operatorships, :to => [:create, :update, :delete] do
       if_attribute :group => { :owners => contains { user } }
     end
-    has_permission_on :group_operator_assignments, :to => [:create, :update, :delete] do
-      if_attribute :group => { :owners => contains { user } }
-    end
-    has_permission_on :group_operator_assignments, :to => [:create, :update, :delete] do
+    has_permission_on :group_operatorships, :to => [:create, :update, :delete] do
       if_attribute :group => { :operators => contains { user } }
     end
-    has_permission_on :group_explicit_member_assignments, :to => [:create, :update, :delete] do
-      if_attribute :group => { :operators => contains { user } }
-    end
-    has_permission_on :group_calculated_member_assignments, :to => [:create, :update, :delete] do
+    has_permission_on :group_memberships, :to => [:create, :update, :delete] do
       if_attribute :group => { :operators => contains { user } }
     end
     
