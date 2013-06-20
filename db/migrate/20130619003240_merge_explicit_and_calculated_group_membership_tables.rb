@@ -1,3 +1,18 @@
+def class_exists?(class_name)
+  klass = Module.const_get(class_name)
+  return klass.is_a?(Class)
+rescue NameError
+  return false
+end
+
+# Necessary as updated code will have removed this class, causing the migration to fail.
+unless class_exists? "GroupCalculatedMemberAssignment"
+  class GroupCalculatedMemberAssignment < ActiveRecord::Base
+  end
+  class GroupExplicitMemberAssignment < ActiveRecord::Base
+  end
+end
+
 class MergeExplicitAndCalculatedGroupMembershipTables < ActiveRecord::Migration
   # Merge calculated group memberships into explicit group memberships and rename
   def change
