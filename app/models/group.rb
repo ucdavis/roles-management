@@ -5,8 +5,8 @@ class Group < Entity
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
 
-  has_many :group_memberships, :dependent => :destroy
-  has_many :members, :through => :group_memberships, :source => :entity
+  has_many :memberships, :class_name => "GroupMembership", :dependent => :destroy
+  has_many :members, :through => :memberships, :source => :entity
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments
   has_many :group_ownerships, :dependent => :destroy
@@ -17,19 +17,19 @@ class Group < Entity
 
   validates :name, :presence => true
 
-  attr_accessible :name, :description, :type, :membership_ids, :owner_ids, :operator_ids, :rules_attributes
+  attr_accessible :name, :description, :type, :owner_ids, :operator_ids, :rules_attributes, :memberships_attributes
 
-  accepts_nested_attributes_for :rules,
-                                :reject_if => lambda { |a| a[:value].blank? || a[:condition].blank? || a[:column].blank? },
-                                :allow_destroy => true
+  accepts_nested_attributes_for :rules, :allow_destroy => true
+  accepts_nested_attributes_for :memberships, :allow_destroy => true
 
+  before_save :recalculate_members
   after_save :trigger_sync
   
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Group',
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :memberships => self.group_memberships.map{ |a| { id: a.id, member_id: a.entity.id, name: a.entity.name, loginid: a.entity.loginid, calculated: a.calculated } },
+      :memberships => self.memberships.map{ |a| { id: a.id, entity_id: a.entity.id, name: a.entity.name, loginid: a.entity.loginid, calculated: a.calculated } },
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
   
@@ -37,10 +37,6 @@ class Group < Entity
     code != nil
   end
   
-  def membership_ids=(ids)
-    group_membership_ids = ids
-  end
-
   # Returns all members, both explicitly assigned and calculated via rules.
   # Recurses groups all the way down to return a list of _only_people_.
   def flattened_members
@@ -60,54 +56,6 @@ class Group < Entity
     results.uniq{ |x| x.id }
   end
 
-  # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction
-  def rules_attributes=(rule_attrs)
-    ids_touched = [] # Remove untouched rules at the end
-
-    # Add/update rules
-    unless rule_attrs.nil?
-      rule_attrs.each do |rule|
-        if rule[:id] == nil
-          # New rule
-          r = GroupRule.new
-          r.column = rule[:column]
-          r.condition = rule[:condition]
-          r.value = rule[:value]
-          r.group_id = id
-          r.save
-          ids_touched << r.id
-        else
-          # Updating a rule
-          r = GroupRule.find(rule[:id])
-          r.column = rule[:column]
-          r.condition = rule[:condition]
-          r.value = rule[:value]
-          r.save
-          ids_touched << r.id
-        end
-      end
-    end
-
-    # Remove unnecessary ones
-    rules.all.each do |r|
-      unless ids_touched.include? r.id
-        r.destroy
-      end
-    end
-    
-    recalculate_members
-  end
-
-  # Compute accessible applications
-  def applications
-    apps = []
-
-    # Add apps via roles explicitly assigned
-    roles.each { |role| apps << role.application }
-
-    apps
-  end
-  
   # Calculates (and resets) all group_members based on rules.
   # Will delete any *_member_assignment flagged as calculated and rebuild
   # from rules.
@@ -158,19 +106,25 @@ class Group < Entity
 
       # Remove previous calculated group member assignments
       destroying_calculated_group_membership do
-        group_memberships.where(:calculated => true).destroy_all
+        memberships.where(:calculated => true).destroy_all
       end
 
       # Reset calculated group member assignments with the results of this algorithm
       unless results.nil?
         results = results.flatten
         results = results.uniq{ |r| r.id }
-        uncalculated_group_member_ids = group_memberships.where(:calculated => false).map{ |m| m.entity.id }
-        self.member_ids = uncalculated_group_member_ids + results.map{ |m| m.id }
+        uncalculated_group_member_ids = memberships.where(:calculated => false).map{ |m| m.entity.id }
+        results.each do |e|
+          m = GroupMembership.new
+          m.group_id = id
+          m.entity_id = e.id
+          m.calculated = true
+          m.save
+        end
       end
       
       results.nil? ? num_found = 0 : num_found = results.length
-      logger.info "Found #{num_found} members"
+      logger.info "Found #{num_found} members, group now has #{memberships.length} total members"
     end
   end
 

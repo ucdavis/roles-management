@@ -64,7 +64,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
       @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
       @memberships = new DssRm.Collections.Entities(@get("memberships")) if @memberships is `undefined`
-      @rules = new DssRm.Collections.Entities(@get("rules")) if @rules is `undefined`
+      @rules = new DssRm.Collections.GroupRules(@get("rules")) if @rules is `undefined`
 
       # Reset nested collection data
       @owners.reset @get("owners")
@@ -147,15 +147,22 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.operator_ids = @operators.map((operator) ->
         operator.id
       )
-      json.membership_ids = @memberships.map((member) ->
-        member.id
-      )
-      json.rules_attributes = @get("rules").map((rule) ->
-        id: rule.id
-        column: rule.column
-        condition: rule.condition
-        value: rule.value
-      )
+      # Note we use Rails' nested attributes here so we need to 
+      if @memberships.length
+        json.memberships_attributes = @memberships.map((membership) ->
+          id: membership.get('id')
+          calculated: membership.get('calculated')
+          entity_id: membership.get('entity_id')
+          group_id: membership.get('group_id')
+          _destroy: membership.get('_destroy')
+        )
+      if @rules.length
+        json.rules_attributes = @rules.map((rule) ->
+          id: rule.id
+          column: rule.column
+          condition: rule.condition
+          value: rule.value
+        )
     else if @type() is EntityTypes.person
       json = {} 
       

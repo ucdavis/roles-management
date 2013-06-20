@@ -3,6 +3,7 @@ class GroupRule < ActiveRecord::Base
 
   @@valid_columns = %w( title major affiliation classification loginid ou )
 
+  validates_presence_of :condition, :column, :value
   validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => @@valid_columns
 

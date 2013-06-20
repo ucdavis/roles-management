@@ -36,26 +36,15 @@ class DssRm.Views.GroupShow extends Backbone.View
       theme: "facebook"
       disabled: readonly
       onAdd: (item) =>
-        # Any members added via this interaction will be explicit members
-        @model.set('explicit_members', @model.get('explicit_members').push
-          id: item.id
+        @model.memberships.add
+          calculated: false
           loginid: item.loginid
+          entity_id: item.id
+          group_id: @model.get('id')
           name: item.name
-        )
       onDelete: (item) =>
-        # Did they delete an explicit member or calculated method?
-        # Calculated members being deleted require a new rule be created
-        if item.calculated
-          # Calculated member requires we make a new rule
-          $rule = @addRule()
-          $rule.find('select#column').val('loginid')
-          $rule.find('select#condition').val('is not')
-          $rule.find('input#value').val(item.loginid)
-        else
-          # Explicit member is simply removed from the list, no rule needed
-          @model.set('explicit_members', _.filter(@model.get('explicit_members'), (m) =>
-            m.id != item.id
-          ))
+        membership = @model.memberships.get(item.id)
+        membership.set('_destroy', true)
 
   render: ->
     readonly = @model.isReadOnly()
@@ -83,13 +72,14 @@ class DssRm.Views.GroupShow extends Backbone.View
     members_tokeninput = @$("input[name=memberships]")
     members_tokeninput.tokenInput "clear"
     @model.memberships.each (membership) ->
-      members_tokeninput.tokenInput "add",
-        id: membership.id
-        member_id: membership.get('member_id')
-        name: membership.get('name')
-        loginid: membership.get('loginid')
-        calculated: membership.get('calculated')
-        class: (if membership.get('calculated') then "calculated" else "")
+      unless membership.get('_destroy')
+        members_tokeninput.tokenInput "add",
+          id: membership.id
+          entity_id: membership.get('entity_id')
+          name: membership.get('name')
+          loginid: membership.get('loginid')
+          calculated: membership.get('calculated')
+          class: (if membership.get('calculated') then "calculated" else "")
     
     @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
     
@@ -109,7 +99,8 @@ class DssRm.Views.GroupShow extends Backbone.View
     rules_table = @$("table#rules tbody")
     rules_table.empty()
     @model.rules.each (rule, i) =>
-      rules_table.append @renderRule(rule)
+      unless rule.get('_destroy')
+        rules_table.append @renderRule(rule)
     
     if @model.rules.length is 0
       rules_table.hide()
@@ -149,29 +140,18 @@ class DssRm.Views.GroupShow extends Backbone.View
     
     @$('#apply').attr('disabled', 'disabled').html('Saving ...')
 
-    # tokenInput('get') contains both explicit and calculated members.
-    # Calculatedness is indicated by a flag inserted at render time.
-    # Filter the list down to only explicit members - these are the only ones we save.
-    # The others come from rules.
-    explicit_tokeninput_members = _.filter(@$('input[name=memberships]').tokenInput('get'), (m) ->
-      m.calculated != true
-    )
-
     # Note: the _.filter() on rules is to avoid saving empty rules (rules with no value set)
     @model.save
       name: @$('input[name=name]').val()
       description: @$('textarea[name=description]').val()
-      owners: @$('input[name=owners]').tokenInput('get')
-      operators: @$('input[name=operators]').tokenInput('get')
-      explicit_members: explicit_tokeninput_members
-      rules: _.filter(_.map($('table#rules>tbody>tr'), (el, i) ->
-        id: $(el).data('rule_id')
-        column: $(el).find("#column").val(),
-        condition: $(el).find("#condition").val(),
-        value: $(el).find("#value").val()
-      ), (r) ->
-        r.value != ""
-      )
+      # rules: _.filter(_.map($('table#rules>tbody>tr'), (el, i) ->
+      #   id: $(el).data('rule_id')
+      #   column: $(el).find("#column").val(),
+      #   condition: $(el).find("#condition").val(),
+      #   value: $(el).find("#value").val()
+      # ), (r) ->
+      #   r.value != ""
+      # )
     ,
       success: ->
         @$('#apply').removeAttr('disabled').html('Apply Changes')
@@ -194,22 +174,27 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   # Renders a new rule and returns jQuery object
   addRule: (e) ->
-    rules_table = @$("table#rules tbody")
-    rules_table.show() # it will be hidden if there are no rules already
-    $rule = @renderRule({ id: null, column: null, condition: null, value: null })
-    rules_table.append $rule
-    return $rule
+    @model.rules.add {}
+    @renderRules()
+    # rules_table = @$("table#rules tbody")
+    # rules_table.show() # it will be hidden if there are no rules already
+    # $rule = @renderRule({ id: null, column: null, condition: null, value: null })
+    # rules_table.append $rule
+    # return $rule
 
   removeRule: (e) ->
     rule_id = $(e.target).parents("tr").data("rule_id")
-    @model.set
-      rules: _.reject(@model.get("rules"), (r) ->
-        r.id is rule_id
-      )
-    ,
-      silent: true
-    
-    $(e.target).parents("tr").remove()
+    rule = @model.rules.get rule_id
+    rule.set('_destroy', true)
+    @renderRules()
+    # @model.set
+    #   rules: _.reject(@model.get("rules"), (r) ->
+    #     r.id is rule_id
+    #   )
+    # ,
+    #   silent: true
+    # 
+    # $(e.target).parents("tr").remove()
 
   cleanUpModal: ->
     @remove()

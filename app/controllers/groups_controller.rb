@@ -23,7 +23,7 @@ class GroupsController < ApplicationController
       # API access will have to rely on other methods for assocating objects with a group, e.g.
       # setting GroupRule.group_id instead of trying Group.rules << GroupRule.
       @group.update_attributes(params[:group].except(:id, :members, :operators, :owners, :rules))
-
+      
       respond_with @group
     else
       respond_with 422

@@ -54,8 +54,7 @@ class EntitiesController < ApplicationController
 
     @entity.update_attributes(params[:entity])
     
-    #respond_with @entity
-    # Override as we want to respond with the object, not a 204 No Content
+    # Overridden to respond with the object and not a '204 No Content'.
     # See: http://stackoverflow.com/questions/9953887/simple-respond-with-in-rails-that-avoids-204-from-put
     respond_with(@entity) do |format|
       format.json { render json: @entity }
