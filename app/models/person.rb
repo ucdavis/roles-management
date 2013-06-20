@@ -79,20 +79,6 @@ class Person < Entity
     title.classifications
   end
 
-  # Calculates all roles for an individual - explicitly assigned + those via group membership, including group rules
-  def calculated_roles
-    calculated_roles = []
-
-    explicit_groups.each do |group|
-      calculated_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id, name: r.name, description: r.description } }
-    end
-    calculated_groups.each do |group|
-      calculated_roles += group.roles.map { |r| { id: r.id, token: r.token, application_name: r.application.name, application_id: r.application_id, name: r.name, description: r.description } }
-    end
-    
-    calculated_roles
-  end
-  
   # Overriden to be self.first + " " + self.last
   # though there is a 'name' column used by Entity (for groups).
   # Update first and last, not 'name'. Consider 'name' to be
@@ -119,8 +105,8 @@ class Person < Entity
   end
   
   def trigger_sync
-    logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{explicit_roles.length} roles"
-    explicit_roles.all.each { |role| role.trigger_sync }
+    logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
+    roles.all.each { |role| role.trigger_sync }
     return true
   end
   
