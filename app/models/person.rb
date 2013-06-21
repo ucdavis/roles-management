@@ -23,11 +23,12 @@ class Person < Entity
   accepts_nested_attributes_for :group_ownerships, :allow_destroy => true
   accepts_nested_attributes_for :group_operatorships, :allow_destroy => true
   accepts_nested_attributes_for :group_memberships, :allow_destroy => true
+  accepts_nested_attributes_for :role_assignments, :allow_destroy => true
 
   validates :loginid, :presence => true, :uniqueness => true
   validate :first_or_last_presence
 
-  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_assignment_ids, :favorite_ids, :group_memberships_attributes
+  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :favorite_ids, :group_memberships_attributes, :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes
 
   after_save :trigger_sync
   

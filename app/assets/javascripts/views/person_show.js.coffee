@@ -39,23 +39,26 @@ class DssRm.Views.PersonShow extends Backbone.View
       disabled: @readonly
       onAdd: (item) =>
         @model.group_ownerships.add
-          id: item.id
+          entity_id: @model.get('id')
+          group_id: item.id
           name: item.name
       onDelete: (item) =>
-        @model.group_ownerships.remove(item.id)
+        ownership = @model.group_ownerships.get(item.id)
+        ownership.set('_destroy', true)
 
     @$("input[name=group_operatorships]").tokenInput Routes.groups_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
       disabled: @readonly
-      # onAdd: (item) =>
-      #   @model.set "favorites", @model.get("favorites").push(item)
-      # 
-      # onDelete: (item) =>
-      #   @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
-      #     favorite.id isnt item.id
-      #   )
+      onAdd: (item) =>
+        @model.group_operatorships.add
+          entity_id: @model.get('id')
+          group_id: item.id
+          name: item.name
+      onDelete: (item) =>
+        operatorship = @model.group_operatorships.get(item.id)
+        operatorship.set('_destroy', true)
 
     @$("input[name=non_ou_group_memberships]").tokenInput Routes.groups_path(),
       crossDomain: false
@@ -69,20 +72,23 @@ class DssRm.Views.PersonShow extends Backbone.View
           name: item.name
           calculated: false
       onDelete: (item) =>
-        @model.group_memberships.remove(item.id)
+        membership = @model.group_memberships.get(item.id)
+        membership.set('_destroy', true)
 
-    @$("input[name=ou_group_memberships]").tokenInput Routes.groups_path(),
+    @$("input[name=ou_group_memberships]").tokenInput Routes.ous_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
       disabled: @readonly
-      # onAdd: (item) =>
-      #   @model.set "favorites", @model.get("favorites").push(item)
-      # 
-      # onDelete: (item) =>
-      #   @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
-      #     favorite.id isnt item.id
-      #   )
+      onAdd: (item) =>
+        @model.group_memberships.add
+          group_id: item.id
+          entity_id: @model.get('id')
+          name: item.name
+          calculated: false
+      onDelete: (item) =>
+        membership = @model.group_memberships.get(item.id)
+        membership.set('_destroy', true)
 
   resetRolesTab: ->
     $rolesTab = @$("div#roles")
@@ -123,36 +129,40 @@ class DssRm.Views.PersonShow extends Backbone.View
     group_ownership_tokeninput = @$("input[name=group_ownerships]")
     group_ownership_tokeninput.tokenInput "clear"
     @model.group_ownerships.each (ownership) =>
-      group_ownership_tokeninput.tokenInput "add",
-        id: ownership.get('id')
-        name: ownership.get('name')
-        readonly: @readonly
+      unless ownership.get('_destroy')
+        group_ownership_tokeninput.tokenInput "add",
+          id: ownership.get('id')
+          name: ownership.get('name')
+          readonly: @readonly
 
     group_operatorship_tokeninput = @$("input[name=group_operatorships]")
     group_operatorship_tokeninput.tokenInput "clear"
     @model.group_operatorships.each (operatorship) =>
-      group_operatorship_tokeninput.tokenInput "add",
-        id: operatorship.get('id')
-        name: operatorship.get('name')
-        readonly: @readonly
+      unless operatorship.get('_destroy')
+        group_operatorship_tokeninput.tokenInput "add",
+          id: operatorship.get('id')
+          name: operatorship.get('name')
+          readonly: @readonly
     
     non_ou_group_membership_tokeninput = @$("input[name=non_ou_group_memberships]")
     non_ou_group_membership_tokeninput.tokenInput "clear"
     _.each @model.nonOuGroupMemberships(), (membership) =>
-      non_ou_group_membership_tokeninput.tokenInput "add",
-        id: membership.get('id')
-        name: membership.get('name')
-        readonly: @readonly || not membership.get('explicit')
-        class: (if membership.get('explicit') then "" else "calculated")
+      unless membership.get('_destroy')
+        non_ou_group_membership_tokeninput.tokenInput "add",
+          id: membership.get('id')
+          name: membership.get('name')
+          readonly: @readonly || membership.get('calculated')
+          class: (if membership.get('calculated') then "calculated" else "")
 
     ou_group_membership_tokeninput = @$("input[name=ou_group_memberships]")
     ou_group_membership_tokeninput.tokenInput "clear"
     _.each @model.ouGroupMemberships(), (membership) =>
-      ou_group_membership_tokeninput.tokenInput "add",
-        id: membership.get('id')
-        name: membership.get('name')
-        readonly: @readonly || not membership.get('explicit')
-        class: (if membership.get('explicit') then "" else "calculated")
+      unless membership.get('_destroy')
+        ou_group_membership_tokeninput.tokenInput "add",
+          id: membership.get('id')
+          name: membership.get('name')
+          readonly: @readonly || membership.get('calculated')
+          class: (if membership.get('calculated') then "calculated" else "")
 
     # Roles tab
     $rolesTab = @$("div#roles")
@@ -166,8 +176,8 @@ class DssRm.Views.PersonShow extends Backbone.View
         role_tokeninput.tokenInput "add",
           id: role.get("id")
           name: role.get("name")
-          readonly: @readonly || not role.get('explicit')
-          class: (if role.get('explicit') then "" else "calculated")
+          readonly: @readonly || role.get('calculated')
+          class: (if role.get('calculated') then "calculated" else "")
     
     if @readonly
       @$('.token-input-list-facebook').readonly()

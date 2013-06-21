@@ -102,9 +102,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.loginid = @get("loginid")
       json.phone = @get("phone")
       
-      json.role_assignment_ids = @role_assignments.map((assignment) ->
-        assignment.id
-      )
       json.favorite_ids = @favorites.map((favorite) ->
         favorite.id
       )
@@ -116,11 +113,22 @@ DssRm.Models.Entity = Backbone.Model.extend(
           group_id: membership.get('group_id')
           _destroy: membership.get('_destroy')
         )
-      # json.group_operatorship_ids = @group_operatorships.map((operatorship) ->
-      #   operatorship.id
-      # )
-      # json.group_ownership_ids = @group_ownerships.map((ownership) ->
-      #   ownership.id
+      if @group_operatorships.length
+        json.group_operatorships_attributes = @group_operatorships.map((operatorship) ->
+          id: operatorship.get('id')
+          entity_id: operatorship.get('entity_id')
+          group_id: operatorship.get('group_id')
+          _destroy: operatorship.get('_destroy')
+        )
+      if @group_ownerships.length
+        json.group_ownerships_attributes = @group_ownerships.map((ownership) ->
+          id: ownership.get('id')
+          entity_id: ownership.get('entity_id')
+          group_id: ownership.get('group_id')
+          _destroy: ownership.get('_destroy')
+        )
+      # json.role_assignment_ids = @role_assignments.map((assignment) ->
+      #   assignment.id
       # )
     
     entity: json
