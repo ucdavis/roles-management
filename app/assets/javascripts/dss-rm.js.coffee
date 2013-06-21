@@ -6,8 +6,7 @@ window.DssRm =
   
   initialize: (data) ->
     @applications = new DssRm.Collections.Applications data.applications
-
-    window.data = data
+    
     @current_user = new DssRm.Models.Entity data.current_user
     @current_user.set 'admin', data.current_user_admin
     

@@ -17,8 +17,6 @@ class DssRm.Views.PersonShow extends Backbone.View
     @listenTo @model, "sync", @render
     @readonly = @model.isReadOnly()
     
-    window.person = @model
-    
     @initializeRelationsTab()
   
   initializeRelationsTab: ->
@@ -28,12 +26,11 @@ class DssRm.Views.PersonShow extends Backbone.View
       theme: "facebook"
       disabled: @readonly
       onAdd: (item) =>
-        @model.set "favorites", @model.get("favorites").push(item)
-
+        @model.favorites.add
+          id: item.id
+          name: item.name
       onDelete: (item) =>
-        @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
-          favorite.id isnt item.id
-        )
+        @model.favorites.remove(item.id)
 
     @$("input[name=group_ownerships]").tokenInput Routes.people_path(),
       crossDomain: false

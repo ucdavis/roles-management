@@ -17,6 +17,109 @@ DssRm.Models.Entity = Backbone.Model.extend(
     @resetNestedCollections()
     @on "sync", @resetNestedCollections, this
   
+  resetNestedCollections: ->    
+    if @type() is EntityTypes.group
+      @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
+      @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
+      @memberships = new DssRm.Collections.Entities(@get("memberships")) if @memberships is `undefined`
+      @rules = new DssRm.Collections.GroupRules(@get("rules")) if @rules is `undefined`
+
+      # Reset nested collection data
+      @owners.reset @get("owners")
+      @operators.reset @get("operators")
+      @memberships.reset @get("memberships")
+      @rules.reset @get("rules")
+      
+      # Enforce the design pattern by removing from @attributes what is represented in a nested collection
+      delete @attributes.owners
+      delete @attributes.operators
+      delete @attributes.memberships
+      delete @attributes.rules
+
+    else if @type() is EntityTypes.person
+      # Ensure nested collections exist
+      @favorites = new DssRm.Collections.Entities(@get("favorites")) if @favorites is `undefined`
+      @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
+      @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships")) if @group_operatorships is `undefined`
+      @group_memberships = new Backbone.Collection(@get("group_memberships")) if @group_memberships is `undefined`
+      @role_assignments = new DssRm.Collections.Roles(@get("role_assignments")) if @role_assignments is `undefined`
+      
+      # Reset nested collection data
+      @favorites.reset @get("favorites")
+      @group_ownerships.reset @get("group_ownerships")
+      @group_operatorships.reset @get("group_operatorships")
+      @group_memberships.reset @get("group_memberships")
+      @role_assignments.reset @get("role_assignments")
+      
+      # Enforce the design pattern by removing from @attributes what is represented in a nested collection
+      delete @attributes.favorites
+      delete @attributes.group_ownerships
+      delete @attributes.group_operatorships
+      delete @attributes.group_memberships
+      delete @attributes.role_assignments
+  
+  toJSON: ->
+    if @type() is EntityTypes.group
+      json = {}
+      # Group-specific JSON
+      json.name = @get("name")
+      json.type = "Group"
+      json.description = @get("description")
+      json.owner_ids = @owners.map((owner) ->
+        owner.id
+      )
+      json.operator_ids = @operators.map((operator) ->
+        operator.id
+      )
+      # Note we use Rails' nested attributes here so we need to 
+      if @memberships.length
+        json.memberships_attributes = @memberships.map((membership) ->
+          id: membership.get('id')
+          calculated: membership.get('calculated')
+          entity_id: membership.get('entity_id')
+          group_id: membership.get('group_id')
+          _destroy: membership.get('_destroy')
+        )
+      if @rules.length
+        json.rules_attributes = @rules.map((rule) ->
+          id: parseInt(rule.get('id'))
+          column: rule.get('column')
+          condition: rule.get('condition')
+          value: rule.get('value')
+          _destroy: rule.get('_destroy')
+        )
+    
+    else if @type() is EntityTypes.person
+      json = {} 
+      
+      # Person-specific JSON
+      json.type = "Person"
+      
+      json.first = @get("first")
+      json.last = @get("last")
+      json.address = @get("address")
+      json.email = @get("email")
+      json.loginid = @get("loginid")
+      json.phone = @get("phone")
+      
+      json.role_assignment_ids = @role_assignments.map((assignment) ->
+        assignment.id
+      )
+      json.favorite_ids = @favorites.map((favorite) ->
+        favorite.id
+      )
+      json.group_membership_ids = @group_memberships.map((membership) ->
+        membership.id
+      )
+      json.group_operatorship_ids = @group_operatorships.map((operatorship) ->
+        operatorship.id
+      )
+      json.group_ownership_ids = @group_ownerships.map((ownership) ->
+        ownership.id
+      )
+    
+    entity: json
+
   type: ->
     if @get("type")
       result = @get("type").toLowerCase()
@@ -58,47 +161,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
   isReadOnly: ->
     if @relationship() is 'admin' or @relationship() is 'owner' then return false
     true
-
-  resetNestedCollections: ->
-    if @type() is EntityTypes.group
-      @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
-      @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
-      @memberships = new DssRm.Collections.Entities(@get("memberships")) if @memberships is `undefined`
-      @rules = new DssRm.Collections.GroupRules(@get("rules")) if @rules is `undefined`
-
-      # Reset nested collection data
-      @owners.reset @get("owners")
-      @operators.reset @get("operators")
-      @memberships.reset @get("memberships")
-      @rules.reset @get("rules")
-      
-      # Enforce the design pattern by removing from @attributes what is represented in a nested collection
-      delete @attributes.owners
-      delete @attributes.operators
-      delete @attributes.memberships
-      delete @attributes.rules
-    
-    if @type() is EntityTypes.person
-      # Ensure nested collections exist
-      @favorites = new DssRm.Collections.Entities(@get("favorites")) if @favorites is `undefined`
-      @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
-      @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships")) if @group_operatorships is `undefined`
-      @group_memberships = new Backbone.Collection(@get("group_memberships")) if @group_memberships is `undefined`
-      @role_assignments = new DssRm.Collections.Roles(@get("role_assignments")) if @role_assignments is `undefined`
-      
-      # Reset nested collection data
-      @favorites.reset @get("favorites")
-      @group_ownerships.reset @get("group_ownerships")
-      @group_operatorships.reset @get("group_operatorships")
-      @group_memberships.reset @get("group_memberships")
-      @role_assignments.reset @get("role_assignments")
-      
-      # Enforce the design pattern by removing from @attributes what is represented in a nested collection
-      delete @attributes.favorites
-      delete @attributes.group_ownerships
-      delete @attributes.group_operatorships
-      delete @attributes.group_memberships
-      delete @attributes.role_assignments
   
   # Returns only explicit group memberships (valid only for Person entity, not Group)
   uncalculatedGroupMemberships: ->
@@ -133,67 +195,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
     @group_memberships.filter( (group) ->
       group.get('ou') == false
     )
-
-  toJSON: ->
-    if @type() is EntityTypes.group
-      json = {}
-      # Group-specific JSON
-      json.name = @get("name")
-      json.type = "Group"
-      json.description = @get("description")
-      json.owner_ids = @owners.map((owner) ->
-        owner.id
-      )
-      json.operator_ids = @operators.map((operator) ->
-        operator.id
-      )
-      # Note we use Rails' nested attributes here so we need to 
-      if @memberships.length
-        json.memberships_attributes = @memberships.map((membership) ->
-          id: membership.get('id')
-          calculated: membership.get('calculated')
-          entity_id: membership.get('entity_id')
-          group_id: membership.get('group_id')
-          _destroy: membership.get('_destroy')
-        )
-      if @rules.length
-        json.rules_attributes = @rules.map((rule) ->
-          id: parseInt(rule.get('id'))
-          column: rule.get('column')
-          condition: rule.get('condition')
-          value: rule.get('value')
-          _destroy: rule.get('_destroy')
-        )
-    else if @type() is EntityTypes.person
-      json = {} 
-      
-      # Person-specific JSON
-      json.type = "Person"
-      
-      json.first = @get("first")
-      json.last = @get("last")
-      json.address = @get("address")
-      json.email = @get("email")
-      json.loginid = @get("loginid")
-      json.phone = @get("phone")
-      
-      json.role_assignment_ids = @role_assignments.map((assignment) ->
-        assignment.id
-      )
-      json.favorite_ids = @favorites.map((favorite) ->
-        favorite.id
-      )
-      json.group_membership_ids = @group_memberships.map((membership) ->
-        membership.id
-      )
-      json.group_operatorship_ids = @group_operatorships.map((operatorship) ->
-        operatorship.id
-      )
-      json.group_ownership_ids = @group_ownerships.map((ownership) ->
-        ownership.id
-      )
-    
-    entity: json
 )
 
 DssRm.Collections.Entities = Backbone.Collection.extend(
