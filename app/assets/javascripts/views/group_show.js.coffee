@@ -154,6 +154,15 @@ class DssRm.Views.GroupShow extends Backbone.View
     
     @$('#apply').attr('disabled', 'disabled').html('Saving ...')
 
+    # Ensure @model.rules is up-to-date
+    _.each $('table#rules>tbody>tr'), (el, i) =>
+      id = $(el).data('rule_id')
+      rule = @model.rules.get(id)
+      rule.set
+        column: $(el).find("#column").val()
+        condition: $(el).find("#condition").val()
+        value: $(el).find("#value").val()
+
     # Note: the _.filter() on rules is to avoid saving empty rules (rules with no value set)
     @model.save
       name: @$('input[name=name]').val()
@@ -180,7 +189,8 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   # Renders a new rule and returns jQuery object
   addRule: (e) ->
-    @model.rules.add {}
+    @model.rules.add
+      id: 'new_' + (new Date).getTime()
     @renderRules()
     # rules_table = @$("table#rules tbody")
     # rules_table.show() # it will be hidden if there are no rules already

@@ -158,10 +158,11 @@ DssRm.Models.Entity = Backbone.Model.extend(
         )
       if @rules.length
         json.rules_attributes = @rules.map((rule) ->
-          id: rule.id
-          column: rule.column
-          condition: rule.condition
-          value: rule.value
+          id: parseInt(rule.get('id'))
+          column: rule.get('column')
+          condition: rule.get('condition')
+          value: rule.get('value')
+          _destroy: rule.get('_destroy')
         )
     else if @type() is EntityTypes.person
       json = {} 
