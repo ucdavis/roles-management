@@ -55,8 +55,20 @@ class DssRm.Views.GroupShow extends Backbone.View
           group_id: @model.get('id')
           name: item.name
       onDelete: (item) =>
-        membership = @model.memberships.get(item.id)
-        membership.set('_destroy', true)
+        # Did they delete a normal member or calculated member?
+        # Deleting calculated members requires a new rule be created
+        if item.calculated
+          # Calculated member requires a new rule
+          @model.rules.add
+            id: 'new_' + (new Date).getTime()
+            column: 'loginid'
+            condition: 'is not'
+            value: item.loginid
+          @renderRules()
+        else
+          # Normal member being removed - no rule needed
+          membership = @model.memberships.get(item.id)
+          membership.set('_destroy', true)
 
   render: ->
     readonly = @model.isReadOnly()
@@ -192,25 +204,12 @@ class DssRm.Views.GroupShow extends Backbone.View
     @model.rules.add
       id: 'new_' + (new Date).getTime()
     @renderRules()
-    # rules_table = @$("table#rules tbody")
-    # rules_table.show() # it will be hidden if there are no rules already
-    # $rule = @renderRule({ id: null, column: null, condition: null, value: null })
-    # rules_table.append $rule
-    # return $rule
 
   removeRule: (e) ->
     rule_id = $(e.target).parents("tr").data("rule_id")
     rule = @model.rules.get rule_id
     rule.set('_destroy', true)
     @renderRules()
-    # @model.set
-    #   rules: _.reject(@model.get("rules"), (r) ->
-    #     r.id is rule_id
-    #   )
-    # ,
-    #   silent: true
-    # 
-    # $(e.target).parents("tr").remove()
 
   cleanUpModal: ->
     @remove()
