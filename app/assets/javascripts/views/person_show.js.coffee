@@ -94,17 +94,24 @@ class DssRm.Views.PersonShow extends Backbone.View
     $rolesTab = @$("div#roles")
     $rolesTab.empty()
     
-    _.each @model.role_assignments.groupBy("application_name"), (roleset) =>
-      app_name = roleset[0].get("application_name")
-      app_id = roleset[0].get("application_id")
+    _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
+      app_name = role_assignment_set[0].get("application_name")
+      app_id = role_assignment_set[0].get("application_id")
       $rolesTab.append "<p><label for=\"_token_input_" + app_id + "\">" + app_name + "</label><input type=\"text\" name=\"_token_input_" + app_id + "\" class=\"token_input\" /></p>"
       $rolesTab.find("input[name=_token_input_" + app_id + "]").tokenInput Routes.roles_path() + "?application_id=" + app_id,
         crossDomain: false
         defaultText: ""
         theme: "facebook"
         disabled: @readonly
-        onAdd: (item) => @model.roles.add item
-        onDelete: (item) => @model.roles.remove item
+        onAdd: (item) =>
+          @model.role_assignments.add
+            role_id: item.id
+            entity_id: @model.get('id')
+            name: item.name
+            calculated: false
+        onDelete: (item) =>
+          assignment = @model.role_assignments.get(item.id)
+          assignment.set('_destroy', true)
 
   render: ->
     @$("h3").html @model.escape("name")
@@ -166,18 +173,22 @@ class DssRm.Views.PersonShow extends Backbone.View
 
     # Roles tab
     $rolesTab = @$("div#roles")
-    _.each @model.role_assignments.groupBy("application_name"), (roleset) =>
-      app_name = roleset[0].get("application_name")
-      app_id = roleset[0].get("application_id")
+    _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
+      app_name = role_assignment_set[0].get("application_name")
+      app_id = role_assignment_set[0].get("application_id")
       
       role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
       role_tokeninput.tokenInput "clear"
-      _.each roleset, (role) ->
-        role_tokeninput.tokenInput "add",
-          id: role.get("id")
-          name: role.get("name")
-          readonly: @readonly || role.get('calculated')
-          class: (if role.get('calculated') then "calculated" else "")
+      _.each role_assignment_set, (role_assignment) ->
+        unless role_assignment.get('_destroy')
+          console.log role_assignment
+          role_tokeninput.tokenInput "add",
+            id: role_assignment.get("id")
+            role_id: role_assignment.get("role_id")
+            entity_id: role_assignment.get("entity_id")
+            name: role_assignment.get("name")
+            readonly: @readonly || role_assignment.get('calculated')
+            class: (if role_assignment.get('calculated') then "calculated" else "")
     
     if @readonly
       @$('.token-input-list-facebook').readonly()
