@@ -108,15 +108,20 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.favorite_ids = @favorites.map((favorite) ->
         favorite.id
       )
-      json.group_membership_ids = @group_memberships.map((membership) ->
-        membership.id
-      )
-      json.group_operatorship_ids = @group_operatorships.map((operatorship) ->
-        operatorship.id
-      )
-      json.group_ownership_ids = @group_ownerships.map((ownership) ->
-        ownership.id
-      )
+      if @group_memberships.length
+        json.group_memberships_attributes = @group_memberships.map((membership) ->
+          id: membership.get('id')
+          calculated: membership.get('calculated')
+          entity_id: membership.get('entity_id')
+          group_id: membership.get('group_id')
+          _destroy: membership.get('_destroy')
+        )
+      # json.group_operatorship_ids = @group_operatorships.map((operatorship) ->
+      #   operatorship.id
+      # )
+      # json.group_ownership_ids = @group_ownerships.map((ownership) ->
+      #   ownership.id
+      # )
     
     entity: json
 

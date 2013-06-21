@@ -4,7 +4,6 @@
 class Person < Entity
   using_access_control
 
-  belongs_to :title
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
   has_many :group_memberships, :foreign_key => "entity_id"
@@ -18,13 +17,17 @@ class Person < Entity
   has_many :group_operatorships, :foreign_key => "entity_id"
   has_many :group_ownerships, :foreign_key => "entity_id"
   has_one :student
+  belongs_to :title
   belongs_to :major
+  
+  accepts_nested_attributes_for :group_ownerships, :allow_destroy => true
+  accepts_nested_attributes_for :group_operatorships, :allow_destroy => true
+  accepts_nested_attributes_for :group_memberships, :allow_destroy => true
 
   validates :loginid, :presence => true, :uniqueness => true
   validate :first_or_last_presence
 
-  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_assignment_ids, :favorite_ids, :group_membership_ids,
-                  :ou_ids, :group_ownership_ids, :group_operatorship_ids
+  attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :role_assignment_ids, :favorite_ids, :group_memberships_attributes
 
   after_save :trigger_sync
   

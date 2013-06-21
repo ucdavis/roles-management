@@ -32,7 +32,19 @@ class DssRm.Views.PersonShow extends Backbone.View
       onDelete: (item) =>
         @model.favorites.remove(item.id)
 
-    @$("input[name=group_ownerships]").tokenInput Routes.people_path(),
+    @$("input[name=group_ownerships]").tokenInput Routes.groups_path(),
+      crossDomain: false
+      defaultText: ""
+      theme: "facebook"
+      disabled: @readonly
+      onAdd: (item) =>
+        @model.group_ownerships.add
+          id: item.id
+          name: item.name
+      onDelete: (item) =>
+        @model.group_ownerships.remove(item.id)
+
+    @$("input[name=group_operatorships]").tokenInput Routes.groups_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
@@ -45,33 +57,21 @@ class DssRm.Views.PersonShow extends Backbone.View
       #     favorite.id isnt item.id
       #   )
 
-    @$("input[name=group_operatorships]").tokenInput Routes.people_path(),
+    @$("input[name=non_ou_group_memberships]").tokenInput Routes.groups_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
       disabled: @readonly
-      # onAdd: (item) =>
-      #   @model.set "favorites", @model.get("favorites").push(item)
-      # 
-      # onDelete: (item) =>
-      #   @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
-      #     favorite.id isnt item.id
-      #   )
+      onAdd: (item) =>
+        @model.group_memberships.add
+          group_id: item.id
+          entity_id: @model.get('id')
+          name: item.name
+          calculated: false
+      onDelete: (item) =>
+        @model.group_memberships.remove(item.id)
 
-    @$("input[name=non_ou_group_memberships]").tokenInput Routes.people_path(),
-      crossDomain: false
-      defaultText: ""
-      theme: "facebook"
-      disabled: @readonly
-      # onAdd: (item) =>
-      #   @model.set "favorites", @model.get("favorites").push(item)
-      # 
-      # onDelete: (item) =>
-      #   @model.set "favorites", _.filter(@model.get("favorites"), (favorite) ->
-      #     favorite.id isnt item.id
-      #   )
-
-    @$("input[name=ou_group_memberships]").tokenInput Routes.people_path(),
+    @$("input[name=ou_group_memberships]").tokenInput Routes.groups_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
