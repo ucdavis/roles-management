@@ -23,12 +23,24 @@ class DssRm.Views.GroupShow extends Backbone.View
       defaultText: ""
       theme: "facebook"
       disabled: readonly
+      onAdd: (item) =>
+        @model.owners.add
+          id: item.id
+          name: item.name
+      onDelete: (item) =>
+        @model.owners.remove(item.id)
 
     @$("input[name=operators]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
       disabled: readonly
+      onAdd: (item) =>
+        @model.operators.add
+          id: item.id
+          name: item.name
+      onDelete: (item) =>
+        @model.operators.remove(item.id)
 
     @$("input[name=memberships]").tokenInput Routes.people_path(),
       crossDomain: false
@@ -58,16 +70,18 @@ class DssRm.Views.GroupShow extends Backbone.View
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
     @model.owners.each (owner) ->
-      owners_tokeninput.tokenInput "add",
-        id: owner.get('id')
-        name: owner.get('name')
+      unless owner.get('_destroy')
+        owners_tokeninput.tokenInput "add",
+          id: owner.get('id')
+          name: owner.get('name')
     
     operators_tokeninput = @$("input[name=operators]")
     operators_tokeninput.tokenInput "clear"
     @model.operators.each (operator) ->
-      operators_tokeninput.tokenInput "add",
-        id: operator.get('id')
-        name: operator.get('name')
+      unless operator.get('_destroy')
+        operators_tokeninput.tokenInput "add",
+          id: operator.get('id')
+          name: operator.get('name')
     
     members_tokeninput = @$("input[name=memberships]")
     members_tokeninput.tokenInput "clear"
@@ -144,14 +158,6 @@ class DssRm.Views.GroupShow extends Backbone.View
     @model.save
       name: @$('input[name=name]').val()
       description: @$('textarea[name=description]').val()
-      # rules: _.filter(_.map($('table#rules>tbody>tr'), (el, i) ->
-      #   id: $(el).data('rule_id')
-      #   column: $(el).find("#column").val(),
-      #   condition: $(el).find("#condition").val(),
-      #   value: $(el).find("#value").val()
-      # ), (r) ->
-      #   r.value != ""
-      # )
     ,
       success: ->
         @$('#apply').removeAttr('disabled').html('Apply Changes')
