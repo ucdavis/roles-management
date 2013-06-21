@@ -117,23 +117,31 @@ class DssRm.Views.PersonShow extends Backbone.View
     $rolesTab.empty()
     
     _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
-      app_name = role_assignment_set[0].get("application_name")
-      app_id = role_assignment_set[0].get("application_id")
-      $rolesTab.append "<p><label for=\"_token_input_" + app_id + "\">" + app_name + "</label><input type=\"text\" name=\"_token_input_" + app_id + "\" class=\"token_input\" /></p>"
-      $rolesTab.find("input[name=_token_input_" + app_id + "]").tokenInput Routes.roles_path() + "?application_id=" + app_id,
-        crossDomain: false
-        defaultText: ""
-        theme: "facebook"
-        disabled: @readonly
-        onAdd: (item) =>
-          @model.role_assignments.add
-            role_id: item.id
-            entity_id: @model.get('id')
-            name: item.name
-            calculated: false
-        onDelete: (item) =>
-          assignment = @model.role_assignments.get(item.id)
-          assignment.set('_destroy', true)
+      application_name = role_assignment_set[0].get("application_name")
+      application_id = role_assignment_set[0].get("application_id")
+      
+      $rolesTab.append @renderRoleAssignmentTokenInput(application_name, application_id)
+
+  # Renders and initializes a single tokenInput for the role (assignment) tab.
+  # Does not insert into DOM.
+  renderRoleAssignmentTokenInput: (name, id) ->
+    $input = $("<p><label for=\"_token_input_#{id}\">#{name}</label><input type=\"text\" name=\"_token_input_#{id}\" class=\"token_input\" /></p>")
+    $input.find("input").tokenInput Routes.roles_path() + "?application_id=#{id}",
+      crossDomain: false
+      defaultText: ""
+      theme: "facebook"
+      disabled: @readonly
+      onAdd: (item) =>
+        @model.role_assignments.add
+          role_id: item.id
+          entity_id: @model.get('id')
+          name: item.name
+          calculated: false
+      onDelete: (item) =>
+        assignment = @model.role_assignments.get(item.id)
+        assignment.set('_destroy', true)
+
+    return $input
 
   render: ->
     @$("h3").html @model.escape("name")
@@ -203,7 +211,6 @@ class DssRm.Views.PersonShow extends Backbone.View
       role_tokeninput.tokenInput "clear"
       _.each role_assignment_set, (role_assignment) ->
         unless role_assignment.get('_destroy')
-          console.log role_assignment
           role_tokeninput.tokenInput "add",
             id: role_assignment.get("id")
             role_id: role_assignment.get("role_id")
@@ -276,7 +283,12 @@ class DssRm.Views.PersonShow extends Backbone.View
     false
   
   addRoleAssignmentApplication: ->
+    # Add new tokenInput to DOM
+    application_id = @$("#add_role_assignment_application_search").data('selected-id')
+    application_name = @$("#add_role_assignment_application_search").val()
+    @$("div#role_assignments").append @renderRoleAssignmentTokenInput(application_name, application_id)
     
+    @$("#add_role_assignment_application_search").val('')
   
   # Populates the role assignment application search with results via async call
   roleAssignmentApplicationSearch: (query, process) ->
@@ -297,6 +309,8 @@ class DssRm.Views.PersonShow extends Backbone.View
     id = parseInt(parts[0])
     label = parts[1]
     
+    @$("#add_role_assignment_application_search").data('selected-id', id)
+    
     label
 
   cleanUpModal: ->
@@ -304,7 +318,6 @@ class DssRm.Views.PersonShow extends Backbone.View
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
-
   
   # Due to a bug in Bootstrap 2.x modals, we need to adjust
   # the overflow to be off when using tokeninput tabs but
