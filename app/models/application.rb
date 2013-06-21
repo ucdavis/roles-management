@@ -6,20 +6,15 @@ class Application < ActiveRecord::Base
   has_many :owners, :through => :application_ownerships
   has_many :application_operatorships, :dependent => :destroy
   has_many :operators, :through => :application_operatorships, :source => "entity", :dependent => :destroy
+  belongs_to :api_key
 
-  before_save :set_default_properties
-
-  validates :name, :presence => true
+  validates :name, :presence => true, :uniqueness => true
 
   attr_accessible :name, :ous_ids, :hostname, :description, :roles, :roles_attributes, :owner_ids, :operator_ids
 
-  belongs_to :api_key
-
   accepts_nested_attributes_for :roles, :allow_destroy => true
 
-  def self.csv_header
-    "Role,ID,Login ID,Email,First,Last".split(',')
-  end
+  before_save :set_default_properties
 
   def as_json(options={})
     { :id => self.id, :name => self.name,
@@ -29,6 +24,10 @@ class Application < ActiveRecord::Base
                                       ad_path: r.ad_path } },
       :description => self.description, :owners => self.owners.map{ |o| { name: o.name, id: o.id } },
       :operators => self.operators.map{ |o| { name: o.name, id: o.id } } }
+  end
+
+  def self.csv_header
+    "Role,ID,Login ID,Email,First,Last".split(',')
   end
 
   # Overriden to avoid having to use _destroy in Backbone/simplify client-side interaction

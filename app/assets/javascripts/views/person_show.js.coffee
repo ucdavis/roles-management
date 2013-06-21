@@ -6,10 +6,12 @@ class DssRm.Views.PersonShow extends Backbone.View
   id: "entityShowModal"
   
   events:
-    "click #apply": "save"
-    "click a#rescan": "rescan"
-    "hidden": "cleanUpModal"
-    "click #delete": "deleteEntity"
+    "click #apply"                                  : "save"
+    "click a#rescan"                                : "rescan"
+    "hidden"                                        : "cleanUpModal"
+    "click #delete"                                 : "deleteEntity"
+    "shown"                                         : "adjustOverflow"
+    "click #add_role_assignment_application_button" : "addRoleAssignmentApplication"
 
   initialize: ->
     @$el.html JST["templates/entities/show_person"](model: @model)
@@ -18,6 +20,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     @readonly = @model.isReadOnly()
     
     @initializeRelationsTab()
+    @initializeRolesTab()
   
   initializeRelationsTab: ->
     @$("input[name=favorites]").tokenInput Routes.people_path(),
@@ -89,9 +92,28 @@ class DssRm.Views.PersonShow extends Backbone.View
       onDelete: (item) =>
         membership = @model.group_memberships.get(item.id)
         membership.set('_destroy', true)
+  
+  initializeRolesTab: ->
+    @$("#add_role_assignment_application_search").typeahead
+      minLength: 3
+      sorter: (items) -> # required to keep the order given to process() in 'source'
+        items
+      highlighter: (item) ->
+        parts = item.split("####")
+        item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+        query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
+        ret = item.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
+          "<strong>" + match + "</strong>"
+        )
+        ret = ret + parts[2]  if parts[2] isnt `undefined`
+        ret
+      source: @roleAssignmentApplicationSearch
+      updater: (item) =>
+        @roleAssignmentApplicationSearchResultSelected item, @
+      items: 5
 
   resetRolesTab: ->
-    $rolesTab = @$("div#roles")
+    $rolesTab = @$("div#role_assignments")
     $rolesTab.empty()
     
     _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
@@ -172,7 +194,7 @@ class DssRm.Views.PersonShow extends Backbone.View
           class: (if membership.get('calculated') then "calculated" else "")
 
     # Roles tab
-    $rolesTab = @$("div#roles")
+    $rolesTab = @$("div#role_assignments")
     _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
       app_name = role_assignment_set[0].get("application_name")
       app_id = role_assignment_set[0].get("application_id")
@@ -252,9 +274,45 @@ class DssRm.Views.PersonShow extends Backbone.View
           @$(".modal-header a.close").trigger "click"
 
     false
+  
+  addRoleAssignmentApplication: ->
+    
+  
+  # Populates the role assignment application search with results via async call
+  roleAssignmentApplicationSearch: (query, process) ->
+    $.ajax(
+      url: Routes.applications_path()
+      data:
+        q: query
+      type: "GET"
+    ).always (data) ->
+      entities = []
+      _.each data, (entity) ->
+        entities.push entity.id + "####" + entity.name
+
+      process entities
+
+  roleAssignmentApplicationSearchResultSelected: (item) ->
+    parts = item.split("####")
+    id = parseInt(parts[0])
+    label = parts[1]
+    
+    label
 
   cleanUpModal: ->
     @remove()
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
+
+  
+  # Due to a bug in Bootstrap 2.x modals, we need to adjust
+  # the overflow to be off when using tokeninput tabs but
+  # on when using typeahead tabs
+  adjustOverflow: (e) ->
+    switch $(e.target).attr('href')
+      when '#roles'
+        @$('.modal-body').css('overflow-y', 'visible')
+      else
+        @$('.modal-body').css('overflow-y', 'hidden')
+  

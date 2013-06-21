@@ -100,7 +100,11 @@ class ApplicationsController < ApplicationController
   end
 
   def load_applications
-    @applications = Application.with_permissions_to(:read)
+    if params[:q]
+      @applications = Application.with_permissions_to(:read).where("upper(name) like ?", "%#{params[:q].upcase}%")
+    else
+      @applications = Application.with_permissions_to(:read)
+    end
   end
   
   def new_application_from_params
