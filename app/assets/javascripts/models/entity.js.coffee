@@ -199,12 +199,15 @@ DssRm.Collections.Entities = Backbone.Collection.extend(
   model: DssRm.Models.Entity
   url: "/entities"
   
-  # Sort groups before people, then alphabetical by name
+  # Two orders of sorting:
+  # Calculated entities always come first, then groups
+  # So a calculated person (12) comes _before_ a non-calculated group (21),
+  # but a calculated group (11) comes before everything. See *_order below.
   comparator: (entity) ->
-    if entity.type() is EntityTypes.group
-      return '1' + entity.get("name")
-    else
-      return '2' + entity.get("name")
+    calculated_order = (if entity.get('calculated') then '1' else '2')
+    type_order = (if entity.type() is EntityTypes.group then '1' else '2')
+
+    return calculated_order + type_order + entity.get("name")
 )
 
 DssRm.Collections.Owners = Backbone.Collection.extend(model: DssRm.Models.Entity)
