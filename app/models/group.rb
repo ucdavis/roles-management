@@ -22,7 +22,7 @@ class Group < Entity
   accepts_nested_attributes_for :rules, :allow_destroy => true
   accepts_nested_attributes_for :memberships, :allow_destroy => true
 
-  before_save :recalculate_members
+  after_save :recalculate_members
   after_save :trigger_sync
   
   def as_json(options={})
@@ -125,6 +125,13 @@ class Group < Entity
       
       results.nil? ? num_found = 0 : num_found = results.length
       logger.info "Found #{num_found} members, group now has #{memberships.length} total members"
+      
+      # Force a reload (make sure this function stays as a after_save callback, never before_save)
+      # to ensure old memberships get deleted properly. EntityController#update was returning both
+      # new calculated memberships _and_ those marked for destruction before this 'reload'
+      # statement was added. (Bug in format.json render: json as logger.info @entity.members.length
+      # just before the render: json line _does_ show the correct number?)
+      reload
     end
   end
 

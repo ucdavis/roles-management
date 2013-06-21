@@ -57,7 +57,7 @@ class EntitiesController < ApplicationController
     # Overridden to respond with the object and not a '204 No Content'.
     # See: http://stackoverflow.com/questions/9953887/simple-respond-with-in-rails-that-avoids-204-from-put
     respond_with(@entity) do |format|
-      format.json { render json: @entity }
+      format.json{ render json: @entity }
     end
   end
 
