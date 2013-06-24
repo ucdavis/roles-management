@@ -1,15 +1,18 @@
-DssRm.Views.ApplicationShow = Backbone.View.extend(
+DssRm.Views.ApplicationShow ||= {}
+
+class DssRm.Views.ApplicationShow extends Backbone.View
   tagName: "div"
   id: "applicationShowModal"
   className: "modal"
   
   events:
-    "click #apply": "save"
-    "click a#delete": "deleteApplication"
-    "hidden": "cleanUpModal"
-    "click button#add_role": "addRole"
-    "click button#remove_role": "removeRole"
-    "change table#roles input": "storeRoleChanges"
+    "click #apply"             : "save"
+    "click a#delete"           : "deleteApplication"
+    "hidden"                   : "cleanUpModal"
+    "click button#add_role"    : "addRole"
+    "click button#remove_role" : "removeRole"
+    "change table#roles input" : "storeRoleChanges"
+    "shown"                    : "adjustOverflow"
 
   initialize: (options) ->
     @listenTo @model.roles, "add remove", @render
@@ -167,4 +170,15 @@ DssRm.Views.ApplicationShow = Backbone.View.extend(
       description: $(e.target).parents("tr").find("input[name=description]").val()
 
     true
-)
+  
+  # Due to a bug in Bootstrap 2.x modals, we need to adjust
+  # the overflow to be off when using tokeninput tabs but
+  # on when using typeahead tabs
+  adjustOverflow: (e) ->
+    switch $(e.target).attr('href')
+      when '#roles'
+        @$('.modal-body').css('overflow-y', 'visible')
+        @$('.tab-content').css('overflow', 'visible')
+      else
+        @$('.modal-body').css('overflow-y', 'hidden')
+        @$('.tab-content').css('overflow', 'auto')
