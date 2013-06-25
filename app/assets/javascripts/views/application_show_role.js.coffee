@@ -2,9 +2,10 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
   tagName: "tr"
   className: "fields"
   events:
-    'blur input[name=name]': 'autofillEmptyToken'
-    'click #plainText'     : 'exportPlainText'
-    'click #syncAD'        : 'syncAD'
+    'blur input[name=name]' : 'autofillEmptyToken'
+    'click #plainText'      : 'exportPlainText'
+    'click #syncAD'         : 'syncAD'
+    'keyup input'           : 'setRoleValue'
 
   render: ->
     @$el.html JST["templates/applications/show_role"](role: @model)
@@ -17,6 +18,11 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
     @$el.data "role_id", @model.escape("id")
 
     @
+  
+  setRoleValue: (e) ->
+    input_name = $(e.target).attr('name')
+    input_value = $(e.target).val()
+    @model.set(input_name, input_value)
 
   autofillEmptyToken: (e) ->
     roleName = $(e.target).val()
@@ -30,7 +36,6 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
     role_id = $(e.target).parents("tr").data("role_id")
     url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id, {format: 'txt'})
     window.open url
-    #window.prompt "Copy to clipboard: Ctrl+C, Enter", url
   
   syncAD: (e) ->
     status_bar.show "Role sync queued in the background. Expect results in a minute or two.", 'default', 4500

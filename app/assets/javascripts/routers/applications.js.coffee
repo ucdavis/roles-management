@@ -23,7 +23,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     application.fetch
       success: ->
         status_bar.hide()
-        new DssRm.Views.ApplicationShow(model: application).render().$el.modal()
+        new DssRm.Views.ApplicationShow(model: application).$el.modal()
         
       error: ->
         status_bar.show "An error occurred while loading the application.", "error"

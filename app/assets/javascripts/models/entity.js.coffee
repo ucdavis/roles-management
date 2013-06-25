@@ -65,29 +65,23 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.name = @get("name")
       json.type = "Group"
       json.description = @get("description")
-      json.owner_ids = @owners.map((owner) ->
-        owner.id
-      )
-      json.operator_ids = @operators.map((operator) ->
-        operator.id
-      )
+      json.owner_ids = @owners.map (owner) -> owner.id
+      json.operator_ids = @operators.map (operator) -> operator.id
       # Note we use Rails' nested attributes here so we need to 
       if @memberships.length
-        json.memberships_attributes = @memberships.map((membership) ->
+        json.memberships_attributes = @memberships.map (membership) ->
           id: membership.get('id')
           calculated: membership.get('calculated')
           entity_id: membership.get('entity_id')
           group_id: membership.get('group_id')
           _destroy: membership.get('_destroy')
-        )
       if @rules.length
-        json.rules_attributes = @rules.map((rule) ->
+        json.rules_attributes = @rules.map (rule) ->
           id: parseInt(rule.get('id'))
           column: rule.get('column')
           condition: rule.get('condition')
           value: rule.get('value')
           _destroy: rule.get('_destroy')
-        )
     
     else if @type() is EntityTypes.person
       json = {} 
@@ -102,39 +96,33 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.loginid = @get("loginid")
       json.phone = @get("phone")
       
-      json.favorite_ids = @favorites.map((favorite) ->
-        favorite.id
-      )
+      json.favorite_ids = @favorites.map (favorite) -> favorite.id
       if @group_memberships.length
-        json.group_memberships_attributes = @group_memberships.map((membership) ->
+        json.group_memberships_attributes = @group_memberships.map (membership) ->
           id: membership.get('id')
           calculated: membership.get('calculated')
           entity_id: membership.get('entity_id')
           group_id: membership.get('group_id')
           _destroy: membership.get('_destroy')
-        )
       if @group_operatorships.length
-        json.group_operatorships_attributes = @group_operatorships.map((operatorship) ->
+        json.group_operatorships_attributes = @group_operatorships.map (operatorship) ->
           id: operatorship.get('id')
           entity_id: operatorship.get('entity_id')
           group_id: operatorship.get('group_id')
           _destroy: operatorship.get('_destroy')
-        )
       if @group_ownerships.length
-        json.group_ownerships_attributes = @group_ownerships.map((ownership) ->
+        json.group_ownerships_attributes = @group_ownerships.map (ownership) ->
           id: ownership.get('id')
           entity_id: ownership.get('entity_id')
           group_id: ownership.get('group_id')
           _destroy: ownership.get('_destroy')
-        )
       if @role_assignments.length
-        json.role_assignments_attributes = @role_assignments.map((assignment) ->
+        json.role_assignments_attributes = @role_assignments.map (assignment) ->
           id: assignment.get('id')
           role_id: assignment.get('role_id')
           entity_id: assignment.get('entity_id')
           calculated: assignment.get('calculated')
           _destroy: assignment.get('_destroy')
-        )
     
     entity: json
 

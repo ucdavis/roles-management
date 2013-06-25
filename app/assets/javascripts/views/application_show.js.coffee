@@ -11,33 +11,26 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     "hidden"                   : "cleanUpModal"
     "click button#add_role"    : "addRole"
     "click button#remove_role" : "removeRole"
-    "change table#roles input" : "storeRoleChanges"
     "shown"                    : "adjustOverflow"
 
   initialize: (options) ->
-    @listenTo @model.roles, "add remove", @render
-    
     @$el.html JST["templates/applications/show"](application: @model)
+    @listenTo @model, "sync", @render
+    @listenTo @model.roles, "add remove", @renderRoles
+    
     @$("input[name=owners]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
-      onAdd: (item) =>
-        @model.owners.add item
-
-      onDelete: (item) =>
-        @model.owners.remove item
+      onAdd: (item) => @model.owners.add item
+      onDelete: (item) => @model.owners.remove item
 
     @$("input[name=operators]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
-      onAdd: (item) =>
-        @model.operators.add item
-
-      onDelete: (item) =>
-        @model.operators.remove item
-
+      onAdd: (item) => @model.operators.add item
+      onDelete: (item) => @model.operators.remove item
 
   render: ->
     # Summary tab
@@ -63,13 +56,7 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     if DssRm.admin_logged_in()
       @$('a#delete').show()
     
-    # Roles tab
-    @$("table#roles tbody").empty()
-    @model.roles.each (role) =>
-      roleItem = new DssRm.Views.ApplicationShowRole(model: role)
-      roleItem.render()
-      @$("table#roles tbody").append roleItem.el
-
+    @renderRoles()
     
     # Active Directory tab
     @$("div#ad_fields").empty()
@@ -78,7 +65,16 @@ class DssRm.Views.ApplicationShow extends Backbone.View
       roleItem.render()
       @$("div#ad_fields").append roleItem.el
 
-    this
+    @
+  
+  renderRoles: ->
+    # Roles tab
+    @$("table#roles tbody").empty()
+    @model.roles.each (role) =>
+      unless role.get('_destroy')
+        roleItem = new DssRm.Views.ApplicationShowRole(model: role)
+        roleItem.render()
+        @$("table#roles tbody").append roleItem.el
 
   save: ->
     @$('#apply').attr('disabled', 'disabled').html('Saving ...')
@@ -140,36 +136,19 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
 
-  addRole: ->
-    # the false ID simply needs to be unique in case the 'remove' button is hit - our backend will provide a proper ID on saving
-    @model.roles.add id: "new_" + Math.round((new Date()).getTime())
+  addRole: (e) ->
+    e.preventDefault()
     
-    false
+    # the false ID simply needs to be unique in case the 'remove' button is hit - our backend will provide a proper ID on saving
+    @model.roles.add {}
 
   removeRole: (e) ->
     e.preventDefault()
     
     role_id = $(e.target).parents("tr").data("role_id")
-    
-    unless role_id.substring(0, 4) == "new_"
-      role_id = parseInt(role_id)
-
-    role = @model.roles.find((r) ->
-      r.id is role_id
-    )
-    @model.roles.remove role
-
-  storeRoleChanges: (e) ->
-    role_id = $(e.target).parents("tr").data("role_id")
-    role = @model.roles.find((e) ->
-      e.id is role_id
-    )
-    role.set
-      token: $(e.target).parents("tr").find("input[name=token]").val()
-      name: $(e.target).parents("tr").find("input[name=name]").val()
-      description: $(e.target).parents("tr").find("input[name=description]").val()
-
-    true
+    role = @model.roles.get role_id
+    role.set('_destroy', true)
+    @renderRoles()
   
   # Due to a bug in Bootstrap 2.x modals, we need to adjust
   # the overflow to be off when using tokeninput tabs but

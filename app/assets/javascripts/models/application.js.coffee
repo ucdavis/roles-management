@@ -1,13 +1,17 @@
 DssRm.Models.Application = Backbone.Model.extend(
   initialize: ->
-    # Be sure to use this.roles and this.owners and not this.get('roles'), etc.
-    @roles = new DssRm.Collections.Roles(@get("roles"))
-    @owners = new DssRm.Collections.Entities(@get("owners"))
-    @operators = new DssRm.Collections.Entities(@get("operators"))
+    @resetNestedCollections()
+    @on "sync", @resetNestedCollections, this
+  
+  resetNestedCollections: ->    
+    @roles = new DssRm.Collections.Roles(@get("roles")) if @roles is `undefined`
+    @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
+    @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
     
-    @on "sync", =>
-      # Adding a new role will reveal a proper ID only after the server gives us one on save
-      @roles.reset @get("roles")
+    # Enforce the design pattern by removing from @attributes what is represented in a nested collection
+    delete @attributes.roles
+    delete @attributes.owners
+    delete @attributes.operators
   
   # Returns only the "highest" relationship (this order): admin, owner, operator
   # Uses DssRm.current_user as the entity
@@ -23,26 +27,19 @@ DssRm.Models.Application = Backbone.Model.extend(
     null
 
   toJSON: ->
-    json = _.omit(@attributes, "roles", "owners", "uids", "operators")
-    json.roles_attributes = @roles.map((role) ->
-      r = {}
-      r.id = role.id.toString()  if role.id
-      if role.entities.length > 0
-        r.entity_ids = role.entities.map((e) ->
-          e.id
-        )
-      r.token = role.get("token")
-      r.name = role.get("name")
-      r.description = role.get("description")
-      r.ad_path = role.get("ad_path")
-      r
-    )
-    json.owner_ids = @owners.map((owner) ->
-      owner.id
-    )
-    json.operator_ids = @operators.map((operator) ->
-      operator.id
-    )
+    json = {}
+    json.name = @get('name')
+    json.description = @get('description')
+    json.operator_ids = @operators.map (operator) -> operator.id
+    json.owner_ids = @owners.map (owner) -> owner.id
+    json.roles_attributes = @roles.map (role) ->
+      id: (if role.id then role.id.toString())
+      entity_ids: (if role.entities.length then role.entities.map (e) -> e.id)
+      token: role.get("token")
+      name: role.get("name")
+      description: role.get("description")
+      ad_path: role.get("ad_path")
+      _destroy: role.get('_destroy')
     
     json
 )
