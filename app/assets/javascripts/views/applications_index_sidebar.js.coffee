@@ -3,8 +3,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   id: "sidebar-area"
   className: "span3 disable-text-select"
   events:
-    "click #pins li"             : "selectEntity"
-    "click #highlighted_pins li" : "selectEntity"
+    "click ul#pins li"             : "selectEntity"
+    "click ul#highlighted_pins li" : "selectEntity"
   
   initialize: (options) ->
     @$el.html JST["templates/applications/sidebar"]()
@@ -50,66 +50,49 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
   
   render: ->
+    selected_role = DssRm.view_state.getSelectedRole()
+    
     pins_frag = document.createDocumentFragment()
     highlighted_pins_frag = document.createDocumentFragment()
     
-    # Render sidebar entities (favorites, etc.)
-    @sidebar_entities.each (view) =>
-      pin = view.get('view')
-      if pin.assignedToCurrentRole()
-        highlighted_pins_frag.appendChild pin.el
+    # Render sidebar entities (favorites, ownerships, operators)
+    @sidebar_entities.each (e) =>
+      if selected_role and selected_role.entities.get e
+        faded = true
       else
-        pins_frag.appendChild pin.el
+        faded = false
+      pin = @renderSidebarPin(e, { highlighted: false, faded: faded })
+      pins_frag.appendChild pin.el
 
-    selected_role = DssRm.view_state.getSelectedRole()
     if selected_role
-      # Render external entities related to the selected role
-      assigned_non_subordinates = selected_role.entities.reject((e) =>
-        id = e.get("id")
-        @sidebar_entities.find (i) ->
-          i.get("id") is id
-      )
-      _.each assigned_non_subordinates, (entity) =>
-        pin = @renderSidebarPin(entity)
+      selected_role.entities.each (e) =>
+        pin = @renderSidebarPin(e, { highlighted: true, faded: false })
         highlighted_pins_frag.appendChild pin.el
     
-    @$('#pins').html pins_frag
-    @$("#highlighted_pins").html highlighted_pins_frag
+    @$('ul#pins').html pins_frag
+    @$("ul#highlighted_pins").html highlighted_pins_frag
 
-    # Sidebar pins are clickable if a role is selected, else not.
-    if selected_role
-      $("ul#highlighted_pins li").css('cursor', 'pointer')
-      $("ul#pins li").css('cursor', 'pointer')
+    if @$("ul#highlighted_pins>li").length
+      @$('h5#highlighted_pins').show()
     else
-      $("ul#highlighted_pins li").css('cursor', 'default')
-      $("ul#pins li").css('cursor', 'default')
+      @$('h5#highlighted_pins').hide()
+
+    # Sidebar pins are clickable only if a role is selected.
+    if selected_role
+      $("ul li").css('cursor', 'pointer')
+    else
+      $("ul li").css('cursor', 'default')
     
     @
   
   # Renders a single sidebar pin and renders the object. Does not add to DOM.
-  renderSidebarPin: (entity) ->
-    pin = new DssRm.Views.SidebarPin { model: entity }
+  renderSidebarPin: (entity, options) ->
+    pin = new DssRm.Views.SidebarPin { model: entity, highlighted: options.highlighted, faded: options.faded }
     pin.render()
   
-  # Rebuilds all data and views related to the sidebar but does not render.
+  # Constructs list of current user's ownerships, operatorships, and favorites
   buildSidebar: ->
-    # Populate with the user's ownerships, operatorships, and favorites
-    @sidebar_entities.reset _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models), { silent: true } # we need to build the views below before triggering 'reset'
-
-    # Render a view for each entity
-    @sidebar_entities.each (el) =>
-      el.set 'view', @renderSidebarPin(el)
-    
-    @sidebar_entities.trigger 'reset'
-  
-  addToSidebar: (model, collection, options) ->
-    @sidebar_entities.add
-      id: model.get('id')
-      name: model.get('name')
-      view: @renderSidebarPin(model)
-
-  removeFromSidebar: (model, collection, options) ->
-    @sidebar_entities.remove model
+    @sidebar_entities.reset _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
   
   selectEntity: (e) ->
     clicked_entity_id = $(e.currentTarget).data("entity-id")

@@ -10,24 +10,25 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @$el.html JST["templates/entities/item"](entity: @model)
     @$el.data "entity-id", @model.get("id")
     @$el.addClass @model.typeAsString()
+    
+    console.log options
+    @highlighted = options.highlighted
+    @faded = options.faded
 
   render: ->
     @$el.data "entity-name", @model.get("name")
     @$("span").html @model.escape("name")
     
     # Highlight this entity?
-    if @assignedToCurrentRole() || @isFocused()
+    if @highlighted # @assignedToCurrentRole() || @isFocused()
       @$el.addClass "highlighted"
-    else
-      @$el.removeClass "highlighted"
     
     # Change actionable icons depending on ownership
     if !@assignedToCurrentUser()
       @$("i.icon-minus").hide()
     
     # Is this pin unrelated to the current_user? Make it appear faded
-    focused_entity_id = DssRm.view_state.get('focused_entity_id')
-    if !@assignedToCurrentUser() || ((focused_entity_id > 0) && (focused_entity_id != @model.get('id')))
+    if @faded
       @$el.css "opacity", "0.6"
     
     # Is this entity a favorite?
