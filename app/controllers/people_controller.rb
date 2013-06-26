@@ -115,9 +115,8 @@ class PeopleController < ApplicationController
   
   def load_people
     if params[:q]
-      upper_q = params[:q].upcase
-
-      @people = Person.where("upper(loginid) like ? or upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
+      people_table = Person.arel_table
+      @people = Person.with_permissions_to(:read).where(people_table[:name].matches("%#{params[:q]}%").or(people_table[:loginid].matches("%#{params[:q]}%")).or(people_table[:first].matches("%#{params[:q]}%")).or(people_table[:last].matches("%#{params[:q]}%")))
 
       @people.map()
     else

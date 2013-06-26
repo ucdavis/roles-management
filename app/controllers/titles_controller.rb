@@ -10,7 +10,8 @@ class TitlesController < ApplicationController
   
   def load_titles
     if params[:q]
-      @titles = Title.where("upper(name) like ? or code like ?", "%#{params[:q].upcase}%", "%#{params[:q]}%")
+      titles_table = Title.arel_table
+      @titles = Title.with_permissions_to(:read).where(titles_table[:name].matches("%#{params[:q]}%").or(titles_table[:code].matches("%#{params[:q]}%")))
     else
       @titles = Title.all
     end

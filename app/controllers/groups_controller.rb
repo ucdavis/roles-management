@@ -50,7 +50,8 @@ class GroupsController < ApplicationController
   
   def load_groups
     if params[:q]
-      @groups = Group.where("upper(name) like ? and code is null", "%#{params[:q].upcase}%")
+      groups_table = Group.arel_table
+      @groups = Group.with_permissions_to(:read).where(groups_table[:name].matches("%#{params[:q]}%").and(groups_table[:code].eq(nil)))
     else
       @groups = Group.all
     end

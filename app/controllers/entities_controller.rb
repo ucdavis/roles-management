@@ -88,9 +88,10 @@ class EntitiesController < ApplicationController
   
   def load_entities
     if params[:q]
-      upper_q = params[:q].upcase
-      # Note: we search login IDs here too in case somebody is doing an entity-search but wants to find people by login ID
-      @entities = Entity.where("upper(first) like ? or upper(last) like ? or upper(" + db_concat(:first, ' ', :last) + ") like ? or upper(name) like ? or upper(loginid) like ?", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%", "%#{upper_q}%")
+      entities_table = Entity.arel_table
+      
+      # Search login IDs in case of an entity-search but looking for person by login ID
+      @entities = Entity.with_permissions_to(:read).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
     else
       @entities = Entity.all
     end

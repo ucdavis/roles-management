@@ -10,7 +10,8 @@ class MajorsController < ApplicationController
   
   def load_majors
     if params[:q]
-      @majors = Major.where("upper(name) like ?", "%#{params[:q]}%")
+      majors_table = Major.arel_table
+      @majors = Major.with_permissions_to(:read).where(majors_table[:name].matches("%#{params[:q]}%"))
     else
       @majors = Major.all
     end

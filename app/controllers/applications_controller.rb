@@ -101,7 +101,8 @@ class ApplicationsController < ApplicationController
 
   def load_applications
     if params[:q]
-      @applications = Application.with_permissions_to(:read).where("upper(name) like ?", "%#{params[:q].upcase}%")
+      apps = Application.arel_table
+      @applications = Application.with_permissions_to(:read).where(apps[:name].matches("%#{params[:q]}%"))
     else
       @applications = Application.with_permissions_to(:read)
     end

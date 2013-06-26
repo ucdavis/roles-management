@@ -10,7 +10,8 @@ class AffiliationsController < ApplicationController
   
   def load_affiliations
     if params[:q]
-      @as = Affiliation.where("upper(name) like ?", "%#{params[:q].upcase}%")
+      affiliations_table = Affiliation.arel_table
+      @as = Affiliation.with_permissions_to(:read).where(affiliations_table[:name].matches("%#{params[:q]}%"))
     else
       @as = Affiliation.all
     end
