@@ -4,4 +4,3 @@ dssrm:
   id: 1
   name: DSS Roles Management
   description: The roles management application
-  api_key: 1234567

@@ -25,17 +25,17 @@ class GroupsControllerTest < ActionController::TestCase
 
     assert body.include?('operators'), 'JSON response should include operators'
     body['operators'].each do |o|
-      assert o["id"], "JSON response's 'members' section should include an ID"
-      assert o["name"], "JSON response's 'members' section should include a name"
-      assert o["loginid"], "JSON response's 'members' section should include the login ID"
+      assert o["id"], "JSON response's 'operators' section should include an ID"
+      assert o["name"], "JSON response's 'operators' section should include a name"
+      assert o["loginid"], "JSON response's 'operators' section should include the login ID"
     end
     
-    assert body.include?('members'), 'JSON response should include members'
-    body['members'].each do |m|
-      assert m["id"], "JSON response's 'members' section should include an ID"
-      assert m["name"], "JSON response's 'members' section should include a name"
+    assert body.include?('memberships'), 'JSON response should include memberships'
+    body['memberships'].each do |m|
+      assert m["id"], "JSON response's 'memberships' section should include an ID"
+      assert m["name"], "JSON response's 'memberships' section should include a name"
       # loginid may be nil if the member is a group, so check for existence, not value
-      assert m.has_key?("loginid"), "JSON response's 'members' section should include the login ID"
+      assert m.has_key?("loginid"), "JSON response's 'memberships' section should include the login ID"
     end
     
   end
