@@ -139,12 +139,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
     
     return EntityTypes.unknown
   
-  typeAsString: ->
-    if @type() is EntityTypes.group
-      return "group"
-    if @type() is EntityTypes.person
-      return "person"
-  
   # Returns only the "highest" relationship (this order): admin, owner, operator
   # Does not return anything if not admin, owner, or operator on purpose
   # Uses DssRm.current_user as the entity

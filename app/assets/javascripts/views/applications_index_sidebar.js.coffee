@@ -57,10 +57,11 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     
     # Render sidebar entities (favorites, ownerships, operators)
     @sidebar_entities.each (e) =>
-      if selected_role and selected_role.entities.get e
-        faded = true
-      else
-        faded = false
+      faded = false
+      
+      if selected_role and selected_role.entities.get(e)
+          faded = true
+
       pin = @renderSidebarPin(e, { highlighted: false, faded: faded })
       pins_frag.appendChild pin.el
 
@@ -92,7 +93,22 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   
   # Constructs list of current user's ownerships, operatorships, and favorites
   buildSidebar: ->
-    @sidebar_entities.reset _.union(DssRm.current_user.group_ownerships.models, DssRm.current_user.group_operatorships.models, DssRm.current_user.favorites.models)
+    @sidebar_entities.reset _.union(
+      DssRm.current_user.group_ownerships.models.map (o) ->
+        id: o.get('group_id')
+        name: o.get('name')
+        type: 'group'
+    ,
+      DssRm.current_user.group_operatorships.models.map (o) ->
+        id: o.get('group_id')
+        name: o.get('name')
+        type: 'group'
+    ,
+      DssRm.current_user.favorites.models.map (f) ->
+        id: f.get('id')
+        name: f.get('name')
+        type: f.get('type').toLowerCase()
+    )
   
   selectEntity: (e) ->
     clicked_entity_id = $(e.currentTarget).data("entity-id")

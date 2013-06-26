@@ -8,16 +8,15 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @listenTo DssRm.view_state, "change", @render
 
     @$el.html JST["templates/entities/item"](entity: @model)
-    @$el.data "entity-id", @model.get("id")
-    @$el.addClass @model.typeAsString()
+    @$el.data "entity-id", @model.get('id')
+    @$el.addClass @model.get('type').toLowerCase()
     
-    console.log options
     @highlighted = options.highlighted
     @faded = options.faded
 
   render: ->
-    @$el.data "entity-name", @model.get("name")
-    @$("span").html @model.escape("name")
+    @$el.data "entity-name", @model.get('name')
+    @$("span").html @model.escape('name')
     
     # Highlight this entity?
     if @highlighted # @assignedToCurrentRole() || @isFocused()
@@ -29,7 +28,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     
     # Is this pin unrelated to the current_user? Make it appear faded
     if @faded
-      @$el.css "opacity", "0.6"
+      @$el.css "opacity", "0.5"
     
     # Is this entity a favorite?
     if @favoritedByCurrentUser()
@@ -48,11 +47,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @
 
   entityUrl: ->
-    if @model.get("group_id")
-      id = @model.get("group_id")
-    else
-      id = @model.get("id")
-    "#" + "/entities/" + id
+    "#" + "/entities/" + @model.get("id")
 
   toggleEntityFavorite: (e) ->
     e.stopPropagation()
