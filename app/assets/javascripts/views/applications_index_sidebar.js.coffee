@@ -3,8 +3,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   id: "sidebar-area"
   className: "span3 disable-text-select"
   events:
-    "click ul#pins li"             : "selectEntity"
-    "click ul#highlighted_pins li" : "selectEntity"
+    "click ul>li" : "selectEntity"
   
   initialize: (options) ->
     @$el.html JST["templates/applications/sidebar"]()
@@ -59,16 +58,24 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     @sidebar_entities.each (e) =>
       faded = false
       
-      if selected_role and selected_role.entities.get(e)
+      if selected_role
+        console.log "looking for entity id of #{e.id} in selected_role #{selected_role.cid} with #{selected_role.assignments.length} assignments"
+      
+      if selected_role and selected_role.assignments.findWhere({ entity_id: e.id })
           faded = true
 
       pin = @renderSidebarPin(e, { highlighted: false, faded: faded })
       pins_frag.appendChild pin.el
 
     if selected_role
-      selected_role.entities.each (e) =>
-        pin = @renderSidebarPin(e, { highlighted: true, faded: false })
-        highlighted_pins_frag.appendChild pin.el
+      # We parse assignments to ensure we don't display a calculated assignment
+      # (they only come from groups and the group will be in the list already),
+      # but we must then pass an entity, not an assignment, to @renderSidebarPin()
+      selected_role.assignments.each (a) =>
+        unless a.get('calculated')
+          e = selected_role.entities.get a.get('entity_id')
+          pin = @renderSidebarPin(e, { highlighted: true, faded: false })
+          highlighted_pins_frag.appendChild pin.el
     
     @$('ul#pins').html pins_frag
     @$("ul#highlighted_pins").html highlighted_pins_frag
@@ -121,13 +128,15 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     selected_role = DssRm.view_state.getSelectedRole()
     if selected_role
       # toggle on or off?
-      matched = selected_role.entities.filter((e) ->
-        e.id is clicked_entity_id
+      matched = selected_role.assignments.filter((a) ->
+        a.entity_id is clicked_entity_id
       )
 
       if matched.length > 0
         # toggling off
-        selected_role.entities.remove matched[0]
+        selected_role.assignments.remove matched[0]
+        selected_role.entities.remove matched[0].entity_id
+
         DssRm.view_state.getSelectedApplication().save {},
           success: =>
             DssRm.view_state.trigger('change')
@@ -135,6 +144,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         # toggling on
         new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
         new_entity.fetch success: =>
+          console.log "toggling on via application save for selected_role with cid #{selected_role.cid}"
           selected_role.entities.add new_entity
           app = DssRm.view_state.getSelectedApplication()
           app.save {},

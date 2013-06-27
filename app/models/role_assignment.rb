@@ -14,7 +14,7 @@ class RoleAssignment < ActiveRecord::Base
   belongs_to :entity
   validates :role_id, :entity_id, :presence => true
   validates_uniqueness_of :role_id, :scope => [:entity_id, :calculated]
-  validate :assignment_cannot_be_cyclical
+  validate :assignment_cannot_be_cyclical # keep this before the possibly cyclical operations of granting role assignments in after_create
   before_destroy :cannot_destroy_calculated_assignment_without_flag
   
   # Though this seems like 'group' logic, it must be done in this 'join table' class
@@ -25,7 +25,51 @@ class RoleAssignment < ActiveRecord::Base
   before_destroy :remove_role_assignments_from_group_members_if_needed
   
   private
+
+  # Grant this role assignment to all members of the group
+  # (only if this role assignment really is with a group)
   def grant_role_assignments_to_group_members_if_needed
+    if entity.type == 'Group'
+      Rails.logger.tagged "RoleAssignment #{id}" do
+        entity.members.each do |m|
+          logger.info "Granting role (#{role.id}, #{role.token}, #{role.application.name}) just granted to group (#{entity.id}/#{entity.name}) to its member (#{m.id}/#{m.name})"
+          ra = RoleAssignment.new
+          ra.role_id = role.id
+          ra.entity_id = m.id
+          ra.calculated = true
+          if ra.save == false
+            logger.error "  -- Could not grant role!"
+          end
+        end
+      end
+    end
+  end
+
+  # Remove this role assignment from all members of the group
+  # (only if this role assignment really was with a group)  
+  def remove_role_assignments_from_group_members_if_needed
+    logger.info "DESTROYING ROLE ASSIGNMENT BEING CALLED"
+    
+    if entity.type == 'Group'
+      logger.info "DESTROYING ROLE ASSIGNMENT FOR A GROUP"
+      
+      Rails.logger.tagged "RoleAssignment #{id}" do
+        entity.members.each do |m|
+          logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
+          ra = RoleAssignment.find_by_role_id_and_entity_id_and_calculated(role.id, m.id, true)
+          if ra
+            destroying_calculated_role_assignment do
+              ra.destroy
+            end
+          else
+            logger.warn "Failed to remove role (#{role.id}, #{role.token}, #{role.application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that role. This is probably okay."
+          end
+        end
+      end
+    end
+  end
+  
+  def assignment_cannot_be_cyclical
     
   end
   

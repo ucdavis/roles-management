@@ -26,6 +26,40 @@ class GroupMembership < ActiveRecord::Base
   before_destroy :remove_group_roles_from_member
 
   private
+  
+  # Grant group's roles to new member (marking as calculated)
+  def grant_group_roles_to_member
+    logger.tagged "GroupMembership #{id}" do
+      group.roles.each do |r|
+        logger.info "Granting role (#{r.id}, #{r.token}, #{r.application.name}) to new group member (#{entity.id}/#{entity.name} joining #{group.id}/#{group.name})"
+        ra = RoleAssignment.new
+        ra.role_id = r.id
+        ra.entity_id = entity.id
+        ra.calculated = true
+        ra.save!
+      end
+    end
+  end
+  
+  def remove_group_roles_from_member
+    logger.tagged "GroupMembership #{id}" do
+      group.roles.each do |r|
+        logger.info "Removing role (#{r.id}, #{r.token}, #{r.application.name}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
+        ra = RoleAssignment.find_by_role_id_and_entity_id_and_calculated(r.id, entity.id, true)
+        if ra
+          destroying_calculated_role_assignment do
+            ra.destroy
+          end
+        else
+          logger.warn "Failed to remove role (#{r.id}, #{r.token}, #{r.application.name}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database. This is probably okay."
+        end
+      end
+    end
+  end
+  
+  def membership_cannot_be_cyclical
+    
+  end
 
   # Ensure a group does not attempt to join (member) itself
   def group_cannot_join_itself

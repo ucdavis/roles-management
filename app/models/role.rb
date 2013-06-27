@@ -11,28 +11,27 @@ class Role < ActiveRecord::Base
 
   has_many :role_assignments, :dependent => :destroy
 
-  has_many :entities, :through => :role_assignments,
-                      :after_add => Proc.new{ |r|
-                                               r.entities_changed = true
-                                             },
-                      :after_remove => Proc.new{ |r|
-                                                 r.entities_changed = true
-                                               }
+  has_many :entities, :through => :role_assignments
   before_save :clear_last_sync_if_path_changed
   after_save :sync_ad
 
   belongs_to :application
 
-  attr_accessible :token, :entity_ids, :name, :description, :ad_path
+  # DO NOT add entity_ids to this list - removing entities that way goes through
+  # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
+  # This is noted in the Rails documentation. Remove entities via role_assignment_ids.
+  attr_accessible :token, :role_assignment_ids, :name, :description, :ad_path
+  
   attr_accessor :skip_next_sync   # flag which may be set by manipulating code to avoid an AD sync
-  attr_accessor :entities_changed # flag used by has_many :entities add/remove to force a role sync
   attr_accessor :force_sync       # flag used to force a sync on save or explicit call to Role.sync_ad
   
   def as_json(options={})
     { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id,
       :description => self.description,
       :entities => self.entities.map{ |e| { type: e.type, id: e.id, name: e.name } }, :ad_path => self.ad_path,
-      :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } } }
+      :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.calculated, entity_id: a.entity_id, name: a.entity.name } }
+     }
   end
 
   def to_csv
@@ -69,14 +68,14 @@ class Role < ActiveRecord::Base
     # AD sync will update the role's "last_ad_sync" member. Ensure we don't
     # end up recursively calling this after_save callback!
     if (self.skip_next_sync != true) || self.force_sync
-      if (self.ad_path_changed? || self.entities_changed || self.force_sync) && self.ad_path
+      if (self.ad_path_changed? || self.force_sync) && self.ad_path
         require 'rake'
         load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
         logger.info "Scheduling AD sync for role #{id}"
         Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
       else
-        logger.info "Not syncing AD as ad_path_changed? is #{self.ad_path_changed?}, entities_changed is #{self.entities_changed}, force_sync is #{self.force_sync}, or AD path may be blank '#{self.ad_path}'."
+        logger.info "Not syncing AD as ad_path_changed? is #{self.ad_path_changed?}, force_sync is #{self.force_sync}, or AD path may be blank '#{self.ad_path}'."
       end
     else
       logger.info "Not scheduling AD sync for role #{id} as skip_next_sync was set #{self.skip_next_sync} and force_sync was unset #{self.force_sync}."

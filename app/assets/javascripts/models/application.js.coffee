@@ -28,13 +28,14 @@ DssRm.Models.Application = Backbone.Model.extend(
 
   toJSON: ->
     json = {}
+    
     json.name = @get('name')
     json.description = @get('description')
     json.operator_ids = @operators.map (operator) -> operator.id
     json.owner_ids = @owners.map (owner) -> owner.id
     json.roles_attributes = @roles.map (role) ->
       id: (if role.id then role.id.toString())
-      entity_ids: (if role.entities.length then role.entities.map (e) -> e.id)
+      role_assignment_ids: (if role.assignments.length then role.assignments.map (a) -> a.id)
       token: role.get("token")
       name: role.get("name")
       description: role.get("description")
