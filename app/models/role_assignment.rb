@@ -25,6 +25,9 @@ class RoleAssignment < ActiveRecord::Base
   before_destroy :remove_role_assignments_from_group_members_if_needed
   
   private
+  def grant_role_assignments_to_group_members_if_needed
+    
+  end
   
   def cannot_destroy_calculated_assignment_without_flag
     if calculated and not @@destroy_calculated_assignment_flag
