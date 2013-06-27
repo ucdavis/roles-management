@@ -3,6 +3,7 @@
 # block method below.
 class GroupMembership < ActiveRecord::Base
   using_access_control
+  
   @@destroy_calculated_membership_flag = false
   
   def self.destroy_calculated_membership_flag=(val)
@@ -10,11 +11,19 @@ class GroupMembership < ActiveRecord::Base
   end
 
   validates_presence_of :group, :entity
+  validates_uniqueness_of :group_id, :scope => [:entity_id, :calculated]
   validate :group_cannot_join_itself
-  before_destroy :cannot_destroy_calculated_membership_without_flag
+  validate :membership_cannot_be_cyclical
+  before_destroy :destroying_calculated_membership_requires_flag
 
   belongs_to :group
   belongs_to :entity
+
+  # Though this seems like 'group' logic, it must be done in this 'join table' class
+  # as group memberships can be created outside the Group class causing
+  # that Group's callbacks to go unused
+  after_create :grant_group_roles_to_member
+  before_destroy :remove_group_roles_from_member
 
   private
 
@@ -25,7 +34,7 @@ class GroupMembership < ActiveRecord::Base
     end
   end
   
-  def cannot_destroy_calculated_membership_without_flag
+  def destroying_calculated_membership_requires_flag
     if calculated and not @@destroy_calculated_membership_flag
       errors.add(:calculated, "can't destroy a calculated group membership without flag properly set")
       return false
