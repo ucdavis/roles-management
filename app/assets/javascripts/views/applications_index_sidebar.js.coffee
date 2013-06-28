@@ -72,7 +72,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       # (they only come from groups and the group will be in the list already),
       # but we must then pass an entity, not an assignment, to @renderSidebarPin()
       selected_role.assignments.each (a) =>
-        unless a.get('calculated')
+        unless a.get('calculated') or a.get('_destroy')
           e = selected_role.entities.get a.get('entity_id')
           pin = @renderSidebarPin(e, { highlighted: true, faded: false })
           highlighted_pins_frag.appendChild pin.el
