@@ -43,6 +43,7 @@ authorization do
     has_permission_on :groups, :to => :manage
     has_permission_on :group_rules, :to => :manage
     has_permission_on :people, :to => :manage
+    has_permission_on :entities, :to => :manage
   end
   
   role :access do
