@@ -19,8 +19,9 @@ class Role < ActiveRecord::Base
 
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
-  # This is noted in the Rails documentation. Remove entities via role_assignment_ids.
-  attr_accessible :token, :role_assignment_ids, :name, :description, :ad_path
+  # This is noted in the Rails documentation. Remove entities via roles_attributes.
+  attr_accessible :token, :role_assignments_attributes, :name, :description, :ad_path
+  accepts_nested_attributes_for :role_assignments, :allow_destroy => true
   
   attr_accessor :skip_next_sync   # flag which may be set by manipulating code to avoid an AD sync
   attr_accessor :force_sync       # flag used to force a sync on save or explicit call to Role.sync_ad

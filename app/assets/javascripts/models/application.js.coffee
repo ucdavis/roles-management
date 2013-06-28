@@ -3,7 +3,7 @@ DssRm.Models.Application = Backbone.Model.extend(
     @resetNestedCollections()
     @on "sync", @resetNestedCollections, this
   
-  resetNestedCollections: ->    
+  resetNestedCollections: ->
     @roles = new DssRm.Collections.Roles(@get("roles")) if @roles is `undefined`
     @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
     @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
@@ -33,14 +33,22 @@ DssRm.Models.Application = Backbone.Model.extend(
     json.description = @get('description')
     json.operator_ids = @operators.map (operator) -> operator.id
     json.owner_ids = @owners.map (owner) -> owner.id
-    json.roles_attributes = @roles.map (role) ->
-      id: (if role.id then role.id.toString())
-      role_assignment_ids: (if role.assignments.length then role.assignments.map (a) -> a.id)
-      token: role.get("token")
-      name: role.get("name")
-      description: role.get("description")
-      ad_path: role.get("ad_path")
-      _destroy: role.get('_destroy')
+    if @roles.length
+      json.roles_attributes = @roles.map (role) ->
+        role_json = {}
+        
+        if role.assignments.length
+          role_json.role_assignments_attributes = role.assignments.map (a) ->
+            id: a.get('id')
+            entity_id: a.get('entity_id')
+            _destroy: a.get('_destroy')
+        role_json.id = role.get('id')
+        role_json.token = role.get("token")
+        role_json.name = role.get("name")
+        role_json.description = role.get("description")
+        role_json.ad_path = role.get("ad_path")
+        role_json._destroy = role.get('_destroy')
+        role_json
     
     json
 )

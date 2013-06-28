@@ -3,8 +3,7 @@ DssRm.Models.Role = Backbone.Model.extend(
   
   initialize: ->
     @resetNestedCollections()
-    # Trigger on 'change' as that's what .fetch() calls (used when we click on a role on the left)
-    @on "change sync", @resetNestedCollections, this
+    @on "sync", @resetNestedCollections, this
     
   resetNestedCollections: ->
     console.log "role #{@cid} resetting nested collections"
@@ -15,6 +14,8 @@ DssRm.Models.Role = Backbone.Model.extend(
     # Reset nested collection data
     @entities.reset @get('entities')
     @assignments.reset @get('assignments')
+    
+    console.log "role now has #{@assignments.length} assignments"
     
     # Enforce the design pattern by removing from @attributes what is represented in a nested collection
     delete @attributes.entities

@@ -126,15 +126,18 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     # If a role is selected, toggle the entity's association with that role.
     # If no role is selected, merely filter the application/role list to display their assignments.
     selected_role = DssRm.view_state.getSelectedRole()
+
     if selected_role
       # toggle on or off?
       matched = selected_role.assignments.filter((a) ->
-        a.entity_id is clicked_entity_id
+        a.get('entity_id') is clicked_entity_id
       )
 
       if matched.length > 0
         # toggling off
-        selected_role.assignments.remove matched[0]
+        console.log 'toggling off'
+        
+        matched[0].set('_destroy', true)
         selected_role.entities.remove matched[0].entity_id
 
         DssRm.view_state.getSelectedApplication().save {},
@@ -146,6 +149,9 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         new_entity.fetch success: =>
           console.log "toggling on via application save for selected_role with cid #{selected_role.cid}"
           selected_role.entities.add new_entity
+          selected_role.assignments.add
+            entity_id: new_entity.id
+            calculated: false
           app = DssRm.view_state.getSelectedApplication()
           app.save {},
             success: =>

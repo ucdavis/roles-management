@@ -73,6 +73,8 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     role_id = parseInt($(e.currentTarget).attr("data-role-id"))
     role = @model.roles.get(role_id)
     
+    console.log "clicked a role (and fetching) with cid #{role.cid}"
+    
     status_bar.show "Fetching role details ..."
     role.fetch
       success: =>
