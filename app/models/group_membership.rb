@@ -29,7 +29,7 @@ class GroupMembership < ActiveRecord::Base
   
   # Grant group's roles to new member (marking as calculated)
   def grant_group_roles_to_member
-    logger.tagged "GroupMembership #{id}" do
+    Rails.logger.tagged "GroupMembership #{id}" do
       group.roles.each do |r|
         logger.info "Granting role (#{r.id}, #{r.token}, #{r.application.name}) to new group member (#{entity.id}/#{entity.name} joining #{group.id}/#{group.name})"
         ra = RoleAssignment.new
@@ -42,7 +42,7 @@ class GroupMembership < ActiveRecord::Base
   end
   
   def remove_group_roles_from_member
-    logger.tagged "GroupMembership #{id}" do
+    Rails.logger.tagged "GroupMembership #{id}" do
       group.roles.each do |r|
         logger.info "Removing role (#{r.id}, #{r.token}, #{r.application.name}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
         ra = RoleAssignment.find_by_role_id_and_entity_id_and_calculated(r.id, entity.id, true)
