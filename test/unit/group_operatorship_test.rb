@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class GroupOperatorAssignmentsTest < ActiveSupport::TestCase
+class GroupOperatorshipTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

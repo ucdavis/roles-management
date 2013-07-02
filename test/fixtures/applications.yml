@@ -1,6 +1,9 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
 dssrm:
   id: 1
   name: DSS Roles Management
   description: The roles management application
+
+regular_app:
+  id: 2
+  name: Regular App
+  description: I'm just a plain regular application

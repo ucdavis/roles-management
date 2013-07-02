@@ -42,3 +42,15 @@ groupB:
   type: Group
   name: Group B
   description: I'm a member of Group A!
+
+groupWithARole:
+  id: 6
+  type: Group
+  name: Group with a Role
+  description: This group has exactly one role.
+
+groupWithoutARole:
+  id: 7
+  type: Group
+  name: Group without a Role
+  description: This group has no roles.

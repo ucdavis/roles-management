@@ -11,3 +11,10 @@ dssrm_admin:
   description: Provides administrator (super user / root) access
   token: admin
   application_id: 1
+
+boring_role:
+  id: 3
+  name: Boring role
+  description: I'm just a plain ol' boring role
+  token: boring
+  application_id: 2
