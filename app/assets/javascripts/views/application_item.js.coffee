@@ -72,17 +72,25 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     
     role_id = parseInt($(e.currentTarget).attr("data-role-id"))
     role = @model.roles.get(role_id)
+    previous_selected_role_id = DssRm.view_state.get('selected_role_id')
     
-    console.log "clicked a role (and fetching) with cid #{role.cid}"
-    
-    status_bar.show "Fetching role details ..."
-    role.fetch
-      success: =>
-        status_bar.hide()
+    if previous_selected_role_id == role_id
+      # Toggling off
+      DssRm.view_state.set
+        selected_application_id: null
+        selected_role_id: null
+        focused_application_id: null
+        focused_entity_id: null
+    else
+      # Toggling on
+      status_bar.show "Fetching role details ..."
+      role.fetch
+        success: =>
+          status_bar.hide()
         
-        DssRm.view_state.set
-          selected_application_id: @model.get('id')
-          selected_role_id: role_id
-      error: ->
-        status_bar.show "An error occurred while fetching information about the role.", "error"
+          DssRm.view_state.set
+            selected_application_id: @model.get('id')
+            selected_role_id: role_id
+        error: ->
+          status_bar.show "An error occurred while fetching information about the role.", "error"
 )
