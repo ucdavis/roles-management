@@ -34,7 +34,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     # Search DssRm.current_user objects first
     # We'd prefer not to create new objects and would like events like name
     # changes to propagate
-    entity = DssRm.view_state.sidebar_entities.get(uid)
+    entity = DssRm.view_state.bookmarks.get(uid)
     
     # Fetch it as a last resort - we won't get event updates
     entity = new DssRm.Models.Entity(id: uid) if entity is `undefined`

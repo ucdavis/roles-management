@@ -6,47 +6,21 @@ DssRm.Models.ViewState = Backbone.Model.extend(
     "focused_entity_id"       : null
 
   initialize: ->
-    @sidebar_entities = new DssRm.Collections.Entities()
+    @bookmarks = new DssRm.Collections.Entities()
     
-    @buildSidebarEntities()
+    @buildBookmarks()
     
-    # Intelligently handle adjusting @sidebar_entities
-    DssRm.current_user.favorites.on "add", (entity) =>
-      @sidebar_entities.add
-        id: entity.get('id')
-        name: entity.get('name')
-        type: entity.get('type').toLowerCase()
-    , this
-    DssRm.current_user.favorites.on "remove", (entity) =>
-      @sidebar_entities.remove entity
-    , this
-    DssRm.current_user.group_ownerships.on "add", (ownership) =>
-      @sidebar_entities.add
-        id: ownership.get('id')
-        name: ownership.get('name')
-        type: 'group'
-    , this
+    # Adjust @bookmarks as needed
+    DssRm.current_user.favorites.on "add remove", @buildBookmarks, this
+    DssRm.current_user.group_ownerships.on "add", @buildBookmarks, this
   
   # Constructs list of current user's ownerships, operatorships, and favorites
-  buildSidebarEntities: ->
-    console.log 'building sidebar ...'
-    @sidebar_entities.reset _.union(
-      DssRm.current_user.group_ownerships.models.map (o) ->
-        id: o.get('group_id')
-        name: o.get('name')
-        type: 'group'
-    ,
-      DssRm.current_user.group_operatorships.models.map (o) ->
-        id: o.get('group_id')
-        name: o.get('name')
-        type: 'group'
-    ,
-      DssRm.current_user.favorites.models.map (f) ->
-        id: f.get('id')
-        name: f.get('name')
-        type: f.get('type').toLowerCase()
+  buildBookmarks: ->
+    @bookmarks.reset _.union(
+      DssRm.current_user.group_ownerships.models,
+      DssRm.current_user.group_operatorships.models,
+      DssRm.current_user.favorites.models
     )
-    console.log 'done building sidebar'
 
   # Return the role model associated with @selected_role_id. Always search, don't store the role model - it may be reset on sync!
   getSelectedRole: ->

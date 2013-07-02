@@ -9,27 +9,12 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     @$el.html JST["templates/applications/sidebar"]()
     
     # Re-render the sidebar when favorites, etc. are added/removed
-    #DssRm.view_state.sidebar_entities.on "reset", @render, this
-    DssRm.view_state.sidebar_entities.on "destroy", =>
-      console.log 'view_state.sidebar_entities destroy caught, re-rendering'
-      @render()
-    , this
-    DssRm.view_state.sidebar_entities.on "add", =>
-      console.log 'view_state.sidebar_entities add caught, re-rendering'
-      @render()
-    , this
-    DssRm.view_state.sidebar_entities.on "remove", =>
-      console.log 'view_state.sidebar_entities remove caught, re-rendering'
-      @render()
-    , this
-    DssRm.view_state.on "change", =>
-      console.log 'view state change, calling render'
-      @render()
-    , this
+    DssRm.view_state.bookmarks.on "reset destroy", @render, this
+    DssRm.view_state.on "change", @render, this
     
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
-      entity = DssRm.view_state.sidebar_entities.find( (i) -> i.get('name') == entry )
+      entity = DssRm.view_state.bookmarks.find( (i) -> i.get('name') == entry )
       
       if entity
         DssRm.view_state.set focused_entity_id: entity.id
@@ -61,7 +46,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     highlighted_pins_frag = document.createDocumentFragment()
     
     # Render sidebar entities (favorites, ownerships, operators)
-    DssRm.view_state.sidebar_entities.each (e) =>
+    DssRm.view_state.bookmarks.each (e) =>
       faded = false
       
       if selected_role
@@ -207,7 +192,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         else
           # No role selected, either add entity to their favorites (default behavior)
           # or highlight the result if they're already a favorite.
-          if DssRm.view_state.sidebar_entities.find((e) ->
+          if DssRm.view_state.bookmarks.find((e) ->
             e.id is id
           ) is `undefined`
             # Add to favorites

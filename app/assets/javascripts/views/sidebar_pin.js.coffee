@@ -9,7 +9,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
 
     @$el.html JST["templates/entities/item"](entity: @model)
     @$el.data "entity-id", @model.get('id')
-    @$el.addClass @model.get('type').toLowerCase()
+    @$el.addClass (@model.get('type') || 'group').toLowerCase()
     
     @highlighted = options.highlighted
     @faded = options.faded
@@ -52,7 +52,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @
 
   entityUrl: ->
-    "#" + "/entities/" + @model.get("id")
+    "#" + "/entities/" + (@model.get("group_id") || @model.get("id"))
 
   toggleEntityFavorite: (e) ->
     e.stopPropagation()
@@ -67,6 +67,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
       DssRm.current_user.favorites.remove favorites_entity
     else
       # Favoriting
+      console.log 'favoriting model'
       DssRm.current_user.favorites.add @model
     
     DssRm.current_user.save()
