@@ -53,7 +53,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         console.log "looking for entity id of #{e.id} in selected_role #{selected_role.cid} with #{selected_role.assignments.length} assignments"
         console.log "selected_role #{selected_role.cid} has #{selected_role.assignments.length} assignments"
       
-      if selected_role and selected_role.assignments.findWhere({ entity_id: (e.get('group_id') || e.id) })
+      if selected_role and selected_role.has_assigned(e)
           faded = true
 
       pin = @renderSidebarPin(e, { highlighted: false, faded: faded })
@@ -164,10 +164,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     switch id
       when DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
         DssRm.router.navigate "import/" + label.slice(14), {trigger: true} # slice(14) is removing the "Import Person " prefix
-        label = ""
-        
+      
       when DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
-        console.log 'calling .create on current user group_ownerships'
         DssRm.current_user.group_ownerships.create
           name: label.slice(13) # slice(13) is removing the "Create Group " prefix
           type: "Group"
@@ -175,10 +173,10 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
           wait: true
       else
         # Specific entity selected.
-        # If a role is selected, so assign the result to that role,
+        # If a role is selected, assign the result to that role
         # and do not add to favorites.
         selected_role = DssRm.view_state.getSelectedRole()
-        if selected_role
+        if selected_role and not selected_role.has_assigned(id)
           entity_to_assign = new DssRm.Models.Entity(id: id)
           entity_to_assign.fetch success: =>
             selected_role.entities.add entity_to_assign
@@ -203,13 +201,11 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
             e.fetch success: =>
               DssRm.current_user.favorites.add e
               DssRm.current_user.save()
-            
-            return ""
           else
             # Already in favorites - highlight the result
             DssRm.view_state.set focused_entity_id: id
     
-    label
+    ""
 
 ,
   # Constants used in this view

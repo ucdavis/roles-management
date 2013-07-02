@@ -23,6 +23,18 @@ DssRm.Models.Role = Backbone.Model.extend(
 
   tokenize: (str) ->
     String(str).replace(RegExp(" ", "g"), "-").replace(/'/g, "").replace(/"/g, "").toLowerCase()
+  
+  # Returns the entity if it is assigned to this role
+  # Accepts an entity or an entity_id
+  has_assigned: (entity) ->
+    if entity.get == undefined
+      # Looks like 'entity' is an ID
+      id = entity
+    else
+      # Looks like 'entity' is a model
+      id = (entity.get('group_id') || entity.id)
+    
+    @assignments.findWhere { entity_id: id }
 )
 
 DssRm.Collections.Roles = Backbone.Collection.extend(
