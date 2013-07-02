@@ -53,7 +53,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         console.log "looking for entity id of #{e.id} in selected_role #{selected_role.cid} with #{selected_role.assignments.length} assignments"
         console.log "selected_role #{selected_role.cid} has #{selected_role.assignments.length} assignments"
       
-      if selected_role and selected_role.assignments.findWhere({ entity_id: e.id })
+      if selected_role and selected_role.assignments.findWhere({ entity_id: (e.get('group_id') || e.id) })
           faded = true
 
       pin = @renderSidebarPin(e, { highlighted: false, faded: faded })

@@ -8,7 +8,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @listenTo DssRm.view_state, "change", @render
 
     @$el.html JST["templates/entities/item"](entity: @model)
-    @$el.data "entity-id", @model.get('id')
+    @$el.data "entity-id", (@model.get('group_id') || @model.get('id'))
     @$el.addClass (@model.get('type') || 'group').toLowerCase()
     
     @highlighted = options.highlighted

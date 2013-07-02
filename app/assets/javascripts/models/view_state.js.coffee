@@ -30,11 +30,6 @@ DssRm.Models.ViewState = Backbone.Model.extend(
     DssRm.applications.find (application) =>
       application.roles.find (role) =>
         selected_role = role if role.id == selected_role_id
-    
-    if selected_role
-      console.log "get selected role returning a role with cid #{selected_role.cid}"
-    else
-      console.log "get selected role called when no role is selected (this is normal)"
         
     selected_role
   
