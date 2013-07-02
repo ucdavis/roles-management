@@ -16,7 +16,7 @@ class GroupTest < ActiveSupport::TestCase
     # Ensure the group has group members that are not empty
     assert group.members.select{ |m| m.type == "Group"}.count > 0, "cannot test without groups assigned to this group"
     
-    flattened_members_count = group.members(true).count
+    flattened_members_count = group.flattened_members.count
     
     # Manually flatten the group and ensure g.members(:flatten = true)'s logic works correctly (the point of this test)
     # Technically this is a recursive test (we rely on g.members(true) working correctly). This should still
@@ -24,9 +24,9 @@ class GroupTest < ActiveSupport::TestCase
     test_flatten_count = 0
     test_flatten_count += group.members.select{ |m| m.type == "Person"}.count
     group.members.select{ |m| m.type == "Group"}.each do |g|
-      test_flatten_count += g.members(true).count
+      test_flatten_count += g.flattened_members.count
     end
     
-    assert test_flatten_count == flattened_members_count, "test flattening and Group.members(:flatten = true) should match count"
+    assert test_flatten_count == flattened_members_count, "test flattening (#{test_flatten_count}) and Group.members(:flatten = true) (#{flattened_members_count}) should match count"
   end
 end
