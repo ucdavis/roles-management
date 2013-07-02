@@ -14,6 +14,10 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       console.log 'view_state.sidebar_entities destroy caught, re-rendering'
       @render()
     , this
+    DssRm.view_state.sidebar_entities.on "add", =>
+      console.log 'view_state.sidebar_entities add caught, re-rendering'
+      @render()
+    , this
     
     DssRm.view_state.on "change", =>
       console.log 'view state change, calling render'
@@ -176,6 +180,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         DssRm.current_user.group_ownerships.create
           name: label.slice(13) # slice(13) is removing the "Create Group " prefix
           type: "Group"
+        ,
+          wait: true
       else
         # Specific entity selected.
         # If a role is selected, so assign the result to that role,
