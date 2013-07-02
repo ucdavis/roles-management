@@ -15,10 +15,10 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @faded = options.faded
 
   render: ->
-    console.log "rendering sidebar pin for entity (#{@model.cid}) with id #{@model.get('id')}"
-    if @model.get('id') is undefined
-      console.log "id seems to be undefined, but group_id is: #{@model.get('group_id')}"
-      debugger
+    # console.log "rendering sidebar pin for entity (#{@model.cid}) with id #{@model.get('id')}"
+    # if @model.get('id') is undefined
+    #   console.log "id seems to be undefined, but group_id is: #{@model.get('group_id')}"
+    #   debugger
     
     @$el.data "entity-name", @model.get('name')
     @$("span").html @model.escape('name')

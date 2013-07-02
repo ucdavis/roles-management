@@ -6,7 +6,7 @@ DssRm.Models.Role = Backbone.Model.extend(
     @on "sync", @resetNestedCollections, this
     
   resetNestedCollections: ->
-    console.log "role #{@cid} resetting nested collections"
+    #console.log "role #{@cid} resetting nested collections"
     
     @entities = new DssRm.Collections.Entities(@get('entities')) if @entities is `undefined`
     @assignments = new Backbone.Collection(@get('assignments')) if @assignments is `undefined`
@@ -15,7 +15,7 @@ DssRm.Models.Role = Backbone.Model.extend(
     @entities.reset @get('entities')
     @assignments.reset @get('assignments')
     
-    console.log "role now has #{@assignments.length} assignments"
+    #console.log "role now has #{@assignments.length} assignments"
     
     # Enforce the design pattern by removing from @attributes what is represented in a nested collection
     delete @attributes.entities

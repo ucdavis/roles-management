@@ -49,9 +49,9 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     DssRm.view_state.bookmarks.each (e) =>
       faded = false
       
-      if selected_role
-        console.log "looking for entity id of #{e.id} in selected_role #{selected_role.cid} with #{selected_role.assignments.length} assignments"
-        console.log "selected_role #{selected_role.cid} has #{selected_role.assignments.length} assignments"
+      # if selected_role
+      #   console.log "looking for entity id of #{e.id} in selected_role #{selected_role.cid} with #{selected_role.assignments.length} assignments"
+      #   console.log "selected_role #{selected_role.cid} has #{selected_role.assignments.length} assignments"
       
       if selected_role and selected_role.has_assigned(e)
           faded = true
@@ -111,8 +111,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         console.log 'toggling off'
         
         matched[0].set('_destroy', true)
-        selected_role.entities.remove matched[0].get('entity_id')
-        selected_role.assignments.remove matched[0]
+        #selected_role.entities.remove matched[0].get('entity_id')
+        #selected_role.assignments.remove matched[0]
         console.log "selected_role #{selected_role.cid} now has #{selected_role.assignments.length} assignments"
 
         DssRm.view_state.getSelectedApplication().save {},
