@@ -61,6 +61,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     favorites_entity = DssRm.current_user.favorites.find((e) ->
       e.id is model_id
     )
+    
     if favorites_entity
       # Unfavoriting
       DssRm.current_user.favorites.remove favorites_entity

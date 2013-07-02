@@ -11,20 +11,21 @@ DssRm.Models.ViewState = Backbone.Model.extend(
     @buildSidebarEntities()
     
     # Intelligently handle adjusting @sidebar_entities
-    # DssRm.current_user.favorites.on "sync", =>
-    #   console.log 'favorites sync event, calling build sidebar'
-    #   @buildSidebarEntities()
-    # , this
+    DssRm.current_user.favorites.on "add", (entity) =>
+      @sidebar_entities.add
+        id: entity.get('id')
+        name: entity.get('name')
+        type: entity.get('type').toLowerCase()
+    , this
+    DssRm.current_user.favorites.on "remove", (entity) =>
+      @sidebar_entities.remove entity
+    , this
     DssRm.current_user.group_ownerships.on "add", (ownership) =>
       @sidebar_entities.add
         id: ownership.get('id')
         name: ownership.get('name')
         type: 'group'
     , this
-    # DssRm.current_user.group_operatorships.on "sync", =>
-    #   console.log 'group operatorships sync, calling build sidebar'
-    #   @buildSidebarEntities()
-    # , this
   
   # Constructs list of current user's ownerships, operatorships, and favorites
   buildSidebarEntities: ->

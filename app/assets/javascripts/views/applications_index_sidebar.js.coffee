@@ -18,7 +18,10 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       console.log 'view_state.sidebar_entities add caught, re-rendering'
       @render()
     , this
-    
+    DssRm.view_state.sidebar_entities.on "remove", =>
+      console.log 'view_state.sidebar_entities remove caught, re-rendering'
+      @render()
+    , this
     DssRm.view_state.on "change", =>
       console.log 'view state change, calling render'
       @render()
@@ -194,8 +197,13 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
           entity_to_assign = new DssRm.Models.Entity(id: id)
           entity_to_assign.fetch success: =>
             selected_role.entities.add entity_to_assign
-            DssRm.view_state.getSelectedApplication().save()
-            @render() # need to update the sidebar and we don't listen to either of the above
+            selected_role.assignments.add
+              entity_id: entity_to_assign.id
+              calculated: false
+            app = DssRm.view_state.getSelectedApplication()
+            app.save {},
+              success: =>
+                DssRm.view_state.trigger('change')
         else
           # No role selected, either add entity to their favorites (default behavior)
           # or highlight the result if they're already a favorite.
