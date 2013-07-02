@@ -1,13 +1,50 @@
 DssRm.Models.ViewState = Backbone.Model.extend(
-  initialize: ->
-    @deselectAll()
+  defaults:
+    "selected_application_id" : null
+    "selected_role_id"        : null
+    "focused_application_id"  : null
+    "focused_entity_id"       : null
 
-  deselectAll: ->
-    @set selected_application_id: null
-    @set selected_role_id: null # do _not_ store non-IDs. the CIDs of roles may change when we reset.
-    @set focused_application_id: null
-    @set focused_entity_id: null
+  initialize: ->
+    @sidebar_entities = new DssRm.Collections.Entities()
+    
+    @buildSidebarEntities()
+    
+    # Intelligently handle adjusting @sidebar_entities
+    DssRm.current_user.favorites.on "sync", =>
+      console.log 'favorites sync event, calling build sidebar'
+      @buildSidebarEntities()
+    , this
+    DssRm.current_user.group_ownerships.on "sync", =>
+      console.log 'group ownerships sync, calling build sidebar'
+      @buildSidebarEntities()
+    , this
+    DssRm.current_user.group_operatorships.on "sync", =>
+      console.log 'group operatorships sync, calling build sidebar'
+      @buildSidebarEntities()
+    , this
   
+  # Constructs list of current user's ownerships, operatorships, and favorites
+  buildSidebarEntities: ->
+    console.log 'building sidebar ...'
+    @sidebar_entities.reset _.union(
+      DssRm.current_user.group_ownerships.models.map (o) ->
+        id: o.get('group_id')
+        name: o.get('name')
+        type: 'group'
+    ,
+      DssRm.current_user.group_operatorships.models.map (o) ->
+        id: o.get('group_id')
+        name: o.get('name')
+        type: 'group'
+    ,
+      DssRm.current_user.favorites.models.map (f) ->
+        id: f.get('id')
+        name: f.get('name')
+        type: f.get('type').toLowerCase()
+    )
+    console.log 'done building sidebar'
+
   # Return the role model associated with @selected_role_id. Always search, don't store the role model - it may be reset on sync!
   getSelectedRole: ->
     selected_role_id = @get('selected_role_id')

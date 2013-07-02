@@ -15,6 +15,11 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @faded = options.faded
 
   render: ->
+    console.log "rendering sidebar pin for entity (#{@model.cid}) with id #{@model.get('id')}"
+    if @model.get('id') is undefined
+      console.log "id seems to be undefined, but group_id is: #{@model.get('group_id')}"
+      debugger
+    
     @$el.data "entity-name", @model.get('name')
     @$("span").html @model.escape('name')
     
@@ -36,7 +41,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     else
       @$('a.entity-favorite-link>i').removeClass('icon-star').addClass('icon-star-empty').attr('title', 'Favorite')
     
-    if @model.isReadOnly()
+    if false #@model.isReadOnly()
       @$("i.icon-remove").hide()
       @$("i.icon-search").hide()
     else

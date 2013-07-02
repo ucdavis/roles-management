@@ -104,7 +104,12 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
     # we really do want only clicks on div#cards and not its
     # children
     if e.target is $("div#cards").get(0)
-      DssRm.view_state.deselectAll()
+      DssRm.view_state.set
+        selected_application_id: null
+        selected_role_id: null
+        focused_application_id: null
+        focused_entity_id: null
+      
 ,
   # Constants used in this view
   FID_CREATE_APPLICATION: -1

@@ -8,22 +8,21 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   initialize: (options) ->
     @$el.html JST["templates/applications/sidebar"]()
     
-    @sidebar_entities = new DssRm.Collections.Entities()
-    @buildSidebar()
-    
     # Re-render the sidebar when favorites, etc. are added/removed
-    @sidebar_entities.on "reset", @render, this
-
-    # Intelligently handle adjusting @sidebar_entities
-    DssRm.current_user.favorites.on "add remove", @buildSidebar, this
-    DssRm.current_user.group_ownerships.on "add remove", @buildSidebar, this
-    DssRm.current_user.group_operatorships.on "add remove", @buildSidebar, this
+    #DssRm.view_state.sidebar_entities.on "reset", @render, this
+    DssRm.view_state.sidebar_entities.on "destroy", =>
+      console.log 'view_state.sidebar_entities destroy caught, re-rendering'
+      @render()
+    , this
     
-    DssRm.view_state.on "change", @render, this
+    DssRm.view_state.on "change", =>
+      console.log 'view state change, calling render'
+      @render()
+    , this
     
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
-      entity = @sidebar_entities.find( (i) -> i.get('name') == entry )
+      entity = DssRm.view_state.sidebar_entities.find( (i) -> i.get('name') == entry )
       
       if entity
         DssRm.view_state.set focused_entity_id: entity.id
@@ -55,7 +54,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     highlighted_pins_frag = document.createDocumentFragment()
     
     # Render sidebar entities (favorites, ownerships, operators)
-    @sidebar_entities.each (e) =>
+    DssRm.view_state.sidebar_entities.each (e) =>
       faded = false
       
       if selected_role
@@ -97,25 +96,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   renderSidebarPin: (entity, options) ->
     pin = new DssRm.Views.SidebarPin { model: entity, highlighted: options.highlighted, faded: options.faded }
     pin.render()
-  
-  # Constructs list of current user's ownerships, operatorships, and favorites
-  buildSidebar: ->
-    @sidebar_entities.reset _.union(
-      DssRm.current_user.group_ownerships.models.map (o) ->
-        id: o.get('group_id')
-        name: o.get('name')
-        type: 'group'
-    ,
-      DssRm.current_user.group_operatorships.models.map (o) ->
-        id: o.get('group_id')
-        name: o.get('name')
-        type: 'group'
-    ,
-      DssRm.current_user.favorites.models.map (f) ->
-        id: f.get('id')
-        name: f.get('name')
-        type: f.get('type').toLowerCase()
-    )
   
   selectEntity: (e) ->
     clicked_entity_id = $(e.currentTarget).data("entity-id")
@@ -192,6 +172,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         label = ""
         
       when DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
+        console.log 'calling .create on current user group_ownerships'
         DssRm.current_user.group_ownerships.create
           name: label.slice(13) # slice(13) is removing the "Create Group " prefix
           type: "Group"
@@ -209,7 +190,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         else
           # No role selected, either add entity to their favorites (default behavior)
           # or highlight the result if they're already a favorite.
-          if @sidebar_entities.find((e) ->
+          if DssRm.view_state.sidebar_entities.find((e) ->
             e.id is id
           ) is `undefined`
             # Add to favorites

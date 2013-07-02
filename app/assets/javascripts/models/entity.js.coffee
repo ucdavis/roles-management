@@ -14,6 +14,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       "/entities"
 
   initialize: ->
+    console.log "initializing entity #{@cid}"
     @resetNestedCollections()
     @on "sync", @resetNestedCollections, this
   
