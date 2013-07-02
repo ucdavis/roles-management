@@ -8,6 +8,11 @@ DssRm.Models.Application = Backbone.Model.extend(
     @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
     @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
     
+    # Reset nested collection data
+    @roles.reset @get("roles")
+    @owners.reset @get("owners")
+    @operators.reset @get("operators")
+    
     # Enforce the design pattern by removing from @attributes what is represented in a nested collection
     delete @attributes.roles
     delete @attributes.owners
