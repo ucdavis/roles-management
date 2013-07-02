@@ -24,6 +24,15 @@ class GroupMembership < ActiveRecord::Base
   # that Group's callbacks to go unused
   after_create :grant_group_roles_to_member
   before_destroy :remove_group_roles_from_member
+  
+  def self.destroying_calculated_group_membership
+    begin
+      GroupMembership.destroy_calculated_membership_flag = true
+      yield
+    ensure
+      GroupMembership.destroy_calculated_membership_flag = false
+    end
+  end
 
   private
   
@@ -73,14 +82,5 @@ class GroupMembership < ActiveRecord::Base
       errors.add(:calculated, "can't destroy a calculated group membership without flag properly set")
       return false
     end
-  end
-end
-
-def destroying_calculated_group_membership
-  begin
-    GroupMembership.destroy_calculated_membership_flag = true
-    yield
-  ensure
-    GroupMembership.destroy_calculated_membership_flag = false
   end
 end

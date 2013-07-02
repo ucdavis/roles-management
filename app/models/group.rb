@@ -105,7 +105,7 @@ class Group < Entity
       end
 
       # Remove previous calculated group member assignments
-      destroying_calculated_group_membership do
+      GroupMembership.destroying_calculated_group_membership do
         memberships.where(:calculated => true).destroy_all
       end
 
