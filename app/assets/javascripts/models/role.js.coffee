@@ -26,7 +26,7 @@ DssRm.Models.Role = Backbone.Model.extend(
   
   # Returns the entity if it is assigned to this role
   # Accepts an entity or an entity_id
-  has_assigned: (entity) ->
+  has_assigned: (entity, include_calculated = true) ->
     if entity.get == undefined
       # Looks like 'entity' is an ID
       id = entity
@@ -34,7 +34,9 @@ DssRm.Models.Role = Backbone.Model.extend(
       # Looks like 'entity' is a model
       id = (entity.get('group_id') || entity.id)
     
-    @assignments.findWhere { entity_id: id }
+    assignment = @assignments.findWhere { entity_id: id }
+    
+    return assignment if (assignment and ((assignment.get('calculated') == false) or include_calculated))
 )
 
 DssRm.Collections.Roles = Backbone.Collection.extend(
