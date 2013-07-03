@@ -1,9 +1,11 @@
 DssRm.Models.Application = Backbone.Model.extend(
   initialize: ->
     @resetNestedCollections()
-    @on "sync", @resetNestedCollections, this
-    @roles.on "sync", ->
+    @on 'sync', @resetNestedCollections, this
+
+    @roles.on 'sync', ->
       console.log 'application detected a role sync'
+      @trigger 'application_roles_sync' # do not use 'sync'
     , this
   
   resetNestedCollections: ->

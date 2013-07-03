@@ -7,8 +7,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     @$el.html JST["templates/applications/sidebar"]()
     
     # Re-render the sidebar when favorites, etc. are added/removed
-    DssRm.view_state.bookmarks.on "reset destroy", @render, this
-    DssRm.view_state.on "change", @render, this
+    DssRm.view_state.bookmarks.on 'reset destroy', @render, this
+    DssRm.view_state.on 'change', @render, this
     
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
@@ -63,6 +63,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       selected_role.assignments.each (a) =>
         unless a.get('calculated') or a.get('_destroy')
           e = selected_role.entities.get a.get('entity_id')
+          if e == undefined
+            debugger
           pin = @renderSidebarPin(e, { highlighted: true, faded: false })
           highlighted_pins_frag.appendChild pin.el
     

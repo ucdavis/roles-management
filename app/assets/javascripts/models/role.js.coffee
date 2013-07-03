@@ -3,7 +3,7 @@ DssRm.Models.Role = Backbone.Model.extend(
   
   initialize: ->
     @resetNestedCollections()
-    @on "sync", @resetNestedCollections, this
+    @on 'sync', @resetNestedCollections, this
     
   resetNestedCollections: ->
     console.log "role #{@cid} resetting nested collections"
@@ -20,7 +20,7 @@ DssRm.Models.Role = Backbone.Model.extend(
     # Enforce the design pattern by removing from @attributes what is represented in a nested collection
     delete @attributes.entities
     delete @attributes.assignments
-
+  
   tokenize: (str) ->
     String(str).replace(RegExp(" ", "g"), "-").replace(/'/g, "").replace(/"/g, "").toLowerCase()
   

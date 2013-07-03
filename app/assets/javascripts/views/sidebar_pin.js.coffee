@@ -5,6 +5,9 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     "click"                        : "pinClicked"
 
   initialize: (options) ->
+    console.log 'sidebar pin model is:'
+    console.log @model
+    
     @listenTo @model, "change", @render
     @listenTo DssRm.view_state, "change", @render
 
@@ -111,7 +114,10 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
         selected_role.assignments.add
           entity_id: id
           calculated: false
-        selected_role.save {},
-          success: =>
-            DssRm.view_state.trigger('change')
+        selected_role.save() # {},
+          # wait: true
+          # success: =>
+          #   console.log 'selected_role.save callback'
+            #debugger
+            #DssRm.view_state.trigger('change')
 )
