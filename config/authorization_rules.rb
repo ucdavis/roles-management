@@ -56,10 +56,6 @@ authorization do
     has_permission_on :majors, :to => :read
     has_permission_on :titles, :to => :read
     
-    # Operators can read applications
-    has_permission_on :applications, :to => :read do
-      if_attribute :operators => contains { user }
-    end
     # Owners can read and update their own applications
     has_permission_on :applications, :to => [:read, :update] do
       if_attribute :owners => contains { user }

@@ -15,6 +15,20 @@ class RolesController < ApplicationController
     end
   end
   
+  def update
+    if params[:id] and params[:role]
+      @role.update_attributes(params[:role].except(:id))
+      
+      # Overridden to respond with the object and not a '204 No Content'.
+      # See: http://stackoverflow.com/questions/9953887/simple-respond-with-in-rails-that-avoids-204-from-put
+      respond_with(@role) do |format|
+        format.json { render json: @role }
+      end
+    else
+      respond_with 422
+    end
+  end
+  
   # Forces a role to sync
   def sync
     @role = Role.find_by_id(params[:role_id])

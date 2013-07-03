@@ -43,13 +43,9 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     pins_frag = document.createDocumentFragment()
     highlighted_pins_frag = document.createDocumentFragment()
     
-    # Render sidebar entities (favorites, ownerships, operators)
+    # Render 'bookmarks'
     DssRm.view_state.bookmarks.each (e) =>
       faded = false
-      
-      # if selected_role
-      #   console.log "looking for entity id of #{e.id} in selected_role #{selected_role.cid} with #{selected_role.assignments.length} assignments"
-      #   console.log "selected_role #{selected_role.cid} has #{selected_role.assignments.length} assignments"
       
       if selected_role and selected_role.has_assigned(e, false)
           faded = true
@@ -57,6 +53,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       pin = @renderSidebarPin(e, { highlighted: false, faded: faded })
       pins_frag.appendChild pin.el
 
+    # Render 'Assigned'
     if selected_role
       # We parse assignments to ensure we don't display a calculated assignment
       # (they only come from groups and the group will be in the list already),
@@ -135,12 +132,10 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         if selected_role and not selected_role.has_assigned(id)
           entity_to_assign = new DssRm.Models.Entity(id: id)
           entity_to_assign.fetch success: =>
-            selected_role.entities.add entity_to_assign
             selected_role.assignments.add
               entity_id: entity_to_assign.id
               calculated: false
-            app = DssRm.view_state.getSelectedApplication()
-            app.save {},
+            selected_role.save {},
               success: =>
                 DssRm.view_state.trigger('change')
         else

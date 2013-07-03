@@ -16,8 +16,6 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/1
   def show
-    # SECUREME: Can the current user see this application?
-
     respond_with @application do |format|
       format.csv {
         require 'csv'
@@ -48,7 +46,6 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/new
   def new
-    # SECUREME: Can the current user try to create a new application?
     @application = Application.new
 
     respond_with @application
@@ -56,7 +53,6 @@ class ApplicationsController < ApplicationController
 
   # POST /applications
   def create
-    # SECUREME: Can the current user create applications?
     if @application.save
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new application, #{params[:application]}."
     else
@@ -68,8 +64,6 @@ class ApplicationsController < ApplicationController
 
   # PUT /applications/1
   def update
-    # SECUREME: Can the current user update this application?
-
     @application = Application.find(params[:id])
 
     if @application.update_attributes(params[:application])
@@ -83,8 +77,6 @@ class ApplicationsController < ApplicationController
 
   # DELETE /applications/1
   def destroy
-    # SECUREME: Can the current user delete this application?
-
     @application = Application.find(params[:id])
     @application.destroy
 

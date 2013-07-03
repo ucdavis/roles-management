@@ -10,7 +10,7 @@ DssRm.Models.Role = Backbone.Model.extend(
     
     @entities = new DssRm.Collections.Entities(@get('entities')) if @entities is `undefined`
     @assignments = new Backbone.Collection(@get('assignments')) if @assignments is `undefined`
-
+    
     # Reset nested collection data
     @entities.reset @get('entities')
     @assignments.reset @get('assignments')
@@ -37,6 +37,24 @@ DssRm.Models.Role = Backbone.Model.extend(
     assignment = @assignments.findWhere { entity_id: id }
     
     return assignment if (assignment and ((assignment.get('calculated') == false) or include_calculated))
+  
+  toJSON: ->
+    json = {}
+
+    json.name = @get('name')
+    json.token = @get('token')
+    json.description = @get('description')
+    json.ad_path = @get('ad_path')
+
+    # Note we use Rails' nested attributes here
+    if @assignments.length
+      json.role_assignments_attributes = @assignments.map (assignment) =>
+        id: assignment.get('id')
+        entity_id: assignment.get('entity_id')
+        role_id: @get('id')
+        _destroy: assignment.get('_destroy')
+    
+    role: json
 )
 
 DssRm.Collections.Roles = Backbone.Collection.extend(

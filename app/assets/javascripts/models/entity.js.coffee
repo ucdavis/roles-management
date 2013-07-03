@@ -155,8 +155,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
       return "operator" if _.find(@get("operators"), (o) ->
         o.id is current_user_id
       ) isnt `undefined`
-
-    null
   
   # Returns true if DssRm.current_user cannot modify this entity
   isReadOnly: ->
