@@ -42,8 +42,8 @@ namespace :ad do
 
           p.affiliations.each do |affiliation|
             # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
-            unless p.group_memberships.ous.length == 0
-              short_ou = ou_to_short(p.group_memberships.ous[0].name)
+            unless p.groups.ous.length == 0
+              short_ou = ou_to_short(p.groups.ous[0].name)
               flattened_affiliation = flatten_affiliation(affiliation.name)
 
               # Skip unknown translations
