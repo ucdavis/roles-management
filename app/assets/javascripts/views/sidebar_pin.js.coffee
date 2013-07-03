@@ -5,9 +5,6 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     "click"                        : "pinClicked"
 
   initialize: (options) ->
-    console.log 'sidebar pin model is:'
-    console.log @model
-    
     @listenTo @model, "change", @render
     @listenTo DssRm.view_state, "change", @render
 
@@ -97,7 +94,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
       matched = selected_role.assignments.filter((a) ->
         (a.get('entity_id') is id) and (a.get('calculated') == false)
       )
-
+      
       if matched.length > 0
         # toggling off
         console.log 'toggling off'
@@ -110,14 +107,14 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
             DssRm.view_state.trigger('change')
       else
         # toggling on
-        console.log "toggling on via role save for selected_role with cid #{selected_role.cid}"
-        selected_role.assignments.add
-          entity_id: id
-          calculated: false
-        selected_role.save() # {},
-          # wait: true
-          # success: =>
-          #   console.log 'selected_role.save callback'
-            #debugger
-            #DssRm.view_state.trigger('change')
+        new_entity = new DssRm.Models.Entity(id: id)
+        new_entity.fetch success: =>
+          console.log "toggling on via application save for selected_role with cid #{selected_role.cid}"
+          selected_role.entities.add new_entity
+          selected_role.assignments.add
+            entity_id: new_entity.id
+            calculated: false
+          selected_role.save {},
+            success: =>
+              DssRm.view_state.trigger('change')
 )

@@ -13,11 +13,6 @@ DssRm.Models.ViewState = Backbone.Model.extend(
     # Adjust @bookmarks as needed
     DssRm.current_user.favorites.on "add remove", @buildBookmarks, this
     DssRm.current_user.group_ownerships.on "add", @buildBookmarks, this
-    
-    DssRm.applications.on "application_roles_sync", =>
-      console.log 'view_state on applications sync fired'
-      @trigger 'change'
-    , this
   
   # Constructs list of current user's ownerships, operatorships, and favorites
   buildBookmarks: ->
