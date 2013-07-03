@@ -114,7 +114,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
           selected_role.assignments.add
             entity_id: new_entity.id
             calculated: false
-          selected_role.save {},
-            success: =>
-              DssRm.view_state.trigger('change')
+          selected_role.save() # {},
+            # success: =>
+            #   DssRm.view_state.trigger('change')
 )

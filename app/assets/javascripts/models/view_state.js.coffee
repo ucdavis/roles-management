@@ -13,6 +13,19 @@ DssRm.Models.ViewState = Backbone.Model.extend(
     # Adjust @bookmarks as needed
     DssRm.current_user.favorites.on "add remove", @buildBookmarks, this
     DssRm.current_user.group_ownerships.on "add", @buildBookmarks, this
+    
+    # This little hack is required due to BBJS having no callback on .save() that fires after all other events
+    # This hack lets us use .on() for the selected_role even though it may change unexpected.
+    # When it does change, we call .off() so we are only tracking one role at a time.
+    # This is required for the sidebar to re-render after Role.save() calls 'sync'.
+    @old_selected_role = null
+    @on 'change:selected_role_id', =>
+      @old_selected_role.off('sync') if @old_selected_role
+      @old_selected_role = @getSelectedRole()
+      @old_selected_role.on('sync', =>
+        @trigger 'change' # trigger a few change if the selected role trigger's a sync
+      , this) if @old_selected_role
+    , this
   
   # Constructs list of current user's ownerships, operatorships, and favorites
   buildBookmarks: ->
