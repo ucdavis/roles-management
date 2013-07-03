@@ -23,6 +23,8 @@ DssRm.Models.ViewState = Backbone.Model.extend(
   
   # Constructs list of current user's ownerships, operatorships, and favorites
   buildBookmarks: ->
+    console.log 'building bookmarks'
+    
     @bookmarks.reset _.union(
       DssRm.current_user.group_ownerships.models,
       DssRm.current_user.group_operatorships.models,

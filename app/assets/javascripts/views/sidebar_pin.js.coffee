@@ -77,9 +77,6 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
       return i.get("id") is @model.get('id')
     )
   
-  isFocused: ->
-    return DssRm.view_state.get('focused_entity_id') == @model.id
-  
   pinClicked: (e) ->
     e.stopPropagation()
     
@@ -95,7 +92,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     if selected_role
       # toggle on or off?
       matched = selected_role.assignments.filter((a) ->
-        a.get('entity_id') is id
+        (a.get('entity_id') is id) and (a.get('calculated') == false)
       )
 
       if matched.length > 0

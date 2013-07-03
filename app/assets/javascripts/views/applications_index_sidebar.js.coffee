@@ -38,6 +38,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
   
   render: ->
+    console.log 'rendering sidebar'
+    
     selected_role = DssRm.view_state.getSelectedRole()
     
     pins_frag = document.createDocumentFragment()
