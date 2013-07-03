@@ -19,6 +19,10 @@ class RolesController < ApplicationController
     if params[:id] and params[:role]
       @role.update_attributes(params[:role].except(:id))
       
+      # Reload the group in case the after_save callback destroyed
+      # role assignments.
+      @role.reload
+      
       # Overridden to respond with the object and not a '204 No Content'.
       # See: http://stackoverflow.com/questions/9953887/simple-respond-with-in-rails-that-avoids-204-from-put
       respond_with(@role) do |format|
