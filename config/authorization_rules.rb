@@ -147,6 +147,9 @@ authorization do
       if_attribute :group => { :operators => contains { user } }
     end
     
+    # Allow reading of any group
+    has_permission_on :groups, :to => [:read, :show]
+    
     # Allow searching/importing of people
     has_permission_on :people, :to => [:search, :import]
   end
