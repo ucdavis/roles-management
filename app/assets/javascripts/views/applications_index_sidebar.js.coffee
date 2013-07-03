@@ -139,6 +139,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
             selected_role.assignments.add
               entity_id: entity_to_assign.id
               calculated: false
+            selected_role.entities.add entity_to_assign
             selected_role.save {},
               success: =>
                 DssRm.view_state.trigger('change')
