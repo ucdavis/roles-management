@@ -44,7 +44,6 @@ input#search_sidebar {
       -moz-border-radius: 3px;
       border-radius: 3px;
       margin: 3px;
-  //    cursor: pointer;
 
       i {
         float: right;
@@ -59,6 +58,10 @@ input#search_sidebar {
         i {
           display: block;
         }
+      }
+      
+      &.faded {
+        opacity: 0.5;
       }
     }
   

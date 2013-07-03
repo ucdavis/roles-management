@@ -1,30 +1,24 @@
 DssRm.Views.SidebarPin = Backbone.View.extend(
   tagName: "li"
   events:
-    "click a.entity-favorite-link": "toggleEntityFavorite"
+    "click a.entity-favorite-link" : "toggleEntityFavorite"
+    "click"                        : "pinClicked"
 
   initialize: (options) ->
     @listenTo @model, "change", @render
     @listenTo DssRm.view_state, "change", @render
 
     @$el.html JST["templates/entities/item"](entity: @model)
-    @$el.data "entity-id", (@model.get('group_id') || @model.get('id'))
     @$el.addClass (@model.get('type') || 'group').toLowerCase()
     
     @highlighted = options.highlighted
     @faded = options.faded
 
   render: ->
-    # console.log "rendering sidebar pin for entity (#{@model.cid}) with id #{@model.get('id')}"
-    # if @model.get('id') is undefined
-    #   console.log "id seems to be undefined, but group_id is: #{@model.get('group_id')}"
-    #   debugger
-    
-    @$el.data "entity-name", @model.get('name')
     @$("span").html @model.escape('name')
     
     # Highlight this entity?
-    if @highlighted # @assignedToCurrentRole() || @isFocused()
+    if @highlighted
       @$el.addClass "highlighted"
     
     # Change actionable icons depending on ownership
@@ -33,7 +27,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     
     # Is this pin unrelated to the current_user? Make it appear faded
     if @faded
-      @$el.css "opacity", "0.5"
+      @$el.addClass "faded"
     
     # Is this entity a favorite?
     if @favoritedByCurrentUser()
@@ -41,7 +35,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     else
       @$('a.entity-favorite-link>i').removeClass('icon-star').addClass('icon-star-empty').attr('title', 'Favorite')
     
-    if false #@model.isReadOnly()
+    if @model.isReadOnly()
       @$("i.icon-remove").hide()
       @$("i.icon-search").hide()
     else
@@ -101,4 +95,48 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
   
   isFocused: ->
     return DssRm.view_state.get('focused_entity_id') == @model.id
+  
+  pinClicked: (e) ->
+    e.stopPropagation()
+    
+    # do nothing if this pin is faded
+    return if @faded
+    
+    id = (@model.get('group_id') || @model.get('id'))
+    
+    # If a role is selected, toggle the entity's association with that role.
+    # If no role is selected, merely filter the application/role list to display their assignments. (not implemented yet)
+    selected_role = DssRm.view_state.getSelectedRole()
+
+    if selected_role
+      # toggle on or off?
+      matched = selected_role.assignments.filter((a) ->
+        a.get('entity_id') is id
+      )
+
+      if matched.length > 0
+        # toggling off
+        console.log 'toggling off'
+        
+        matched[0].set('_destroy', true)
+        #selected_role.entities.remove matched[0].get('entity_id')
+        #selected_role.assignments.remove matched[0]
+        console.log "selected_role #{selected_role.cid} now has #{selected_role.assignments.length} assignments"
+
+        DssRm.view_state.getSelectedApplication().save {},
+          success: =>
+            DssRm.view_state.trigger('change')
+      else
+        # toggling on
+        new_entity = new DssRm.Models.Entity(id: id)
+        new_entity.fetch success: =>
+          console.log "toggling on via application save for selected_role with cid #{selected_role.cid}"
+          selected_role.entities.add new_entity
+          selected_role.assignments.add
+            entity_id: new_entity.id
+            calculated: false
+          app = DssRm.view_state.getSelectedApplication()
+          app.save {},
+            success: =>
+              DssRm.view_state.trigger('change')
 )

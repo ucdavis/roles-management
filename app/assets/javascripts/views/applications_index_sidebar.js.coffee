@@ -2,8 +2,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   tagName: "div"
   id: "sidebar-area"
   className: "span3 disable-text-select"
-  events:
-    "click ul>li" : "selectEntity"
   
   initialize: (options) ->
     @$el.html JST["templates/applications/sidebar"]()
@@ -90,48 +88,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     pin = new DssRm.Views.SidebarPin { model: entity, highlighted: options.highlighted, faded: options.faded }
     pin.render()
   
-  selectEntity: (e) ->
-    clicked_entity_id = $(e.currentTarget).data("entity-id")
-    clicked_entity_name = $(e.currentTarget).data("entity-name")
-    
-    e.stopPropagation()
-    
-    # If a role is selected, toggle the entity's association with that role.
-    # If no role is selected, merely filter the application/role list to display their assignments.
-    selected_role = DssRm.view_state.getSelectedRole()
-
-    if selected_role
-      # toggle on or off?
-      matched = selected_role.assignments.filter((a) ->
-        a.get('entity_id') is clicked_entity_id
-      )
-
-      if matched.length > 0
-        # toggling off
-        console.log 'toggling off'
-        
-        matched[0].set('_destroy', true)
-        #selected_role.entities.remove matched[0].get('entity_id')
-        #selected_role.assignments.remove matched[0]
-        console.log "selected_role #{selected_role.cid} now has #{selected_role.assignments.length} assignments"
-
-        DssRm.view_state.getSelectedApplication().save {},
-          success: =>
-            DssRm.view_state.trigger('change')
-      else
-        # toggling on
-        new_entity = new DssRm.Models.Entity(id: clicked_entity_id)
-        new_entity.fetch success: =>
-          console.log "toggling on via application save for selected_role with cid #{selected_role.cid}"
-          selected_role.entities.add new_entity
-          selected_role.assignments.add
-            entity_id: new_entity.id
-            calculated: false
-          app = DssRm.view_state.getSelectedApplication()
-          app.save {},
-            success: =>
-              DssRm.view_state.trigger('change')
-
   # Populates the sidebar search with results via async call
   sidebarSearch: (query, process) ->
     $.ajax(
