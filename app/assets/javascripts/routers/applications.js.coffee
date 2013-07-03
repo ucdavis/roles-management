@@ -29,19 +29,27 @@ DssRm.Routers.Applications = Backbone.Router.extend(
         status_bar.show "An error occurred while loading the application.", "error"
 
   showEntity: (uid) ->
+    uid = parseInt(uid)
+    
     status_bar.show "Loading ..."
 
     # Search DssRm.current_user objects first
     # We'd prefer not to create new objects and would like events like name
     # changes to propagate
     entity = DssRm.view_state.bookmarks.get(uid)
+    entity = DssRm.view_state.bookmarks.findWhere({ group_id: uid }) if entity is undefined
+    
+    if entity is undefined
+      console.log 'couldnt find entity in bookmarks'
+      debugger
     
     # Fetch it as a last resort - we won't get event updates
-    entity = new DssRm.Models.Entity(id: uid) if entity is `undefined`
+    entity = new DssRm.Models.Entity(id: uid) if entity is undefined
     
     entity.fetch
       success: =>
         status_bar.hide()
+        console.log "showing entity #{entity.cid}"
         new DssRm.Views.EntityShow(entity).entityView.$el.modal()
 
       error: ->

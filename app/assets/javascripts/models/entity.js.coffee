@@ -8,13 +8,13 @@
 # to a strict pattern. This difference should probably be reconciled.
 DssRm.Models.Entity = Backbone.Model.extend(
   url: ->
-    if @get("id")
-      "/entities/" + @get("id")
+    id = (@get('group_id') || @get('id'))
+    if id
+      "/entities/#{id}"
     else
       "/entities"
 
   initialize: ->
-    #console.log "initializing entity #{@cid}"
     @resetNestedCollections()
     @on "sync", @resetNestedCollections, this
   
@@ -128,10 +128,10 @@ DssRm.Models.Entity = Backbone.Model.extend(
     entity: json
 
   type: ->
-    if @get("type")
-      result = @get("type").toLowerCase()
-    else if @get("group_id")
-      result = "group"
+    if @get('type')
+      result = @get('type').toLowerCase()
+    else if @get('group_id')
+      result = 'group'
     
     if result == "person"
       return EntityTypes.person
