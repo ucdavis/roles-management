@@ -80,8 +80,8 @@ authorization do
     has_permission_on :application_operatorships, :to => [:read, :update, :create, :delete] do
       if_attribute :application => { :owners => contains { user } }
     end
-    # Allow updating/reading of roles which belong to an application they operator
-    has_permission_on :roles, :to => [:read, :update] do
+    # Allow reading/updating/reading of roles which belong to an application they operator
+    has_permission_on :roles, :to => [:show, :read, :update] do
       if_attribute :application => { :operators => contains { user } }
     end
     
@@ -93,10 +93,6 @@ authorization do
     # Create/delete role_assignments for applications they operate
     has_permission_on :role_assignments, :to => [:create, :delete] do
       if_attribute :role => { :application => { :operators => contains { user } } }
-    end
-    # Read roles if they are operators for that application
-    has_permission_on :roles, :to => [:show] do
-      if_attribute :application => { :operators => contains { user } }
     end
     
     # Allow viewing/searching of individuals
