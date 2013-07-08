@@ -102,11 +102,11 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
         console.log 'toggling off'
         
         matched[0].set('_destroy', true)
-        console.log "selected_role #{selected_role.cid} now has #{selected_role.assignments.length} assignments"
+        console.log "selected_role #{selected_role.cid} has #{selected_role.assignments.length} assignments, should be one less in a moment"
         
-        selected_role.save {},
-          success: =>
-            DssRm.view_state.trigger('change')
+        selected_role.save() # {},
+          # success: =>
+          #   DssRm.view_state.trigger('change')
       else
         # toggling on
         new_entity = new DssRm.Models.Entity(id: id)

@@ -20,12 +20,14 @@ DssRm.Models.ViewState = Backbone.Model.extend(
     # This is required for the sidebar to re-render after Role.save() calls 'sync'.
     @old_selected_role = null
     @on 'change:selected_role_id', =>
-      @old_selected_role.off('sync') if @old_selected_role
+      @old_selected_role.off('sync', @triggerChangeOnSelectedRoleSync, this) if @old_selected_role
       @old_selected_role = @getSelectedRole()
-      @old_selected_role.on('sync', =>
-        @trigger 'change' # trigger a few change if the selected role trigger's a sync
-      , this) if @old_selected_role
-    , this
+      @old_selected_role.on('sync', @triggerChangeOnSelectedRoleSync, this) if @old_selected_role
+  
+  # We need this to be a proper function so our .off() statement above
+  # can turn off _just_ this function and not all 'sync' callbacks!
+  triggerChangeOnSelectedRoleSync: ->
+    @trigger 'change'
   
   # Constructs list of current user's ownerships, operatorships, and favorites
   buildBookmarks: ->
