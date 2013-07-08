@@ -71,8 +71,10 @@ DSSRM::Application.configure do
   config.action_mailer.raise_delivery_errors = true
 
   # Send e-mail on exceptions
-  config.middleware.use ExceptionNotifier,
-    sender_address: 'no-reply@roles.dss.ucdavis.edu',
-    exception_recipients: 'cmthielen@ucdavis.edu',
-    ignore_exceptions: ExceptionNotifier.default_ignore_exceptions # + [RuntimeError]
+  config.middleware.use ExceptionNotification::Rack,
+    :email => {
+      :email_prefix => "[Roles Management] ",
+      :sender_address => %{no-reply@roles.dss.ucdavis.edu},
+      :exception_recipients => %w{cmthielen@ucdavis.edu}
+    }
 end
