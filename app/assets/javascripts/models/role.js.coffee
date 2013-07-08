@@ -32,8 +32,11 @@ DssRm.Models.Role = Backbone.Model.extend(
   tokenize: (str) ->
     String(str).replace(RegExp(" ", "g"), "-").replace(/'/g, "").replace(/"/g, "").toLowerCase()
   
-  # Returns the entity if it is assigned to this role
+  # Returns true if the entity is assigned to this role
   # Accepts an entity or an entity_id
+  # If 'include_calcualted' is false, has_assigned will not return
+  # an entity which is technically assigned to this role if it is via
+  # a calculated assignment.
   has_assigned: (entity, include_calculated = true) ->
     if entity.get == undefined
       # Looks like 'entity' is an ID
@@ -42,9 +45,11 @@ DssRm.Models.Role = Backbone.Model.extend(
       # Looks like 'entity' is a model
       id = (entity.get('group_id') || entity.id)
     
-    assignment = @assignments.findWhere { entity_id: id }
+    # Use 'filter' as the entity_id may appear in multiple assignments
+    results = @assignments.filter (a) =>
+      (a.get('entity_id') == id) && ((a.get('calculated') == false) or include_calculated)
     
-    return assignment if (assignment and ((assignment.get('calculated') == false) or include_calculated))
+    return results.length
   
   toJSON: ->
     json = {}
