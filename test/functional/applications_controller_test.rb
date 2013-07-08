@@ -42,18 +42,6 @@ class ApplicationsControllerTest < ActionController::TestCase
       assert r["description"], "JSON response's 'roles' section should include a description field"
       # ad_path may be nil so check for existence not value
       assert r.has_key?("ad_path"), "JSON response's 'roles' section should include an ad_path field"
-      assert r["entities"], "JSON response's 'roles' section should include an 'entities' section"
-      assert r["members"], "JSON response's 'roles' section should include a 'members' section"
-      r["entities"].each do |e|
-        assert e["id"], "JSON response's 'roles' section's 'entities' should include an ID"
-        assert e["name"], "JSON response's 'roles' section's 'entities' should include a name"
-        assert e["type"], "JSON response's 'roles' section's 'entities' should include a type"
-      end
-      r["members"].each do |m|
-        assert m["id"], "JSON response's 'roles' section's 'members' should include an ID"
-        assert m["name"], "JSON response's 'roles' section's 'members' should include a name"
-        assert m["loginid"], "JSON response's 'roles' section's 'members' should include their login ID"
-      end
     end
 
     assert body["owners"], "JSON response should include an 'owners' section"
