@@ -29,9 +29,9 @@ class Role < ActiveRecord::Base
   def as_json(options={})
     { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id,
       :description => self.description,
-      :entities => self.entities.map{ |e| { type: e.type, id: e.id, name: e.name } }, :ad_path => self.ad_path,
-      :members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
-      :assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.calculated, entity_id: a.entity_id, name: a.entity.name } }
+      #:entities => self.entities.map{ |e| { type: e.type, id: e.id, name: e.name } }, :ad_path => self.ad_path,
+      #:members => self.members.map{ |m| { id: m.id, name: m.name, loginid: m.loginid } },
+      :assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.calculated, entity_id: a.entity_id, name: a.entity.name, type: a.entity.type } }
      }
   end
 

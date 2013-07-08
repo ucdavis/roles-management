@@ -49,10 +49,16 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     DssRm.view_state.bookmarks.each (e) =>
       faded = false
       
+      # 'Fade' bookmark if it is also going to be in the 'Assigned' section
       if selected_role and selected_role.has_assigned(e, false)
           faded = true
 
-      pin = @renderSidebarPin(e, { highlighted: false, faded: faded })
+      ep = new Backbone.Model
+        entity_id: (e.get('group_id') || e.get('id'))
+        name: e.get('name')
+        type: e.get('type')
+
+      pin = @renderSidebarPin(ep, { highlighted: false, faded: faded })
       pins_frag.appendChild pin.el
 
     # Render 'Assigned'
@@ -62,10 +68,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       # but we must then pass an entity, not an assignment, to @renderSidebarPin()
       selected_role.assignments.each (a) =>
         unless a.get('calculated') or a.get('_destroy')
-          e = selected_role.entities.get a.get('entity_id')
-          if e == undefined
-            debugger
-          pin = @renderSidebarPin(e, { highlighted: true, faded: false })
+          pin = @renderSidebarPin(a, { highlighted: true, faded: false })
           highlighted_pins_frag.appendChild pin.el
     
     @$('ul#pins').html pins_frag
@@ -139,7 +142,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
             selected_role.assignments.add
               entity_id: entity_to_assign.id
               calculated: false
-            selected_role.entities.add entity_to_assign
+            #selected_role.entities.add entity_to_assign
             selected_role.save {},
               success: =>
                 DssRm.view_state.trigger('change')

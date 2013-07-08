@@ -8,17 +8,25 @@ DssRm.Models.Role = Backbone.Model.extend(
   resetNestedCollections: ->
     console.log "role #{@cid} resetting nested collections"
     
-    @entities = new DssRm.Collections.Entities(@get('entities')) if @entities is `undefined`
+    #@entities = new DssRm.Collections.Entities(@get('entities')) if @entities is `undefined`
     @assignments = new Backbone.Collection(@get('assignments')) if @assignments is `undefined`
     
+    _.each @get('assignments'), (a) =>
+      if a._destroy
+        debugger
+    
     # Reset nested collection data
-    @entities.reset @get('entities')
+    #@entities.reset @get('entities')
     @assignments.reset @get('assignments')
     
-    console.log "role now has #{@assignments.length} assignments"
+    console.log "role #{@cid} now has #{@assignments.length} assignments"
+    
+    if @get('assignments')
+      if @assignments.length != @get('assignments').length
+        debugger
     
     # Enforce the design pattern by removing from @attributes what is represented in a nested collection
-    delete @attributes.entities
+    #delete @attributes.entities
     delete @attributes.assignments
   
   tokenize: (str) ->
@@ -40,6 +48,8 @@ DssRm.Models.Role = Backbone.Model.extend(
   
   toJSON: ->
     json = {}
+    
+    console.log "toJSON called (probably a save) for role #{@cid}, assignments.length = #{@assignments.length}"
 
     json.name = @get('name')
     json.token = @get('token')

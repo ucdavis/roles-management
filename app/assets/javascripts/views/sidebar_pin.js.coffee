@@ -35,18 +35,20 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     else
       @$('a.entity-favorite-link>i').removeClass('icon-star').addClass('icon-star-empty').attr('title', 'Favorite')
     
-    if @model.isReadOnly()
-      @$("i.icon-remove").hide()
-      @$("i.icon-search").hide()
-    else
-      @$("i.icon-lock").hide()
-      @$(".entity-details-link").attr("href", @entityUrl()).on "click", (e) ->
-        e.stopPropagation() # stop parent from receiving click
+    # if @model.isReadOnly()
+    #   @$("i.icon-remove").hide()
+    #   @$("i.icon-search").hide()
+    # else
+    @$("i.icon-lock").hide()
+    @$(".entity-details-link").attr("href", @entityUrl()).on "click", (e) ->
+      e.stopPropagation() # stop parent from receiving click
     
     @
 
   entityUrl: ->
-    "#" + "/entities/" + (@model.get('group_id') || @model.get('id'))
+    unless @model.get('entity_id')
+      debugger
+    "#" + "/entities/" + @model.get('entity_id')
 
   toggleEntityFavorite: (e) ->
     e.stopPropagation()
@@ -83,7 +85,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     # do nothing if this pin is faded
     return if @faded
     
-    id = (@model.get('group_id') || @model.get('id'))
+    id = @model.get('entity_id')
     
     # If a role is selected, toggle the entity's association with that role.
     # If no role is selected, merely filter the application/role list to display their assignments. (not implemented yet)
@@ -109,8 +111,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
         # toggling on
         new_entity = new DssRm.Models.Entity(id: id)
         new_entity.fetch success: =>
-          console.log "toggling on via application save for selected_role with cid #{selected_role.cid}"
-          selected_role.entities.add new_entity
+          console.log "toggling on via application save for selected_role with cid #{selected_role.cid}, assignments.length = #{selected_role.assignments.length}"
           selected_role.assignments.add
             entity_id: new_entity.id
             calculated: false
