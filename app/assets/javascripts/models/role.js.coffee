@@ -2,6 +2,7 @@ DssRm.Models.Role = Backbone.Model.extend(
   urlRoot: "/roles"
   
   initialize: ->
+    console.log "initializing new role #{@cid}"
     @resetNestedCollections()
     @on 'sync', @resetNestedCollections, this
     
@@ -9,7 +10,7 @@ DssRm.Models.Role = Backbone.Model.extend(
     console.log "role #{@cid} resetting nested collections"
     
     #@entities = new DssRm.Collections.Entities(@get('entities')) if @entities is `undefined`
-    @assignments = new Backbone.Collection(@get('assignments')) if @assignments is `undefined`
+    @assignments = new Backbone.Collection if @assignments is `undefined`
     
     _.each @get('assignments'), (a) =>
       if a._destroy

@@ -1,12 +1,15 @@
 DssRm.Models.Application = Backbone.Model.extend(
   initialize: ->
+    console.log "initializing new application #{@cid}"
     @resetNestedCollections()
     @on 'sync', @resetNestedCollections, this
+    console.log "done initializing new application #{@cid}"
   
   resetNestedCollections: ->
-    @roles = new DssRm.Collections.Roles(@get("roles")) if @roles is `undefined`
-    @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
-    @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
+    console.log "resetting nested collections for application #{@cid}"
+    @roles = new DssRm.Collections.Roles if @roles is `undefined`
+    @owners = new DssRm.Collections.Entities if @owners is `undefined`
+    @operators = new DssRm.Collections.Entities if @operators is `undefined`
     
     # Reset nested collection data
     @roles.reset @get("roles")

@@ -20,10 +20,10 @@ DssRm.Models.Entity = Backbone.Model.extend(
   
   resetNestedCollections: ->
     if @type() is EntityTypes.group
-      @owners = new DssRm.Collections.Entities(@get("owners")) if @owners is `undefined`
-      @operators = new DssRm.Collections.Entities(@get("operators")) if @operators is `undefined`
-      @memberships = new DssRm.Collections.Entities(@get("memberships")) if @memberships is `undefined`
-      @rules = new DssRm.Collections.GroupRules(@get("rules")) if @rules is `undefined`
+      @owners = new DssRm.Collections.Entities if @owners is `undefined`
+      @operators = new DssRm.Collections.Entities if @operators is `undefined`
+      @memberships = new DssRm.Collections.Entities if @memberships is `undefined`
+      @rules = new DssRm.Collections.GroupRules if @rules is `undefined`
 
       # Reset nested collection data
       @owners.reset @get("owners")
@@ -39,11 +39,11 @@ DssRm.Models.Entity = Backbone.Model.extend(
 
     else if @type() is EntityTypes.person
       # Ensure nested collections exist
-      @favorites = new DssRm.Collections.Entities(@get("favorites")) if @favorites is `undefined`
-      @group_ownerships = new DssRm.Collections.Entities(@get("group_ownerships")) if @group_ownerships is `undefined`
-      @group_operatorships = new DssRm.Collections.Entities(@get("group_operatorships")) if @group_operatorships is `undefined`
-      @group_memberships = new Backbone.Collection(@get("group_memberships")) if @group_memberships is `undefined`
-      @role_assignments = new DssRm.Collections.Roles(@get("role_assignments")) if @role_assignments is `undefined`
+      @favorites = new DssRm.Collections.Entities if @favorites is `undefined`
+      @group_ownerships = new DssRm.Collections.Entities if @group_ownerships is `undefined`
+      @group_operatorships = new DssRm.Collections.Entities if @group_operatorships is `undefined`
+      @group_memberships = new Backbone.Collection if @group_memberships is `undefined`
+      @role_assignments = new DssRm.Collections.RoleAssignments if @role_assignments is `undefined`
       
       # Reset nested collection data
       @favorites.reset @get("favorites")
