@@ -33,23 +33,29 @@ class DssRm.Views.ApplicationShow extends Backbone.View
       onDelete: (item) => @model.operators.remove item
 
   render: ->
+    console.log 'rendering application:'
+    console.log @model
+    
     # Summary tab
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
     @$("input[name=description]").val @model.get("description")
+    
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
-    _.each @model.get("owners"), (owner) ->
+    @model.owners.each (owner) ->
+      console.log 'rendering owner'
+      console.log owner
       owners_tokeninput.tokenInput "add",
-        id: owner.id
-        name: owner.name
+        id: owner.get('id')
+        name: owner.get('name')
 
     operators_tokeninput = @$("input[name=operators]")
     operators_tokeninput.tokenInput "clear"
-    _.each @model.get("operators"), (operator) ->
+    @model.operators.each (operator) ->
       operators_tokeninput.tokenInput "add",
-        id: operator.id
-        name: operator.name
+        id: operator.get('id')
+        name: operator.get('name')
 
     @$("a#csv-download").attr "href", Routes.application_path(@model.id, {format: 'csv'})
     
