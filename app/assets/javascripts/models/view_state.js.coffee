@@ -1,4 +1,6 @@
 DssRm.Models.ViewState = Backbone.Model.extend(
+  # 'focus' refers to the search bar
+  # 'selected' refers to the highlighting used when a user selects a role
   defaults:
     "selected_application_id" : null
     "selected_role_id"        : null
@@ -66,4 +68,12 @@ DssRm.Models.ViewState = Backbone.Model.extend(
       @set focused_application_id: app.id
     else
       @set focused_application_id: null
+  
+  # Simple function used during view state debugging
+  _debugToStr: ->
+    console.log 'Current view_state:'
+    console.log "selected_application_id: #{@get('selected_application_id')}"
+    console.log "selected_role_id: #{@get('selected_role_id')}"
+    console.log "focused_application_id: #{@get('focused_application_id')}"
+    console.log "focused_entity_id: #{@get('focused_entity_id')}"
 )

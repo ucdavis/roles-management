@@ -33,9 +33,6 @@ class DssRm.Views.ApplicationShow extends Backbone.View
       onDelete: (item) => @model.operators.remove item
 
   render: ->
-    console.log 'rendering application:'
-    console.log @model
-    
     # Summary tab
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
@@ -44,8 +41,6 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
     @model.owners.each (owner) ->
-      console.log 'rendering owner'
-      console.log owner
       owners_tokeninput.tokenInput "add",
         id: owner.get('id')
         name: owner.get('name')
@@ -107,6 +102,25 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     @model.save {},
       success: =>
         @$('#apply').removeAttr('disabled').html('Apply Changes')
+        
+        # Did we remove a role that was highlighted? If so, adjust DssRm.view_state accordingly
+        if DssRm.view_state.get('selected_application_id') == @model.id
+          unset_view_state_selection = true
+          selected_role_id = DssRm.view_state.get('selected_role_id')
+          r = @model.roles.find (r) -> r.id is selected_role_id
+          if r
+            # Selected role still exists, don't unset the view_state unless it was marked for destruction
+            unless r.get('_destroy')
+              unset_view_state_selection = false
+          
+          if unset_view_state_selection
+            console.log 'application_show save: unsetting view state as selected role was deleted'
+            DssRm.view_state.set
+              selected_application_id: null
+              selected_role_id: null
+              focused_application_id: null
+              focused_entity_id: null
+        
         @render()
 
       error: ->
