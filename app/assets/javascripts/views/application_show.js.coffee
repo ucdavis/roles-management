@@ -114,7 +114,6 @@ class DssRm.Views.ApplicationShow extends Backbone.View
               unset_view_state_selection = false
           
           if unset_view_state_selection
-            console.log 'application_show save: unsetting view state as selected role was deleted'
             DssRm.view_state.set
               selected_application_id: null
               selected_role_id: null
@@ -137,10 +136,18 @@ class DssRm.Views.ApplicationShow extends Backbone.View
       @$el.fadeIn()
       
       if result
-        # delete the application and dismiss the dialog
+        # Adjust view_state if we're deleting the selected application
+        if DssRm.view_state.get('selected_application_id') == @model.id
+          DssRm.view_state.set
+            selected_application_id: null
+            selected_role_id: null
+            focused_application_id: null
+            focused_entity_id: null
+        
+        # Delete the application and dismiss the dialog
         @model.destroy()
         
-        # dismiss the dialog
+        # Dismiss the dialog
         @$(".modal-header a.close").trigger "click"
       
       # Ensure applications_index is updated
