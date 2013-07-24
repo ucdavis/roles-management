@@ -19,7 +19,8 @@
     <div class="navbar-inner">
       <div class="container-fluid">
         <%= link_to "Roles Management", applications_url, :class => "brand" %>
-        <div class="nav-collapse">
+        
+        <div class="nav-collapse collapse">
           <ul class="nav pull-right">
             <li class="dropdown">
               <% _has_role? :admin do %>
