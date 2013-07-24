@@ -30,6 +30,7 @@ class Person < Entity
 
   attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :favorite_ids, :group_memberships_attributes, :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes
 
+  before_save :ensure_name_exists
   after_save :trigger_sync
   
   def as_json(options={})
@@ -74,18 +75,6 @@ class Person < Entity
     title.classifications
   end
 
-  # Overriden to be self.first + " " + self.last
-  # though there is a 'name' column used by Entity (for groups).
-  # Update first and last, not 'name'. Consider 'name' to be
-  # read-only
-  def name
-    name = ""
-    name = first unless first.nil?
-    name = name + " " + last unless last.nil?
-
-    return name
-  end
-
   # Returns a list of symbols as required by the authorization layer (declarative_authorization gem).
   # Currently only have :access and :admin. Note that an :admin user will have both due to :admin
   # being merely an extension on top of permissions already granted via :access.
@@ -106,6 +95,13 @@ class Person < Entity
   end
 
   private
+  def ensure_name_exists
+    if self.name.nil?
+      self.name = ""
+      self.name = self.first unless self.first.nil?
+      self.name = self.name + " " + self.last unless self.last.nil?
+    end
+  end
   
   # Validators.
   def first_or_last_presence
