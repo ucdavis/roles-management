@@ -260,9 +260,9 @@ class DssRm.Views.GroupShow extends Backbone.View
   # the overflow to be off when using tokeninput tabs but
   # on when using typeahead tabs
   adjustOverflow: (e) ->
-    switch $(e.target).attr('href')
-      when '#rules'
-        @$('.modal-body').css('overflow-y', 'visible')
-      else
-        @$('.modal-body').css('overflow-y', 'hidden')
+    # switch $(e.target).attr('href')
+    #   when '#rules'
+    #     @$('.modal-body').css('overflow-y', 'visible')
+    #   else
+    #     @$('.modal-body').css('overflow-y', 'hidden')
   
