@@ -3,6 +3,7 @@ casuser:
   type: Person
   first: CAS
   last: User
+  name: CAS A User
   email: casuser@domain.com
   loginid: casuser
   status: true
@@ -20,6 +21,7 @@ group_memberA:
   type: Person
   first: Bob
   last: Groupmember
+  name: Bob B. Groupmember
   email: bob@domain.com
   loginid: bob
   status: true
@@ -31,6 +33,7 @@ group_memberB:
   type: Person
   first: George
   last: Groupmember
+  name: George P Groupmember
   email: george@domain.com
   loginid: george
   status: true
