@@ -3,6 +3,12 @@ input#search_sidebar {
   margin-top: 3px;
 }
 
+i.sidebar-details {
+  float: right;
+  margin-left: 15px;
+  margin-top: 2px;
+}
+
 #sidebar {
   h5 {
     text-align: center;
@@ -10,12 +16,6 @@ input#search_sidebar {
     color: #777;
     font-size: 8pt;
     margin: 5px 0 5px 0;
-  }
-  
-  i.sidebar-details {
-    float: right;
-    margin-left: 15px;
-    margin-top: 2px;
   }
 
   #highlighted_results>li {
