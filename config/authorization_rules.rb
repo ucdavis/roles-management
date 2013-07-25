@@ -146,6 +146,10 @@ authorization do
     has_permission_on :group_memberships, :to => [:create, :update, :delete] do
       if_attribute :group => { :operators => contains { user } }
     end
+    # Allow manging rules on groups they own
+    has_permission_on :group_rules, :to => [:manage] do
+      if_attribute :group => { :owners => contains { user } }
+    end
     
     # Allow reading of any group
     has_permission_on :groups, :to => [:read, :show]
