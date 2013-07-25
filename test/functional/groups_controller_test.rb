@@ -15,6 +15,7 @@ class GroupsControllerTest < ActionController::TestCase
 
     assert body.include?('id'), 'JSON response should include id field'
     assert body.include?('name'), 'JSON response should include name field'
+    assert body.include?('description'), 'JSON response should include description field'
 
     assert body.include?('owners'), 'JSON response should include owners'
     body['owners'].each do |o|

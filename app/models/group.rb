@@ -26,7 +26,7 @@ class Group < Entity
   after_save :trigger_sync
   
   def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Group',
+    { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :memberships => self.memberships.map{ |a| { id: a.id, entity_id: a.entity.id, name: a.entity.name, loginid: a.entity.loginid, calculated: a.calculated } },

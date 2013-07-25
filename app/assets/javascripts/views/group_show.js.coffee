@@ -78,7 +78,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     # Summary tab
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
-    @$("textarea[name=description]").val @model.escape("description")
+    @$("textarea[name=description]").val @model.get("description")
     @$("span#group_member_count").html @model.memberships.length
     
     owners_tokeninput = @$("input[name=owners]")
