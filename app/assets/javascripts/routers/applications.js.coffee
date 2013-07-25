@@ -39,10 +39,6 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     entity = DssRm.view_state.bookmarks.get(uid)
     entity = DssRm.view_state.bookmarks.findWhere({ group_id: uid }) if entity is undefined
     
-    if entity is undefined
-      console.log 'couldnt find entity in bookmarks'
-      debugger
-    
     # Fetch it as a last resort - we won't get event updates
     entity = new DssRm.Models.Entity(id: uid) if entity is undefined
     
