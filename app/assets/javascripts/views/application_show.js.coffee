@@ -11,7 +11,6 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     "hidden"                   : "cleanUpModal"
     "click button#add_role"    : "addRole"
     "click button#remove_role" : "removeRole"
-    "shown"                    : "adjustOverflow"
     "change table#roles input" : "persistRoleChanges"
 
   initialize: (options) ->
@@ -190,15 +189,3 @@ class DssRm.Views.ApplicationShow extends Backbone.View
         role.set 'token', $(e.target).val(), { silent: true }
       when 'description'
         role.set 'description', $(e.target).val(), { silent: true }
-  
-  # Due to a bug in Bootstrap 2.x modals, we need to adjust
-  # the overflow to be off when using tokeninput tabs but
-  # on when using typeahead tabs
-  adjustOverflow: (e) ->
-    switch $(e.target).attr('href')
-      when '#roles'
-        @$('.modal-body').css('overflow-y', 'visible')
-        @$('.tab-content').css('overflow', 'visible')
-      else
-        @$('.modal-body').css('overflow-y', 'hidden')
-        @$('.tab-content').css('overflow', 'auto')
