@@ -206,7 +206,10 @@ DssRm.Collections.Entities = Backbone.Collection.extend(
   # but a calculated group (11) comes before everything. See *_order below.
   comparator: (entity) ->
     calculated_order = (if entity.get('calculated') then '1' else '2')
-    type_order = (if entity.type() is EntityTypes.group then '1' else '2')
+    if entity.type == undefined
+      type_order = (if (entity.get('type') == 'Group') then '1' else '2')
+    else
+      type_order = (if entity.type() is EntityTypes.group then '1' else '2')
 
     return calculated_order + type_order + entity.get("name")
 )

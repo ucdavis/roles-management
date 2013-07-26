@@ -38,8 +38,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
   
   render: ->
-    console.log 'rendering sidebar'
-    
     selected_role = DssRm.view_state.getSelectedRole()
     
     pins_frag = document.createDocumentFragment()
@@ -52,15 +50,17 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       # 'Fade' bookmark if it is also going to be in the 'Assigned' section
       if selected_role and selected_role.has_assigned(e, false)
           faded = true
-
+      
       ep = new Backbone.Model
         entity_id: (e.get('group_id') || e.get('id'))
         name: e.get('name')
         type: e.get('type')
-
+      
       pin = @renderSidebarPin(ep, { highlighted: false, faded: faded })
       pins_frag.appendChild pin.el
-
+    
+    @$('#bookmark-count').html DssRm.view_state.bookmarks.length
+    
     # Render 'Assigned'
     if selected_role
       # We parse assignments to ensure we don't display a calculated assignment

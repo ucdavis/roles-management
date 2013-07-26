@@ -33,14 +33,24 @@ DssRm.Models.ViewState = Backbone.Model.extend(
   
   # Constructs list of current user's ownerships, operatorships, and favorites
   buildBookmarks: ->
-    console.log 'building bookmarks'
-    
     @bookmarks.reset _.union(
-      DssRm.current_user.group_ownerships.models,
-      DssRm.current_user.group_operatorships.models,
-      DssRm.current_user.favorites.models
+      DssRm.current_user.favorites.models.map( (f) -> 
+        name: f.get('name')
+        type: f.get('type')
+        id: f.id
+      ),
+      DssRm.current_user.group_ownerships.models.map( (o) ->
+        name: o.get('name')
+        type: 'Group'
+        id: o.get('group_id')
+      ),
+      DssRm.current_user.group_operatorships.models.map( (o) ->
+        name: o.get('name')
+        type: 'Group'
+        id: o.get('group_id')
+      )
     )
-
+  
   # Return the role model associated with @selected_role_id. Always search, don't store the role model - it may be reset on sync!
   getSelectedRole: ->
     selected_role_id = @get('selected_role_id')

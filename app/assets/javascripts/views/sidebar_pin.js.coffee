@@ -53,18 +53,23 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
   toggleEntityFavorite: (e) ->
     e.stopPropagation()
     
-    model_id = (@model.get('group_id') || @model.get('id'))
+    model_id = (@model.get('group_id') || @model.get('entity_id'))
     favorites_entity = DssRm.current_user.favorites.find((e) ->
       e.id is model_id
     )
     
     if favorites_entity
       # Unfavoriting
+      console.log 'unfavoriting model'
       DssRm.current_user.favorites.remove favorites_entity
     else
       # Favoriting
       console.log 'favoriting model'
+      #@model.id = @model.get('entity_id')
+      debugger
+      
       DssRm.current_user.favorites.add @model
+      console.log 'done favoriting model'
     
     DssRm.current_user.save()
   
@@ -75,9 +80,8 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
   
   # Returns true if this entity is favorited by the current user
   favoritedByCurrentUser: ->
-    return _.find(DssRm.current_user.favorites.models, (i) =>
-      return i.get("id") is @model.get('id')
-    )
+    return DssRm.current_user.favorites.find (f) =>
+      return f.get('id') is @model.get('entity_id')
   
   pinClicked: (e) ->
     e.stopPropagation()
