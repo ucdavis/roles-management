@@ -223,6 +223,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
       @$('textarea').readonly()
+      @$('#roles #add_application').hide()
 
     @
 
