@@ -60,16 +60,14 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     
     if favorites_entity
       # Unfavoriting
-      console.log 'unfavoriting model'
       DssRm.current_user.favorites.remove favorites_entity
     else
       # Favoriting
-      console.log 'favoriting model'
-      #@model.id = @model.get('entity_id')
-      debugger
-      
-      DssRm.current_user.favorites.add @model
-      console.log 'done favoriting model'
+      DssRm.current_user.favorites.add
+        id: @model.get('entity_id')
+        entity_id: @model.get('entity_id')
+        type: @model.get('type')
+        name: @model.get('name')
     
     DssRm.current_user.save()
   
