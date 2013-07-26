@@ -29,6 +29,9 @@ authorization do
     # For whitelisted IP users
     has_permission_on :admin_api_whitelisted_ip_users, :to => :manage
     has_permission_on :api_whitelisted_ip_users, :to => :manage
+    
+    # For viewing enqueued jobs
+    has_permission_on :admin_queued_jobs, :to => :manage
   end
   
   # API whitelisted users are not quite admins. Grant specific access here

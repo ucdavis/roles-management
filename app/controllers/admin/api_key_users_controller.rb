@@ -5,12 +5,10 @@ class Admin::ApiKeyUsersController < ApplicationController
   respond_to :json
 
   def index
-    # SECUREME
     respond_with @api_keys
   end
 
   def create
-    # SECUREME
     respond_to do |format|
       if @api_key_user.save
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new API key, #{params[:api_key]}."
@@ -22,7 +20,6 @@ class Admin::ApiKeyUsersController < ApplicationController
   end
 
   def destroy
-    # SECUREME
     @api_key = ApiKeyUser.find(params[:id])
     @api_key.destroy
 

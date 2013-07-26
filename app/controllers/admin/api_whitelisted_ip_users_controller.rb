@@ -5,13 +5,11 @@ class Admin::ApiWhitelistedIpUsersController < ApplicationController
   respond_to :json
 
   def index
-    # SECUREME
     respond_with @addresses
   end
 
   # POST /admin/api_whitelisted_ips.json
   def create
-    # SECUREME
     respond_to do |format|
       if @api_whitelisted_ip_user.save
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new whitelisted IP address, #{params[:api_whitelisted_ip]}."
@@ -24,7 +22,6 @@ class Admin::ApiWhitelistedIpUsersController < ApplicationController
 
   # DELETE /admin/api_whitelisted_ips/1.json
   def destroy
-    # SECUREME
     @address = ApiWhitelistedIpUser.find(params[:id])
     @address.destroy
 

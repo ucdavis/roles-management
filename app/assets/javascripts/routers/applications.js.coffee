@@ -4,15 +4,16 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     $("#applications").replaceWith @indexView.el
 
   routes:
-    "": "index"
-    "applications/:id": "showApplication"
-    "entities/:uid": "showEntity"
-    "import/:term": "importPersonDialog"
-    "impersonate": "impersonateDialog"
-    "unimpersonate": "unimpersonate"
-    "api-keys": "apiKeysDialog"
-    "whitelist": "whitelistDialog"
-    "about": "aboutDialog"
+    ""                 : "index"
+    "applications/:id" : "showApplication"
+    "entities/:uid"    : "showEntity"
+    "import/:term"     : "importPersonDialog"
+    "impersonate"      : "impersonateDialog"
+    "unimpersonate"    : "unimpersonate"
+    "api-keys"         : "apiKeysDialog"
+    "whitelist"        : "whitelistDialog"
+    "queued-jobs"      : "queuedJobsDialog"
+    "about"            : "aboutDialog"
 
   index: ->
 
@@ -75,6 +76,14 @@ DssRm.Routers.Applications = Backbone.Router.extend(
       status_bar.hide()
       whitelisted_ips = new DssRm.Collections.WhitelistedIPs(ips)
       new DssRm.Views.WhitelistDialog(whitelist: whitelisted_ips).render().$el.modal()
+
+  queuedJobsDialog: ->
+    status_bar.show "Loading Queued Jobs dialog ..."
+    
+    $.get Routes.admin_queued_jobs_path(), (jobs) =>
+      status_bar.hide()
+      queued_jobs = new DssRm.Collections.QueuedJobs(jobs)
+      new DssRm.Views.QueuedJobsDialog(queued_jobs: queued_jobs).render().$el.modal()
 
   aboutDialog: ->
     new DssRm.Views.AboutDialog().render().$el.modal()

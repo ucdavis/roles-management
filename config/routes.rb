@@ -32,6 +32,7 @@ DSSRM::Application.routes.draw do
     
     resources :api_whitelisted_ip_users
     resources :api_key_users
+    resources :queued_jobs # we only use index (most likely, see controller)
   end
 
   root :to => redirect("/welcome")
