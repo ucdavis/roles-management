@@ -10,7 +10,6 @@ class DssRm.Views.PersonShow extends Backbone.View
     "click a#rescan"                                : "rescan"
     "hidden"                                        : "cleanUpModal"
     "click #delete"                                 : "deleteEntity"
-    "shown"                                         : "adjustOverflow"
     "click #add_role_assignment_application_button" : "addRoleAssignmentApplication"
 
   initialize: ->
@@ -152,7 +151,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     @$("input[name=last]").val @model.escape("last")
     @$("input[name=email]").val @model.escape("email")
     @$("input[name=loginid]").val @model.escape("loginid")
-    @$("input[name=phone]").val @model.escape("phone")
+    @$("input[name=phone]").val @formatPhone(@model.get("phone"))
     @$("input[name=address]").val @model.get("address")
     
     favorites_tokeninput = @$("input[name=favorites]")
@@ -238,7 +237,7 @@ class DssRm.Views.PersonShow extends Backbone.View
         last: @$("input[name=last]").val()
         email: @$("input[name=email]").val()
         loginid: @$("input[name=loginid]").val()
-        phone: @$("input[name=phone]").val()
+        phone: @$("input[name=phone]").val().replace(/\D/g, '') # strip out non-numeric characters
         address: @$("input[name=address]").val()
 
       @model.save {},
@@ -313,20 +312,17 @@ class DssRm.Views.PersonShow extends Backbone.View
     @$("#add_role_assignment_application_search").data('selected-id', id)
     
     label
+  
+  # Attempt to render the phone number in a more readable format.
+  # Assumes phone comes in like '8005551234' or '5551234'
+  formatPhone: (phone) ->
+    if phone.length == 10
+      return "(#{phone.substr(0, 3)}) #{phone.substr(3, 3)}-#{phone.substr(6, 4)}"
+    if phone.length == 7
+      return "#{phone.substr(0, 3)}-#{phone.substr(3, 4)}"
 
   cleanUpModal: ->
     @remove()
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
-  
-  # Due to a bug in Bootstrap 2.x modals, we need to adjust
-  # the overflow to be off when using tokeninput tabs but
-  # on when using typeahead tabs
-  adjustOverflow: (e) ->
-    # switch $(e.target).attr('href')
-    #   when '#roles'
-    #     @$('.modal-body').css('overflow-y', 'visible')
-    #   else
-    #     @$('.modal-body').css('overflow-y', 'hidden')
-  
