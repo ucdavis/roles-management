@@ -11,6 +11,8 @@ class DssRm.Views.GroupShow extends Backbone.View
     "click button#remove_group_rule" : "removeRule"
     "hidden"                         : "cleanUpModal"
     "click #delete"                  : "deleteEntity"
+    "change table#rules input"       : "persistRuleChanges"
+    "change table#rules select"      : "persistRuleChanges"
 
   initialize: ->
     @$el.html JST["templates/entities/show_group"](model: @model)
@@ -140,7 +142,7 @@ class DssRm.Views.GroupShow extends Backbone.View
   renderRule: (rule) ->
     $rule = $(JST["templates/entities/group_rule"]())
     
-    $rule.data "rule_id", rule.get('id')
+    $rule.data "rule_cid", rule.cid
     $rule.find("td:nth-child(1) select").val rule.get('column')
     $rule.find("td:nth-child(2) select").val rule.get('condition')
     $rule.find("td:nth-child(3) input").val rule.get('value')
@@ -169,8 +171,8 @@ class DssRm.Views.GroupShow extends Backbone.View
 
     # Ensure @model.rules is up-to-date
     _.each $('table#rules>tbody>tr'), (el, i) =>
-      id = $(el).data('rule_id')
-      rule = @model.rules.get(id)
+      cid = $(el).data('rule_cid')
+      rule = @model.rules.get(cid)
       rule.set
         column: $(el).find("#column").val()
         condition: $(el).find("#condition").val()
@@ -202,13 +204,13 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   # Renders a new rule and returns jQuery object
   addRule: (e) ->
-    @model.rules.add
-      id: 'new_' + (new Date).getTime()
+    @model.rules.add {}
+      #id: 'new_' + (new Date).getTime()
     @renderRules()
 
   removeRule: (e) ->
-    rule_id = $(e.target).parents("tr").data("rule_id")
-    rule = @model.rules.get rule_id
+    rule_cid = $(e.target).parents("tr").data("rule_cid")
+    rule = @model.rules.get rule_cid
     rule.set('_destroy', true)
     @renderRules()
 
@@ -256,3 +258,16 @@ class DssRm.Views.GroupShow extends Backbone.View
     id = parseInt(parts[0])
     label = parts[1]
     label
+
+  # Copies the attributes of rules out of the DOM and into our model
+  persistRuleChanges: (e) ->
+    rule_cid = $(e.target).parents("tr").data("rule_cid")
+    rule = @model.rules.get rule_cid
+    
+    switch $(e.target).attr('id')
+      when 'column'
+        rule.set 'column', $(e.target).val(), { silent: true }
+      when 'condition'
+        rule.set 'condition', $(e.target).val(), { silent: true }
+      when 'value'
+        rule.set 'value', $(e.target).val(), { silent: true }
