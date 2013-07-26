@@ -12,10 +12,12 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
     @$("input[name=token]").val @model.escape("token")
     
     # If this is a new role, we will attempt to automatically generate a token
-    @$("input[name=token]").data "autofill", true  if @model.escape("token").length is 0
-    @$("input[name=name]").val @model.escape("name")
-    @$("input[name=description]").val @model.escape("description")
-    @$el.data "role_id", @model.escape("id")
+    @$("input[name=token]").data("autofill", true) if @model.escape('token').length is 0
+    @$("input[name=name]").val @model.get("name")
+    @$("input[name=description]").val @model.get("description")
+    @$el.data "role_cid", @model.cid
+    
+    console.log "rendering show role with data role_id set to #{@model.get('id')}"
 
     @
   

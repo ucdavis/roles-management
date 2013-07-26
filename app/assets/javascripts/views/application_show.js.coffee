@@ -12,6 +12,7 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     "click button#add_role"    : "addRole"
     "click button#remove_role" : "removeRole"
     "shown"                    : "adjustOverflow"
+    "change table#roles input" : "persistRoleChanges"
 
   initialize: (options) ->
     @$el.html JST["templates/applications/show"](application: @model)
@@ -172,10 +173,23 @@ class DssRm.Views.ApplicationShow extends Backbone.View
   removeRole: (e) ->
     e.preventDefault()
     
-    role_id = $(e.target).parents("tr").data("role_id")
-    role = @model.roles.get role_id
+    role_cid = $(e.target).parents("tr").data("role_cid")
+    role = @model.roles.get role_cid
     role.set('_destroy', true)
     @renderRoles()
+  
+  # Copies the attributes of roles out of the DOM and into our model
+  persistRoleChanges: (e) ->
+    role_cid = $(e.target).parents("tr").data("role_cid")
+    role = @model.roles.get role_cid
+    
+    switch $(e.target).attr('name')
+      when 'name'
+        role.set 'name', $(e.target).val(), { silent: true }
+      when 'token'
+        role.set 'token', $(e.target).val(), { silent: true }
+      when 'description'
+        role.set 'description', $(e.target).val(), { silent: true }
   
   # Due to a bug in Bootstrap 2.x modals, we need to adjust
   # the overflow to be off when using tokeninput tabs but
