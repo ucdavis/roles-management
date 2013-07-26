@@ -22,8 +22,8 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
       @$el.addClass "highlighted"
     
     # Change actionable icons depending on ownership
-    if !@assignedToCurrentUser()
-      @$("i.icon-minus").hide()
+    # if !@assignedToCurrentUser()
+    #   @$("i.icon-minus").hide()
     
     # Is this pin unrelated to the current_user? Make it appear faded
     if @faded
