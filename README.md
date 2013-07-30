@@ -52,5 +52,9 @@ config/schedule.rb
 You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
 in case this README neglects any configuration details.
 
+## Screenshots
+![Group rule editor](http://169.237.101.195/image2.png "Group rule editor")
+![Person dialog relations tab](http://169.237.101.195/image3.png "Person dialog relations tab")
+
 ## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
