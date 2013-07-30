@@ -3,6 +3,8 @@
 Roles Management (RM) is a people, roles, and application management web
 application developed by the UC Davis Division of Social Science.
 
+![Main screen with role selected](http://it.dss.ucdavis.edu/intranet/archive/developers/github-screenshots/rm-main-screen-with-role-selected/image "Main screen with role selected")
+
 The purpose of DSS RM is to allow anyone with subordinate employees and
 virtual appliances (file servers, mailing lists, web applications) to
 manage and assign their people and groups whatever permissions they wish
