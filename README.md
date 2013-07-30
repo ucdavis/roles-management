@@ -1,4 +1,4 @@
-== DSS Roles Management
+# DSS Roles Management
 
 Roles Management (RM) is a people, roles, and application management web
 application developed by the UC Davis Division of Social Science.
@@ -10,7 +10,7 @@ virtual appliances (file servers, mailing lists, web applications) to
 manage and assign their people and groups whatever permissions they wish
 without requiring the help of IT.
 
-== Requirements
+## Requirements
 
 RM was written for Ruby 1.9 and Rails 3.2 and is deployed using Unicorn and
 PostgreSQL. It has been tested on Apache and Nginix and should run fine on
@@ -18,7 +18,7 @@ Linux, Mac OS X, and Windows. It has not been tested with Microsoft's
 IronRuby, and as of this writing, IronRuby does not support Ruby 1.9, which
 is a requirement for this application.
 
-== Deployment
+## Deployment
 
 RM is designed to be re-deployable in any organization, though there are a few
 matters of configuration that need to be attended to:
@@ -52,5 +52,5 @@ config/schedule.rb
 You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
 in case this README neglects any configuration details.
 
-== Authors
+## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
