@@ -84,6 +84,14 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
   pinClicked: (e) ->
     e.stopPropagation()
     
+    # Mobile browsers don't support hover, so, if the hover controls haven't appeared
+    # by now (as they will on desktop browsers via CSS hover), we'll simply display
+    # those hover controls and return. If they 'click' (touch) again, we'll proceed
+    # as normal
+    if @$('i:first').css('display') == 'none'
+      @$('i').css('display', 'block')
+      return
+    
     # do nothing if this pin is faded
     return if @faded
     
