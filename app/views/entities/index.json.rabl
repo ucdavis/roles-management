@@ -1,3 +1,3 @@
 object @entities
 
-attributes :id, :name, :type, :first
+attributes :id, :name, :type, :first, :loginid
