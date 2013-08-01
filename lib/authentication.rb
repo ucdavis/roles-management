@@ -50,6 +50,11 @@ module Authentication
       session[:user_id] = request.remote_ip
       session[:auth_via] = :whitelisted_ip
       Authorization.current_user = @whitelisted_user
+      
+      Authorization.ignore_access_control(true)
+      @whitelisted_user.logged_in_at = DateTime.now()
+      @whitelisted_user.save
+      Authorization.ignore_access_control(false)
       return
     else
       logger.debug "authenticate: Not on the API whitelist."
@@ -64,6 +69,10 @@ module Authentication
         session[:user_id] = name
         session[:auth_via] = :api_key
         Authorization.current_user = @api_user
+        Authorization.ignore_access_control(true)
+        @api_user.logged_in_at = DateTime.now()
+        @api_user.save
+        Authorization.ignore_access_control(false)
         return
       end
 
@@ -95,6 +104,10 @@ module Authentication
         session[:user_id] = @user.id
         session[:auth_via] = :cas
         Authorization.current_user = @user
+        Authorization.ignore_access_control(true)
+        @user.logged_in_at = DateTime.now()
+        @user.save
+        Authorization.ignore_access_control(false)
 
         logger.info "Valid CAS user is in our database. Passes authentication."
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130702043936) do
+ActiveRecord::Schema.define(:version => 20130801211054) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -26,16 +26,18 @@ ActiveRecord::Schema.define(:version => 20130702043936) do
 
   create_table "api_key_users", :force => true do |t|
     t.string   "secret"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.string   "name"
+    t.datetime "logged_in_at"
   end
 
   create_table "api_whitelisted_ip_users", :force => true do |t|
     t.string   "address"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.text     "reason"
+    t.datetime "logged_in_at"
   end
 
   create_table "application_operatorships", :force => true do |t|
@@ -100,8 +102,9 @@ ActiveRecord::Schema.define(:version => 20130702043936) do
     t.integer  "major_id"
     t.string   "code"
     t.text     "description"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.datetime "logged_in_at"
   end
 
   create_table "group_memberships", :force => true do |t|
