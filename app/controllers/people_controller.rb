@@ -96,14 +96,16 @@ class PeopleController < ApplicationController
 
       if @p
         @p.save
+        
+        respond_with @p
       else
         logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
+        
+        raise ActionController::RoutingError.new('Not Found')
       end
     
       Authorization.ignore_access_control(false)
     end
-    
-    respond_with @p
   end
   
   private
