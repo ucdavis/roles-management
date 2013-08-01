@@ -97,6 +97,12 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
         return ""
       else
         DssRm.view_state.set focused_application_id: id
+        
+        # Scroll the view to the application
+        $('html, body').animate
+          scrollTop: $("div.card#application_#{id}").offset().top
+        , 1000
+        
         return label
 
   deselectAll: (e) ->
