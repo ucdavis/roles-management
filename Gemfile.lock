@@ -14,7 +14,7 @@ GIT
 
 GIT
   remote: git://github.com/railsware/js-routes.git
-  revision: 4c79f86f88eb35d16c10a8decf544ecfdb4b758d
+  revision: bd7ec4f2bd2d34bee697176e2b6d327197962d50
   specs:
     js-routes (0.9.3)
       rails (>= 3.2)
@@ -98,11 +98,11 @@ GEM
       debugger-ruby_core_source (~> 1.2.3)
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.3)
-    delayed_job (3.0.5)
-      activesupport (~> 3.0)
-    delayed_job_active_record (0.4.4)
-      activerecord (>= 2.1.0, < 4)
-      delayed_job (~> 3.0)
+    delayed_job (4.0.0)
+      activesupport (>= 3.0, < 4.1)
+    delayed_job_active_record (4.0.0)
+      activerecord (>= 3.0, < 4.1)
+      delayed_job (>= 3.0, < 4.1)
     dynamic_form (1.1.4)
     ejs (1.1.1)
     erubis (2.7.0)
@@ -113,7 +113,7 @@ GEM
       multi_json (~> 1.0)
     ffi (1.9.0)
     formatador (0.2.4)
-    guard (1.8.1)
+    guard (1.8.2)
       formatador (>= 0.2.4)
       listen (>= 1.0.0)
       lumberjack (>= 1.0.2)
@@ -128,7 +128,7 @@ GEM
     highline (1.6.19)
     hike (1.2.3)
     i18n (0.6.4)
-    jbuilder (1.4.2)
+    jbuilder (1.5.0)
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
     journey (1.0.4)
@@ -150,7 +150,7 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
-    method_source (0.8.1)
+    method_source (0.8.2)
     mime-types (1.23)
     multi_json (1.7.7)
     net-ldap (0.3.1)
@@ -203,7 +203,7 @@ GEM
     ruby-prof (0.13.0)
     ruby_parser (3.2.2)
       sexp_processor (~> 4.1)
-    sass (3.2.9)
+    sass (3.2.10)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
