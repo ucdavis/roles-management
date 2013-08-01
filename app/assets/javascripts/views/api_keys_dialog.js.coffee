@@ -15,7 +15,7 @@ DssRm.Views.ApiKeysDialog = Backbone.View.extend(
   render: ->
     @$("tbody").empty()
     @api_keys.each (key) =>
-      row = $("<tr><td>" + key.escape("name") + "</td><td>" + key.escape("secret") + "</td><td><a href=\"#\" id=\"delete-key\">Remove</a></td></tr>")
+      row = $("<tr><td>" + key.escape("name") + "</td><td>" + key.escape("secret") + "</td><td>" + key.escape("logged_in_at") + "</td><td><a href=\"#\" id=\"delete-key\">Remove</a></td></tr>")
       $(row).data "key-id", key.escape("id")
       @$("tbody").append row
 

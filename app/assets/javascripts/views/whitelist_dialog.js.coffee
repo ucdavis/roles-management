@@ -16,7 +16,7 @@ DssRm.Views.WhitelistDialog = Backbone.View.extend(
     self = this
     @$("tbody").empty()
     @whitelist.each (ip) ->
-      row = $("<tr><td>" + ip.escape("address") + "</td><td>" + ip.escape("reason") + "</td><td><a href=\"#\" id=\"remove_ip\">Remove</a></td></tr>")
+      row = $("<tr><td>" + ip.escape("address") + "</td><td>" + ip.escape("reason") + "</td><td>" + ip.escape("logged_in_at") + "</td><td><a href=\"#\" id=\"remove_ip\">Remove</a></td></tr>")
       $(row).data "ip_id", ip.get("id")
       self.$("tbody").append row
 
