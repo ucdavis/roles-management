@@ -10,6 +10,7 @@
   <b>If you believe this is an error</b>, please contact your supervisor or IT support.
 </p>
 
-<% unless session[:impersonate].nil? %>
-  <p><br /><b>Looks like you could use the <%= link_to "unimpersonate link", admin_ops_unimpersonate_url %>.</b></p>
+<% unless session[:impersonation_id].nil? %>
+  <h3>Wait a sec, you're an administrator!</h3>
+  <p>You probably need this: <%= link_to "unimpersonate link", admin_ops_unimpersonate_url %>.</p>
 <% end %>
