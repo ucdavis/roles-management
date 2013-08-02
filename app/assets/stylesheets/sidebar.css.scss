@@ -10,6 +10,17 @@ i.sidebar-details {
 }
 
 #sidebar {
+  position: fixed;
+  width: 280px;
+  height: calc(100% - 90px);
+  height: -webkit-calc(100% - 90px); /* required for Safari */
+  
+  #sidebar-scrollable {
+    height: calc(100% - 15px);
+    height: -webkit-calc(100% - 15px);
+    overflow-y: scroll;
+  }
+  
   h5 {
     text-align: center;
     text-transform: uppercase;
