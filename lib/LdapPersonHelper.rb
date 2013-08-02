@@ -57,6 +57,7 @@ module LdapPersonHelper
       elsif p.name.nil?
         # No first or last, just use loginid
         p.name = p.loginid
+      end
 
       if p.new_record?
         # Only turn this individual on if they're new - we don't want to override
