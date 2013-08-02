@@ -50,6 +50,13 @@ module LdapPersonHelper
       end
       p.address = entry.get_values('street').to_s[2..-3]
       p.name = entry.get_values('displayName')[0]
+      
+      # If no displayName exists, construct it from p.first and p.last
+      if p.name.nil? and p.first and p.last
+        p.name = p.first + ' ' + p.last
+      elsif p.name.nil?
+        # No first or last, just use loginid
+        p.name = p.loginid
 
       if p.new_record?
         # Only turn this individual on if they're new - we don't want to override
