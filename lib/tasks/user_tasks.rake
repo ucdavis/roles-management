@@ -92,10 +92,10 @@ namespace :user do
     
     Authorization.ignore_access_control(true)
     
-    puts "Setting names for #{Person.where(:first => nil).count} people ..."
+    puts "Setting names for #{Person.where(:name => nil).count} people ..."
     
-    Person.where(:first => nil).each do |p|
-      p.first = p.loginid
+    Person.where(:name => nil).each do |p|
+      p.name = p.loginid
       p.save
     end
     

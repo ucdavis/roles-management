@@ -158,8 +158,7 @@ namespace :ad do
 
                       p = Person.new
                       p.loginid = m[:samaccountname]
-                      p.first = p.loginid # we need the name set to something so it will show up in the sidebar correctly
-                                          # Person.name is overriden to be Person.first + " " + Person.last, so set 'first', not 'name'
+                      p.name = p.loginid # we need the name set to something. LDAP sync will update this if possible.
                       p.save
 
                       log.info "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check."
