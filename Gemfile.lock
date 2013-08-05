@@ -34,7 +34,7 @@ GIT
 
 GIT
   remote: https://github.com/rubycas/rubycas-client.git
-  revision: 4cbacc2f5c3c5c865dc818e6699539e28824f1e4
+  revision: 0da93937e05d2a904fac1fc77af7e1a8f6c58a0f
   specs:
     rubycas-client (2.3.10.rc1)
       activesupport
@@ -152,7 +152,7 @@ GEM
       treetop (~> 1.4.8)
     method_source (0.8.2)
     mime-types (1.23)
-    multi_json (1.7.7)
+    multi_json (1.7.8)
     net-ldap (0.3.1)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
