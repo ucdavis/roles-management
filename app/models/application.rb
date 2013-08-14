@@ -18,11 +18,7 @@ class Application < ActiveRecord::Base
   # 'entities' are what actually exists in the database but includes groups.
   def as_json(options={})
     { :id => self.id, :name => self.name,
-      :roles => self.roles.map{ |r| { id: r.id, description: r.description, token: r.token, name: r.name,
-                                      #assignments: r.role_assignments.map { |a| { id: a.id, calculated: a.calculated, entity_id: a.entity_id, name: a.entity.name } },
-                                      #entities: r.entities.map { |e| { id: e.id, name: e.name, type: e.type } },
-                                      #members: r.members.map { |m| { id: m.id, name: m.name, loginid: m.loginid } },
-                                      ad_path: r.ad_path } },
+      :roles => self.roles.map{ |r| { id: r.id, description: r.description, token: r.token, name: r.name, ad_path: r.ad_path } },
       :description => self.description, :owners => self.owners.map{ |o| { name: o.name, id: o.id } },
       :operators => self.operators.map{ |o| { name: o.name, id: o.id } } }
   end

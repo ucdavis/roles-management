@@ -34,9 +34,9 @@ module Authentication
         Authorization.current_user = ApiKeyUser.find_by_name(session[:user_id])
       when :cas
         if impersonating?
-          Authorization.current_user = Person.find_by_id(session[:impersonation_id])
+          Authorization.current_user = Person.includes(:role_assignments).find_by_id(session[:impersonation_id])
         else
-          Authorization.current_user = Person.find_by_id(session[:user_id])
+          Authorization.current_user = Person.includes(:role_assignments).find_by_id(session[:user_id])
         end
       end
       logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{Authorization.current_user}"
@@ -97,7 +97,7 @@ module Authentication
       logger.debug "authenticate: cas_user exists in session."
 
       # CAS session exists. Valid user account?
-      @user = Person.find_by_loginid(session[:cas_user])
+      @user = Person.includes(:role_assignments).find_by_loginid(session[:cas_user])
 
       if @user
         # Valid user found through CAS.

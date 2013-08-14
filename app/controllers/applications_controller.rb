@@ -94,9 +94,9 @@ class ApplicationsController < ApplicationController
   def load_applications
     if params[:q]
       apps = Application.arel_table
-      @applications = Application.with_permissions_to(:read).where(apps[:name].matches("%#{params[:q]}%"))
+      @applications = Application.with_permissions_to(:read).includes(:roles).where(apps[:name].matches("%#{params[:q]}%"))
     else
-      @applications = Application.with_permissions_to(:read)
+      @applications = Application.with_permissions_to(:read).includes(:roles)
     end
   end
   
