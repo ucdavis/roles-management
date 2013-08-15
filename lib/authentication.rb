@@ -2,7 +2,7 @@ module Authentication
   # Returns the current_user, which may be 'false' if impersonation is active
   def current_user
     if impersonating?
-      return Person.find_by_id(session[:impersonation_id])
+      return Authorization.current_user
     else
       case session[:auth_via]
       when :whitelisted_ip
@@ -10,7 +10,7 @@ module Authentication
       when :api_key
         return ApiKeyUser.find_by_name(session[:user_id])
       when :cas
-        return Person.find_by_id(session[:user_id])
+        return Authorization.current_user
       end
     end
   end
@@ -34,9 +34,9 @@ module Authentication
         Authorization.current_user = ApiKeyUser.find_by_name(session[:user_id])
       when :cas
         if impersonating?
-          Authorization.current_user = Person.includes(:role_assignments).find_by_id(session[:impersonation_id])
+          Authorization.current_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonation_id])
         else
-          Authorization.current_user = Person.includes(:role_assignments).find_by_id(session[:user_id])
+          Authorization.current_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
         end
       end
       logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{Authorization.current_user}"
@@ -97,7 +97,7 @@ module Authentication
       logger.debug "authenticate: cas_user exists in session."
 
       # CAS session exists. Valid user account?
-      @user = Person.includes(:role_assignments).find_by_loginid(session[:cas_user])
+      @user = Person.includes(:role_assignments).includes(:roles).find_by_loginid(session[:cas_user])
 
       if @user
         # Valid user found through CAS.
