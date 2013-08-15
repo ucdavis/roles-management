@@ -29,7 +29,7 @@ class Group < Entity
     { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
       :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :memberships => self.memberships.map{ |a| { id: a.id, entity_id: a.entity.id, name: a.entity.name, loginid: a.entity.loginid, calculated: a.calculated } },
+      :memberships => self.memberships.includes(:entity).map{ |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid, calculated: m.calculated } },
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
   
@@ -71,7 +71,7 @@ class Group < Entity
       # Step One: Build groups out of each 'is' rule,
       #           groupping rules of similar type together via OR
       #           Note: we ignore the 'loginid' column as it is calculated separately
-      rules.where(:condition => "is").where(:column => GroupRule.valid_columns.reject{|x| x == "loginid"}).all.group_by(&:column).each do |ruleset|
+      rules.select{ |r| r.condition == "is" and GroupRule.valid_columns.reject{|x| x == "loginid"}.include? r.column }.group_by(&:column).each do |ruleset|
         ruleset_results = []
 
         ruleset[1].each do |rule|
@@ -89,7 +89,7 @@ class Group < Entity
         # remove anybody who violates an 'is not' rule
         results = results.find_all{ |member|
           keep = true
-          rules.where(:condition => "is not").all.each do |rule|
+          rules.select{ |r| r.condition == "is not" }.each do |rule|
             keep &= rule.matches(member)
           end
           keep
@@ -97,7 +97,7 @@ class Group < Entity
       end
       
       # Step Four: Process any 'loginid is' rules
-      rules.where({:condition => "is", :column => "loginid"}).all.each do |rule|
+      rules.select{ |r| r.condition == "is" and r.column == "loginid" }.each do |rule|
         if results.nil?
           results = []
         end
@@ -106,14 +106,14 @@ class Group < Entity
 
       # Remove previous calculated group member assignments
       GroupMembership.destroying_calculated_group_membership do
-        memberships.where(:calculated => true).destroy_all
+        GroupMembership.where(:group_id => self.id, :calculated => true).destroy_all
       end
 
       # Reset calculated group member assignments with the results of this algorithm
       unless results.nil?
         results = results.flatten
         results = results.uniq{ |r| r.id }
-        uncalculated_group_member_ids = memberships.where(:calculated => false).map{ |m| m.entity.id }
+        uncalculated_group_member_ids = memberships.select{ |m| m.calculated == false }.map{ |m| m.entity_id }
         results.each do |e|
           m = GroupMembership.new
           m.group_id = id

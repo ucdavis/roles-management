@@ -40,7 +40,7 @@ class GroupMembership < ActiveRecord::Base
   def grant_group_roles_to_member
     Rails.logger.tagged "GroupMembership #{id}" do
       group.roles.each do |r|
-        logger.info "Granting role (#{r.id}, #{r.token}, #{r.application.name}) to new group member (#{entity.id}/#{entity.name} joining #{group.id}/#{group.name})"
+        logger.info "Granting role (#{r.id}, #{r.token}, App ID #{r.application_id}) to new group member (#{entity.id}/#{entity.name} joining #{group.id}/#{group.name})"
         ra = RoleAssignment.new
         ra.role_id = r.id
         ra.entity_id = entity.id
@@ -53,14 +53,14 @@ class GroupMembership < ActiveRecord::Base
   def remove_group_roles_from_member
     Rails.logger.tagged "GroupMembership #{id}" do
       group.roles.each do |r|
-        logger.info "Removing role (#{r.id}, #{r.token}, #{r.application.name}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
+        logger.info "Removing role (#{r.id}, #{r.token}, App ID #{r.application_id}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
         ra = RoleAssignment.find_by_role_id_and_entity_id_and_calculated(r.id, entity.id, true)
         if ra
           destroying_calculated_role_assignment do
             ra.destroy
           end
         else
-          logger.warn "Failed to remove role (#{r.id}, #{r.token}, #{r.application.name}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database. This is probably okay."
+          logger.warn "Failed to remove role (#{r.id}, #{r.token}, App ID #{r.application_id}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database. This is probably okay."
         end
       end
     end
