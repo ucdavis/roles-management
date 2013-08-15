@@ -56,6 +56,7 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
+    active_record_query_trace (1.2)
     activemodel (3.2.14)
       activesupport (= 3.2.14)
       builder (~> 3.0.0)
@@ -239,6 +240,7 @@ PLATFORMS
 DEPENDENCIES
   SyslogLogger
   active_directory!
+  active_record_query_trace
   capistrano
   coffee-rails (~> 3.2.1)
   daemons

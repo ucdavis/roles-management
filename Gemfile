@@ -21,6 +21,7 @@ group :development do
 end
 
 gem 'sqlite3', :groups => [:development, :test]
+gem 'active_record_query_trace', :groups => [:development]
 
 # Deploy with Capistrano
 gem 'capistrano'
