@@ -5,8 +5,8 @@ application = Application.includes(:roles).find_by_name("DSS Roles Management")
 
 if application
 	RM_ROLES = application.roles
+  RM_ROLES_IDS = RM_ROLES.map{ |r| r.id }
 else
 	puts "You must set up the built-in RM roles before application can start."
 	exit
 end
-
