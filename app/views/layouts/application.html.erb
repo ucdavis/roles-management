@@ -41,7 +41,7 @@
                 <li><a href="#about">About…</a></li>
               </ul>
               <% end %>
-              <%= li_link_with_class({:title => 'Log out', :controller => 'site', :action => 'logout'}) %>
+              <li><%= link_to "Log out", logout_url %></li>
             </li>
           </ul>
         </div><!-- /.nav-collapse -->
