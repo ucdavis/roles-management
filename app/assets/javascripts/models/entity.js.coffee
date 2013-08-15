@@ -70,7 +70,9 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.operator_ids = @operators.map (operator) -> operator.id
       # Note we use Rails' nested attributes here so we need to 
       if @memberships.length
-        json.memberships_attributes = @memberships.map (membership) ->
+        explicit_members = @memberships.filter (membership) ->
+          membership.get('calculated') == false
+        json.memberships_attributes = _.map explicit_members, (membership) ->
           id: membership.get('id')
           calculated: membership.get('calculated')
           entity_id: membership.get('entity_id')
