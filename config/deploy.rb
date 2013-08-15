@@ -35,7 +35,7 @@ after "deploy", "deploy:cleanup" # keep only the last 5 releases
 after "deploy", "deploy:migrations" # run any pending migrations
 
 namespace :deploy do
-  before 'deploy:update_code' do
+  before 'deploy' do
     puts "--> Running tests, please wait ..."
     unless system "bundle exec rake > #{test_log} 2>&1" #' > /dev/null'
       puts "--> Tests failed. Run `cat #{test_log}` to see what went wrong."
