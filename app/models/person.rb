@@ -84,7 +84,7 @@ class Person < Entity
     # roles.where(:id => RM_ROLES).each do |role|
     #   syms << role.token.underscore.to_sym
     # end
-    roles.keep_if{ |r| RM_ROLES_IDS.include? r.id }.each do |r|
+    roles.select{ |r| RM_ROLES_IDS.include? r.id }.each do |r|
       syms << r.token.underscore.to_sym
     end
 
