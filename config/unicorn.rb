@@ -6,4 +6,4 @@ stdout_path "#{root}/log/unicorn.log"
 
 listen "/tmp/unicorn.dssrm.sock"
 worker_processes 15
-timeout 20
+timeout 35
