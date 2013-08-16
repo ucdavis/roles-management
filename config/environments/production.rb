@@ -75,6 +75,6 @@ DSSRM::Application.configure do
     :email => {
       :email_prefix => "[Roles Management] ",
       :sender_address => %{no-reply@roles.dss.ucdavis.edu},
-      :exception_recipients => %w{cmthielen@ucdavis.edu}
+      :exception_recipients => %w{dssit-devs-exceptions@ucdavis.edu}
     }
 end
