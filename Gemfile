@@ -42,10 +42,11 @@ gem 'declarative_authorization', :git => 'git://github.com/stffn/declarative_aut
 # For MS Active Directory support
 gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
 
-gem "js-routes", :git => 'git://github.com/railsware/js-routes.git'
-gem "ruby_parser"
+gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
+gem 'ruby_parser'
 
-gem "rabl"
+gem 'rabl'
+gem 'oj'
 
 gem 'exception_notification'
 

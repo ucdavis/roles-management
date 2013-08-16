@@ -32,7 +32,8 @@ class Person < Entity
 
   before_save :ensure_name_exists
   after_save :trigger_sync
-  
+
+  # TODO OPTIMIZEME: Would .includes help on role_assignments, group_memberships, etc.?
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
       :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline,

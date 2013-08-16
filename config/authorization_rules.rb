@@ -47,6 +47,10 @@ authorization do
     has_permission_on :group_rules, :to => :manage
     has_permission_on :people, :to => :manage
     has_permission_on :entities, :to => :manage
+    
+    role :api_reader do
+      has_permission_on :api_v1_people, :to => :read
+    end
   end
   
   role :access do
@@ -159,6 +163,13 @@ authorization do
     
     # Allow searching/importing of people
     has_permission_on :people, :to => [:search, :import]
+    
+    # REMOVE ME ONCE API IS WORKING FIXME TODO SECUREME
+    includes :api_reader
+  end
+  
+  role :api_reader do
+    has_permission_on :api_v1_people, :to => :read
   end
 end
 

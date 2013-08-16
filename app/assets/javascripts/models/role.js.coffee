@@ -68,8 +68,6 @@ DssRm.Models.Role = Backbone.Model.extend(
   
   toJSON: ->
     json = {}
-    
-    console.log "toJSON called (probably a save) for role #{@cid}, assignments.length = #{@assignments.length}"
 
     json.name = @get('name')
     json.token = @get('token')

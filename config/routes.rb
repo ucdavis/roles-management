@@ -1,4 +1,12 @@
+require 'api_constraints'
+
 DSSRM::Application.routes.draw do
+  namespace :api, defaults: {format: 'json'} do
+    scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
+      resources :people
+    end
+  end
+  
   get "/welcome" => 'site#welcome', :format => false, :defaults => { :format => 'html' }
   get "/logout" => 'site#logout'
   get "/access_denied" => 'site#access_denied'
