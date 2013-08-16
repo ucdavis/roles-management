@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130807020938) do
+ActiveRecord::Schema.define(:version => 20130816020037) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -24,6 +24,8 @@ ActiveRecord::Schema.define(:version => 20130807020938) do
     t.string "name"
   end
 
+  add_index "affiliations", ["name"], :name => "index_affiliations_on_name"
+
   create_table "api_key_users", :force => true do |t|
     t.string   "secret"
     t.datetime "created_at",   :null => false
@@ -32,6 +34,8 @@ ActiveRecord::Schema.define(:version => 20130807020938) do
     t.datetime "logged_in_at"
   end
 
+  add_index "api_key_users", ["name", "secret"], :name => "index_api_key_users_on_name_and_secret"
+
   create_table "api_whitelisted_ip_users", :force => true do |t|
     t.string   "address"
     t.datetime "created_at",   :null => false
@@ -39,6 +43,8 @@ ActiveRecord::Schema.define(:version => 20130807020938) do
     t.text     "reason"
     t.datetime "logged_in_at"
   end
+
+  add_index "api_whitelisted_ip_users", ["address"], :name => "index_api_whitelisted_ip_users_on_address"
 
   create_table "application_operatorships", :force => true do |t|
     t.integer  "application_id"
@@ -61,11 +67,15 @@ ActiveRecord::Schema.define(:version => 20130807020938) do
     t.text     "description"
   end
 
+  add_index "applications", ["name"], :name => "index_applications_on_name"
+
   create_table "classifications", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "classifications", ["name"], :name => "index_classifications_on_name"
 
   create_table "classifications_titles", :force => true do |t|
     t.integer "classification_id"
@@ -107,6 +117,10 @@ ActiveRecord::Schema.define(:version => 20130807020938) do
     t.datetime "logged_in_at"
   end
 
+  add_index "entities", ["code"], :name => "index_entities_on_code"
+  add_index "entities", ["loginid"], :name => "index_entities_on_loginid"
+  add_index "entities", ["name"], :name => "index_entities_on_name"
+
   create_table "group_memberships", :force => true do |t|
     t.integer "group_id"
     t.integer "entity_id"
@@ -142,6 +156,8 @@ ActiveRecord::Schema.define(:version => 20130807020938) do
     t.datetime "updated_at", :null => false
   end
 
+  add_index "majors", ["name"], :name => "index_majors_on_name"
+
   create_table "person_favorite_assignments", :force => true do |t|
     t.integer  "entity_id"
     t.integer  "owner_id"
@@ -156,6 +172,9 @@ ActiveRecord::Schema.define(:version => 20130807020938) do
     t.integer  "entity_id"
     t.boolean  "calculated", :default => false
   end
+
+  add_index "role_assignments", ["role_id", "entity_id", "calculated"], :name => "index_role_assignments_on_role_id_and_entity_id_and_calculated"
+  add_index "role_assignments", ["role_id", "entity_id"], :name => "index_role_assignments_on_role_id_and_entity_id"
 
   create_table "roles", :force => true do |t|
     t.string   "token"
@@ -185,6 +204,8 @@ ActiveRecord::Schema.define(:version => 20130807020938) do
     t.string "name"
     t.string "code"
   end
+
+  add_index "titles", ["code"], :name => "index_titles_on_code"
 
   create_table "versions", :force => true do |t|
     t.integer  "versioned_id"
