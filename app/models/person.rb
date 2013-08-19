@@ -82,10 +82,7 @@ class Person < Entity
   def role_symbols
     syms = []
 
-    # roles.where(:id => RM_ROLES).each do |role|
-    #   syms << role.token.underscore.to_sym
-    # end
-    roles.select{ |r| RM_ROLES_IDS.include? r.id }.each do |r|
+    roles.select{ |r| rm_roles_ids.include? r.id }.each do |r|
       syms << r.token.underscore.to_sym
     end
 

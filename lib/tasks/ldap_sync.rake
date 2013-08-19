@@ -131,7 +131,7 @@ namespace :ldap do
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
     if notify_admins
-      admin_role_id = RM_ROLES.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+      admin_role_id = rm_roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
       Role.find_by_id(admin_role_id).entities.each do |admin|
         WheneverMailer.ldap_report(admin.email, strio.string).deliver!
       end
