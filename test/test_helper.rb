@@ -43,4 +43,11 @@ class ActiveSupport::TestCase
   def grant_whitelisted_access
     @request.env['REMOTE_ADDR'] = '1.2.3.4'
   end
+  
+  def revoke_all_access
+    Authorization.current_user = nil
+    @request.env.delete('REMOTE_ADDR')
+    session.delete(:auth_via)
+    session.delete(:user_id)
+  end
 end

@@ -2,22 +2,42 @@ require 'test_helper'
 
 # These tests are run using the fake CAS user 'casuser'
 class Api::V1::EntitiesControllerTest < ActionController::TestCase
-  setup do
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+  test "unauthenticated user should redirected to cas" do
+    revoke_all_access
     
-    @person = entities(:casuser)
+    assert @request.env['REMOTE_ADDR'] != '1.2.3.4'
+    # Even if we unset Authorization.current_user, declarative_authorization sets it as "AnonymousUser" with role :guest, so check for that instead of nil
+    assert Authorization.current_user.role_symbols.include?(:guest), "current_user should have :guest role for this test"
+    assert Authorization.current_user.role_symbols.length == 1, "current_user should not have more than :guest role for this test"
+    assert session[:auth_via] != :cas, "authentication should not be set"
+  
+    # We have to pass 'auth_via' as '' to ensure it is set to an empty string
+    # in the session. Deleting session keys doesn't appear to work nor does
+    # setting 'auth_via' to nil. I'd love to know why.
+    get :index, nil, { 'auth_via' => '' }, nil
+  
+    assert_response 403
   end
 
+  test "valid API whitelisted user should get index" do
+    grant_whitelisted_access
+  
+    get :index
+  
+    assert_response :success
+    assert_not_nil assigns(:entities)
+  end
+  
   # loginid required for: impersonate dialog, group rule "loginid is"
   # id, name, loginid, email, roles included as per published API spec
   # Should also respond to /people/loginid.json
   test 'JSON request should include certain attributes' do
-    grant_test_user_admin_access
-
+    grant_whitelisted_access
+  
     get :index, :format => :json
-
+  
     body = JSON.parse(response.body)[0]
-
+  
     assert body.include?('id'), 'JSON response should include id field'
     assert body.include?('name'), 'JSON response should include name field'
     assert body.include?('type'), 'JSON response should include type field'

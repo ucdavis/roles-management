@@ -81,8 +81,8 @@ module Authentication
       # failed. If they supplied nothing for HTTP Auth, this block will get passed
       # over.
       render :text => "Invalid API key.", :status => 401
+
       return
-      #raise ActionController::RoutingError.new('Access denied')
     }
 
     logger.debug "Passed over HTTP Auth."

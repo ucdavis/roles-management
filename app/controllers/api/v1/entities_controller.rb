@@ -8,7 +8,7 @@ module Api
       respond_to :json
 
       def index
-        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index."
+        logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
         
         render "api/v1/entities/index"
       end
