@@ -6,6 +6,7 @@ DSSRM::Application.routes.draw do
       resources :people
       resources :entities
       resources :applications
+      resources :roles
     end
   end
   

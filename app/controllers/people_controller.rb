@@ -111,8 +111,8 @@ class PeopleController < ApplicationController
   private
   
   def load_person
-    @person = Person.find_by_loginid(params[:id])
-    @person = Person.find_by_id(params[:id]) unless @person
+    @person = Person.with_permissions_to(:read).find_by_loginid(params[:id])
+    @person = Person.with_permissions_to(:read).find_by_id(params[:id]) unless @person
   end
   
   def load_people

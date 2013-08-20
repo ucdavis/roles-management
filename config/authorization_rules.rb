@@ -172,6 +172,7 @@ authorization do
     has_permission_on :api_v1_people, :to => :read
     has_permission_on :api_v1_entities, :to => :read
     has_permission_on :api_v1_applications, :to => :read
+    has_permission_on :api_v1_roles, :to => :read
   end
 end
 

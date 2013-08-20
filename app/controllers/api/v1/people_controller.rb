@@ -4,7 +4,6 @@ module Api
       include DatabaseExtensions
       before_filter :load_person, :only => :show
       filter_access_to :all, :attribute_check => true
-      filter_access_to :index, :attribute_check => true, :load_method => :load_people
 
       def show
         if @person
@@ -19,8 +18,8 @@ module Api
       private
   
       def load_person
-        @person = Person.find_by_loginid(params[:id])
-        @person = Person.find_by_id(params[:id]) unless @person
+        @person = Person.with_permissions_to(:read).find_by_loginid(params[:id])
+        @person = Person.with_permissions_to(:read).find_by_id(params[:id]) unless @person
       end
     end
   end
