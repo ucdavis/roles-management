@@ -22,6 +22,7 @@ class Api::V1::RolesControllerTest < ActionController::TestCase
     body['members'].each do |e|
       assert e['id'], "JSON response 'members' section should include id"
       assert e['loginid'], "JSON response 'members' section should include loginid"
+      assert e['name'], "JSON response 'members' section should include name"
     end
   end
 end
