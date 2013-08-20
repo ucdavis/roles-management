@@ -47,7 +47,7 @@ class ActiveSupport::TestCase
   def revoke_all_access
     Authorization.current_user = nil
     @request.env.delete('REMOTE_ADDR')
-    session.delete(:auth_via)
-    session.delete(:user_id)
+    @request.session.delete(:auth_via)
+    @request.session.delete(:user_id)
   end
 end
