@@ -102,7 +102,7 @@ class EntitiesController < ApplicationController
       
       logger.debug "Entities#index searching for '#{params[:q]}'. Found #{@entities.length} results."
     else
-      @entities = Entity.all
+      @entities = Entity.with_permissions_to(:read).all
     end
   end
 end

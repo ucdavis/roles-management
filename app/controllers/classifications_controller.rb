@@ -14,7 +14,7 @@ class ClassificationsController < ApplicationController
       classifications_table = Classification.arel_table
       @classifications = Classification.with_permissions_to(:read).where(classifications_table[:name].matches("%#{params[:q]}%"))
     else
-      @classifications = Classification.all
+      @classifications = Classification.with_permissions_to(:read).all
     end
   end
 end

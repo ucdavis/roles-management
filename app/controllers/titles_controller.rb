@@ -13,7 +13,7 @@ class TitlesController < ApplicationController
       titles_table = Title.arel_table
       @titles = Title.with_permissions_to(:read).where(titles_table[:name].matches("%#{params[:q]}%").or(titles_table[:code].matches("%#{params[:q]}%")))
     else
-      @titles = Title.all
+      @titles = Title.with_permissions_to(:read).all
     end
   end
 end

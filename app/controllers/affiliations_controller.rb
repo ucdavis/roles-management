@@ -13,7 +13,7 @@ class AffiliationsController < ApplicationController
       affiliations_table = Affiliation.arel_table
       @as = Affiliation.with_permissions_to(:read).where(affiliations_table[:name].matches("%#{params[:q]}%"))
     else
-      @as = Affiliation.all
+      @as = Affiliation.with_permissions_to(:read).all
     end
 
     @affiliations = @as.map{ |x| { id: x.id, name: x.name } }

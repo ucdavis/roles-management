@@ -14,7 +14,7 @@ class OusController < ApplicationController
     if params[:q]
       @ous = Group.with_permissions_to(:read).where(groups_table[:name].matches("%#{params[:q]}%").and(groups_table[:code].not_eq(nil)))
     else
-      @ous = Group.where(groups_table[:code].not_eq(nil))
+      @ous = Group.with_permissions_to(:read).where(groups_table[:code].not_eq(nil))
     end
   end
 end

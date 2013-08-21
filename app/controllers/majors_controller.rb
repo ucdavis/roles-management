@@ -13,7 +13,7 @@ class MajorsController < ApplicationController
       majors_table = Major.arel_table
       @majors = Major.with_permissions_to(:read).where(majors_table[:name].matches("%#{params[:q]}%"))
     else
-      @majors = Major.all
+      @majors = Major.with_permissions_to(:read).all
     end
   end
 end

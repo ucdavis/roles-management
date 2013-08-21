@@ -122,7 +122,7 @@ class PeopleController < ApplicationController
 
       @people.map()
     else
-      @people = Person.all
+      @people = Person.with_permissions_to(:read).all
     end
   end
 end
