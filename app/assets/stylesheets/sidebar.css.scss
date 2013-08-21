@@ -3,7 +3,7 @@ input#search_sidebar {
   margin-top: 3px;
 }
 
-i.sidebar-details {
+i.sidebar-search-details {
   float: right;
   margin-left: 15px;
   margin-top: 2px;
@@ -58,6 +58,9 @@ i.sidebar-details {
 
       i {
         float: right;
+        /* relative so z-index applies. z-index so the icons are clickable atop very long entity labels */
+        position: relative;
+        z-index: 1;
         display: none;
         cursor: pointer;
         margin-top: 2px;

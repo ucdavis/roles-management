@@ -107,7 +107,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         # and don't want them cut off if the search results list is long
         if entities.length < (DssRm.Views.ApplicationsIndexSidebar.SIDEBAR_MAX_LENGTH - 2)
           exact_match_found = true if query.toLowerCase() is entity.name.toLowerCase()
-          entities.push entity.id + "####" + entity.name + "####" + entity.loginid + "####<i class=\"icon-search sidebar-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; event.stopPropagation(); DssRm.Views.ApplicationsIndexSidebar.sidebarDetails(event);\" />"
+          entities.push entity.id + "####" + entity.name + "####" + entity.loginid + "####<i class=\"icon-search sidebar-search-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; event.stopPropagation(); DssRm.Views.ApplicationsIndexSidebar.sidebarDetails(event);\" />"
 
       if exact_match_found is false
         # Add the option to create a new one with this query (-1 and -2 are invalid IDs to indicate these choices)
