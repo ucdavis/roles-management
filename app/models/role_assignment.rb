@@ -48,11 +48,7 @@ class RoleAssignment < ActiveRecord::Base
   # Remove this role assignment from all members of the group
   # (only if this role assignment really was with a group)  
   def remove_role_assignments_from_group_members_if_needed
-    logger.info "DESTROYING ROLE ASSIGNMENT BEING CALLED"
-    
     if entity.type == 'Group'
-      logger.info "DESTROYING ROLE ASSIGNMENT FOR A GROUP"
-      
       Rails.logger.tagged "RoleAssignment #{id}" do
         entity.members.each do |m|
           logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"

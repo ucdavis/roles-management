@@ -33,17 +33,16 @@ class Person < Entity
   before_save :ensure_name_exists
   after_save :trigger_sync
 
-  # TODO OPTIMIZEME: Would .includes help on role_assignments, group_memberships, etc.?
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
       :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline,
-      :role_assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.calculated, entity_id: a.entity_id,
+      :role_assignments => self.role_assignments.includes(:role).map{ |a| { id: a.id, calculated: a.calculated, entity_id: a.entity_id,
                                                             role_id: a.role.id, token: a.role.token, application_name: a.role.application.name,
                                                             application_id: a.role.application_id, name: a.role.name, description: a.role.description } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      :group_memberships => self.group_memberships.map{ |m| { id: m.id, group_id: m.group.id, name: m.group.name, ou: m.group.ou?, calculated: m.calculated } },
-      :group_ownerships => self.group_ownerships.map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } },
-      :group_operatorships => self.group_operatorships.map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } }
+      :group_memberships => self.group_memberships.includes(:group).map{ |m| { id: m.id, group_id: m.group.id, name: m.group.name, ou: m.group.ou?, calculated: m.calculated } },
+      :group_ownerships => self.group_ownerships.includes(:group).map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } },
+      :group_operatorships => self.group_operatorships.includes(:group).map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } }
     }
   end
 
