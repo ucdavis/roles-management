@@ -1,5 +1,5 @@
 object @role
-cache @role
+cache ['roles_show', @role]
 
 attributes :application_id, :description, :name, :token
 

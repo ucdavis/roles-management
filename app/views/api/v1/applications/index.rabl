@@ -1,5 +1,5 @@
 collection @applications
-cache @applications
+cache ['applications_index', @applications]
 
 attributes :id, :name
 

@@ -1,5 +1,5 @@
 object @application
-cache @application
+cache ['applications_show', @application]
 
 attributes :description, :id, :name, :url
 node :icon do |a|
