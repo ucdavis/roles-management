@@ -1,5 +1,4 @@
 class PeopleController < ApplicationController
-  include DatabaseExtensions
   before_filter :load_person, :only => :show
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_people

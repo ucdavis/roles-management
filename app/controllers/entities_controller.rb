@@ -1,6 +1,4 @@
 class EntitiesController < ApplicationController
-  include DatabaseExtensions
-  
   before_filter :new_entity_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_entities

@@ -1,9 +1,8 @@
 module Api
   module V1
     class EntitiesController < ApplicationController
-      include DatabaseExtensions
-  
       filter_access_to :all, :attribute_check => true
+      before_filter :load_person, :only => :show
       filter_access_to :index, :attribute_check => true, :load_method => :load_entities
       respond_to :json
 
@@ -11,6 +10,16 @@ module Api
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
         
         render "api/v1/entities/index"
+      end
+      
+      def show
+        if @entity
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
+          render "api/v1/entities/show"
+        else
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load entity view (show) for invalid ID #{params[:id]}." }
+          render :text => "Invalid entity ID '#{params[:id]}'.", :status => 404
+        end
       end
 
       private

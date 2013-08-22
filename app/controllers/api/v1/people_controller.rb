@@ -1,7 +1,6 @@
 module Api
   module V1
     class PeopleController < ApplicationController
-      include DatabaseExtensions
       before_filter :load_person, :only => :show
       filter_access_to :all, :attribute_check => true
 
