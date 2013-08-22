@@ -2,7 +2,7 @@ module Api
   module V1
     class EntitiesController < ApplicationController
       filter_access_to :all, :attribute_check => true
-      before_filter :load_person, :only => :show
+      before_filter :load_entity, :only => :show
       filter_access_to :index, :attribute_check => true, :load_method => :load_entities
       respond_to :json
 
@@ -23,6 +23,10 @@ module Api
       end
 
       private
+
+      def load_entity
+        @entity = Entity.with_permissions_to(:read).find_by_id(params[:id])
+      end
   
       def load_entities
         if params[:q]
