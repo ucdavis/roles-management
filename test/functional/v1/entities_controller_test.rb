@@ -44,10 +44,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
     assert body.include?('loginid'), 'JSON response should include loginid field'
   end
 
-  # loginid required for: impersonate dialog, group rule "loginid is"
-  # id, name, loginid, email, roles included as per published API spec
-  # Should also respond to /people/loginid.json
-  test 'JSON show request should include certain attributes' do
+  test 'JSON show request should include certain attributes when entity is a person' do
     grant_whitelisted_access
   
     get :show, :format => :json, :id => 1
@@ -58,5 +55,26 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
     assert body.include?('name'), 'JSON response should include name field'
     assert body.include?('type'), 'JSON response should include type field'
     refute body.include?('loginid'), 'JSON response should include loginid field'
+    
+    refute body.include?('members'), 'JSON response should not include members'
+  end
+
+  test 'JSON show request should include certain attributes when entity is a group' do
+    grant_whitelisted_access
+  
+    get :show, :format => :json, :id => 2
+  
+    body = JSON.parse(response.body)
+  
+    refute body.include?('id'), 'JSON response should include id field'
+    assert body.include?('name'), 'JSON response should include name field'
+    assert body.include?('type'), 'JSON response should include type field'
+    refute body.include?('loginid'), 'JSON response should include loginid field'
+    
+    assert body.include?('members'), 'JSON response should include members'
+    body["members"].each do |m|
+      assert m["id"], "JSON response's 'members' section should include an id"
+      assert m["type"], "JSON response's 'members' section should include a type"
+    end
   end
 end
