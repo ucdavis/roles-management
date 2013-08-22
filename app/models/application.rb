@@ -9,6 +9,8 @@ class Application < ActiveRecord::Base
   has_many :application_operatorships, :dependent => :destroy
   has_many :operators, :through => :application_operatorships, :source => "entity", :dependent => :destroy
   belongs_to :api_key
+  
+  has_attached_file :icon, :styles => { :normal => "75x75" }, :default_url => ""
 
   attr_accessible :name, :description, :roles_attributes, :owner_ids, :operator_ids
   accepts_nested_attributes_for :roles, :allow_destroy => true

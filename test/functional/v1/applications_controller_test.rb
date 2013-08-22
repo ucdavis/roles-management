@@ -51,6 +51,8 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
     assert body.include?('id'), 'JSON response does not include id field'
     assert body.include?('name'), 'JSON response does not include name field'
     assert body.include?('description'), 'JSON response does not include description field'
+    assert body.include?('url'), 'JSON response does not include url field'
+    assert body.include?('icon'), 'JSON response does not include icon field'
     assert body.include?('roles'), 'JSON response should include roles'
     
     # body['roles'] should include entities which include name and id (for frontend interface role assignment, applicaiton saving, and new role creation saving (temp ID -> real ID), etc.)
