@@ -57,7 +57,7 @@ DSSRM::Application.configure do
   config.assets.compile = true
 
   # Don't forget additional files requiring compilation
-  config.assets.precompile += ['cards.js', 'controllers/applications.js', 'controllers/templates.js', 'site.css']
+  config.assets.precompile += ['cards.js', 'controllers/applications.js', 'controllers/templates.js', 'site.css', 'bootstrap.css']
 
   # Generate digests for assets URLs
   config.assets.digest = true
