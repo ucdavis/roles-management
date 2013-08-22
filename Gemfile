@@ -62,6 +62,9 @@ gem 'whenever'
 gem 'delayed_job_active_record'
 gem 'daemons'
 
+# For icon processing
+gem 'paperclip', '~> 3.0'
+
 group :development, :test do
   gem 'jasminerice', :git => 'git://github.com/bradphelan/jasminerice.git'
   gem 'guard-jasmine'

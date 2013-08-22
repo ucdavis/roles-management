@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130816020037) do
+ActiveRecord::Schema.define(:version => 20130822170844) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -65,6 +65,11 @@ ActiveRecord::Schema.define(:version => 20130816020037) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "description"
+    t.string   "url"
+    t.string   "icon_file_name"
+    t.string   "icon_content_type"
+    t.integer  "icon_file_size"
+    t.datetime "icon_updated_at"
   end
 
   add_index "applications", ["name"], :name => "index_applications_on_name"
