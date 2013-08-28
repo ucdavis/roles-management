@@ -11,7 +11,7 @@ class EntitiesController < ApplicationController
   def show
     @entity = Entity.find(params[:id])
 
-    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded group page for #{params[:id]}."
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity show view for #{params[:id]}."
 
     respond_with @entity do |format|
       format.json

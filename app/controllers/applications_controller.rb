@@ -16,6 +16,8 @@ class ApplicationsController < ApplicationController
 
   # GET /applications/1
   def show
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application show view for #{params[:id]}."
+    
     respond_with @application do |format|
       format.csv {
         require 'csv'
