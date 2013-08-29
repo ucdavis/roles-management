@@ -28,7 +28,7 @@ gem 'capistrano'
 
 gem 'unicorn'
 
-gem 'ruby-ldap', '~> 0.9.13'
+gem 'ruby-ldap'
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 gem 'dynamic_form'
 
