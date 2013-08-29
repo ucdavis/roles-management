@@ -54,6 +54,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
     refute body.include?('id'), 'JSON response should include id field'
     assert body.include?('name'), 'JSON response should include name field'
     assert body.include?('type'), 'JSON response should include type field'
+    assert body.include?('email'), 'JSON response should include email field'
     refute body.include?('loginid'), 'JSON response should include loginid field'
     
     refute body.include?('members'), 'JSON response should not include members'
