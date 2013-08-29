@@ -270,7 +270,7 @@ DEPENDENCIES
   pg
   rabl
   rails (= 3.2.14)
-  ruby-ldap
+  ruby-ldap (~> 0.9.13)
   ruby-prof
   ruby_parser
   rubycas-client!
