@@ -18,10 +18,9 @@ DSSRM::Application.configure do
   # See everything in the log (default is :info)
   config.log_level = :info
 
-  # Use a different logger for distributed setups
-  # FIXME - require 'syslog_logger' no longer works with gem version >= 2.0?
-  #require 'syslog_logger'
-  #config.logger = SyslogLogger.new("roles-management")
+  # Use a syslog-based logger for distributed log collection
+  config.logger = Syslogger.new("roles-management", Syslog::LOG_PID, Syslog::LOG_LOCAL0)
+  config.logger.level = Logger::INFO
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store

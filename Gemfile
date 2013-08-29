@@ -11,7 +11,7 @@ group :assets do
 end
 
 group :production do
-  gem 'SyslogLogger'
+  gem 'syslogger'
 end
 
 group :development do
