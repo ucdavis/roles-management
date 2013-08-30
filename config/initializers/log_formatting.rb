@@ -18,7 +18,4 @@ class Formatter
 
 end
 
-unless defined? Syslogger and Rails.logger.is_a? Syslogger
-  Rails.logger.formatter = Formatter.new
-  puts "formatter installed"
-end
+Rails.logger.formatter = Formatter.new unless defined? Syslogger and Rails.logger.is_a? Syslogger
