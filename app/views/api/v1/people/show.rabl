@@ -3,6 +3,9 @@ cache ['people_show', @person]
 
 attributes :address, :byline, :email, :first, :id, :last, :loginid, :name, :phone, :type
 
+glue(:title) { attribute :name => :title }
+node(:title, :unless => lambda { |p| p.title }) {} # ensure an empty title shows up
+
 child :group_memberships do |membership|
   attributes :group_id, :id
   glue(:group) {

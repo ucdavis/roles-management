@@ -23,6 +23,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
     assert body.include?('email'), 'JSON response should include email field'
     assert body.include?('type'), 'JSON response should include type field'
     assert body.include?('loginid'), 'JSON response should include loginid field'
+    assert body.include?('title'), 'JSON response should include title field'
 
     assert body.include?('role_assignments'), 'JSON response should include role_assignments'
     body["role_assignments"].each do |r|
