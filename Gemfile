@@ -11,7 +11,7 @@ group :assets do
 end
 
 group :production do
-  gem 'syslogger'
+  gem 'syslogger', :git => 'https://github.com/cthielen/syslogger.git'
 end
 
 group :development do
