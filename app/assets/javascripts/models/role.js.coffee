@@ -5,20 +5,7 @@ DssRm.Models.Role = Backbone.Model.extend(
     @resetNestedCollections()
     @on 'sync', @resetNestedCollections, this
     
-    @on 'change', ->
-      console.log "role #{@cid} experienced a change event"
-    , this
-    @on 'request', ->
-      console.log "role #{@cid} experienced a request event"
-    , this
-    @on 'sync', ->
-      console.log "role #{@cid} experienced a sync event"
-    , this
-    
   resetNestedCollections: ->
-    console.log "role #{@cid} resetting nested collections"
-    
-    #@entities = new DssRm.Collections.Entities(@get('entities')) if @entities is `undefined`
     @assignments = new Backbone.Collection if @assignments is `undefined`
     
     _.each @get('assignments'), (a) =>
@@ -28,8 +15,6 @@ DssRm.Models.Role = Backbone.Model.extend(
     # Reset nested collection data
     #@entities.reset @get('entities')
     @assignments.reset @get('assignments')
-    
-    console.log "role #{@cid} now has #{@assignments.length} assignments"
     
     if @get('assignments')
       if @assignments.length != @get('assignments').length
