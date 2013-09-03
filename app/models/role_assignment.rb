@@ -4,12 +4,6 @@
 class RoleAssignment < ActiveRecord::Base
   using_access_control
   
-  @@destroy_calculated_assignment_flag = false
-  
-  def self.destroy_calculated_assignment_flag=(val)
-    @@destroy_calculated_assignment_flag = val
-  end
-
   belongs_to :role
   belongs_to :entity
   validates :role_id, :entity_id, :presence => true
@@ -70,7 +64,7 @@ class RoleAssignment < ActiveRecord::Base
   end
   
   def cannot_destroy_calculated_assignment_without_flag
-    if parent_id and not @@destroy_calculated_assignment_flag
+    if parent_id and not Thread.current[:role_assignment_destroying_calculated_flag]
       errors.add(:parent_id, "can't destroy a calculated role assignment without flag properly set")
       return false
     end
@@ -79,9 +73,9 @@ end
 
 def destroying_calculated_role_assignment
   begin
-    RoleAssignment.destroy_calculated_assignment_flag = true
+    Thread.current[:role_assignment_destroying_calculated_flag] = true
     yield
   ensure
-    RoleAssignment.destroy_calculated_assignment_flag = false
+    Thread.current[:role_assignment_destroying_calculated_flag] = nil
   end
 end
