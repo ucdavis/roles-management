@@ -6,13 +6,12 @@ class Application < ActiveRecord::Base
   has_many :roles, :dependent => :destroy
   has_many :application_ownerships, :dependent => :destroy
   has_many :owners, :through => :application_ownerships
-  has_many :application_operatorships, :dependent => :destroy
-  has_many :operators, :through => :application_operatorships, :source => "entity", :dependent => :destroy
+  has_many :operatorships, :dependent => :destroy, :class_name => "ApplicationOperatorship"
   belongs_to :api_key
   
   has_attached_file :icon, :styles => { :normal => "75x75" }, :default_url => ""
 
-  attr_accessible :name, :description, :roles_attributes, :owner_ids, :operator_ids
+  attr_accessible :name, :description, :roles_attributes, :owner_ids, :operatorship_ids
   accepts_nested_attributes_for :roles, :allow_destroy => true
 
   # Note the nested 'role' JSON includes "members" and "entities."
@@ -22,7 +21,7 @@ class Application < ActiveRecord::Base
     { :id => self.id, :name => self.name,
       :roles => self.roles.map{ |r| { id: r.id, description: r.description, token: r.token, name: r.name, ad_path: r.ad_path } },
       :description => self.description, :owners => self.owners.map{ |o| { name: o.name, id: o.id } },
-      :operators => self.operators.map{ |o| { name: o.name, id: o.id } } }
+      :operatorships => self.operatorships.includes(:entity).map{ |o| { name: o.entity.name, entity_id: o.entity.id, id: o.id, calculated: o.parent_id? } } }
   end
 
   def self.csv_header

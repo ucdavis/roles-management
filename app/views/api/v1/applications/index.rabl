@@ -3,8 +3,8 @@ cache ['applications_index', @applications]
 
 attributes :id, :name
 
-child :operators => :operators do |operator|
-  attributes :id, :name
+child :operatorships => :operators do |operatorship|
+  glue(:entity) { attributes :id, :name }
 end
 
 child :owners => :owners do |owner|

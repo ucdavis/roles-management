@@ -50,10 +50,10 @@ class ApplicationsControllerTest < ActionController::TestCase
       assert o["name"], "JSON response's 'owners' section's 'members' should include a name"
     end
 
-    assert body["operators"], "JSON response should include an 'operators' section"    
-    body["operators"].each do |o|
-      assert o["id"], "JSON response's 'roles' section's 'members' should include an ID"
-      assert o["name"], "JSON response's 'roles' section's 'members' should include a name"
+    assert body["operatorships"], "JSON response should include an 'operatorships' section"    
+    body["operatorships"].each do |o|
+      assert o["id"], "JSON response's 'operatorships' section should include an ID"
+      assert o["name"], "JSON response's 'operatorships' section should include a name"
     end
   end
 end

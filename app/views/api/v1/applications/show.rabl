@@ -6,8 +6,8 @@ node :icon do |a|
   a.icon.url(:normal)
 end
 
-child :operators => :operators do |operator|
-  attributes :id, :name
+child :operatorships => :operators do |operatorship|
+  glue(:entity) { attributes :id, :name }
 end
 
 child :owners => :owners do |owner|
