@@ -2,17 +2,10 @@
 class RoleAssignment < ActiveRecord::Base
   using_access_control
   
-  @@destroy_calculated_assignment_flag = false
-  
-  def self.destroy_calculated_assignment_flag=(val)
-    @@destroy_calculated_assignment_flag = val
-  end
-
   belongs_to :role
   belongs_to :entity
   validates :role_id, :entity_id, :presence => true
   validates_uniqueness_of :role_id, :scope => [:entity_id, :calculated]
-  before_destroy :cannot_destroy_calculated_assignment_without_flag
   
   # Though this seems like 'group' logic, it must be done in this 'join table' class
   # as role assignments can be created by e.g. saving an application with roles_attributes
@@ -61,13 +54,6 @@ class RoleAssignment < ActiveRecord::Base
       end
     end
   end
-  
-  def cannot_destroy_calculated_assignment_without_flag
-    if calculated and not @@destroy_calculated_assignment_flag
-      errors.add(:calculated, "can't destroy a calculated role assignment without flag properly set")
-      return false
-    end
-  end
 end
 
 class ReplaceRoleCalculatedColumnWithParentId < ActiveRecord::Migration
@@ -76,9 +62,7 @@ class ReplaceRoleCalculatedColumnWithParentId < ActiveRecord::Migration
     
     # Remove old calculated role assignments (will be recalculated)
     RoleAssignment.where(:calculated => true).each do |ra|
-      destroying_calculated_role_assignment do
-        ra.destroy
-      end
+      ra.destroy
     end
     
     remove_index :role_assignments, [:role_id, :entity_id, :calculated]
