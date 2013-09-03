@@ -44,9 +44,7 @@ class RoleAssignment < ActiveRecord::Base
           logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
           ra = RoleAssignment.find_by_role_id_and_entity_id_and_calculated(role.id, m.id, true)
           if ra
-            destroying_calculated_role_assignment do
-              ra.destroy
-            end
+            ra.destroy
           else
             logger.warn "Failed to remove role (#{role.id}, #{role.token}, #{role.application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that role. This is probably okay."
           end
