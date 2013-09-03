@@ -70,7 +70,7 @@ class RoleAssignment < ActiveRecord::Base
   end
   
   def cannot_destroy_calculated_assignment_without_flag
-    if parent_id and not @@destroy_calculated_assignment_flag
+    if not @@destroy_calculated_assignment_flag
       errors.add(:parent_id, "can't destroy a calculated role assignment without flag properly set")
       return false
     end
