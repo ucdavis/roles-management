@@ -27,7 +27,7 @@ class ReplaceRoleCalculatedColumnWithParentId < ActiveRecord::Migration
             ra_new = RoleAssignment.new
             ra_new.role_id = ra.role.id
             ra_new.entity_id = m.id
-            ra_new.parent_id = ra.id
+            ra_new.parent_id = ra.entity.id
             if ra_new.save == false
               Rails.logger.error "  -- Could not grant role!"
             end

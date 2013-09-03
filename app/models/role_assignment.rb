@@ -36,7 +36,7 @@ class RoleAssignment < ActiveRecord::Base
           ra = RoleAssignment.new
           ra.role_id = role.id
           ra.entity_id = m.id
-          ra.parent_id = id
+          ra.parent_id = entity.id
           if ra.save == false
             logger.error "  -- Could not grant role!"
           end
@@ -52,7 +52,7 @@ class RoleAssignment < ActiveRecord::Base
       Rails.logger.tagged "RoleAssignment #{id}" do
         entity.members.each do |m|
           logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
-          ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(role.id, m.id, id)
+          ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(role.id, m.id, entity.id)
           if ra
             destroying_calculated_role_assignment do
               ra.destroy

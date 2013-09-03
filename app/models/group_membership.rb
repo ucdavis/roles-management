@@ -44,7 +44,7 @@ class GroupMembership < ActiveRecord::Base
         ra = RoleAssignment.new
         ra.role_id = r.id
         ra.entity_id = entity.id
-        ra.calculated = true
+        ra.parent_id = group.id
         ra.save!
       end
     end
@@ -54,7 +54,7 @@ class GroupMembership < ActiveRecord::Base
     Rails.logger.tagged "GroupMembership #{id}" do
       group.roles.each do |r|
         logger.info "Removing role (#{r.id}, #{r.token}, App ID #{r.application_id}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
-        ra = RoleAssignment.find_by_role_id_and_entity_id_and_calculated(r.id, entity.id, true)
+        ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(r.id, entity.id, group.id)
         if ra
           destroying_calculated_role_assignment do
             ra.destroy
