@@ -36,7 +36,7 @@ class Person < Entity
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
       :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline,
-      :role_assignments => self.role_assignments.includes(:role).map{ |a| { id: a.id, calculated: a.calculated, entity_id: a.entity_id,
+      :role_assignments => self.role_assignments.includes(:role).map{ |a| { id: a.id, calculated: a.parent_id?, entity_id: a.entity_id,
                                                             role_id: a.role.id, token: a.role.token, application_name: a.role.application.name,
                                                             application_id: a.role.application_id, name: a.role.name, description: a.role.description } },
       :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },

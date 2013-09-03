@@ -2,7 +2,6 @@ DssRm.Models.Role = Backbone.Model.extend(
   urlRoot: "/roles"
   
   initialize: ->
-    console.log "initializing new role #{@cid}"
     @resetNestedCollections()
     @on 'sync', @resetNestedCollections, this
     

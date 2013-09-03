@@ -13,8 +13,8 @@ class RoleAssignment < ActiveRecord::Base
   belongs_to :role
   belongs_to :entity
   validates :role_id, :entity_id, :presence => true
-  validates_uniqueness_of :role_id, :scope => [:entity_id, :calculated]
-  validate :assignment_cannot_be_cyclical # keep this before the possibly cyclical operations of granting role assignments in after_create
+  validates_uniqueness_of :role_id, :scope => [:entity_id, :parent_id]
+  validate :assignment_cannot_be_cyclical # must come before the possibly cyclical operations of granting role assignments in after_create
   before_destroy :cannot_destroy_calculated_assignment_without_flag
   
   # Though this seems like 'group' logic, it must be done in this 'join table' class
@@ -36,7 +36,7 @@ class RoleAssignment < ActiveRecord::Base
           ra = RoleAssignment.new
           ra.role_id = role.id
           ra.entity_id = m.id
-          ra.calculated = true
+          ra.parent_id = id
           if ra.save == false
             logger.error "  -- Could not grant role!"
           end
@@ -52,7 +52,7 @@ class RoleAssignment < ActiveRecord::Base
       Rails.logger.tagged "RoleAssignment #{id}" do
         entity.members.each do |m|
           logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
-          ra = RoleAssignment.find_by_role_id_and_entity_id_and_calculated(role.id, m.id, true)
+          ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(role.id, m.id, id)
           if ra
             destroying_calculated_role_assignment do
               ra.destroy
@@ -70,8 +70,8 @@ class RoleAssignment < ActiveRecord::Base
   end
   
   def cannot_destroy_calculated_assignment_without_flag
-    if calculated and not @@destroy_calculated_assignment_flag
-      errors.add(:calculated, "can't destroy a calculated role assignment without flag properly set")
+    if parent_id and not @@destroy_calculated_assignment_flag
+      errors.add(:parent_id, "can't destroy a calculated role assignment without flag properly set")
       return false
     end
   end

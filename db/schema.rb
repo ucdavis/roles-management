@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130822170844) do
+ActiveRecord::Schema.define(:version => 20130903183025) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -175,10 +175,10 @@ ActiveRecord::Schema.define(:version => 20130822170844) do
     t.datetime "updated_at"
     t.integer  "role_id"
     t.integer  "entity_id"
-    t.boolean  "calculated", :default => false
+    t.integer  "parent_id"
   end
 
-  add_index "role_assignments", ["role_id", "entity_id", "calculated"], :name => "index_role_assignments_on_role_id_and_entity_id_and_calculated"
+  add_index "role_assignments", ["role_id", "entity_id", "parent_id"], :name => "index_role_assignments_on_role_id_and_entity_id_and_parent_id"
   add_index "role_assignments", ["role_id", "entity_id"], :name => "index_role_assignments_on_role_id_and_entity_id"
 
   create_table "roles", :force => true do |t|
