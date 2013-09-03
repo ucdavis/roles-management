@@ -1,8 +1,8 @@
 class Application < ActiveRecord::Base
   using_access_control
-
+  
   validates :name, :presence => true, :uniqueness => true
-
+  
   has_many :roles, :dependent => :destroy
   has_many :application_ownerships, :dependent => :destroy
   has_many :owners, :through => :application_ownerships
@@ -10,10 +10,12 @@ class Application < ActiveRecord::Base
   belongs_to :api_key
   
   has_attached_file :icon, :styles => { :normal => "75x75" }, :default_url => ""
-
-  attr_accessible :name, :description, :roles_attributes, :owner_ids, :operatorship_ids
+  
+  attr_accessible :name, :description, :roles_attributes, :owner_ids, :operatorships_attributes
+  
   accepts_nested_attributes_for :roles, :allow_destroy => true
-
+  accepts_nested_attributes_for :operatorships, :allow_destroy => true
+  
   # Note the nested 'role' JSON includes "members" and "entities."
   # 'members' are people only - flattened entities.
   # 'entities' are what actually exists in the database but includes groups.
@@ -23,7 +25,7 @@ class Application < ActiveRecord::Base
       :description => self.description, :owners => self.owners.map{ |o| { name: o.name, id: o.id } },
       :operatorships => self.operatorships.includes(:entity).map{ |o| { name: o.entity.name, entity_id: o.entity.id, id: o.id, calculated: o.parent_id? } } }
   end
-
+  
   def self.csv_header
     "Role,ID,Login ID,Email,First,Last".split(',')
   end

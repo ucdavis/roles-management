@@ -20,6 +20,11 @@
   margin-left: 3px;
 }
 
+/* Hide the 'x' (delete) button in application operatorship token inputs (it is an unsupported action) */
+.modal#applicationShowModal ul.token-input-list-facebook li.calculated .token-input-delete-token-facebook {
+  display: none;
+}
+
 #cards {
   -webkit-column-count: auto;
   -webkit-column-width: 335px;

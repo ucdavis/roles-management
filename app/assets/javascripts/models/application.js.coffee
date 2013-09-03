@@ -6,17 +6,17 @@ DssRm.Models.Application = Backbone.Model.extend(
   resetNestedCollections: ->
     @roles = new DssRm.Collections.Roles if @roles is `undefined`
     @owners = new DssRm.Collections.Entities if @owners is `undefined`
-    @operators = new DssRm.Collections.Entities if @operators is `undefined`
+    @operatorships = new DssRm.Collections.Entities if @operatorships is `undefined`
     
     # Reset nested collection data
     @roles.reset @get("roles")
     @owners.reset @get("owners")
-    @operators.reset @get("operators")
+    @operatorships.reset @get("operatorships")
     
     # Enforce the design pattern by removing from @attributes what is represented in a nested collection
     delete @attributes.roles
     delete @attributes.owners
-    delete @attributes.operators
+    delete @attributes.operatorships
   
   # Returns only the "highest" relationship (this order): admin, owner, operator
   # Uses DssRm.current_user as the entity
@@ -26,7 +26,7 @@ DssRm.Models.Application = Backbone.Model.extend(
     return "owner" if @owners.find((o) ->
       o.id is current_user_id
     ) isnt `undefined`
-    return "operator" if @operators.find((o) ->
+    return "operator" if @operatorships.find((o) ->
       o.id is current_user_id
     ) isnt `undefined`
     null
@@ -36,8 +36,18 @@ DssRm.Models.Application = Backbone.Model.extend(
     
     json.name = @get('name')
     json.description = @get('description')
-    json.operator_ids = @operators.map (operator) -> operator.id
+    
+    explicit_operatorships = @operatorships.filter (operatorship) ->
+      operatorship.get('calculated') == false
+    if explicit_operatorships.length
+      json.operatorships_attributes = _.map explicit_operatorships, (operatorship) ->
+        id: operatorship.get('id')
+        entity_id: operatorship.get('entity_id')
+        application_id: operatorship.get('application_id')
+        _destroy: operatorship.get('_destroy')
+    
     json.owner_ids = @owners.map (owner) -> owner.id
+    
     if @roles.length
       json.roles_attributes = @roles.map (role) ->
         role_json = {}

@@ -25,12 +25,25 @@ class DssRm.Views.ApplicationShow extends Backbone.View
       onAdd: (item) => @model.owners.add item
       onDelete: (item) => @model.owners.remove item
 
-    @$("input[name=operators]").tokenInput Routes.people_path(),
+    @$("input[name=operators]").tokenInput Routes.entities_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
-      onAdd: (item) => @model.operators.add item
-      onDelete: (item) => @model.operators.remove item
+      onAdd: (item) =>
+        @model.operatorships.add
+          calculated: false
+          entity_id: item.id
+          application_id: @model.get('id')
+          name: item.name
+      onDelete: (item) =>
+        # Did they delete a normal operator or calculated member?
+        # You cannot delete a calculated operator - you must delete the group that granted the calculation
+        if item.calculated
+          alert 'You cannot remove a calculated operatorship. You must remove the group which is granting the calculation.'
+        else
+          # Normal member being removed - no rule needed
+          operatorship = @model.operatorships.get(item.id)
+          operatorship.set('_destroy', true)
 
   render: ->
     # Summary tab
@@ -47,10 +60,13 @@ class DssRm.Views.ApplicationShow extends Backbone.View
 
     operators_tokeninput = @$("input[name=operators]")
     operators_tokeninput.tokenInput "clear"
-    @model.operators.each (operator) ->
-      operators_tokeninput.tokenInput "add",
-        id: operator.get('id')
-        name: operator.get('name')
+    @model.operatorships.each (operatorship) ->
+      unless operatorship.get('_destroy')
+        operators_tokeninput.tokenInput "add",
+          id: operatorship.id
+          name: operatorship.get('name')
+          calculated: operatorship.get('calculated')
+          class: (if operatorship.get('calculated') then "calculated" else "")
 
     @$("a#csv-download").attr "href", Routes.application_path(@model.id, {format: 'csv'})
     
