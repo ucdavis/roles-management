@@ -7,7 +7,6 @@ class Application < ActiveRecord::Base
   has_many :application_ownerships, :dependent => :destroy
   has_many :owners, :through => :application_ownerships
   has_many :operatorships, :dependent => :destroy, :class_name => "ApplicationOperatorship"
-  belongs_to :api_key
   
   has_attached_file :icon, :styles => { :normal => "75x75" }, :default_url => ""
   
