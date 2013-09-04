@@ -5,8 +5,8 @@ class ApplicationOperatorship < ActiveRecord::Base
   validates_uniqueness_of :application_id, :scope => [:entity_id, :parent_id]
   before_destroy :require_destroy_flag
 
-  belongs_to :application #, :touch => true
-  belongs_to :entity #, :touch => true
+  belongs_to :application, :touch => true
+  belongs_to :entity, :touch => true
   
   after_create :grant_operatorship_to_group_members
   before_destroy :remove_operatorship_from_group_members
