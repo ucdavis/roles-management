@@ -26,11 +26,33 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
     assert body.include?('title'), 'JSON response should include title field'
 
     assert body.include?('role_assignments'), 'JSON response should include role_assignments'
-    body["role_assignments"].each do |r|
-      assert r["role_id"], "JSON response's 'role_assignments' section should include a role_id field" # we cannot call it 'id' because Backbone won't add it twice then, which we _do_ want due to a person possibly having a role both explicitly and non-explicitly
-      assert r["token"], "JSON response's 'role_assignments' section should include a token"
-      assert r["name"], "JSON response's 'role_assignments' section should include a name"
-      assert r["application_id"], "JSON response's 'role_assignments' section should include an application_id"
+    body['role_assignments'].each do |r|
+      assert r['role_id'], "JSON response's 'role_assignments' section should include a role_id field" # we cannot call it 'id' because Backbone won't add it twice then, which we _do_ want due to a person possibly having a role both explicitly and non-explicitly
+      assert r['token'], "JSON response's 'role_assignments' section should include a token"
+      assert r['name'], "JSON response's 'role_assignments' section should include a name"
+      assert r['application_id'], "JSON response's 'role_assignments' section should include an application_id"
+    end
+    
+    assert body.include?('group_memberships'), 'JSON response should include group_memberships'
+    body['group_memberships'].each do |r|
+      assert r['group_id'], "JSON response's 'group_memberships' section should include a group_id field"
+      assert r['id'], "JSON response's 'group_memberships' section should include an id"
+      assert r['name'], "JSON response's 'group_memberships' section should include a name"
+      assert r.has_key?('ou'), "JSON response's 'group_memberships' section should include ou field"
+    end
+
+    assert body.include?('group_ownerships'), 'JSON response should include group_ownerships'
+    body['group_ownerships'].each do |r|
+      assert r['group_id'], "JSON response's 'group_ownerships' section should include a group_id field"
+      assert r['id'], "JSON response's 'group_ownerships' section should include an id"
+      assert r['name'], "JSON response's 'group_ownerships' section should include a name"
+    end
+
+    assert body.include?('group_operatorships'), 'JSON response should include group_operatorships'
+    body['group_operatorships'].each do |r|
+      assert r['group_id'], "JSON response's 'group_operatorships' section should include a group_id field"
+      assert r['id'], "JSON response's 'group_operatorships' section should include an id"
+      assert r['name'], "JSON response's 'group_operatorships' section should include a name"
     end
   end
 end

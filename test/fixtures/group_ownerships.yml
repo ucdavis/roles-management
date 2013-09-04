@@ -1,0 +1,4 @@
+# casuser owning group ID 2
+group_ownership1:
+  entity_id: 1
+  group_id: 2

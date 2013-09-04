@@ -1,0 +1,4 @@
+# casuser operating group ID 2
+group_operatorship1:
+  entity_id: 1
+  group_id: 2

@@ -10,6 +10,7 @@ child :group_memberships do |membership|
   attributes :group_id, :id
   glue(:group) {
     attribute :name
+    attribute :ou? => :ou
   }
 end
 
