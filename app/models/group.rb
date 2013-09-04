@@ -12,7 +12,7 @@ class Group < Entity
   has_many :group_ownerships, :dependent => :destroy
   has_many :owners, :through => :group_ownerships, :source => "entity"
   has_many :group_operatorships, :dependent => :destroy
-  has_many :operators, :through => :group_operatorships, :source => "entity"
+  has_many :operators, :through => :group_operatorships, :source => "entity", :dependent => :destroy
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
 
   validates :name, :presence => true
