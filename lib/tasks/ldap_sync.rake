@@ -89,6 +89,8 @@ namespace :ldap do
         filters = [staffFilter,facultyFilter,studentFilter] + manualFilter
       end
 
+      num_results = 0
+
       # Query LDAP
       Person.transaction do
         for f in filters
@@ -103,9 +105,13 @@ namespace :ldap do
               untouched_loginids.delete p.loginid unless p.nil?
 
               log_and_save_if_needed(p, log)
+              
+              num_results += 1
             end
           end
         end
+        
+        log.info "No LDAP results were found." unless num_results > 0
 
         # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
         # Only do this if we weren't in 'single' import mode
