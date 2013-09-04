@@ -6,6 +6,8 @@ class GroupOperatorship < ActiveRecord::Base
 
   belongs_to :group, :touch => true
   belongs_to :entity, :touch => true
+  
+  before_destroy { |operatorship| operatorship.group.touch && operatorship.entity.touch } # workaround for Rails bug
 
   private
 
