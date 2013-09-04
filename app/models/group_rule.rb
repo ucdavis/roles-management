@@ -7,7 +7,7 @@ class GroupRule < ActiveRecord::Base
   validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => @@valid_columns
 
-  belongs_to :group
+  belongs_to :group, :touch => true
   
   # Needed by 'Group' when calculating rules
   def GroupRule.valid_columns

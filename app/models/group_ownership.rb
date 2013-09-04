@@ -4,8 +4,8 @@ class GroupOwnership < ActiveRecord::Base
   validates_presence_of :group, :entity
   validate :group_cannot_own_itself
 
-  belongs_to :group
-  belongs_to :entity
+  belongs_to :group, :touch => true
+  belongs_to :entity, :touch => true
 
   private
 

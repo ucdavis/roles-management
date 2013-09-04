@@ -4,8 +4,8 @@
 class RoleAssignment < ActiveRecord::Base
   using_access_control
   
-  belongs_to :role
-  belongs_to :entity
+  belongs_to :role, :touch => true
+  belongs_to :entity, :touch => true
   validates :role_id, :entity_id, :presence => true
   validates_uniqueness_of :role_id, :scope => [:entity_id, :parent_id]
   validate :assignment_cannot_be_cyclical # must come before the possibly cyclical operations of granting role assignments in after_create

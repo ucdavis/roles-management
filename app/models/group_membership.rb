@@ -16,8 +16,8 @@ class GroupMembership < ActiveRecord::Base
   validate :membership_cannot_be_cyclical
   before_destroy :destroying_calculated_membership_requires_flag
 
-  belongs_to :group
-  belongs_to :entity
+  belongs_to :group, :touch => true
+  belongs_to :entity, :touch => true
 
   # Though this seems like 'group' logic, it must be done in this 'join table' class
   # as group memberships can be created outside the Group class causing
