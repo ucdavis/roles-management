@@ -9,9 +9,6 @@ class GroupRule < ActiveRecord::Base
 
   belongs_to :group
   
-  #after_save :clear_cache_if_needed
-  #before_destroy Proc.new { |model| model.clear_cache_if_needed(true) }
-
   # Needed by 'Group' when calculating rules
   def GroupRule.valid_columns
     @@valid_columns
@@ -167,14 +164,4 @@ class GroupRule < ActiveRecord::Base
 
     str.html_safe
   end
-
-  # def clear_cache_if_needed(force_clear = false)
-  #   if self.changed? or force_clear
-  #     logger.debug "Clearing cache for group #{group_id} because of change in rule #{id}"
-  #     # Rails.cache.delete statements go here
-  #     return true
-  #   else
-  #     return false
-  #   end
-  # end
 end
