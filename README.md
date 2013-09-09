@@ -56,5 +56,15 @@ in case this README neglects any configuration details.
 ![Group rule editor](http://169.237.101.195/image2.png "Group rule editor")
 ![Person dialog relations tab](http://169.237.101.195/image3.png "Person dialog relations tab")
 
+## Owners and Operators
+RM has two classes of users with administrative behavior: owners and operators. Their
+application applies to both groups and applications:
+
+  - Owners: Can create, edit, and delete all attributes of an application or group.
+  - Operators: Can make role assignments with that group or application but cannot edit
+               any attributes with some exceptions:
+               - Group operators can add or remove explicit members to a group but cannot
+               edit the group rules.
+
 ## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
