@@ -2,6 +2,7 @@ class GroupOwnership < ActiveRecord::Base
   using_access_control
 
   validates_presence_of :group, :entity
+  validates_uniqueness_of :entity_id, :scope => :group_id
   validate :group_cannot_own_itself
 
   belongs_to :group, :touch => true
