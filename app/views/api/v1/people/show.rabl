@@ -6,6 +6,10 @@ attributes :address, :byline, :email, :first, :id, :last, :loginid, :name, :phon
 glue(:title) { attribute :name => :title }
 node(:title, :unless => lambda { |p| p.title }) {} # ensure an empty title shows up
 
+child :affiliations do |affiliation|
+  attributes :name
+end
+
 child :group_memberships do |membership|
   attributes :group_id, :id
   glue(:group) {
