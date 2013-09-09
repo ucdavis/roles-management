@@ -60,11 +60,11 @@ in case this README neglects any configuration details.
 RM has two classes of users with administrative behavior: owners and operators. Their
 application applies to both groups and applications:
 
-  - Owners: Can create, edit, and delete all attributes of an application or group.
-  - Operators: Can make role assignments with that group or application but cannot edit
-               any attributes with some exceptions:
-               - Group operators can add or remove explicit members to a group but cannot
-               edit the group rules.
+  - Application/Group Owners: Can create, edit, and delete all attributes of an application or group.
+  - Application Operators: Can make role assignments with that group or application but cannot edit
+               any attributes.
+  - Group Operators: Similar to Application Operators but with the added ability to add or remove explicit
+               membersbut cannot edit the group rules.
 
 ## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
