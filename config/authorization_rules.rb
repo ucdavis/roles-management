@@ -165,7 +165,7 @@ authorization do
     has_permission_on :people, :to => [:search, :import]
     
     # REMOVE ME ONCE API IS WORKING FIXME TODO SECUREME
-    includes :api_reader
+    # includes :api_reader
   end
   
   role :api_reader do
