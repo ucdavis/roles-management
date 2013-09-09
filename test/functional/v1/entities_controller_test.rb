@@ -32,7 +32,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   # id, name, loginid, email, roles included as per published API spec
   # Should also respond to /people/loginid.json
   test 'JSON request should include certain attributes' do
-    grant_whitelisted_access
+    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
   
     get :index, :format => :json
   
@@ -45,7 +45,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   end
 
   test 'JSON show request should include certain attributes when entity is a person' do
-    grant_whitelisted_access
+    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
   
     get :show, :format => :json, :id => 1
   
@@ -61,7 +61,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   end
 
   test 'JSON show request should include certain attributes when entity is a group' do
-    grant_whitelisted_access
+    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
   
     get :show, :format => :json, :id => 2
   

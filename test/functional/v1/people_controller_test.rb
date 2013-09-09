@@ -1,11 +1,8 @@
 require 'test_helper'
 
-# These tests are run using the fake CAS user 'casuser'
 class Api::V1::PeopleControllerTest < ActionController::TestCase
   setup do
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
-    
-    @person = entities(:casuser)
+    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
   end
 
   # loginid required for: impersonate dialog, group rule "loginid is"

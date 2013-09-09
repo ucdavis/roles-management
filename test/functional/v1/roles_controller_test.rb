@@ -3,9 +3,9 @@ require 'test_helper'
 # These tests are run using the fake CAS user 'casuser'
 class Api::V1::RolesControllerTest < ActionController::TestCase
   test "JSON request should include certain attributes" do
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
     
-    grant_test_user_admin_access
+    #grant_test_user_admin_access
   
     get :show, :format => :json, :id => '1'
   

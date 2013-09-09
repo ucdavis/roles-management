@@ -37,6 +37,8 @@ authorization do
   # API whitelisted users are not quite admins. Grant specific access here
   role :api_whitelist do
     has_permission_on :roles, :to => :read
+    
+    includes :api_reader
   end
   
   # API key users are not quite admins. Grant specific access here
@@ -48,9 +50,7 @@ authorization do
     has_permission_on :people, :to => :manage
     has_permission_on :entities, :to => :manage
     
-    role :api_reader do
-      has_permission_on :api_v1_people, :to => :read
-    end
+    includes :api_reader
   end
   
   role :access do
@@ -163,9 +163,6 @@ authorization do
     
     # Allow searching/importing of people
     has_permission_on :people, :to => [:search, :import]
-    
-    # REMOVE ME ONCE API IS WORKING FIXME TODO SECUREME
-    # includes :api_reader
   end
   
   role :api_reader do
