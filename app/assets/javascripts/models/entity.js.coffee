@@ -60,6 +60,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       delete @attributes.role_assignments
   
   toJSON: ->
+    
     if @type() is EntityTypes.group
       json = {}
       # Group-specific JSON
@@ -69,7 +70,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.owner_ids = @owners.map (owner) -> owner.id
       json.operator_ids = @operators.map (operator) -> operator.id
       
-      # Note we use Rails' nested attributes here so we need to
+      # Note: We use Rails' nested attributes here
       explicit_members = @memberships.filter (membership) ->
         membership.get('calculated') == false
       if explicit_members.length
@@ -121,11 +122,12 @@ DssRm.Models.Entity = Backbone.Model.extend(
           group_id: ownership.get('group_id')
           _destroy: ownership.get('_destroy')
       if @role_assignments.length
-        json.role_assignments_attributes = @role_assignments.map (assignment) ->
+        explicit_role_assignments = @role_assignments.filter (role_assignment) ->
+          role_assignment.get('calculated') == false
+        json.role_assignments_attributes = explicit_role_assignments.map (assignment) ->
           id: assignment.get('id')
           role_id: assignment.get('role_id')
           entity_id: assignment.get('entity_id')
-          calculated: assignment.get('calculated')
           _destroy: assignment.get('_destroy')
     
     entity: json
