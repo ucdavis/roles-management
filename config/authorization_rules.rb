@@ -32,6 +32,8 @@ authorization do
     
     # For viewing enqueued jobs
     has_permission_on :admin_queued_jobs, :to => :manage
+    
+    includes :api_reader
   end
   
   # API whitelisted users are not quite admins. Grant specific access here
