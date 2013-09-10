@@ -47,9 +47,10 @@ class DssRm.Views.ApplicationShow extends Backbone.View
 
   render: ->
     # Summary tab
-    @$("h3").html @model.escape("name")
-    @$("input[name=name]").val @model.get("name")
-    @$("input[name=description]").val @model.get("description")
+    @$("h3").html @model.escape('name')
+    @$("input[name=name]").val @model.get('name')
+    @$("input[name=description]").val @model.get('description')
+    @$("input[name=url]").val @model.get('url')
     
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
@@ -100,6 +101,7 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     @model.set
       name: @$("input[name=name]").val()
       description: @$("input[name=description]").val()
+      url: @$("input[name=url]").val()
     ,
       silent: true
 

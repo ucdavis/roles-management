@@ -47,6 +47,7 @@ DssRm.Models.Application = Backbone.Model.extend(
         _destroy: operatorship.get('_destroy')
     
     json.owner_ids = @owners.map (owner) -> owner.id
+    json.url = @get('url')
     
     if @roles.length
       json.roles_attributes = @roles.map (role) ->
