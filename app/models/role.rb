@@ -45,7 +45,9 @@ class Role < ActiveRecord::Base
 
   # Slightly different than 'entities' ...
   # members takes all people and all people from groups (flattens the group)
-  # and returns them as a list.
+  # and returns them as a list. It also only returns unique results, so e.g. if
+  # a person has this role via two different groups, they will only appear once
+  # in the members output, but at least twice in the 'entities' output.
   def members
     all = []
 
