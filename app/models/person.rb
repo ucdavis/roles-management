@@ -88,6 +88,11 @@ class Person < Entity
     syms
   end
   
+  # Returns all applications visible to a user (via ownership or operatorship)
+  def accessible_applications
+    Application.with_permissions_to(:read).includes(:roles)
+  end
+  
   def trigger_sync
     logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync }

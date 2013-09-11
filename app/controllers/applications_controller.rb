@@ -94,11 +94,13 @@ class ApplicationsController < ApplicationController
   end
 
   def load_applications
+    accessible_applications = current_user.accessible_applications
+    
     if params[:q]
       apps = Application.arel_table
-      @applications = Application.with_permissions_to(:read).includes(:roles).where(apps[:name].matches("%#{params[:q]}%"))
+      @applications = accessible_applications.where(apps[:name].matches("%#{params[:q]}%"))
     else
-      @applications = Application.with_permissions_to(:read).includes(:roles)
+      @applications = accessible_applications
     end
   end
   
