@@ -52,7 +52,7 @@ namespace :user do
       ra.save!
       
       # Ensure they have the 'access' role as well
-      if p.roles.where(:application_id => a.id).where(:token => "access").length == 0
+      if p.roles.where(:application_id => ra.id).where(:token => "access").length == 0
         ra = RoleAssignment.new
         ra.role_id = rm_roles.find(:first, :conditions => [ "lower(token) = 'access'" ]).id
         ra.entity_id = p.id
