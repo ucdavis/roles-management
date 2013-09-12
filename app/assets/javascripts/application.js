@@ -11,6 +11,7 @@
 //= require bootstrap-modal-alert
 //= require jquery.tokeninput-modified
 //= require routes
+//= require jquery.filedrop
 //
 //= require dss-rm
 //

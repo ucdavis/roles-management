@@ -44,6 +44,53 @@ class DssRm.Views.ApplicationShow extends Backbone.View
           # Normal member being removed - no rule needed
           operatorship = @model.operatorships.get(item.id)
           operatorship.set('_destroy', true)
+    
+    @initializeIconFileDrop() if DssRm.admin_logged_in()
+
+  initializeIconFileDrop: ->
+    @$('#app-icon').filedrop
+      url: Routes.application_path(@model.id)
+      paramname: 'application[icon]'
+      requestType: 'PUT'
+    
+      headers:
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+    
+      error: (err, file) ->
+        switch err
+          when "BrowserNotSupported"
+            alert "Your browser does not appear to support HTML5 drag and drop. Cannot update icon."
+      
+        #   # user uploaded more than 'maxfiles'
+        #   when "TooManyFiles", "FileTooLarge"
+        #     
+        # # program encountered a file whose size is greater than 'maxfilesize'
+        # # FileTooLarge also has access to the file which was too large
+        # # use file.name to reference the filename of the culprit file
+        # , "FileTypeNotAllowed"
+        #     
+        # # The file type is not in the specified list 'allowedfiletypes'
+        # , "FileExtensionNotAllowed"
+        #       
+        #   # The file extension is not in the specified list 'allowedfileextensions'
+        #   else
+    
+      allowedfiletypes: ["image/jpeg", "image/png", "image/gif"]
+      allowedfileextensions: [".jpg", ".jpeg", ".png", ".gif"]
+      maxfiles: 1
+      maxfilesize: 1 # MB
+      
+      # user drops file
+      uploadStarted: (i, file, len) ->
+        console.log 'upload started'
+      
+      uploadFinished: (i, file, response, time) =>
+         @$('img#app-icon').attr('src', response.icon)
+      
+    #   # response is the data you got back from server in JSON format.
+    #   progressUpdated: (i, file, progress) ->
+    #   
+    #     
 
   render: ->
     # Summary tab
@@ -51,6 +98,7 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     @$("input[name=name]").val @model.get('name')
     @$("input[name=description]").val @model.get('description')
     @$("input[name=url]").val @model.get('url')
+    @$('img#app-icon').attr('src', @model.get('icon')) if @model.get('icon')
     
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
