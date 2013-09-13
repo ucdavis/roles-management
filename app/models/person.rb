@@ -12,7 +12,7 @@ class Person < Entity
   has_many :roles, :through => :role_assignments, :source => :role, :dependent => :destroy
   has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "owner_id"
   has_many :favorites, :through => :favorite_relationships, :source => :entity
-  has_many :application_ownerships, :foreign_key => "owner_id", :dependent => :destroy
+  has_many :application_ownerships, :foreign_key => "entity_id", :dependent => :destroy
   has_many :application_operatorships, :foreign_key => "entity_id", :dependent => :destroy
   has_many :group_operatorships, :foreign_key => "entity_id", :dependent => :destroy
   has_many :group_ownerships, :foreign_key => "entity_id", :dependent => :destroy

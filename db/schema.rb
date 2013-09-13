@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130903220931) do
+ActiveRecord::Schema.define(:version => 20130913034407) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -57,10 +57,11 @@ ActiveRecord::Schema.define(:version => 20130903220931) do
   add_index "application_operatorships", ["application_id", "entity_id", "parent_id"], :name => "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
 
   create_table "application_ownerships", :force => true do |t|
-    t.integer  "owner_id"
+    t.integer  "entity_id"
     t.integer  "application_id"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+    t.integer  "parent_id"
   end
 
   create_table "applications", :force => true do |t|

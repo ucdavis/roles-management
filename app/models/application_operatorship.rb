@@ -3,6 +3,7 @@ class ApplicationOperatorship < ActiveRecord::Base
 
   validates_presence_of :application, :entity
   validates_uniqueness_of :application_id, :scope => [:entity_id, :parent_id]
+
   before_destroy :require_destroy_flag
 
   belongs_to :application, :touch => true
@@ -45,7 +46,7 @@ class ApplicationOperatorship < ActiveRecord::Base
               ao.destroy
             end
           else
-            logger.warn "Failed to remove application operatorship (#{id}, #{application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that operatorship. This is probably okay."
+            logger.warn "Failed to remove application operatorship (#{id}, #{application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that operatorship."
           end
         end
       end
@@ -61,7 +62,6 @@ class ApplicationOperatorship < ActiveRecord::Base
       return false
     end
   end
-  
 end
 
 def destroying_calculated_application_operatorship

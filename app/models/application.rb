@@ -5,7 +5,7 @@ class Application < ActiveRecord::Base
   
   has_many :roles, :dependent => :destroy
   has_many :application_ownerships, :dependent => :destroy
-  has_many :owners, :through => :application_ownerships
+  has_many :owners, :through => :application_ownerships, :source => :entity
   has_many :operatorships, :dependent => :destroy, :class_name => "ApplicationOperatorship"
   has_many :operators, :through => :operatorships, :source => :entity
   

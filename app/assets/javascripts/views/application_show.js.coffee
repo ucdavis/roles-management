@@ -18,7 +18,7 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     @listenTo @model, "sync", @render
     @listenTo @model.roles, "add remove", @renderRoles
     
-    @$("input[name=owners]").tokenInput Routes.people_path(),
+    @$("input[name=owners]").tokenInput Routes.entities_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"

@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'debugger'
 
 class ApplicationOperatorshipTest < ActiveSupport::TestCase
   test "application associated with operatorship appears in user's accessible_apps" do
