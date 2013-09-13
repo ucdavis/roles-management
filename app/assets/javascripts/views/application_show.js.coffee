@@ -110,12 +110,12 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     operators_tokeninput = @$("input[name=operators]")
     operators_tokeninput.tokenInput "clear"
     @model.operatorships.each (operatorship) ->
-      unless operatorship.get('_destroy')
+      unless operatorship.get('_destroy') or operatorship.get('calculated')
         operators_tokeninput.tokenInput "add",
           id: operatorship.id
           name: operatorship.get('name')
           calculated: operatorship.get('calculated')
-          class: (if operatorship.get('calculated') then "calculated" else "")
+          #class: (if operatorship.get('calculated') then "calculated" else "")
 
     @$("a#csv-download").attr "href", Routes.application_path(@model.id, {format: 'csv'})
     
