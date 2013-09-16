@@ -22,7 +22,7 @@ class Application < ActiveRecord::Base
   def as_json(options={})
     { :id => self.id, :name => self.name, url: self.url, icon: self.icon(:normal),
       :roles => self.roles.map{ |r| { id: r.id, description: r.description, token: r.token, name: r.name, ad_path: r.ad_path } },
-      :description => self.description, :owners => self.owners.map{ |o| { name: o.name, id: o.id } },
+      :description => self.description, :owners => self.application_ownerships.map{ |o| { name: o.entity.name, id: o.entity.id, calculated: o.parent_id? } },
       :operatorships => self.operatorships.includes(:entity).map{ |o| { name: o.entity.name, entity_id: o.entity.id, id: o.id, calculated: o.parent_id? } } }
   end
   

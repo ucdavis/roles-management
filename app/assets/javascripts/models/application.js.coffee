@@ -30,6 +30,14 @@ DssRm.Models.Application = Backbone.Model.extend(
       o.id is current_user_id
     ) isnt `undefined`
     null
+  
+  # Returns owner names nicely formatted. Returns "Nobody" is owners is empty. Does not list
+  # inherited ownerships, only the entity that granted the inheriting.
+  ownerNames: ->
+    owner_names = @owners.filter((role_assignment) ->
+        role_assignment.get('calculated') == false).map((i) -> i.get "name").join(", ")
+    owner_names = "Nobody" if owner_names.length is 0
+    return owner_names
 
   toJSON: ->
     json = {}

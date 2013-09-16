@@ -18,11 +18,8 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     @$("#application-name").html @model.escape("name")
     @$(".card-title").attr "title", @model.get("description")
     
-    @owner_names = @model.owners.map((i) -> i.get "name").join(", ")
-    @owner_names = "Nobody" if @owner_names.length is 0
-    
     if @relationship is "admin" or @relationship is "operator"
-      @$("h6").html "Owned by " + @owner_names
+      @$("h6").html "Owned by " + @model.ownerNames()
       @$("h6").show()
     else
       @$("h6").hide()
