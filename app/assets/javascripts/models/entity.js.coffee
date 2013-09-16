@@ -121,9 +121,9 @@ DssRm.Models.Entity = Backbone.Model.extend(
           entity_id: ownership.get('entity_id')
           group_id: ownership.get('group_id')
           _destroy: ownership.get('_destroy')
-      if @role_assignments.length
-        explicit_role_assignments = @role_assignments.filter (role_assignment) ->
-          role_assignment.get('calculated') == false
+      explicit_role_assignments = @role_assignments.filter (role_assignment) ->
+        role_assignment.get('calculated') == false
+      if explicit_role_assignments.length
         json.role_assignments_attributes = explicit_role_assignments.map (assignment) ->
           id: assignment.get('id')
           role_id: assignment.get('role_id')
