@@ -46,7 +46,6 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     entity.fetch
       success: =>
         status_bar.hide()
-        console.log "showing entity #{entity.cid}"
         new DssRm.Views.EntityShow(entity).entityView.$el.modal()
 
       error: ->

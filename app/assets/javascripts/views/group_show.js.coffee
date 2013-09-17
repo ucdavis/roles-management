@@ -19,8 +19,6 @@ class DssRm.Views.GroupShow extends Backbone.View
     @listenTo @model, "sync", @render
     readonly = @model.isReadOnly()
     
-    window.group = @model
-    
     @$("input[name=owners]").tokenInput Routes.people_path(),
       crossDomain: false
       defaultText: ""
