@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Matt Campbell", "Matt Zukowski", "Matt Walker", "Matt Campbell"]
-  s.date = "2013-09-25"
+  s.date = "2013-09-26"
   s.description = "Client library for the Central Authentication Service (CAS) protocol."
   s.email = ["matt@soupmatt.com"]
   s.extra_rdoc_files = ["LICENSE.txt", "README.rdoc"]

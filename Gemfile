@@ -65,6 +65,9 @@ gem 'daemons'
 # For icon processing
 gem 'paperclip', '~> 3.0'
 
+# For memory usage checks
+gem 'os'
+
 group :development, :test do
   gem 'jasminerice', :git => 'git://github.com/bradphelan/jasminerice.git'
   gem 'guard-jasmine'
