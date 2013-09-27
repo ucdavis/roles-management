@@ -13,6 +13,8 @@ class Role < ActiveRecord::Base
   has_many :entities, :through => :role_assignments
 
   belongs_to :application
+  
+  before_save :reset_last_ad_sync_if_ad_path_changed
 
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
@@ -79,5 +81,16 @@ class Role < ActiveRecord::Base
   def trigger_sync
     logger.info "Role #{id}: trigger_sync called, calling sync_ad"
     sync_ad
+  end
+  
+  private
+  
+  # If the ad_path was changed in any way, reset the last_ad_sync to ensure
+  # the next AD sync is a two-way sync. (It is only two-way for the first sync,
+  # one-way after that.)
+  def reset_last_ad_sync_if_ad_path_changed
+    if self.ad_path_changed?
+      self.last_ad_sync = nil
+    end
   end
 end
