@@ -15,20 +15,11 @@ namespace :ldap do
     strio = StringIO.new
     log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
     
-    puts "LDAP import begin: #{OS.rss_bytes} KB"
-    
     log.tagged "ldap:import" do
       # Include the large lot of UCD info (dept codes, title codes, etc.)
       require 'UcdLookups'
 
       timestamp_start = Time.now
-
-      # Keep a list of untouched login IDs - we'll remove items from this list as we sync.
-      # If at the end of our sync we failed to query LDAP for a user, we can manually query
-      # them by their login IDs.
-      # This happens to a small minority of users who aren't caught by the original LDAP query
-      # design but were added to RM anyway (via AD sync, manual add, etc.)
-      untouched_loginids = Person.all.map{ |x| x.loginid }
 
       #
       # STEP ONE: Connect to LDAP. Query needed data.
@@ -36,9 +27,8 @@ namespace :ldap do
       ldap = LdapHelper.new
       ldap.connect
 
-      log.info "Connected to ldap.ucdavis.edu on port 636, LDAP protocol version 3."
+      log.debug "Connected to ldap.ucdavis.edu on port 636, LDAP protocol version 3."
 
-      people = {}
       filters = []
 
       # If they specified a loginid, only import them, otherwise, do everybody
@@ -47,7 +37,7 @@ namespace :ldap do
         manualFilter = []
         manualFilter << '(uid=' + args[:loginid] + ')'
 
-        log.info "Will use query: " + manualFilter.join(",")
+        log.debug "Will use query: " + manualFilter.join(",")
 
         filters = manualFilter
       else
@@ -61,7 +51,7 @@ namespace :ldap do
         end
         staffFilter = staffFilter + '))'
 
-        log.info "Will use query: " + staffFilter
+        log.debug "Will use query: " + staffFilter
 
         # Faculty filter
         facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
@@ -70,7 +60,7 @@ namespace :ldap do
         end
         facultyFilter = facultyFilter + '))'
 
-        log.info "Will use query: " + facultyFilter
+        log.debug "Will use query: " + facultyFilter
 
         # Student filter
         studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
@@ -79,7 +69,7 @@ namespace :ldap do
         end
         studentFilter = studentFilter + '))'
 
-        log.info "Will use query: " + studentFilter
+        log.debug "Will use query: " + studentFilter
 
         # Manual filter
         manualFilter = []
@@ -87,14 +77,12 @@ namespace :ldap do
           manualFilter << '(uid=' + m + ')'
         end
 
-        log.info "Will use query: " + manualFilter.join(",")
+        log.debug "Will use query: " + manualFilter.join(",")
 
         filters = [staffFilter,facultyFilter,studentFilter] + manualFilter
       end
 
       num_results = 0
-
-      puts "LDAP before query: #{OS.rss_bytes} KB"
 
       # Query LDAP
       Person.transaction do
@@ -103,37 +91,34 @@ namespace :ldap do
             ldap.search(f) do |entry|
               p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
 
-              # Remove the login ID from the untouched list (see explanation above)
-              # Even if the record is invalid, keeping them on the list only means
-              # we're going to attempt this again, so there's no use in keeping them around.
-              # We've effectively dealt with their record as best we can.
-              untouched_loginids.delete p.loginid unless p.nil?
-
-              log_and_save_if_needed(p, log)
+              save_or_touch(p, log) if p
               
               num_results += 1
-              
-              if (num_results % 20) == 0
-                GC.start
-              end
-              
-              puts "LDAP after #{num_results} result(s): #{OS.rss_bytes} KB"
               
               p = nil
             end
           end
         end
         
-        log.info "No LDAP results were found." unless num_results > 0
+        log.debug "No LDAP results were found." unless num_results > 0
 
         # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
         # Only do this if we weren't in 'single' import mode
         if args[:loginid].nil?
-          log.info "Processing #{untouched_loginids.length} additional login IDs existing locally but not found in the above LDAP queries."
-          untouched_loginids.each do |loginid|
-            ldap.search('(uid=' + loginid + ')') do |entry|
+          log.debug "Processing additional login IDs existing locally but not found in the standard LDAP queries."
+          
+          Person.find(:all, :conditions => ["updated_at < ?", timestamp_start]).each do |person|
+            p = nil
+            
+            ldap.search('(uid=' + person.loginid + ')') do |entry|
               p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
-              log_and_save_if_needed(p, log)
+              save_or_touch(p, log)
+            end
+            
+            unless p
+              log.debug "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
+              person.status = false
+              person.save!
             end
           end
         end
@@ -144,9 +129,7 @@ namespace :ldap do
 
       timestamp_finish = Time.now
 
-      log.info "Finished LDAP import. Time elapsed: " + (timestamp_finish - timestamp_start).to_s + " seconds"
-      
-      puts "LDAP end of loop, after disconnect: #{OS.rss_bytes} KB"
+      log.info "Completed LDAP import. Took " + (timestamp_finish - timestamp_start).to_s + "s. Used #{OS.rss_bytes} KB at the end of the task (varies during operation but generally grows)."
     end
 
     # Email the log
@@ -190,35 +173,39 @@ namespace :ldap do
     end
   end
 
-  def log_and_save_if_needed(p, log)
-    if (p == nil) or (p.valid? == false)
-      if p
-        log.warn "Unable to create or update persion with loginid #{p.loginid}. Reason(s): "
-        p.errors.messages.each do |field,reason|
-          log.warn "\tField #{field} #{reason}"
-        end
+  def save_or_touch(p, log)
+    if p.valid? == false
+      log.warn "Unable to create or update persion with loginid #{p.loginid}. Reason(s): "
+      p.errors.messages.each do |field,reason|
+        log.warn "\tField #{field} #{reason}"
       end
     else
       if p.changed? == false
-        log.info "No standard record changes for #{p.loginid}"
+        log.debug "No standard record changes for #{p.loginid}"
+        
+        p.touch
       else
-        log.info "Updating the following for #{p.loginid}:"
+        log.debug "Updating the following for #{p.loginid}:"
         p.changes.each do |field,changes|
-          log.info "\t#{field}: #{changes[0]} -> #{changes[1]}"
+          log.debug "\t#{field}: #{changes[0]} -> #{changes[1]}"
         end
+        
+        p.save!
       end
-      p.save!
 
       if p.student
         if p.student.changed? == false
-          log.info "Student record exists but there are no changes for #{p.loginid}"
+          log.debug "Student record exists but there are no changes for #{p.loginid}"
+          
+          p.student.touch
         else
-          log.info "Updating the following student records for #{p.loginid}:"
+          log.debug "Updating the following student records for #{p.loginid}:"
           p.student.changes.each do |field,changes|
-            log.info "\t#{field}: #{changes[0]} -> #{changes[1]}"
+            log.debug "\t#{field}: #{changes[0]} -> #{changes[1]}"
           end
+          
+          p.student.save!
         end
-        p.student.save!
       end
     end
   end

@@ -70,8 +70,8 @@ class PeopleController < ApplicationController
   
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
-    load 'LdapHelper.rb'
-    load 'LdapPersonHelper.rb'
+    require 'LdapHelper.rb'
+    require 'LdapPersonHelper.rb'
     
     logger.tagged "people#import" do
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."

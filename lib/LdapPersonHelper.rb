@@ -17,7 +17,7 @@ module LdapPersonHelper
         loginid = entry.get_values('uid').to_s[2..-3]
       else
         # Give up
-        log.warn "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s unless log.nil?
+        log.debug "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s unless log.nil?
         return nil
       end
     else
@@ -28,16 +28,16 @@ module LdapPersonHelper
     p = nil
     
     log.tagged loginid do
-      log.info "Processing LDAP record for #{loginid}" unless log.nil?
+      log.debug "Processing LDAP record for #{loginid}" unless log.nil?
 
       # Find or create the Person object
       p = Person.find_or_initialize_by_loginid(loginid)
 
       if log
         if p.new_record?
-          log.info "Creating new person record (#{loginid} is not already in our database)."
+          log.debug "Creating new person record (#{loginid} is not already in our database)."
         else
-          log.info "Updating existing person record (#{loginid} is in our database)."
+          log.debug "Updating existing person record (#{loginid} is in our database)."
         end
       end
 
@@ -71,6 +71,7 @@ module LdapPersonHelper
         unless p.affiliations.include? affiliation
           p.affiliations << affiliation
         end
+        affiliation = nil
       end
 
       # Set title: take the original unless there is a translation from UcdLookups
@@ -86,6 +87,7 @@ module LdapPersonHelper
         title.save
       end
       p.title = title
+      title = nil
 
       # Handle student-specific data
       ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
@@ -99,11 +101,13 @@ module LdapPersonHelper
       unless ucdStudentMajor.nil?
         major = Major.find_or_create_by_name ucdStudentMajor
         p.major = major
+        major = nil
       end
       # Update the list of student levels if needed and record the student level if needed
       unless ucdStudentLevel.nil?
         level = StudentLevel.find_or_create_by_name ucdStudentLevel
         p.student.level = level
+        level = nil
       end
 
       # Use UcdLookups to clean up the data
@@ -208,7 +212,7 @@ module LdapPersonHelper
       p.groups.ous.each do |o|
         if (o != ou) and (o != company)
           p.groups.destroy(o)
-          log.info "Removing ou #{o.name} from person #{p.loginid}" unless log.nil?
+          log.debug "Removing ou #{o.name} from person #{p.loginid}" unless log.nil?
         end
       end
     end
@@ -216,10 +220,6 @@ module LdapPersonHelper
     ou = nil
     company = nil
     ou_manager = nil
-    major = nil
-    level = nil
-    title = nil
-    affiliation = nil
 
     return p
   end
