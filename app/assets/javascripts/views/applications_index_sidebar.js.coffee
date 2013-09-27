@@ -75,9 +75,13 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     @$("ul#highlighted_pins").html highlighted_pins_frag
 
     if @$("ul#highlighted_pins>li").length
-      @$('h5#highlighted_pins').show()
+      # Show the 'Assigned' section
+      @$('h5#highlighted_pins').slideDown('slow')
+      @$('ul#highlighted_pins').slideDown('slow')
     else
-      @$('h5#highlighted_pins').hide()
+      # Hide the 'Assigned' section
+      @$('h5#highlighted_pins').slideUp('slow')
+      @$('ul#highlighted_pins').slideUp('slow')
 
     # Sidebar pins are clickable only if a role is selected.
     if selected_role
