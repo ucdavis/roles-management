@@ -7,7 +7,7 @@ module LdapPersonHelper
   #   Rails.logger would suffice.
   def LdapPersonHelper.create_or_update_person_from_ldap(entry, log = nil)
     # Include the large lot of UCD info (dept codes, title codes, etc.)
-    load 'UcdLookups.rb'
+    require 'UcdLookups.rb'
     
     # First, determine their login ID from the principal name
     eduPersonPrincipalName = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
@@ -212,6 +212,14 @@ module LdapPersonHelper
         end
       end
     end
+    
+    ou = nil
+    company = nil
+    ou_manager = nil
+    major = nil
+    level = nil
+    title = nil
+    affiliation = nil
 
     return p
   end

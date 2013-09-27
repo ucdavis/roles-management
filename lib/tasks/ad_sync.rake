@@ -1,10 +1,11 @@
 require 'rake'
-require 'stringio'
-load 'ActiveDirectoryWrapper.rb'
 
 namespace :ad do
   desc 'Sync the user database with Active Directory'
   task :sync_all_users => :environment do
+    require 'stringio'
+    require 'ActiveDirectoryWrapper'
+    
     notify_admins = false
 
     # Log to a string so we can both optionally e-mail the log to the admins and merge it into the master log
@@ -107,6 +108,9 @@ namespace :ad do
 
   desc 'Sync a role against Active Directory. May create new users as needed.'
   task :sync_role, [:role_id] => :environment do |t, args|
+    require 'stringio'
+    require 'ActiveDirectoryWrapper'
+    
     strio = StringIO.new
     log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
     
@@ -192,7 +196,7 @@ namespace :ad do
             log.info "Done syncing role #{r.id} with AD."
 
             r.last_ad_sync = Time.now
-            r.skip_next_sync = true
+            #r.skip_next_sync = true
             r.save
           else
             log.info "Not syncing role because no AD path is set."

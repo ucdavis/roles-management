@@ -1,10 +1,11 @@
 namespace :ldap do
-  load 'LdapHelper.rb'
-  load 'LdapPersonHelper.rb'
+  require 'LdapHelper'
+  require 'LdapPersonHelper'
   
   desc 'Runs the LDAP import. Takes approx. 5-10 mins.'
   task :import, [:loginid] => :environment do |t, args|
     require 'stringio'
+    require 'os'
 
     notify_admins = false
 
@@ -14,9 +15,11 @@ namespace :ldap do
     strio = StringIO.new
     log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
     
+    puts "LDAP import begin: #{OS.rss_bytes} KB"
+    
     log.tagged "ldap:import" do
       # Include the large lot of UCD info (dept codes, title codes, etc.)
-      load 'UcdLookups.rb'
+      require 'UcdLookups'
 
       timestamp_start = Time.now
 
@@ -91,6 +94,8 @@ namespace :ldap do
 
       num_results = 0
 
+      puts "LDAP before query: #{OS.rss_bytes} KB"
+
       # Query LDAP
       Person.transaction do
         for f in filters
@@ -107,6 +112,14 @@ namespace :ldap do
               log_and_save_if_needed(p, log)
               
               num_results += 1
+              
+              if (num_results % 20) == 0
+                GC.start
+              end
+              
+              puts "LDAP after #{num_results} result(s): #{OS.rss_bytes} KB"
+              
+              p = nil
             end
           end
         end
@@ -132,6 +145,8 @@ namespace :ldap do
       timestamp_finish = Time.now
 
       log.info "Finished LDAP import. Time elapsed: " + (timestamp_finish - timestamp_start).to_s + " seconds"
+      
+      puts "LDAP end of loop, after disconnect: #{OS.rss_bytes} KB"
     end
 
     # Email the log
