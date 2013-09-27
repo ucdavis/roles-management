@@ -1,4 +1,5 @@
 require "bundler/capistrano"
+require 'delayed_job_active_record'
 
 # 'whenever' setup
 set :whenever_command, "bundle exec whenever"
