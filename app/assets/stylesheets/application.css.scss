@@ -18,16 +18,14 @@
   user-select: none;
 }
 
-#loading-backdrop {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 1040;
-  background-color: #000000;
-  opacity: 0.8;
-  filter: alpha(opacity=80);
+i.loading {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background: 3px 2px url('/assets/loading.gif') no-repeat;
+  opacity: 0.4;
+  filter: alpha(opacity = 40); /* IE8 and earlier */
+  float: right;
 }
 
 input#search_applications {

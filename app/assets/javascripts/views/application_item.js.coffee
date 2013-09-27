@@ -81,8 +81,12 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     else
       # Toggling on
       status_bar.show "Fetching role details ..."
+      $loading = $('<i class="loading" />')
+      $(e.currentTarget).append $loading
+      
       role.fetch
         success: =>
+          $loading.remove()
           status_bar.hide()
         
           DssRm.view_state.set
