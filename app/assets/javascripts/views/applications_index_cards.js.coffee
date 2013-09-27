@@ -106,11 +106,12 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
         return label
 
   deselectAll: (e) ->
-    DssRm.view_state.set
-      selected_application_id: null
-      selected_role_id: null
-      focused_application_id: null
-      focused_entity_id: null
+    if e.target.id == "cards"
+      DssRm.view_state.set
+        selected_application_id: null
+        selected_role_id: null
+        focused_application_id: null
+        focused_entity_id: null
       
 ,
   # Constants used in this view
