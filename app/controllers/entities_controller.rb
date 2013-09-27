@@ -45,6 +45,8 @@ class EntitiesController < ApplicationController
       @entity.owners << current_user
       Authorization.ignore_access_control(false)
     end
+    
+    @entity.trigger_sync
 
     respond_with @entity
   end
@@ -58,6 +60,8 @@ class EntitiesController < ApplicationController
     end
 
     @entity.update_attributes(params[:entity])
+    
+    @entity.trigger_sync
     
     # Overridden to respond with the object and not a '204 No Content'.
     # See: http://stackoverflow.com/questions/9953887/simple-respond-with-in-rails-that-avoids-204-from-put

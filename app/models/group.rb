@@ -25,7 +25,6 @@ class Group < Entity
   accepts_nested_attributes_for :memberships, :allow_destroy => true
 
   after_save :recalculate_members
-  after_save :trigger_sync
   
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
@@ -140,6 +139,5 @@ class Group < Entity
   def trigger_sync
     logger.info "Group #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync }
-    return true
   end
 end

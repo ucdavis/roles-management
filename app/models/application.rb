@@ -29,4 +29,9 @@ class Application < ActiveRecord::Base
   def self.csv_header
     "Role,ID,Login ID,Email,First,Last".split(',')
   end
+  
+  def trigger_sync
+    logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
+    roles.all.each { |role| role.trigger_sync }
+  end
 end

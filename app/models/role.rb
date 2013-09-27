@@ -10,10 +10,7 @@ class Role < ActiveRecord::Base
   validates :application_id, :presence => true # must have an application
 
   has_many :role_assignments, :dependent => :destroy
-
   has_many :entities, :through => :role_assignments
-  before_save :clear_last_sync_if_path_changed
-  after_save :sync_ad
 
   belongs_to :application
 
@@ -22,9 +19,6 @@ class Role < ActiveRecord::Base
   # This is noted in the Rails documentation. Remove entities via roles_attributes.
   attr_accessible :token, :role_assignments_attributes, :name, :description, :ad_path, :application_id
   accepts_nested_attributes_for :role_assignments, :allow_destroy => true
-  
-  attr_accessor :skip_next_sync   # flag which may be set by manipulating code to avoid an AD sync
-  attr_accessor :force_sync       # flag used to force a sync on save or explicit call to Role.sync_ad
   
   def as_json(options={})
     { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id,
@@ -66,21 +60,16 @@ class Role < ActiveRecord::Base
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
-    # AD sync will update the role's "last_ad_sync" member. Ensure we don't
-    # end up recursively calling this after_save callback!
-    if (self.skip_next_sync != true) || self.force_sync
-      if (self.ad_path_changed? || self.force_sync) && self.ad_path
-        require 'rake'
-        load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
+    if self.ad_path # && (self.ad_path_changed? || self.force_ad_sync)
+      require 'rake'
+      require 'delayed_job_active_record'
+      
+      load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
-        logger.info "Scheduling AD sync for role #{id}"
-        Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
-      else
-        logger.info "Not syncing AD as ad_path_changed? is #{self.ad_path_changed?}, force_sync is #{self.force_sync}, or AD path may be blank '#{self.ad_path}'."
-      end
+      logger.info "Scheduling AD sync for role #{id}"
+      Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
     else
-      logger.info "Not scheduling AD sync for role #{id} as skip_next_sync was set #{self.skip_next_sync} and force_sync was unset #{self.force_sync}."
-      self.skip_next_sync = false
+      logger.info "Not scheduling AD sync for role #{id} as AD path is not set."
     end
   end
 
@@ -91,13 +80,5 @@ class Role < ActiveRecord::Base
   def trigger_sync
     logger.info "Role #{id}: trigger_sync called, calling sync_ad"
     sync_ad
-  end
-
-  private
-
-  def clear_last_sync_if_path_changed
-    if self.ad_path_changed?
-      self.last_ad_sync = nil
-    end
   end
 end

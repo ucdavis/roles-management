@@ -5,7 +5,6 @@ class ApplicationsController < ApplicationController
   filter_access_to :index, :attribute_check => true, :load_method => :load_applications
   respond_to :json
 
-  # GET /applications
   def index
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
     
@@ -14,7 +13,6 @@ class ApplicationsController < ApplicationController
     end
   end
 
-  # GET /applications/1
   def show
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application show view for #{params[:id]}."
     
@@ -46,38 +44,38 @@ class ApplicationsController < ApplicationController
     end
   end
 
-  # GET /applications/new
   def new
     @application = Application.new
 
     respond_with @application
   end
 
-  # POST /applications
   def create
     if @application.save
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new application, #{params[:application]}."
     else
       logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to create new application, #{params[:application]}."
     end
+    
+    @application.trigger_sync
 
     respond_with @application
   end
 
-  # PUT /applications/1
   def update
     @application = Application.find(params[:id])
 
     if @application.update_attributes(params[:application])
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
     end
+    
+    @application.trigger_sync
 
     respond_with @application do |format|
       format.json { render :json => @application } # A new role may have been created, so we need to render out to reveal the new ID
     end
   end
 
-  # DELETE /applications/1
   def destroy
     @application = Application.find(params[:id])
     @application.destroy

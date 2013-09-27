@@ -23,6 +23,8 @@ class RolesController < ApplicationController
       # role assignments.
       @role.reload
       
+      @role.trigger_sync
+      
       # Overridden to respond with the object and not a '204 No Content'.
       # See: http://stackoverflow.com/questions/9953887/simple-respond-with-in-rails-that-avoids-204-from-put
       respond_with(@role) do |format|
@@ -33,11 +35,10 @@ class RolesController < ApplicationController
     end
   end
   
-  # Forces a role to sync
+  # Forces a role to sync (used by a button in application modal)
   def sync
     @role = Role.find_by_id(params[:role_id])
-    @role.force_sync = true
-    @role.sync_ad
+    @role.trigger_sync
     
     respond_with :ok
   end

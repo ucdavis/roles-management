@@ -31,7 +31,6 @@ class Person < Entity
   attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :favorite_ids, :group_memberships_attributes, :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes
 
   before_save :ensure_name_exists
-  after_save :trigger_sync
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
@@ -96,10 +95,10 @@ class Person < Entity
   def trigger_sync
     logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync }
-    return true
   end
 
   private
+  
   def ensure_name_exists
     if self.name.nil?
       self.name = ""
