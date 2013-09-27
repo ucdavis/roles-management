@@ -70,6 +70,7 @@ if defined?(Bundler)
   # #gem 'whenever'
   # 
   # # For background processing
+  require 'delayed_job_active_record'
   # gem 'delayed_job_active_record'
   # gem 'daemons'
   # 

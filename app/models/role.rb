@@ -62,7 +62,7 @@ class Role < ActiveRecord::Base
   def sync_ad
     if self.ad_path # && (self.ad_path_changed? || self.force_ad_sync)
       require 'rake'
-      require 'delayed_job_active_record'
+      #require 'delayed_job_active_record'
       
       load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
