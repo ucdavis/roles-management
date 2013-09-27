@@ -13,7 +13,6 @@ DssRm.Models.Role = Backbone.Model.extend(
         debugger
     
     # Reset nested collection data
-    #@entities.reset @get('entities')
     @assignments.reset @get('assignments')
     
     if @get('assignments')
@@ -21,7 +20,6 @@ DssRm.Models.Role = Backbone.Model.extend(
         debugger
     
     # Enforce the design pattern by removing from @attributes what is represented in a nested collection
-    #delete @attributes.entities
     delete @attributes.assignments
     
     @assignments.each (a) =>
