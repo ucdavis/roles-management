@@ -34,7 +34,7 @@ gem 'dynamic_form'
 
 gem 'pg'
 
-gem 'jquery-rails'
+#gem 'jquery-rails'
 gem 'ejs'
 
 gem 'declarative_authorization', :git => 'git://github.com/stffn/declarative_authorization.git' #, "~> 0.5.7"
