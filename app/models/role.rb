@@ -60,9 +60,8 @@ class Role < ActiveRecord::Base
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
   def sync_ad
-    if self.ad_path # && (self.ad_path_changed? || self.force_ad_sync)
+    if self.ad_path and (self.ad_path.length > 0)
       require 'rake'
-      #require 'delayed_job_active_record'
       
       load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
