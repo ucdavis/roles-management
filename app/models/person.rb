@@ -49,6 +49,7 @@ class Person < Entity
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
   end
+  
   def to_csv
     [id, loginid, email, first, last]
   end
@@ -107,10 +108,10 @@ class Person < Entity
     end
   end
   
-  # Validators.
+  # Validators
   def first_or_last_presence
-    unless self.name.length > 0
-      errors.add(:name, "first or last must be set")
+    if ((self.first.nil? or self.first.length == 0) and (self.last.nil? or self.last.length == 0))
+      errors.add(:name, "first and/or last must be set")
     end
   end
 end
