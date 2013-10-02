@@ -4,7 +4,7 @@ namespace :ad do
   desc 'Sync the user database with Active Directory'
   task :sync_all_users => :environment do
     require 'stringio'
-    require 'ActiveDirectoryWrapper'
+    require 'active_directory_wrapper'
     
     notify_admins = false
 
@@ -109,7 +109,7 @@ namespace :ad do
   desc 'Sync a role against Active Directory. May create new users as needed.'
   task :sync_role, [:role_id] => :environment do |t, args|
     require 'stringio'
-    require 'ActiveDirectoryWrapper'
+    require 'active_directory_wrapper'
     
     strio = StringIO.new
     log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
@@ -119,8 +119,6 @@ namespace :ad do
         r = Role.includes(:entities).find_by_id(args[:role_id])
 
         unless r.nil?
-          require 'ActiveDirectoryWrapper'
-
           Authorization.ignore_access_control(true)
 
           unless r.ad_path.nil?
