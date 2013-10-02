@@ -16,7 +16,7 @@ after "deploy:restart", "deploy:prime_cache"
 
 server "169.237.120.176", :web, :app, :db, primary: true
 
-set :application, "dss-rm"
+set :application, "roles-management"
 set :url, "https://roles.dss.ucdavis.edu/"
 set :user, "deployer"
 set :deploy_to, "/home/#{user}/apps/#{application}"

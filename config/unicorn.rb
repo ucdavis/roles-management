@@ -1,4 +1,4 @@
-root = "/home/deployer/apps/dss-rm/current"
+root = "/home/deployer/apps/roles-management/current"
 working_directory root
 pid "#{root}/tmp/pids/unicorn.pid"
 stderr_path "#{root}/log/unicorn.log"
