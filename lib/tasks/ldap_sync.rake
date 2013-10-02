@@ -118,7 +118,10 @@ namespace :ldap do
             unless p
               log.debug "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
               person.status = false
-              person.save!
+              unless person.save
+                log.error "Could not save person (#{person.loginid}), reason(s):"
+                log.error "\t#{person.errors.full_messages.join(', ')}"
+              end
             end
           end
         end
