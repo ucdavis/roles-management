@@ -23,7 +23,7 @@ class Admin::OpsController < Admin::BaseController
   end
 
   def ad_path_check
-    require 'ActiveDirectoryWrapper'
+    require 'active_directory_wrapper'
 
     respond_to do |format|
       format.json { render :json => { exists: ActiveDirectoryWrapper.group_exists?(params[:path]) } }
