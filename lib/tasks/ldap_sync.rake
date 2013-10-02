@@ -1,6 +1,6 @@
 namespace :ldap do
-  require 'LdapHelper'
-  require 'LdapPersonHelper'
+  require 'ldap_helper'
+  require 'ldap_person_helper'
   
   desc 'Runs the LDAP import. Takes approx. 5-10 mins.'
   task :import, [:loginid] => :environment do |t, args|
@@ -17,7 +17,7 @@ namespace :ldap do
     
     log.tagged "ldap:import" do
       # Include the large lot of UCD info (dept codes, title codes, etc.)
-      require 'UcdLookups'
+      require 'ucd_lookups'
 
       timestamp_start = Time.now
 

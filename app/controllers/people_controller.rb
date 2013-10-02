@@ -33,7 +33,7 @@ class PeopleController < ApplicationController
   # 'search' queries _external_ databases (LDAP, etc.). GET /search?q=loginid (can be partial loginid, * will be appended)
   # If you wish to search the internal databases, use index with GET parameter q=..., e.g. /people?q=somebody
   def search
-    load 'LdapHelper.rb'
+    require 'ldap_helper'
     require 'ostruct'
     
     @results = []
@@ -70,8 +70,8 @@ class PeopleController < ApplicationController
   
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
-    require 'LdapHelper.rb'
-    require 'LdapPersonHelper.rb'
+    require 'ldap_helper'
+    require 'ldap_person_helper'
     
     logger.tagged "people#import" do
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
