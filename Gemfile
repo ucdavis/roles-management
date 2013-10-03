@@ -43,7 +43,6 @@ gem 'net-ldap', :git => 'git://github.com/ruby-ldap/ruby-net-ldap.git'
 gem 'active_directory', :git => 'git://github.com/cthielen/active_directory.git'
 
 gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
-#gem 'ruby_parser'
 
 gem 'rabl'
 gem 'oj'
