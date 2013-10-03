@@ -8,7 +8,8 @@ class Role < ActiveRecord::Base
 
   validates :token, :uniqueness => { :scope => :id, :message => "token must be unique per application" }
   validates :application_id, :presence => true # must have an application
-
+  validate :ad_path_cannot_be_blank_if_present
+  
   has_many :role_assignments, :dependent => :destroy
   has_many :entities, :through => :role_assignments
 
@@ -91,6 +92,12 @@ class Role < ActiveRecord::Base
   def reset_last_ad_sync_if_ad_path_changed
     if self.ad_path_changed?
       self.last_ad_sync = nil
+    end
+  end
+  
+  def ad_path_cannot_be_blank_if_present
+    if self.ad_path and self.ad_path.blank?
+      errors.add(:ad_path, "must not be blank if specified")
     end
   end
 end
