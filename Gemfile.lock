@@ -6,6 +6,13 @@ GIT
       coffee-rails
 
 GIT
+  remote: git://github.com/cthielen/active_directory.git
+  revision: 4de152eb34b4f3902a92fe019a5c1a7ec5fae584
+  specs:
+    active_directory (1.2.9)
+      net-ldap (>= 0.5.0)
+
+GIT
   remote: git://github.com/railsware/js-routes.git
   revision: 463f94a71773eeea754033deca50529af699a975
   specs:
@@ -30,12 +37,6 @@ GIT
   specs:
     rubycas-client (2.3.10.rc1)
       activesupport
-
-PATH
-  remote: /Users/chmthielen/src/active_directory
-  specs:
-    active_directory (1.2.9)
-      net-ldap (>= 0.5.0)
 
 GEM
   remote: https://rubygems.org/
