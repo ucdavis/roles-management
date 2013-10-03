@@ -52,6 +52,30 @@ module ActiveDirectoryWrapper
     end
   end
 
+  # Takes objectGuid as a hex string and returns an ActiveDirectory::Group object
+  def ActiveDirectoryWrapper.fetch_group_by_guid(guid)
+    settings = {
+        :host => AD_GROUPS_SETTINGS['host'],
+        :base => AD_GROUPS_SETTINGS['base'],
+        :port => 636,
+        :encryption => :simple_tls,
+        :auth => {
+          :method => :simple,
+          :username => AD_GROUPS_SETTINGS['user'],
+          :password => AD_GROUPS_SETTINGS['pass']
+        }
+    }
+
+    ActiveDirectory::Base.setup(settings)
+
+    begin
+      ActiveDirectory::Group.find(:first, :objectguid => guid)
+    rescue SystemCallError
+      # Usually occurs when AD can't be reached (times out)
+      return nil
+    end
+  end
+
   # Takes name as a string (e.g. 'this-that') and returns true or false
   def ActiveDirectoryWrapper.group_exists?(group_name)
     if ActiveDirectoryWrapper.fetch_group(group_name).nil?

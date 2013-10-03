@@ -122,11 +122,21 @@ namespace :ad do
           Authorization.ignore_access_control(true)
 
           unless r.ad_path.nil?
-            log.info "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD..."
-            g = ActiveDirectoryWrapper.fetch_group(r.ad_path)
+            log.info "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD ..."
+            
+            if r.ad_guid
+              g = ActiveDirectoryWrapper.fetch_group_by_guid(r.ad_guid)
+            else
+              g = ActiveDirectoryWrapper.fetch_group(r.ad_path)
+              # Record GUID as this is our preferred method of finding an existing group
+              r.ad_guid = g.objectguid unless g.nil?
+            end
+            
+            # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
+            r.ad_path = g.cn unless g.nil?
 
             unless g.nil?
-              log.info "Found group #{r.ad_path} in AD."
+              log.info "Found group (#{r.ad_path}, #{r.ad_guid}) in AD."
 
               # Add members to AD
               r.members.each do |member|
@@ -143,10 +153,12 @@ namespace :ad do
               # else we will remove any AD members who do not match our local database (one-way sync).
               ad_members = ActiveDirectoryWrapper.list_group_members(g)
               role_members = r.members.map{ |x| x.loginid }
+              
               if r.last_ad_sync == nil
                 # Add AD entries back as local members
                 log.info "Syncing AD members back to local as this is the first recorded AD sync for this role."
                 log.info "There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start."
+                
                 ad_members.each do |m|
                   log.info "Syncing back #{m[:samaccountname]}"
                   unless role_members.include? m[:samaccountname]
@@ -188,13 +200,13 @@ namespace :ad do
                 end
               end
             else
-              log.error "Could not find group #{r.ad_path} in AD."
+              log.error "Could not find group (#{r.ad_path}, #{r.ad_guid}) in AD."
             end
 
             log.info "Done syncing role #{r.id} with AD."
 
             r.last_ad_sync = Time.now
-            #r.skip_next_sync = true
+            
             r.save
           else
             log.info "Not syncing role because no AD path is set."

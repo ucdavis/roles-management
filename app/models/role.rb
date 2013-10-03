@@ -6,8 +6,8 @@
 class Role < ActiveRecord::Base
   using_access_control
 
-  validates :token, :uniqueness => { :scope => :id, :message => "token must be unique per application" }
-  validates :application_id, :presence => true # must have an application
+  validates :application_id, :presence => true
+  validates :token, :uniqueness => { :scope => :application_id, :message => "token must be unique per application" }
   validate :ad_path_cannot_be_blank_if_present
   
   has_many :role_assignments, :dependent => :destroy
