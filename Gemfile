@@ -2,8 +2,6 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.14'
 
-# Gems used only for assets and not required
-# in production environments by default.
 group :assets do
   gem 'sass-rails',   ' ~> 3.2.3'
   gem 'coffee-rails', ' ~> 3.2.1'
@@ -12,28 +10,29 @@ end
 
 group :production do
   gem 'syslogger', :git => 'https://github.com/cthielen/syslogger.git'
+  gem 'pg'
+  gem 'unicorn'
 end
 
 group :development do
   gem 'letter_opener'
   gem 'ruby-prof'
   gem 'debugger'
+  gem 'active_record_query_trace'
 end
 
-gem 'sqlite3', :groups => [:development, :test]
-gem 'active_record_query_trace', :groups => [:development]
+group :development, :test do
+  gem 'jasminerice', :git => 'git://github.com/bradphelan/jasminerice.git'
+  gem 'guard-jasmine'
+  gem 'sqlite3'
+end
 
 gem 'capistrano'
 
-gem 'unicorn'
-
 gem 'ruby-ldap'
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
-gem 'dynamic_form'
+#gem 'dynamic_form'
 
-gem 'pg'
-
-#gem 'jquery-rails'
 gem 'ejs'
 
 gem 'declarative_authorization', "~> 0.5.7"
@@ -44,7 +43,7 @@ gem 'net-ldap', :git => 'git://github.com/ruby-ldap/ruby-net-ldap.git'
 gem 'active_directory', :git => 'git://github.com/cthielen/active_directory.git'
 
 gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
-gem 'ruby_parser'
+#gem 'ruby_parser'
 
 gem 'rabl'
 gem 'oj'
@@ -65,8 +64,3 @@ gem 'paperclip', '~> 3.0'
 
 # For memory usage checks
 gem 'os'
-
-group :development, :test do
-  gem 'jasminerice', :git => 'git://github.com/bradphelan/jasminerice.git'
-  gem 'guard-jasmine'
-end
