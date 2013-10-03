@@ -23,7 +23,6 @@ end
 gem 'sqlite3', :groups => [:development, :test]
 gem 'active_record_query_trace', :groups => [:development]
 
-# Deploy with Capistrano
 gem 'capistrano'
 
 gem 'unicorn'
@@ -37,10 +36,12 @@ gem 'pg'
 #gem 'jquery-rails'
 gem 'ejs'
 
-gem 'declarative_authorization', :git => 'git://github.com/stffn/declarative_authorization.git' #, "~> 0.5.7"
+gem 'declarative_authorization', "~> 0.5.7"
 
 # For MS Active Directory support
-gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
+#gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
+gem 'net-ldap', :git => 'git://github.com/ruby-ldap/ruby-net-ldap.git'
+gem 'active_directory', :path => '/Users/chmthielen/src/active_directory'
 
 gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
 gem 'ruby_parser'
@@ -49,9 +50,6 @@ gem 'rabl'
 gem 'oj'
 
 gem 'exception_notification'
-
-# Temporary version of net-ssh to workaround broken 2.5.1
-gem 'net-ssh', :git => 'git://github.com/nessche/net-ssh.git'
 
 gem 'jbuilder'
 

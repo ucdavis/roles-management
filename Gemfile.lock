@@ -6,13 +6,6 @@ GIT
       coffee-rails
 
 GIT
-  remote: git://github.com/nessche/net-ssh.git
-  revision: 21dde273463f5aae11dcad34dfb3feb08dc81375
-  specs:
-    net-ssh (2.5.1)
-      jruby-pageant (>= 1.0.2)
-
-GIT
   remote: git://github.com/railsware/js-routes.git
   revision: 463f94a71773eeea754033deca50529af699a975
   specs:
@@ -20,17 +13,10 @@ GIT
       rails (>= 3.2)
 
 GIT
-  remote: git://github.com/richardun/active_directory.git
-  revision: 20abe18dfa9ffb964717252201f1ca225bb764bd
+  remote: git://github.com/ruby-ldap/ruby-net-ldap.git
+  revision: bbef82f22494864f5c0e53d4dffb21cead3fc274
   specs:
-    active_directory (1.2.9)
-      net-ldap (>= 0.1.1)
-
-GIT
-  remote: git://github.com/stffn/declarative_authorization.git
-  revision: 549a8d384e10cd7be5df4edcd5695893634fcf03
-  specs:
-    declarative_authorization (0.5.7)
+    net-ldap (0.5.0)
 
 GIT
   remote: https://github.com/cthielen/syslogger.git
@@ -40,10 +26,16 @@ GIT
 
 GIT
   remote: https://github.com/rubycas/rubycas-client.git
-  revision: 843a5afb00be0c648c450451a8232043f10d44d4
+  revision: d0e22cb2a098879d0369c8109386cb8338b1dc2e
   specs:
     rubycas-client (2.3.10.rc1)
       activesupport
+
+PATH
+  remote: /Users/chmthielen/src/active_directory
+  specs:
+    active_directory (1.2.9)
+      net-ldap (>= 0.5.0)
 
 GEM
   remote: https://rubygems.org/
@@ -108,6 +100,7 @@ GEM
       debugger-ruby_core_source (~> 1.2.3)
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.3)
+    declarative_authorization (0.5.7)
     delayed_job (4.0.0)
       activesupport (>= 3.0, < 4.1)
     delayed_job_active_record (4.0.0)
@@ -141,7 +134,6 @@ GEM
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
     journey (1.0.4)
-    jruby-pageant (1.1.1)
     json (1.8.0)
     kgio (2.8.1)
     launchy (2.3.0)
@@ -159,13 +151,13 @@ GEM
     method_source (0.8.2)
     mime-types (1.25)
     multi_json (1.8.0)
-    net-ldap (0.3.1)
-    net-scp (1.0.4)
-      net-ssh (>= 1.99.1)
-    net-sftp (2.0.5)
-      net-ssh (>= 2.0.9)
-    net-ssh-gateway (1.1.0)
-      net-ssh (>= 1.99.1)
+    net-scp (1.1.2)
+      net-ssh (>= 2.6.5)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (2.7.0)
+    net-ssh-gateway (1.2.0)
+      net-ssh (>= 2.6.5)
     oj (2.1.4)
     os (0.9.6)
     paperclip (3.5.1)
@@ -256,7 +248,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   daemons
   debugger
-  declarative_authorization!
+  declarative_authorization (~> 0.5.7)
   delayed_job_active_record
   dynamic_form
   ejs
@@ -266,7 +258,7 @@ DEPENDENCIES
   jbuilder
   js-routes!
   letter_opener
-  net-ssh!
+  net-ldap!
   oj
   os
   paperclip (~> 3.0)
