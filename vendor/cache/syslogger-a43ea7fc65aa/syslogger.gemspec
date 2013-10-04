@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.3") if s.respond_to? :required_rubygems_version=
   s.authors = ["Cyril Rohr"]
-  s.date = "2013-09-27"
+  s.date = "2013-10-04"
   s.description = "Same as SyslogLogger, but without the ridiculous number of dependencies and with the possibility to specify the syslog facility"
   s.email = ["cyril.rohr@gmail.com"]
   s.files = ["lib/syslogger.rb", "spec/spec_helper.rb", "spec/syslogger_spec.rb", "Rakefile", "LICENSE", "README.rdoc"]
