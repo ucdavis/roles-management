@@ -97,7 +97,7 @@ class Role < ActiveRecord::Base
   
   def ad_path_cannot_be_blank_if_present
     if self.ad_path and self.ad_path.blank?
-      errors.add(:ad_path, "must not be blank if specified")
+      self.ad_path = nil
     end
   end
 end
