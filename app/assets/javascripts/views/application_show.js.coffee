@@ -80,10 +80,6 @@ class DssRm.Views.ApplicationShow extends Backbone.View
       maxfiles: 1
       maxfilesize: 1 # MB
       
-      # user drops file
-      uploadStarted: (i, file, len) ->
-        console.log 'upload started'
-      
       uploadFinished: (i, file, response, time) =>
          @$('img#app-icon').attr('src', response.icon)
       
