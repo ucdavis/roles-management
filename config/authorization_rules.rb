@@ -24,7 +24,7 @@ authorization do
     has_permission_on :api_key_users, :to => :manage
     
     # For impersonating
-    has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate]
+    has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate, :ad_path_check]
     
     # For whitelisted IP users
     has_permission_on :admin_api_whitelisted_ip_users, :to => :manage
