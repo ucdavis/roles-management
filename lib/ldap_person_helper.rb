@@ -190,7 +190,14 @@ module LdapPersonHelper
         end
 
         if UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode].nil? and ucdAppointmentDepartmentCode
-          log.warn "Could not find a department code translation for " + ucdAppointmentDepartmentCode + ". Do we need to update our department translations table?" unless log.nil?
+          # Unknown department. Create it and assume LDAP data is trustworthy.
+          new_ou = Group.find_or_initialize_by_code(ucdAppointmentDepartmentCode)
+          new_ou.name = entry.get_values('ou')[0]
+          new_ou.save!
+          
+          #log.info "Adding newly found OU (#{ou.name}, #{ou.code}) for person #{p.loginid}." unless log.nil?
+          
+          p.groups << new_ou
         end
       end
 
