@@ -20,6 +20,10 @@ DssRm.Views.ApplicationShowAD = Backbone.View.extend(
     current_ts = new Date().getTime()
     typed = @$('input[name=ad_path]').val()
 
+    if typed == ""
+      @$('i').hide()
+      return
+
     @$('i').show()
     
     if current_ts > @lastAdCheck + @AD_CHECK_DELAY
