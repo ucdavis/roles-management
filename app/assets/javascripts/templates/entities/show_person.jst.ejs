@@ -80,11 +80,18 @@
     </div>
   </div> <!-- /tabbable -->
 </div>
-<div class="modal-footer">
+<div class="modal-footer" style="text-align: center;">
   <div style="float: left;">
-    <a href="#" class="btn" id="rescan">Rescan</a>
+    <a href="#" class="btn span1" id="rescan">Rescan</a>
   </div>
   <% if( !model.isReadOnly()) { %>
-    <button class="btn btn-primary" id="apply">Apply Changes</button>
+    <div class="btn-group" data-toggle="buttons-radio">
+      <button type="button" class="btn" id="status-enabled">Enabled</button>
+      <button type="button" class="btn" id="status-disabled">Disabled</button>
+    </div>
+    
+    <div style="float: right;">
+      <button class="btn btn-primary span2" id="apply">Apply Changes</button>
+    </div>
   <% } %>
 </div>

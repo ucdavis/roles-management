@@ -154,6 +154,13 @@ class DssRm.Views.PersonShow extends Backbone.View
     @$("input[name=phone]").val @formatPhone(@model.get("phone"))
     @$("input[name=address]").val @model.get("address")
     
+    if @model.get("status")
+      @$('button#status-enabled').addClass 'active'
+      @$('button#status-disabled').removeClass 'active'
+    else
+      @$('button#status-enabled').removeClass 'active'
+      @$('button#status-disabled').addClass 'active'
+    
     favorites_tokeninput = @$("input[name=favorites]")
     favorites_tokeninput.tokenInput "clear"
     @model.favorites.each (favorite) =>
@@ -239,6 +246,7 @@ class DssRm.Views.PersonShow extends Backbone.View
         loginid: @$("input[name=loginid]").val()
         phone: @$("input[name=phone]").val().replace(/\D/g, '') # strip out non-numeric characters
         address: @$("input[name=address]").val()
+        status: @$('button#status-enabled').hasClass('active')
 
       @model.save {},
         success: ->

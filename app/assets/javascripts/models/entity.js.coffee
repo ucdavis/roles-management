@@ -60,7 +60,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
       delete @attributes.role_assignments
   
   toJSON: ->
-    
     if @type() is EntityTypes.group
       json = {}
       # Group-specific JSON
@@ -100,6 +99,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.email = @get("email")
       json.loginid = @get("loginid")
       json.phone = @get("phone")
+      json.status = @get("status")
       
       json.favorite_ids = @favorites.map (favorite) -> favorite.id
       if @group_memberships.length
