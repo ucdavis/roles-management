@@ -32,7 +32,7 @@ class ActiveSupport::TestCase
       a = Application.find_by_name("DSS Roles Management")
       r_access = a.roles.find_by_token("access")
       assert r_access, "DSS Roles Management 'access' token appears to be missing"
-      p.roles << r_access
+      p.roles << r_access unless p.roles.include? r_access
       r_admin = a.roles.find_by_token("admin")
       assert r_admin, "DSS Roles Management 'admin' token appears to be missing"
       p.roles << r_admin
@@ -50,8 +50,9 @@ class ActiveSupport::TestCase
   
   def revoke_all_access
     Authorization.current_user = nil
-    @request.env.delete('REMOTE_ADDR')
-    @request.session.delete(:auth_via)
-    @request.session.delete(:user_id)
+    request.env.delete('REMOTE_ADDR')
+    request.session.delete(:auth_via)
+    request.session.delete(:user_id)
+    CASClient::Frameworks::Rails::Filter.fake(nil)
   end
 end

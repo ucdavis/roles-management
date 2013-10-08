@@ -1,3 +1,4 @@
 apiuser:
+  id: 1
   name: apiuser
   secret: 123456

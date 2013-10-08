@@ -5,12 +5,12 @@ class Admin::OpsController < Admin::BaseController
   # GET /admin/ops/impersonate/[loginid]
   def impersonate
     @person = Person.find_by_loginid(params[:loginid])
-
+    
     unless @person.nil?
       logger.info "#{actual_user.log_identifier}@#{request.remote_ip}: Impersonating #{params[:loginid]}."
       session[:impersonation_id] = @person.id
     end
-
+    
     redirect_to applications_url
   end
 

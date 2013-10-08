@@ -11,7 +11,7 @@ class Admin::ApiKeyUsersController < ApplicationController
   def create
     respond_to do |format|
       if @api_key_user.save
-        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new API key, #{params[:api_key]}."
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new API key, #{params[:api_key_user]}."
         format.json { render json: @api_key_user, status: :created }
       else
         format.json { render json: @api_key_user.errors, status: :unprocessable_entity }
@@ -20,10 +20,10 @@ class Admin::ApiKeyUsersController < ApplicationController
   end
 
   def destroy
-    @api_key = ApiKeyUser.find(params[:id])
+    @api_key = ApiKeyUser.find_by_id(params[:id])
     @api_key.destroy
 
-    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted API key, #{params[:api_key]}."
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted API key '#{@api_key.name}' (#{params[:id]})."
 
     respond_to do |format|
       format.json { head :no_content }
