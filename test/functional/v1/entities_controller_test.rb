@@ -31,8 +31,8 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   # loginid required for: impersonate dialog, group rule "loginid is"
   # id, name, loginid, email, roles included as per published API spec
   # Should also respond to /people/loginid.json
-  test 'JSON request should include certain attributes' do
-    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
+  test 'JSON index request should include certain attributes' do
+    grant_api_user_access
   
     get :index, :format => :json
   
@@ -45,7 +45,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   end
 
   test 'JSON show request should include certain attributes when entity is a person' do
-    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
+    grant_api_user_access
   
     get :show, :format => :json, :id => 1
   
@@ -61,7 +61,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   end
 
   test 'JSON show request should include certain attributes when entity is a group' do
-    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
+    grant_api_user_access
   
     get :show, :format => :json, :id => 2
   
@@ -77,5 +77,29 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
       assert m["id"], "JSON response's 'members' section should include an id"
       assert m["type"], "JSON response's 'members' section should include a type"
     end
+  end
+  
+  test "JSON index request should not include disabled entities" do
+    grant_api_user_access
+    
+    get :index, :format => :json
+    
+    disabledEntity = entities(:disabledPerson)
+    
+    entities = JSON.parse(response.body)
+    
+    entities.each do |e|
+      assert e["id"].to_i != disabledEntity.id, 'JSON response should not include disabled entities'
+    end
+  end
+  
+  test "JSON show request should not include disabled entities" do
+    grant_api_user_access
+
+    disabledEntity = entities(:disabledPerson)
+
+    get :show, :format => :json, :id => disabledEntity.id
+
+    assert_response :missing
   end
 end

@@ -41,7 +41,11 @@ class ActiveSupport::TestCase
   end
 
   def grant_whitelisted_access
-    @request.env['REMOTE_ADDR'] = '1.2.3.4'
+    request.env['REMOTE_ADDR'] = '1.2.3.4'
+  end
+  
+  def grant_api_user_access
+    request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
   end
   
   def revoke_all_access

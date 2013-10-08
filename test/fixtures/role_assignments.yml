@@ -2,3 +2,8 @@ assigns_group_with_a_role_to_that_role:
   id: 1
   entity_id: 6
   role_id: 3
+
+assigns_disabled_user_a_role:
+  id: 2
+  entity_id: 8
+  role_id: 3

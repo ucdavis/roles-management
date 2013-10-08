@@ -58,3 +58,16 @@ groupWithoutARole:
   type: Group
   name: Group without a Role
   description: This group has no roles.
+
+disabledPerson:
+  id: 8
+  type: Person
+  first: Robert
+  last: Natinabled
+  name: Robert Natinabled
+  email: robert@domain.com
+  loginid: robert
+  status: false
+  phone: 8005551313
+  address: 471 Testing Lane
+  

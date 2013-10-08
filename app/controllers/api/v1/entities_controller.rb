@@ -13,9 +13,12 @@ module Api
       end
       
       def show
-        if @entity
+        if @entity and @entity.status
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
           render "api/v1/entities/show"
+        elsif @entity and @entity.status == false
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id} but entity is disabled. Returning 404." }
+          render :json => "", :status => 404
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load entity view (show) for invalid ID #{params[:id]}." }
           render :text => "Invalid entity ID '#{params[:id]}'.", :status => 404

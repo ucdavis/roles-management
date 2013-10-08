@@ -8,7 +8,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
   # loginid required for: impersonate dialog, group rule "loginid is"
   # id, name, loginid, email, roles included as per published API spec
   # Should also respond to /people/loginid.json
-  test 'JSON request should include certain attributes' do
+  test 'JSON show request should include certain attributes' do
     grant_test_user_admin_access
 
     get :show, :format => :json, :id => 'casuser'
@@ -56,5 +56,15 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
       assert r['id'], "JSON response's 'group_operatorships' section should include an id"
       assert r['name'], "JSON response's 'group_operatorships' section should include a name"
     end
+  end
+  
+  test "JSON show request should not include disabled entities" do
+    grant_api_user_access
+
+    disabledEntity = entities(:disabledPerson)
+
+    get :show, :format => :json, :id => disabledEntity.id
+
+    assert_response :missing
   end
 end

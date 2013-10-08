@@ -29,14 +29,35 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
 
     assert body["owners"], "JSON response should include an 'owners' section"
     body["owners"].each do |o|
-      assert o["id"], "JSON response's 'owners' section's 'members' should include an ID"
-      assert o["name"], "JSON response's 'owners' section's 'members' should include a name"
+      pp o
+      assert o["id"], "JSON response's 'owners' section should include an ID"
+      assert o["name"], "JSON response's 'owners' section should include a name"
     end
 
     assert body["operators"], "JSON response should include an 'operators' section"    
     body["operators"].each do |o|
       assert o["id"], "JSON response's 'roles' section's 'members' should include an ID"
       assert o["name"], "JSON response's 'roles' section's 'members' should include a name"
+    end
+  end
+
+  test "JSON index request should not include disabled entities" do
+    disabledEntity = entities(:disabledPerson)
+
+    grant_test_user_admin_access
+
+    get :index, :format => :json
+
+    applications = JSON.parse(response.body)
+    
+    applications.each do |a|
+      a["owners"].each do |o|
+        assert o["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
+      end
+
+      a["operators"].each do |o|
+        assert o["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
+      end
     end
   end
 
@@ -74,6 +95,31 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
     body["operators"].each do |o|
       assert o["id"], "JSON response's 'roles' section's 'members' should include an ID"
       assert o["name"], "JSON response's 'roles' section's 'members' should include a name"
+    end
+  end
+  
+  test "JSON show request should not include disabled entities" do
+    disabledEntity = entities(:disabledPerson)
+
+    assert disabledEntity.application_ownerships.length > 0, "disabled entity fixture needs at least one application ownership"
+    assert disabledEntity.application_operatorships.length > 0, "disabled entity fixture needs at least one application operatorship"
+
+    grant_test_user_admin_access
+
+    get :show, :format => :json, :id => disabledEntity.application_ownerships[0].id
+
+    application = JSON.parse(response.body)
+
+    application["owners"].each do |o|
+      assert o["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
+    end
+
+    get :show, :format => :json, :id => disabledEntity.application_operatorships[0].id
+
+    application = JSON.parse(response.body)
+
+    application["operators"].each do |o|
+      assert o["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
     end
   end
 end

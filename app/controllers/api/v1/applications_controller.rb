@@ -26,7 +26,7 @@ module Api
       private
 
       def load_application
-        @application = Application.with_permissions_to(:read).find(params[:id])
+        @application = Application.with_permissions_to(:read).find_by_id(params[:id])
       end
 
       def load_applications
