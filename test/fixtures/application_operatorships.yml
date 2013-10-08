@@ -1,0 +1,11 @@
+application_operatorship1:
+  id: 1
+  application_id: 1
+  entity_id: 1
+  parent_id: null
+
+application_operatorship2:
+  id: 2
+  application_id: 1
+  entity_id: 8
+  parent_id: null

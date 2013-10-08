@@ -1,0 +1,11 @@
+application_ownership1:
+  id: 1
+  application_id: 1
+  entity_id: 1
+  parent_id: null
+
+application_ownership2:
+  id: 2
+  application_id: 1
+  entity_id: 8
+  parent_id: null
