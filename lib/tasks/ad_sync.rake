@@ -23,14 +23,15 @@ namespace :ad do
         log.error "Error: Could not load group dss-us-auto-all"
       end
 
-      Person.all.each_with_index do |p, i|
+      # Add active users to dss-us-auto-all, cluster-name-affiliation, and cluster-all groups as necessary
+      Person.where(:status => true).each_with_index do |p, i|
         log.tagged "person:#{p.loginid}" do
           ad_user = ActiveDirectoryWrapper.fetch_user(p.loginid)
           if ad_user.nil?
             log.warn "Could not find user in AD"
           end
 
-          # Write them to all group (dss-us-auto-all) if necessary
+          # Add them to dss-us-auto-all if necessary
           unless ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
             if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
               log.error "Need to add to dss-us-auto-all but operation failed"
@@ -49,6 +50,8 @@ namespace :ad do
 
               # Skip unknown translations
               if ((short_ou == false) || (flattened_affiliation == false))
+                log.warn "Skipping AD affiliation group sync for user #{p.loginid} as OU shortened translation is unknown for '#{p.groups.ous[0].name}'." unless short_ou
+                log.warn "Skipping AD affiliation group sync for user #{p.loginid} as affiliation shortened translation is unknown for '#{affiliation.name}'." unless flattened_affiliation
                 next
               end
 
@@ -138,8 +141,8 @@ namespace :ad do
             unless g.nil?
               log.info "Found group (#{r.ad_path}, #{r.ad_guid}) in AD."
 
-              # Add members to AD
-              r.members.each do |member|
+              # Add enabled members to AD
+              r.members.select{ |m| m.status }.each do |member|
                 u = ActiveDirectoryWrapper.fetch_user(member.loginid)
                 unless ActiveDirectoryWrapper.in_group(u, g)
                   log.info "Adding user #{member.loginid} to AD group #{r.ad_path}"
@@ -152,7 +155,7 @@ namespace :ad do
               # If this is our first AD sync, we will add AD entries not found locally back to our database (two-way sync),
               # else we will remove any AD members who do not match our local database (one-way sync).
               ad_members = ActiveDirectoryWrapper.list_group_members(g)
-              role_members = r.members.map{ |x| x.loginid }
+              role_members = r.members.select{ |m| m.status }.map{ |x| x.loginid }
               
               if r.last_ad_sync == nil
                 # Add AD entries back as local members
