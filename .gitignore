@@ -13,4 +13,4 @@ config/active_directory.yml
 public/assets/
 .rvmrc
 public/system
-vendor/bundle
+vendor/bundle/
