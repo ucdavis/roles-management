@@ -36,9 +36,9 @@ module Api
           entities_table = Entity.arel_table
       
           # Search login IDs in case of an entity-search but looking for person by login ID
-          @entities = Entity.with_permissions_to(:read).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+          @entities = Entity.with_permissions_to(:read).where(:status => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
         else
-          @entities = Entity.with_permissions_to(:read).all
+          @entities = Entity.with_permissions_to(:read).where(:status => true).all
         end
       end
     end

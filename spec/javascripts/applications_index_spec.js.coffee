@@ -9,5 +9,10 @@ describe "ApplicationsIndex", ->
   it "displays application cards and sidebar entities", ->
     jasmine.log @data.current_user
     expect(@view.el.nodeName).toEqual("DIV")
+    jasmine.log '1'
     expect(@view.$el.find("#cards>.card").length).toBeGreaterThan(0)
-    expect(@view.$el.find("#sidebar>#pins>li").length).toBeGreaterThan(0)
+    jasmine.log '2'
+    expect(@view.$el.find("#sidebar #pins>li").length).toBeGreaterThan(0)
+    jasmine.log '3'
+    
+    jasmine.log @view.$el.find("#sidebar>#pins")
