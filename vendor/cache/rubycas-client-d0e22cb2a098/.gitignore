@@ -1,0 +1,30 @@
+*.swp
+*.gem
+
+# simplecov generated
+coverage
+
+# rdoc generated
+rdoc
+
+# yard generated
+doc
+.yardoc
+
+# bundler
+.bundle
+
+# jeweler generated
+pkg
+
+# rbenv and rvm configs
+.rbenv-version
+.rbenv-vars
+.rvmrc
+.ruby-version
+
+tmp
+
+.project
+
+Gemfile.lock

@@ -1,0 +1,7 @@
+test:
+  adapter: sqlite3
+  database: spec/test.sqlite3.db
+
+testjruby:
+  adapter: jdbcsqlite3
+  database: spec/test.sqlite3.db
