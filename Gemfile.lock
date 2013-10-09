@@ -20,7 +20,7 @@ GIT
       net-ldap (>= 0.1.1)
 
 GIT
-  remote: git://github.com/ruby-ldap/ruby-net-ldap.git
+  remote: git@github.com:cthielen/net-ldap.git
   revision: bbef82f22494864f5c0e53d4dffb21cead3fc274
   specs:
     net-ldap (0.5.0)
