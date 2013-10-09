@@ -13,13 +13,6 @@ GIT
       rails (>= 3.2)
 
 GIT
-  remote: git://github.com/richardun/active_directory.git
-  revision: 20abe18dfa9ffb964717252201f1ca225bb764bd
-  specs:
-    active_directory (1.2.9)
-      net-ldap (>= 0.1.1)
-
-GIT
   remote: git@github.com:cthielen/net-ldap.git
   revision: bbef82f22494864f5c0e53d4dffb21cead3fc274
   specs:
@@ -242,7 +235,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_directory!
   active_record_query_trace
   capistrano (< 3.0.0)
   coffee-rails (~> 3.2.1)
