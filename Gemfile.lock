@@ -6,6 +6,13 @@ GIT
       coffee-rails
 
 GIT
+  remote: git://github.com/cthielen/active_directory.git
+  revision: 4de152eb34b4f3902a92fe019a5c1a7ec5fae584
+  specs:
+    active_directory (1.2.9)
+      net-ldap (>= 0.5.0)
+
+GIT
   remote: git://github.com/railsware/js-routes.git
   revision: 463f94a71773eeea754033deca50529af699a975
   specs:
@@ -13,7 +20,7 @@ GIT
       rails (>= 3.2)
 
 GIT
-  remote: git@github.com:cthielen/net-ldap.git
+  remote: git://github.com/ruby-ldap/ruby-net-ldap.git
   revision: bbef82f22494864f5c0e53d4dffb21cead3fc274
   specs:
     net-ldap (0.5.0)
@@ -235,6 +242,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_directory!
   active_record_query_trace
   capistrano (< 3.0.0)
   coffee-rails (~> 3.2.1)

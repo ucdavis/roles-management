@@ -14,3 +14,4 @@ public/assets/
 .rvmrc
 public/system
 vendor/bundle/
+vendor/cache/
