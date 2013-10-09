@@ -39,7 +39,6 @@ gem 'ejs'
 gem 'declarative_authorization', "~> 0.5.7"
 
 # For MS Active Directory support
-#gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
 gem 'net-ldap', :git => 'git://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
 #gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git', :require => false
 gem 'active_directory', :git => 'git://github.com/cthielen/active_directory.git', :require => false
