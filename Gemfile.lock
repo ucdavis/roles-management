@@ -232,6 +232,8 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    unicorn-worker-killer (0.4.2)
+      unicorn (~> 4)
     whenever (0.8.4)
       activesupport (>= 2.3.4)
       chronic (>= 0.6.3)
@@ -270,4 +272,5 @@ DEPENDENCIES
   syslogger!
   uglifier (>= 1.0.3)
   unicorn
+  unicorn-worker-killer
   whenever
