@@ -257,7 +257,7 @@ DEPENDENCIES
   jbuilder
   js-routes!
   letter_opener
-  net-ldap (>= 0.5.0)!
+  net-ldap!
   oj
   os
   paperclip (~> 3.0)
