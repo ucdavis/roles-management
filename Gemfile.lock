@@ -6,18 +6,18 @@ GIT
       coffee-rails
 
 GIT
-  remote: git://github.com/cthielen/active_directory.git
-  revision: 4de152eb34b4f3902a92fe019a5c1a7ec5fae584
-  specs:
-    active_directory (1.2.9)
-      net-ldap (>= 0.5.0)
-
-GIT
   remote: git://github.com/railsware/js-routes.git
   revision: 463f94a71773eeea754033deca50529af699a975
   specs:
     js-routes (0.9.3)
       rails (>= 3.2)
+
+GIT
+  remote: git://github.com/richardun/active_directory.git
+  revision: 20abe18dfa9ffb964717252201f1ca225bb764bd
+  specs:
+    active_directory (1.2.9)
+      net-ldap (>= 0.1.1)
 
 GIT
   remote: git://github.com/ruby-ldap/ruby-net-ldap.git
