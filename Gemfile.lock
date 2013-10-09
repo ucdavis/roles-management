@@ -20,12 +20,6 @@ GIT
       net-ldap (>= 0.1.1)
 
 GIT
-  remote: git://github.com/ruby-ldap/ruby-net-ldap.git
-  revision: bbef82f22494864f5c0e53d4dffb21cead3fc274
-  specs:
-    net-ldap (0.5.0)
-
-GIT
   remote: https://github.com/cthielen/syslogger.git
   revision: a43ea7fc65aa061f6d37a65bc436cdd7f88c7016
   specs:
@@ -153,6 +147,7 @@ GEM
     method_source (0.8.2)
     mime-types (1.25)
     multi_json (1.8.1)
+    net-ldap (0.3.1)
     net-scp (1.1.2)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -257,7 +252,6 @@ DEPENDENCIES
   jbuilder
   js-routes!
   letter_opener
-  net-ldap!
   oj
   os
   paperclip (~> 3.0)
