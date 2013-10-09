@@ -28,7 +28,7 @@ group :development, :test do
   gem 'sqlite3'
 end
 
-gem 'capistrano', :require => false
+gem 'capistrano', '< 3.0.0'
 
 gem 'ruby-ldap', :require => false
 
