@@ -70,6 +70,7 @@ class PeopleController < ApplicationController
   
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
+    require 'ldap'
     require 'ldap_helper'
     require 'ldap_person_helper'
     

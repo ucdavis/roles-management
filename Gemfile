@@ -12,6 +12,7 @@ group :production do
   gem 'syslogger', :git => 'https://github.com/cthielen/syslogger.git'
   gem 'pg'
   gem 'unicorn'
+  gem 'unicorn-worker-killer'
 end
 
 group :development do
@@ -27,11 +28,11 @@ group :development, :test do
   gem 'sqlite3'
 end
 
-gem 'capistrano'
+gem 'capistrano', :require => false
 
-gem 'ruby-ldap'
+gem 'ruby-ldap', :require => false
+
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
-#gem 'dynamic_form'
 
 gem 'ejs'
 
@@ -39,10 +40,10 @@ gem 'declarative_authorization', "~> 0.5.7"
 
 # For MS Active Directory support
 #gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git'
-gem 'net-ldap', :git => 'git://github.com/ruby-ldap/ruby-net-ldap.git'
-gem 'active_directory', :git => 'git://github.com/cthielen/active_directory.git'
+gem 'net-ldap', :git => 'git://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
+gem 'active_directory', :git => 'git://github.com/cthielen/active_directory.git', :require => false
 
-gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
+gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git', :require => false
 
 gem 'rabl'
 gem 'oj'
@@ -52,7 +53,7 @@ gem 'exception_notification'
 gem 'jbuilder'
 
 # For scheduled tasks
-gem 'whenever'
+gem 'whenever', :require => false
 
 # For background processing
 gem 'delayed_job_active_record'
@@ -62,4 +63,4 @@ gem 'daemons'
 gem 'paperclip', '~> 3.0'
 
 # For memory usage checks
-gem 'os'
+gem 'os', :require => false

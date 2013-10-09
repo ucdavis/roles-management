@@ -1,4 +1,5 @@
 namespace :ldap do
+  require 'ldap'
   require 'ldap_helper'
   require 'ldap_person_helper'
   

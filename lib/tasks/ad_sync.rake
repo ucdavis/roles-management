@@ -4,6 +4,7 @@ namespace :ad do
   desc 'Sync the user database with Active Directory'
   task :sync_all_users => :environment do
     require 'stringio'
+    require 'active_directory'
     require 'active_directory_wrapper'
     
     notify_admins = false
@@ -112,6 +113,7 @@ namespace :ad do
   desc 'Sync a role against Active Directory. May create new users as needed.'
   task :sync_role, [:role_id] => :environment do |t, args|
     require 'stringio'
+    require 'active_directory'
     require 'active_directory_wrapper'
     
     strio = StringIO.new
