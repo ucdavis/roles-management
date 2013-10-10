@@ -39,7 +39,7 @@ module Authentication
           Authorization.current_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
         end
       end
-      logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{Authorization.current_user}"
+      logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{session[:user_id]}, #{Authorization.current_user}"
       return
     end
 
@@ -94,8 +94,6 @@ module Authentication
     CASClient::Frameworks::Rails::Filter.filter(self)
 
     if session[:cas_user]
-      logger.debug "authenticate: cas_user exists in session."
-
       # CAS session exists. Valid user account?
       @user = Person.includes(:role_assignments).includes(:roles).find_by_loginid(session[:cas_user])
       @user = nil if @user and @user.status == false # Don't allow disabled users to log in
