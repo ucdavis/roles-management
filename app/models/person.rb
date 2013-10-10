@@ -91,7 +91,11 @@ class Person < Entity
   
   # Returns all applications visible to a user (via ownership or operatorship)
   def accessible_applications
-    Application.with_permissions_to(:read).includes(:roles)
+    begin
+      Application.with_permissions_to(:read).includes(:roles)
+    rescue Authorization::NotAuthorized
+      []
+    end
   end
   
   def trigger_sync
