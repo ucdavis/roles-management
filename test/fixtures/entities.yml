@@ -70,4 +70,15 @@ disabledPerson:
   status: false
   phone: 8005551313
   address: 471 Testing Lane
-  
+
+cthielen:
+  id: 9
+  type: Person
+  first: Christopher
+  last: Thielen
+  name: Christopher Thielen
+  email: thielen-testing@ucdavis.edu
+  loginid: cthielen
+  status: true
+  phone: 8005551414
+  address: 472 Testing Drive
