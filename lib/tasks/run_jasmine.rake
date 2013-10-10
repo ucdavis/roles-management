@@ -6,4 +6,3 @@ namespace :jasmine do
     exec 'phantomjs script/run-jasmine.js http://roles-management.dev/jasmine'
   end
 end
-
