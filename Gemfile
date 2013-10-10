@@ -17,8 +17,8 @@ end
 
 group :development do
   gem 'letter_opener'
-  gem 'ruby-prof'
-  gem 'debugger'
+  gem 'ruby-prof', :platform => :mri
+  gem 'debugger', :platform => :mri
   gem 'active_record_query_trace'
 end
 
@@ -27,6 +27,9 @@ group :development, :test do
   gem 'guard-jasmine'
   gem 'sqlite3'
 end
+
+
+gem "rubysl", "~> 2.0", :platform => :rbx
 
 gem 'capistrano', '< 3.0.0'
 
