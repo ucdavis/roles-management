@@ -14,7 +14,9 @@ class RoleAssignmentTest < ActiveSupport::TestCase
       
       assert group.roles.length == 0, "looks like groupWithoutARole actually has some roles - somebody messed with the fixtures"
       
+      @person.role_assignments.destroy_all
       assert @person.roles.length == 0, "Looks like our test user 'casuser' has roles already - somebody messed with the fixtures"
+      
       @person.group_memberships.destroy_all
       assert @person.group_memberships.length == 0, "'casuser' must not have group memberships for this test"
       

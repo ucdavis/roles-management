@@ -7,3 +7,13 @@ assigns_disabled_user_a_role:
   id: 2
   entity_id: 8
   role_id: 3
+
+assign_casuser_rm_access:
+  id: 3
+  entity_id: 1
+  role_id: 1
+
+assign_casuser_rm_admin:
+  id: 4
+  entity_id: 1
+  role_id: 2

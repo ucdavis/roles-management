@@ -11,14 +11,16 @@ class ApplicationOwnershipTest < ActiveSupport::TestCase
     Authorization.current_user = entities(:casuser)
     
     p = entities(:casuser)
-    grant_test_user_basic_access
     
     without_access_control do
       p.application_ownerships.destroy_all
       p.application_operatorships.destroy_all
+      p.role_assignments.destroy_all
     end
     
-    assert p.accessible_applications.length == 0, "user should not have any accessible applications at this point in the test #{p.accessible_applications.length}"
+    grant_test_user_basic_access
+    
+    assert p.accessible_applications.include?(applications(:regular_app)) == false, "user should not have access to the regular_app yet"
     
     without_access_control do
       ao = ApplicationOwnership.new

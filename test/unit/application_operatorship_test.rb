@@ -11,20 +11,22 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
     Authorization.current_user = entities(:casuser)
     
     p = entities(:casuser)
-    grant_test_user_basic_access
     
     without_access_control do
       p.application_ownerships.destroy_all
       p.application_operatorships.destroy_all
+      p.role_assignments.destroy_all
     end
     
-    assert p.accessible_applications.length == 0, "user should not have any accessible applications at this point in the test #{p.accessible_applications.length}"
+    grant_test_user_basic_access
+    
+    assert p.accessible_applications.include?(applications(:regular_app)) == false, "user should not be able to access applications(:regular_app) at this point"
     
     without_access_control do
       ao = ApplicationOperatorship.new
       ao.entity = p
       ao.application = applications(:regular_app)
-      ao.save!
+      p.application_operatorships << ao
     end
     
     assert p.accessible_applications.include?(applications(:regular_app)), "user should have access to application just granted via operatorship"

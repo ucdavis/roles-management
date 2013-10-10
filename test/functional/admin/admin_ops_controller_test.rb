@@ -4,6 +4,7 @@ class Admin::OpsControllerTest < ActionController::TestCase
   test "admin access required for AD path check" do
     # Ensure unauthorized user has no access
     revoke_all_access
+    assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
       
     get :ad_path_check, { path: 'somewhere', format: :json }
@@ -14,6 +15,7 @@ class Admin::OpsControllerTest < ActionController::TestCase
     
     Authorization.current_user = entities(:casuser)
     grant_test_user_basic_access
+    revoke_test_user_admin_access
     
     get :ad_path_check, { path: 'somewhere', format: :json }
     assert_response 403
@@ -28,6 +30,7 @@ class Admin::OpsControllerTest < ActionController::TestCase
   test "admin access required impersonating" do
     # Ensure unauthorized user has no access
     revoke_all_access
+    assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     
     get "impersonate", loginid: 'someone'
@@ -38,6 +41,7 @@ class Admin::OpsControllerTest < ActionController::TestCase
     
     Authorization.current_user = entities(:casuser)
     grant_test_user_basic_access
+    revoke_test_user_admin_access
     
     get "impersonate", loginid: 'someone'
     assert_response 406
