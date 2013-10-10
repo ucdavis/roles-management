@@ -1,4 +1,4 @@
-class Admin::ApiKeyUsersController < ApplicationController
+class Admin::ApiKeyUsersController < Admin::BaseController
   before_filter :new_api_key_user_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_api_keys
@@ -26,7 +26,7 @@ class Admin::ApiKeyUsersController < ApplicationController
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted API key '#{@api_key.name}' (#{params[:id]})."
 
     respond_to do |format|
-      format.json { head :no_content }
+      format.json { head :no_content, status: :destroyed }
     end
   end
   
