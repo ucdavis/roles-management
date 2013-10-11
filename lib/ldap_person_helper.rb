@@ -59,12 +59,6 @@ module LdapPersonHelper
         p.name = p.loginid
       end
 
-      if p.new_record?
-        # Only turn this individual on if they're new - we don't want to override
-        # a disabled individual just because we're updating their information from LDAP.
-        p.status = true
-      end
-
       # A person may have multiple affiliations
       entry.get_values('ucdPersonAffiliation').each do |affiliation_name|
         affiliation = Affiliation.find_or_create_by_name(affiliation_name)
