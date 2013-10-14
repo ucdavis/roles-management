@@ -15,3 +15,6 @@ public/assets/
 public/system
 vendor/bundle/
 vendor/cache/
+.powenv
+.ruby-version
+
