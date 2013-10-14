@@ -116,6 +116,8 @@ namespace :ad do
     require 'active_directory'
     require 'active_directory_wrapper'
     
+    MAGIC_DESCRIPTOR = "(RM Sync)" # string which will be added to an AD group's 'description' if it is not present
+    
     strio = StringIO.new
     log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
     
@@ -135,6 +137,20 @@ namespace :ad do
               g = ActiveDirectoryWrapper.fetch_group(r.ad_path)
               # Record GUID as this is our preferred method of finding an existing group
               r.ad_guid = g.objectguid unless g.nil?
+            end
+            
+            # Ensure g.description includes the text MAGIC_DESCRIPTOR (see above) somewhere in it (by request of the sys admins)
+            # If a group has no description, activedirectory gem will throw an ArgumentError.
+            begin
+              g_desc = g.description
+            rescue ArgumentError
+              # description not set
+              g_desc = ""
+            end
+            
+            unless g_desc and g_desc.index MAGIC_DESCRIPTOR
+              g.description = "#{g_desc} #{MAGIC_DESCRIPTOR}"
+              g.save
             end
             
             # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
@@ -177,7 +193,7 @@ namespace :ad do
 
                       p = Person.new
                       p.loginid = m[:samaccountname]
-                      p.name = p.loginid # we need the name set to something. LDAP sync will update this if possible.
+                      p.last = p.loginid # we need the name set to something. LDAP sync will update this if possible.
                       p.save
 
                       log.info "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check."
