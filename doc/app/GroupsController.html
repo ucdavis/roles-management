@@ -72,9 +72,15 @@
     
     <li><a href="#method-i-create">#create</a>
     
+    <li><a href="#method-i-destroy">#destroy</a>
+    
     <li><a href="#method-i-index">#index</a>
     
+    <li><a href="#method-i-new_group_from_params">#new_group_from_params</a>
+    
     <li><a href="#method-i-show">#show</a>
+    
+    <li><a href="#method-i-update">#update</a>
     
   </ul>
 </nav>
@@ -99,13 +105,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -114,6 +134,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -125,9 +147,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -137,8 +159,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -147,11 +167,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -165,6 +189,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -176,8 +202,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -244,10 +268,8 @@
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 17</span>
+            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
-  <span class="ruby-ivar">@group</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:group</span>])
-
   <span class="ruby-ivar">@group</span>.<span class="ruby-identifier">save</span>
   <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@group</span>
 <span class="ruby-keyword">end</span></pre>
@@ -259,6 +281,38 @@
 
         
       </div><!-- create-method -->
+
+    
+      <div id="method-i-destroy" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">destroy</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="destroy-source">
+            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 37</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
+  <span class="ruby-ivar">@group</span>.<span class="ruby-identifier">destroy</span>
+  
+  <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@group</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- destroy-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- destroy-method -->
 
     
       <div id="method-i-index" class="method-detail ">
@@ -278,14 +332,8 @@
 
           
           <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 7</span>
+            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 9</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:q</span>]
-    <span class="ruby-ivar">@groups</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">where</span>(<span class="ruby-string">&quot;upper(name) like ? and code is null&quot;</span>, <span class="ruby-node">&quot;%#{params[:q].upcase}%&quot;</span>)
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-ivar">@groups</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">all</span>
-  <span class="ruby-keyword">end</span>
-
   <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@groups</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- index-source -->
@@ -314,10 +362,8 @@
 
           
           <div class="method-source-code" id="show-source">
-            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 24</span>
+            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 33</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>
-  <span class="ruby-ivar">@group</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
-  
   <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@group</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- show-source -->
@@ -330,7 +376,84 @@
       </div><!-- show-method -->
 
     
+      <div id="method-i-update" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="update-source">
+            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 18</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>] <span class="ruby-keyword">and</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:group</span>]
+    <span class="ruby-ivar">@group</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
+    
+    <span class="ruby-comment"># ActiveResource (for API access) sends us members, operators, etc.</span>
+    <span class="ruby-comment"># API access will have to rely on other methods for assocating objects with a group, e.g.</span>
+    <span class="ruby-comment"># setting GroupRule.group_id instead of trying Group.rules &lt;&lt; GroupRule.</span>
+    <span class="ruby-ivar">@group</span>.<span class="ruby-identifier">update_attributes</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:group</span>].<span class="ruby-identifier">except</span>(<span class="ruby-value">:id</span>, <span class="ruby-value">:members</span>, <span class="ruby-value">:operators</span>, <span class="ruby-value">:owners</span>, <span class="ruby-value">:rules</span>))
+    
+    <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@group</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">respond_with</span> <span class="ruby-value">422</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- update-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- update-method -->
+
+    
     </section><!-- public-instance-method-details -->
+  
+     <section id="protected-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Protected Instance Methods</h3>
+
+    
+      <div id="method-i-new_group_from_params" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new_group_from_params</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="new_group_from_params-source">
+            <pre><span class="ruby-comment"># File app/controllers/groups_controller.rb, line 45</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">new_group_from_params</span>
+  <span class="ruby-ivar">@group</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:group</span>])
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- new_group_from_params-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- new_group_from_params-method -->
+
+    
+    </section><!-- protected-instance-method-details -->
   
   </section><!-- 5Buntitled-5D -->
 

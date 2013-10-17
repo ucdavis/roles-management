@@ -78,8 +78,6 @@
     
     <li><a href="#method-i-_has_role-3F">#_has_role?</a>
     
-    <li><a href="#method-i-li_link_with_class">#li_link_with_class</a>
-    
   </ul>
 </nav>
 
@@ -103,13 +101,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -118,6 +130,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -129,9 +143,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -141,8 +155,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -151,11 +163,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -169,6 +185,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -180,8 +198,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -250,13 +266,11 @@
           <div class="method-source-code" id="_has_role-3F-source">
             <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 4</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">_has_role?</span>(<span class="ruby-identifier">role</span>)
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">current_user</span> <span class="ruby-operator">==</span> <span class="ruby-value">:cas_user_not_in_database</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">impersonating?</span>
-      <span class="ruby-comment"># We assume anybody impersonating is an admin and has every role anyway ...</span>
-      <span class="ruby-keyword">yield</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-keyword">yield</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">has_role?</span>(<span class="ruby-identifier">role</span>)
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">impersonating?</span>
+    <span class="ruby-comment"># We assume anybody impersonating is an admin and has every role anyway ...</span>
+    <span class="ruby-keyword">yield</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">yield</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">has_role?</span>(<span class="ruby-identifier">role</span>)
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- _has_role-3F-source -->
@@ -267,42 +281,6 @@
 
         
       </div><!-- _has_role-3F-method -->
-
-    
-      <div id="method-i-li_link_with_class" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">li_link_with_class</span><span
-            class="method-args">(options)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Produces a link_to, adjusting CSS class if link is to current controller</p>
-          
-
-          
-          <div class="method-source-code" id="li_link_with_class-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 16</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">li_link_with_class</span>(<span class="ruby-identifier">options</span>)
-  <span class="ruby-identifier">title</span> = <span class="ruby-identifier">options</span>[<span class="ruby-value">:title</span>]
-  <span class="ruby-identifier">options</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:title</span>) <span class="ruby-comment"># to avoid being used by link_to</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:controller</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">controller_name</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">options</span>[<span class="ruby-value">:action</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">action_name</span>
-    (<span class="ruby-string">&#39;&lt;li class=&quot;active&quot;&gt;&#39;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">title</span>, <span class="ruby-identifier">options</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&#39;&lt;/li&gt;&#39;</span>).<span class="ruby-identifier">html_safe</span>
-  <span class="ruby-keyword">else</span>
-    (<span class="ruby-string">&#39;&lt;li&gt;&#39;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">link_to</span>(<span class="ruby-identifier">title</span>, <span class="ruby-identifier">options</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&#39;&lt;/li&gt;&#39;</span>).<span class="ruby-identifier">html_safe</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- li_link_with_class-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- li_link_with_class-method -->
 
     
     </section><!-- public-instance-method-details -->

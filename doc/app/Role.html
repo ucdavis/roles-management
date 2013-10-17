@@ -70,11 +70,7 @@
 
   <ul class="link-list">
     
-    <li><a href="#method-i-application_name">#application_name</a>
-    
     <li><a href="#method-i-as_json">#as_json</a>
-    
-    <li><a href="#method-i-init">#init</a>
     
     <li><a href="#method-i-members">#members</a>
     
@@ -107,13 +103,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -122,6 +132,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -133,9 +145,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -145,8 +157,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -155,11 +165,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -173,6 +187,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -184,8 +200,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -216,6 +230,12 @@
 
   <div id="description" class="description">
     
+<p>A role has both &#39;entities&#39; and &#39;members&#39;. Ultimately,
+&#39;entities&#39; is the only model assigned to a role. An entity is
+either a <a href="Person.html">Person</a> or <a
+href="Group.html">Group</a>. &#39;Members&#39; refers only to people and is
+calculated by flattening groups down to people.</p>
+
   </div><!-- description -->
 
   
@@ -229,74 +249,11 @@
     
 
     
-    <!-- Attributes -->
-    <section id="attribute-method-details" class="method-section section">
-      <h3 class="section-header">Attributes</h3>
-
-      
-      <div id="attribute-i-entities_changed" class="method-detail">
-        <div class="method-heading attribute-method-heading">
-          <span class="method-name">entities_changed</span><span
-            class="attribute-access-type">[RW]</span>
-        </div>
-
-        <div class="method-description">
-        
-        
-        
-        </div>
-      </div>
-      
-      <div id="attribute-i-skip_next_sync" class="method-detail">
-        <div class="method-heading attribute-method-heading">
-          <span class="method-name">skip_next_sync</span><span
-            class="attribute-access-type">[RW]</span>
-        </div>
-
-        <div class="method-description">
-        
-        
-        
-        </div>
-      </div>
-      
-    </section><!-- attribute-method-details -->
-    
 
     <!-- Methods -->
     
      <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
       <h3 class="section-header">Public Instance Methods</h3>
-
-    
-      <div id="method-i-application_name" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">application_name</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Needed in show.json.rabl to display a role&#39;s application&#39;s name</p>
-          
-
-          
-          <div class="method-source-code" id="application_name-source">
-            <pre><span class="ruby-comment"># File app/models/role.rb, line 27</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">application_name</span>
-  <span class="ruby-identifier">application</span>.<span class="ruby-identifier">name</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- application_name-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- application_name-method -->
 
     
       <div id="method-i-as_json" class="method-detail ">
@@ -315,12 +272,12 @@
 
           
           <div class="method-source-code" id="as_json-source">
-            <pre><span class="ruby-comment"># File app/models/role.rb, line 31</span>
+            <pre><span class="ruby-comment"># File app/models/role.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">as_json</span>(<span class="ruby-identifier">options</span>={})
   { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:token</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">token</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">:application_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">application_id</span>,
-    <span class="ruby-value">:description</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">description</span>, <span class="ruby-value">:mandatory</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">mandatory</span>,
-    <span class="ruby-value">:entities</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">entities</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">type</span>, <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">name</span> } }, <span class="ruby-value">:ad_path</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ad_path</span>,
-    <span class="ruby-value">:members</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">members</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">loginid</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">loginid</span> } } }
+    <span class="ruby-value">:description</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">description</span>,
+    <span class="ruby-value">:assignments</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">role_assignments</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">calculated</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">parent_id?</span>, <span class="ruby-identifier">entity_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">entity_id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">type</span> } }
+   }
 <span class="ruby-keyword">end</span></pre>
           </div><!-- as_json-source -->
           
@@ -330,36 +287,6 @@
 
         
       </div><!-- as_json-method -->
-
-    
-      <div id="method-i-init" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">init</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="init-source">
-            <pre><span class="ruby-comment"># File app/models/role.rb, line 22</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">init</span>
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">entities_changed</span> = <span class="ruby-keyword">false</span> <span class="ruby-comment"># hokey way of setting a default value</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- init-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- init-method -->
 
     
       <div id="method-i-members" class="method-detail ">
@@ -374,21 +301,24 @@
         <div class="method-description">
           
           <p>Slightly different than &#39;entities&#39; … members takes all people and
-all people from groups (flattens the group) and returns them as a list.</p>
+all people from groups (flattens the group) and returns them as a list. It
+also only returns unique results, so e.g. if a person has this role via two
+different groups, they will only appear once in the members output, but at
+least twice in the &#39;entities&#39; output.</p>
           
 
           
           <div class="method-source-code" id="members-source">
-            <pre><span class="ruby-comment"># File app/models/role.rb, line 51</span>
+            <pre><span class="ruby-comment"># File app/models/role.rb, line 48</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">members</span>
   <span class="ruby-identifier">all</span> = []
 
   <span class="ruby-comment"># Add all people</span>
-  <span class="ruby-identifier">all</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">entities</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Person&quot;</span>)
+  <span class="ruby-identifier">all</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">entities</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Person&quot;</span>).<span class="ruby-identifier">all</span>
 
   <span class="ruby-comment"># Add all (flattened) groups</span>
-  <span class="ruby-identifier">entities</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Group&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">group</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">all</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">group</span>.<span class="ruby-identifier">members</span>(<span class="ruby-keyword">true</span>)
+  <span class="ruby-identifier">entities</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Group&quot;</span>).<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">group</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">all</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">group</span>.<span class="ruby-identifier">flattened_members</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-comment"># Return a unique list</span>
@@ -421,23 +351,17 @@ verified as a success right away</p>
 
           
           <div class="method-source-code" id="sync_ad-source">
-            <pre><span class="ruby-comment"># File app/models/role.rb, line 68</span>
+            <pre><span class="ruby-comment"># File app/models/role.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">sync_ad</span>
-  <span class="ruby-comment"># AD sync will update the role&#39;s &quot;last_ad_sync&quot; member. Ensure we don&#39;t</span>
-  <span class="ruby-comment"># end up recursively calling this after_save callback!</span>
-  <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">skip_next_sync</span>
-    <span class="ruby-keyword">if</span> (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">ad_path_changed?</span> <span class="ruby-operator">||</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">entities_changed</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ad_path</span>
-      <span class="ruby-identifier">require</span> <span class="ruby-string">&#39;rake&#39;</span>
-      <span class="ruby-identifier">load</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>, <span class="ruby-string">&#39;lib&#39;</span>, <span class="ruby-string">&#39;tasks&#39;</span>, <span class="ruby-string">&#39;ad_sync.rake&#39;</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">ad_path</span> <span class="ruby-keyword">and</span> (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">ad_path</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>)
+    <span class="ruby-identifier">require</span> <span class="ruby-string">&#39;rake&#39;</span>
+    
+    <span class="ruby-identifier">load</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">join</span>(<span class="ruby-constant">Rails</span>.<span class="ruby-identifier">root</span>, <span class="ruby-string">&#39;lib&#39;</span>, <span class="ruby-string">&#39;tasks&#39;</span>, <span class="ruby-string">&#39;ad_sync.rake&#39;</span>)
 
-      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Scheduling AD sync for role #{id}&quot;</span>
-      <span class="ruby-constant">Delayed</span><span class="ruby-operator">::</span><span class="ruby-constant">Job</span>.<span class="ruby-identifier">enqueue</span>(<span class="ruby-constant">DelayedRake</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;ad:sync_role[#{id}]&quot;</span>))
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Not syncing AD as ad_path_changed? is #{self.ad_path_changed?} or entities_changed is #{self.entities_changed}&quot;</span>
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Scheduling AD sync for role #{id}&quot;</span>
+    <span class="ruby-constant">Delayed</span><span class="ruby-operator">::</span><span class="ruby-constant">Job</span>.<span class="ruby-identifier">enqueue</span>(<span class="ruby-constant">DelayedRake</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;ad:sync_role[#{id}]&quot;</span>))
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Not scheduling AD sync for role #{id} as skip_next_sync was set.&quot;</span>
-    <span class="ruby-keyword">self</span>.<span class="ruby-identifier">skip_next_sync</span> = <span class="ruby-keyword">false</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Not scheduling AD sync for role #{id} as AD path is not set.&quot;</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- sync_ad-source -->
@@ -466,7 +390,7 @@ verified as a success right away</p>
 
           
           <div class="method-source-code" id="to_csv-source">
-            <pre><span class="ruby-comment"># File app/models/role.rb, line 38</span>
+            <pre><span class="ruby-comment"># File app/models/role.rb, line 33</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_csv</span>
   <span class="ruby-identifier">data</span> = []
 
@@ -506,7 +430,7 @@ Directory, etc. can be updated)</p>
 
           
           <div class="method-source-code" id="trigger_sync-source">
-            <pre><span class="ruby-comment"># File app/models/role.rb, line 91</span>
+            <pre><span class="ruby-comment"># File app/models/role.rb, line 82</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">trigger_sync</span>
   <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Role #{id}: trigger_sync called, calling sync_ad&quot;</span>
   <span class="ruby-identifier">sync_ad</span>

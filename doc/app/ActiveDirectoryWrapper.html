@@ -47,7 +47,7 @@
     <nav id="file-list-section" class="section">
   <h3 class="section-header">Defined In</h3>
   <ul>
-    <li>lib/ActiveDirectoryWrapper.rb
+    <li>lib/active_directory_wrapper.rb
   </ul>
 </nav>
 
@@ -67,6 +67,8 @@
     <li><a href="#method-c-add_user_to_group">::add_user_to_group</a>
     
     <li><a href="#method-c-fetch_group">::fetch_group</a>
+    
+    <li><a href="#method-c-fetch_group_by_guid">::fetch_group_by_guid</a>
     
     <li><a href="#method-c-fetch_user">::fetch_user</a>
     
@@ -101,13 +103,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -116,6 +132,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -127,9 +145,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -139,8 +157,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -149,11 +165,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -167,6 +187,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -178,8 +200,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -265,7 +285,7 @@ ActiveDirectory::Group object and returns boolean</p>
 
           
           <div class="method-source-code" id="add_user_to_group-source">
-            <pre><span class="ruby-comment"># File lib/ActiveDirectoryWrapper.rb, line 65</span>
+            <pre><span class="ruby-comment"># File lib/active_directory_wrapper.rb, line 89</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">add_user_to_group</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">group</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
@@ -314,7 +334,7 @@ ActiveDirectory::Group object</p>
 
           
           <div class="method-source-code" id="fetch_group-source">
-            <pre><span class="ruby-comment"># File lib/ActiveDirectoryWrapper.rb, line 32</span>
+            <pre><span class="ruby-comment"># File lib/active_directory_wrapper.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">fetch_group</span>(<span class="ruby-identifier">group_name</span>)
   <span class="ruby-identifier">settings</span> = {
       <span class="ruby-value">:host</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">AD_GROUPS_SETTINGS</span>[<span class="ruby-string">&#39;host&#39;</span>],
@@ -347,6 +367,56 @@ ActiveDirectory::Group object</p>
       </div><!-- fetch_group-method -->
 
     
+      <div id="method-c-fetch_group_by_guid" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">fetch_group_by_guid</span><span
+            class="method-args">(guid)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Takes objectGuid as a hex string and returns an ActiveDirectory::Group
+object</p>
+          
+
+          
+          <div class="method-source-code" id="fetch_group_by_guid-source">
+            <pre><span class="ruby-comment"># File lib/active_directory_wrapper.rb, line 56</span>
+<span class="ruby-keyword">def</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">fetch_group_by_guid</span>(<span class="ruby-identifier">guid</span>)
+  <span class="ruby-identifier">settings</span> = {
+      <span class="ruby-value">:host</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">AD_GROUPS_SETTINGS</span>[<span class="ruby-string">&#39;host&#39;</span>],
+      <span class="ruby-value">:base</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">AD_GROUPS_SETTINGS</span>[<span class="ruby-string">&#39;base&#39;</span>],
+      <span class="ruby-value">:port</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">636</span>,
+      <span class="ruby-value">:encryption</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:simple_tls</span>,
+      <span class="ruby-value">:auth</span> =<span class="ruby-operator">&gt;</span> {
+        <span class="ruby-value">:method</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">:simple</span>,
+        <span class="ruby-value">:username</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">AD_GROUPS_SETTINGS</span>[<span class="ruby-string">&#39;user&#39;</span>],
+        <span class="ruby-value">:password</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">AD_GROUPS_SETTINGS</span>[<span class="ruby-string">&#39;pass&#39;</span>]
+      }
+  }
+
+  <span class="ruby-constant">ActiveDirectory</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">setup</span>(<span class="ruby-identifier">settings</span>)
+
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-constant">ActiveDirectory</span><span class="ruby-operator">::</span><span class="ruby-constant">Group</span>.<span class="ruby-identifier">find</span>(<span class="ruby-value">:first</span>, <span class="ruby-value">:objectguid</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">guid</span>)
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">SystemCallError</span>
+    <span class="ruby-comment"># Usually occurs when AD can&#39;t be reached (times out)</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- fetch_group_by_guid-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- fetch_group_by_guid-method -->
+
+    
       <div id="method-c-fetch_user" class="method-detail ">
         
         <div class="method-heading">
@@ -364,7 +434,7 @@ ActiveDirectory::User object</p>
 
           
           <div class="method-source-code" id="fetch_user-source">
-            <pre><span class="ruby-comment"># File lib/ActiveDirectoryWrapper.rb, line 7</span>
+            <pre><span class="ruby-comment"># File lib/active_directory_wrapper.rb, line 7</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">fetch_user</span>(<span class="ruby-identifier">loginid</span>)
   <span class="ruby-identifier">u</span> = <span class="ruby-keyword">nil</span>
 
@@ -414,7 +484,7 @@ ActiveDirectory::User object</p>
 
           
           <div class="method-source-code" id="group_exists-3F-source">
-            <pre><span class="ruby-comment"># File lib/ActiveDirectoryWrapper.rb, line 56</span>
+            <pre><span class="ruby-comment"># File lib/active_directory_wrapper.rb, line 80</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">group_exists?</span>(<span class="ruby-identifier">group_name</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">fetch_group</span>(<span class="ruby-identifier">group_name</span>).<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
@@ -452,7 +522,7 @@ href="ActiveDirectoryWrapper.html#method-c-fetch_group">::fetch_group</a>)</p>
 
           
           <div class="method-source-code" id="in_group-source">
-            <pre><span class="ruby-comment"># File lib/ActiveDirectoryWrapper.rb, line 121</span>
+            <pre><span class="ruby-comment"># File lib/active_directory_wrapper.rb, line 145</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">in_group</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">group</span>)
   <span class="ruby-identifier">settings</span> = {
       <span class="ruby-value">:host</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">AD_GROUPS_SETTINGS</span>[<span class="ruby-string">&#39;host&#39;</span>],
@@ -508,7 +578,7 @@ users</p>
 
           
           <div class="method-source-code" id="list_group_members-source">
-            <pre><span class="ruby-comment"># File lib/ActiveDirectoryWrapper.rb, line 88</span>
+            <pre><span class="ruby-comment"># File lib/active_directory_wrapper.rb, line 112</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">list_group_members</span>(<span class="ruby-identifier">group</span>)
   <span class="ruby-identifier">members</span> = []
 
@@ -566,7 +636,7 @@ users</p>
 
           
           <div class="method-source-code" id="remove_user_from_group-source">
-            <pre><span class="ruby-comment"># File lib/ActiveDirectoryWrapper.rb, line 150</span>
+            <pre><span class="ruby-comment"># File lib/active_directory_wrapper.rb, line 174</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">ActiveDirectoryWrapper</span>.<span class="ruby-identifier">remove_user_from_group</span>(<span class="ruby-identifier">user</span>, <span class="ruby-identifier">group</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">group</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>

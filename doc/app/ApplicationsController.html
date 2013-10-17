@@ -78,7 +78,11 @@
     
     <li><a href="#method-i-load_application">#load_application</a>
     
+    <li><a href="#method-i-load_applications">#load_applications</a>
+    
     <li><a href="#method-i-new">#new</a>
+    
+    <li><a href="#method-i-new_application_from_params">#new_application_from_params</a>
     
     <li><a href="#method-i-show">#show</a>
     
@@ -107,13 +111,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -122,6 +140,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -133,9 +153,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -145,8 +165,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -155,11 +173,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -173,6 +195,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -184,8 +208,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -247,24 +269,20 @@
 
         <div class="method-description">
           
-          <p>POST /applications</p>
+          
           
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 54</span>
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
-  <span class="ruby-comment"># SECUREME: Can the current user create applications?</span>
-
-  <span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>][<span class="ruby-value">:owner_ids</span>] = [] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>][<span class="ruby-value">:owner_ids</span>]
-  <span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>][<span class="ruby-value">:owner_ids</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>][<span class="ruby-value">:owner_ids</span>].<span class="ruby-identifier">include?</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
-  <span class="ruby-ivar">@application</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>])
-
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@application</span>.<span class="ruby-identifier">save</span>
-    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.loginid}@#{request.remote_ip}: Created new application, #{params[:application]}.&quot;</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Created new application, #{params[:application]}.&quot;</span>
   <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;#{current_user.loginid}@#{request.remote_ip}: Failed to create new application, #{params[:application]}.&quot;</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">warn</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Failed to create new application, #{params[:application]}.&quot;</span>
   <span class="ruby-keyword">end</span>
+  
+  <span class="ruby-ivar">@application</span>.<span class="ruby-identifier">trigger_sync</span>
 
   <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@application</span>
 <span class="ruby-keyword">end</span></pre>
@@ -289,19 +307,17 @@
 
         <div class="method-description">
           
-          <p>DELETE /applications/1</p>
+          
           
 
           
           <div class="method-source-code" id="destroy-source">
-            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 86</span>
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 79</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
-  <span class="ruby-comment"># SECUREME: Can the current user delete this application?</span>
-
   <span class="ruby-ivar">@application</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
   <span class="ruby-ivar">@application</span>.<span class="ruby-identifier">destroy</span>
 
-  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.loginid}@#{request.remote_ip}: Deleted application, #{params[:application]}.&quot;</span>
+  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Deleted application, #{params[:application]}.&quot;</span>
 
   <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@application</span>
 <span class="ruby-keyword">end</span></pre>
@@ -326,16 +342,18 @@
 
         <div class="method-description">
           
-          <p>GET /applications</p>
+          
           
 
           
           <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 7</span>
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 8</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>
-  <span class="ruby-ivar">@applications</span> = <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">manageable_applications</span> <span class="ruby-keyword">unless</span> <span class="ruby-keyword">not</span> <span class="ruby-keyword">defined?</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">manageable_applications</span>
   <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page).&quot;</span>
-  <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@applications</span>
+  
+  <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@applications</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">format</span>.<span class="ruby-identifier">html</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- index-source -->
           
@@ -358,14 +376,13 @@
 
         <div class="method-description">
           
-          <p>GET /applications/new</p>
+          
           
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 46</span>
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">new</span>
-  <span class="ruby-comment"># SECUREME: Can the current user try to create a new application?</span>
   <span class="ruby-ivar">@application</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">new</span>
 
   <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@application</span>
@@ -391,20 +408,20 @@
 
         <div class="method-description">
           
-          <p>GET /applications/1</p>
+          
           
 
           
           <div class="method-source-code" id="show-source">
-            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 14</span>
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>
-  <span class="ruby-comment"># SECUREME: Can the current user see this application?</span>
-
+  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Loaded application show view for #{params[:id]}.&quot;</span>
+  
   <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@application</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">format</span>.<span class="ruby-identifier">csv</span> {
       <span class="ruby-identifier">require</span> <span class="ruby-string">&#39;csv&#39;</span>
 
-      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.loginid}@#{request.remote_ip}: Downloaded CSV of application, #{params[:application]}.&quot;</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Downloaded CSV of application, #{params[:application]}.&quot;</span>
 
       <span class="ruby-comment"># Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html</span>
       <span class="ruby-identifier">csv_data</span> = <span class="ruby-constant">CSV</span>.<span class="ruby-identifier">generate</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">csv</span><span class="ruby-operator">|</span>
@@ -423,7 +440,7 @@
       <span class="ruby-keyword">end</span>
       <span class="ruby-identifier">send_data</span> <span class="ruby-identifier">csv_data</span>,
         <span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;text/csv; charset=iso-8859-1; header=present&#39;</span>,
-        <span class="ruby-value">:disposition</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-node">&quot;attachment; filename=rm_application_#{@application.to_param}.csv&quot;</span>
+        <span class="ruby-value">:disposition</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;attachment; filename=&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">unix_filename</span>(<span class="ruby-node">&quot;#{@application.name}&quot;</span>)
     }
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -448,20 +465,20 @@
 
         <div class="method-description">
           
-          <p>PUT /applications/1</p>
+          
           
 
           
           <div class="method-source-code" id="update-source">
-            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 71</span>
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>
-  <span class="ruby-comment"># SECUREME: Can the current user update this application?</span>
-
   <span class="ruby-ivar">@application</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@application</span>.<span class="ruby-identifier">update_attributes</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>])
-    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.loginid}@#{request.remote_ip}: Updated application with params #{params[:application]}.&quot;</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}.&quot;</span>
   <span class="ruby-keyword">end</span>
+  
+  <span class="ruby-ivar">@application</span>.<span class="ruby-identifier">trigger_sync</span>
 
   <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@application</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
     <span class="ruby-identifier">format</span>.<span class="ruby-identifier">json</span> { <span class="ruby-identifier">render</span> <span class="ruby-value">:json</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@application</span> } <span class="ruby-comment"># A new role may have been created, so we need to render out to reveal the new ID</span>
@@ -499,14 +516,9 @@
 
           
           <div class="method-source-code" id="load_application-source">
-            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 99</span>
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 90</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">load_application</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">permitted_to?</span>(<span class="ruby-value">:show</span>, <span class="ruby-value">:applications</span>)
-    <span class="ruby-ivar">@application</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-ivar">@application</span> = <span class="ruby-keyword">nil</span>
-    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.loginid}@#{request.remote_ip}: Tried loading an application without permission.&quot;</span>
-  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@application</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">with_permissions_to</span>(<span class="ruby-value">:read</span>).<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
 <span class="ruby-keyword">end</span></pre>
           </div><!-- load_application-source -->
           
@@ -516,6 +528,75 @@
 
         
       </div><!-- load_application-method -->
+
+    
+      <div id="method-i-load_applications" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">load_applications</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="load_applications-source">
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 94</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">load_applications</span>
+  <span class="ruby-identifier">accessible_applications</span> = <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">accessible_applications</span>
+  
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:q</span>]
+    <span class="ruby-identifier">apps</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">arel_table</span>
+    <span class="ruby-ivar">@applications</span> = <span class="ruby-identifier">accessible_applications</span>.<span class="ruby-identifier">where</span>(<span class="ruby-identifier">apps</span>[<span class="ruby-value">:name</span>].<span class="ruby-identifier">matches</span>(<span class="ruby-node">&quot;%#{params[:q]}%&quot;</span>))
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@applications</span> = <span class="ruby-identifier">accessible_applications</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- load_applications-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- load_applications-method -->
+
+    
+      <div id="method-i-new_application_from_params" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new_application_from_params</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="new_application_from_params-source">
+            <pre><span class="ruby-comment"># File app/controllers/applications_controller.rb, line 105</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">new_application_from_params</span>
+  <span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>][<span class="ruby-value">:owner_ids</span>] = [] <span class="ruby-keyword">unless</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>][<span class="ruby-value">:owner_ids</span>]
+  <span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>][<span class="ruby-value">:owner_ids</span>] <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>][<span class="ruby-value">:owner_ids</span>].<span class="ruby-identifier">include?</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>
+  <span class="ruby-ivar">@application</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:application</span>])
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- new_application_from_params-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- new_application_from_params-method -->
 
     
     </section><!-- protected-instance-method-details -->

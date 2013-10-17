@@ -4,7 +4,7 @@
 <head>
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 
-<title>module SafeFilename - Rails Application Documentation</title>
+<title>module Api - Rails Application Documentation</title>
 
 <link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
 
@@ -47,7 +47,10 @@
     <nav id="file-list-section" class="section">
   <h3 class="section-header">Defined In</h3>
   <ul>
-    <li>lib/safe_filename.rb
+    <li>app/controllers/api/v1/applications_controller.rb
+    <li>app/controllers/api/v1/entities_controller.rb
+    <li>app/controllers/api/v1/people_controller.rb
+    <li>app/controllers/api/v1/roles_controller.rb
   </ul>
 </nav>
 
@@ -58,17 +61,7 @@
     
     
     
-    <!-- Method Quickref -->
-<nav id="method-list-section" class="section">
-  <h3 class="section-header">Methods</h3>
-
-  <ul class="link-list">
     
-    <li><a href="#method-i-unix_filename">#unix_filename</a>
-    
-  </ul>
-</nav>
-
   </div>
 
   <div id="project-metadata">
@@ -212,12 +205,10 @@
 </nav>
 
 <div id="documentation">
-  <h1 class="module">module SafeFilename</h1>
+  <h1 class="module">module Api</h1>
 
   <div id="description" class="description">
     
-<p>Controller-level helper to generate safe Unix filenames</p>
-
   </div><!-- description -->
 
   
@@ -234,45 +225,6 @@
 
     <!-- Methods -->
     
-     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
-      <h3 class="section-header">Public Instance Methods</h3>
-
-    
-      <div id="method-i-unix_filename" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">unix_filename</span><span
-            class="method-args">(filename)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Taken from <a
-href="http://stackoverflow.com/questions/3932704/where-should-i-put-controller-helper-methods">stackoverflow.com/questions/3932704/where-should-i-put-controller-helper-methods</a></p>
-          
-
-          
-          <div class="method-source-code" id="unix_filename-source">
-            <pre><span class="ruby-comment"># File lib/safe_filename.rb, line 4</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">unix_filename</span>(<span class="ruby-identifier">filename</span>)
-  <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/[^\w\s_-]+/</span>, <span class="ruby-string">&#39;&#39;</span>)
-          .<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/(^|\b\s)\s+($|\s?\b)/</span>, <span class="ruby-string">&#39;\1\2&#39;</span>)
-          .<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/\s+/</span>, <span class="ruby-string">&#39;_&#39;</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- unix_filename-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- unix_filename-method -->
-
-    
-    </section><!-- public-instance-method-details -->
-  
   </section><!-- 5Buntitled-5D -->
 
 </div><!-- documentation -->

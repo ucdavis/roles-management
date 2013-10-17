@@ -70,9 +70,9 @@
 
   <ul class="link-list">
     
-    <li><a href="#method-c-valid_columns">::valid_columns</a>
+    <li><a href="#method-c-recalculate_all">::recalculate_all</a>
     
-    <li><a href="#method-i-clear_cache_if_needed">#clear_cache_if_needed</a>
+    <li><a href="#method-c-valid_columns">::valid_columns</a>
     
     <li><a href="#method-i-matches">#matches</a>
     
@@ -103,13 +103,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -118,6 +132,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -129,9 +145,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -141,8 +157,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -151,11 +165,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -169,6 +187,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -180,8 +200,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -223,6 +241,19 @@
     
 
     
+    <!-- Constants -->
+    <section id="constants-list" class="section">
+      <h3 class="section-header">Constants</h3>
+      <dl>
+      
+        <dt id="VALID_COLUMNS">VALID_COLUMNS
+        
+        <dd class="description">
+        
+      
+      </dl>
+    </section>
+    
 
     
 
@@ -230,6 +261,36 @@
     
      <section id="public-class-5Buntitled-5D-method-details" class="method-section section">
       <h3 class="section-header">Public Class Methods</h3>
+
+    
+      <div id="method-c-recalculate_all" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">recalculate_all</span><span
+            class="method-args">(column, person_id)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="recalculate_all-source">
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 17</span>
+<span class="ruby-keyword">def</span> <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">recalculate_all</span>(<span class="ruby-identifier">column</span>, <span class="ruby-identifier">person_id</span>)
+  <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;recalculate_all called for #{column} on #{person_id}&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- recalculate_all-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- recalculate_all-method -->
 
     
       <div id="method-c-valid_columns" class="method-detail ">
@@ -248,9 +309,9 @@
 
           
           <div class="method-source-code" id="valid_columns-source">
-            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 16</span>
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">valid_columns</span>
-  <span class="ruby-identifier">@@valid_columns</span>
+  <span class="ruby-constant">VALID_COLUMNS</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- valid_columns-source -->
           
@@ -266,46 +327,6 @@
   
      <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
       <h3 class="section-header">Public Instance Methods</h3>
-
-    
-      <div id="method-i-clear_cache_if_needed" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">clear_cache_if_needed</span><span
-            class="method-args">(force_clear = false)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="clear_cache_if_needed-source">
-            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 166</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">clear_cache_if_needed</span>(<span class="ruby-identifier">force_clear</span> = <span class="ruby-keyword">false</span>)
-  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">changed?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">force_clear</span>
-    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> <span class="ruby-node">&quot;Clearing cache for group #{group_id} because of change in rule #{id}&quot;</span>
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/member_tokens/#{group_id}&quot;</span>)
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/rule_members/#{group_id}&quot;</span>)
-    <span class="ruby-comment"># entities/members/#{flatten} (can be false or true), we may be storing both</span>
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/members/false/#{group_id}&quot;</span>)
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/members/true/#{group_id}&quot;</span>)
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- clear_cache_if_needed-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- clear_cache_if_needed-method -->
 
     
       <div id="method-i-matches" class="method-detail ">
@@ -324,7 +345,7 @@
 
           
           <div class="method-source-code" id="matches-source">
-            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 117</span>
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 121</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">matches</span>(<span class="ruby-identifier">person</span>)
   <span class="ruby-comment"># &#39;cond&#39; is a boolean representing this rule&#39;s &#39;is&#39; or &#39;is not&#39;</span>
   <span class="ruby-identifier">cond</span> = (<span class="ruby-identifier">condition</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;is&quot;</span>)
@@ -338,7 +359,7 @@
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;affiliation&quot;</span>
     <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">affiliations</span>.<span class="ruby-identifier">include?</span> <span class="ruby-constant">Affiliation</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;ou&quot;</span>
-    <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">ous</span>.<span class="ruby-identifier">include?</span> <span class="ruby-constant">Group</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">groups</span>.<span class="ruby-identifier">ous</span>.<span class="ruby-identifier">include?</span> <span class="ruby-constant">Group</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;classification&quot;</span>
     <span class="ruby-identifier">matched</span> = <span class="ruby-identifier">person</span>.<span class="ruby-identifier">classification</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Classification</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;loginid&quot;</span>
@@ -373,11 +394,13 @@
 
           
           <div class="method-source-code" id="print_formatted-source">
-            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 140</span>
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 144</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">print_formatted</span>
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">column</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;title&#39;</span>
     <span class="ruby-identifier">str</span> = <span class="ruby-string">&quot;&lt;b&gt;Title&lt;/b&gt; &quot;</span>
+  <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;ou&#39;</span>
+    <span class="ruby-identifier">str</span> = <span class="ruby-string">&quot;&lt;b&gt;OU&lt;/b&gt; &quot;</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;loginid&#39;</span>
     <span class="ruby-identifier">str</span> = <span class="ruby-string">&quot;&lt;b&gt;Login ID&lt;/b&gt; &quot;</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;major&#39;</span>
@@ -425,9 +448,12 @@
 
           
           <div class="method-source-code" id="resolve-source">
-            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 21</span>
+            <pre><span class="ruby-comment"># File app/models/group_rule.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">resolve</span>
   <span class="ruby-identifier">p</span> = []
+  
+  <span class="ruby-comment"># Ignore blank rules</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">p</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">value</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;&quot;</span>
 
   <span class="ruby-keyword">case</span> <span class="ruby-identifier">column</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;title&quot;</span>
@@ -470,7 +496,7 @@
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">when</span> <span class="ruby-string">&quot;ou&quot;</span>
-    <span class="ruby-identifier">ou</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
+    <span class="ruby-identifier">ou</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">ous</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:members</span>).<span class="ruby-identifier">find_by_name</span>(<span class="ruby-identifier">value</span>)
     <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ou</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">nil</span>
       <span class="ruby-identifier">ps</span> = <span class="ruby-identifier">ou</span>.<span class="ruby-identifier">members</span>
       <span class="ruby-keyword">case</span> <span class="ruby-identifier">condition</span>

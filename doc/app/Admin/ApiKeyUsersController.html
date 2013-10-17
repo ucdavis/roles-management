@@ -4,7 +4,7 @@
 <head>
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 
-<title>class Admin::ApiWhitelistedIpsController - Rails Application Documentation</title>
+<title>class Admin::ApiKeyUsersController - Rails Application Documentation</title>
 
 <link type="text/css" media="screen" href="../rdoc.css" rel="stylesheet">
 
@@ -47,7 +47,7 @@
     <nav id="file-list-section" class="section">
   <h3 class="section-header">Defined In</h3>
   <ul>
-    <li>app/controllers/admin/api_whitelisted_ips_controller.rb
+    <li>app/controllers/admin/api_key_users_controller.rb
   </ul>
 </nav>
 
@@ -59,7 +59,7 @@
     <nav id="parent-class-section" class="section">
   <h3 class="section-header">Parent</h3>
   
-  <p class="link"><a href="../ApplicationController.html">ApplicationController</a>
+  <p class="link"><a href="BaseController.html">Admin::BaseController</a>
   
 </nav>
 
@@ -99,13 +99,27 @@
   
     <li><a href="../Admin.html">Admin</a>
   
-    <li><a href="../Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="../Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="../Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="../Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="../Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="../Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="../Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="../Api.html">Api</a>
+  
+    <li><a href="../Api/V1.html">Api::V1</a>
+  
+    <li><a href="../Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="../Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="../Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="../Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="../ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -114,6 +128,8 @@
     <li><a href="../AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="../AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="../ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="../ApiKeyUser.html">ApiKeyUser</a>
   
@@ -125,9 +141,9 @@
   
     <li><a href="../ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="../ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="../ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="../ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="../ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="../ApplicationsController.html">ApplicationsController</a>
   
@@ -137,8 +153,6 @@
   
     <li><a href="../ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="../DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="../DelayedRake.html">DelayedRake</a>
   
     <li><a href="../EntitiesController.html">EntitiesController</a>
@@ -147,11 +161,15 @@
   
     <li><a href="../Group.html">Group</a>
   
-    <li><a href="../GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="../GroupMembership.html">GroupMembership</a>
   
-    <li><a href="../GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="../GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="../GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="../GroupRule.html">GroupRule</a>
+  
+    <li><a href="../GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="../GroupsController.html">GroupsController</a>
   
@@ -165,6 +183,8 @@
   
     <li><a href="../MajorsController.html">MajorsController</a>
   
+    <li><a href="../Object.html">Object</a>
+  
     <li><a href="../OusController.html">OusController</a>
   
     <li><a href="../PeopleController.html">PeopleController</a>
@@ -176,8 +196,6 @@
     <li><a href="../Role.html">Role</a>
   
     <li><a href="../RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="../RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="../RolesController.html">RolesController</a>
   
@@ -204,7 +222,7 @@
 </nav>
 
 <div id="documentation">
-  <h1 class="class">class Admin::ApiWhitelistedIpsController</h1>
+  <h1 class="class">class Admin::ApiKeyUsersController</h1>
 
   <div id="description" class="description">
     
@@ -239,22 +257,19 @@
 
         <div class="method-description">
           
-          <p>POST /admin/api_whitelisted_ips.json</p>
+          
           
 
           
           <div class="method-source-code" id="create-source">
-            <pre><span class="ruby-comment"># File app/controllers/admin/api_whitelisted_ips_controller.rb, line 13</span>
+            <pre><span class="ruby-comment"># File app/controllers/admin/api_key_users_controller.rb, line 11</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
-  <span class="ruby-comment"># SECUREME</span>
-  <span class="ruby-ivar">@address</span> = <span class="ruby-constant">ApiWhitelistedIpUser</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:api_whitelisted_ip</span>])
-
   <span class="ruby-identifier">respond_to</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@address</span>.<span class="ruby-identifier">save</span>
-      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.loginid}@#{request.remote_ip}: Created new whitelisted IP address, #{params[:address]}.&quot;</span>
-      <span class="ruby-identifier">format</span>.<span class="ruby-identifier">json</span> { <span class="ruby-identifier">render</span> <span class="ruby-identifier">json</span><span class="ruby-operator">:</span> <span class="ruby-ivar">@address</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-value">:created</span> }
+    <span class="ruby-keyword">if</span> <span class="ruby-ivar">@api_key_user</span>.<span class="ruby-identifier">save</span>
+      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Created new API key, #{params[:api_key_user]}.&quot;</span>
+      <span class="ruby-identifier">format</span>.<span class="ruby-identifier">json</span> { <span class="ruby-identifier">render</span> <span class="ruby-identifier">json</span><span class="ruby-operator">:</span> <span class="ruby-ivar">@api_key_user</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-value">:created</span> }
     <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">format</span>.<span class="ruby-identifier">json</span> { <span class="ruby-identifier">render</span> <span class="ruby-identifier">json</span><span class="ruby-operator">:</span> <span class="ruby-ivar">@address</span>.<span class="ruby-identifier">errors</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-value">:unprocessable_entity</span> }
+      <span class="ruby-identifier">format</span>.<span class="ruby-identifier">json</span> { <span class="ruby-identifier">render</span> <span class="ruby-identifier">json</span><span class="ruby-operator">:</span> <span class="ruby-ivar">@api_key_user</span>.<span class="ruby-identifier">errors</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-value">:unprocessable_entity</span> }
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
@@ -279,21 +294,20 @@
 
         <div class="method-description">
           
-          <p>DELETE /admin/api_whitelisted_ips/1.json</p>
+          
           
 
           
           <div class="method-source-code" id="destroy-source">
-            <pre><span class="ruby-comment"># File app/controllers/admin/api_whitelisted_ips_controller.rb, line 28</span>
+            <pre><span class="ruby-comment"># File app/controllers/admin/api_key_users_controller.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
-  <span class="ruby-comment"># SECUREME</span>
-  <span class="ruby-ivar">@address</span> = <span class="ruby-constant">ApiWhitelistedIpUser</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
-  <span class="ruby-ivar">@address</span>.<span class="ruby-identifier">destroy</span>
+  <span class="ruby-ivar">@api_key</span> = <span class="ruby-constant">ApiKeyUser</span>.<span class="ruby-identifier">find_by_id</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
+  <span class="ruby-ivar">@api_key</span>.<span class="ruby-identifier">destroy</span>
 
-  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.loginid}@#{request.remote_ip}: Deleted whitelisted IP address, #{params[:address]}.&quot;</span>
+  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;#{current_user.log_identifier}@#{request.remote_ip}: Deleted API key &#39;#{@api_key.name}&#39; (#{params[:id]}).&quot;</span>
 
   <span class="ruby-identifier">respond_to</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">format</span>.<span class="ruby-identifier">json</span> { <span class="ruby-identifier">head</span> <span class="ruby-value">:no_content</span> }
+    <span class="ruby-identifier">format</span>.<span class="ruby-identifier">json</span> { <span class="ruby-identifier">head</span> <span class="ruby-value">:no_content</span>, <span class="ruby-identifier">status</span><span class="ruby-operator">:</span> <span class="ruby-value">:destroyed</span> }
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- destroy-source -->
@@ -322,12 +336,9 @@
 
           
           <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File app/controllers/admin/api_whitelisted_ips_controller.rb, line 5</span>
+            <pre><span class="ruby-comment"># File app/controllers/admin/api_key_users_controller.rb, line 7</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">index</span>
-  <span class="ruby-comment"># SECUREME</span>
-  <span class="ruby-ivar">@addresses</span> = <span class="ruby-constant">ApiWhitelistedIpUser</span>.<span class="ruby-identifier">all</span>
-
-  <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@addresses</span>
+  <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@api_keys</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- index-source -->
           

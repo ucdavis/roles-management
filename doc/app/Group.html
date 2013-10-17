@@ -70,31 +70,13 @@
 
   <ul class="link-list">
     
-    <li><a href="#method-i-applications">#applications</a>
-    
     <li><a href="#method-i-as_json">#as_json</a>
     
-    <li><a href="#method-i-clear_cache_if_needed">#clear_cache_if_needed</a>
+    <li><a href="#method-i-flattened_members">#flattened_members</a>
     
-    <li><a href="#method-i-entities_tokens-3D">#entities_tokens=</a>
+    <li><a href="#method-i-ou-3F">#ou?</a>
     
-    <li><a href="#method-i-member_ids-3D">#member_ids=</a>
-    
-    <li><a href="#method-i-member_tokens">#member_tokens</a>
-    
-    <li><a href="#method-i-members">#members</a>
-    
-    <li><a href="#method-i-operator_tokens">#operator_tokens</a>
-    
-    <li><a href="#method-i-operator_tokens-3D">#operator_tokens=</a>
-    
-    <li><a href="#method-i-owner_tokens">#owner_tokens</a>
-    
-    <li><a href="#method-i-owner_tokens-3D">#owner_tokens=</a>
-    
-    <li><a href="#method-i-rule_members">#rule_members</a>
-    
-    <li><a href="#method-i-rules_attributes-3D">#rules_attributes=</a>
+    <li><a href="#method-i-recalculate_members">#recalculate_members</a>
     
     <li><a href="#method-i-trigger_sync">#trigger_sync</a>
     
@@ -121,13 +103,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -136,6 +132,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -147,9 +145,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -159,8 +157,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -169,11 +165,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -187,6 +187,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -198,8 +200,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -230,6 +230,8 @@
 
   <div id="description" class="description">
     
+<p><a href="Group.html">Group</a> shares many attributes with entity.</p>
+
   </div><!-- description -->
 
   
@@ -250,43 +252,6 @@
       <h3 class="section-header">Public Instance Methods</h3>
 
     
-      <div id="method-i-applications" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">applications</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Compute accessible applications</p>
-          
-
-          
-          <div class="method-source-code" id="applications-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 93</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">applications</span>
-  <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-node">&quot;entities/applications/#{id}&quot;</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">apps</span> = []
-
-    <span class="ruby-comment"># Add apps via roles explicitly assigned</span>
-    <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">role</span><span class="ruby-operator">|</span> <span class="ruby-identifier">apps</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">application</span> }
-
-    <span class="ruby-identifier">apps</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- applications-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- applications-method -->
-
-    
       <div id="method-i-as_json" class="method-detail ">
         
         <div class="method-heading">
@@ -303,9 +268,13 @@
 
           
           <div class="method-source-code" id="as_json-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 175</span>
+            <pre><span class="ruby-comment"># File app/models/group.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">as_json</span>(<span class="ruby-identifier">options</span>={})
-  { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">:owners</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">owners</span>, <span class="ruby-value">:operators</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">operators</span>, <span class="ruby-value">:members</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">member_tokens</span>, <span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Group&#39;</span> }
+  { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Group&#39;</span>, <span class="ruby-value">:description</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">description</span>,
+    <span class="ruby-value">:owners</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">owners</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">loginid</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">loginid</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">name</span> } },
+    <span class="ruby-value">:operators</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">operators</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">loginid</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">loginid</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">name</span> } },
+    <span class="ruby-value">:memberships</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">memberships</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:entity</span>).<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">entity_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">loginid</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">loginid</span>, <span class="ruby-identifier">calculated</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">calculated</span> } },
+    <span class="ruby-value">:rules</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">rules</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">column</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">column</span>, <span class="ruby-identifier">condition</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">condition</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">value</span> } } }
 <span class="ruby-keyword">end</span></pre>
           </div><!-- as_json-source -->
           
@@ -317,235 +286,54 @@
       </div><!-- as_json-method -->
 
     
-      <div id="method-i-clear_cache_if_needed" class="method-detail ">
+      <div id="method-i-flattened_members" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">clear_cache_if_needed</span><span
-            class="method-args">(force_clear = false)</span>
+          <span class="method-name">flattened_members</span><span
+            class="method-args">()</span>
           <span class="method-click-advice">click to toggle source</span>
         </div>
         
 
         <div class="method-description">
           
-          
-          
-
-          
-          <div class="method-source-code" id="clear_cache_if_needed-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 237</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">clear_cache_if_needed</span>(<span class="ruby-identifier">force_clear</span> = <span class="ruby-keyword">false</span>)
-  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">changed?</span> <span class="ruby-keyword">or</span> <span class="ruby-identifier">force_clear</span>
-    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> <span class="ruby-node">&quot;Clearing cache for group #{id}&quot;</span>
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/member_tokens/#{id}&quot;</span>)
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/rule_members/#{id}&quot;</span>)
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/applications/#{id}&quot;</span>)
-    <span class="ruby-comment"># entities/members/#{flatten} (can be false or true), we may be storing both</span>
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/members/false/#{id}&quot;</span>)
-    <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-node">&quot;entities/members/true/#{id}&quot;</span>)
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
-  <span class="ruby-keyword">else</span>
-    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> <span class="ruby-node">&quot;Not clearing cache for group #{id}, nothing has changed. Associations may still clear cache.&quot;</span>
-    <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- clear_cache_if_needed-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- clear_cache_if_needed-method -->
-
-    
-      <div id="method-i-entities_tokens-3D" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">entities_tokens=</span><span
-            class="method-args">(ids)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
+          <p>Returns all members, both explicitly assigned and calculated via rules.
+Recurses groups all the way down to return a list of <em>only_people</em>.</p>
           
 
           
-          <div class="method-source-code" id="entities_tokens-3D-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 146</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">entities_tokens=</span>(<span class="ruby-identifier">ids</span>)
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">entity_ids</span> = <span class="ruby-identifier">ids</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;,&quot;</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- entities_tokens-3D-source -->
-          
-        </div>
+          <div class="method-source-code" id="flattened_members-source">
+            <pre><span class="ruby-comment"># File app/models/group.rb, line 43</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">flattened_members</span>
+  <span class="ruby-identifier">results</span> = []
 
-        
-
-        
-      </div><!-- entities_tokens-3D-method -->
-
-    
-      <div id="method-i-member_ids-3D" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">member_ids=</span><span
-            class="method-args">(ids)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="member_ids-3D-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 150</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">member_ids=</span>(<span class="ruby-identifier">ids</span>)
-  <span class="ruby-comment"># We&#39;ll build these lists and assign them at the end</span>
-  <span class="ruby-identifier">e_ids</span> = []
-  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;member_ids= start, self.entity_ids is:&quot;</span>
-  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">entity_ids</span>
-
-  <span class="ruby-comment"># Determine which members come from rules so we don&#39;t add them to the explicit list (causes dupes)</span>
-  <span class="ruby-identifier">r_members</span> = []
-  <span class="ruby-identifier">rule_members</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">r_members</span> <span class="ruby-operator">+=</span> [<span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>]
-  <span class="ruby-keyword">end</span>
-  
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ids</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">ids</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">id</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">unless</span> <span class="ruby-identifier">r_members</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">id</span>
-        <span class="ruby-identifier">e_ids</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">id</span>
+  <span class="ruby-identifier">members</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;Group&quot;</span>
+      <span class="ruby-identifier">e</span>.<span class="ruby-identifier">flattened_members</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">results</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">m</span>
       <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">results</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">e</span>
     <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">end</span>
 
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">entity_ids</span> = <span class="ruby-identifier">e_ids</span>
-  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;member_ids= end, self.entity_ids is:&quot;</span>
-  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">entity_ids</span>
+  <span class="ruby-comment"># Only return a unique list</span>
+  <span class="ruby-identifier">results</span>.<span class="ruby-identifier">uniq</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span> }
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- member_ids-3D-source -->
+          </div><!-- flattened_members-source -->
           
         </div>
 
         
 
         
-      </div><!-- member_ids-3D-method -->
+      </div><!-- flattened_members-method -->
 
     
-      <div id="method-i-member_tokens" class="method-detail ">
+      <div id="method-i-ou-3F" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">member_tokens</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Returns tokenized members, including &#39;via&#39; parameter to
-differentiate explicitly-assigned vs. rule-resolved members</p>
-          
-
-          
-          <div class="method-source-code" id="member_tokens-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 106</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">member_tokens</span>
-  <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-node">&quot;entities/member_tokens/#{id}&quot;</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">result</span> = []
-    <span class="ruby-identifier">explicit_members</span> = []
-    <span class="ruby-identifier">resolved_members</span> = []
-
-    <span class="ruby-identifier">entities</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">explicit_members</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">e</span>
-    <span class="ruby-keyword">end</span>
-
-    <span class="ruby-comment"># Include members via rules</span>
-    <span class="ruby-identifier">resolved_members</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">rule_members</span>
-
-    <span class="ruby-comment"># Unique members only</span>
-    <span class="ruby-identifier">explicit_members</span> = <span class="ruby-identifier">explicit_members</span>.<span class="ruby-identifier">uniq</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span>}
-    <span class="ruby-identifier">resolved_members</span> = <span class="ruby-identifier">resolved_members</span>.<span class="ruby-identifier">uniq</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span>}
-
-    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">resolved_members</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">:readonly</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>, <span class="ruby-value">:loginid</span> =<span class="ruby-operator">&gt;</span> ((<span class="ruby-keyword">defined?</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">loginid</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">loginid</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> ) } }.<span class="ruby-identifier">sort</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>[<span class="ruby-value">:name</span>] <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">b</span>[<span class="ruby-value">:name</span>] }
-    <span class="ruby-identifier">result</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">explicit_members</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">:readonly</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">:loginid</span> =<span class="ruby-operator">&gt;</span> ((<span class="ruby-keyword">defined?</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">loginid</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">loginid</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span> ) } }.<span class="ruby-identifier">sort</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>[<span class="ruby-value">:name</span>] <span class="ruby-operator">&lt;=&gt;</span> <span class="ruby-identifier">b</span>[<span class="ruby-value">:name</span>] }
-
-    <span class="ruby-identifier">result</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- member_tokens-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- member_tokens-method -->
-
-    
-      <div id="method-i-members" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">members</span><span
-            class="method-args">(flatten = false)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Calculates all members, including those defined via rules. If flatten is
-set to true, child groups are resolved recursively until only a list of
-people remains. If flatten is false, any member groups will simply be
-returned as a group (i.e. not as the people <em>in</em> that member group)</p>
-          
-
-          
-          <div class="method-source-code" id="members-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 34</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">members</span>(<span class="ruby-identifier">flatten</span> = <span class="ruby-keyword">false</span>)
-  <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-node">&quot;entities/members/#{flatten}/#{id}&quot;</span>) <span class="ruby-keyword">do</span>
-    <span class="ruby-identifier">members</span> = []
-
-    <span class="ruby-identifier">entities</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">flatten</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;Group&quot;</span>
-        <span class="ruby-identifier">e</span>.<span class="ruby-identifier">members</span>(<span class="ruby-keyword">true</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span>
-          <span class="ruby-identifier">members</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">m</span>
-        <span class="ruby-keyword">end</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-identifier">members</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">e</span>
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">end</span>
-
-    <span class="ruby-comment"># Include members via rules</span>
-    <span class="ruby-identifier">members</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">rule_members</span>
-
-    <span class="ruby-comment"># Only return a unique list</span>
-    <span class="ruby-identifier">members</span>.<span class="ruby-identifier">uniq</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span>}
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- members-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- members-method -->
-
-    
-      <div id="method-i-operator_tokens" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">operator_tokens</span><span
+          <span class="method-name">ou?</span><span
             class="method-args">()</span>
           <span class="method-click-advice">click to toggle source</span>
         </div>
@@ -557,55 +345,25 @@ returned as a group (i.e. not as the people <em>in</em> that member group)</p>
           
 
           
-          <div class="method-source-code" id="operator_tokens-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 138</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">operator_tokens</span>
-  <span class="ruby-identifier">operator_ids</span>
+          <div class="method-source-code" id="ou-3F-source">
+            <pre><span class="ruby-comment"># File app/models/group.rb, line 37</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">ou?</span>
+  <span class="ruby-identifier">code</span> <span class="ruby-operator">!=</span> <span class="ruby-keyword">nil</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- operator_tokens-source -->
+          </div><!-- ou-3F-source -->
           
         </div>
 
         
 
         
-      </div><!-- operator_tokens-method -->
+      </div><!-- ou-3F-method -->
 
     
-      <div id="method-i-operator_tokens-3D" class="method-detail ">
+      <div id="method-i-recalculate_members" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">operator_tokens=</span><span
-            class="method-args">(ids)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="operator_tokens-3D-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 142</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">operator_tokens=</span>(<span class="ruby-identifier">ids</span>)
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">operator_ids</span> = <span class="ruby-identifier">ids</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;,&quot;</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- operator_tokens-3D-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- operator_tokens-3D-method -->
-
-    
-      <div id="method-i-owner_tokens" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">owner_tokens</span><span
+          <span class="method-name">recalculate_members</span><span
             class="method-args">()</span>
           <span class="method-click-advice">click to toggle source</span>
         </div>
@@ -613,82 +371,26 @@ returned as a group (i.e. not as the people <em>in</em> that member group)</p>
 
         <div class="method-description">
           
-          
-          
-
-          
-          <div class="method-source-code" id="owner_tokens-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 130</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">owner_tokens</span>
-  <span class="ruby-identifier">owner_ids</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- owner_tokens-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- owner_tokens-method -->
-
-    
-      <div id="method-i-owner_tokens-3D" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">owner_tokens=</span><span
-            class="method-args">(ids)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
+          <p>Calculates (and resets) all group_members based on rules. Will delete any
+*_member_assignment flagged as calculated and rebuild from rules. This
+algorithm starts with an empty set, then runs all &#39;is&#39; rules,
+intersecting those sets, then makes a second pass and removes anyone who
+fails a &#39;is not&#39; rule.</p>
           
 
           
-          <div class="method-source-code" id="owner_tokens-3D-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 134</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">owner_tokens=</span>(<span class="ruby-identifier">ids</span>)
-  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">owner_ids</span> = <span class="ruby-identifier">ids</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&quot;,&quot;</span>)
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- owner_tokens-3D-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- owner_tokens-3D-method -->
-
-    
-      <div id="method-i-rule_members" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">rule_members</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Returns all members via resolving group rules This algorithm starts with an
-empty set, then runs all &#39;is&#39; rules, intersecting those sets, then
-makes a second pass and removes anyone who fails a &#39;is not&#39; rule.</p>
-          
-
-          
-          <div class="method-source-code" id="rule_members-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 183</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">rule_members</span>
-  <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">cache</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-node">&quot;entities/rule_members/#{id}&quot;</span>) <span class="ruby-keyword">do</span>
+          <div class="method-source-code" id="recalculate_members-source">
+            <pre><span class="ruby-comment"># File app/models/group.rb, line 66</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">recalculate_members</span>
+  <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">tagged</span> <span class="ruby-node">&quot;Group #{id}&quot;</span> <span class="ruby-keyword">do</span>
     <span class="ruby-identifier">results</span> = []
+    
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-string">&quot;Recalculating members...&quot;</span>
 
     <span class="ruby-comment"># Step One: Build groups out of each &#39;is&#39; rule,</span>
     <span class="ruby-comment">#           groupping rules of similar type together via OR</span>
     <span class="ruby-comment">#           Note: we ignore the &#39;loginid&#39; column as it is calculated separately</span>
-    <span class="ruby-identifier">rules</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:condition</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;is&quot;</span>).<span class="ruby-identifier">where</span>(<span class="ruby-value">:column</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">valid_columns</span>.<span class="ruby-identifier">reject</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;loginid&quot;</span>}).<span class="ruby-identifier">group_by</span>(&amp;<span class="ruby-value">:column</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ruleset</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">rules</span>.<span class="ruby-identifier">select</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">condition</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;is&quot;</span> <span class="ruby-keyword">and</span> <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">valid_columns</span>.<span class="ruby-identifier">reject</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;loginid&quot;</span>}.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">column</span> }.<span class="ruby-identifier">group_by</span>(&amp;<span class="ruby-value">:column</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ruleset</span><span class="ruby-operator">|</span>
       <span class="ruby-identifier">ruleset_results</span> = []
 
       <span class="ruby-identifier">ruleset</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">rule</span><span class="ruby-operator">|</span>
@@ -699,105 +401,66 @@ makes a second pass and removes anyone who fails a &#39;is not&#39; rule.</p>
     <span class="ruby-keyword">end</span>
 
     <span class="ruby-comment"># Step Two: AND all groups from step one together</span>
-    <span class="ruby-identifier">result</span> = <span class="ruby-identifier">results</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-identifier">results</span>.<span class="ruby-identifier">first</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">sum</span>,<span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sum</span> <span class="ruby-operator">&amp;=</span> <span class="ruby-identifier">m</span> }
+    <span class="ruby-identifier">results</span> = <span class="ruby-identifier">results</span>.<span class="ruby-identifier">inject</span>(<span class="ruby-identifier">results</span>.<span class="ruby-identifier">first</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">sum</span>,<span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">sum</span> <span class="ruby-operator">&amp;=</span> <span class="ruby-identifier">m</span> }
 
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>
       <span class="ruby-comment"># Step Three: Pass over the result from step two and</span>
       <span class="ruby-comment"># remove anybody who violates an &#39;is not&#39; rule</span>
-      <span class="ruby-identifier">result</span> = <span class="ruby-identifier">result</span>.<span class="ruby-identifier">find_all</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">member</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">results</span> = <span class="ruby-identifier">results</span>.<span class="ruby-identifier">find_all</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">member</span><span class="ruby-operator">|</span>
         <span class="ruby-identifier">keep</span> = <span class="ruby-keyword">true</span>
-        <span class="ruby-identifier">rules</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:condition</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;is not&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">rule</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">rules</span>.<span class="ruby-identifier">select</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">condition</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;is not&quot;</span> }.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">rule</span><span class="ruby-operator">|</span>
           <span class="ruby-identifier">keep</span> <span class="ruby-operator">&amp;=</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">matches</span>(<span class="ruby-identifier">member</span>)
         <span class="ruby-keyword">end</span>
         <span class="ruby-identifier">keep</span>
       }
     <span class="ruby-keyword">end</span>
-
-    <span class="ruby-comment"># Step Four: Process any &#39;loginid is&#39; rules</span>
-    <span class="ruby-identifier">rules</span>.<span class="ruby-identifier">where</span>({<span class="ruby-value">:condition</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;is&quot;</span>, <span class="ruby-value">:column</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;loginid&quot;</span>}).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">rule</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span>
-        <span class="ruby-identifier">result</span> = []
-      <span class="ruby-keyword">end</span>
-      <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">resolve</span>.<span class="ruby-identifier">at</span>(<span class="ruby-value">0</span>)
-    <span class="ruby-keyword">end</span>
-
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-keyword">return</span> []
-    <span class="ruby-keyword">end</span>
-
-    <span class="ruby-identifier">result</span>
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- rule_members-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- rule_members-method -->
-
     
-      <div id="method-i-rules_attributes-3D" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">rules_attributes=</span><span
-            class="method-args">(rule_attrs)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
+    <span class="ruby-comment"># Step Four: Process any &#39;loginid is&#39; rules</span>
+    <span class="ruby-identifier">rules</span>.<span class="ruby-identifier">select</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">condition</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;is&quot;</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">column</span> <span class="ruby-operator">==</span> <span class="ruby-string">&quot;loginid&quot;</span> }.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">rule</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">nil?</span>
+        <span class="ruby-identifier">results</span> = []
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">results</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">rule</span>.<span class="ruby-identifier">resolve</span>.<span class="ruby-identifier">at</span>(<span class="ruby-value">0</span>)
+    <span class="ruby-keyword">end</span>
 
-        <div class="method-description">
-          
-          <p>Overriden to avoid having to use _destroy in Backbone/simplify client-side
-interaction</p>
-          
+    <span class="ruby-comment"># Remove previous calculated group member assignments</span>
+    <span class="ruby-constant">GroupMembership</span>.<span class="ruby-identifier">destroying_calculated_group_membership</span> <span class="ruby-keyword">do</span>
+      <span class="ruby-constant">GroupMembership</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:group_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:calculated</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">true</span>).<span class="ruby-identifier">destroy_all</span>
+    <span class="ruby-keyword">end</span>
 
-          
-          <div class="method-source-code" id="rules_attributes-3D-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 57</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">rules_attributes=</span>(<span class="ruby-identifier">rule_attrs</span>)
-  <span class="ruby-identifier">ids_touched</span> = [] <span class="ruby-comment"># We&#39;ll remove any rules that weren&#39;t touched at the end</span>
-
-  <span class="ruby-comment"># Add/update rules</span>
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">rule_attrs</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">rule_attrs</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">rule</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">if</span> (<span class="ruby-identifier">rule</span>[<span class="ruby-value">:id</span>].<span class="ruby-identifier">to_s</span>)[<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">3</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&quot;new_&quot;</span>
-        <span class="ruby-comment"># New rule</span>
-        <span class="ruby-identifier">r</span> = <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">new</span>
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">column</span> = <span class="ruby-identifier">rule</span>[<span class="ruby-value">:column</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">condition</span> = <span class="ruby-identifier">rule</span>[<span class="ruby-value">:condition</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">value</span> = <span class="ruby-identifier">rule</span>[<span class="ruby-value">:value</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">group_id</span> = <span class="ruby-identifier">id</span>
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">save</span>
-        <span class="ruby-identifier">ids_touched</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-comment"># Updating a rule</span>
-        <span class="ruby-identifier">r</span> = <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">rule</span>[<span class="ruby-value">:id</span>])
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">column</span> = <span class="ruby-identifier">rule</span>[<span class="ruby-value">:column</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">condition</span> = <span class="ruby-identifier">rule</span>[<span class="ruby-value">:condition</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">value</span> = <span class="ruby-identifier">rule</span>[<span class="ruby-value">:value</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">save</span>
-        <span class="ruby-identifier">ids_touched</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>
+    <span class="ruby-comment"># Reset calculated group member assignments with the results of this algorithm</span>
+    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">results</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">results</span> = <span class="ruby-identifier">results</span>.<span class="ruby-identifier">flatten</span>
+      <span class="ruby-identifier">results</span> = <span class="ruby-identifier">results</span>.<span class="ruby-identifier">uniq</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span> }
+      <span class="ruby-identifier">uncalculated_group_member_ids</span> = <span class="ruby-identifier">memberships</span>.<span class="ruby-identifier">select</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">calculated</span> <span class="ruby-operator">==</span> <span class="ruby-keyword">false</span> }.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">entity_id</span> }
+      <span class="ruby-identifier">results</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span>
+        <span class="ruby-identifier">m</span> = <span class="ruby-constant">GroupMembership</span>.<span class="ruby-identifier">new</span>
+        <span class="ruby-identifier">m</span>.<span class="ruby-identifier">group_id</span> = <span class="ruby-identifier">id</span>
+        <span class="ruby-identifier">m</span>.<span class="ruby-identifier">entity_id</span> = <span class="ruby-identifier">e</span>.<span class="ruby-identifier">id</span>
+        <span class="ruby-identifier">m</span>.<span class="ruby-identifier">calculated</span> = <span class="ruby-keyword">true</span>
+        <span class="ruby-identifier">m</span>.<span class="ruby-identifier">save</span>
       <span class="ruby-keyword">end</span>
     <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-comment"># Remove unnecessary ones</span>
-  <span class="ruby-identifier">rules</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
-    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ids_touched</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>
-      <span class="ruby-identifier">r</span>.<span class="ruby-identifier">destroy</span>
-    <span class="ruby-keyword">end</span>
+    
+    <span class="ruby-identifier">results</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">num_found</span> = <span class="ruby-value">0</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">num_found</span> = <span class="ruby-identifier">results</span>.<span class="ruby-identifier">length</span>
+    <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Found #{num_found} members, group now has #{memberships.length} total members&quot;</span>
+    
+    <span class="ruby-comment"># Force a reload (make sure this function stays as a after_save callback, never before_save)</span>
+    <span class="ruby-comment"># to ensure old memberships get deleted properly. EntityController#update was returning both</span>
+    <span class="ruby-comment"># new calculated memberships _and_ those marked for destruction before this &#39;reload&#39;</span>
+    <span class="ruby-comment"># statement was added. (Bug in format.json render: json as logger.info @entity.members.length</span>
+    <span class="ruby-comment"># just before the render: json line _does_ show the correct number?)</span>
+    <span class="ruby-identifier">reload</span>
   <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- rules_attributes-3D-source -->
+          </div><!-- recalculate_members-source -->
           
         </div>
 
         
 
         
-      </div><!-- rules_attributes-3D-method -->
+      </div><!-- recalculate_members-method -->
 
     
       <div id="method-i-trigger_sync" class="method-detail ">
@@ -816,11 +479,10 @@ interaction</p>
 
           
           <div class="method-source-code" id="trigger_sync-source">
-            <pre><span class="ruby-comment"># File app/models/group.rb, line 231</span>
+            <pre><span class="ruby-comment"># File app/models/group.rb, line 139</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">trigger_sync</span>
   <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Group #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles&quot;</span>
   <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">role</span><span class="ruby-operator">|</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">trigger_sync</span> }
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- trigger_sync-source -->
           

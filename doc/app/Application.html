@@ -74,7 +74,7 @@
     
     <li><a href="#method-i-as_json">#as_json</a>
     
-    <li><a href="#method-i-roles_attributes-3D">#roles_attributes=</a>
+    <li><a href="#method-i-trigger_sync">#trigger_sync</a>
     
   </ul>
 </nav>
@@ -99,13 +99,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -114,6 +128,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -125,9 +141,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -137,8 +153,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -147,11 +161,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -165,6 +183,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -176,8 +196,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -244,9 +262,9 @@
 
           
           <div class="method-source-code" id="csv_header-source">
-            <pre><span class="ruby-comment"># File app/models/application.rb, line 20</span>
+            <pre><span class="ruby-comment"># File app/models/application.rb, line 29</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">csv_header</span>
-  <span class="ruby-string">&quot;Role,ID,Login ID, Email, First, Last&quot;</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;,&#39;</span>)
+  <span class="ruby-string">&quot;Role,ID,Login ID,Email,First,Last&quot;</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;,&#39;</span>)
 <span class="ruby-keyword">end</span></pre>
           </div><!-- csv_header-source -->
           
@@ -275,20 +293,19 @@
 
         <div class="method-description">
           
-          
+          <p>Note the nested &#39;role&#39; JSON includes “members” and “entities.”
+&#39;members&#39; are people only - flattened entities. &#39;entities&#39;
+are what actually exists in the database but includes groups.</p>
           
 
           
           <div class="method-source-code" id="as_json-source">
-            <pre><span class="ruby-comment"># File app/models/application.rb, line 24</span>
+            <pre><span class="ruby-comment"># File app/models/application.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">as_json</span>(<span class="ruby-identifier">options</span>={})
-  { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>,
-    <span class="ruby-value">:roles</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">roles</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">description</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">description</span>, <span class="ruby-identifier">token</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">token</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">name</span>,
-                                    <span class="ruby-identifier">entities</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">entities</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">type</span> } },
-                                    <span class="ruby-identifier">members</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">members</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">loginid</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">loginid</span> } },
-                                    <span class="ruby-identifier">ad_path</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">ad_path</span> } },
-    <span class="ruby-value">:description</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">description</span>, <span class="ruby-value">:owners</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">owners</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span> } },
-    <span class="ruby-value">:operators</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">operators</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span> } } }
+  { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">url</span><span class="ruby-operator">:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">url</span>, <span class="ruby-identifier">icon</span><span class="ruby-operator">:</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">icon</span>(<span class="ruby-value">:normal</span>),
+    <span class="ruby-value">:roles</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">roles</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">description</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">description</span>, <span class="ruby-identifier">token</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">token</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">ad_path</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">ad_path</span> } },
+    <span class="ruby-value">:description</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">description</span>, <span class="ruby-value">:owners</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">application_ownerships</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">calculated</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">parent_id?</span> } },
+    <span class="ruby-value">:operatorships</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">operatorships</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:entity</span>).<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">entity_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">entity</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">calculated</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">parent_id?</span> } } }
 <span class="ruby-keyword">end</span></pre>
           </div><!-- as_json-source -->
           
@@ -300,71 +317,35 @@
       </div><!-- as_json-method -->
 
     
-      <div id="method-i-roles_attributes-3D" class="method-detail ">
+      <div id="method-i-trigger_sync" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">roles_attributes=</span><span
-            class="method-args">(role_attrs)</span>
+          <span class="method-name">trigger_sync</span><span
+            class="method-args">()</span>
           <span class="method-click-advice">click to toggle source</span>
         </div>
         
 
         <div class="method-description">
           
-          <p>Overriden to avoid having to use _destroy in Backbone/simplify client-side
-interaction</p>
+          
           
 
           
-          <div class="method-source-code" id="roles_attributes-3D-source">
-            <pre><span class="ruby-comment"># File app/models/application.rb, line 35</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">roles_attributes=</span>(<span class="ruby-identifier">role_attrs</span>)
-  <span class="ruby-identifier">ids_touched</span> = [] <span class="ruby-comment"># We&#39;ll remove any roles that weren&#39;t touched at the end</span>
-
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">role_attrs</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-comment"># Add/update roles</span>
-    <span class="ruby-identifier">role_attrs</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">role</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-identifier">role</span>
-      <span class="ruby-keyword">if</span> (<span class="ruby-identifier">role</span>[<span class="ruby-value">:id</span>].<span class="ruby-identifier">to_s</span>)[<span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">3</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&quot;new_&quot;</span>
-        <span class="ruby-comment"># New role</span>
-        <span class="ruby-identifier">r</span> = <span class="ruby-constant">Role</span>.<span class="ruby-identifier">new</span>
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">token</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:token</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">name</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:name</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">description</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:description</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">entity_ids</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:entity_ids</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">ad_path</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:ad_path</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">application_id</span> = <span class="ruby-identifier">id</span>
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">save</span>
-        <span class="ruby-identifier">ids_touched</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-comment"># Updating a role</span>
-        <span class="ruby-identifier">r</span> = <span class="ruby-constant">Role</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">role</span>[<span class="ruby-value">:id</span>])
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">token</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:token</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">name</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:name</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">description</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:description</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">entity_ids</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:entity_ids</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">ad_path</span> = <span class="ruby-identifier">role</span>[<span class="ruby-value">:ad_path</span>]
-        <span class="ruby-identifier">r</span>.<span class="ruby-identifier">save</span>
-        <span class="ruby-identifier">ids_touched</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
-
-  <span class="ruby-comment"># Remove unnecessary ones</span>
-  <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
-    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ids_touched</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>
-      <span class="ruby-identifier">r</span>.<span class="ruby-identifier">destroy</span>
-    <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">end</span>
+          <div class="method-source-code" id="trigger_sync-source">
+            <pre><span class="ruby-comment"># File app/models/application.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">trigger_sync</span>
+  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles&quot;</span>
+  <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">role</span><span class="ruby-operator">|</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">trigger_sync</span> }
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- roles_attributes-3D-source -->
+          </div><!-- trigger_sync-source -->
           
         </div>
 
         
 
         
-      </div><!-- roles_attributes-3D-method -->
+      </div><!-- trigger_sync-method -->
 
     
     </section><!-- public-instance-method-details -->

@@ -74,39 +74,17 @@
     
     <li><a href="#method-i-accessible_applications">#accessible_applications</a>
     
-    <li><a href="#method-i-all_roles">#all_roles</a>
-    
     <li><a href="#method-i-as_json">#as_json</a>
     
     <li><a href="#method-i-byline">#byline</a>
     
-    <li><a href="#method-i-can_administer_application-3F">#can_administer_application?</a>
-    
-    <li><a href="#method-i-can_administer_group-3F">#can_administer_group?</a>
-    
-    <li><a href="#method-i-can_administer_person-3F">#can_administer_person?</a>
-    
-    <li><a href="#method-i-can_administer_role-3F">#can_administer_role?</a>
-    
     <li><a href="#method-i-classifications">#classifications</a>
-    
-    <li><a href="#method-i-first_or_last_presence">#first_or_last_presence</a>
-    
-    <li><a href="#method-i-is_rm_admin-3F">#is_rm_admin?</a>
     
     <li><a href="#method-i-log_identifier">#log_identifier</a>
     
-    <li><a href="#method-i-manageable_applications">#manageable_applications</a>
-    
-    <li><a href="#method-i-name">#name</a>
-    
-    <li><a href="#method-i-ou_ids-3D">#ou_ids=</a>
+    <li><a href="#method-i-recalculate_group_rule_membership">#recalculate_group_rule_membership</a>
     
     <li><a href="#method-i-role_symbols">#role_symbols</a>
-    
-    <li><a href="#method-i-roles_by_api_key">#roles_by_api_key</a>
-    
-    <li><a href="#method-i-roles_by_application">#roles_by_application</a>
     
     <li><a href="#method-i-to_csv">#to_csv</a>
     
@@ -135,13 +113,27 @@
   
     <li><a href="./Admin.html">Admin</a>
   
-    <li><a href="./Admin/ApiKeysController.html">Admin::ApiKeysController</a>
+    <li><a href="./Admin/ApiKeyUsersController.html">Admin::ApiKeyUsersController</a>
   
-    <li><a href="./Admin/ApiWhitelistedIpsController.html">Admin::ApiWhitelistedIpsController</a>
+    <li><a href="./Admin/ApiWhitelistedIpUsersController.html">Admin::ApiWhitelistedIpUsersController</a>
   
     <li><a href="./Admin/BaseController.html">Admin::BaseController</a>
   
     <li><a href="./Admin/OpsController.html">Admin::OpsController</a>
+  
+    <li><a href="./Admin/QueuedJobsController.html">Admin::QueuedJobsController</a>
+  
+    <li><a href="./Api.html">Api</a>
+  
+    <li><a href="./Api/V1.html">Api::V1</a>
+  
+    <li><a href="./Api/V1/ApplicationsController.html">Api::V1::ApplicationsController</a>
+  
+    <li><a href="./Api/V1/EntitiesController.html">Api::V1::EntitiesController</a>
+  
+    <li><a href="./Api/V1/PeopleController.html">Api::V1::PeopleController</a>
+  
+    <li><a href="./Api/V1/RolesController.html">Api::V1::RolesController</a>
   
     <li><a href="./ActiveDirectoryWrapper.html">ActiveDirectoryWrapper</a>
   
@@ -150,6 +142,8 @@
     <li><a href="./AffiliationAssignment.html">AffiliationAssignment</a>
   
     <li><a href="./AffiliationsController.html">AffiliationsController</a>
+  
+    <li><a href="./ApiConstraints.html">ApiConstraints</a>
   
     <li><a href="./ApiKeyUser.html">ApiKeyUser</a>
   
@@ -161,9 +155,9 @@
   
     <li><a href="./ApplicationHelper.html">ApplicationHelper</a>
   
-    <li><a href="./ApplicationOperatorAssignment.html">ApplicationOperatorAssignment</a>
+    <li><a href="./ApplicationOperatorship.html">ApplicationOperatorship</a>
   
-    <li><a href="./ApplicationOwnerAssignment.html">ApplicationOwnerAssignment</a>
+    <li><a href="./ApplicationOwnership.html">ApplicationOwnership</a>
   
     <li><a href="./ApplicationsController.html">ApplicationsController</a>
   
@@ -173,8 +167,6 @@
   
     <li><a href="./ClassificationsController.html">ClassificationsController</a>
   
-    <li><a href="./DatabaseExtensions.html">DatabaseExtensions</a>
-  
     <li><a href="./DelayedRake.html">DelayedRake</a>
   
     <li><a href="./EntitiesController.html">EntitiesController</a>
@@ -183,11 +175,15 @@
   
     <li><a href="./Group.html">Group</a>
   
-    <li><a href="./GroupOperatorAssignment.html">GroupOperatorAssignment</a>
+    <li><a href="./GroupMembership.html">GroupMembership</a>
   
-    <li><a href="./GroupOwnerAssignment.html">GroupOwnerAssignment</a>
+    <li><a href="./GroupOperatorship.html">GroupOperatorship</a>
+  
+    <li><a href="./GroupOwnership.html">GroupOwnership</a>
   
     <li><a href="./GroupRule.html">GroupRule</a>
+  
+    <li><a href="./GroupRulesController.html">GroupRulesController</a>
   
     <li><a href="./GroupsController.html">GroupsController</a>
   
@@ -201,6 +197,8 @@
   
     <li><a href="./MajorsController.html">MajorsController</a>
   
+    <li><a href="./Object.html">Object</a>
+  
     <li><a href="./OusController.html">OusController</a>
   
     <li><a href="./PeopleController.html">PeopleController</a>
@@ -212,8 +210,6 @@
     <li><a href="./Role.html">Role</a>
   
     <li><a href="./RoleAssignment.html">RoleAssignment</a>
-  
-    <li><a href="./RoleAssignmentsController.html">RoleAssignmentsController</a>
   
     <li><a href="./RolesController.html">RolesController</a>
   
@@ -248,10 +244,6 @@
 that the &#39;name&#39; field is simply self.first + “ ” + self.last and is
 thus read-only. The same does not apply for groups.</p>
 
-<p>&#39;roles&#39; refers only to explicit roles. Use method &#39;<a
-href="Person.html#method-i-all_roles">#all_roles</a>&#39; to include those
-assigned via group membership.</p>
-
   </div><!-- description -->
 
   
@@ -283,12 +275,12 @@ assigned via group membership.</p>
 
         <div class="method-description">
           
-          
+          <p>For CSV export</p>
           
 
           
           <div class="method-source-code" id="csv_header-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 46</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 51</span>
 <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">csv_header</span>
   <span class="ruby-string">&quot;ID,Login ID, Email, First, Last&quot;</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;,&#39;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -319,19 +311,18 @@ assigned via group membership.</p>
 
         <div class="method-description">
           
-          <p>Compute applications for which they have a role.</p>
+          <p>Returns all applications visible to a user (via ownership or operatorship)</p>
           
 
           
           <div class="method-source-code" id="accessible_applications-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 141</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 94</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">accessible_applications</span>
-  <span class="ruby-identifier">apps</span> = []
-
-  <span class="ruby-comment"># Add apps via roles explicitly assigned</span>
-  <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">role</span><span class="ruby-operator">|</span> <span class="ruby-identifier">apps</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">application</span> }
-
-  <span class="ruby-identifier">apps</span>.<span class="ruby-identifier">uniq</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span> }
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-constant">Application</span>.<span class="ruby-identifier">with_permissions_to</span>(<span class="ruby-value">:read</span>).<span class="ruby-identifier">includes</span>(<span class="ruby-value">:roles</span>)
+  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">Authorization</span><span class="ruby-operator">::</span><span class="ruby-constant">NotAuthorized</span>
+    []
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- accessible_applications-source -->
           
@@ -341,42 +332,6 @@ assigned via group membership.</p>
 
         
       </div><!-- accessible_applications-method -->
-
-    
-      <div id="method-i-all_roles" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">all_roles</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Calculates all roles for an individual - explicitly assigned + those via
-group membership, including group rules</p>
-          
-
-          
-          <div class="method-source-code" id="all_roles-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 89</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">all_roles</span>
-  <span class="ruby-identifier">computed_roles</span> = []
-  <span class="ruby-identifier">computed_roles</span> = <span class="ruby-identifier">roles</span>
-  <span class="ruby-identifier">group_memberships</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">membership</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">computed_roles</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">membership</span>.<span class="ruby-identifier">roles</span>
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-identifier">computed_roles</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- all_roles-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- all_roles-method -->
 
     
       <div id="method-i-as_json" class="method-detail ">
@@ -395,15 +350,17 @@ group membership, including group rules</p>
 
           
           <div class="method-source-code" id="as_json-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 161</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 37</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">as_json</span>(<span class="ruby-identifier">options</span>={})
-  { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Person&#39;</span>, <span class="ruby-value">:email</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">email</span>, <span class="ruby-value">:loginid</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">loginid</span>,
-    <span class="ruby-value">:roles</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">all_roles</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">token</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">token</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">application_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">application_id</span> } },
+  { <span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">:type</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&#39;Person&#39;</span>, <span class="ruby-value">:email</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">email</span>, <span class="ruby-value">:loginid</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">loginid</span>, <span class="ruby-value">:first</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">first</span>,
+    <span class="ruby-value">:last</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">last</span>, <span class="ruby-value">:email</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">email</span>, <span class="ruby-value">:phone</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">phone</span>, <span class="ruby-value">:address</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">address</span>, <span class="ruby-value">:byline</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">byline</span>, <span class="ruby-value">:status</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">status</span>,
+    <span class="ruby-value">:role_assignments</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">role_assignments</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:role</span>).<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">calculated</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">parent_id?</span>, <span class="ruby-identifier">entity_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">entity_id</span>,
+                                                          <span class="ruby-identifier">role_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">role</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">token</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">role</span>.<span class="ruby-identifier">token</span>, <span class="ruby-identifier">application_name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">role</span>.<span class="ruby-identifier">application</span>.<span class="ruby-identifier">name</span>,
+                                                          <span class="ruby-identifier">application_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">role</span>.<span class="ruby-identifier">application_id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">role</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">description</span><span class="ruby-operator">:</span> <span class="ruby-identifier">a</span>.<span class="ruby-identifier">role</span>.<span class="ruby-identifier">description</span> } },
     <span class="ruby-value">:favorites</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">favorites</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">type</span> } },
-    <span class="ruby-value">:group_memberships</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:non_ous</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">group_memberships</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">type</span> } },
-                            <span class="ruby-value">:ous</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">group_memberships</span>.<span class="ruby-identifier">ous</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">e</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-identifier">e</span>.<span class="ruby-identifier">type</span> } } },
-    <span class="ruby-value">:group_ownerships</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">group_ownerships</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">type</span> } },
-    <span class="ruby-value">:group_operatorships</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">group_operatorships</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">type</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">type</span> } }
+    <span class="ruby-value">:group_memberships</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">group_memberships</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:group</span>).<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">group_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">group</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">group</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">ou</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">group</span>.<span class="ruby-identifier">ou?</span>, <span class="ruby-identifier">calculated</span><span class="ruby-operator">:</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">calculated</span> } },
+    <span class="ruby-value">:group_ownerships</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">group_ownerships</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:group</span>).<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">group_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">group</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">group</span>.<span class="ruby-identifier">name</span> } },
+    <span class="ruby-value">:group_operatorships</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">group_operatorships</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:group</span>).<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span> { <span class="ruby-identifier">id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">group_id</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">group</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">name</span><span class="ruby-operator">:</span> <span class="ruby-identifier">o</span>.<span class="ruby-identifier">group</span>.<span class="ruby-identifier">name</span> } }
   }
 <span class="ruby-keyword">end</span></pre>
           </div><!-- as_json-source -->
@@ -427,18 +384,21 @@ group membership, including group rules</p>
 
         <div class="method-description">
           
-          
+          <p>Calculates &#39;byline&#39; for a <a href="Person.html">Person</a>, e.g.
+“PROGRAMMER V (staff:career)”</p>
           
 
           
           <div class="method-source-code" id="byline-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 58</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 65</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">byline</span>
-  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">title</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">title</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot; (&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">affiliations</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">name</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;, &quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&quot;)&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">title</span> <span class="ruby-keyword">and</span> <span class="ruby-identifier">title</span>.<span class="ruby-identifier">name</span>
+    <span class="ruby-identifier">byline</span> = <span class="ruby-identifier">title</span>.<span class="ruby-identifier">name</span>
   <span class="ruby-keyword">else</span>
-    <span class="ruby-string">&quot;(&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">affiliations</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">name</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;, &quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&quot;)&quot;</span>
+    <span class="ruby-identifier">byline</span> = <span class="ruby-string">&quot;&quot;</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">byline</span> <span class="ruby-operator">+=</span> <span class="ruby-string">&quot; (&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">affiliations</span>.<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">name</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;, &quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&quot;)&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">affiliations</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+  <span class="ruby-identifier">byline</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- byline-source -->
           
@@ -448,126 +408,6 @@ group membership, including group rules</p>
 
         
       </div><!-- byline-method -->
-
-    
-      <div id="method-i-can_administer_application-3F" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">can_administer_application?</span><span
-            class="method-args">(app_id)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="can_administer_application-3F-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 172</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">can_administer_application?</span>(<span class="ruby-identifier">app_id</span>)
-  <span class="ruby-identifier">applications</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span> }.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">app_id</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- can_administer_application-3F-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- can_administer_application-3F-method -->
-
-    
-      <div id="method-i-can_administer_group-3F" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">can_administer_group?</span><span
-            class="method-args">(group_id)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="can_administer_group-3F-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 181</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">can_administer_group?</span>(<span class="ruby-identifier">group_id</span>)
-  <span class="ruby-identifier">group_memberships</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span> }.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">group_id</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- can_administer_group-3F-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- can_administer_group-3F-method -->
-
-    
-      <div id="method-i-can_administer_person-3F" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">can_administer_person?</span><span
-            class="method-args">(person_id)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>SECUREME: Does it matter that this computes based on favorites now?</p>
-          
-
-          
-          <div class="method-source-code" id="can_administer_person-3F-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 177</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">can_administer_person?</span>(<span class="ruby-identifier">person_id</span>)
-  <span class="ruby-identifier">favorites</span>.<span class="ruby-identifier">collect</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span> }.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">person_id</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- can_administer_person-3F-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- can_administer_person-3F-method -->
-
-    
-      <div id="method-i-can_administer_role-3F" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">can_administer_role?</span><span
-            class="method-args">(role_id)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="can_administer_role-3F-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 185</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">can_administer_role?</span>(<span class="ruby-identifier">role_id</span>)
-  <span class="ruby-identifier">applications</span>.<span class="ruby-identifier">collect</span>{<span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">role_ids</span>}.<span class="ruby-identifier">flatten</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">role_id</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- can_administer_role-3F-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- can_administer_role-3F-method -->
 
     
       <div id="method-i-classifications" class="method-detail ">
@@ -586,7 +426,7 @@ group membership, including group rules</p>
 
           
           <div class="method-source-code" id="classifications-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 67</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 76</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">classifications</span>
   <span class="ruby-identifier">title</span>.<span class="ruby-identifier">classifications</span>
 <span class="ruby-keyword">end</span></pre>
@@ -600,68 +440,6 @@ group membership, including group rules</p>
       </div><!-- classifications-method -->
 
     
-      <div id="method-i-first_or_last_presence" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">first_or_last_presence</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="first_or_last_presence-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 200</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">first_or_last_presence</span>
-  <span class="ruby-keyword">unless</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
-    <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:name</span>, <span class="ruby-string">&quot;first or last must be set&quot;</span>)
-  <span class="ruby-keyword">end</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- first_or_last_presence-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- first_or_last_presence-method -->
-
-    
-      <div id="method-i-is_rm_admin-3F" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">is_rm_admin?</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Returns true if this user is an admin of “DSS Roles Management” itself</p>
-          
-
-          
-          <div class="method-source-code" id="is_rm_admin-3F-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 190</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">is_rm_admin?</span>
-  <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:application</span>).<span class="ruby-identifier">where</span>(<span class="ruby-value">:token</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;admin&quot;</span>, <span class="ruby-value">:applications</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;DSS Roles Management&quot;</span> }).<span class="ruby-identifier">exists?</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- is_rm_admin-3F-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- is_rm_admin-3F-method -->
-
-    
       <div id="method-i-log_identifier" class="method-detail ">
         
         <div class="method-heading">
@@ -673,12 +451,13 @@ group membership, including group rules</p>
 
         <div class="method-description">
           
-          
+          <p>Returns identifying string for logging purposes. Other classes implement
+this method too.</p>
           
 
           
           <div class="method-source-code" id="log_identifier-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 50</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 60</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">log_identifier</span>
   <span class="ruby-identifier">loginid</span>
 <span class="ruby-keyword">end</span></pre>
@@ -692,10 +471,10 @@ group membership, including group rules</p>
       </div><!-- log_identifier-method -->
 
     
-      <div id="method-i-manageable_applications" class="method-detail ">
+      <div id="method-i-recalculate_group_rule_membership" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">manageable_applications</span><span
+          <span class="method-name">recalculate_group_rule_membership</span><span
             class="method-args">()</span>
           <span class="method-click-advice">click to toggle source</span>
         </div>
@@ -703,119 +482,42 @@ group membership, including group rules</p>
 
         <div class="method-description">
           
-          <p>Compute applications for which they can make assignments.</p>
+          
           
 
           
-          <div class="method-source-code" id="manageable_applications-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 120</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">manageable_applications</span>
-  <span class="ruby-identifier">apps</span> = []
-
-  <span class="ruby-comment"># Admins can see all applications</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_rm_admin?</span>
-    <span class="ruby-identifier">apps</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">all</span>
+          <div class="method-source-code" id="recalculate_group_rule_membership-source">
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 107</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">recalculate_group_rule_membership</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">changed</span>.<span class="ruby-identifier">include?</span> <span class="ruby-string">&quot;title_id&quot;</span>
+    <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">recalculate_all</span>(<span class="ruby-value">:title</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>)
+    <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">recalculate_all</span>(<span class="ruby-value">:classification</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>)
   <span class="ruby-keyword">else</span>
-    <span class="ruby-comment"># Add apps where they are owners</span>
-    <span class="ruby-identifier">application_ownerships</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">apps</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">a</span>
-    <span class="ruby-keyword">end</span>
-    <span class="ruby-comment"># Add apps where they are operators</span>
-    <span class="ruby-identifier">application_operatorships</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span>
-      <span class="ruby-identifier">apps</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">a</span>
-    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;title/classification didn&#39;t change&quot;</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-identifier">apps</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- manageable_applications-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- manageable_applications-method -->
-
-    
-      <div id="method-i-name" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">name</span><span
-            class="method-args">()</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>Overriden to be self.first + “ ” + self.last though there is a
-&#39;name&#39; column used by <a href="Entity.html">Entity</a> (for
-groups). Update first and last, not &#39;name&#39;. Consider &#39;name&#39;
-to be read-only</p>
-          
-
-          
-          <div class="method-source-code" id="name-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 111</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">name</span>
-  <span class="ruby-identifier">name</span> = <span class="ruby-string">&quot;&quot;</span>
-  <span class="ruby-identifier">name</span> = <span class="ruby-identifier">first</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">first</span>.<span class="ruby-identifier">nil?</span>
-  <span class="ruby-identifier">name</span> = <span class="ruby-identifier">name</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot; &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">last</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">last</span>.<span class="ruby-identifier">nil?</span>
-
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">name</span>
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- name-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- name-method -->
-
-    
-      <div id="method-i-ou_ids-3D" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">ou_ids=</span><span
-            class="method-args">(ids)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="ou_ids-3D-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 71</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">ou_ids=</span>(<span class="ruby-identifier">ids</span>)
-  <span class="ruby-comment"># Add any new OUs</span>
-  <span class="ruby-identifier">ids</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">id</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">ou</span> = <span class="ruby-constant">Group</span>.<span class="ruby-identifier">where</span>(<span class="ruby-constant">Group</span>.<span class="ruby-identifier">arel_table</span>[<span class="ruby-value">:code</span>].<span class="ruby-identifier">not_eq</span>(<span class="ruby-keyword">nil</span>)).<span class="ruby-identifier">find_by_id</span>(<span class="ruby-identifier">id</span>)
-    <span class="ruby-keyword">unless</span> (<span class="ruby-identifier">group_memberships</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">ou</span>) <span class="ruby-keyword">or</span> <span class="ruby-identifier">ou</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">group_memberships</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">ou</span>
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">changed</span>.<span class="ruby-identifier">include?</span> <span class="ruby-string">&quot;major_id&quot;</span>
+    <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">recalculate_all</span>(<span class="ruby-value">:major</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;major didn&#39;t change&quot;</span>
   <span class="ruby-keyword">end</span>
-
-  <span class="ruby-comment"># Remove any OUs not mentioned (ou_ids= behavior is to always give the complete list)</span>
-  <span class="ruby-identifier">group_memberships</span>.<span class="ruby-identifier">ous</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ou</span><span class="ruby-operator">|</span>
-    <span class="ruby-keyword">unless</span> <span class="ruby-identifier">ids</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">ou</span>.<span class="ruby-identifier">id</span>
-      <span class="ruby-identifier">group_memberships</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">ou</span>.<span class="ruby-identifier">id</span>)
-    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">changed</span>.<span class="ruby-identifier">include?</span> <span class="ruby-string">&quot;loginid&quot;</span>
+    <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">recalculate_all</span>(<span class="ruby-value">:loginid</span>, <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-string">&quot;loginid didn&#39;t change&quot;</span>
   <span class="ruby-keyword">end</span>
+  <span class="ruby-comment"># puts &quot;affiliation changed:&quot;</span>
+  <span class="ruby-comment"># puts self.affiliations.changed?</span>
+  <span class="ruby-comment"># puts &quot;ou changed:&quot;</span>
+  <span class="ruby-comment"># puts self.group.ous.changed?</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- ou_ids-3D-source -->
+          </div><!-- recalculate_group_rule_membership-source -->
           
         </div>
 
         
 
         
-      </div><!-- ou_ids-3D-method -->
+      </div><!-- recalculate_group_rule_membership-method -->
 
     
       <div id="method-i-role_symbols" class="method-detail ">
@@ -829,17 +531,20 @@ to be read-only</p>
 
         <div class="method-description">
           
-          <p>ACL symbols</p>
+          <p>Returns a list of symbols as required by the authorization layer
+(declarative_authorization gem). Currently only have :access and :admin.
+Note that an :admin user will have both due to :admin being merely an
+extension on top of permissions already granted via :access.</p>
           
 
           
           <div class="method-source-code" id="role_symbols-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 151</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">role_symbols</span>
   <span class="ruby-identifier">syms</span> = []
 
-  <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Application</span>.<span class="ruby-identifier">find_by_name</span>(<span class="ruby-string">&quot;DSS Roles Management&quot;</span>).<span class="ruby-identifier">roles</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">role</span><span class="ruby-operator">|</span>
-    <span class="ruby-identifier">syms</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">token</span>.<span class="ruby-identifier">underscore</span>.<span class="ruby-identifier">to_sym</span>
+  <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">select</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-identifier">rm_roles_ids</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">id</span> }.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">syms</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">token</span>.<span class="ruby-identifier">underscore</span>.<span class="ruby-identifier">to_sym</span>
   <span class="ruby-keyword">end</span>
 
   <span class="ruby-identifier">syms</span>
@@ -852,67 +557,6 @@ to be read-only</p>
 
         
       </div><!-- role_symbols-method -->
-
-    
-      <div id="method-i-roles_by_api_key" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">roles_by_api_key</span><span
-            class="method-args">(api_key_id)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="roles_by_api_key-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 102</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">roles_by_api_key</span>(<span class="ruby-identifier">api_key_id</span>)
-  <span class="ruby-identifier">api_key_role_ids</span> = <span class="ruby-constant">Application</span>.<span class="ruby-identifier">find_by_api_key_id</span>(<span class="ruby-identifier">api_key_id</span>).<span class="ruby-identifier">roles</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span> }
-  <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">reject</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">api_key_role_ids</span>.<span class="ruby-identifier">include?</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">id</span> }
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- roles_by_api_key-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- roles_by_api_key-method -->
-
-    
-      <div id="method-i-roles_by_application" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">roles_by_application</span><span
-            class="method-args">(application_id)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="roles_by_application-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 98</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">roles_by_application</span>(<span class="ruby-identifier">application_id</span>)
-  <span class="ruby-constant">Role</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:role_assignments</span>).<span class="ruby-identifier">where</span>(<span class="ruby-value">:application_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">application_id</span>, <span class="ruby-value">:role_assignments</span> =<span class="ruby-operator">&gt;</span> { <span class="ruby-value">:entity_id</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">id</span> } ).<span class="ruby-identifier">map</span>{ <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">token</span> }
-<span class="ruby-keyword">end</span></pre>
-          </div><!-- roles_by_application-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- roles_by_application-method -->
 
     
       <div id="method-i-to_csv" class="method-detail ">
@@ -931,7 +575,7 @@ to be read-only</p>
 
           
           <div class="method-source-code" id="to_csv-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 54</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 55</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">to_csv</span>
   [<span class="ruby-identifier">id</span>, <span class="ruby-identifier">loginid</span>, <span class="ruby-identifier">email</span>, <span class="ruby-identifier">first</span>, <span class="ruby-identifier">last</span>]
 <span class="ruby-keyword">end</span></pre>
@@ -961,11 +605,10 @@ to be read-only</p>
 
           
           <div class="method-source-code" id="trigger_sync-source">
-            <pre><span class="ruby-comment"># File app/models/person.rb, line 194</span>
+            <pre><span class="ruby-comment"># File app/models/person.rb, line 102</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier">trigger_sync</span>
   <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">info</span> <span class="ruby-node">&quot;Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles&quot;</span>
   <span class="ruby-identifier">roles</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">role</span><span class="ruby-operator">|</span> <span class="ruby-identifier">role</span>.<span class="ruby-identifier">trigger_sync</span> }
-  <span class="ruby-keyword">return</span> <span class="ruby-keyword">true</span>
 <span class="ruby-keyword">end</span></pre>
           </div><!-- trigger_sync-source -->
           

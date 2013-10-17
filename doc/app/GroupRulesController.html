@@ -4,7 +4,7 @@
 <head>
 <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 
-<title>module SafeFilename - Rails Application Documentation</title>
+<title>class GroupRulesController - Rails Application Documentation</title>
 
 <link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
 
@@ -20,7 +20,7 @@
 <script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
 
 
-<body id="top" class="module">
+<body id="top" class="class">
 <nav id="metadata">
   <nav id="home-section" class="section">
   <h3 class="section-header">
@@ -47,7 +47,7 @@
     <nav id="file-list-section" class="section">
   <h3 class="section-header">Defined In</h3>
   <ul>
-    <li>lib/safe_filename.rb
+    <li>app/controllers/group_rules_controller.rb
   </ul>
 </nav>
 
@@ -56,7 +56,13 @@
 
   <div id="class-metadata">
     
-    
+    <nav id="parent-class-section" class="section">
+  <h3 class="section-header">Parent</h3>
+  
+  <p class="link"><a href="ApplicationController.html">ApplicationController</a>
+  
+</nav>
+
     
     <!-- Method Quickref -->
 <nav id="method-list-section" class="section">
@@ -64,7 +70,13 @@
 
   <ul class="link-list">
     
-    <li><a href="#method-i-unix_filename">#unix_filename</a>
+    <li><a href="#method-i-create">#create</a>
+    
+    <li><a href="#method-i-destroy">#destroy</a>
+    
+    <li><a href="#method-i-show">#show</a>
+    
+    <li><a href="#method-i-update">#update</a>
     
   </ul>
 </nav>
@@ -212,11 +224,13 @@
 </nav>
 
 <div id="documentation">
-  <h1 class="module">module SafeFilename</h1>
+  <h1 class="class">class GroupRulesController</h1>
 
   <div id="description" class="description">
     
-<p>Controller-level helper to generate safe Unix filenames</p>
+<p>This controller is necessary for single resource-type access, needed for
+the JSON API in order to allow clients to create rules without nesting them
+in a &#39;Group&#39; object.</p>
 
   </div><!-- description -->
 
@@ -238,37 +252,132 @@
       <h3 class="section-header">Public Instance Methods</h3>
 
     
-      <div id="method-i-unix_filename" class="method-detail ">
+      <div id="method-i-create" class="method-detail ">
         
         <div class="method-heading">
-          <span class="method-name">unix_filename</span><span
-            class="method-args">(filename)</span>
+          <span class="method-name">create</span><span
+            class="method-args">()</span>
           <span class="method-click-advice">click to toggle source</span>
         </div>
         
 
         <div class="method-description">
           
-          <p>Taken from <a
-href="http://stackoverflow.com/questions/3932704/where-should-i-put-controller-helper-methods">stackoverflow.com/questions/3932704/where-should-i-put-controller-helper-methods</a></p>
+          
           
 
           
-          <div class="method-source-code" id="unix_filename-source">
-            <pre><span class="ruby-comment"># File lib/safe_filename.rb, line 4</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier">unix_filename</span>(<span class="ruby-identifier">filename</span>)
-  <span class="ruby-identifier">filename</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/[^\w\s_-]+/</span>, <span class="ruby-string">&#39;&#39;</span>)
-          .<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/(^|\b\s)\s+($|\s?\b)/</span>, <span class="ruby-string">&#39;\1\2&#39;</span>)
-          .<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/\s+/</span>, <span class="ruby-string">&#39;_&#39;</span>)
+          <div class="method-source-code" id="create-source">
+            <pre><span class="ruby-comment"># File app/controllers/group_rules_controller.rb, line 14</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">create</span>
+  <span class="ruby-ivar">@group_rule</span>.<span class="ruby-identifier">save</span>
+
+  <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@group_rule</span>
 <span class="ruby-keyword">end</span></pre>
-          </div><!-- unix_filename-source -->
+          </div><!-- create-source -->
           
         </div>
 
         
 
         
-      </div><!-- unix_filename-method -->
+      </div><!-- create-method -->
+
+    
+      <div id="method-i-destroy" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">destroy</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="destroy-source">
+            <pre><span class="ruby-comment"># File app/controllers/group_rules_controller.rb, line 26</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">destroy</span>
+  <span class="ruby-ivar">@group_rule</span>.<span class="ruby-identifier">destroy</span>
+
+  <span class="ruby-identifier">respond_width</span> <span class="ruby-ivar">@group_rule</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- destroy-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- destroy-method -->
+
+    
+      <div id="method-i-show" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">show</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="show-source">
+            <pre><span class="ruby-comment"># File app/controllers/group_rules_controller.rb, line 8</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">show</span>
+  <span class="ruby-ivar">@group_rule</span> = <span class="ruby-constant">GroupRule</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
+
+  <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@group_rule</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- show-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- show-method -->
+
+    
+      <div id="method-i-update" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="update-source">
+            <pre><span class="ruby-comment"># File app/controllers/group_rules_controller.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">update</span>
+  <span class="ruby-ivar">@group_rule</span>.<span class="ruby-identifier">update_attributes</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:group_rule</span>])
+  
+  <span class="ruby-identifier">respond_with</span> <span class="ruby-ivar">@group_rule</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- update-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- update-method -->
 
     
     </section><!-- public-instance-method-details -->
