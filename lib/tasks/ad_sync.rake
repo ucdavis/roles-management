@@ -22,8 +22,10 @@ namespace :ad do
       groups["dss-us-auto-all"] = ActiveDirectoryWrapper.fetch_group("dss-us-auto-all")
       if groups["dss-us-auto-all"].nil?
         log.error "Error: Could not load group dss-us-auto-all"
+      else
+        ensure_magic_descriptor_presence(groups["dss-us-auto-all"])
       end
-
+      
       # Add active users to dss-us-auto-all, cluster-name-affiliation, and cluster-all groups as necessary
       Person.where(:status => true).each_with_index do |p, i|
         log.tagged "person:#{p.loginid}" do
@@ -116,8 +118,6 @@ namespace :ad do
     require 'active_directory'
     require 'active_directory_wrapper'
     
-    MAGIC_DESCRIPTOR = "(RM Sync)" # string which will be added to an AD group's 'description' if it is not present
-    
     strio = StringIO.new
     log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
     
@@ -139,19 +139,7 @@ namespace :ad do
               r.ad_guid = g.objectguid unless g.nil?
             end
             
-            # Ensure g.description includes the text MAGIC_DESCRIPTOR (see above) somewhere in it (by request of the sys admins)
-            # If a group has no description, activedirectory gem will throw an ArgumentError.
-            begin
-              g_desc = g.description
-            rescue ArgumentError
-              # description not set
-              g_desc = ""
-            end
-            
-            unless g_desc and g_desc.index MAGIC_DESCRIPTOR
-              g.description = "#{g_desc} #{MAGIC_DESCRIPTOR}"
-              g.save
-            end
+            ensure_magic_descriptor_presence(g)
             
             # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
             r.ad_path = g.cn unless g.nil?
@@ -241,6 +229,29 @@ namespace :ad do
     end
 
     Rails.logger.info strio.string
+  end
+end
+
+# The magic descriptor used by ensure_magic_descriptor_presence
+MAGIC_DESCRIPTOR = "(RM Sync)"
+
+# Adds the MAGIC_DESCRIPTOR text to an AD group's description field if
+# it is not present.
+#
+# +ad_group+ is an AD group object required by the active_record gem
+def ensure_magic_descriptor_presence(ad_group)
+  # Use exceptions as activedirectory gem will throw an ArgumentError if no description exists.
+  # AD groups don't have to have description fields but we will add one if needed.
+  begin
+    g_desc = ad_group.description
+  rescue ArgumentError
+    # description not set
+    g_desc = ""
+  end
+  
+  unless g_desc and g_desc.index MAGIC_DESCRIPTOR
+    ad_group.description = "#{g_desc} #{MAGIC_DESCRIPTOR}"
+    ad_group.save
   end
 end
 
