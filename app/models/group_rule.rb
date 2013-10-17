@@ -1,26 +1,32 @@
+# GroupRule stores the results of its rule in a cache using GroupRuleResult.
+# Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ActiveRecord::Base
   using_access_control
-
-  @@valid_columns = %w( title major affiliation classification loginid ou )
-
+  
+  VALID_COLUMNS = %w( title major affiliation classification loginid ou )
+  
   validates_presence_of :condition, :column, :value
   validates_inclusion_of :condition, :in => %w( is is\ not  )
-  validates_inclusion_of :column, :in => @@valid_columns
-
+  validates_inclusion_of :column, :in => VALID_COLUMNS
+  
   belongs_to :group, :touch => true
+  has_many :results, :class_name => "GroupRuleResult", :dependent => :destroy
+  
+  after_save :resolve_if_changed
   
   # Needed by 'Group' when calculating rules
   def GroupRule.valid_columns
-    @@valid_columns
+    VALID_COLUMNS
   end
-
-  # Resolve (discern) the rule and return a UID and name for the person
-  def resolve
+  
+  def GroupRule.recalculate_all(column, person_id)
+    puts "recalculate_all called for #{column} on #{person_id}"
+  end
+  
+  # Calculate the results of the rule and cache in GroupRuleResult instances
+  def resolve!
     p = []
     
-    # Ignore blank rules
-    return p if value == ""
-
     case column
     when "title"
       ps = Person.where(:title_id => Title.find_by_name(value))
@@ -95,7 +101,7 @@ class GroupRule < ActiveRecord::Base
         logger.warn "Classification not found"
       end
     when "loginid"
-      ps = Person.where(:loginid => value) #.collect{|x| ["1" + x.id.to_s, x.name]}
+      ps = Person.where(:loginid => value)
       case condition
       when "is"
         p = p + ps
@@ -109,8 +115,13 @@ class GroupRule < ActiveRecord::Base
       # Undefined column
       logger.warn " -- unknown rule type (#{column})"
     end
-
-    p
+    
+    # Save the result in GroupRuleResults
+    results.destroy_all
+    
+    p.each do |e|
+      results << GroupRuleResult.new(:entity_id => e.id)
+    end
   end
 
   # Returns true if the given person satisfies the rule
@@ -137,31 +148,10 @@ class GroupRule < ActiveRecord::Base
     return cond == matched
   end
 
-  def print_formatted
-    case column
-    when 'title'
-      str = "<b>Title</b> "
-    when 'ou'
-      str = "<b>OU</b> "
-    when 'loginid'
-      str = "<b>Login ID</b> "
-    when 'major'
-      str = "<b>Major</b> "
-    when 'affiliation'
-      str = "<b>Affiliation</b> "
-    when 'classification'
-      str = "<b>Classification</b> "
-    end
-
-    case condition
-    when 'is'
-      str = str + "is "
-    when 'is not'
-      str = str + "is not "
-    end
-
-    str = str + "<b>" + value + "</b>"
-
-    str.html_safe
+  private
+  
+  # Recalculates group members if anything changed. Called after_save.
+  def resolve_if_changed
+    self.resolve! if self.changed?
   end
 end

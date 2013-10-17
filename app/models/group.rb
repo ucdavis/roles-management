@@ -24,7 +24,7 @@ class Group < Entity
   accepts_nested_attributes_for :rules, :allow_destroy => true
   accepts_nested_attributes_for :memberships, :allow_destroy => true
 
-  after_save :recalculate_members
+  after_save :recalculate_members!
   
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
@@ -63,11 +63,11 @@ class Group < Entity
   # This algorithm starts with an empty set, then runs all 'is'
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
-  def recalculate_members
+  def recalculate_members!
     Rails.logger.tagged "Group #{id}" do
       results = []
       
-      logger.info "Recalculating members..."
+      logger.info "Reassembling group members using rule result cache ..."
 
       # Step One: Build groups out of each 'is' rule,
       #           groupping rules of similar type together via OR
@@ -76,7 +76,7 @@ class Group < Entity
         ruleset_results = []
 
         ruleset[1].each do |rule|
-          ruleset_results << rule.resolve
+          ruleset_results << rule.results.map{ |r| r.entity_id }
         end
 
         results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
@@ -99,10 +99,8 @@ class Group < Entity
       
       # Step Four: Process any 'loginid is' rules
       rules.select{ |r| r.condition == "is" and r.column == "loginid" }.each do |rule|
-        if results.nil?
-          results = []
-        end
-        results << rule.resolve.at(0)
+        results = [] if results.nil?
+        results << rule.results.map{ |r| r.entity_id }
       end
 
       # Remove previous calculated group member assignments
@@ -111,21 +109,13 @@ class Group < Entity
       end
 
       # Reset calculated group member assignments with the results of this algorithm
-      unless results.nil?
-        results = results.flatten
-        results = results.uniq{ |r| r.id }
-        uncalculated_group_member_ids = memberships.select{ |m| m.calculated == false }.map{ |m| m.entity_id }
-        results.each do |e|
-          m = GroupMembership.new
-          m.group_id = id
-          m.entity_id = e.id
-          m.calculated = true
-          m.save
+      if results
+        results.each do |r|
+          memberships << GroupMembership.new(:entity_id => r, :calculated => true)
         end
       end
       
-      results.nil? ? num_found = 0 : num_found = results.length
-      logger.info "Found #{num_found} members, group now has #{memberships.length} total members"
+      logger.info "Calculated #{memberships.length} members"
       
       # Force a reload (make sure this function stays as a after_save callback, never before_save)
       # to ensure old memberships get deleted properly. EntityController#update was returning both
