@@ -19,8 +19,93 @@ class GroupRule < ActiveRecord::Base
     VALID_COLUMNS
   end
   
-  def GroupRule.recalculate_all(column, person_id)
-    puts "recalculate_all called for #{column} on #{person_id}"
+  # Class method to recalculate all rules related to column and entity_id.
+  # Similar to resolve! but only involves removing/adding results for a specific person
+  def GroupRule.resolve_target!(column, entity_id)
+    unless VALID_COLUMNS.include? column.to_s
+      raise "Cannot resolve_target for unknown column '#{column}'"
+    end
+    
+    # Remove any existing rule results for this (person, column) duple
+    GroupRuleResult.includes(:group_rule).where(:entity_id => entity_id, :group_rules => { :column => column.to_s }).destroy_all
+    
+    entity = Entity.find_by_id(entity_id)
+    
+    # Figure out which rules the entity matches specifically and add them
+    case column
+    when :title
+      if entity.title
+        GroupRule.where(:column => "title").each do |rule|
+          if rule.condition == "is"
+            if rule.value == entity.title.name
+              rule.results << GroupRuleResult.new(:entity_id => entity_id)
+            end
+          elsif rule.condition == "is not"
+            logger.warn "Cannot GroupRule.resolve_target! for 'title is not'. Unimplemented behavior."
+          end
+        end
+      end
+    when :major
+      if entity.major
+        GroupRule.where(:column => "major").each do |rule|
+          if rule.condition == "is"
+            if rule.value == entity.major.name
+              rule.results << GroupRuleResult.new(:entity_id => entity_id)
+            end
+          elsif rule.condition == "is not"
+            logger.warn "Cannot GroupRule.resolve_target! for 'major is not'. Unimplemented behavior."
+          end
+        end
+      end
+    when :affiliation
+      entity.affiliations.each do |entity_affiliation|
+        GroupRule.where(:column => "affiliation").each do |rule|
+          if rule.condition == "is"
+            if rule.value == entity_affiliation.name
+              rule.results << GroupRuleResult.new(:entity_id => entity_id)
+            end
+          elsif rule.condition == "is not"
+            logger.warn "Cannot GroupRule.resolve_target! for 'affiliation is not'. Unimplemented behavior."
+          end
+        end
+      end
+    when :ou
+      entity.groups.ous.each do |ou|
+        GroupRule.where(:column => "ou").each do |rule|
+          if rule.condition == "is"
+            if rule.value == ou.name
+              rule.results << GroupRuleResult.new(:entity_id => entity_id)
+            end
+          elsif rule.condition == "is not"
+            logger.warn "Cannot GroupRule.resolve_target! for 'ou is not'. Unimplemented behavior."
+          end
+        end
+      end
+    when :classification
+      if entity.title
+        entity.title.classifications.each do |classification|
+          GroupRule.where(:column => "classification").each do |rule|
+            if rule.condition == "is"
+              if rule.value == classification.name
+                rule.results << GroupRuleResult.new(:entity_id => entity_id)
+              end
+            elsif rule.condition == "is not"
+              logger.warn "Cannot GroupRule.resolve_target! for 'classification is not'. Unimplemented behavior."
+            end
+          end
+        end
+      end
+    when :loginid
+      GroupRule.where(:column => "loginid").each do |rule|
+        if rule.condition == "is"
+          if rule.value == entity.loginid
+            rule.results << GroupRuleResult.new(:entity_id => entity_id)
+          end
+        elsif rule.condition == "is not"
+          logger.warn "Cannot GroupRule.resolve_target! for 'loginid is not'. Unimplemented behavior."
+        end
+      end
+    end
   end
   
   # Calculate the results of the rule and cache in GroupRuleResult instances
@@ -113,7 +198,7 @@ class GroupRule < ActiveRecord::Base
       end
     else
       # Undefined column
-      logger.warn " -- unknown rule type (#{column})"
+      logger.warn " -- unhandled column (#{column})"
     end
     
     # Save the result in GroupRuleResults

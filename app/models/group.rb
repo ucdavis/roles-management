@@ -17,7 +17,7 @@ class Group < Entity
   has_many :operators, :through => :group_operatorships, :source => "entity", :dependent => :destroy
   has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
 
-  validates :name, :presence => true
+  validates_presence_of :name
 
   attr_accessible :name, :description, :type, :owner_ids, :operator_ids, :rules_attributes, :memberships_attributes
 

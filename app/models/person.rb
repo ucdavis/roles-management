@@ -32,6 +32,7 @@ class Person < Entity
                   :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes, :status
 
   before_save :ensure_name_exists
+  after_save  :recalculate_group_rule_membership
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
@@ -102,13 +103,25 @@ class Person < Entity
     logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync }
   end
+  
+  def recalculate_group_rule_membership
+    if changed.include? "title_id"
+      GroupRule.resolve_target!(:title, id)
+      GroupRule.resolve_target!(:classification, id)
+    end
+    if changed.include? "major_id"
+      GroupRule.resolve_target!(:major, id)
+    end
+    if changed.include? "loginid"
+      GroupRule.resolve_target!(:loginid, id)
+    end
+  end
 
   private
   
   def ensure_name_exists
     if self.name.nil?
-      self.name = ""
-      self.name = self.first unless self.first.nil?
+      self.name = "#{self.first}"
       self.name = self.name + " " + self.last unless self.last.nil?
     end
   end
