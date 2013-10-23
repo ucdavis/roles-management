@@ -210,10 +210,12 @@ class GroupRule < ActiveRecord::Base
   end
 
   # Returns true if the given person satisfies the rule
-  def matches(person)
+  def matches(person_id)
     # 'cond' is a boolean representing this rule's 'is' or 'is not'
     cond = (condition == "is")
     matched = nil
+    
+    person = Person.find_by_id(person_id)
 
     case column
     when "title"
