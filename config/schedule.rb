@@ -6,12 +6,12 @@ every :reboot do
 end
 
 # Run LDAP import updater every hour
-every 6.hours do
+every 5.hours do
   #rake "ldap:import"
   envcommand 'nice -n 10 bundle exec rake ldap:import --silent'
 end
 
 # Sync with Active Directory every 24 hours at 2:30am (LDAP usually only takes 2-3 mins)
-every 8.hours do
+every 4.hours do
   rake "ad:sync_all_users"
 end
