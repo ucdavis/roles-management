@@ -14,9 +14,9 @@ GIT
 
 GIT
   remote: git://github.com/railsware/js-routes.git
-  revision: 463f94a71773eeea754033deca50529af699a975
+  revision: 986220740cdc32ba98f4182f2f1cf57a7319a821
   specs:
-    js-routes (0.9.3)
+    js-routes (0.9.4)
       rails (>= 3.2)
 
 GIT
@@ -85,7 +85,7 @@ GEM
     chronic (0.10.2)
     climate_control (0.0.3)
       activesupport (>= 3.0)
-    cocaine (0.5.2)
+    cocaine (0.5.3)
       climate_control (>= 0.0.3, < 1.0)
     coderay (1.0.9)
     coffee-rails (3.2.2)
@@ -118,7 +118,7 @@ GEM
     ffi (1.9.0)
     ffi2-generators (0.1.1)
     formatador (0.2.4)
-    guard (2.1.0)
+    guard (2.2.2)
       formatador (>= 0.2.4)
       listen (~> 2.1)
       lumberjack (~> 1.0)
@@ -162,12 +162,12 @@ GEM
     net-ssh (2.7.0)
     net-ssh-gateway (1.2.0)
       net-ssh (>= 2.6.5)
-    oj (2.1.6)
+    oj (2.1.7)
     os (0.9.6)
-    paperclip (3.5.1)
+    paperclip (3.5.2)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
-      cocaine (~> 0.5.0)
+      cocaine (~> 0.5.3)
       mime-types
     pg (0.17.0)
     polyglot (0.3.3)
@@ -175,10 +175,8 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
-    psych (2.0.1)
     rabl (0.9.0)
       activesupport (>= 2.3.14)
-    racc (1.4.10)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -210,9 +208,7 @@ GEM
       json (~> 1.4)
     ruby-ldap (0.9.16)
     ruby-prof (0.13.0)
-    rubysl (2.0.10)
-      psych (~> 2.0)
-      racc (~> 1.4)
+    rubysl (2.0.11)
       rubysl-abbrev (~> 2.0)
       rubysl-base64 (~> 2.0)
       rubysl-benchmark (~> 2.0)
@@ -421,7 +417,7 @@ GEM
     rubysl-webrick (2.0.0)
     rubysl-xmlrpc (2.0.0)
     rubysl-yaml (2.0.0)
-    rubysl-zlib (2.0.0)
+    rubysl-zlib (2.0.1)
     sass (3.2.12)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
