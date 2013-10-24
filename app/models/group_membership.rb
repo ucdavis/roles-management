@@ -5,9 +5,13 @@ class GroupMembership < ActiveRecord::Base
   using_access_control
   
   @@destroy_calculated_membership_flag = false
+  @@recalculating_membership_flag = false
   
   def self.destroy_calculated_membership_flag=(val)
     @@destroy_calculated_membership_flag = val
+  end
+  def self.recalculating_membership_flag=(val)
+    @@recalculating_membership_flag = val
   end
 
   validates_presence_of :group, :entity
@@ -35,6 +39,14 @@ class GroupMembership < ActiveRecord::Base
       GroupMembership.destroy_calculated_membership_flag = false
     end
   end
+  def self.recalculating_membership
+    begin
+      GroupMembership.recalculating_membership_flag = true
+      yield
+    ensure
+      GroupMembership.recalculating_membership_flag = false
+    end
+  end
 
   private
   
@@ -43,7 +55,7 @@ class GroupMembership < ActiveRecord::Base
   # This logic is located here and not in GroupRule as this is the best
   # place to find group memberships being created and destroyed.
   def recalculate_ou_group_rules_if_necessary
-    if group.ou?
+    if group.ou? and not @@recalculating_membership_flag
       GroupRule.resolve_target!(:ou, self.entity_id)
     end
   end

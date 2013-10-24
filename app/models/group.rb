@@ -120,13 +120,17 @@ class Group < Entity
 
       # Remove previous calculated group member assignments
       GroupMembership.destroying_calculated_group_membership do
-        GroupMembership.where(:group_id => self.id, :calculated => true).destroy_all
+        GroupMembership.recalculating_membership do
+          GroupMembership.where(:group_id => self.id, :calculated => true).destroy_all
+        end
       end
 
       # Reset calculated group member assignments with the results of this algorithm
       if results
         results.each do |r|
-          memberships << GroupMembership.new(:entity_id => r, :calculated => true)
+          GroupMembership.recalculating_membership do
+            memberships << GroupMembership.new(:entity_id => r, :calculated => true)
+          end
         end
       end
       
