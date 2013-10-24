@@ -1,0 +1,9 @@
+researcher:
+  id: 1
+  name: Researcher
+  code: 100
+
+programmer:
+  id: 2
+  name: Programmer I
+  code: 101

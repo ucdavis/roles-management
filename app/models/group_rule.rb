@@ -5,7 +5,7 @@ class GroupRule < ActiveRecord::Base
   
   VALID_COLUMNS = %w( title major affiliation classification loginid ou )
   
-  validates_presence_of :condition, :column, :value
+  validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => VALID_COLUMNS
   
@@ -13,6 +13,7 @@ class GroupRule < ActiveRecord::Base
   has_many :results, :class_name => "GroupRuleResult", :dependent => :destroy
   
   after_save :resolve_if_changed
+  after_destroy :group_must_recalculate
   
   # Needed by 'Group' when calculating rules
   def GroupRule.valid_columns
@@ -22,88 +23,120 @@ class GroupRule < ActiveRecord::Base
   # Class method to recalculate all rules related to column and entity_id.
   # Similar to resolve! but only involves removing/adding results for a specific person
   def GroupRule.resolve_target!(column, entity_id)
-    unless VALID_COLUMNS.include? column.to_s
-      raise "Cannot resolve_target for unknown column '#{column}'"
-    end
+    touched_group_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
     
-    # Remove any existing rule results for this (person, column) duple
-    GroupRuleResult.includes(:group_rule).where(:entity_id => entity_id, :group_rules => { :column => column.to_s }).destroy_all
+    logger.tagged "GroupRule.resolve_target!" do
+      unless VALID_COLUMNS.include? column.to_s
+        raise "Cannot resolve_target for unknown column '#{column}'"
+      end
     
-    entity = Entity.find_by_id(entity_id)
+      logger.info "Resolving target entity ID #{entity_id} for column #{column}"
     
-    # Figure out which rules the entity matches specifically and add them
-    case column
-    when :title
-      if entity.title
-        GroupRule.where(:column => "title").each do |rule|
-          if rule.condition == "is"
-            if rule.value == entity.title.name
-              rule.results << GroupRuleResult.new(:entity_id => entity_id)
-            end
-          elsif rule.condition == "is not"
-            logger.warn "Cannot GroupRule.resolve_target! for 'title is not'. Unimplemented behavior."
-          end
-        end
+      # Remove any existing rule results for this (person, column) duple
+      expired_rule_results = GroupRuleResult.includes(:group_rule).where(:entity_id => entity_id, :group_rules => { :column => column.to_s })
+      expired_rule_results.each do |result|
+        touched_group_ids << result.group_rule.group.id
       end
-    when :major
-      if entity.major
-        GroupRule.where(:column => "major").each do |rule|
-          if rule.condition == "is"
-            if rule.value == entity.major.name
-              rule.results << GroupRuleResult.new(:entity_id => entity_id)
-            end
-          elsif rule.condition == "is not"
-            logger.warn "Cannot GroupRule.resolve_target! for 'major is not'. Unimplemented behavior."
-          end
-        end
+      logger.info "Expiring #{expired_rule_results.length} rules"
+      expired_rule_results.destroy_all
+    
+      entity = Entity.find_by_id(entity_id)
+      unless entity
+        logger.warn "Could not find entity with ID #{entity_id}"
+        return
       end
-    when :affiliation
-      entity.affiliations.each do |entity_affiliation|
-        GroupRule.where(:column => "affiliation").each do |rule|
-          if rule.condition == "is"
-            if rule.value == entity_affiliation.name
-              rule.results << GroupRuleResult.new(:entity_id => entity_id)
-            end
-          elsif rule.condition == "is not"
-            logger.warn "Cannot GroupRule.resolve_target! for 'affiliation is not'. Unimplemented behavior."
-          end
-        end
-      end
-    when :ou
-      entity.groups.ous.each do |ou|
-        GroupRule.where(:column => "ou").each do |rule|
-          if rule.condition == "is"
-            if rule.value == ou.name
-              rule.results << GroupRuleResult.new(:entity_id => entity_id)
-            end
-          elsif rule.condition == "is not"
-            logger.warn "Cannot GroupRule.resolve_target! for 'ou is not'. Unimplemented behavior."
-          end
-        end
-      end
-    when :classification
-      if entity.title
-        entity.title.classifications.each do |classification|
-          GroupRule.where(:column => "classification").each do |rule|
+    
+      # Figure out which rules the entity matches specifically and add them
+      case column
+      when :title
+        if entity.title
+          GroupRule.where(:column => "title").each do |rule|
             if rule.condition == "is"
-              if rule.value == classification.name
+              if rule.value == entity.title.name
+                logger.info "Matched 'title is' rule. Recording result."
                 rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                touched_group_ids << rule.group.id
               end
             elsif rule.condition == "is not"
-              logger.warn "Cannot GroupRule.resolve_target! for 'classification is not'. Unimplemented behavior."
+              logger.warn "Cannot GroupRule.resolve_target! for 'title is not'. Unimplemented behavior."
             end
           end
         end
-      end
-    when :loginid
-      GroupRule.where(:column => "loginid").each do |rule|
-        if rule.condition == "is"
-          if rule.value == entity.loginid
-            rule.results << GroupRuleResult.new(:entity_id => entity_id)
+      when :major
+        if entity.major
+          GroupRule.where(:column => "major").each do |rule|
+            if rule.condition == "is"
+              if rule.value == entity.major.name
+                logger.info "Matched 'major is' rule. Recording result."
+                rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                touched_group_ids << rule.group.id
+              end
+            elsif rule.condition == "is not"
+              logger.warn "Cannot GroupRule.resolve_target! for 'major is not'. Unimplemented behavior."
+            end
           end
-        elsif rule.condition == "is not"
-          logger.warn "Cannot GroupRule.resolve_target! for 'loginid is not'. Unimplemented behavior."
         end
+      when :affiliation
+        entity.affiliations.each do |entity_affiliation|
+          GroupRule.where(:column => "affiliation").each do |rule|
+            if rule.condition == "is"
+              if rule.value == entity_affiliation.name
+                logger.info "Matched 'affiliation is' rule. Recording result."
+                rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                touched_group_ids << rule.group.id
+              end
+            elsif rule.condition == "is not"
+              logger.warn "Cannot GroupRule.resolve_target! for 'affiliation is not'. Unimplemented behavior."
+            end
+          end
+        end
+      when :ou
+        entity.groups.ous.each do |ou|
+          GroupRule.where(:column => "ou").each do |rule|
+            if rule.condition == "is"
+              if rule.value == ou.name
+                logger.info "Matched 'ou is' rule. Recording result."
+                rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                touched_group_ids << rule.group.id
+              end
+            elsif rule.condition == "is not"
+              logger.warn "Cannot GroupRule.resolve_target! for 'ou is not'. Unimplemented behavior."
+            end
+          end
+        end
+      when :classification
+        if entity.title
+          entity.title.classifications.each do |classification|
+            GroupRule.where(:column => "classification").each do |rule|
+              if rule.condition == "is"
+                if rule.value == classification.name
+                  logger.info "Matched 'classification is' rule. Recording result."
+                  rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                  touched_group_ids << rule.group.id
+                end
+              elsif rule.condition == "is not"
+                logger.warn "Cannot GroupRule.resolve_target! for 'classification is not'. Unimplemented behavior."
+              end
+            end
+          end
+        end
+      when :loginid
+        GroupRule.where(:column => "loginid").each do |rule|
+          if rule.condition == "is"
+            if rule.value == entity.loginid
+              logger.info "Matched 'loginid is' rule. Recording result."
+              rule.results << GroupRuleResult.new(:entity_id => entity_id)
+              touched_group_ids << rule.group.id
+            end
+          elsif rule.condition == "is not"
+            logger.warn "Cannot GroupRule.resolve_target! for 'loginid is not'. Unimplemented behavior."
+          end
+        end
+      end
+      
+      touched_group_ids.uniq.each do |touched_group_id|
+        logger.info "Alerting group ##{touched_group_id} to recalculate as at least one of its rules were touched."
+        Group.find_by_id(touched_group_id).recalculate_members!
       end
     end
   end
@@ -111,6 +144,8 @@ class GroupRule < ActiveRecord::Base
   # Calculate the results of the rule and cache in GroupRuleResult instances
   def resolve!
     p = []
+    
+    logger.info "Resolving (calculating) group rule ##{id}"
     
     case column
     when "title"
@@ -207,6 +242,8 @@ class GroupRule < ActiveRecord::Base
     p.each do |e|
       results << GroupRuleResult.new(:entity_id => e.id)
     end
+    
+    logger.info "Resolved group rule ##{id} to have #{results.length} results"
   end
 
   # Returns true if the given person satisfies the rule
@@ -239,6 +276,12 @@ class GroupRule < ActiveRecord::Base
   
   # Recalculates group members if anything changed. Called after_save.
   def resolve_if_changed
-    self.resolve! if self.changed?
+    self.resolve! if self.changed? # recalculate this rule
+    self.group.recalculate_members! if self.changed? # tell the group to recombine the results list
+  end
+  
+  # In after_destroy it's important the group recalculate members as this rule is gone
+  def group_must_recalculate
+    self.group.recalculate_members!
   end
 end

@@ -82,3 +82,16 @@ cthielen:
   status: true
   phone: 8005551414
   address: 472 Testing Drive
+
+groupWithNothing:
+  id: 10
+  type: Group
+  name: Group with nothing
+  description: This group has no rules, owners, operators, or members
+
+anOU:
+  id: 11
+  type: Group
+  name: An OU
+  description: I am an OU.
+  code: 1

@@ -44,7 +44,6 @@ class GroupMembership < ActiveRecord::Base
   # place to find group memberships being created and destroyed.
   def recalculate_ou_group_rules_if_necessary
     if group.ou?
-      puts "ou membership changed for entity #{self.entity_id}, calling recalculate"
       GroupRule.resolve_target!(:ou, self.entity_id)
     end
   end

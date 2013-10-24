@@ -76,14 +76,27 @@ class Group < Entity
         ruleset_results = []
 
         ruleset[1].each do |rule|
+          logger.info "Rule (#{rule.id}, #{rule.column} #{rule.condition} #{rule.value}) has #{rule.results.length} result(s)"
           ruleset_results << rule.results.map{ |r| r.entity_id }
         end
+        
+        logger.info "ruleset_results:"
+        logger.info ruleset_results
 
-        results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
+        #results << ruleset_results.inject(ruleset_results.first) { |sum,m| sum |= m }
+        results << ruleset_results.reduce(:+)
+        
+        logger.info "results1:"
+        logger.info results
       end
 
       # Step Two: AND all groups from step one together
-      results = results.inject(results.first) { |sum,m| sum &= m }
+      #results = results.inject(results.first) { |sum,n| sum + n } # &= n instead of + n
+      results = results.reduce(:+)
+      results = [] unless results # reduce/inject may return nil
+
+      logger.info "results2:"
+      logger.info results
 
       if results
         # Step Three: Pass over the result from step two and
@@ -99,9 +112,11 @@ class Group < Entity
       
       # Step Four: Process any 'loginid is' rules
       rules.select{ |r| r.condition == "is" and r.column == "loginid" }.each do |rule|
-        results = [] if results.nil?
+        logger.info "Processing loginid is rule #{rule.value}..."
         results << rule.results.map{ |r| r.entity_id }
       end
+      
+      results.flatten!
 
       # Remove previous calculated group member assignments
       GroupMembership.destroying_calculated_group_membership do
@@ -115,14 +130,14 @@ class Group < Entity
         end
       end
       
-      logger.info "Calculated #{memberships.length} members"
+      logger.info "Calculated #{results.length} results. Membership now at #{memberships.length} members."
       
       # Force a reload (make sure this function stays as a after_save callback, never before_save)
       # to ensure old memberships get deleted properly. EntityController#update was returning both
       # new calculated memberships _and_ those marked for destruction before this 'reload'
       # statement was added. (Bug in format.json render: json as logger.info @entity.members.length
       # just before the render: json line _does_ show the correct number?)
-      reload
+      #reload
     end
   end
 

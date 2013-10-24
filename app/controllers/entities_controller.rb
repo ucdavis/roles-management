@@ -61,10 +61,12 @@ class EntitiesController < ApplicationController
 
     @entity.update_attributes(params[:entity])
     
+    # Groups may change their membership based on rule changes,
+    # making our AR object stale.
+    #@entity.reload if params[:entity][:type] == "Group"
+    
     @entity.trigger_sync
     
-    # Overridden to respond with the object and not a '204 No Content'.
-    # See: http://stackoverflow.com/questions/9953887/simple-respond-with-in-rails-that-avoids-204-from-put
     respond_with(@entity) do |format|
       format.json{ render json: @entity }
     end
