@@ -91,8 +91,7 @@ class Group < Entity
       end
 
       # Step Two: AND all groups from step one together
-      #results = results.inject(results.first) { |sum,n| sum + n } # &= n instead of + n
-      results = results.reduce(:+)
+      results = results.inject(results.first) { |sum,n| sum &= n }
       results = [] unless results # reduce/inject may return nil
 
       logger.info "results2:"

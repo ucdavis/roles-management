@@ -79,6 +79,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.length == 0, "group should have no members"
 
       # Test that setting a person's major fills in a group
+      group.rules.destroy_all
       group_rule = GroupRule.new({ column: 'major', condition: 'is', value: 'History', group_id: group.id })
       group.rules << group_rule
       
@@ -101,6 +102,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.length == 0, "group should have no members"
 
       # Test that setting a person's affiliation fills in a group
+      group.rules.destroy_all
       group_rule = GroupRule.new({ column: 'affiliation', condition: 'is', value: 'staff', group_id: group.id })
       group.rules << group_rule
       
@@ -123,6 +125,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.length == 0, "group should have no members"
 
       # Test that setting a person's OU fills in a group
+      group.rules.destroy_all
       group_rule = GroupRule.new({ column: 'ou', condition: 'is', value: 'An OU', group_id: group.id })
       group.rules << group_rule
       
@@ -145,6 +148,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.length == 0, "group should have no members"
 
       # Test that setting a person's classification fills in a group
+      group.rules.destroy_all
       group_rule = GroupRule.new({ column: 'classification', condition: 'is', value: 'Programmer', group_id: group.id })
       group.rules << group_rule
       
@@ -219,6 +223,37 @@ class GroupRuleTest < ActiveSupport::TestCase
       
       person = entities(:cthielen)
       person.destroy
+      
+      group.reload
+      
+      assert group.members.length == 0, "group should have no members"
+    end
+  end
+  
+  test "group rules are ANDed together correctly" do
+    without_access_control do
+      # Ensure a group has a rule
+      group = entities(:groupWithNothing)
+      
+      assert group.roles.length == 0, "looks like groupWithNothing has a role"
+      assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+      assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+      assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+
+      @person.groups << entities(:anOU)
+
+      # Test login ID rules
+      assert group.members.length == 0, "group should have no members"
+      
+      group_rule = GroupRule.new({ column: 'ou', condition: 'is', value: 'An OU', group_id: group.id })
+      group.rules << group_rule
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have a member"
+      
+      group_rule = GroupRule.new({ column: 'title', condition: 'is', value: 'something that does not exist', group_id: group.id })
+      group.rules << group_rule
       
       group.reload
       
