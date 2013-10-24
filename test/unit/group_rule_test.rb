@@ -50,7 +50,6 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.length == 1, "group should have a member"
       
       # Test that destroying all rules removes members
-      
       group.rules.destroy_all
       
       group.reload
@@ -170,10 +169,60 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "creating a person should associate them with the proper groups" do
-    assert false, "incomplete test"
+    without_access_control do
+      # Ensure a group has a rule
+      group = entities(:groupWithNothing)
+      
+      assert group.roles.length == 0, "looks like groupWithNothing has a role"
+      assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+      assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+      assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+
+      # Test login ID rules
+      assert group.members.length == 0, "group should have no members"
+      
+      group_rule = GroupRule.new({ column: 'loginid', condition: 'is', value: 'somebody_new', group_id: group.id })
+      group.rules << group_rule
+      
+      group.reload
+      
+      assert group.members.length == 0, "group should have no members"
+      
+      person = Person.new({loginid: 'somebody_new', first: 'Somebody', last: 'New'})
+      person.save!
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have a member"
+    end
   end
 
   test "deleting a person or disabling them should disassociate them with the proper groups" do
-    assert false, "incomplete test"
+    without_access_control do
+      # Ensure a group has a rule
+      group = entities(:groupWithNothing)
+      
+      assert group.roles.length == 0, "looks like groupWithNothing has a role"
+      assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+      assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+      assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+
+      # Test login ID rules
+      assert group.members.length == 0, "group should have no members"
+      
+      group_rule = GroupRule.new({ column: 'loginid', condition: 'is', value: 'cthielen', group_id: group.id })
+      group.rules << group_rule
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have a member"
+      
+      person = entities(:cthielen)
+      person.destroy
+      
+      group.reload
+      
+      assert group.members.length == 0, "group should have no members"
+    end
   end
 end
