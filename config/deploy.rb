@@ -12,7 +12,7 @@ after  "deploy:restart", "delayed_job:start"
 after "deploy:stop",  "delayed_job:stop"
 after "deploy:start", "delayed_job:start"
 
-after "deploy:restart", "deploy:prime_cache"
+# after "deploy:restart", "deploy:prime_cache"
 
 server "169.237.120.176", :web, :app, :db, primary: true
 
@@ -47,12 +47,12 @@ namespace :deploy do
     end
   end
 
-  %w[start stop restart].each do |command|
-    desc "#{command} unicorn server"
-    task command, roles: :app, except: {no_release: true} do
-      run "/etc/init.d/unicorn_#{application} #{command}"
-    end
-  end
+  # %w[start stop restart].each do |command|
+  #   desc "#{command} unicorn server"
+  #   task command, roles: :app, except: {no_release: true} do
+  #     run "/etc/init.d/unicorn_#{application} #{command}"
+  #   end
+  # end
 
   task :setup_config, roles: :app do
     sudo "ln -nfs #{current_path}/config/nginx.conf /etc/nginx/sites-enabled/#{application}"
@@ -84,8 +84,8 @@ namespace :deploy do
   end
   before "deploy", "deploy:check_revision"
 
-  desc "Prime cache using curl"
-    task :prime_cache, roles: :web do
-      run "curl #{url} >/dev/null 2>&1; true"
-    end
+  # desc "Prime cache using curl"
+  # task :prime_cache, roles: :web do
+  #   run "curl #{url} >/dev/null 2>&1; true"
+  # end
 end
