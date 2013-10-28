@@ -324,10 +324,13 @@ class DssRm.Views.PersonShow extends Backbone.View
   # Attempt to render the phone number in a more readable format.
   # Assumes phone comes in like '8005551234' or '5551234'
   formatPhone: (phone) ->
-    if phone.length == 10
-      return "(#{phone.substr(0, 3)}) #{phone.substr(3, 3)}-#{phone.substr(6, 4)}"
-    if phone.length == 7
-      return "#{phone.substr(0, 3)}-#{phone.substr(3, 4)}"
+    if phone
+      if phone.length == 10
+        return "(#{phone.substr(0, 3)}) #{phone.substr(3, 3)}-#{phone.substr(6, 4)}"
+      if phone.length == 7
+        return "#{phone.substr(0, 3)}-#{phone.substr(3, 4)}"
+    else
+      return ""
 
   cleanUpModal: ->
     @remove()
