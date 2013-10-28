@@ -8,13 +8,13 @@ namespace :ldap do
     require 'stringio'
     require 'os'
 
-    notify_admins = false
+    # notify_admins = false
 
     Authorization.ignore_access_control(true)
 
     # Keep a log to e-mail to the admins
-    strio = StringIO.new
-    log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
+    # strio = StringIO.new
+    log = Rails.logger #ActiveSupport::TaggedLogging.new(Logger.new(strio))
     
     log.tagged "ldap:import" do
       # Include the large lot of UCD info (dept codes, title codes, etc.)
@@ -136,14 +136,14 @@ namespace :ldap do
 
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
-    if notify_admins
-      admin_role_id = rm_roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-      Role.find_by_id(admin_role_id).entities.each do |admin|
-        WheneverMailer.ldap_report(admin.email, strio.string).deliver!
-      end
-    end
+    # if notify_admins
+    #   admin_role_id = rm_roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+    #   Role.find_by_id(admin_role_id).entities.each do |admin|
+    #     WheneverMailer.ldap_report(admin.email, strio.string).deliver!
+    #   end
+    # end
 
-    Rails.logger.info strio.string
+    #Rails.logger.info strio.string
 
     Authorization.ignore_access_control(false)
   end
