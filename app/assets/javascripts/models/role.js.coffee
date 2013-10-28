@@ -6,7 +6,9 @@ DssRm.Models.Role = Backbone.Model.extend(
     @on 'sync', @resetNestedCollections, this
     
   resetNestedCollections: ->
-    @assignments = new Backbone.Collection if @assignments is `undefined`
+    if @assignments is `undefined`
+      @assignments = new Backbone.Collection
+      @assignments.comparator = (assignment) -> assignment.get('type') + assignment.get('name')
     
     _.each @get('assignments'), (a) =>
       if a._destroy
