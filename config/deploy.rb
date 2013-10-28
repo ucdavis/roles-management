@@ -12,8 +12,6 @@ after  "deploy:restart", "delayed_job:start"
 after "deploy:stop",  "delayed_job:stop"
 after "deploy:start", "delayed_job:start"
 
-# after "deploy:restart", "deploy:prime_cache"
-
 server "169.237.120.176", :web, :app, :db, primary: true
 
 set :application, "roles-management"
@@ -47,13 +45,12 @@ namespace :deploy do
     end
   end
 
-  # %w[start stop restart].each do |command|
-  #   desc "#{command} unicorn server"
-  #   task command, roles: :app, except: {no_release: true} do
-  #     run "/etc/init.d/unicorn_#{application} #{command}"
-  #   end
-  # end
+  desc "Restart Passenger server"
+  task :restart, roles: :app, except: {no_release: true} do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
 
+  desc "First-time config setup"
   task :setup_config, roles: :app do
     sudo "ln -nfs #{current_path}/config/nginx.conf /etc/nginx/sites-enabled/#{application}"
     sudo "ln -nfs #{current_path}/config/unicorn_init.sh /etc/init.d/unicorn_#{application}"
@@ -66,6 +63,7 @@ namespace :deploy do
   end
   after "deploy:setup", "deploy:setup_config"
 
+  desc "Symlink config from shared to the newly deployed copy"
   task :symlink_config, roles: :app do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"
@@ -83,9 +81,4 @@ namespace :deploy do
     end
   end
   before "deploy", "deploy:check_revision"
-
-  # desc "Prime cache using curl"
-  # task :prime_cache, roles: :web do
-  #   run "curl #{url} >/dev/null 2>&1; true"
-  # end
 end
