@@ -28,7 +28,6 @@ group :development, :test do
   gem 'sqlite3'
 end
 
-
 gem "rubysl", "~> 2.0", :platform => :rbx
 
 gem 'capistrano', '< 3.0.0'
