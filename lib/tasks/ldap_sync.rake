@@ -85,8 +85,6 @@ namespace :ldap do
 
       num_results = 0
 
-      puts "Before LDAP query: #{OS.rss_bytes} KB"
-
       # Query LDAP
       for f in filters
         unless f.length == 0
@@ -96,8 +94,6 @@ namespace :ldap do
             save_or_touch(p, log) if p
             
             num_results += 1
-            
-            puts "After result #{num_results}: #{OS.rss_bytes} KB"
             
             p = nil
           end
