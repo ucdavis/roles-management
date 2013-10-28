@@ -3,15 +3,14 @@ require 'rake'
 namespace :ad do
   desc 'Sync the user database with Active Directory'
   task :sync_all_users => :environment do
-    require 'stringio'
+    # require 'stringio'
     require 'active_directory'
     require 'active_directory_wrapper'
     
-    notify_admins = false
+    # notify_admins = false
 
     # Log to a string so we can both optionally e-mail the log to the admins and merge it into the master log
-    strio = StringIO.new
-    log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
+    log = Rails.logger
     log.tagged "ad:sync_all_users" do
       # Cached groups list
       groups = {}
@@ -102,24 +101,23 @@ namespace :ad do
     end
 
     # Email the log
-    if notify_admins
-      admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-      Role.find_by_id(admin_role_id).people.each do |admin|
-        WheneverMailer.adsync_report(admin.email, strio.string).deliver!
-      end
-    end
-
-    Rails.logger.info strio.string
+    # if notify_admins
+    #   admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+    #   Role.find_by_id(admin_role_id).people.each do |admin|
+    #     WheneverMailer.adsync_report(admin.email, strio.string).deliver!
+    #   end
+    # end
   end
 
   desc 'Sync a role against Active Directory. May create new users as needed.'
   task :sync_role, [:role_id] => :environment do |t, args|
-    require 'stringio'
+    # require 'stringio'
     require 'active_directory'
     require 'active_directory_wrapper'
     
-    strio = StringIO.new
-    log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
+    log = Rails.logger
+    
+    timestamp_start = Time.now
     
     log.tagged "ad:sync_role" do
       log.tagged "role:#{args[:role_id]}" do
@@ -225,10 +223,12 @@ namespace :ad do
         else
           log.warn "Cannot find role with ID #{args[:role_id]}"
         end
+
+        timestamp_finish = Time.now
+
+        log.info "Sync finished. Time elapsed: " + (timestamp_finish - timestamp_start).to_s + " seconds"
       end
     end
-
-    Rails.logger.info strio.string
   end
 end
 
