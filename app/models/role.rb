@@ -13,7 +13,7 @@ class Role < ActiveRecord::Base
   has_many :role_assignments, :dependent => :destroy
   has_many :entities, :through => :role_assignments
 
-  belongs_to :application
+  belongs_to :application, :touch => true
   
   before_save :reset_last_ad_sync_if_ad_path_changed
 
@@ -40,10 +40,9 @@ class Role < ActiveRecord::Base
     return data
   end
 
-  # Slightly different than 'entities' ...
-  # members takes all people and all people from groups (flattens the group)
-  # and returns them as a list. It also only returns unique results, so e.g. if
-  # a person has this role via two different groups, they will only appear once
+  # Different from entities, 'members' takes all people and all people from groups
+  # (flattens the group) and returns them as a list. It also only returns unique results,
+  # so e.g. if a person has this role via two different groups, they will only appear once
   # in the members output, but at least twice in the 'entities' output.
   def members
     all = []
