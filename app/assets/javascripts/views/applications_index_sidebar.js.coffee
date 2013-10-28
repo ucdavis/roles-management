@@ -49,7 +49,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       
       # 'Fade' bookmark if it is also going to be in the 'Assigned' section
       if selected_role and selected_role.has_assigned(e, false)
-          faded = true
+        faded = true
       
       ep = new Backbone.Model
         entity_id: (e.get('group_id') || e.get('id'))
@@ -70,6 +70,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         unless a.get('calculated') or a.get('_destroy')
           pin = @renderSidebarPin(a, { highlighted: true, faded: false })
           highlighted_pins_frag.appendChild pin.el
+      
+      @$('#assigned-count').html selected_role.get('member_count')
     
     @$('ul#pins').html pins_frag
     @$("ul#highlighted_pins").html highlighted_pins_frag
