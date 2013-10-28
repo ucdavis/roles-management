@@ -38,7 +38,7 @@ namespace :ldap do
         manualFilter = []
         manualFilter << '(uid=' + args[:loginid] + ')'
 
-        log.debug "Will use query: " + manualFilter.join(",")
+        log.debug "Query: " + manualFilter.join(",")
 
         filters = manualFilter
       else
@@ -52,7 +52,7 @@ namespace :ldap do
         end
         staffFilter = staffFilter + '))'
 
-        log.debug "Will use query: " + staffFilter
+        log.debug "Query: " + staffFilter
 
         # Faculty filter
         facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
@@ -61,7 +61,7 @@ namespace :ldap do
         end
         facultyFilter = facultyFilter + '))'
 
-        log.debug "Will use query: " + facultyFilter
+        log.debug "Query: " + facultyFilter
 
         # Student filter
         studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
@@ -70,59 +70,61 @@ namespace :ldap do
         end
         studentFilter = studentFilter + '))'
 
-        log.debug "Will use query: " + studentFilter
+        log.debug "Query: " + studentFilter
 
         # Manual filter
-        manualFilter = []
-        for m in UcdLookups::MANUAL_INCLUDES
-          manualFilter << '(uid=' + m + ')'
-        end
+        # manualFilter = []
+        # for m in UcdLookups::MANUAL_INCLUDES
+        #   manualFilter << '(uid=' + m + ')'
+        # end
+        # 
+        # log.debug "Query: " + manualFilter.join(",")
 
-        log.debug "Will use query: " + manualFilter.join(",")
-
-        filters = [staffFilter,facultyFilter,studentFilter] + manualFilter
+        filters = [staffFilter,facultyFilter,studentFilter] #+ manualFilter
       end
 
       num_results = 0
 
-      # Query LDAP
-      Person.transaction do
-        for f in filters
-          unless f.length == 0
-            ldap.search(f) do |entry|
-              p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
+      puts "Before LDAP query: #{OS.rss_bytes} KB"
 
-              save_or_touch(p, log) if p
-              
-              num_results += 1
-              
-              p = nil
-            end
+      # Query LDAP
+      for f in filters
+        unless f.length == 0
+          ldap.search(f) do |entry|
+            p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
+
+            save_or_touch(p, log) if p
+            
+            num_results += 1
+            
+            puts "After result #{num_results}: #{OS.rss_bytes} KB"
+            
+            p = nil
           end
         end
-        
-        log.debug "No LDAP results were found." unless num_results > 0
+      end
+      
+      log.debug "No LDAP results were found." unless num_results > 0
 
-        # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
-        # Only do this if we weren't in 'single' import mode
-        if args[:loginid].nil?
-          log.debug "Processing additional login IDs existing locally but not found in the standard LDAP queries."
+      # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
+      # Only do this if we weren't in 'single' import mode
+      if args[:loginid].nil?
+        log.debug "Processing additional login IDs existing locally but not found in the standard LDAP queries."
+        
+        Person.find(:all, :conditions => ["updated_at < ?", timestamp_start]).each do |person|
+          p = nil
           
-          Person.find(:all, :conditions => ["updated_at < ?", timestamp_start]).each do |person|
-            p = nil
-            
-            ldap.search('(uid=' + person.loginid + ')') do |entry|
-              p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
-              save_or_touch(p, log)
-            end
-            
-            unless p
-              log.debug "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
-              person.status = false
-              unless person.save
-                log.error "Could not save person (#{person.loginid}), reason(s):"
-                log.error "\t#{person.errors.full_messages.join(', ')}"
-              end
+          ldap.search('(uid=' + person.loginid + ')') do |entry|
+            p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
+            save_or_touch(p, log)
+          end
+          
+          unless p
+            log.debug "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
+            person.status = false
+            unless person.save
+              log.error "Could not save person (#{person.loginid}), reason(s):"
+              log.error "\t#{person.errors.full_messages.join(', ')}"
             end
           end
         end
