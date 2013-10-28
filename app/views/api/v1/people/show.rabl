@@ -1,5 +1,5 @@
 object @person
-cache ['people_show', @person]
+cache ['api_v1_people_show', @person]
 
 attributes :address, :byline, :email, :first, :id, :last, :loginid, :name, :phone, :type
 

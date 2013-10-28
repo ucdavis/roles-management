@@ -1,5 +1,5 @@
 collection @applications
-cache ['applications_index', @applications]
+cache ['api_v1_applications_index', @applications]
 
 @applications.each do |application|
   attributes :id, :name

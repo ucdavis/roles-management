@@ -1,5 +1,5 @@
 object @role
-cache ['roles_show', @role]
+cache ['api_v1_roles_show', @role]
 
 attributes :application_id, :description, :name, :token
 
