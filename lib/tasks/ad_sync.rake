@@ -108,6 +108,16 @@ namespace :ad do
     #   end
     # end
   end
+  
+  desc 'Sync all roles against Active Directory.'
+  task :sync_all_roles => :environment do
+    Role.all.each do |r|
+      if r.ad_path
+        puts "Queueing role #{r.id} (#{r.name} / #{r.application.name}) for background sync ..."
+        Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{r.id}]"))
+      end
+    end
+  end
 
   desc 'Sync a role against Active Directory. May create new users as needed.'
   task :sync_role, [:role_id] => :environment do |t, args|
