@@ -32,6 +32,6 @@ class Application < ActiveRecord::Base
   
   def trigger_sync
     logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
-    roles.all.each { |role| role.trigger_sync }
+    roles.all.each { |role| role.trigger_sync! }
   end
 end

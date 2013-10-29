@@ -18,6 +18,15 @@ class RoleAssignment < ActiveRecord::Base
   after_create :grant_role_assignments_to_group_members_if_needed
   before_destroy :remove_role_assignments_from_group_members_if_needed
   
+  # Trigger role syncs when role membership (assignment) changes.
+  # Note: For a group which has a role and gains a new member, that group
+  #       membership code will give them their own calculated RoleAssignment (parent_id),
+  #       thereby triggering role sync.
+  # Note: We skip over groups as their individual members hold their own role assignments which
+  #       will catch any needed syncing.
+  after_create { |assignment| assignment.role.trigger_sync! unless assignment.entity.type == "Group" }
+  after_destroy { |assignment| assignment.role.trigger_sync! unless assignment.entity.type == "Group" }
+  
   private
 
   # Grant this role assignment to all members of the group
@@ -25,6 +34,10 @@ class RoleAssignment < ActiveRecord::Base
   def grant_role_assignments_to_group_members_if_needed
     if entity.type == 'Group'
       Rails.logger.tagged "RoleAssignment #{id}" do
+        # Tell trigger_sync! to ignore any requests it receives - we'll just put in one
+        # sync request after all the new RoleAssignments exist.
+        Thread.current[:will_sync_role] << role.id
+        
         entity.members.each do |m|
           logger.info "Granting role (#{role.id}, #{role.token}, #{role.application.name}) just granted to group (#{entity.id}/#{entity.name}) to its member (#{m.id}/#{m.name})"
           ra = RoleAssignment.new
@@ -35,6 +48,9 @@ class RoleAssignment < ActiveRecord::Base
             logger.error "  -- Could not grant role!"
           end
         end
+        
+        Thread.current[:will_sync_role].delete(role.id)
+        role.trigger_sync!
       end
     end
   end
@@ -44,6 +60,10 @@ class RoleAssignment < ActiveRecord::Base
   def remove_role_assignments_from_group_members_if_needed
     if entity.type == 'Group'
       Rails.logger.tagged "RoleAssignment #{id}" do
+        # Tell trigger_sync! to ignore any requests it receives - we'll just put in one
+        # sync request after all the new RoleAssignments exist.
+        Thread.current[:will_sync_role] << role.id
+        
         entity.members.each do |m|
           logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
           ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(role.id, m.id, entity.id)
@@ -55,6 +75,9 @@ class RoleAssignment < ActiveRecord::Base
             logger.warn "Failed to remove role (#{role.id}, #{role.token}, #{role.application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that role."
           end
         end
+        
+        Thread.current[:will_sync_role].delete(role.id)
+        role.trigger_sync!
       end
     end
   end

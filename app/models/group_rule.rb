@@ -25,7 +25,7 @@ class GroupRule < ActiveRecord::Base
   def GroupRule.resolve_target!(column, entity_id)
     touched_group_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
     
-    logger.tagged "GroupRule.resolve_target!" do
+    Rails.logger.tagged "GroupRule.resolve_target!" do
       unless VALID_COLUMNS.include? column.to_s
         raise "Cannot resolve_target for unknown column '#{column}'"
       end

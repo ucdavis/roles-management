@@ -19,11 +19,8 @@ class RolesController < ApplicationController
     if params[:id] and params[:role]
       @role.update_attributes(params[:role].except(:id))
       
-      # Reload the group in case the after_save callback destroyed
-      # role assignments.
+      # Reload the group in case the after_save callback destroyed role assignments.
       @role.reload
-      
-      @role.trigger_sync
       
       respond_with(@role) do |format|
         format.json { render json: @role }
@@ -36,7 +33,7 @@ class RolesController < ApplicationController
   # Forces a role to sync (used by a button in application modal)
   def sync
     @role = Role.find_by_id(params[:role_id])
-    @role.trigger_sync
+    @role.trigger_sync!
     
     respond_with :ok
   end

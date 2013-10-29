@@ -4,14 +4,14 @@
 class GroupMembership < ActiveRecord::Base
   using_access_control
   
-  @@destroy_calculated_membership_flag = false
-  @@recalculating_membership_flag = false
+  Thread.current[:destroy_calculated_membership_flag] = false
+  Thread.current[:recalculating_membership_flag] = false
   
   def self.destroy_calculated_membership_flag=(val)
-    @@destroy_calculated_membership_flag = val
+    Thread.current[:destroy_calculated_membership_flag] = val
   end
   def self.recalculating_membership_flag=(val)
-    @@recalculating_membership_flag = val
+    Thread.current[:recalculating_membership_flag] = val
   end
 
   validates_presence_of :group, :entity
@@ -33,18 +33,18 @@ class GroupMembership < ActiveRecord::Base
   
   def self.destroying_calculated_group_membership
     begin
-      GroupMembership.destroy_calculated_membership_flag = true
+      Thread.current[:destroy_calculated_membership_flag] = true
       yield
     ensure
-      GroupMembership.destroy_calculated_membership_flag = false
+      Thread.current[:destroy_calculated_membership_flag] = false
     end
   end
   def self.recalculating_membership
     begin
-      GroupMembership.recalculating_membership_flag = true
+      Thread.current[:recalculating_membership_flag] = true
       yield
     ensure
-      GroupMembership.recalculating_membership_flag = false
+      Thread.current[:recalculating_membership_flag] = false
     end
   end
 
@@ -55,7 +55,7 @@ class GroupMembership < ActiveRecord::Base
   # This logic is located here and not in GroupRule as this is the best
   # place to find group memberships being created and destroyed.
   def recalculate_ou_group_rules_if_necessary
-    if group.ou? and not @@recalculating_membership_flag
+    if group.ou? and not Thread.current[:recalculating_membership_flag]
       GroupRule.resolve_target!(:ou, self.entity_id)
     end
   end
@@ -102,7 +102,7 @@ class GroupMembership < ActiveRecord::Base
   end
   
   def destroying_calculated_membership_requires_flag
-    if calculated and not @@destroy_calculated_membership_flag
+    if calculated and not Thread.current[:destroy_calculated_membership_flag]
       errors.add(:calculated, "can't destroy a calculated group membership without flag properly set")
       return false
     end
