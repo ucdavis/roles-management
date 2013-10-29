@@ -15,7 +15,7 @@ class Role < ActiveRecord::Base
 
   belongs_to :application, :touch => true
   
-  before_save :reset_last_ad_sync_if_ad_path_changed
+  # before_save :reset_last_ad_sync_if_ad_path_changed
 
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
@@ -88,11 +88,11 @@ class Role < ActiveRecord::Base
   # If the ad_path was changed in any way, reset the last_ad_sync to ensure
   # the next AD sync is a two-way sync. (It is only two-way for the first sync,
   # one-way after that.)
-  def reset_last_ad_sync_if_ad_path_changed
-    if self.ad_path_changed?
-      self.last_ad_sync = nil
-    end
-  end
+  # def reset_last_ad_sync_if_ad_path_changed
+  #   if self.ad_path_changed?
+  #     self.last_ad_sync = nil
+  #   end
+  # end
   
   def ad_path_cannot_be_blank_if_present
     if self.ad_path and self.ad_path.blank?
