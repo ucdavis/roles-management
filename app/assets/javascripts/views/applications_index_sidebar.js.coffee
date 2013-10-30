@@ -66,12 +66,14 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       # We parse assignments to ensure we don't display a calculated assignment
       # (they only come from groups and the group will be in the list already),
       # but we must then pass an entity, not an assignment, to @renderSidebarPin()
+      member_count = 0
       selected_role.assignments.each (a) =>
+        member_count = member_count + 1 unless a.get('type') == "Group"
         unless a.get('calculated') or a.get('_destroy')
           pin = @renderSidebarPin(a, { highlighted: true, faded: false })
           highlighted_pins_frag.appendChild pin.el
       
-      @$('#assigned-count').html selected_role.get('member_count')
+      @$('#assigned-count').html member_count
     
     @$('ul#pins').html pins_frag
     @$("ul#highlighted_pins").html highlighted_pins_frag
