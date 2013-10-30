@@ -17,13 +17,18 @@ class RolesController < ApplicationController
   
   def update
     if params[:id] and params[:role]
-      @role.update_attributes(params[:role].except(:id))
-      
-      # Reload the group in case the after_save callback destroyed role assignments.
-      @role.reload
-      
-      respond_with(@role) do |format|
-        format.json { render json: @role }
+      if @role.update_attributes(params[:role].except(:id))
+        # Reload the group in case the after_save callback destroyed role assignments.
+        @role.reload
+        
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated role #{@role.id} (#{@role.token})."
+        
+        respond_with(@role) do |format|
+          format.json { render json: @role, status: :ok }
+        end
+      else
+        logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to update role #{@role.id}, bad request."
+        format.json { render json: @role.errors, status: :unprocessable_entity }
       end
     else
       respond_with 422

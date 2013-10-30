@@ -37,4 +37,16 @@ class RolesControllerTest < ActionController::TestCase
     
     assert_response :success
   end
+  
+  test "Role#update should function correctly" do
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    
+    grant_test_user_admin_access
+
+    @role = roles(:boring_role)
+    
+    put :update, id: @role, role: { token: 'not boring' }, :format => :json
+    
+    assert_response :success
+  end
 end
