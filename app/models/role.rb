@@ -80,7 +80,7 @@ class Role < ActiveRecord::Base
   # with the syncing architecture (e.g. person changes, trigger roles to sync so
   # Active Directory, etc. can be updated)
   def trigger_sync!
-    unless Thread.current[:will_sync_role].include? id
+    unless Thread.current[:will_sync_role] and Thread.current[:will_sync_role].include? id
       logger.info "Role #{id}: trigger_sync! called, calling sync_ad"
       sync_ad
     else
