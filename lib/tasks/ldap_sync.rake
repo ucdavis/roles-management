@@ -3,9 +3,9 @@ namespace :ldap do
   require 'ldap_helper'
   require 'ldap_person_helper'
   
-  desc 'Runs the LDAP import. Takes approx. 5-10 mins.'
+  desc 'Run the LDAP import'
   task :import, [:loginid] => :environment do |t, args|
-    require 'stringio'
+    # require 'stringio'
     require 'os'
 
     # notify_admins = false
@@ -146,33 +146,6 @@ namespace :ldap do
     #Rails.logger.info strio.string
 
     Authorization.ignore_access_control(false)
-  end
-
-  desc 'Erases any data that might be introduced by LDAP. Be very careful and back up your database!'
-  task :erase => :environment do
-    if Rails.env != "production"
-      Authorization.ignore_access_control(true)
-
-      Person.destroy_all
-      Group.destroy_all
-      RoleAssignment.destroy_all
-      Affiliation.destroy_all
-      GroupRule.delete_all
-      AffiliationAssignment.destroy_all
-      PersonManagerAssignment.destroy_all
-      Classification.destroy_all
-      Title.destroy_all
-      ApplicationOwnerAssignment.destroy_all
-      GroupOperatorAssignment.destroy_all
-      GroupOwnerAssignment.destroy_all
-      Student.destroy_all
-
-      Authorization.ignore_access_control(false)
-
-      puts "Be sure to assign roles if you re-import the directory."
-    else
-      puts "This task is purposefully disabled in production mode."
-    end
   end
 
   def save_or_touch(p, log)
