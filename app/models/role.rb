@@ -123,4 +123,4 @@ end
 #      its members individually trigger role syncs, i.e. because
 #      N-member-role assignments will be created, each calling
 #      trigger_sync.
-Thread.current[:will_sync_role] = []
+#Thread.current[:will_sync_role] = []

@@ -36,6 +36,7 @@ class RoleAssignment < ActiveRecord::Base
       Rails.logger.tagged "RoleAssignment #{id}" do
         # Tell trigger_sync! to ignore any requests it receives - we'll just put in one
         # sync request after all the new RoleAssignments exist.
+        Thread.current[:will_sync_role] = [] unless Thread.current[:will_sync_role]
         Thread.current[:will_sync_role] << role.id
         
         entity.members.each do |m|
@@ -62,6 +63,7 @@ class RoleAssignment < ActiveRecord::Base
       Rails.logger.tagged "RoleAssignment #{id}" do
         # Tell trigger_sync! to ignore any requests it receives - we'll just put in one
         # sync request after all the new RoleAssignments exist.
+        Thread.current[:will_sync_role] = [] unless Thread.current[:will_sync_role]
         Thread.current[:will_sync_role] << role.id
         
         entity.members.each do |m|

@@ -109,7 +109,8 @@ class Group < Entity
 
       # Ensure the mass GroupMembership creation (and subsequent mass RoleAssignment creation)
       # doesn't trigger a flurry of trigger_sync - we can intelligently do this group's roles
-      # after the new RoleAssignments are created
+      # after the new RoleAssignments are created.
+      Thread.current[:will_sync_role] = [] unless Thread.current[:will_sync_role]
       roles.each do |r|
         Thread.current[:will_sync_role] << r.id
         logger.debug "Locking role #{r.id} against syncing - we will call trigger_sync! after recalculation."
