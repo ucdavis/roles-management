@@ -67,6 +67,8 @@ class Group < Entity
     Rails.logger.tagged "Group #{id}" do
       results = []
       
+      recalculate_start = Time.now
+      
       logger.info "Reassembling group members using rule result cache ..."
 
       # Step One: Build groups out of each 'is' rule,
@@ -132,7 +134,7 @@ class Group < Entity
         end
       end
       
-      logger.info "Calculated #{results.length} results. Membership now at #{memberships.length} members."
+      logger.info "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
       
       # As promised, now that all the GroupMembership and RoleAssignment objects are created,
       # we will sync roles in one sweep instead of allowing the flurry of activity to create
@@ -142,6 +144,8 @@ class Group < Entity
         logger.debug "Unlocking role #{r.id} for syncing and calling trigger_sync!."
         r.trigger_sync!
       end
+      
+      logger.info "Completed recalculate_members!, including role trigger syncs. Total elapsed time was #{Time.now - recalculate_start}s."
     end
   end
 
