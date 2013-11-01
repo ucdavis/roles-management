@@ -70,51 +70,59 @@ class PeopleController < ApplicationController
   
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
-    require 'ldap'
-    require 'ldap_helper'
-    require 'ldap_person_helper'
+    if params[:loginid]
+      require 'ldap'
+      require 'ldap_helper'
+      require 'ldap_person_helper'
     
-    logger.tagged "people#import" do
-      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
+      logger.tagged "people#import(#{params[:loginid]})" do
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
       
-      import_start = Time.now
+        import_start = Time.now
 
-      # We allow creating people (and titles, etc.) for the purpose of import.
-      # User must still have authorization for people#import
-      Authorization.ignore_access_control(true)
+        # We allow creating people (and titles, etc.) for the purpose of import.
+        # User must still have authorization for people#import
+        Authorization.ignore_access_control(true)
       
-      if params[:loginid]
-        ldap_import_start = Time.now
+        if params[:loginid]
+          ldap_import_start = Time.now
         
-        ldap = LdapHelper.new
-        ldap.connect
+          ldap = LdapHelper.new
+          ldap.connect
     
-        ldap.search("(uid=" + params[:loginid] + ")") do |result|
-          @p = LdapPersonHelper.create_or_update_person_from_ldap(result, Rails.logger)
+          ldap.search("(uid=" + params[:loginid] + ")") do |result|
+            @p = LdapPersonHelper.create_or_update_person_from_ldap(result, Rails.logger)
+          end
+      
+          logger.debug @p.inspect
+    
+          ldap.disconnect
+        
+          ldap_import_finish = Time.now
         end
-      
-        logger.debug @p.inspect
-    
-        ldap.disconnect
-        
-        ldap_import_finish = Time.now
-      end
 
-      if @p
-        @p.save
+        if @p
+          @p.save
+          
+          Authorization.ignore_access_control(false)
+          
+          import_finish = Time.now
         
-        import_finish = Time.now
+          logger.info "Finished LDAP import request. LDAP operations took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
         
-        logger.info "Finished LDAP import request. LDAP operations took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
+          respond_with @p
+        else
+          Authorization.ignore_access_control(false)
+          
+          logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
         
-        respond_with @p
-      else
-        logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
-        
-        raise ActionController::RoutingError.new('Not Found')
+          raise ActionController::RoutingError.new('Not Found')
+        end
       end
-    
-      Authorization.ignore_access_control(false)
+    else
+      logger.error "Invalid request for LDAP person import. Did not specify loginid."
+
+      respond_with 400
     end
   end
   
