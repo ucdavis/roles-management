@@ -48,7 +48,6 @@ namespace :deploy do
 
   desc "Restart Passenger server"
   task :restart, roles: :app, except: {no_release: true} do
-    puts "Restarting Passenger instance ..."
     run "touch #{current_path}/tmp/restart.txt"
   end
 
