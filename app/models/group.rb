@@ -81,7 +81,7 @@ class Group < Entity
           logger.info "Rule (#{rule.id}, #{rule.column} #{rule.condition} #{rule.value}) has #{rule.results.length} result(s)"
           ruleset_results << rule.results.map{ |r| r.entity_id }
         end
-        
+      
         results << ruleset_results.reduce(:+)
       end
 
@@ -89,24 +89,22 @@ class Group < Entity
       results = results.inject(results.first) { |sum,n| sum &= n }
       results = [] unless results # reduce/inject may return nil
 
-      if results
-        # Step Three: Pass over the result from step two and
-        # remove anybody who violates an 'is not' rule
-        results = results.find_all{ |member|
-          keep = true
-          rules.select{ |r| r.condition == "is not" }.each do |rule|
-            keep &= rule.matches(member)
-          end
-          keep
-        }
-      end
+      # Step Three: Pass over the result from step two and
+      # remove anybody who violates an 'is not' rule
+      results = results.find_all{ |member|
+        keep = true
+        rules.select{ |r| r.condition == "is not" }.each do |rule|
+          keep &= rule.matches(member)
+        end
+        keep
+      }
       
       # Step Four: Process any 'loginid is' rules
       rules.select{ |r| r.condition == "is" and r.column == "loginid" }.each do |rule|
         logger.info "Processing loginid is rule #{rule.value}..."
         results << rule.results.map{ |r| r.entity_id }
       end
-      
+    
       results.flatten!
 
       # Ensure the mass GroupMembership creation (and subsequent mass RoleAssignment creation)
@@ -118,19 +116,24 @@ class Group < Entity
         logger.debug "Locking role #{r.id} against syncing - we will call trigger_sync! after recalculation."
       end
 
-      # Remove previous calculated group member assignments
-      GroupMembership.destroying_calculated_group_membership do
-        GroupMembership.recalculating_membership do
-          GroupMembership.where(:group_id => self.id, :calculated => true).destroy_all
+      # Look for memberships which need to be removed
+      GroupMembership.where(:group_id => self.id, :calculated => true).each do |membership|
+        # Note: Array.delete returns nil iff result is not in array
+        if results.delete(membership.entity_id) == nil
+          GroupMembership.destroying_calculated_group_membership do
+            GroupMembership.recalculating_membership do
+              membership.destroy
+            end
+          end
         end
       end
-
-      # Reset calculated group member assignments with the results of this algorithm
-      if results
-        results.each do |r|
-          GroupMembership.recalculating_membership do
-            memberships << GroupMembership.new(:entity_id => r, :calculated => true)
-          end
+      
+      # Look for memberships to add
+      # Whatever's left in results are memberships which don't already exist
+      # and need to be created.
+      results.each do |r|
+        GroupMembership.recalculating_membership do
+          memberships << GroupMembership.new(:entity_id => r, :calculated => true)
         end
       end
       
