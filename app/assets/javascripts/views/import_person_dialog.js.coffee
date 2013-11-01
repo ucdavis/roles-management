@@ -83,11 +83,14 @@ DssRm.Views.ImportPersonDialogResult = Backbone.View.extend(
   importResult: (e) ->
     e.preventDefault()
     
+    @$('td>button').html('Importing ...').attr('disabled', 'disabled')
+    
     $.ajax
       type: "POST"
       url: Routes.person_import_path(@person.get('loginid'))
       success: (data) =>
         @person.set 'imported', true
       error: (data) =>
+        @$('td>button').html('Error').removeAttr('disabled')
         alert 'An error has occurred!'
 )
