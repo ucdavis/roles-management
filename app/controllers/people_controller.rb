@@ -76,12 +76,16 @@ class PeopleController < ApplicationController
     
     logger.tagged "people#import" do
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
+      
+      import_start = Time.now
 
       # We allow creating people (and titles, etc.) for the purpose of import.
       # User must still have authorization for people#import
       Authorization.ignore_access_control(true)
-    
+      
       if params[:loginid]
+        ldap_import_start = Time.now
+        
         ldap = LdapHelper.new
         ldap.connect
     
@@ -92,10 +96,16 @@ class PeopleController < ApplicationController
         logger.debug @p.inspect
     
         ldap.disconnect
+        
+        ldap_import_finish = Time.now
       end
 
       if @p
         @p.save
+        
+        import_finish = Time.now
+        
+        logger.info "Finished LDAP import request. LDAP operations took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
         
         respond_with @p
       else
