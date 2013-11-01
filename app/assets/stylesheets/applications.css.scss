@@ -124,6 +124,10 @@
       margin: 3px 3px 5px;
       list-style-type: none;
       cursor: pointer;
+      
+      a {
+        pointer-events: none;
+      }
 
       a:hover {
         text-decoration: inherit;
