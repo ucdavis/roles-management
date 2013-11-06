@@ -1,6 +1,7 @@
 # Group shares many attributes with entity.
 class Group < Entity
   using_access_control
+  include Diaryable
 
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
@@ -25,7 +26,7 @@ class Group < Entity
   accepts_nested_attributes_for :memberships, :allow_destroy => true
 
   after_save :recalculate_members!
-  
+
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
@@ -33,11 +34,11 @@ class Group < Entity
       :memberships => self.memberships.includes(:entity).map{ |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid, calculated: m.calculated } },
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
-  
+
   def ou?
     code != nil
   end
-  
+
   # Returns all members, both explicitly assigned and calculated via rules.
   # Recurses groups all the way down to return a list of _only_people_.
   def flattened_members
@@ -66,9 +67,9 @@ class Group < Entity
   def recalculate_members!
     Rails.logger.tagged "Group #{id}" do
       results = []
-      
+
       recalculate_start = Time.now
-      
+
       logger.info "Reassembling group members using rule result cache ..."
 
       # Step One: Build groups out of each 'is' rule,
@@ -81,7 +82,7 @@ class Group < Entity
           logger.info "Rule (#{rule.id}, #{rule.column} #{rule.condition} #{rule.value}) has #{rule.results.length} result(s)"
           ruleset_results << rule.results.map{ |r| r.entity_id }
         end
-      
+
         results << ruleset_results.reduce(:+)
       end
 
@@ -98,13 +99,13 @@ class Group < Entity
         end
         keep
       }
-      
+
       # Step Four: Process any 'loginid is' rules
       rules.select{ |r| r.condition == "is" and r.column == "loginid" }.each do |rule|
         logger.info "Processing loginid is rule #{rule.value}..."
         results << rule.results.map{ |r| r.entity_id }
       end
-    
+
       results.flatten!
 
       # Ensure the mass GroupMembership creation (and subsequent mass RoleAssignment creation)
@@ -127,7 +128,7 @@ class Group < Entity
           end
         end
       end
-      
+
       # Look for memberships to add
       # Whatever's left in results are memberships which don't already exist
       # and need to be created.
@@ -136,9 +137,9 @@ class Group < Entity
           memberships << GroupMembership.new(:entity_id => r, :calculated => true)
         end
       end
-      
+
       logger.info "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
-      
+
       # As promised, now that all the GroupMembership and RoleAssignment objects are created,
       # we will sync roles in one sweep instead of allowing the flurry of activity to create
       # chaotic redundancies with trigger_sync.
@@ -147,7 +148,7 @@ class Group < Entity
         logger.debug "Unlocking role #{r.id} for syncing and calling trigger_sync!."
         r.trigger_sync!
       end
-      
+
       logger.info "Completed recalculate_members!, including role trigger syncs. Total elapsed time was #{Time.now - recalculate_start}s."
     end
   end

@@ -3,6 +3,7 @@
 # and is thus read-only. The same does not apply for groups.
 class Person < Entity
   using_access_control
+  include Diaryable
 
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
@@ -19,7 +20,7 @@ class Person < Entity
   has_one :student
   belongs_to :title
   belongs_to :major
-  
+
   accepts_nested_attributes_for :group_ownerships, :allow_destroy => true
   accepts_nested_attributes_for :group_operatorships, :allow_destroy => true
   accepts_nested_attributes_for :group_memberships, :allow_destroy => true
@@ -51,11 +52,11 @@ class Person < Entity
   def self.csv_header
     "ID,Login ID, Email, First, Last".split(',')
   end
-  
+
   def to_csv
     [id, loginid, email, first, last]
   end
-  
+
   # Returns identifying string for logging purposes. Other classes implement this method too.
   def log_identifier
     loginid
@@ -89,7 +90,7 @@ class Person < Entity
 
     syms
   end
-  
+
   # Returns all applications visible to a user (via ownership or operatorship)
   def accessible_applications
     begin
@@ -98,12 +99,12 @@ class Person < Entity
       []
     end
   end
-  
+
   def trigger_sync
     logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
     roles.all.each { |role| role.trigger_sync! }
   end
-  
+
   def recalculate_group_rule_membership
     if changed.include? "title_id"
       GroupRule.resolve_target!(:title, id)
@@ -118,14 +119,14 @@ class Person < Entity
   end
 
   private
-  
+
   def ensure_name_exists
     if self.name.nil?
       self.name = "#{self.first}"
       self.name = self.name + " " + self.last unless self.last.nil?
     end
   end
-  
+
   # Validators
   def first_or_last_presence
     if ((self.first.nil? or self.first.length == 0) and (self.last.nil? or self.last.length == 0))
