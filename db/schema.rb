@@ -155,20 +155,14 @@ ActiveRecord::Schema.define(:version => 20131106040101) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "entity_id"
-    t.integer  "parent_id"
   end
-
-  add_index "group_operatorships", ["group_id", "entity_id", "parent_id"], :name => "idx_group_opships_on_g_id_and_entity_id_and_parent_id"
 
   create_table "group_ownerships", :force => true do |t|
     t.integer  "group_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "entity_id"
-    t.integer  "parent_id"
   end
-
-  add_index "group_ownerships", ["group_id", "entity_id", "parent_id"], :name => "idx_group_ownships_on_g_id_and_entity_id_and_parent_id"
 
   create_table "group_rule_results", :force => true do |t|
     t.integer  "group_rule_id"

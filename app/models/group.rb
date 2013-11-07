@@ -25,7 +25,7 @@ class Group < Entity
   accepts_nested_attributes_for :rules, :allow_destroy => true
   accepts_nested_attributes_for :memberships, :allow_destroy => true
 
-  after_save :recalculate_members!
+  #after_save :recalculate_members! GroupRule changes should handle this
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
@@ -139,7 +139,8 @@ class Group < Entity
       end
 
       logger.info "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
-
+      diary "Membership recalculated to #{memberships.length} members"
+      
       # As promised, now that all the GroupMembership and RoleAssignment objects are created,
       # we will sync roles in one sweep instead of allowing the flurry of activity to create
       # chaotic redundancies with trigger_sync.
@@ -154,7 +155,8 @@ class Group < Entity
   end
 
   def trigger_sync
-    logger.info "Group #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
+    logger.info "Group #{id}: trigger_sync called, calling trigger_sync on #{roles.count} roles"
+    diary "Triggering all #{roles.count} roles to sync."
     roles.all.each { |role| role.trigger_sync! }
   end
 end

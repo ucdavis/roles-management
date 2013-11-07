@@ -5,6 +5,7 @@
 # groups down to people.
 class Role < ActiveRecord::Base
   using_access_control
+  include Diaryable
 
   validates :application_id, :presence => true
   validates :token, :uniqueness => { :scope => :application_id, :message => "token must be unique per application" }
@@ -69,8 +70,10 @@ class Role < ActiveRecord::Base
       load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
       logger.info "Scheduling AD sync for role #{id}"
+      diary "Queueing Active Directory sync."
       Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
     else
+      diary "Skipping Active Directory sync as no AD path is set."
       logger.info "Not scheduling AD sync for role #{id} as AD path is not set."
     end
   end
@@ -82,6 +85,7 @@ class Role < ActiveRecord::Base
   def trigger_sync!
     unless Thread.current[:will_sync_role] and Thread.current[:will_sync_role].include? id
       logger.info "Role #{id}: trigger_sync! called, calling sync_ad"
+      diary "Triggering registered sync methods."
       sync_ad
     else
       logger.debug "Role #{id}: trigger_sync! called but skipping as will_sync_role lock exists"
