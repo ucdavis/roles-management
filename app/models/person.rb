@@ -117,6 +117,10 @@ class Person < Entity
       GroupRule.resolve_target!(:loginid, id)
     end
   end
+  
+  def diary_logged_in_at
+    "Logged in."
+  end
 
   private
 
