@@ -14,7 +14,14 @@ module Diaryable
         if key == 'updated_at'
           #DiaryEntry.write! diary_uid_id, "Marked as updated"
         else
-          DiaryEntry.write! diary_uid_id, "Attribute '#{key}' changed from '#{value_delta[0]}' to '#{value_delta[1]}'"
+          begin
+            # Allow them to define a 'diary_X' function to rescribe the diary entry if they wish.
+            # Expected to return a string.
+            message = send(('diary_' + key).to_sym)
+            DiaryEntry.write! diary_uid_id, message if message
+          rescue NoMethodError
+            DiaryEntry.write! diary_uid_id, "Attribute '#{key}' changed from '#{value_delta[0]}' to '#{value_delta[1]}'"
+          end
         end
       end
     end
