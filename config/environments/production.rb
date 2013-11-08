@@ -21,6 +21,8 @@ DSSRM::Application.configure do
   # Use a syslog-based logger for distributed log collection
   # config.logger = Syslogger.new("roles-management", Syslog::LOG_PID, Syslog::LOG_LOCAL0)
   # config.logger.level = Logger::INFO
+  
+  config.cache_store = :mem_cache_store, "localhost"
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store

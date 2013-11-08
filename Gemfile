@@ -11,6 +11,7 @@ end
 group :production do
   gem 'syslogger', :git => 'https://github.com/cthielen/syslogger.git'
   gem 'pg'
+  gem 'dalli'
   # gem 'unicorn'
   # gem 'unicorn-worker-killer'
 end
