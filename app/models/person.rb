@@ -82,26 +82,18 @@ class Person < Entity
   # Currently only have :access and :admin. Note that an :admin user will have both due to :admin
   # being merely an extension on top of permissions already granted via :access.
   def role_symbols
-    #syms = []
-    
-    # roles.select{ |r| rm_roles_ids.include? r.id }.each do |r|
-    #   syms << r.token.underscore.to_sym
-    # end
-    # 
-    # syms
-    
-    @_role_symbols ||= roles.select{ |r| rm_roles_ids.include? r.id }.map{ |r| r.token.underscore.to_sym }.uniq
+    roles.select{ |r| rm_roles_ids.include? r.id }.map{ |r| r.token.underscore.to_sym }.uniq
   end
 
-  # Returns all applications visible to a user (via ownership or operatorship)
+  # Returns all applications visible to a user
   # WARNING: This is incredibly slow (due to the .with_permissions_to ?)
-  # def accessible_applications
-  #   begin
-  #     Application.with_permissions_to(:read).includes(:roles)
-  #   rescue Authorization::NotAuthorized
-  #     []
-  #   end
-  # end
+  def accessible_applications
+    begin
+      Application.with_permissions_to(:read).includes(:roles)
+    rescue Authorization::NotAuthorized
+      []
+    end
+  end
   
   # Returns all applications the user has an ownership or operatorship on
   def manageable_applications
