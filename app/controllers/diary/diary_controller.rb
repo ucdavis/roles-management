@@ -4,7 +4,7 @@ class Diary::DiaryController < ApplicationController
   respond_to :json
 
   def index
-    @entries = DiaryEntry.order('created_at DESC').group('diary_uid_id')
+    @entries = DiaryEntry.order('created_at DESC').all.uniq{ |e| e.diary_uid_id }
     
     render 'diary/index'
   end
