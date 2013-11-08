@@ -19,7 +19,7 @@ DssRm.Views.ApiKeysDialog = Backbone.View.extend(
       $(row).data "key-id", key.escape("id")
       @$("tbody").append row
 
-    this
+    @
 
   newApiKey: (e) ->
     name = $(e.currentTarget).find("input[name=name]").val()
@@ -35,7 +35,7 @@ DssRm.Views.ApiKeysDialog = Backbone.View.extend(
     false
 
   cleanUpModal: ->
-    @remove
+    @remove()
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"

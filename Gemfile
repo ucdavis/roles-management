@@ -45,7 +45,7 @@ gem 'net-ldap', :git => 'git://github.com/ruby-ldap/ruby-net-ldap.git', :require
 #gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git', :require => false
 gem 'active_directory', :git => 'git://github.com/cthielen/active_directory.git', :require => false
 
-gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git', :require => false
+gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
 
 gem 'rabl'
 gem 'oj'

@@ -52,7 +52,7 @@ DssRm.Views.ImportPersonDialog = Backbone.View.extend(
     @loadResults()
 
   cleanUpModal: ->
-    @remove
+    @remove()
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"

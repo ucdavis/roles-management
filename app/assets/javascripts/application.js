@@ -12,6 +12,7 @@
 //= require jquery.tokeninput-modified
 //= require routes
 //= require jquery.filedrop
+//= require jquery.timeago
 //
 //= require dss-rm
 //

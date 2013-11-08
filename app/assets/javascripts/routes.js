@@ -259,10 +259,6 @@
   Utils.namespace(window, "Routes");
 
   window.Routes = {
-// about => /about(.:format)
-  about_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"about",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
 // access_denied => /access_denied(.:format)
   access_denied_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"access_denied",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -319,6 +315,38 @@
   affiliations_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"affiliations",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// api_application => /api/applications/:id(.:format)
+  api_application_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"applications",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// api_applications => /api/applications(.:format)
+  api_applications_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"applications",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// api_entities => /api/entities(.:format)
+  api_entities_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"entities",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// api_entity => /api/entities/:id(.:format)
+  api_entity_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"entities",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// api_people => /api/people(.:format)
+  api_people_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"people",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// api_person => /api/people/:id(.:format)
+  api_person_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"people",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// api_role => /api/roles/:id(.:format)
+  api_role_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"roles",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// api_roles => /api/roles(.:format)
+  api_roles_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"roles",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // application => /applications/:id(.:format)
   application_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"applications",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -347,6 +375,14 @@
   classifications_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"classifications",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// diary => /diary/entries/:uid_id(.:format)
+  diary_path: function(_uid_id, options) {
+  return Utils.build_path(["uid_id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"diary",false]],[7,"/",false]],[6,"entries",false]],[7,"/",false]],[3,"uid_id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// diary_entries => /diary/entries(.:format)
+  diary_entries_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"diary",false]],[7,"/",false]],[6,"entries",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // edit_admin_api_key_user => /admin/api_key_users/:id/edit(.:format)
   edit_admin_api_key_user_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"admin",false]],[7,"/",false]],[6,"api_key_users",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -362,6 +398,22 @@
 // edit_affiliation => /affiliations/:id/edit(.:format)
   edit_affiliation_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"affiliations",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// edit_api_application => /api/applications/:id/edit(.:format)
+  edit_api_application_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"applications",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// edit_api_entity => /api/entities/:id/edit(.:format)
+  edit_api_entity_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"entities",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// edit_api_person => /api/people/:id/edit(.:format)
+  edit_api_person_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"people",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// edit_api_role => /api/roles/:id/edit(.:format)
+  edit_api_role_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"roles",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // edit_application => /applications/:id/edit(.:format)
   edit_application_path: function(_id, options) {
@@ -462,6 +514,22 @@
 // new_affiliation => /affiliations/new(.:format)
   new_affiliation_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"affiliations",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// new_api_application => /api/applications/new(.:format)
+  new_api_application_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"applications",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// new_api_entity => /api/entities/new(.:format)
+  new_api_entity_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"entities",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// new_api_person => /api/people/new(.:format)
+  new_api_person_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"people",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// new_api_role => /api/roles/new(.:format)
+  new_api_role_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"api",false]],[7,"/",false]],[6,"roles",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // new_application => /applications/new(.:format)
   new_application_path: function(options) {

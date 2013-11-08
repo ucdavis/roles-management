@@ -20,7 +20,7 @@ DssRm.Views.WhitelistDialog = Backbone.View.extend(
       $(row).data "ip_id", ip.get("id")
       self.$("tbody").append row
 
-    this
+    @
 
   newAddress: (e) ->
     self = this
@@ -42,7 +42,7 @@ DssRm.Views.WhitelistDialog = Backbone.View.extend(
     false
 
   cleanUpModal: ->
-    @remove
+    @remove()
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"

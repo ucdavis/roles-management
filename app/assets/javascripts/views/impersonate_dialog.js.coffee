@@ -16,7 +16,7 @@ DssRm.Views.ImpersonateDialog = Backbone.View.extend(
     @$("input#loginid").focus()
 
   render: ->
-    this
+    @
 
   impersonate: ->
     window.location.href = Routes.admin_path(@impersonate_user)
@@ -42,7 +42,7 @@ DssRm.Views.ImpersonateDialog = Backbone.View.extend(
 
 
   cleanUpModal: ->
-    @remove
+    @remove()
     
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
