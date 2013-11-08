@@ -45,5 +45,10 @@ DSSRM::Application.routes.draw do
     resources :queued_jobs # we only use index (most likely, see controller)
   end
 
+  namespace "diary" do
+    get "entries", :controller => "diary", :action => "index"
+    get "entries/:uid_id", :controller => "diary", :action => "show"
+  end
+
   root :to => redirect("/welcome")
 end
