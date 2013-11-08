@@ -92,13 +92,13 @@ class ApplicationsController < ApplicationController
   end
 
   def load_applications
-    accessible_applications = current_user.accessible_applications
+    manageable_applications = current_user.manageable_applications
     
     if params[:q]
       apps = Application.arel_table
-      @applications = accessible_applications.where(apps[:name].matches("%#{params[:q]}%"))
+      @applications = manageable_applications.where(apps[:name].matches("%#{params[:q]}%"))
     else
-      @applications = accessible_applications
+      @applications = manageable_applications
     end
   end
   
