@@ -130,22 +130,24 @@ module LdapPersonHelper
   # Resolve title details from ucdAppointmentTitleCode
   def LdapPersonHelper.determine_title_details(p, entry, log = nil)
     # Set title: take the original unless there is a translation from UcdLookups
-    title = entry.get_values('title').to_s[2..-3]
+    title_name = entry.get_values('title').to_s[2..-3]
     ucdAppointmentTitleCode = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
     
     if UcdLookups::TITLE_CODES[ucdAppointmentTitleCode]
-      title = UcdLookups::TITLE_CODES[ucdAppointmentTitleCode]['title']
+      title_name = UcdLookups::TITLE_CODES[ucdAppointmentTitleCode]['title']
     end
     
-    title = Title.find_or_create_by_name(title)
+    unless title_name.blank?
+      title = Title.find_or_create_by_name(title_name)
     
-    # Update the title code information, if necessary
-    if title.code.nil?
-      title.code = ucdAppointmentTitleCode
-      title.save
-    end
+      # Update the title code information, if necessary
+      if title.code.nil?
+        title.code = ucdAppointmentTitleCode
+        title.save
+      end
 
-    p.title = title
+      p.title = title
+    end
     
     return p
   end
