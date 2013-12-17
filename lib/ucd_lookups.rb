@@ -46,6 +46,11 @@ module UcdLookups
 	MAJORS["Sociology"] = "040320"
 	MAJORS["History"] = "040180"
 
+	DEPT_CODES["040002"] = {}
+		DEPT_CODES["040002"]["name"] = "L&S DEANS - U/G ED & ADVISING"
+		DEPT_CODES["040002"]["company"] = "040008"
+		DEPT_CODES["040002"]["manager"] = "jsmcclai"
+
 	DEPT_CODES["040325"] = {}
 		DEPT_CODES["040325"]["name"] = "SOCIAL SCIENCES PROGRAM"
 		DEPT_CODES["040325"]["company"] = "040390"
