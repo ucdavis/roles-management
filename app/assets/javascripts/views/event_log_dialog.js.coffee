@@ -42,7 +42,6 @@ DssRm.Views.EventLogDialog = Backbone.View.extend(
         _.each data.entries, (entry) =>
           table += '<tr><td>' + entry.message + '</td><td><time class="timeago" datetime="' + entry.created_at + '">' + jQuery.timeago(entry.created_at) + '</time></td></tr>'
         table += '</tbody></table>'
-        console.log data
 
         $(e.target).find('.accordion-inner').html table
 
