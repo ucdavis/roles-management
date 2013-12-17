@@ -27,12 +27,11 @@ class Person < Entity
   accepts_nested_attributes_for :role_assignments, :allow_destroy => true
 
   validates :loginid, :presence => true, :uniqueness => true
-  validate :first_or_last_presence
 
   attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :favorite_ids, :group_memberships_attributes,
                   :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes, :status
 
-  before_save :ensure_name_exists
+  before_save :set_name_if_blank
   after_save  :recalculate_group_rule_membership
 
   def as_json(options={})
@@ -128,17 +127,16 @@ class Person < Entity
 
   private
 
-  def ensure_name_exists
-    if self.name.nil?
-      self.name = "#{self.first}"
-      self.name = self.name + " " + self.last unless self.last.nil?
-    end
-  end
-
-  # Validators
-  def first_or_last_presence
-    if ((self.first.nil? or self.first.length == 0) and (self.last.nil? or self.last.length == 0))
-      errors.add(:name, "first and/or last must be set")
+  # If name is unset, construct it from first + last.
+  # If that fails, use loginid.
+  def set_name_if_blank
+    if self.name.blank?
+      unless self.first.blank?
+        self.name = "#{self.first}"
+        self.name = self.name + " " + self.last unless self.last.nil?
+      else
+        self.name = self.loginid
+      end
     end
   end
 end
