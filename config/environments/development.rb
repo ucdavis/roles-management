@@ -39,12 +39,5 @@ DSSRM::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  config.middleware.use ExceptionNotification::Rack,
-    :email => {
-      :email_prefix => "[Roles Management] ",
-      :sender_address => %{no-reply@roles.dss.ucdavis.edu},
-      :exception_recipients => %w{cmthielen@ucdavis.edu}
-    }
-
   config.action_mailer.delivery_method = :letter_opener
 end

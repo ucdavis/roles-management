@@ -14,6 +14,7 @@ group :production do
   gem 'dalli'
   # gem 'unicorn'
   # gem 'unicorn-worker-killer'
+  gem 'exception_notification'
 end
 
 group :development do
@@ -50,8 +51,6 @@ gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
 
 gem 'rabl'
 gem 'oj'
-
-gem 'exception_notification'
 
 gem 'jbuilder'
 
