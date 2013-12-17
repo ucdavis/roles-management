@@ -2,6 +2,7 @@ class Title < ActiveRecord::Base
   using_access_control
 
   has_and_belongs_to_many :classifications
+  has_many :people
 
   validates :name, :presence => true, :uniqueness => true
   validates :code, :presence => true, :uniqueness => true
