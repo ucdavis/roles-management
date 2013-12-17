@@ -9,7 +9,7 @@ namespace :title do
       exit
     end
 
-    require 'CSV'
+    require 'csv'
     
     Authorization.ignore_access_control(true)
     
