@@ -8,7 +8,7 @@ namespace :ldap do
     require 'stringio'
     require 'os'
 
-    notify_admins = true
+    notify_admins = false
 
     Authorization.ignore_access_control(true)
 
