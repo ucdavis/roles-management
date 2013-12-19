@@ -36,7 +36,7 @@ class Role < ActiveRecord::Base
     data = []
 
     members.each do |m|
-      data << [token, m.id, m.loginid, m.email, m.first, m.last]
+      data << [token, m.id, m.loginid, m.email, m.first, m.last] if m.status
     end
 
     return data
