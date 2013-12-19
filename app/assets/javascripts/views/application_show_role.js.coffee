@@ -33,7 +33,7 @@ DssRm.Views.ApplicationShowRole = Backbone.View.extend(
     true
   
   exportPlainText: (e) ->
-    role_id = $(e.target).parents("tr").data("role_id")
+    role_id = @model.get('id')
     url = window.location.protocol + "//" + window.location.hostname + Routes.role_path(role_id, {format: 'txt'})
     window.open url
   
