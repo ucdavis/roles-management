@@ -26,7 +26,7 @@ namespace :ad do
       end
       
       # Add active users to dss-us-auto-all, cluster-name-affiliation, and cluster-all groups as necessary
-      Person.where(:status => true).each_with_index do |p, i|
+      Person.where(:active => true).each_with_index do |p, i|
         log.tagged "person:#{p.loginid}" do
           ad_user = ActiveDirectoryWrapper.fetch_user(p.loginid)
           if ad_user.nil?
@@ -156,7 +156,7 @@ namespace :ad do
               log.info "Found group (#{r.ad_path}, #{r.ad_guid}) in AD."
 
               # Add enabled members to AD
-              r.members.select{ |m| m.status }.each do |member|
+              r.members.select{ |m| m.active }.each do |member|
                 u = ActiveDirectoryWrapper.fetch_user(member.loginid)
                 unless ActiveDirectoryWrapper.in_group(u, g)
                   log.info "Adding user #{member.loginid} to AD group #{r.ad_path}"
@@ -169,7 +169,7 @@ namespace :ad do
               # If this is our first AD sync, we will add AD entries not found locally back to our database (two-way sync),
               # else we will remove any AD members who do not match our local database (one-way sync).
               ad_members = ActiveDirectoryWrapper.list_group_members(g)
-              role_members = r.members.select{ |m| m.status }.map{ |x| x.loginid }
+              role_members = r.members.select{ |m| m.active }.map{ |x| x.loginid }
               
               if r.last_ad_sync == nil
                 # Add AD entries back as local members

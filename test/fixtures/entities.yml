@@ -6,7 +6,7 @@ casuser:
   name: CAS A User
   email: casuser@domain.com
   loginid: casuser
-  status: true
+  active: true
   title: Worker
   phone: 8005551212
   address: 123 Test Dr
@@ -25,7 +25,7 @@ group_memberA:
   name: Bob B. Groupmember
   email: bob@domain.com
   loginid: bob
-  status: true
+  active: true
   phone: 8005551212
   address: 234 Test Dr
 
@@ -37,7 +37,7 @@ group_memberB:
   name: George P Groupmember
   email: george@domain.com
   loginid: george
-  status: true
+  active: true
   phone: 8005551212
   address: 345 Test Dr
 
@@ -59,7 +59,7 @@ groupWithoutARole:
   name: Group without a Role
   description: This group has no roles.
 
-disabledPerson:
+inactivePerson:
   id: 8
   type: Person
   first: Robert
@@ -67,7 +67,7 @@ disabledPerson:
   name: Robert Natinabled
   email: robert@domain.com
   loginid: robert
-  status: false
+  active: false
   phone: 8005551313
   address: 471 Testing Lane
 
@@ -79,7 +79,7 @@ cthielen:
   name: Christopher Thielen
   email: thielen-testing@ucdavis.edu
   loginid: cthielen
-  status: true
+  active: true
   phone: 8005551414
   address: 472 Testing Drive
 

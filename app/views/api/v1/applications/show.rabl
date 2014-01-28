@@ -6,11 +6,11 @@ node :icon do |a|
   a.icon.url(:normal)
 end
 
-child @application.operatorships.select{ |o| o.entity.status == true } => :operators do |operatorship|
+child @application.operatorships.select{ |o| o.entity.active == true } => :operators do |operatorship|
   glue(:entity) { attributes :id, :name }
 end
 
-child @application.owners.select{ |o| o.status == true } => :owners do |owner|
+child @application.owners.select{ |o| o.active == true } => :owners do |owner|
   attributes :id, :name
 end
 

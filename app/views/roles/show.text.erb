@@ -1,6 +1,6 @@
 <% unless @role.nil? %>
 <% @role.members.each do |person| %>
-  <% if (not person.email.blank?) and person.status %>
+  <% if (not person.email.blank?) and person.active %>
 <%= person.email %> <%= person.name %>
   <% end %>
 <% end %>

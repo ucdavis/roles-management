@@ -13,10 +13,10 @@ module Api
       end
       
       def show
-        if @entity and @entity.status
+        if @entity and @entity.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
           render "api/v1/entities/show"
-        elsif @entity and @entity.status == false
+        elsif @entity and @entity.active == false
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id} but entity is disabled. Returning 404." }
           render :json => "", :status => 404
         else
@@ -36,9 +36,9 @@ module Api
           entities_table = Entity.arel_table
       
           # Search login IDs in case of an entity-search but looking for person by login ID
-          @entities = Entity.with_permissions_to(:read).where(:status => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+          @entities = Entity.with_permissions_to(:read).where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
         else
-          @entities = Entity.with_permissions_to(:read).where(:status => true).all
+          @entities = Entity.with_permissions_to(:read).where(:active => true).all
         end
       end
     end

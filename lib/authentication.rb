@@ -96,7 +96,7 @@ module Authentication
     if session[:cas_user]
       # CAS session exists. Valid user account?
       @user = Person.includes(:role_assignments).includes(:roles).find_by_loginid(session[:cas_user])
-      @user = nil if @user and @user.status == false # Don't allow disabled users to log in
+      @user = nil if @user and @user.active == false # Don't allow disabled users to log in
 
       if @user
         # Valid user found through CAS.

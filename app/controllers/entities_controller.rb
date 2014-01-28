@@ -22,7 +22,7 @@ class EntitiesController < ApplicationController
         csv_data = CSV.generate do |csv|
           csv << Person.csv_header
           @entity.flattened_members.each do |m|
-            csv << m.to_csv if m.status
+            csv << m.to_csv if m.active
           end
         end
         send_data csv_data,

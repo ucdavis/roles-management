@@ -84,7 +84,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
     
     get :index, :format => :json
     
-    disabledEntity = entities(:disabledPerson)
+    disabledEntity = entities(:inactivePerson)
     
     entities = JSON.parse(response.body)
     
@@ -96,7 +96,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   test "JSON show request should not include disabled entities" do
     grant_api_user_access
 
-    disabledEntity = entities(:disabledPerson)
+    disabledEntity = entities(:inactivePerson)
 
     get :show, :format => :json, :id => disabledEntity.id
 

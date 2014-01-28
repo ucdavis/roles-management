@@ -42,7 +42,7 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
   # end
   # 
   # test "JSON index request should not include disabled entities" do
-  #   disabledEntity = entities(:disabledPerson)
+  #   disabledEntity = entities(:inactivePerson)
   # 
   #   grant_test_user_admin_access
   # 
@@ -99,7 +99,7 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
   # end
   
   test "JSON show request should not include disabled entities" do
-    disabledEntity = entities(:disabledPerson)
+    disabledEntity = entities(:inactivePerson)
 
     assert disabledEntity.application_ownerships.length > 0, "disabled entity fixture needs at least one application ownership"
     assert disabledEntity.application_operatorships.length > 0, "disabled entity fixture needs at least one application operatorship"

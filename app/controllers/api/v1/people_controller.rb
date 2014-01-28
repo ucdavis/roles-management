@@ -5,10 +5,10 @@ module Api
       filter_access_to :all, :attribute_check => true
 
       def show
-        if @person and @person.status
+        if @person and @person.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid}." }
           render "api/v1/people/show"
-        elsif @person and @person.status == false
+        elsif @person and @person.active == false
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid} but person is disabled. Returning 404." }
           render :json => "", :status => 404
         else

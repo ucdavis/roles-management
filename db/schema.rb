@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131106040101) do
+ActiveRecord::Schema.define(:version => 20140128193631) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -128,7 +128,7 @@ ActiveRecord::Schema.define(:version => 20131106040101) do
     t.string   "last"
     t.string   "email"
     t.string   "loginid"
-    t.boolean  "status",       :default => true
+    t.boolean  "active",       :default => true
     t.string   "phone"
     t.string   "address"
     t.integer  "title_id"
@@ -138,11 +138,13 @@ ActiveRecord::Schema.define(:version => 20131106040101) do
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
     t.datetime "logged_in_at"
+    t.integer  "ou_id"
   end
 
   add_index "entities", ["code"], :name => "index_entities_on_code"
   add_index "entities", ["loginid"], :name => "index_entities_on_loginid"
   add_index "entities", ["name"], :name => "index_entities_on_name"
+  add_index "entities", ["ou_id"], :name => "index_entities_on_ou_id"
 
   create_table "group_memberships", :force => true do |t|
     t.integer "group_id"
@@ -155,14 +157,20 @@ ActiveRecord::Schema.define(:version => 20131106040101) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "entity_id"
+    t.integer  "parent_id"
   end
+
+  add_index "group_operatorships", ["group_id", "entity_id", "parent_id"], :name => "idx_group_opships_on_g_id_and_entity_id_and_parent_id"
 
   create_table "group_ownerships", :force => true do |t|
     t.integer  "group_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "entity_id"
+    t.integer  "parent_id"
   end
+
+  add_index "group_ownerships", ["group_id", "entity_id", "parent_id"], :name => "idx_group_ownships_on_g_id_and_entity_id_and_parent_id"
 
   create_table "group_rule_results", :force => true do |t|
     t.integer  "group_rule_id"
@@ -187,6 +195,12 @@ ActiveRecord::Schema.define(:version => 20131106040101) do
   end
 
   add_index "majors", ["name"], :name => "index_majors_on_name"
+
+  create_table "ous", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "person_favorite_assignments", :force => true do |t|
     t.integer  "entity_id"

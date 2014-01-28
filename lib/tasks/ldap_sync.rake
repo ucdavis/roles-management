@@ -78,7 +78,7 @@ namespace :ldap do
           
           unless p
             log.debug "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
-            person.status = false
+            person.active = false
             unless person.save
               log.error "Could not save person (#{person.loginid}), reason(s):"
               log.error "\t#{person.errors.full_messages.join(', ')}"
@@ -116,10 +116,10 @@ namespace :ldap do
         log.warn "\tField #{field} #{reason}"
       end
     else
-      if p.status == false
+      if p.active == false
         log.info "Valid LDAP result #{p.loginid} is inactive in our system. Re-activating ..."
         
-        p.status = true
+        p.active = true
       end
       
       if p.changed? == false

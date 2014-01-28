@@ -27,7 +27,7 @@ class Api::V1::RolesControllerTest < ActionController::TestCase
   test "JSON show request should not include disabled entities" do
     grant_api_user_access
 
-    disabledEntity = entities(:disabledPerson)
+    disabledEntity = entities(:inactivePerson)
     
     assert disabledEntity.roles.length > 0, "disabled entity fixture needs at least one role"
 

@@ -29,7 +29,7 @@ class Person < Entity
   validates :loginid, :presence => true, :uniqueness => true
 
   attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :favorite_ids, :group_memberships_attributes,
-                  :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes, :status
+                  :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes, :active
 
   before_save :set_name_if_blank
   after_save  :recalculate_group_rule_membership
@@ -37,7 +37,7 @@ class Person < Entity
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
-      :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline, :status => self.status,
+      :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline, :active => self.active,
       :role_assignments => self.role_assignments.includes(:role).map{ |a| { id: a.id, calculated: a.parent_id?, entity_id: a.entity_id,
                                                             role_id: a.role.id, token: a.role.token, application_name: a.role.application.name,
                                                             application_id: a.role.application_id, name: a.role.name, description: a.role.description } },
@@ -132,7 +132,7 @@ class Person < Entity
   # If a person goes from inactive to active, we need to ensure
   # any role_assignment or group views are touched correctly.
   def touch_caches_as_needed
-    if changed.include? "status"
+    if changed.include? "active"
       role_assignments.each { |ra| ra.touch }
       group_memberships.each { |gm| gm.touch }
     end
