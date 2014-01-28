@@ -18,9 +18,6 @@ namespace :ldap do
     log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
     
     log.tagged "ldap:import" do
-      # Include the large lot of UCD info (dept codes, title codes, etc.)
-      require 'ucd_lookups'
-
       timestamp_start = Time.now
 
       #
@@ -33,8 +30,8 @@ namespace :ldap do
 
       filters = []
 
-      # If they specified a loginid, only import them, otherwise, do everybody
-      unless args[:loginid].nil?
+      # If a login ID was specified, process only that login ID, else, process the standard (broad) filters
+      if args[:loginid]
         # Specified a loginid
         manualFilter = []
         manualFilter << '(uid=' + args[:loginid] + ')'
@@ -44,52 +41,15 @@ namespace :ldap do
         filters = manualFilter
       else
         # Did not specify a loginid - import everyone
-
-        # Build needed LDAP filters
-        # Staff filter
-        staffFilter = '(&(ucdPersonAffiliation=staff*)(|'
-        for d in UcdLookups::DEPT_CODES.keys()
-          staffFilter = staffFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
-        end
-        staffFilter = staffFilter + '))'
-
-        log.debug "Query: " + staffFilter
-
-        # Faculty filter
-        facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
-        for d in UcdLookups::DEPT_CODES.keys()
-            facultyFilter = facultyFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
-        end
-        facultyFilter = facultyFilter + '))'
-
-        log.debug "Query: " + facultyFilter
-
-        # Student filter
-        studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
-        for m in UcdLookups::MAJORS.keys()
-             studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
-        end
-        studentFilter = studentFilter + '))'
-
-        log.debug "Query: " + studentFilter
-
-        # Manual filter
-        # manualFilter = []
-        # for m in UcdLookups::MANUAL_INCLUDES
-        #   manualFilter << '(uid=' + m + ')'
-        # end
-        # 
-        # log.debug "Query: " + manualFilter.join(",")
-
-        filters = [staffFilter,facultyFilter,studentFilter] #+ manualFilter
+        filters = buildFilters(log)
       end
 
       num_results = 0
 
       # Query LDAP
-      for f in filters
-        unless f.length == 0
-          ldap.search(f) do |entry|
+      for filter in filters
+        unless filter.length == 0
+          ldap.search(filter) do |entry|
             p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
 
             save_or_touch(p, log) if p
@@ -156,6 +116,12 @@ namespace :ldap do
         log.warn "\tField #{field} #{reason}"
       end
     else
+      if p.status == false
+        log.info "Valid LDAP result #{p.loginid} is inactive in our system. Re-activating ..."
+        
+        p.status = true
+      end
+      
       if p.changed? == false
         log.debug "No standard record changes for #{p.loginid}"
         

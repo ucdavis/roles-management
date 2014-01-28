@@ -23,4 +23,44 @@ class LdapHelper
       yield result
     end
   end
+  
+  def build_filters(log = nil)
+    # Build needed LDAP filters
+    # Staff filter
+    staffFilter = '(&(ucdPersonAffiliation=staff*)(|'
+    for d in UcdLookups::DEPT_CODES.keys()
+      staffFilter = staffFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
+    end
+    staffFilter = staffFilter + '))'
+
+    log.debug "Query: " + staffFilter if log
+
+    # Faculty filter
+    facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
+    for d in UcdLookups::DEPT_CODES.keys()
+        facultyFilter = facultyFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
+    end
+    facultyFilter = facultyFilter + '))'
+
+    log.debug "Query: " + facultyFilter if log
+
+    # Student filter
+    studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
+    for m in UcdLookups::MAJORS.keys()
+         studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
+    end
+    studentFilter = studentFilter + '))'
+
+    log.debug "Query: " + studentFilter if log
+
+    # Manual filter
+    # manualFilter = []
+    # for m in UcdLookups::MANUAL_INCLUDES
+    #   manualFilter << '(uid=' + m + ')'
+    # end
+    # 
+    # log.debug "Query: " + manualFilter.join(",")
+
+    [staffFilter,facultyFilter,studentFilter] #+ manualFilter
+  end
 end
