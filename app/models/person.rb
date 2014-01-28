@@ -134,6 +134,7 @@ class Person < Entity
   def touch_caches_as_needed
     if changed.include? "status"
       role_assignments.each { |ra| ra.touch }
+      group_memberships.each { |gm| gm.touch }
     end
   end
 
