@@ -24,19 +24,45 @@ class Api::V1::RolesControllerTest < ActionController::TestCase
     end
   end
   
-  test "JSON show request should not include disabled entities" do
+  test "JSON show request should not include inactive entities" do
     grant_api_user_access
 
-    disabledEntity = entities(:inactivePerson)
+    inactiveEntity = entities(:inactivePerson)
     
-    assert disabledEntity.roles.length > 0, "disabled entity fixture needs at least one role"
+    assert inactiveEntity.roles.length > 0, "inactive entity fixture needs at least one role"
 
-    get :show, :format => :json, :id => disabledEntity.roles[0].id
+    get :show, :format => :json, :id => inactiveEntity.roles[0].id
 
     role = JSON.parse(response.body)
 
     role["members"].each do |m|
-      assert m["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
+      assert m["id"].to_i != inactiveEntity.id, "JSON response should not include inactive entity"
+    end
+  end
+
+  test "Activating/de-activating a person should invalid role view caches (touch appropriate role and role assignment objects)" do
+    without_access_control do
+      inactiveEntity = entities(:inactivePerson)
+    
+      assert inactiveEntity.active == false, "inactive entity should be inactive at the start of the test. Check the fixture."
+    
+      # The following two lines are equivalent but it doesn't hurt to do have extra testing
+      assert inactiveEntity.roles.length > 0, "inactive entity fixture needs at least one role"
+      assert inactiveEntity.role_assignments.length > 0, "inactive entity fixture needs at least one role assignment"
+    
+      # Save the last modified time for an inactive entity's role
+      roleAssignment = inactiveEntity.role_assignments.first
+      assignedRole = roleAssignment.role
+    
+      roleAssignment_mtime = roleAssignment.updated_at
+      role_mtime = assignedRole.updated_at
+    
+      # Switch the 'active' status on the entity and ensure the role was updated
+      inactiveEntity.active = true
+      inactiveEntity.save!
+    
+      assert inactiveEntity.role_assignments.first.updated_at > roleAssignment_mtime, "role assignment should have been touched due to active/inactive change"
+      assert inactiveEntity.role_assignments.first.role.updated_at > role_mtime, "role should have been touched due to active/inactive change"
     end
   end
 end

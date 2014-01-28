@@ -41,8 +41,8 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
   #   end
   # end
   # 
-  # test "JSON index request should not include disabled entities" do
-  #   disabledEntity = entities(:inactivePerson)
+  # test "JSON index request should not include inactive entities" do
+  #   inactiveEntity = entities(:inactivePerson)
   # 
   #   grant_test_user_admin_access
   # 
@@ -52,11 +52,11 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
   #   
   #   applications.each do |a|
   #     a["owners"].each do |o|
-  #       assert o["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
+  #       assert o["id"].to_i != inactiveEntity.id, "JSON response should not include inactive entity"
   #     end
   # 
   #     a["operators"].each do |o|
-  #       assert o["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
+  #       assert o["id"].to_i != inactiveEntity.id, "JSON response should not include inactive entity"
   #     end
   #   end
   # end
@@ -98,28 +98,28 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
   #   end
   # end
   
-  test "JSON show request should not include disabled entities" do
-    disabledEntity = entities(:inactivePerson)
+  test "JSON show request should not include inactive entities" do
+    inactiveEntity = entities(:inactivePerson)
 
-    assert disabledEntity.application_ownerships.length > 0, "disabled entity fixture needs at least one application ownership"
-    assert disabledEntity.application_operatorships.length > 0, "disabled entity fixture needs at least one application operatorship"
+    assert inactiveEntity.application_ownerships.length > 0, "inactive entity fixture needs at least one application ownership"
+    assert inactiveEntity.application_operatorships.length > 0, "inactive entity fixture needs at least one application operatorship"
 
     grant_test_user_admin_access
 
-    get :show, :format => :json, :id => disabledEntity.application_ownerships[0].id
+    get :show, :format => :json, :id => inactiveEntity.application_ownerships[0].id
 
     application = JSON.parse(response.body)
 
     application["owners"].each do |o|
-      assert o["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
+      assert o["id"].to_i != inactiveEntity.id, "JSON response should not include inactive entity"
     end
 
-    get :show, :format => :json, :id => disabledEntity.application_operatorships[0].id
+    get :show, :format => :json, :id => inactiveEntity.application_operatorships[0].id
 
     application = JSON.parse(response.body)
 
     application["operators"].each do |o|
-      assert o["id"].to_i != disabledEntity.id, "JSON response should not include disabled entity"
+      assert o["id"].to_i != inactiveEntity.id, "JSON response should not include inactive entity"
     end
   end
 end

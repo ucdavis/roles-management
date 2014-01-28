@@ -17,3 +17,8 @@ group_assignment3:
 group_assignment4:
   entity_id: 1
   group_id: 2
+
+# inactivePerson belonging to a group ID 2
+group_assignment5:
+  entity_id: 8
+  group_id: 2

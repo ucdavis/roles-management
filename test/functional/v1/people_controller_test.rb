@@ -58,12 +58,12 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
     end
   end
   
-  test "JSON show request should not include disabled entities" do
+  test "JSON show request should not include inactive entities" do
     grant_api_user_access
 
-    disabledEntity = entities(:inactivePerson)
+    inactiveEntity = entities(:inactivePerson)
 
-    get :show, :format => :json, :id => disabledEntity.id
+    get :show, :format => :json, :id => inactiveEntity.id
 
     assert_response :missing
   end

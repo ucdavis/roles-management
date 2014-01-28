@@ -79,26 +79,26 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
     end
   end
   
-  test "JSON index request should not include disabled entities" do
+  test "JSON index request should not include inactive entities" do
     grant_api_user_access
     
     get :index, :format => :json
     
-    disabledEntity = entities(:inactivePerson)
+    inactiveEntity = entities(:inactivePerson)
     
     entities = JSON.parse(response.body)
     
     entities.each do |e|
-      assert e["id"].to_i != disabledEntity.id, 'JSON response should not include disabled entities'
+      assert e["id"].to_i != inactiveEntity.id, 'JSON response should not include inactive entities'
     end
   end
   
-  test "JSON show request should not include disabled entities" do
+  test "JSON show request should not include inactive entities" do
     grant_api_user_access
 
-    disabledEntity = entities(:inactivePerson)
+    inactiveEntity = entities(:inactivePerson)
 
-    get :show, :format => :json, :id => disabledEntity.id
+    get :show, :format => :json, :id => inactiveEntity.id
 
     assert_response :missing
   end
