@@ -33,6 +33,7 @@ class Person < Entity
 
   before_save :set_name_if_blank
   after_save  :recalculate_group_rule_membership
+  after_save  :touch_caches_as_needed
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first,
@@ -126,6 +127,15 @@ class Person < Entity
   end
 
   private
+  
+  # has_many does not have a :touch attribute.
+  # If a person goes from inactive to active, we need to ensure
+  # any role_assignment or group views are touched correctly.
+  def touch_caches_as_needed
+    if changed.include? "status"
+      role_assignments.each { |ra| ra.touch }
+    end
+  end
 
   # If name is unset, construct it from first + last.
   # If that fails, use loginid.
