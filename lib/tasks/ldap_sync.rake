@@ -41,7 +41,7 @@ namespace :ldap do
         filters = manualFilter
       else
         # Did not specify a loginid - import everyone
-        filters = buildFilters(log)
+        filters = ldap.build_filters(log)
       end
 
       num_results = 0
