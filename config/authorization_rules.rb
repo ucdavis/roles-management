@@ -58,6 +58,9 @@ authorization do
   role :access do
     # Allow access to the main page
     has_permission_on :applications, :to => :index
+    
+    # Allow reading of organizations
+    has_permission_on :organizations, :to => :read
 
     # Needed for group rule typeahead lookups
     has_permission_on :ous, :to => :read

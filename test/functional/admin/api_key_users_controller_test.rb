@@ -3,7 +3,8 @@ require 'test_helper'
 class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
   test "API key users index requires admin access" do
     # Ensure unauthorized user has no access
-    revoke_all_access
+    revoke_access
+    
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
   
@@ -32,7 +33,8 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
   
   test "creating an API key user requires admin access" do
     # Ensure unauthorized user is unable to create an API key user
-    revoke_all_access
+    revoke_access
+    
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     
@@ -58,7 +60,8 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
   
   test "deleting an API key requires admin access" do
     # Ensure unauthorized user is unable to create an API key user
-    revoke_all_access
+    revoke_access
+    
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     

@@ -3,64 +3,14 @@ class OrganizationsController < ApplicationController
   filter_access_to :index, :attribute_check => true, :load_method => :load_organizations
   respond_to :json
 
-  # GET /organizations
   # GET /organizations.json
   def index
     respond_with @organizations
   end
 
-  # GET /organizations/1
   # GET /organizations/1.json
   def show
     respond_with @organization
-  end
-
-  # GET /organizations/new
-  # GET /organizations/new.json
-  def new
-    @organization = Organization.new
-    
-    respond_with @organization
-  end
-
-  # GET /organizations/1/edit
-  def edit
-  end
-
-  # POST /organizations
-  # POST /organizations.json
-  def create
-    @organization = Organization.new(params[:organization])
-
-    respond_to do |format|
-      if @organization.save
-        format.json { render json: @organization, status: :created, location: @organization }
-      else
-        format.json { render json: @organization.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /organizations/1
-  # PUT /organizations/1.json
-  def update
-    respond_to do |format|
-      if @organization.update_attributes(params[:organization])
-        format.json { head :no_content }
-      else
-        format.json { render json: @organization.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /organizations/1
-  # DELETE /organizations/1.json
-  def destroy
-    @organization.destroy
-
-    respond_to do |format|
-      format.json { head :no_content }
-    end
   end
 
   private

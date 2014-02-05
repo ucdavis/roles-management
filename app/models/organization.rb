@@ -2,7 +2,7 @@ class Organization < ActiveRecord::Base
   validates_uniqueness_of :org_id
   validates_presence_of :dept_code, :name, :org_id
 
-  attr_accessible :dept_code, :org_id, :name, :parent_organization_id
+  attr_accessible :dept_code, :org_id, :name, :parent_org_id
 
   before_validation :ensure_dept_code_is_left_padded
 

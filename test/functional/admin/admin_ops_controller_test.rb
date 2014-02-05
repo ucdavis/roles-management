@@ -3,7 +3,8 @@ require 'test_helper'
 class Admin::OpsControllerTest < ActionController::TestCase
   test "admin access required for AD path check" do
     # Ensure unauthorized user has no access
-    revoke_all_access
+    revoke_access
+    
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
       
@@ -29,7 +30,8 @@ class Admin::OpsControllerTest < ActionController::TestCase
 
   test "admin access required impersonating" do
     # Ensure unauthorized user has no access
-    revoke_all_access
+    revoke_access
+    
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     

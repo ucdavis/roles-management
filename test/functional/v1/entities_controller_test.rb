@@ -3,7 +3,7 @@ require 'test_helper'
 # These tests are run using the fake CAS user 'casuser'
 class Api::V1::EntitiesControllerTest < ActionController::TestCase
   test "unauthenticated user should redirected to cas" do
-    revoke_all_access
+    revoke_access
     
     assert @request.env['REMOTE_ADDR'] != '1.2.3.4'
     # Even if we unset Authorization.current_user, declarative_authorization sets it as "AnonymousUser" with role :guest, so check for that instead of nil

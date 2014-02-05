@@ -3,7 +3,8 @@ require 'test_helper'
 class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
   test "whitelisted IP users index requires admin access" do
     # Ensure unauthorized user has no access
-    revoke_all_access
+    revoke_access
+    
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
   
@@ -29,7 +30,8 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
   
   test "creating a whitelisted IP user requires admin access" do
     # Ensure unauthorized user is unable to create an API key user
-    revoke_all_access
+    revoke_access
+    
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     
@@ -55,7 +57,8 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
   
   test "deleting a whitelisted IP user requires admin access" do
     # Ensure unauthorized user is unable to create an API key user
-    revoke_all_access
+    revoke_access
+    
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     

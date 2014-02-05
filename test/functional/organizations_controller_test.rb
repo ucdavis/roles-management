@@ -3,47 +3,64 @@ require 'test_helper'
 class OrganizationsControllerTest < ActionController::TestCase
   setup do
     @organization = organizations(:one)
+    revoke_access
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    revoke_rm_permissions
+  end
+
+  test "unauthenticated user should get no index" do
+    get :index, :format => :json
+    assert_response 302
+    assert_nil assigns(:organizations)
   end
 
   test "should get index" do
-    get :index
+    grant_test_user_basic_access
+    get :index, :format => :json
     assert_response :success
     assert_not_nil assigns(:organizations)
   end
-
-  test "should get new" do
-    get :new
-    assert_response :success
-  end
-
-  test "should create organization" do
-    assert_difference('Organization.count') do
-      post :create, organization: { code: @organization.code, name: @organization.name, parent_organization_id: @organization.parent_organization_id }
+  
+  test "should not have create action" do
+    grant_test_user_basic_access
+    
+    begin
+      assert_difference('Organization.count') do
+        post :create, organization: { dept_code: @organization.dept_code, name: @organization.name, parent_org_id: @organization.parent_org_id }
+      end
+    rescue AbstractController::ActionNotFound
+      # This is good.
     end
-
-    assert_redirected_to organization_path(assigns(:organization))
   end
 
   test "should show organization" do
-    get :show, id: @organization
+    grant_test_user_basic_access
+    get :show, id: @organization, :format => :json
     assert_response :success
   end
-
-  test "should get edit" do
-    get :edit, id: @organization
-    assert_response :success
-  end
-
-  test "should update organization" do
-    put :update, id: @organization, organization: { code: @organization.code, name: @organization.name, parent_organization_id: @organization.parent_organization_id }
-    assert_redirected_to organization_path(assigns(:organization))
-  end
-
-  test "should destroy organization" do
-    assert_difference('Organization.count', -1) do
-      delete :destroy, id: @organization
+  
+  test "should not have update action" do
+    grant_test_user_basic_access
+    
+    begin
+      put :update, id: @organization, organization: { dept_code: @organization.dept_code, name: @organization.name, parent_org_id: @organization.parent_org_id }
+      assert_redirected_to organization_path(assigns(:organization))
+    rescue AbstractController::ActionNotFound
+      # This is good.
     end
-
-    assert_redirected_to organizations_path
+  end
+  
+  test "should not have destroy action" do
+    grant_test_user_basic_access
+    
+    begin
+      assert_difference('Organization.count', -1) do
+        delete :destroy, id: @organization
+      end
+  
+      assert_redirected_to organizations_path
+    rescue AbstractController::ActionNotFound
+      # This is good.
+    end
   end
 end
