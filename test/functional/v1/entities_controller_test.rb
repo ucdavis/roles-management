@@ -42,6 +42,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
     assert body.include?('name'), 'JSON response should include name field'
     assert body.include?('type'), 'JSON response should include type field'
     assert body.include?('loginid'), 'JSON response should include loginid field'
+    assert body.include?('member_count'), 'JSON response should include member_count field'
   end
 
   test 'JSON show request should include certain attributes when entity is a person' do

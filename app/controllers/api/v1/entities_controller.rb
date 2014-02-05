@@ -9,6 +9,8 @@ module Api
       def index
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
         
+        @cache_key = Digest::MD5.hexdigest(@entities.map(&:cache_key).to_s)
+        
         render "api/v1/entities/index"
       end
       
