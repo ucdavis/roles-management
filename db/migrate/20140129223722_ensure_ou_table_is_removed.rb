@@ -1,5 +1,7 @@
 class EnsureOuTableIsRemoved < ActiveRecord::Migration
   def change
-    drop_table :ous
+    if defined? Ou
+      drop_table :ous
+    end
   end
 end
