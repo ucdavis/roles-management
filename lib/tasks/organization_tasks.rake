@@ -43,5 +43,18 @@ namespace :organization do
     
     Authorization.ignore_access_control(false)
   end
+  
+  desc 'Drop all organizations'
+  task :drop => :environment do
+    Authorization.ignore_access_control(true)
+    
+    org_count = Organization.count
+    
+    Organization.destroy_all
+    
+    Authorization.ignore_access_control(false)
+    
+    puts "#{org_count} organization(s) dropped."
+  end
 end
 
