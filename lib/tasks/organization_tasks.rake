@@ -44,6 +44,15 @@ namespace :organization do
     Authorization.ignore_access_control(false)
   end
   
+  # As part of the migration from Groups with codes (to signify OUs) to a proper
+  # Organization model we need to ensure every Group with a code is accounted for.
+  # This task (temporarily needed) looks for Groups which have no Organization
+  # equivalent. Run organization:import_csv first.
+  desc 'Check for missing organizations'
+  task :check_groups => :environment do
+    
+  end
+  
   desc 'Drop all organizations'
   task :drop => :environment do
     Authorization.ignore_access_control(true)

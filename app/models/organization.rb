@@ -9,10 +9,6 @@ class Organization < ActiveRecord::Base
 
   before_validation :ensure_dept_code_is_left_padded
   
-  # def parent_organization
-  #   Organization.find_by_org_id(parent_org_id)
-  # end
-
   private
 
   # UCD department codes are left-padded to ensure a six-digit "number"
