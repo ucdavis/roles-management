@@ -1,4 +1,6 @@
 class OrganizationParentId < ActiveRecord::Base
+  using_access_control
+  
   attr_accessible :parent_org_id, :organization_id
   
   belongs_to :organization

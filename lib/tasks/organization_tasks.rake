@@ -142,6 +142,26 @@ namespace :organization do
       end
     end
   end
+
+  # Converts OU-Groups into Organizations.
+  # This task is only temporarily needed. Run organization:import_csv first.
+  desc 'Check for missing organizations'
+  task :migrate_groups => :environment do
+    Group.where('code is not null').each do |ou_group|
+      organization = Organization.find_by_dept_code(ou_group.code)
+      
+      puts "Group (#{ou_group.name}):"
+      
+      if organization
+        puts "\tHas a matching Organization (#{organization.name}). Converting ..."
+        
+        
+        
+      else
+        puts "\tHas no matching organization"
+      end
+    end
+  end
   
   desc 'Drop all organizations'
   task :drop => :environment do
