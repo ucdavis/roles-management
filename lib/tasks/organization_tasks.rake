@@ -147,6 +147,8 @@ namespace :organization do
   # This task is only temporarily needed. Run organization:import_csv first.
   desc 'Check for missing organizations'
   task :migrate_groups => :environment do
+    Authorization.ignore_access_control(true)
+    
     Group.where('code is not null').each do |ou_group|
       organization = Organization.find_by_dept_code(ou_group.code)
       
@@ -155,12 +157,26 @@ namespace :organization do
       if organization
         puts "\tHas a matching Organization (#{organization.name}). Converting ..."
         
+        # Add members from the OU-Group to the Organization
+        ou_group.members.each do |member|
+          puts "\t\tAdding member #{member.name} (#{member.type}) to Organization"
+          organization.entities << member
+        end
         
+        # Remove those members from the OU-Group
+        ou_group.memberships.each do |membership|
+          membership.destroy
+        end
         
+        # Create a new rule within that group for "Department is..." to restore those members
+        # via calculation
+        gr = GroupRule.create!({ column: "organization", condition: "is", value: organization.name, group_id: ou_group.id })
       else
         puts "\tHas no matching organization"
       end
     end
+    
+    Authorization.ignore_access_control(false)
   end
   
   desc 'Drop all organizations'

@@ -3,7 +3,7 @@
 class GroupRule < ActiveRecord::Base
   using_access_control
   
-  VALID_COLUMNS = %w( title major affiliation classification loginid ou )
+  VALID_COLUMNS = %w( title major affiliation classification loginid ou organization )
   
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, :in => %w( is is\ not  )
@@ -101,6 +101,20 @@ class GroupRule < ActiveRecord::Base
               end
             elsif rule.condition == "is not"
               logger.warn "Cannot GroupRule.resolve_target! for 'ou is not'. Unimplemented behavior."
+            end
+          end
+        end
+      when :organization
+        entity.organizations.each do |organization|
+          GroupRule.where(:column => "organization").each do |rule|
+            if rule.condition == "is"
+              if rule.value == organization.name
+                logger.info "Matched 'Organization is' rule. Recording result."
+                rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                touched_group_ids << rule.group.id
+              end
+            elsif rule.condition == "is not"
+              logger.warn "Cannot GroupRule.resolve_target! for 'Organization is not'. Unimplemented behavior."
             end
           end
         end
@@ -203,6 +217,23 @@ class GroupRule < ActiveRecord::Base
       else
         logger.warn "OU not found"
       end
+    when "organization"
+      organization = Organization.includes(:entities).find_by_name(value)
+      if organization
+        # We do not consider groups which belong to organizations in our calculations by design
+        ps = organization.entities.where(:type => 'Person')
+        case condition
+        when "is"
+          p = p + ps
+        when "is not"
+          logger.info " -- 'Organization is not' will not be resolved within GroupRule"
+        else
+          # unsupported
+          logger.warn "Unsupported condition for Organization in group rule."
+        end
+      else
+        logger.warn "Organization not found"
+      end
     when "classification"
       classification = Classification.find_by_name(value)
       unless classification == nil
@@ -263,6 +294,8 @@ class GroupRule < ActiveRecord::Base
       matched = person.affiliations.include? Affiliation.find_by_name(value)
     when "ou"
       matched = person.groups.ous.include? Group.find_by_name(value)
+    when "organization"
+      matched = person.organizations.include? Organization.find_by_name(value)
     when "classification"
       matched = person.classification == Classification.find_by_name(value)
     when "loginid"
