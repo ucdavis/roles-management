@@ -5,6 +5,7 @@ class GroupRuleResult < ActiveRecord::Base
   attr_accessible :entity_id, :group_rule_id
   
   belongs_to :group_rule
+  belongs_to :entity
   
   validates_presence_of :entity_id, :group_rule_id
 end
