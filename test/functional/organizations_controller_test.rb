@@ -26,7 +26,7 @@ class OrganizationsControllerTest < ActionController::TestCase
     
     begin
       assert_difference('Organization.count') do
-        post :create, organization: { dept_code: @organization.dept_code, name: @organization.name, parent_org_id: @organization.parent_org_id }
+        post :create, organization: { dept_code: @organization.dept_code, name: @organization.name }
       end
     rescue AbstractController::ActionNotFound
       # This is good.
@@ -43,7 +43,7 @@ class OrganizationsControllerTest < ActionController::TestCase
     grant_test_user_basic_access
     
     begin
-      put :update, id: @organization, organization: { dept_code: @organization.dept_code, name: @organization.name, parent_org_id: @organization.parent_org_id }
+      put :update, id: @organization, organization: { dept_code: @organization.dept_code, name: @organization.name }
       assert_redirected_to organization_path(assigns(:organization))
     rescue AbstractController::ActionNotFound
       # This is good.
