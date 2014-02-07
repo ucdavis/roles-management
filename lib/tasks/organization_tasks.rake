@@ -155,7 +155,18 @@ namespace :organization do
       puts "Group (#{ou_group.name}):"
       
       if organization
+        group_rule_counts = {}
         puts "\tHas a matching Organization (#{organization.name}). Converting ..."
+        
+        # Convert any "OU is..." groups which use this group into an "Organization is..." rule
+        GroupRule.where(column: 'ou', value: ou_group.name).each do |group_rule|
+          group_rule_counts[group_rule.id] = group_rule.results.length
+          puts "\t\tGroupRule before: #{group_rule.column} #{group_rule.condition} #{group_rule.value} has #{group_rule.results.length} results ..."
+          puts "\t\tGroupRule contains:"
+          group_rule.results.each do |result|
+            puts "\t\t\t#{result.entity.id} #{result.entity.name} (#{result.entity.type})"
+          end
+        end
         
         # Add members from the OU-Group to the Organization
         ou_group.members.each do |member|
@@ -171,6 +182,24 @@ namespace :organization do
         # Create a new rule within that group for "Department is..." to restore those members
         # via calculation
         gr = GroupRule.create!({ column: "organization", condition: "is", value: organization.name, group_id: ou_group.id })
+        
+        puts "\tConverting group rules using this group ..."
+        # Convert any "OU is..." groups which use this group into an "Organization is..." rule
+        GroupRule.where(column: 'ou', value: ou_group.name).each do |group_rule|
+          group_rule.column = "organization"
+          group_rule.value = organization.name # The organization names tend to be slightly different.
+          group_rule.save!
+          puts "\t\tGroupRule after: #{group_rule.column} #{group_rule.condition} #{group_rule.value} has #{group_rule.results.length} results"
+          if group_rule_counts[group_rule.id] != group_rule.results.length
+            puts "\t\tGroupRule count HAS changed."
+          else
+            puts "\t\tGroupRule count HAS NOT changed."
+          end
+          puts "\t\tGroupRule contains:"
+          group_rule.results.each do |result|
+            puts "\t\t\t#{result.entity.id} #{result.entity.name} (#{result.entity.type})"
+          end
+        end
       else
         puts "\tHas no matching organization"
       end
