@@ -132,7 +132,15 @@ namespace :organization do
   # equivalent. Run organization:import_csv first.
   desc 'Check for missing organizations'
   task :check_groups => :environment do
-    
+    Group.where('code is not null').each do |ou_group|
+      organization = Organization.find_by_dept_code(ou_group.code)
+      
+      if organization
+        puts "Group (#{ou_group.name}) has a matching Organization (#{organization.name})"
+      else
+        puts "Group (#{ou_group.name}) has no matching organization"
+      end
+    end
   end
   
   desc 'Drop all organizations'
