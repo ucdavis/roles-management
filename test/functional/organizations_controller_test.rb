@@ -13,12 +13,21 @@ class OrganizationsControllerTest < ActionController::TestCase
     assert_response 302
     assert_nil assigns(:organizations)
   end
-
+  
   test "should get index" do
     grant_test_user_basic_access
     get :index, :format => :json
     assert_response :success
     assert_not_nil assigns(:organizations)
+    assert assigns(:organizations).length == 2, "should return two results"
+  end
+
+  test "index should search" do
+    grant_test_user_basic_access
+    get :index, {'q' => 'Office of Top-Level Org', :format => :json}
+    assert_response :success
+    assert_not_nil assigns(:organizations)
+    assert assigns(:organizations).length == 1, "should only return a single result"
   end
   
   test "should not have create action" do
@@ -32,7 +41,7 @@ class OrganizationsControllerTest < ActionController::TestCase
       # This is good.
     end
   end
-
+  
   test "should show organization" do
     grant_test_user_basic_access
     get :show, id: @organization, :format => :json

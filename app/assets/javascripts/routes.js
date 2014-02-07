@@ -66,7 +66,7 @@
       var last_index;
       path = path.split("://");
       last_index = path.length - 1;
-      path[last_index] = path[last_index].replace(/\/+/g, "/").replace(/.\/$/m, "");
+      path[last_index] = path[last_index].replace(/\/+/g, "/");
       return path.join("://");
     },
     set_default_url_options: function(optional_parts, options) {
@@ -76,8 +76,6 @@
         part = optional_parts[i];
         if (!options.hasOwnProperty(part) && defaults.default_url_options.hasOwnProperty(part)) {
           _results.push(options[part] = defaults.default_url_options[part]);
-        } else {
-          _results.push(void 0);
         }
       }
       return _results;
@@ -92,12 +90,16 @@
       return anchor;
     },
     extract_options: function(number_of_params, args) {
-      var ret_value;
-      ret_value = {};
-      if (args.length > number_of_params) {
-        ret_value = args.pop();
+      var last_el;
+      last_el = args[args.length - 1];
+      if (args.length > number_of_params || ((last_el != null) && "object" === this.get_object_type(last_el) && !this.look_like_serialized_model(last_el))) {
+        return args.pop();
+      } else {
+        return {};
       }
-      return ret_value;
+    },
+    look_like_serialized_model: function(object) {
+      return "id" in object || "to_param" in object;
     },
     path_identifier: function(object) {
       var property;
@@ -109,7 +111,13 @@
       }
       property = object;
       if (this.get_object_type(object) === "object") {
-        property = object.to_param || object.id || object;
+        if ("to_param" in object) {
+          property = object.to_param;
+        } else if ("id" in object) {
+          property = object.id;
+        } else {
+          property = object;
+        }
         if (this.get_object_type(property) === "function") {
           property = property.call(object);
         }
@@ -134,7 +142,9 @@
       result = this.clone(options) || {};
       for (i = _i = 0, _len = required_parameters.length; _i < _len; i = ++_i) {
         val = required_parameters[i];
-        result[val] = actual_parameters[i];
+        if (i < actual_parameters.length) {
+          result[val] = actual_parameters[i];
+        }
       }
       return result;
     },
@@ -439,6 +449,10 @@
   edit_major_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"majors",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// edit_organization => /organizations/:id/edit(.:format)
+  edit_organization_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"organizations",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // edit_ou => /ous/:id/edit(.:format)
   edit_ou_path: function(_id, options) {
   return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"ous",false]],[7,"/",false]],[3,"id",false]],[7,"/",false]],[6,"edit",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -555,6 +569,10 @@
   new_major_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"majors",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
+// new_organization => /organizations/new(.:format)
+  new_organization_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"organizations",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
 // new_ou => /ous/new(.:format)
   new_ou_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"ous",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
@@ -570,6 +588,14 @@
 // new_title => /titles/new(.:format)
   new_title_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"titles",false]],[7,"/",false]],[6,"new",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// organization => /organizations/:id(.:format)
+  organization_path: function(_id, options) {
+  return Utils.build_path(["id"], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"organizations",false]],[7,"/",false]],[3,"id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
+  },
+// organizations => /organizations(.:format)
+  organizations_path: function(options) {
+  return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"organizations",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // ou => /ous/:id(.:format)
   ou_path: function(_id, options) {

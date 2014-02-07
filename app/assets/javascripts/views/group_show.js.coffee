@@ -227,6 +227,8 @@ class DssRm.Views.GroupShow extends Backbone.View
         lookahead_url = Routes.majors_path()
       when "ou"
         lookahead_url = Routes.ous_path()
+      when "organization"
+        lookahead_url = Routes.organizations_path()
       when "loginid"
         lookahead_url = Routes.people_path()
       when "title"

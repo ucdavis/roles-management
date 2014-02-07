@@ -30,7 +30,7 @@ class OrganizationsController < ApplicationController
       organizations_table = Organization.arel_table
       
       # Search login IDs in case of an entity-search but looking for person by login ID
-      @organizations = Organization.with_permissions_to(:read).where(organizatoins_table[:name].matches("%#{params[:q]}%").or(organizations_table[:code].matches("%#{params[:q]}%")))
+      @organizations = Organization.with_permissions_to(:read).where(organizations_table[:name].matches("%#{params[:q]}%").or(organizations_table[:dept_code].matches("%#{params[:q]}%")))
       
       logger.debug "Organizations#index searching for '#{params[:q]}'. Found #{@organizations.length} results."
     else
