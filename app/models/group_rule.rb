@@ -221,7 +221,7 @@ class GroupRule < ActiveRecord::Base
       organization = Organization.includes(:entities).find_by_name(value)
       if organization
         # We do not consider groups which belong to organizations in our calculations by design
-        ps = organization.entities.where(:type => 'Person')
+        ps = organization.flattened_entities
         case condition
         when "is"
           p = p + ps
