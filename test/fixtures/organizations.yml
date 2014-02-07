@@ -2,10 +2,10 @@ one:
   id: 1
   name: Top-Level Org
   dept_code: This is the top level org. There can be only one.
-  parent_org_id:
+  parent_organization_id:
 
 two:
   id: 2
   name: Office of Top-Leve Org
   dept_code: Reports directly to the Top-Level Org.
-  parent_org_id: 1
+  parent_organization_id: 1

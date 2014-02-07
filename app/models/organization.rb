@@ -1,11 +1,9 @@
 class Organization < ActiveRecord::Base
-  belongs_to :parent_organization, :class_name => 'Organization', :foreign_key => 'parent_org_id', :primary_key => 'org_id'
-  has_many :child_organizations, :class_name => 'Organization', :foreign_key => 'parent_org_id', :primary_key => 'org_id'
+  has_many :org_ids, :class_name => 'OrganizationOrgId', :dependent => :destroy
+  has_many :parent_org_ids, :class_name => 'OrganizationParentId', :dependent => :destroy
+  has_many :parent_organizations, :through => :parent_org_ids, :source => :parent_organization
   
-  validates_uniqueness_of :org_id
-  validates_presence_of :dept_code, :name, :org_id
-
-  attr_accessible :dept_code, :org_id, :name, :parent_org_id
+  attr_accessible :dept_code, :name, :parent_organization_id
 
   before_validation :ensure_dept_code_is_left_padded
   
@@ -17,4 +15,3 @@ class Organization < ActiveRecord::Base
     self.dept_code = "%06d" % self.dept_code.to_i if attribute_present?("dept_code")
   end
 end
-

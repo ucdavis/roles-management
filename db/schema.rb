@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140206190740) do
+ActiveRecord::Schema.define(:version => 20140207004849) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -198,13 +198,25 @@ ActiveRecord::Schema.define(:version => 20140206190740) do
 
   add_index "majors", ["name"], :name => "index_majors_on_name"
 
+  create_table "organization_org_ids", :force => true do |t|
+    t.integer  "organization_id"
+    t.string   "org_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  create_table "organization_parent_ids", :force => true do |t|
+    t.integer  "organization_id"
+    t.string   "parent_org_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
   create_table "organizations", :force => true do |t|
     t.string   "name"
     t.string   "dept_code"
-    t.string   "parent_org_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
-    t.string   "org_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "person_favorite_assignments", :force => true do |t|
