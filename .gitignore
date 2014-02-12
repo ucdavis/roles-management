@@ -9,6 +9,7 @@ config/database.yml
 config/api_keys.yml
 config/ldap.yml
 config/active_directory.yml
+config/secret_token.yml
 .sass-cache/
 public/assets/
 .rvmrc
