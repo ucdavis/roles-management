@@ -57,9 +57,10 @@ class Person < Entity
     [id, loginid, email, first, last]
   end
 
-  # Returns identifying string for logging purposes. Other classes implement this method too.
+  # Returns identifying string for logging purposes. Other classes implement this too.
+  # Format: (Class name:id,identifying fields)
   def log_identifier
-    loginid
+    "(Person:#{id},#{loginid},#{name})"
   end
 
   # Calculates 'byline' for a Person, e.g. "PROGRAMMER V (staff:career)"

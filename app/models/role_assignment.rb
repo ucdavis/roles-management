@@ -27,7 +27,44 @@ class RoleAssignment < ActiveRecord::Base
   after_create { |assignment| assignment.role.trigger_sync! unless assignment.entity.type == "Group" }
   after_destroy { |assignment| assignment.role.trigger_sync! unless assignment.entity.type == "Group" }
   
+  after_save { |assignment| assignment.log_changes(:save) }
+  after_destroy { |assignment| assignment.log_changes(:destroy) }
+  
+  before_save :ensure_not_updating
+  
+  protected
+  
+  # Explicitly log that this role assignment was created or destroyed
+  def log_changes(action)
+    Rails.logger.tagged "RoleAssignment #{id}" do
+      case action
+      when :save
+        if created_at_changed?
+          logger.info "Created assignment between #{entity.log_identifier} and #{role.log_identifier}."
+        else
+          # RoleAssignments should really only be created or destroyed, not updated.
+          logger.info "log_changes called for existing RoleAssignment. This shouldn't happen. Assignment is between #{entity.log_identifier} and #{role.log_identifier}."
+        end
+      when :destroy
+        logger.info "Removed assignment between #{entity.log_identifier} and #{role.log_identifier}."
+      else
+        logger.warn "Unknown action in log_changes #{action}. This shouldn't happen."
+      end
+    end
+  end
+  
   private
+  
+  # RoleAssignments should only be created and destroyed, never updated.
+  # Updating would allow for things like changing the entity or role independently,
+  # which really should just be done via creating/destroying a RoleAssignment.
+  # Our log_changes function assumes updates don't occur.
+  # This method throws an error if an update is occurring.
+  def ensure_not_updating
+    unless created_at.blank?
+      errors.add(:base, "RoleAssignments cannot be updated, only created or destroyed")
+    end
+  end
 
   # Grant this role assignment to all members of the group
   # (only if this role assignment really is with a group)

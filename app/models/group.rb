@@ -38,6 +38,12 @@ class Group < Entity
   def ou?
     code != nil
   end
+  
+  # Returns identifying string for logging purposes. Other classes implement this too.
+  # Format: (Class name:id,identifying fields)
+  def log_identifier
+    "(Group:#{id},#{name})"
+  end
 
   # Returns all members, both explicitly assigned and calculated via rules.
   # Recurses groups all the way down to return a list of _only_people_.

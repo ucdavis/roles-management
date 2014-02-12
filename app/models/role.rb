@@ -31,6 +31,12 @@ class Role < ActiveRecord::Base
       :assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.parent_id?, entity_id: a.entity_id, name: a.entity.name, type: a.entity.type } }
      }
   end
+  
+  # Returns identifying string for logging purposes. Other classes implement this too.
+  # Format: (Class name:id,identifying fields)
+  def log_identifier
+    "(Role:#{id},#{application.name}/#{token})"
+  end
 
   def to_csv
     data = []
