@@ -10,8 +10,18 @@ class OrganizationEntityAssociation < ActiveRecord::Base
   
   validate :only_people_hold_titles
   validate :groups_belong_to_only_one_organization
+
+  # Though this seems like 'group rule' logic, it must be done in this 'join table' class
+  # as organizations can be created outside the Organization class causing
+  # any Organization callbacks to go unused
+  after_create :recalculate_organization_group_rules_if_necessary
+  after_destroy :recalculate_organization_group_rules_if_necessary
   
   private
+  
+  def recalculate_organization_group_rules_if_necessary
+    GroupRule.resolve_target!(:organization, self.entity_id)
+  end
   
   # Validate that any title assignment is associated with a 'Person'-type
   # entity, not a 'Group'-type entity as only people hold titles.

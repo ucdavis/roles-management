@@ -112,6 +112,8 @@ class GroupRule < ActiveRecord::Base
                 logger.info "Matched 'Organization is' rule. Recording result."
                 rule.results << GroupRuleResult.new(:entity_id => entity_id)
                 touched_group_ids << rule.group.id
+                
+                touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(organization, entity_id)
               end
             elsif rule.condition == "is not"
               logger.warn "Cannot GroupRule.resolve_target! for 'Organization is not'. Unimplemented behavior."
@@ -148,11 +150,36 @@ class GroupRule < ActiveRecord::Base
         end
       end
       
-      touched_group_ids.uniq.each do |touched_group_id|
+      touched_group_ids.flatten.uniq.each do |touched_group_id|
         logger.info "Alerting group ##{touched_group_id} to recalculate as at least one of its rules were touched."
         Group.find_by_id(touched_group_id).recalculate_members!
       end
     end
+  end
+  
+  # Assumes rule is 'Organization is...'
+  # This function recurses through an organization's parents (and their parents and their parents and...)
+  # looks for any GroupRules associated with that organization. If it finds any, it adds entity_id
+  # as a valid GroupRuleResult.
+  # The opposite behavior (removing an entity) is handled by the fact that resolve_target! begins its
+  # algorithm by removing all GroupRuleResults for an entity_id.
+  def resolve_target_assign_organization_parents!(organization, entity_id)
+    touched_group_ids = []
+    
+    organization.parents do |parent|
+      # Find all rules affecting this parent
+      rules = GroupRule.find_by_column_and_condition_and_value('organization', 'is', parent.name)
+      rules.each do |rule|
+        # Add the entity to the rule's results
+        rule.results << GroupRuleResult.new(:entity_id => entity_id)
+        touched_group_ids << rule.group.id
+      end
+      
+      # Do the same for this parent's parents
+      touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(parent, entity_id)
+    end
+    
+    return touched_group_ids.flatten.uniq
   end
   
   # Calculate the results of the rule and cache in GroupRuleResult instances
