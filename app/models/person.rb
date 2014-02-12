@@ -135,6 +135,7 @@ class Person < Entity
     if changed.include? "active"
       role_assignments.each { |ra| ra.touch }
       group_memberships.each { |gm| gm.touch }
+      organizations.each { |org| org.touch }
     end
   end
 

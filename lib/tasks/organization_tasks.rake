@@ -201,11 +201,45 @@ namespace :organization do
           end
         end
       else
-        puts "\tHas no matching organization"
+        puts "\tHas no matching organization, will leave it alone ..."
+        
+        if GroupRule.where(column: 'ou', value: ou_group.name).length > 0
+          puts "\t\tBut this non-matching group has a group rule. This is unsupported in the migration!"
+          exit
+        end
       end
     end
     
     Authorization.ignore_access_control(false)
+  end
+  
+  # The UCD data is bad and contains some parent/child loops. Fortunately, they represent
+  # invalid relationships so we'll simply remove them if found.
+  desc 'Remove any two-way parent/child relationships'
+  task :remove_parental_loops => :environment do
+    Authorization.ignore_access_control(true)
+    
+    loop_count = 0
+    Organization.all.each do |organization|
+      organization.parent_organizations.each do |parent|
+        if parent.parent_organizations.include? organization
+          loop_count = loop_count + 1
+          puts "Removing child #{organization.name} from parent #{parent.name} because it is a loop ..."
+          parent.parent_organizations.destroy(organization)
+        end
+      end
+    end
+    
+    puts "Destroyed #{loop_count} loops."
+    
+    Authorization.ignore_access_control(false)
+  end
+
+  desc 'List any organization with more than one parent'
+  task :list_multiple_parents => :environment do
+    Organization.all.each do |organization|
+      puts "#{organization.name} (#{organization.parent_organizations.length})" if organization.parent_organizations.length > 1
+    end
   end
   
   desc 'Drop all organizations'
