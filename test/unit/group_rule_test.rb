@@ -8,29 +8,125 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "adding a person to a child organization of an organization should add a GroupRuleResult for that parent" do
-    assert false, "implement me"
+    without_access_control do
+      # Use fixture cthielen, not casuser, as casuser has an association with the toplevel organization by default
+      @cthielen = entities(:cthielen)
+      
+      o = organizations(:toplevel)
+      o_child = organizations(:office_of_toplevel)
+      
+      # Sanity check the fixtures first ...
+      assert o.child_organizations.include?(o_child), "office_of_toplevel fixture should be a child of toplevel"
+      assert o.entities.include?(@cthielen) == false, "toplevel should not include cthielen yet"
+      assert o.flattened_entities.include?(@cthielen) == false, "toplevel should not include cthielen yet nor should any of its children via flattened_entities"
+      
+      # Ensure a group has a rule
+      group = entities(:groupWithNothing)
+      
+      assert group.roles.length == 0, "looks like groupWithNothing has a role"
+      assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+      assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+      assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+      
+      # Test the group rule logic
+      assert group.members.length == 0, "group should have no members"
+      
+      # Ensure @cthielen is in the GroupRuleResult for "Organization is toplevel", which is the parent organization of the one we just added @cthielen to (which is what this test is all about)
+      group_rule = GroupRule.new({ column: 'organization', condition: 'is', value: o.name, group_id: group.id })
+      group.rules << group_rule
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have 1 member"
+      assert group.members.include?(@cthielen) == false, "group should not include @cthielen yet"
+      
+      Rails.logger.debug "===================="
+      
+      # Add @cthielen to the child organization
+      o_child.entities << @cthielen
+      o_child.save!
+      
+      # Ensure @cthielen is in the parent's flattened_entities first ...
+      assert o.flattened_entities.include?(@cthielen), "toplevel should include cthielen"
+      
+      group.reload
+      
+      assert group.members.length == 2, "group should have 2 members but has #{group.members.length}"
+      assert group.members.include?(@cthielen), "group should include @cthielen"      
+    end
   end
   
   test "removing a person from a child organization of an organization should remove the GroupRuleResult for that parent" do
-    assert false, "implement me"
+    without_access_control do
+      # Use fixture cthielen, not casuser, as casuser has an association with the toplevel organization by default
+      @cthielen = entities(:cthielen)
+      
+      o = organizations(:toplevel)
+      o_child = organizations(:office_of_toplevel)
+      
+      # Sanity check the fixtures first ...
+      assert o.child_organizations.include?(o_child), "office_of_toplevel fixture should be a child of toplevel"
+      assert o.entities.include?(@cthielen) == false, "toplevel should not include cthielen yet"
+      assert o.flattened_entities.include?(@cthielen) == false, "toplevel should not include cthielen yet nor should any of its children via flattened_entities"
+      
+      # Ensure a group has a rule
+      group = entities(:groupWithNothing)
+      
+      assert group.roles.length == 0, "looks like groupWithNothing has a role"
+      assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+      assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+      assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+      
+      # Test the group rule logic
+      assert group.members.length == 0, "group should have no members"
+      
+      # Ensure @cthielen is in the GroupRuleResult for "Organization is toplevel", which is the parent organization of the one we just added @cthielen to (which is what this test is all about)
+      group_rule = GroupRule.new({ column: 'organization', condition: 'is', value: o.name, group_id: group.id })
+      group.rules << group_rule
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have 1 member"
+      assert group.members.include?(@cthielen) == false, "group should not include @cthielen yet"
+      
+      # Add @cthielen to the child organization
+      o_child.entities << @cthielen
+      o_child.save!
+      
+      # Ensure @cthielen is in the parent's flattened_entities first ...
+      assert o.flattened_entities.include?(@cthielen), "toplevel should include cthielen"
+      
+      group.reload
+      
+      assert group.members.length == 2, "group should have 2 members but has #{group.members.length}"
+      assert group.members.include?(@cthielen), "group should include @cthielen"
+      
+      o_child.entities.destroy(@cthielen)
+      o_child.save!
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have 1 member but has #{group.members.length}"
+      assert group.members.include?(@cthielen) == false, "group should not include @cthielen"      
+    end
   end
-
+  
   test "adding a person to an organization should produce the relevant GroupRuleResult" do
     assert false, "implement me"
   end
-
+  
   test "removing a person from an organization should remove the relevant GroupRuleResult" do
     assert false, "implement me"
   end
-
+  
   test "'Department is...' rules should only include members of that specific organization and not members from any child or parent organization" do
     assert false, "implement me"
   end
-
+  
   test "adding a new child organization should affect any GroupRuleResults for parent organizations" do
     assert false, "implement me"
   end
-
+  
   test "removing a child organization entirely should affect any GroupRuleResults for parent organizations" do
     assert false, "implement me"
   end
@@ -44,7 +140,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.rules.length == 0, "looks like groupWithNothing has a rule"
       assert group.owners.length == 0, "looks like groupWithNothing has an owner"
       assert group.operators.length == 0, "looks like groupWithNothing has an operator"
-
+  
       # Test login ID rules
       assert group.members.length == 0, "group should have no members"
       
@@ -98,14 +194,14 @@ class GroupRuleTest < ActiveSupport::TestCase
       group.reload
       
       assert group.members.length == 1, "group should have a member"
-
+  
       @person.title = nil
       @person.save!
       
       group.reload
       
       assert group.members.length == 0, "group should have no members"
-
+  
       # Test that setting a person's major fills in a group
       group.rules.destroy_all
       group_rule = GroupRule.new({ column: 'major', condition: 'is', value: 'History', group_id: group.id })
@@ -121,14 +217,14 @@ class GroupRuleTest < ActiveSupport::TestCase
       group.reload
       
       assert group.members.length == 1, "group should have a member"
-
+  
       @person.major = nil
       @person.save!
       
       group.reload
       
       assert group.members.length == 0, "group should have no members"
-
+  
       # Test that setting a person's affiliation fills in a group
       group.rules.destroy_all
       group_rule = GroupRule.new({ column: 'affiliation', condition: 'is', value: 'staff', group_id: group.id })
@@ -144,14 +240,14 @@ class GroupRuleTest < ActiveSupport::TestCase
       group.reload
       
       assert group.members.length == 1, "group should have a member"
-
+  
       @person.affiliations.destroy_all
       @person.save!
       
       group.reload
       
       assert group.members.length == 0, "group should have no members"
-
+  
       # Test that setting a person's OU fills in a group
       group.rules.destroy_all
       group_rule = GroupRule.new({ column: 'ou', condition: 'is', value: 'An OU', group_id: group.id })
@@ -167,14 +263,14 @@ class GroupRuleTest < ActiveSupport::TestCase
       group.reload
       
       assert group.members.length == 1, "group should have a member"
-
+  
       @person.groups.destroy(entities(:anOU))
       @person.save!
       
       group.reload
       
       assert group.members.length == 0, "group should have no members"
-
+  
       # Test that setting a person's classification fills in a group
       group.rules.destroy_all
       group_rule = GroupRule.new({ column: 'classification', condition: 'is', value: 'Programmer', group_id: group.id })
@@ -190,7 +286,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       group.reload
       
       assert group.members.length == 1, "group should have a member"
-
+  
       @person.title = nil
       @person.save!
       
@@ -199,7 +295,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.length == 0, "group should have no members"
     end
   end
-
+  
   test "creating a person should associate them with the proper groups" do
     without_access_control do
       # Ensure a group has a rule
@@ -209,7 +305,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.rules.length == 0, "looks like groupWithNothing has a rule"
       assert group.owners.length == 0, "looks like groupWithNothing has an owner"
       assert group.operators.length == 0, "looks like groupWithNothing has an operator"
-
+  
       # Test login ID rules
       assert group.members.length == 0, "group should have no members"
       
@@ -228,7 +324,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.length == 1, "group should have a member"
     end
   end
-
+  
   test "deleting a person or disabling them should disassociate them with the proper groups" do
     without_access_control do
       # Ensure a group has a rule
@@ -238,7 +334,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.rules.length == 0, "looks like groupWithNothing has a rule"
       assert group.owners.length == 0, "looks like groupWithNothing has an owner"
       assert group.operators.length == 0, "looks like groupWithNothing has an operator"
-
+  
       # Test login ID rules
       assert group.members.length == 0, "group should have no members"
       
@@ -267,9 +363,9 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.rules.length == 0, "looks like groupWithNothing has a rule"
       assert group.owners.length == 0, "looks like groupWithNothing has an owner"
       assert group.operators.length == 0, "looks like groupWithNothing has an operator"
-
+  
       @person.groups << entities(:anOU)
-
+  
       # Test login ID rules
       assert group.members.length == 0, "group should have no members"
       
