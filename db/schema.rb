@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140207023123) do
+ActiveRecord::Schema.define(:version => 20140214015018) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -213,12 +213,18 @@ ActiveRecord::Schema.define(:version => 20140207023123) do
     t.datetime "updated_at",      :null => false
   end
 
+  add_index "organization_org_ids", ["org_id"], :name => "index_organization_org_ids_on_org_id"
+  add_index "organization_org_ids", ["organization_id"], :name => "index_organization_org_ids_on_organization_id"
+
   create_table "organization_parent_ids", :force => true do |t|
     t.integer  "organization_id"
-    t.string   "parent_org_id"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.integer  "parent_org_id",   :limit => 255
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
   end
+
+  add_index "organization_parent_ids", ["organization_id"], :name => "index_organization_parent_ids_on_organization_id"
+  add_index "organization_parent_ids", ["parent_org_id"], :name => "index_organization_parent_ids_on_parent_org_id"
 
   create_table "organizations", :force => true do |t|
     t.string   "name"
@@ -226,6 +232,8 @@ ActiveRecord::Schema.define(:version => 20140207023123) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "organizations", ["dept_code"], :name => "index_organizations_on_dept_code"
 
   create_table "person_favorite_assignments", :force => true do |t|
     t.integer  "entity_id"

@@ -1,7 +1,9 @@
 one:
+  id: 1
   organization_id: 1
-  org_id: MyString
+  org_id: '000001'
 
 two:
+  id: 2
   organization_id: 2
-  org_id: MyString
+  org_id: '000011'

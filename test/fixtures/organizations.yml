@@ -1,9 +1,9 @@
-one:
+toplevel:
   id: 1
   name: Top-Level Org
   dept_code: '010101'
 
-two:
+office_of_toplevel:
   id: 2
   name: Office of Top-Level Org
   dept_code: '010102'

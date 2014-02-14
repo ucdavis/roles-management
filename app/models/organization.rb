@@ -13,6 +13,7 @@ class Organization < ActiveRecord::Base
   
   validate :organization_cannot_have_itself_as_child_or_parent
   validate :organization_is_not_its_parent_own_parent
+  validate :no_parents_are_children_and_vice_versa
 
   before_validation :ensure_dept_code_is_left_padded
   
@@ -70,6 +71,14 @@ class Organization < ActiveRecord::Base
       if parent.parent_organizations.include? self
         errors[:base] << "Organization cannot be a parent of its parent"
       end
+    end
+  end
+  
+  # This check ensures no parents also appear as children and that
+  # no children also appear as parents
+  def no_parents_are_children_and_vice_versa
+    if (parent_organization_ids & child_organization_ids).length > 0
+      errors[:base] << "Organization cannot have a parent as a child and vice-versa"
     end
   end
 
