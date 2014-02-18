@@ -2,7 +2,7 @@ require 'test_helper'
 
 class OrganizationsControllerTest < ActionController::TestCase
   setup do
-    @organization = organizations(:one)
+    @organization = organizations(:toplevel)
     revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     revoke_rm_permissions
