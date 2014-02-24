@@ -36,4 +36,55 @@ class GroupMembershipTest < ActiveSupport::TestCase
       assert @person.roles.length == 0, "removing person from group should have removed the person that group's role"
     end
   end
+  
+  test "group membership may not be cyclical" do
+    without_access_control do
+      group = entities(:groupWithNothing)
+      another_group = entities(:anotherGroupWithNothing)
+      
+      assert group.members.length == 0, "group should not have any members. Fixture has been modified."
+      assert another_group.members.length == 0, "another_group should not have any members. Fixture has been modified."
+      
+      group.members << another_group
+      group.reload
+      another_group.reload
+      
+      assert group.members.length == 1, "group should now have one member"
+      assert another_group.members.length == 0, "another_group should still have no members"
+      
+      begin
+        another_group.members << group
+      rescue ActiveRecord::RecordInvalid
+        # This is correct
+      end
+      
+      assert another_group.valid? == false, "another_group should not be valid, having formed a cycle"
+    end
+  end
+
+  test "non-cycle group membership should work" do
+    without_access_control do
+      group1 = entities(:groupWithNothing)
+      group2 = entities(:anotherGroupWithNothing)
+      group3 = entities(:groupWithoutARole)
+      
+      assert group1.members.length == 0, "group1 should not have any members. Fixture has been modified."
+      assert group2.members.length == 0, "group2 should not have any members. Fixture has been modified."
+      assert group3.members.length == 0, "group3 should not have any members. Fixture has been modified."
+      
+      group1.members << group2
+      group1.reload
+      group2.reload
+      
+      assert group1.members.length == 1, "group1 should now have one member"
+      assert group2.members.length == 0, "group2 should still have no members"
+      assert group3.members.length == 0, "group3 should not have any members. Fixture has been modified."
+      
+      group2.members << group3
+      
+      assert group1.members.length == 1, "group1 should now have one member"
+      assert group2.members.length == 1, "group2 should still have no members"
+      assert group3.members.length == 0, "group3 should not have any members. Fixture has been modified."
+    end
+  end
 end

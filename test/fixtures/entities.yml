@@ -95,3 +95,9 @@ anOU:
   name: An OU
   description: I am an OU.
   code: 1
+
+anotherGroupWithNothing:
+  id: 12
+  type: Group
+  name: Another group with nothing
+  description: This group has no rules, owners, operators, or members, and is not unique in being so

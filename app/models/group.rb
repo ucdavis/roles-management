@@ -25,8 +25,6 @@ class Group < Entity
   accepts_nested_attributes_for :rules, :allow_destroy => true
   accepts_nested_attributes_for :memberships, :allow_destroy => true
 
-  #after_save :recalculate_members! GroupRule changes should handle this
-
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
       :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
@@ -158,6 +156,24 @@ class Group < Entity
 
       logger.info "Completed recalculate_members!, including role trigger syncs. Total elapsed time was #{Time.now - recalculate_start}s."
     end
+  end
+  
+  # Records all IDs found while traversing up the parent graph.
+  # Algorithm ends either when a duplicate ID is found (indicates a loop)
+  # or no more parents exist (indicates no loops).
+  def no_loops_in_group_membership_graph(seen_ids = [])
+    return false if seen_ids.include?(id)
+
+    seen_ids << id
+
+    memberships.each do |membership|
+      if membership.group.no_loops_in_group_membership_graph(seen_ids.dup) == false
+        errors[:base] << "Group membership cannot be cyclical"
+        return false
+      end
+    end
+    
+    return true
   end
 
   def trigger_sync

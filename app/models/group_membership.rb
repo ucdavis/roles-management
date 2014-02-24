@@ -71,8 +71,16 @@ class GroupMembership < ActiveRecord::Base
       end
     end
   end
-
+  
   private
+  
+  def membership_cannot_be_cyclical
+    if entity.type == 'Group'
+      if entity.no_loops_in_group_membership_graph([group_id]) == false
+        errors.add(:base, "group memberships cannot form loop in membership tree graph")
+      end
+    end
+  end
   
   # Alerts GroupRule to recalculate OU-based rules for this entity
   # if group is an OU.
@@ -114,10 +122,6 @@ class GroupMembership < ActiveRecord::Base
     end
   end
   
-  def membership_cannot_be_cyclical
-    
-  end
-
   # Ensure a group does not attempt to join (member) itself
   def group_cannot_join_itself
     if !group.blank? and group == entity
