@@ -9,7 +9,7 @@ group :assets do
 end
 
 group :production do
-  gem 'syslogger', :git => 'https://github.com/cthielen/syslogger.git'
+  #gem 'syslogger', :git => 'https://github.com/cthielen/syslogger.git'
   gem 'pg'
   gem 'dalli'
   # gem 'unicorn'
@@ -19,9 +19,9 @@ end
 
 group :development do
   gem 'letter_opener'
-  gem 'ruby-prof', :platform => :mri
-  gem 'debugger', :platform => :mri
-  gem 'active_record_query_trace'
+  #gem 'ruby-prof', :platform => :mri
+  #gem 'debugger', :platform => :mri
+  #gem 'active_record_query_trace'
 end
 
 group :development, :test do
