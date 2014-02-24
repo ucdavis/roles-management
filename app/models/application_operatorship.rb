@@ -12,6 +12,30 @@ class ApplicationOperatorship < ActiveRecord::Base
   after_create :grant_operatorship_to_group_members
   before_destroy :remove_operatorship_from_group_members
   
+  after_save { |operatorship| operatorship.log_changes(:save) }
+  after_destroy { |operatorship| operatorship.log_changes(:destroy) }
+  
+  protected
+  
+  # Explicitly log that this application operatorship was created or destroyed
+  def log_changes(action)
+    Rails.logger.tagged "ApplicationOperatorship #{id}" do
+      case action
+      when :save
+        if created_at_changed?
+          logger.info "Created application operatorship between #{entity.log_identifier} and #{application.log_identifier}."
+        else
+          # ApplicationOperatorships should really only be created or destroyed, not updated.
+          logger.error "log_changes called for existing ApplicationOperatorship. This shouldn't happen. Operatorship is between #{entity.log_identifier} and #{application.log_identifier}."
+        end
+      when :destroy
+        logger.info "Removed application operatorship between #{entity.log_identifier} and #{application.log_identifier}."
+      else
+        logger.warn "Unknown action in log_changes #{action}."
+      end
+    end
+  end
+  
   private
   
   # Grant this application operatorship to all members of the group

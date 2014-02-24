@@ -26,6 +26,12 @@ class Application < ActiveRecord::Base
       :description => self.description, :owners => self.application_ownerships.map{ |o| { name: o.entity.name, id: o.entity.id, calculated: o.parent_id? } },
       :operatorships => self.operatorships.includes(:entity).map{ |o| { name: o.entity.name, entity_id: o.entity.id, id: o.id, calculated: o.parent_id? } } }
   end
+  
+  # Returns identifying string for logging purposes. Other classes implement this too.
+  # Format: (Class name:id,identifying fields)
+  def log_identifier
+    "(Application:#{id},#{name})"
+  end
 
   def self.csv_header
     "Role,ID,Login ID,Email,First,Last".split(',')
