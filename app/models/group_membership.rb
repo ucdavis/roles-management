@@ -31,6 +31,9 @@ class GroupMembership < ActiveRecord::Base
   before_destroy :remove_group_roles_from_member
   after_destroy :recalculate_ou_group_rules_if_necessary
   
+  after_save { |membership| membership.log_changes(:save) }
+  after_destroy { |membership| membership.log_changes(:destroy) }
+  
   def self.destroying_calculated_group_membership
     begin
       Thread.current[:destroy_calculated_membership_flag] = true
@@ -45,6 +48,27 @@ class GroupMembership < ActiveRecord::Base
       yield
     ensure
       Thread.current[:recalculating_membership_flag] = false
+    end
+  end
+  
+  protected
+  
+  # Explicitly log that this group membership was created or destroyed
+  def log_changes(action)
+    Rails.logger.tagged "GroupMembership #{id}" do
+      case action
+      when :save
+        if created_at_changed?
+          logger.info "Created membership between #{entity.log_identifier} and #{group.log_identifier}."
+        else
+          # RoleAssignments should really only be created or destroyed, not updated.
+          logger.error "log_changes called for existing GroupMembership. This shouldn't happen. Membership is between #{entity.log_identifier} and #{group.log_identifier}."
+        end
+      when :destroy
+        logger.info "Removed membership between #{entity.log_identifier} and #{group.log_identifier}."
+      else
+        logger.warn "Unknown action in log_changes #{action}."
+      end
     end
   end
 

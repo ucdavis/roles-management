@@ -43,12 +43,12 @@ class RoleAssignment < ActiveRecord::Base
           logger.info "Created assignment between #{entity.log_identifier} and #{role.log_identifier}."
         else
           # RoleAssignments should really only be created or destroyed, not updated.
-          logger.info "log_changes called for existing RoleAssignment. This shouldn't happen. Assignment is between #{entity.log_identifier} and #{role.log_identifier}."
+          logger.error "log_changes called for existing RoleAssignment. This shouldn't happen. Assignment is between #{entity.log_identifier} and #{role.log_identifier}."
         end
       when :destroy
         logger.info "Removed assignment between #{entity.log_identifier} and #{role.log_identifier}."
       else
-        logger.warn "Unknown action in log_changes #{action}. This shouldn't happen."
+        logger.warn "Unknown action in log_changes #{action}."
       end
     end
   end
