@@ -27,8 +27,10 @@ class RolesController < ApplicationController
           format.json { render json: @role, status: :ok }
         end
       else
-        logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to update role #{@role.id}, bad request."
-        format.json { render json: @role.errors, status: :unprocessable_entity }
+        logger.error "#{current_user.log_identifier}@#{request.remote_ip}: Failed to update role #{@role.id}, bad request."
+        respond_with(@role) do |format|
+          format.json { render json: @role.errors, status: :unprocessable_entity }
+        end
       end
     else
       respond_with 422
