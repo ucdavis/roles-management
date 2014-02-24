@@ -106,7 +106,7 @@ class GroupRule < ActiveRecord::Base
         end
       when :organization
         # FIXME
-        # This is incorrect because if the entity is only a member of a child organization with no rule
+        # This is incorrect because if the entity is only a member of a child organization with no rules
         # but the child organization's parent has a rule, this will never do anything
         entity.organizations.each do |organization|
           GroupRule.where(:column => "organization").each do |rule|
@@ -156,6 +156,22 @@ class GroupRule < ActiveRecord::Base
       touched_group_ids.flatten.uniq.each do |touched_group_id|
         logger.info "Alerting group ##{touched_group_id} to recalculate as at least one of its rules were touched."
         Group.find_by_id(touched_group_id).recalculate_members!
+      end
+    end
+  end
+  
+  # This function is used by OrganizationParentId to touch parent(s) GroupRuleResults when relationships are formed
+  # between organizations.
+  # It takes the entities 'organization' and ensures their names are propagated up through the GroupRuleResults.
+  # It does this by simply invalidating each entity in the detaching organization and forcing their 'Organization'
+  # rules to be re-calculated.
+  def GroupRule.resolve_organization_parents!(organization)
+    Rails.logger.tagged "GroupRule.resolve_target!" do
+      Rails.logger.debug "Will traverse entities of '#{organization.name}' and call resolve_target_assign_organization_parents!. There are #{organization.entity_ids.length} entities to traverse."
+      
+      organization.entity_ids.each do |entity_id|
+        Rails.logger.debug "Calling GroupRule.resolve_target! for entity ID #{entity_id}"
+        GroupRule.resolve_target!(:organization, entity_id)
       end
     end
   end
