@@ -52,9 +52,14 @@ class OrganizationTest < ActiveSupport::TestCase
       o_parent = organizations(:toplevel)
       
       assert o.valid?, "organization fixture should be valid"
+      assert o_parent.valid?, "organization fixture should be valid"
       assert o.parent_organizations.include?(o_parent), "organization fixture should indicate this parent"
       
-      o_parent.parent_organizations << o
+      begin
+        o_parent.parent_organizations << o
+      rescue ActiveRecord::RecordInvalid
+        # This should happen
+      end
       
       assert o_parent.valid? == false, "organization should not allow a child as a parent"
     end

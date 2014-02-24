@@ -28,6 +28,10 @@ class OrganizationParentId < ActiveRecord::Base
   
   # There's a similar check in Organization but it never hurts ...
   def organization_cannot_relate_to_itself
+    if parent_organization.no_loops_in_organization_relationship_graph([organization_id]) == false
+      errors.add(:base, "organization relationship cannot form loop in organization tree graph")
+    end
+    
     if organization_id == parent_org_id
       errors.add(:base, "organization canot be its own child or parent")
     end

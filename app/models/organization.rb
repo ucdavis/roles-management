@@ -11,9 +11,7 @@ class Organization < ActiveRecord::Base
   
   attr_accessible :dept_code, :name, :parent_organization_id
   
-  validate :organization_cannot_have_itself_as_child_or_parent
-  validate :organization_is_not_its_parent_own_parent
-  validate :no_parents_are_children_and_vice_versa
+  validate :no_loops_in_organization_relationship_graph
 
   before_validation :ensure_dept_code_is_left_padded
   
@@ -53,35 +51,26 @@ class Organization < ActiveRecord::Base
     return false
   end
   
-  private
-  
-  # Simple sanity check
-  def organization_cannot_have_itself_as_child_or_parent
-    if parent_organizations.include? self
-      errors[:base] << "Organization cannot be its own parent"
-    end
-    if child_organizations.include? self
-      errors[:base] << "Organization cannot be its own child"
-    end
-  end
-  
-  # Commonly found invalid loop in the organization CSV data
-  def organization_is_not_its_parent_own_parent
+  # Records all IDs found while traversing up the parent graph.
+  # Algorithm ends either when a duplicate ID is found (indicates a loop)
+  # or no more parents exist (indicates no loops).
+  def no_loops_in_organization_relationship_graph(seen_ids = [])
+    return false if seen_ids.include?(id)
+    
+    seen_ids << id
+
     parent_organizations.each do |parent|
-      if parent.parent_organizations.include? self
-        errors[:base] << "Organization cannot be a parent of its parent"
+      if parent.no_loops_in_organization_relationship_graph(seen_ids.dup) == false
+        errors[:base] << "Organization parent/child relationships may not form loops in the organization tree graph"
+        return false
       end
     end
+    
+    return true
   end
   
-  # This check ensures no parents also appear as children and that
-  # no children also appear as parents
-  def no_parents_are_children_and_vice_versa
-    if (parent_organization_ids & child_organization_ids).length > 0
-      errors[:base] << "Organization cannot have a parent as a child and vice-versa"
-    end
-  end
-
+  private
+  
   # UCD department codes are left-padded to ensure a six-digit "number"
   # (stored as a string though)
   def ensure_dept_code_is_left_padded

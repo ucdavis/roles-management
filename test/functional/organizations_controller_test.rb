@@ -19,7 +19,7 @@ class OrganizationsControllerTest < ActionController::TestCase
     get :index, :format => :json
     assert_response :success
     assert_not_nil assigns(:organizations)
-    assert assigns(:organizations).length == 2, "should return two results"
+    assert_equal Organization.count, assigns(:organizations).length
   end
 
   test "index should search" do
