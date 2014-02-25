@@ -100,6 +100,8 @@ class ApplicationsController < ApplicationController
     else
       @applications = manageable_applications
     end
+    
+    @applications = @applications.sort_by(&:created_at)
   end
   
   def new_application_from_params
