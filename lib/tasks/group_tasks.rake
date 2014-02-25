@@ -34,4 +34,37 @@ namespace :group do
     
     Authorization.ignore_access_control(false)
   end
+
+  desc 'Recalculate the rule-based members of a specific group.'
+  task :recalculate, [:group_id] => :environment do |t, args|
+    unless args[:group_id]
+      puts "You must specify a group ID to recalculate."
+      exit
+    end
+    
+    g = Group.find_by_id(args[:group_id])
+    unless g
+      puts "Could not find a group with ID #{args[:group_id]}."
+      exit
+    end
+    
+    Authorization.ignore_access_control(true)
+    
+    puts "Group (#{g.id}, #{g.name}) has #{g.rules.length} rules."
+    
+    # Recalculate the group's rule caches
+    g.rules.each do |rule|
+      old_count = rule.results.length
+      rule.resolve!
+      rule.reload
+      puts "\tGroupRule ##{rule.id} (#{rule.column} #{rule.condition} #{rule.value}) went from #{old_count} to #{rule.results.length} results"
+    end
+    
+    old_count = g.members.length
+    g.recalculate_members!
+    g.reload
+    puts "\tGroup ##{g.id} (#{g.name}) went from #{old_count} to #{g.members.length} members"
+    
+    Authorization.ignore_access_control(false)
+  end
 end

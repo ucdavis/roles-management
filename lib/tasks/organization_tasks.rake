@@ -214,6 +214,10 @@ namespace :organization do
       end
     end
     
+    GroupRule.where(column: 'ou').each do |rule|
+      puts "WARNING: A rule exists for 'ou' #{rule.condition} '#{rule.value}'. If this is a group that should have been converted, the name likely couldn't be matched exactly and you will need to migrate the rule yourself. It is attached to group #{rule.group.id}, #{rule.group.name}."
+    end
+    
     Authorization.ignore_access_control(false)
   end
   
