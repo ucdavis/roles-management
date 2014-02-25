@@ -368,7 +368,7 @@ GEM
     rubysl-pty (2.0.2)
     rubysl-rational (2.0.1)
     rubysl-readline (2.0.2)
-    rubysl-resolv (2.0.0)
+    rubysl-resolv (2.1.0)
     rubysl-rexml (2.0.2)
     rubysl-rinda (2.0.1)
     rubysl-rss (2.0.0)
