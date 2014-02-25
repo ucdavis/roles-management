@@ -74,43 +74,60 @@ class Group < Entity
 
       recalculate_start = Time.now
 
-      logger.info "Reassembling group members using rule result cache ..."
+      logger.debug "Reassembling group members using rule result cache ..."
 
       # Step One: Build groups out of each 'is' rule,
       #           groupping rules of similar type together via OR
       #           Note: we ignore the 'loginid' column as it is calculated separately
-      rules.select{ |r| r.condition == "is" and GroupRule.valid_columns.reject{|x| x == "loginid"}.include? r.column }.group_by(&:column).each do |ruleset|
-        ruleset_results = []
+      Rails.logger.tagged "Step One" do
+        rules.select{ |r| r.condition == "is" and GroupRule.valid_columns.reject{|x| x == "loginid"}.include? r.column }.group_by(&:column).each do |ruleset|
+          ruleset_results = []
 
-        ruleset[1].each do |rule|
-          logger.info "Rule (#{rule.id}, #{rule.column} #{rule.condition} #{rule.value}) has #{rule.results.length} result(s)"
-          ruleset_results << rule.results.map{ |r| r.entity_id }
+          ruleset[1].each do |rule|
+            logger.debug "Rule (#{rule.id}, #{rule.column} #{rule.condition} #{rule.value}) has #{rule.results.length} result(s)"
+            ruleset_results << rule.results.map{ |r| r.entity_id }
+          end
+
+          reduced_results = ruleset_results.reduce(:+)
+          logger.debug "Adding #{reduced_results.length} results to the total"
+          results << reduced_results
         end
-
-        results << ruleset_results.reduce(:+)
+        
+        logger.debug "Ending step one with #{results.length} results"
       end
 
       # Step Two: AND all groups from step one together
-      results = results.inject(results.first) { |sum,n| sum &= n }
-      results = [] unless results # reduce/inject may return nil
+      Rails.logger.tagged "Step Two" do
+        results = results.inject(results.first) { |sum,n| sum &= n }
+        results = [] unless results # reduce/inject may return nil
+        logger.debug "ANDing all results together yields #{results.length} results"
+      end
 
       # Step Three: Pass over the result from step two and
       # remove anybody who violates an 'is not' rule
-      results = results.find_all{ |member|
-        keep = true
-        rules.select{ |r| r.condition == "is not" }.each do |rule|
-          keep &= rule.matches(member)
-        end
-        keep
-      }
+      Rails.logger.tagged "Step Three" do
+        results = results.find_all{ |member|
+          keep = true
+          rules.select{ |r| r.condition == "is not" }.each do |rule|
+            keep &= rule.matches(member)
+          end
+          keep
+        }
+        logger.debug "Removing any 'is not' violates yielded #{results.length} results"
+      end
 
       # Step Four: Process any 'loginid is' rules
-      rules.select{ |r| r.condition == "is" and r.column == "loginid" }.each do |rule|
-        logger.info "Processing loginid is rule #{rule.value}..."
-        results << rule.results.map{ |r| r.entity_id }
+      Rails.logger.tagged "Step Four" do
+        rules.select{ |r| r.condition == "is" and r.column == "loginid" }.each do |rule|
+          logger.debug "Processing loginid is rule #{rule.value}..."
+          results << rule.results.map{ |r| r.entity_id }
+        end
+        
+        logger.debug "'Login ID is' additions yields #{results.length} results"
       end
 
       results.flatten!
+      logger.debug "Results flattened, count now at #{results.length} results"
 
       # Ensure the mass GroupMembership creation (and subsequent mass RoleAssignment creation)
       # doesn't trigger a flurry of trigger_sync - we can intelligently do this group's roles
@@ -142,7 +159,7 @@ class Group < Entity
         end
       end
 
-      logger.info "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
+      logger.debug "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
       diary "Membership recalculated to #{memberships.length} members"
       
       # As promised, now that all the GroupMembership and RoleAssignment objects are created,
@@ -154,7 +171,7 @@ class Group < Entity
         r.trigger_sync!
       end
 
-      logger.info "Completed recalculate_members!, including role trigger syncs. Total elapsed time was #{Time.now - recalculate_start}s."
+      logger.debug "Completed recalculate_members!, including role trigger syncs. Total elapsed time was #{Time.now - recalculate_start}s."
     end
   end
   
