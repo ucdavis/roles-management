@@ -117,7 +117,11 @@ namespace :organization do
       
       parental_orgs.each do |parental_org|
         puts "\tAssigning parental_org #{parental_org.id} #{parental_org.name} ..."
-        organization.parent_organizations << parental_org
+        begin
+          organization.parent_organizations << parental_org
+        rescue Exception => e
+          puts "Not adding #{parental_org.name} as a parent of #{organization.name} because it would form a loop in the org tree. Error: #{e}."
+        end
       end
     end
     
@@ -191,9 +195,9 @@ namespace :organization do
           group_rule.save!
           puts "\t\tGroupRule after: #{group_rule.column} #{group_rule.condition} #{group_rule.value} has #{group_rule.results.length} results"
           if group_rule_counts[group_rule.id] != group_rule.results.length
-            puts "\t\tGroupRule count HAS changed."
+            puts "\t\tGroupRule result count HAS changed (#{group_rule_counts[group_rule.id]} before, #{group_rule.results.length} after)."
           else
-            puts "\t\tGroupRule count HAS NOT changed."
+            puts "\t\tGroupRule result count HAS NOT changed."
           end
           puts "\t\tGroupRule contains:"
           group_rule.results.each do |result|
