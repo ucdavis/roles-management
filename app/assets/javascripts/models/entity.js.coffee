@@ -44,6 +44,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_operatorships = new DssRm.Collections.Entities if @group_operatorships is `undefined`
       @group_memberships = new Backbone.Collection if @group_memberships is `undefined`
       @role_assignments = new DssRm.Collections.RoleAssignments if @role_assignments is `undefined`
+      @organizations = new Backbone.Collection if @organizations is `undefined`
       
       # Reset nested collection data
       @favorites.reset @get("favorites")
@@ -51,6 +52,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_operatorships.reset @get("group_operatorships")
       @group_memberships.reset @get("group_memberships")
       @role_assignments.reset @get("role_assignments")
+      @organizations.reset @get("organizations")
       
       # Enforce the design pattern by removing from @attributes what is represented in a nested collection
       delete @attributes.favorites
@@ -58,6 +60,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       delete @attributes.group_operatorships
       delete @attributes.group_memberships
       delete @attributes.role_assignments
+      delete @attributes.organizations
   
   toJSON: ->
     if @type() is EntityTypes.group
@@ -109,6 +112,10 @@ DssRm.Models.Entity = Backbone.Model.extend(
           entity_id: membership.get('entity_id')
           group_id: membership.get('group_id')
           _destroy: membership.get('_destroy')
+      # if @organizations.length
+      #   json.organizations_attributes = @organizations.map (organization) ->
+      #     id: organization.get('id')
+      #     _destroy: organization.get('_destroy')
       if @group_operatorships.length
         json.group_operatorships_attributes = @group_operatorships.map (operatorship) ->
           id: operatorship.get('id')
@@ -184,13 +191,13 @@ DssRm.Models.Entity = Backbone.Model.extend(
       group.get('calculated') == true
     )
   
-  ouGroupMemberships: ->
-    unless @group_memberships
-      return []
-
-    @group_memberships.filter( (group) ->
-      group.get('ou') == true
-    )
+  # ouGroupMemberships: ->
+  #   unless @group_memberships
+  #     return []
+  # 
+  #   @group_memberships.filter( (group) ->
+  #     group.get('ou') == true
+  #   )
   
   nonOuGroupMemberships: ->
     unless @group_memberships

@@ -77,20 +77,18 @@ class DssRm.Views.PersonShow extends Backbone.View
         membership = @model.group_memberships.get(item.id)
         membership.set('_destroy', true)
 
-    @$("input[name=ou_group_memberships]").tokenInput Routes.ous_path(),
+    @$("input[name=ou_group_memberships]").tokenInput Routes.organizations_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
-      disabled: @readonly
+      disabled: true #@readonly
       onAdd: (item) =>
-        @model.group_memberships.add
-          group_id: item.id
-          entity_id: @model.get('id')
+        @model.organizations.add
+          id: item.id
           name: item.name
-          calculated: false
       onDelete: (item) =>
-        membership = @model.group_memberships.get(item.id)
-        membership.set('_destroy', true)
+        organization = @model.organizations.get(item.id)
+        organization.set('_destroy', true)
   
   initializeRolesTab: ->
     @$("#add_role_assignment_application_search").typeahead
@@ -199,13 +197,13 @@ class DssRm.Views.PersonShow extends Backbone.View
 
     ou_group_membership_tokeninput = @$("input[name=ou_group_memberships]")
     ou_group_membership_tokeninput.tokenInput "clear"
-    _.each @model.ouGroupMemberships(), (membership) =>
-      unless membership.get('_destroy')
+    @model.organizations.each (organization) =>
+      unless organization.get('_destroy')
         ou_group_membership_tokeninput.tokenInput "add",
-          id: membership.get('id')
-          name: membership.get('name')
-          readonly: @readonly || membership.get('calculated')
-          class: (if membership.get('calculated') then "calculated" else "")
+          id: organization.get('id')
+          name: organization.get('name')
+          readonly: true #@readonly || membership.get('calculated')
+          class: "calculated" #class: (if membership.get('calculated') then "calculated" else "")
 
     # Roles tab
     $rolesTab = @$("div#role_assignments")
