@@ -91,16 +91,20 @@ class GroupRule < ActiveRecord::Base
           end
         end
       when :ou
-        entity.groups.ous.each do |ou|
-          GroupRule.where(:column => "ou").each do |rule|
-            if rule.condition == "is"
-              if rule.value == ou.name
-                logger.info "Matched 'ou is' rule. Recording result."
-                rule.results << GroupRuleResult.new(:entity_id => entity_id)
-                touched_group_ids << rule.group.id
+        if entity.type == 'Group'
+          logger.warn "Targetted entity for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
+        else
+          entity.groups.ous.each do |ou|
+            GroupRule.where(:column => "ou").each do |rule|
+              if rule.condition == "is"
+                if rule.value == ou.name
+                  logger.info "Matched 'ou is' rule. Recording result."
+                  rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                  touched_group_ids << rule.group.id
+                end
+              elsif rule.condition == "is not"
+                logger.warn "Cannot GroupRule.resolve_target! for 'ou is not'. Unimplemented behavior."
               end
-            elsif rule.condition == "is not"
-              logger.warn "Cannot GroupRule.resolve_target! for 'ou is not'. Unimplemented behavior."
             end
           end
         end
