@@ -40,7 +40,7 @@ class OrganizationsController < ApplicationController
         @top_level_organizations = []
         
         @organizations.each do |organization|
-          if organization.parent_organization.nil?
+          if organization.parent_organizations.length == 0
             @top_level_organizations << organization
           end
         end
