@@ -175,7 +175,11 @@ namespace :organization do
         # Add members from the OU-Group to the Organization
         ou_group.members.each do |member|
           puts "\t\tAdding member #{member.name} (#{member.type}) to Organization"
-          organization.entities << member
+          begin
+            organization.entities << member
+          rescue ActiveRecord::RecordInvalid => e
+            puts "\t\tCould not add member to organization: #{e}. Ignoring ..."
+          end
         end
         
         # Remove those members from the OU-Group
