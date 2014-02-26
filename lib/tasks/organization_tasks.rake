@@ -180,11 +180,13 @@ namespace :organization do
         
         # Remove those members from the OU-Group
         ou_group.memberships.each do |membership|
+          puts "\t\tDestroying membership #{membership.id}"
           membership.destroy
         end
         
         # Create a new rule within that group for "Department is..." to restore those members
         # via calculation
+        puts "\t\t"
         gr = GroupRule.create!({ column: "organization", condition: "is", value: organization.name, group_id: ou_group.id })
         
         puts "\tConverting group rules using this group ..."
@@ -217,6 +219,8 @@ namespace :organization do
     GroupRule.where(column: 'ou').each do |rule|
       puts "WARNING: A rule exists for 'ou' #{rule.condition} '#{rule.value}'. If this is a group that should have been converted, the name likely couldn't be matched exactly and you will need to migrate the rule yourself. It is attached to group #{rule.group.id}, #{rule.group.name}."
     end
+    
+    puts "Group rules were generated using 'Organization is'. This should be converted to 'Department is' soon."
     
     Authorization.ignore_access_control(false)
   end
