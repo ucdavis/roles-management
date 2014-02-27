@@ -257,6 +257,27 @@ namespace :organization do
       puts "#{organization.name} (#{organization.parent_organizations.length})" if organization.parent_organizations.length > 1
     end
   end
+  
+  desc 'Adds a top-level node containing all the parentless-nodes'
+  task :add_top_level_node => :environment do
+    Authorization.ignore_access_control(true)
+    
+    orphaned_organizations = []
+    
+    Organization.all.each do |organization|
+      orphaned_organizations << organization if organization.parent_organizations.length == 0
+    end
+    
+    top_level = Organization.create!({name: "UC Davis"})
+    
+    puts "Found #{orphaned_organizations.length} organizations:"
+    orphaned_organizations.each do |org|
+      puts "\t#{org.name}"
+      top_level.child_organizations << org
+    end
+    
+    Authorization.ignore_access_control(false)
+  end
 
   desc 'List any organizations who have a parent which is also a grandparent'
   task :list_dubious_parentage, [:options] => :environment do |t, args|
