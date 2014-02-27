@@ -270,5 +270,24 @@ namespace :organization do
     
     puts "#{org_count} organization(s) dropped."
   end
+  
+  desc 'Generate a GraphViz-compatible output to STDOUT'
+  task :graphviz => :environment do
+    Authorization.ignore_access_control(true)
+    
+    puts "digraph unix {"
+    puts "\tsize=\"6,6\";"
+    puts "\tnode [color=lightblue2, style=filled];"
+    
+    Organization.all.each do |org|
+      org.child_organizations.each do |child|
+        puts "\t\"#{org.id}:#{org.name}\" -> \"#{child.id}:#{child.name}\";"
+      end
+    end
+    
+    puts "}"
+    
+    Authorization.ignore_access_control(false)
+  end
 end
 
