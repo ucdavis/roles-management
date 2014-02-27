@@ -18,6 +18,9 @@ class Organization < ActiveRecord::Base
   has_many :organization_entity_associations
   has_many :entities, :through => :organization_entity_associations
   
+  has_many :organization_managers
+  has_many :managers, :through => :organization_managers
+  
   # Returns all people associated with this organization and all organizations within
   # the children trees. Does _not_ include members of groups associated with any of
   # those organizations by design.

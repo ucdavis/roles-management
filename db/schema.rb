@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140214015018) do
+ActiveRecord::Schema.define(:version => 20140227181618) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -205,6 +205,16 @@ ActiveRecord::Schema.define(:version => 20140214015018) do
     t.datetime "updated_at",      :null => false
     t.integer  "title_id"
   end
+
+  create_table "organization_managers", :force => true do |t|
+    t.integer  "organization_id"
+    t.integer  "manager_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  add_index "organization_managers", ["manager_id"], :name => "index_organization_managers_on_manager_id"
+  add_index "organization_managers", ["organization_id"], :name => "index_organization_managers_on_organization_id"
 
   create_table "organization_org_ids", :force => true do |t|
     t.integer  "organization_id"
