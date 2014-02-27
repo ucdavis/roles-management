@@ -258,8 +258,99 @@ namespace :organization do
     end
   end
   
+  # Verifies all nameless organizations are top-level and combines them into one top-level
+  # node. It then attaches any named top-level organizations as children of that node,
+  # leaving the org tree with a single top-level parent node.
   desc 'Adds a top-level node containing all the parentless-nodes'
   task :add_top_level_node => :environment do
+    Authorization.ignore_access_control(true)
+    
+    # Find nameless organizations and verify they are all top-level
+    nameless_organizations = []
+    Organization.all.each do |organization|
+      if organization.name.nil?
+        if organization.parent_organizations.length > 0
+          puts "Found a nameless organization which is not top-level: #{organization.name} (#{organization.id}). This is unexpected. Aborting."
+          exit
+        end
+        unless organization.dept_code.nil?
+          puts "Found a nameless organization with a dept code: #{organization.name} (#{organization.id}). This is unexpected. Aborting."
+          exit
+        end
+        if organization.entities.length > 0
+          puts "Found a nameless organization with assigned entities: #{organization.name} (#{organization.id}). This is unexpected. Aborting."
+          exit
+        end
+        
+        puts "Found nameless organization: #{organization.id}"
+        nameless_organizations << organization
+      end
+    end
+    
+    # Combine them into a single top-level organization (we do not have to worry about entities nor dept code due to the checks above)
+    top_level = Organization.create!({name: "UC Davis"})
+    puts "Created top-level organization 'UC Davis' (#{top_level.id})"
+    
+    nameless_organizations.each do |nameless_org|
+      ## Assign all the org IDs of the nameless organizations to top-level
+      nameless_org.org_ids.each do |nameless_org_id|
+        puts "\tAssigning nameless org (#{nameless_org.id}) org_id of #{nameless_org_id.org_id} to the top-level ..."
+        
+        org_id = nameless_org_id.org_id
+        
+        # We need to delete the org_id before re-assigning it as they must remain unique in the database
+        nameless_org_id.destroy
+        
+        OrganizationOrgId.create!({ org_id: org_id, organization_id: top_level.id })
+        puts "\tdone."
+      end
+      
+      ## Assign all the child organizations of the nameless organizations to the top-level
+      nameless_org.child_organizations.each do |child_org|
+        if top_level.child_organizations.include?(child_org)
+          puts "\tWould assign nameless org (#{nameless_org.id}) child_org of #{child_org.name} (#{child_org.id}) to the top-level but it is already there. Skipping."
+        else
+          puts "\tAssigning nameless org (#{nameless_org.id}) child_org of #{child_org.name} (#{child_org.id}) to the top-level ..."
+          top_level.child_organizations << child_org
+          puts "\tdone."
+        end
+      end
+      
+      ## Finally, remove the nameless_org
+      puts "\tRemoving nameless org #{nameless_org.id} ..."
+      nameless_org.destroy
+      puts "\tdone."
+    end
+    
+    # Find the remaining orphaned orgs and assign them to the new top-level; they should all have names
+    Organization.all.each do |organization|
+      unless organization.id == top_level.id # don't want to add the new top-level!
+        if organization.parent_organizations.length == 0
+          if organization.name.blank?
+            puts "Found a blank organization after having combined them all. This should not happen. Continuing ..."
+          end
+          puts "Adding #{organization.name} (#{organization.id}) to the top-level ..."
+          top_level.child_organizations << organization
+        end
+      end
+    end
+    
+    # Verify that there is only one top-level org and print out some stats
+    top_orgs = Organization.includes(:parent_org_ids).where(:organization_parent_ids => { id: nil })
+    if top_orgs.length != 1
+      puts "Uh oh! Looks like there's more than one top-level org even though we're done. There are #{top_orgs.length}."
+      exit
+    end
+    
+    top_org = top_orgs[0]
+    
+    puts "New top-level org #{top_org.name} (#{top_org.id}) has #{top_org.org_ids.length} org IDs and #{top_org.child_organizations.length} children."
+    
+    Authorization.ignore_access_control(false)
+  end
+
+  desc 'Removes a top-level node if one exists'
+  task :remove_top_level_node => :environment do
     Authorization.ignore_access_control(true)
     
     orphaned_organizations = []
@@ -268,13 +359,21 @@ namespace :organization do
       orphaned_organizations << organization if organization.parent_organizations.length == 0
     end
     
-    top_level = Organization.create!({name: "UC Davis"})
-    
-    puts "Found #{orphaned_organizations.length} organizations:"
-    orphaned_organizations.each do |org|
-      puts "\t#{org.name}"
-      top_level.child_organizations << org
+    if orphaned_organizations.length != 1
+      puts "Cannot proceed. There are #{orphaned_organizations.length} top-level organizations, not 1."
+      exit
     end
+    
+    top_level = orphaned_organizations[0]
+    
+    puts "Detaching #{top_level.child_organizations.length} organizations from the top-level node (#{top_level.name}):"
+    top_level.child_organizations.each do |org|
+      puts "\tDetaching #{org.name} (#{org.id})"
+      top_level.child_organizations.destroy(org)
+    end
+    
+    puts "Destroying the top-level node #{top_level.name} (#{top_level.id}) ..."
+    top_level.destroy
     
     Authorization.ignore_access_control(false)
   end
