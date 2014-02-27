@@ -264,8 +264,6 @@ namespace :organization do
     
     remove = args[:options] == 'remove'
     
-    puts "Remove is #{remove}"
-    
     Organization.all.each do |organization|
       if organization.parent_organizations.length > 1
         parent_ids = organization.parent_organizations.map{ |org| org.id }
@@ -274,8 +272,11 @@ namespace :organization do
           intersections = parent_ids & grandparent_ids
           
           intersections.each do |i|
-            puts "#{organization.name} (#{organization.id}) has #{Organization.find_by_id(i).name} (#{Organization.find_by_id(i).id}) as a parent but this is also a grandparent. Removing ..."
-            #organization.parent_organizations.destroy(Organization.find_by_id(i))
+            puts "#{organization.name} (#{organization.id}) has #{Organization.find_by_id(i).name} (#{Organization.find_by_id(i).id}) as a parent but this is also a grandparent."
+            if remove
+              puts "Removing ..."
+              organization.parent_organizations.destroy(Organization.find_by_id(i))
+            end
             puts "Other parents:"
             parent_ids.each do |p|
               puts "\t#{Organization.find_by_id(p).name} (#{Organization.find_by_id(p).id})" unless intersections.include? p
