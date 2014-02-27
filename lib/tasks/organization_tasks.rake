@@ -257,6 +257,36 @@ namespace :organization do
       puts "#{organization.name} (#{organization.parent_organizations.length})" if organization.parent_organizations.length > 1
     end
   end
+
+  desc 'List any organizations who have a parent which is also a grandparent'
+  task :list_dubious_parentage, [:options] => :environment do |t, args|
+    Authorization.ignore_access_control(true)
+    
+    remove = args[:options] == 'remove'
+    
+    puts "Remove is #{remove}"
+    
+    Organization.all.each do |organization|
+      if organization.parent_organizations.length > 1
+        parent_ids = organization.parent_organizations.map{ |org| org.id }
+        organization.parent_organizations.each do |parent|
+          grandparent_ids = parent.parent_organizations.map{ |org| org.id }
+          intersections = parent_ids & grandparent_ids
+          
+          intersections.each do |i|
+            puts "#{organization.name} (#{organization.id}) has #{Organization.find_by_id(i).name} (#{Organization.find_by_id(i).id}) as a parent but this is also a grandparent. Removing ..."
+            #organization.parent_organizations.destroy(Organization.find_by_id(i))
+            puts "Other parents:"
+            parent_ids.each do |p|
+              puts "\t#{Organization.find_by_id(p).name} (#{Organization.find_by_id(p).id})" unless intersections.include? p
+            end
+          end
+        end
+      end
+    end
+    
+    Authorization.ignore_access_control(false)
+  end
   
   desc 'Drop all organizations'
   task :drop => :environment do
