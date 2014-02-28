@@ -162,14 +162,134 @@ module LdapPersonHelper
     
     # Prefer UcdLookups for OU, company, and manager information if available
     ucdAppointmentDepartmentCode = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
+    
+    majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name = resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
+    
+    # Log if this individual has neither piece of needed information to assign them to an Organization
+    if (ucdAppointmentDepartmentCode == nil) && (ucdStudentMajor == nil)
+      log.warn "Individual (#{p.loginid}) has neither a ucdAppointmentDepartmentCode nor a ucdStudentMajor. FIXME" unless log.nil?
+      return
+    end
+
+    # DEPT_TRANSLATIONS helps similar names (alternate spellings, etc.) into a consistent name
+    # if UcdLookups::DEPT_TRANSLATIONS.keys().include? ou_name
+    #   ou_name = UcdLookups::DEPT_TRANSLATIONS[ou_name]
+    # end
+    
+    # OU treatment varies for graduate students vs everybody else
+    if p.affiliations.collect{ |x| x.name }.include?("student:graduate") and ucdStudentMajor
+      # Graduate student
+      # make sure they're in the ucdAppointmentDepartmentCode, ucdStudentMajor
+      #ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
+      ou = Organization.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) #|| Group.create(:name => ucdStudentMajor)
+      # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
+      #ou.save!
+    elsif p.affiliations.collect{ |x| x.name }.include?("student:undergraduate") and ucdStudentMajor and not ucdAppointmentDepartmentCode
+      # Undergraduate with no employment
+      #ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
+      ou = Organization.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) #|| Group.create(:name => ucdStudentMajor)
+      # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
+      #ou.save!
+    else
+      # Not an undergraduate nor a graduate student
+      
+      # Ensure 'ou' exists, update if necessary
+      if ou_name
+        #ou = Group.find(:first, :conditions => [ "lower(name) = ?", ou_name.downcase ]) || Group.create(:name => ou_name)
+        ou = Organization.find(:first, :conditions => [ "lower(name) = ?", ou_name.downcase ]) #|| Group.create(:name => ou_name)
+        #ou.code = ucdAppointmentDepartmentCode if ou.code.nil?
+        #ou.save!
+        
+        if ou
+          # Set OU manager to be an owner of their OU
+          ou_manager = Person.find_or_create_by_loginid(ou_manager_name)
+        
+          # Ensure this manager is recorded for the Organization
+          unless ou.managers.include? ou_manager
+            ou.managers << ou_manager
+          end
+
+          # Ensure they have this person as their favorite
+          unless (ou_manager.id == p.id) or (ou_manager.favorites.include? p)
+            # Ensure a manager has all their employees automatically set as favorites
+            # keep adding them as favorites
+            ou_manager.favorites << p
+          end
+        else
+          log.warn "Found a department not in the Organization tree. It has ucdAppointmentDepartmentCode #{ucdAppointmentDepartmentCode} (for person #{p.loginid}). FIXME" unless log.nil?
+        end
+      elsif ucdAppointmentDepartmentCode
+        log.warn "Found a department not in the Organization tree. It has ucdAppointmentDepartmentCode #{ucdAppointmentDepartmentCode} (for person #{p.loginid}). FIXME" unless log.nil?
+        
+        # # Department with no translation. Assume LDAP data is trustworthy.
+        # ou = Group.find_or_initialize_by_code(ucdAppointmentDepartmentCode)
+        # ou_name = entry.get_values('ou')[0]
+        # 
+        # if UcdLookups::DEPT_TRANSLATIONS.keys().include? ou_name
+        #   ou_name = UcdLookups::DEPT_TRANSLATIONS[ou_name]
+        # end
+        # 
+        # ou.name = ou_name
+        # 
+        # ou.save!
+      end
+
+      # Ensure 'company' exists, update if necessary
+      # stop doing this company stuff entirely
+      # when the org tree is fixed, it'll just be the immediate, single parent
+      # if company_name
+      #   company = Group.find_or_initialize_by_code(company_code)
+      #   company.name = company_name if company.name.blank?
+      #   company.save!
+      # 
+      #   # Set company manager to be an owner of their company.
+      #   company_manager = Person.find_or_create_by_loginid(company_manager_name)
+      # 
+      #   unless company.owners.include? company_manager
+      #     company.owners << company_manager
+      #   end
+      # end
+    end
+
+    unless p.organizations.include?(ou) or ou.nil?
+      p.organizations << ou
+    end
+    
+    # unless p.groups.include? company or company.nil?
+    #   p.groups << company
+    # end
+    
+    # Remove this person from any OUs not mentioned in LDAP
+    # in case they have since left that department/company.
+    # Note: It's assumed LDAP can only mention up to one OU
+    #       We do not simply remove all OUs and then re-add
+    #       the proper one above in order to maintain clean
+    #       logs (deleting an OU association may trigger a
+    #       log message).
+    p.organizations.each do |o|
+      if (o != ou) #and (o != company)
+        p.organizations.destroy(o)
+        log.debug "Removing ou #{o.name} from person #{p.loginid}" unless log.nil?
+      end
+    end
+    
+    return p
+  end
+  
+  # Simple function to determine _how_ a person is related to UCD (staff, faculty, student) and return
+  # the relevant OU details. This is separate from determine_affiliation_details.
+  def LdapPersonHelper.resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
     if ucdAppointmentDepartmentCode
       if UcdLookups::DEPT_CODES.keys().include? ucdAppointmentDepartmentCode
+        # This OU should be in the org tree
+        majorDept = nil
         ou_name = UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]['name']
         ou_manager_name = UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]['manager']
         company_code = UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]['company']
         company_name = UcdLookups::DEPT_CODES[company_code]['name']
         company_manager_name = UcdLookups::DEPT_CODES[company_code]['manager']
       elsif ucdStudentMajor
+        # Use major to determine OU (should still be in the org tree)
         if UcdLookups::MAJORS.keys().include? ucdStudentMajor
           majorDept = UcdLookups::MAJORS[ucdStudentMajor]
           ou_name = UcdLookups::DEPT_CODES[majorDept]['name']
@@ -180,6 +300,7 @@ module LdapPersonHelper
         end
       end
     elsif ucdStudentMajor
+      # log if the major is not in the lookup table and add them
       if UcdLookups::MAJORS.keys().include? ucdStudentMajor
         majorDept = UcdLookups::MAJORS[ucdStudentMajor]
         ou_name = UcdLookups::DEPT_CODES[majorDept]['name']
@@ -189,95 +310,7 @@ module LdapPersonHelper
         company_manager_name = UcdLookups::DEPT_CODES[company_code]['manager']
       end
     end
-
-    # DEPT_TRANSLATIONS helps similar names (alternate spellings, etc.) into a consistent name
-    if UcdLookups::DEPT_TRANSLATIONS.keys().include? ou_name
-      ou_name = UcdLookups::DEPT_TRANSLATIONS[ou_name]
-    end
-
-    # OU treatment varies for graduate students vs everybody else
-    if p.affiliations.collect{ |x| x.name }.include?("student:graduate") and ucdStudentMajor
-      # Graduate student
-      ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
-      # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
-      ou.save!
-    elsif p.affiliations.collect{ |x| x.name }.include?("student:undergraduate") and ucdStudentMajor and not ucdAppointmentDepartmentCode
-      # Undergraduate with no employment
-      ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
-      # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
-      ou.save!
-    else
-      # Not a graduate student
-      
-      # Ensure 'ou' exists, update if necessary
-      if ou_name
-        ou = Group.find(:first, :conditions => [ "lower(name) = ?", ou_name.downcase ]) || Group.create(:name => ou_name)
-        ou.code = ucdAppointmentDepartmentCode if ou.code.nil?
-        ou.save!
-        
-        # Set OU manager to be an owner of their OU. Ensure this person record is in manager's favorites
-        ou_manager = Person.find_or_create_by_loginid(ou_manager_name)
-        
-        unless ou.owners.include? ou_manager
-          ou.owners << ou_manager
-        end
-
-        # Ensure they have this person as their favorite
-        unless (ou_manager.id == p.id) or (ou_manager.favorites.include? p)
-          # Ensure a manager has all their employees automatically set as favorites
-          ou_manager.favorites << p
-        end
-      elsif ucdAppointmentDepartmentCode
-        # Department with no translation. Assume LDAP data is trustworthy.
-        ou = Group.find_or_initialize_by_code(ucdAppointmentDepartmentCode)
-        ou_name = entry.get_values('ou')[0]
-        
-        if UcdLookups::DEPT_TRANSLATIONS.keys().include? ou_name
-          ou_name = UcdLookups::DEPT_TRANSLATIONS[ou_name]
-        end
-        
-        ou.name = ou_name
-        
-        ou.save!
-      end
-
-      # Ensure 'company' exists, update if necessary
-      if company_name
-        company = Group.find_or_initialize_by_code(company_code)
-        company.name = company_name if company.name.blank?
-        company.save!
-
-        # Set company manager to be an owner of their company.
-        company_manager = Person.find_or_create_by_loginid(company_manager_name)
-
-        unless company.owners.include? company_manager
-          company.owners << company_manager
-        end
-      end
-    end
-
-    unless p.groups.include? ou or ou.nil?
-      p.groups << ou
-    end
     
-    unless p.groups.include? company or company.nil?
-      p.groups << company
-    end
-    
-    # Remove this person from any OUs not mentioned in LDAP
-    # in case they have since left that department/company.
-    # Note: It's assumed LDAP can only mention up to one OU
-    #       We do not simply remove all OUs and then re-add
-    #       the proper one above in order to maintain clean
-    #       logs (deleting an OU association may trigger a
-    #       log message).
-    p.groups.ous.each do |o|
-      if (o != ou) and (o != company)
-        p.groups.destroy(o)
-        log.debug "Removing ou #{o.name} from person #{p.loginid}" unless log.nil?
-      end
-    end
-    
-    return p
+    return majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name
   end
 end

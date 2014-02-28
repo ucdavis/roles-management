@@ -73,7 +73,7 @@ namespace :ldap do
           
           ldap.search('(uid=' + person.loginid + ')') do |entry|
             p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
-            save_or_touch(p, log)
+            save_or_touch(p, log) if p
           end
           
           unless p
