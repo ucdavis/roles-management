@@ -13,3 +13,13 @@ orphaned_org:
   id: 3
   name: Orphaned Org
   dept_code: '010103'
+
+separate_toplevel:
+  id: 4
+  name: Separate Top-Level (different tree)
+  dept_code: '010104'
+
+office_of_separate_toplevel:
+  id: 5
+  name: Office of Separate Top-Level
+  dept_code: '010105'

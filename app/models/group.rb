@@ -2,9 +2,6 @@
 class Group < Entity
   using_access_control
 
-  scope :ous, where(Group.arel_table[:code].not_eq(nil))
-  scope :non_ous, where(Group.arel_table[:code].eq(nil))
-
   has_many :memberships, :class_name => "GroupMembership", :dependent => :destroy
   has_many :members, :through => :memberships, :source => :entity
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
@@ -32,10 +29,6 @@ class Group < Entity
       :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
 
-  def ou?
-    code != nil
-  end
-  
   # Returns identifying string for logging purposes. Other classes implement this too.
   # Format: (Class name:id,identifying fields)
   def log_identifier

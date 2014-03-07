@@ -89,15 +89,8 @@ groupWithNothing:
   name: Group with nothing
   description: This group has no rules, owners, operators, or members
 
-anOU:
-  id: 11
-  type: Group
-  name: An OU
-  description: I am an OU.
-  code: 1
-
 anotherGroupWithNothing:
-  id: 12
+  id: 11
   type: Group
   name: Another group with nothing
   description: This group has no rules, owners, operators, or members, and is not unique in being so

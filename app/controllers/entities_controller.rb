@@ -48,7 +48,12 @@ class EntitiesController < ApplicationController
     
     @entity.trigger_sync
 
-    respond_with @entity
+    if @entity.group?
+      @group = @entity
+      render "groups/create"
+    else
+      respond_with @entity
+    end
   end
 
   def update

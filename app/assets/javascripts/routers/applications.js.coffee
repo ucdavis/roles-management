@@ -86,12 +86,12 @@ DssRm.Routers.Applications = Backbone.Router.extend(
       new DssRm.Views.QueuedJobsDialog(queued_jobs: queued_jobs).render().$el.modal()
 
   eventLogDialog: ->
-    status_bar.show "Loading Event Log dialog ..."
-    
-    $.get Routes.diary_entries_path(), (data) =>
-      status_bar.hide()
-      entries = new DssRm.Collections.EventLogEntries(data)
-      new DssRm.Views.EventLogDialog(entries: entries).render().$el.modal()
+    # status_bar.show "Loading Event Log dialog ..."
+    # 
+    # $.get Routes.diary_entries_path(), (data) =>
+    #   status_bar.hide()
+    #   entries = new DssRm.Collections.EventLogEntries(data)
+    #   new DssRm.Views.EventLogDialog(entries: entries).render().$el.modal()
 
   aboutDialog: ->
     new DssRm.Views.AboutDialog().render().$el.modal()

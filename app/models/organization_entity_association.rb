@@ -21,6 +21,7 @@ class OrganizationEntityAssociation < ActiveRecord::Base
   
   def recalculate_organization_group_rules_if_necessary
     GroupRule.resolve_target!(:organization, self.entity_id)
+    GroupRule.resolve_target!(:department, self.entity_id)
   end
   
   # Validate that any title assignment is associated with a 'Person'-type

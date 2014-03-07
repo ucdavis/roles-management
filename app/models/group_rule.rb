@@ -3,11 +3,12 @@
 class GroupRule < ActiveRecord::Base
   using_access_control
   
-  VALID_COLUMNS = %w( title major affiliation classification loginid ou organization )
+  VALID_COLUMNS = %w( title major affiliation classification loginid department organization )
   
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => VALID_COLUMNS
+  validate :column_cannot_change
   
   belongs_to :group, :touch => true
   has_many :results, :class_name => "GroupRuleResult", :dependent => :destroy
@@ -90,20 +91,20 @@ class GroupRule < ActiveRecord::Base
             end
           end
         end
-      when :ou
+      when :department
         if entity.type == 'Group'
           logger.warn "Targetted entity for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
         else
-          entity.groups.ous.each do |ou|
-            GroupRule.where(:column => "ou").each do |rule|
+          entity.organizations.each do |organization|
+            GroupRule.where(:column => "department").each do |rule|
               if rule.condition == "is"
-                if rule.value == ou.name
-                  logger.info "Matched 'ou is' rule. Recording result."
+                if rule.value == organization.name
+                  logger.info "Matched 'department is' rule. Recording result."
                   rule.results << GroupRuleResult.new(:entity_id => entity_id)
                   touched_group_ids << rule.group.id
                 end
               elsif rule.condition == "is not"
-                logger.warn "Cannot GroupRule.resolve_target! for 'ou is not'. Unimplemented behavior."
+                logger.warn "Cannot GroupRule.resolve_target! for 'department is not'. Unimplemented behavior."
               end
             end
           end
@@ -111,7 +112,7 @@ class GroupRule < ActiveRecord::Base
       when :organization
         # FIXME
         # This is incorrect because if the entity is only a member of a child organization with no rules
-        # but the child organization's parent has a rule, this will never do anything
+        # but the child organization's parent has a rule, this will never do anything (right?)
         entity.organizations.each do |organization|
           GroupRule.where(:column => "organization").each do |rule|
             if rule.condition == "is"
@@ -258,21 +259,22 @@ class GroupRule < ActiveRecord::Base
           logger.warn "Unsupported condition for affiliation in group rule."
         end
       end
-    when "ou"
-      ou = Group.ous.includes(:members).find_by_name(value)
-      unless ou == nil
-        ps = ou.members
+    when "department"
+      department = Organization.find_by_name(value)
+      unless department == nil
+        ps = department.entities
         case condition
         when "is"
+          logger.debug "Adding #{ps.length} entities to a 'Department is...' GroupRule"
           p = p + ps
         when "is not"
-          logger.info " -- 'OU is not' will not be resolved within GroupRule"
+          logger.info " -- 'Department is not' will not be resolved within GroupRule"
         else
           # unsupported
-          logger.warn "Unsupported condition for OU in group rule."
+          logger.warn "Unsupported condition for Department in group rule."
         end
       else
-        logger.warn "OU not found"
+        logger.warn "Department (Organization) not found"
       end
     when "organization"
       organization = Organization.includes(:entities).find_by_name(value)
@@ -328,6 +330,7 @@ class GroupRule < ActiveRecord::Base
     results.destroy_all
     
     p.each do |e|
+      logger.debug "Generating GroupRuleResult ..."
       results << GroupRuleResult.new(:entity_id => e.id)
     end
     
@@ -349,8 +352,8 @@ class GroupRule < ActiveRecord::Base
       matched = person.major == Major.find_by_name(value)
     when "affiliation"
       matched = person.affiliations.include? Affiliation.find_by_name(value)
-    when "ou"
-      matched = person.groups.ous.include? Group.find_by_name(value)
+    when "department"
+      matched = person.organizations.include? Organization.find_by_name(value)
     when "organization"
       matched = person.organizations.include? Organization.find_by_name(value)
     when "classification"
@@ -366,6 +369,8 @@ class GroupRule < ActiveRecord::Base
   
   # Recalculates group members if anything changed. Called after_save.
   def resolve_if_changed
+    Rails.logger.debug "GroupRule.resolve_if_changed called."
+    Rails.logger.debug "changed? is #{self.changed?}"
     self.resolve! if self.changed? # recalculate this rule
     self.group.recalculate_members! if self.changed? # tell the group to recombine the results list
   end
@@ -373,5 +378,14 @@ class GroupRule < ActiveRecord::Base
   # In after_destroy it's important the group recalculate members as this rule is gone
   def group_must_recalculate
     self.group.recalculate_members!
+  end
+  
+  # GroupRules are usually created and destroyed, not edited.
+  # It's alright to edit the value but anything else should really
+  # be done by destroying and then creating a new GroupRule.
+  def column_cannot_change
+    if column_changed? and not new_record?
+      errors.add(:column, "column cannot be changed")
+    end
   end
 end

@@ -11,11 +11,11 @@ class GroupsController < ApplicationController
     #respond_with @groups
   end
   
-  def create
-    @group.save
-    render "groups/create"
-    #respond_with @group
-  end
+  # def create
+  #   @group.save
+  #   render "groups/create"
+  #   #respond_with @group
+  # end
   
   def update
     if params[:id] and params[:group]
@@ -54,7 +54,7 @@ class GroupsController < ApplicationController
   def load_groups
     if params[:q]
       groups_table = Group.arel_table
-      @groups = Group.with_permissions_to(:read).where(groups_table[:name].matches("%#{params[:q]}%").and(groups_table[:code].eq(nil)))
+      @groups = Group.with_permissions_to(:read).where(groups_table[:name].matches("%#{params[:q]}%"))
     else
       @groups = Group.with_permissions_to(:read).all
     end

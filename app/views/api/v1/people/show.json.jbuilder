@@ -14,7 +14,7 @@ json.cache! ['api_v1_people_show', @cache_key] do
   json.group_memberships @person.group_memberships do |membership|
     json.extract! membership, :group_id, :id
     json.name membership.group.name
-    json.ou membership.group.ou?
+    json.ou false # this field has been removed from the database for groups but remains here as 'false' for compatibility in API v1
   end
 
   json.group_ownerships @person.group_memberships do |ownership|

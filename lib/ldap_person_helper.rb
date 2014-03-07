@@ -116,12 +116,20 @@ module LdapPersonHelper
   
   # Resolve affiliation detail from ucdPersonAffiliation
   def LdapPersonHelper.determine_affiliation_details(p, entry, log = nil)
+    seen_affiliations = []
+    
     # A person may have multiple affiliations
     entry.get_values('ucdPersonAffiliation').each do |affiliation_name|
+      seen_affiliations << affiliation_name
       affiliation = Affiliation.find_or_create_by_name(affiliation_name)
       unless p.affiliations.include? affiliation
         p.affiliations << affiliation
       end
+    end
+    
+    # Remove any affiliations from the person not mentioned by LDAP
+    p.affiliations.each do |affiliation|
+      p.affiliations.destroy(affiliation) unless seen_affiliations.include?(affiliation.name)
     end
     
     return p

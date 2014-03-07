@@ -207,9 +207,74 @@ class GroupRuleTest < ActiveSupport::TestCase
     end
   end
   
-  # test "'Department is...' rules should only include members of that specific organization and not members from any child or parent organization" do
-  #   assert false, "implement me"
-  # end
+  test "Test basic 'Department is...' rule logic" do
+    without_access_control do
+      o = organizations(:separate_toplevel)
+      
+      group = entities(:groupWithNothing)
+      
+      # Sanity-check the fixtures
+      assert group.roles.length == 0, "looks like groupWithNothing has a role"
+      assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+      assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+      assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+      
+      # Test the group rule logic (ensure 'Department is...' works)
+      assert group.members.length == 0, "group should have no members"
+      
+      group_rule = GroupRule.new({ column: 'department', condition: 'is', value: o.name, group_id: group.id })
+      group.rules << group_rule
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have 1 member"
+      
+      # Ensure adding someone to a department affects the group rule results ...
+      @cthielen = entities(:cthielen)
+      # Add @cthielen to the organization
+      o.entities << @cthielen
+      o.save!
+      
+      group.reload
+      
+      assert group.members.length == 2, "group should have 2 members but has #{group.members.length}"
+      assert group.members.include?(@cthielen), "group should include @cthielen"
+      
+      o.entities.destroy(@cthielen)
+      o.save!
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have 1 member but has #{group.members.length}"
+      assert group.members.include?(@cthielen) == false, "group should not include @cthielen"      
+    end
+  end
+
+  test "Ensure 'Department is...' rule logic does not include child entities like 'Organization is...' would" do
+    without_access_control do
+      o = organizations(:separate_toplevel)
+      
+      group = entities(:groupWithNothing)
+      
+      # Sanity-check the fixtures
+      assert group.roles.length == 0, "looks like groupWithNothing has a role"
+      assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+      assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+      assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+      
+      # Test the group rule logic (ensure 'Department is...' works)
+      assert group.members.length == 0, "group should have no members"
+      
+      group_rule = GroupRule.new({ column: 'department', condition: 'is', value: o.name, group_id: group.id })
+      group.rules << group_rule
+      
+      group.reload
+      
+      assert group.members.length == 1, "group should have 1 member"
+      assert group.members.include?(entities(:group_memberA)), "group_memberA should be a member"
+      assert group.members.include?(entities(:group_memberB)) == false, "group_memberB should not be a member"
+    end
+  end
   
   test "adding a new child organization should affect any GroupRuleResults for parent organizations" do
     without_access_control do
@@ -457,23 +522,23 @@ class GroupRuleTest < ActiveSupport::TestCase
       
       assert group.members.length == 0, "group should have no members"
   
-      # Test that setting a person's OU fills in a group
+      # Test that setting a person's OU fills in a group's department rule
       group.rules.destroy_all
-      group_rule = GroupRule.new({ column: 'ou', condition: 'is', value: 'An OU', group_id: group.id })
+      group_rule = GroupRule.new({ column: 'department', condition: 'is', value: organizations(:office_of_toplevel).name, group_id: group.id })
       group.rules << group_rule
       
       group.reload
       
       assert group.members.length == 0, "group should have no members"
       
-      @person.groups << entities(:anOU)
+      @person.organizations << organizations(:office_of_toplevel)
       @person.save!
       
       group.reload
       
       assert group.members.length == 1, "group should have a member"
-  
-      @person.groups.destroy(entities(:anOU))
+      
+      @person.organizations.destroy(organizations(:office_of_toplevel))
       @person.save!
       
       group.reload
@@ -573,12 +638,12 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.owners.length == 0, "looks like groupWithNothing has an owner"
       assert group.operators.length == 0, "looks like groupWithNothing has an operator"
   
-      @person.groups << entities(:anOU)
+      @person.organizations << organizations(:office_of_toplevel)
   
       # Test login ID rules
       assert group.members.length == 0, "group should have no members"
       
-      group_rule = GroupRule.new({ column: 'ou', condition: 'is', value: 'An OU', group_id: group.id })
+      group_rule = GroupRule.new({ column: 'organization', condition: 'is', value: organizations(:office_of_toplevel).name, group_id: group.id })
       group.rules << group_rule
       
       group.reload

@@ -1,9 +1,6 @@
 require 'api_constraints'
 
 DSSRM::Application.routes.draw do
-  resources :organizations
-
-
   namespace :api, defaults: {format: 'json'} do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
       resources :people
@@ -27,7 +24,6 @@ DSSRM::Application.routes.draw do
   resources :people
   resources :groups
   resources :group_rules
-  resources :ous
   resources :roles do
     get "sync" # HTTP GET as we queue this request - we cannot return data immediately
   end
@@ -35,6 +31,7 @@ DSSRM::Application.routes.draw do
   resources :titles
   resources :affiliations
   resources :classifications
+  resources :organizations
 
   namespace "admin" do
     get "dialogs/impersonate"

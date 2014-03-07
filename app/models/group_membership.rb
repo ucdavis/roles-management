@@ -27,9 +27,9 @@ class GroupMembership < ActiveRecord::Base
   # as group memberships can be created outside the Group class causing
   # that Group's callbacks to go unused
   after_create :grant_group_roles_to_member
-  after_create :recalculate_ou_group_rules_if_necessary
+  #after_create :recalculate_ou_group_rules_if_necessary
   before_destroy :remove_group_roles_from_member
-  after_destroy :recalculate_ou_group_rules_if_necessary
+  #after_destroy :recalculate_ou_group_rules_if_necessary
   
   after_save { |membership| membership.log_changes(:save) }
   after_destroy { |membership| membership.log_changes(:destroy) }
@@ -86,11 +86,11 @@ class GroupMembership < ActiveRecord::Base
   # if group is an OU.
   # This logic is located here and not in GroupRule as this is the best
   # place to find group memberships being created and destroyed.
-  def recalculate_ou_group_rules_if_necessary
-    if group.ou? and not Thread.current[:recalculating_membership_flag]
-      GroupRule.resolve_target!(:ou, self.entity_id)
-    end
-  end
+  # def recalculate_ou_group_rules_if_necessary
+  #   if group.ou? and not Thread.current[:recalculating_membership_flag]
+  #     GroupRule.resolve_target!(:ou, self.entity_id)
+  #   end
+  # end
   
   # Grant group's roles to new member (marking as calculated)
   def grant_group_roles_to_member
