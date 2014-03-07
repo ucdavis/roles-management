@@ -65,7 +65,8 @@ class PeopleController < ApplicationController
       ldap.disconnect
     end
     
-    respond_with @results
+    render "people/search"
+    #respond_with @results
   end
   
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports

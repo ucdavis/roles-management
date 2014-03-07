@@ -7,7 +7,8 @@ class GroupsController < ApplicationController
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
-    respond_with @groups
+    render "groups/index"
+    #respond_with @groups
   end
   
   def create
@@ -31,7 +32,8 @@ class GroupsController < ApplicationController
   end
   
   def show
-    respond_with @group
+    render "groups/show"
+    #respond_with @group
   end
   
   def destroy

@@ -22,7 +22,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   test "valid API whitelisted user should get index" do
     grant_whitelisted_access
   
-    get :index
+    get :index, :format => :json
   
     assert_response :success
     assert_not_nil assigns(:entities)
