@@ -176,7 +176,7 @@ module LdapPersonHelper
     # Log if this individual has neither piece of needed information to assign them to an Organization
     if (ucdAppointmentDepartmentCode == nil) && (ucdStudentMajor == nil)
       log.warn "Individual (#{p.loginid}) has neither a ucdAppointmentDepartmentCode nor a ucdStudentMajor. FIXME" unless log.nil?
-      return
+      return p
     end
 
     # DEPT_TRANSLATIONS helps similar names (alternate spellings, etc.) into a consistent name
