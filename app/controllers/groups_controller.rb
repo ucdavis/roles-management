@@ -13,7 +13,8 @@ class GroupsController < ApplicationController
   
   def create
     @group.save
-    respond_with @group
+    render "groups/create"
+    #respond_with @group
   end
   
   def update

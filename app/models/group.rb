@@ -1,7 +1,6 @@
 # Group shares many attributes with entity.
 class Group < Entity
   using_access_control
-  include Diaryable
 
   scope :ous, where(Group.arel_table[:code].not_eq(nil))
   scope :non_ous, where(Group.arel_table[:code].eq(nil))
@@ -160,7 +159,7 @@ class Group < Entity
       end
 
       logger.debug "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
-      diary "Membership recalculated to #{memberships.length} members"
+      #diary "Membership recalculated to #{memberships.length} members"
       
       # As promised, now that all the GroupMembership and RoleAssignment objects are created,
       # we will sync roles in one sweep instead of allowing the flurry of activity to create
@@ -195,7 +194,7 @@ class Group < Entity
 
   def trigger_sync
     logger.info "Group #{id}: trigger_sync called, calling trigger_sync on #{roles.count} roles"
-    diary "Triggering all #{roles.count} roles to sync."
+    #diary "Triggering all #{roles.count} roles to sync."
     roles.all.each { |role| role.trigger_sync! }
   end
 end

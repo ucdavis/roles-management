@@ -3,7 +3,7 @@
 # and is thus read-only. The same does not apply for groups.
 class Person < Entity
   using_access_control
-  include Diaryable
+  include RmBuiltinRoles
 
   has_many :affiliation_assignments, :dependent => :destroy
   has_many :affiliations, :through => :affiliation_assignments, :uniq => true
@@ -114,10 +114,6 @@ class Person < Entity
     end
   end
   
-  def diary_logged_in_at
-    "Logged in."
-  end
-
   private
   
   # has_many does not have a :touch attribute.

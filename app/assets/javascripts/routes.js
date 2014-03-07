@@ -18,6 +18,7 @@
   Utils = {
     serialize: function(object, prefix) {
       var element, i, key, prop, result, s, _i, _len;
+
       if (prefix == null) {
         prefix = null;
       }
@@ -64,6 +65,7 @@
     },
     clean_path: function(path) {
       var last_index;
+
       path = path.split("://");
       last_index = path.length - 1;
       path[last_index] = path[last_index].replace(/\/+/g, "/");
@@ -71,6 +73,7 @@
     },
     set_default_url_options: function(optional_parts, options) {
       var i, part, _i, _len, _results;
+
       _results = [];
       for (i = _i = 0, _len = optional_parts.length; _i < _len; i = ++_i) {
         part = optional_parts[i];
@@ -82,6 +85,7 @@
     },
     extract_anchor: function(options) {
       var anchor;
+
       anchor = "";
       if (options.hasOwnProperty("anchor")) {
         anchor = "#" + options.anchor;
@@ -91,6 +95,7 @@
     },
     extract_options: function(number_of_params, args) {
       var last_el;
+
       last_el = args[args.length - 1];
       if (args.length > number_of_params || ((last_el != null) && "object" === this.get_object_type(last_el) && !this.look_like_serialized_model(last_el))) {
         return args.pop();
@@ -103,6 +108,7 @@
     },
     path_identifier: function(object) {
       var property;
+
       if (object === 0) {
         return "0";
       }
@@ -126,6 +132,7 @@
     },
     clone: function(obj) {
       var attr, copy, key;
+
       if ((obj == null) || "object" !== this.get_object_type(obj)) {
         return obj;
       }
@@ -139,6 +146,7 @@
     },
     prepare_parameters: function(required_parameters, actual_parameters, options) {
       var i, result, val, _i, _len;
+
       result = this.clone(options) || {};
       for (i = _i = 0, _len = required_parameters.length; _i < _len; i = ++_i) {
         val = required_parameters[i];
@@ -150,6 +158,7 @@
     },
     build_path: function(required_parameters, optional_parts, route, args) {
       var anchor, opts, parameters, result, url, url_params;
+
       args = Array.prototype.slice.call(args);
       opts = this.extract_options(required_parameters.length, args);
       if (args.length > required_parameters.length) {
@@ -168,6 +177,7 @@
     },
     visit: function(route, parameters, optional) {
       var left, left_part, right, right_part, type, value;
+
       if (optional == null) {
         optional = false;
       }
@@ -206,6 +216,7 @@
     },
     visit_globbing: function(route, parameters, optional) {
       var left, right, type, value;
+
       type = route[0], left = route[1], right = route[2];
       if (left.replace(/^\*/i, "") !== left) {
         route[1] = left = left.replace(/^\*/i, "");
@@ -226,6 +237,7 @@
     },
     get_prefix: function() {
       var prefix;
+
       prefix = defaults.prefix;
       if (prefix !== "") {
         prefix = (prefix.match("/$") ? prefix : "" + prefix + "/");
@@ -235,11 +247,12 @@
     _classToTypeCache: null,
     _classToType: function() {
       var name, _i, _len, _ref;
+
       if (this._classToTypeCache != null) {
         return this._classToTypeCache;
       }
       this._classToTypeCache = {};
-      _ref = "Boolean Number String Function Array Date RegExp Undefined Null".split(" ");
+      _ref = "Boolean Number String Function Array Date RegExp Object Error".split(" ");
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         name = _ref[_i];
         this._classToTypeCache["[object " + name + "]"] = name.toLowerCase();
@@ -247,15 +260,21 @@
       return this._classToTypeCache;
     },
     get_object_type: function(obj) {
-      var strType;
       if (window.jQuery && (window.jQuery.type != null)) {
         return window.jQuery.type(obj);
       }
-      strType = Object.prototype.toString.call(obj);
-      return this._classToType()[strType] || "object";
+      if (obj == null) {
+        return "" + obj;
+      }
+      if (typeof obj === "object" || typeof obj === "function") {
+        return this._classToType()[Object.prototype.toString.call(obj)] || "object";
+      } else {
+        return typeof obj;
+      }
     },
     namespace: function(root, namespaceString) {
       var current, parts;
+
       parts = (namespaceString ? namespaceString.split(".") : []);
       if (!parts.length) {
         return;
@@ -384,14 +403,6 @@
 // classifications => /classifications(.:format)
   classifications_path: function(options) {
   return Utils.build_path([], ["format"], [2,[2,[7,"/",false],[6,"classifications",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// diary => /diary/entries/:uid_id(.:format)
-  diary_path: function(_uid_id, options) {
-  return Utils.build_path(["uid_id"], ["format"], [2,[2,[2,[2,[2,[2,[7,"/",false],[6,"diary",false]],[7,"/",false]],[6,"entries",false]],[7,"/",false]],[3,"uid_id",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
-  },
-// diary_entries => /diary/entries(.:format)
-  diary_entries_path: function(options) {
-  return Utils.build_path([], ["format"], [2,[2,[2,[2,[7,"/",false],[6,"diary",false]],[7,"/",false]],[6,"entries",false]],[1,[2,[8,".",false],[3,"format",false]],false]], arguments);
   },
 // edit_admin_api_key_user => /admin/api_key_users/:id/edit(.:format)
   edit_admin_api_key_user_path: function(_id, options) {

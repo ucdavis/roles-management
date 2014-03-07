@@ -1,6 +1,5 @@
 class Application < ActiveRecord::Base
   using_access_control
-  include Diaryable
 
   validates :name, :presence => true, :uniqueness => true
 
@@ -39,7 +38,7 @@ class Application < ActiveRecord::Base
 
   def trigger_sync
     logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.count} roles"
-    diary "Triggering all #{roles.count} roles to sync."
+    #diary "Triggering all #{roles.count} roles to sync."
     roles.all.each { |role| role.trigger_sync! }
   end
 end

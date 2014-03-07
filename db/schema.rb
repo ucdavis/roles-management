@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140227181618) do
+ActiveRecord::Schema.define(:version => 20140307211801) do
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"
@@ -106,20 +106,6 @@ ActiveRecord::Schema.define(:version => 20140227181618) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
-
-  create_table "diary_entries", :force => true do |t|
-    t.string   "message"
-    t.integer  "severity"
-    t.datetime "created_at"
-    t.integer  "diary_uid_id"
-  end
-
-  create_table "diary_uids", :force => true do |t|
-    t.string "reference"
-    t.string "display_name"
-  end
-
-  add_index "diary_uids", ["reference"], :name => "index_diary_entry_uuids_on_uuid_ref"
 
   create_table "entities", :force => true do |t|
     t.string   "type"

@@ -1,3 +1,4 @@
+# Contains helper methods useful across the entire application
 module ApplicationHelper
   include Authentication
 

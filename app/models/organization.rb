@@ -1,6 +1,5 @@
 class Organization < ActiveRecord::Base
   using_access_control
-  include Cyclable
   
   has_many :org_ids, :class_name => 'OrganizationOrgId', :dependent => :destroy
   has_many :parent_org_ids, :class_name => 'OrganizationParentId', :dependent => :destroy

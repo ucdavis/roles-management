@@ -14,7 +14,6 @@ namespace :ldap do
 
     # Keep a log to e-mail to the admins
     strio = StringIO.new
-    #log = Rails.logger
     log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
     
     log.tagged "ldap:import" do
@@ -98,8 +97,9 @@ namespace :ldap do
     # Email the log
     # E-mail to each RM admin (anyone with 'admin' permission on this app)
     if notify_admins
-      admin_role_id = rm_roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-      Role.find_by_id(admin_role_id).entities.each do |admin|
+      include RmBuiltinRoles
+      
+      rm_admin_entities.each do |admin|
         WheneverMailer.ldap_report(admin.email, strio.string).deliver!
       end
     end
