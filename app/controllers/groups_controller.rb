@@ -7,6 +7,8 @@ class GroupsController < ApplicationController
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
+    @cache_key = current_user.loginid + '/' + @groups.max_by(&:updated_at).to_s
+    
     render "groups/index"
     #respond_with @groups
   end
@@ -33,6 +35,8 @@ class GroupsController < ApplicationController
   end
   
   def show
+    @cache_key = @group.updated_at.try(:utc).try(:to_s, :number)
+    
     render "groups/show"
     #respond_with @group
   end
