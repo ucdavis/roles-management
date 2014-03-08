@@ -9,6 +9,10 @@ module Api
       def index
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched applications index." }
         
+        # API users currently share access to all resources. If this changes, we will need to alter our
+        # cache_key to avoid leaking data across accounts via stale caches.
+        @cache_key = (params[:q] ? params[:q] : '') + '/' + @applications.max_by(&:updated_at).to_s
+        
         render "api/v1/applications/index"
       end
 
@@ -16,6 +20,9 @@ module Api
       def show
         if @application
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application view (show) for #{@application.id}." }
+          
+          @cache_key = @application.updated_at.try(:utc).try(:to_s, :number)
+          
           render "api/v1/applications/show"
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load application view (show) for invalid ID #{params[:id]}." }

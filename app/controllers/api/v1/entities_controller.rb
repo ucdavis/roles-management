@@ -17,6 +17,9 @@ module Api
       def show
         if @entity and @entity.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
+          
+          @cache_key = @entity.updated_at.try(:utc).try(:to_s, :number)
+          
           render "api/v1/entities/show"
         elsif @entity and @entity.active == false
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id} but entity is disabled. Returning 404." }
