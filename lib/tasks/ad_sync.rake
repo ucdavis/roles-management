@@ -46,13 +46,13 @@ namespace :ad do
 
           p.affiliations.each do |affiliation|
             # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
-            unless p.groups.ous.length == 0
-              short_ou = ou_to_short(p.groups.ous[0].name)
+            unless p.organizations.length == 0
+              short_ou = ou_to_short(p.organizations[0].name)
               flattened_affiliation = flatten_affiliation(affiliation.name)
 
               # Skip unknown translations
               if ((short_ou == false) || (flattened_affiliation == false))
-                log.warn "Skipping AD affiliation group sync for user #{p.loginid} as OU shortened translation is unknown for '#{p.groups.ous[0].name}'." unless short_ou
+                log.warn "Skipping AD affiliation group sync for user #{p.loginid} as OU shortened translation is unknown for '#{p.organizations[0].name}'." unless short_ou
                 log.warn "Skipping AD affiliation group sync for user #{p.loginid} as affiliation shortened translation is unknown for '#{affiliation.name}'." unless flattened_affiliation
                 next
               end
