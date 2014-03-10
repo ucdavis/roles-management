@@ -18,7 +18,7 @@ module Api
         if @entity and @entity.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
           
-          @cache_key = @entity.id + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
           
           render "api/v1/entities/show"
         elsif @entity and @entity.active == false

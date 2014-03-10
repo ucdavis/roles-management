@@ -21,7 +21,7 @@ module Api
         if @application
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application view (show) for #{@application.id}." }
           
-          @cache_key = @application.id + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
           
           render "api/v1/applications/show"
         else

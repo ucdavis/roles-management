@@ -35,7 +35,7 @@ class GroupsController < ApplicationController
   end
   
   def show
-    @cache_key = @group.id + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
     
     render "groups/show"
     #respond_with @group

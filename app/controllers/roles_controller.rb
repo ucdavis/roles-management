@@ -10,7 +10,7 @@ class RolesController < ApplicationController
   end
 
   def show
-    @cache_key = @role.id + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
     
     respond_with(@role) do |format|
       format.text
