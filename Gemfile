@@ -25,8 +25,10 @@ group :development do
 end
 
 group :development, :test do
-  gem 'jasminerice', :git => 'git://github.com/bradphelan/jasminerice.git'
-  gem 'guard-jasmine'
+  gem 'jasmine-rails' # for JS unit testing
+  gem 'capybara' # for JS integration testing
+  #gem 'selenium-webdriver'
+  gem 'poltergeist' # for PhantomJS-based testing with capybara
   gem 'sqlite3'
 end
 
@@ -49,9 +51,7 @@ gem 'active_directory', :git => 'git://github.com/cthielen/active_directory.git'
 
 gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
 
-#gem 'rabl'
-#gem 'oj'
-
+# For JSON templates
 gem 'jbuilder'
 
 # For scheduled tasks

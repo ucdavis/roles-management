@@ -1,0 +1,4 @@
+# list of file expressions to include as specs into spec runner
+# relative path from spec_dir
+spec_files:
+  - "**/*[Ss]pec.{js,coffee}"
