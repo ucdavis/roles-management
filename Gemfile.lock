@@ -28,7 +28,7 @@ GIT
 
 GIT
   remote: https://github.com/rubycas/rubycas-client.git
-  revision: d0e22cb2a098879d0369c8109386cb8338b1dc2e
+  revision: cc35613791d4f6be803ecb0d3bb13363bdd634b0
   specs:
     rubycas-client (2.3.10.rc1)
       activesupport
@@ -396,7 +396,8 @@ GEM
     rubysl-xmlrpc (2.0.0)
     rubysl-yaml (2.0.4)
     rubysl-zlib (2.0.1)
-    sass (3.2.14)
+    sass (3.3.0)
+      rake
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -416,7 +417,7 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    tzinfo (0.3.38)
+    tzinfo (0.3.39)
     uglifier (2.4.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
