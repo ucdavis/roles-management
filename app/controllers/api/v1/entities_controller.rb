@@ -9,7 +9,7 @@ module Api
       def index
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
         
-        @cache_key = Digest::MD5.hexdigest(@entities.map(&:cache_key).to_s)
+        @cache_key = (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).to_s #Digest::MD5.hexdigest(@entities.map(&:cache_key).to_s)
         
         render "api/v1/entities/index"
       end
@@ -18,7 +18,7 @@ module Api
         if @entity and @entity.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
           
-          @cache_key = @entity.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = @entity.id + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
           
           render "api/v1/entities/show"
         elsif @entity and @entity.active == false

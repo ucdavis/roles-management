@@ -7,7 +7,7 @@ class OrganizationsController < ApplicationController
   # It's assumed that organizations are never scoped per-user or per-permission. If this
   # changes, the @cache_key must change to reflect such scoped nature.
   def index
-    @cache_key = Digest::MD5.hexdigest(@organizations.map(&:cache_key).to_s) + params[:tree].to_s + params[:q].to_s
+    @cache_key = (params[:q] ? params[:q] : '') + '/' + Digest::MD5.hexdigest(@organizations.map(&:cache_key).to_s) + params[:tree].to_s + params[:q].to_s
     
     if params[:tree]
       Rails.logger.debug "Rendering organization index tree"
