@@ -10,7 +10,9 @@ class EntitiesController < ApplicationController
 
   def show
     @entity = Entity.find(params[:id])
-
+    
+    @cache_key = @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+    
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity show view for #{params[:id]}."
 
     respond_with @entity do |format|
