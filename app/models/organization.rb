@@ -4,21 +4,17 @@ class Organization < ActiveRecord::Base
   has_many :org_ids, :class_name => 'OrganizationOrgId', :dependent => :destroy
   has_many :parent_org_ids, :class_name => 'OrganizationParentId', :dependent => :destroy
   has_many :parent_organizations, :through => :parent_org_ids, :source => :parent_organization
-  
   has_many :child_org_ids, :class_name => 'OrganizationParentId', :foreign_key => :parent_org_id, :dependent => :destroy
   has_many :child_organizations, :through => :child_org_ids, :source => :organization
-  
-  attr_accessible :dept_code, :name, :parent_organization_id
-  
-  validate :no_loops_in_organization_relationship_graph
-
-  before_validation :ensure_dept_code_is_left_padded
-  
   has_many :organization_entity_associations
   has_many :entities, :through => :organization_entity_associations
-  
   has_many :organization_managers
   has_many :managers, :through => :organization_managers
+  
+  validate :no_loops_in_organization_relationship_graph
+  before_validation :ensure_dept_code_is_left_padded
+  
+  attr_accessible :dept_code, :name, :parent_organization_id
   
   # Returns all people associated with this organization and all organizations within
   # the children trees. Does _not_ include members of groups associated with any of
