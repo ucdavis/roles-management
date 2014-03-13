@@ -54,7 +54,7 @@ json.cache! ['entity_show', @cache_key] do
       json.calculated membership.calculated
       json.loginid membership.entity.loginid
       json.name membership.entity.name
-      json.entity_id membership.entity.id
+      json.entity_id membership.entity_id
     end
     json.operators @entity.operators.select{ |m| m.active == true } do |operator|
       json.extract! operator, :id, :name, :loginid
