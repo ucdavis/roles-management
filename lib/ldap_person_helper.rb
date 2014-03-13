@@ -207,20 +207,22 @@ module LdapPersonHelper
       
       if ou
         # Set OU manager to be an owner of their OU
-        ou_manager = Person.find_or_create_by_loginid(ou_manager_name)
-      
-        # Ensure this manager is recorded for the Organization
-        unless ou.managers.include? ou_manager
-          log.debug "Assigning Person with login ID '#{ou_manager_name}' as a manager of Organization '#{ou.name}'" unless log.nil?
-          ou.managers << ou_manager
-        end
+        ou_manager = Person.find_or_create_by_loginid(ou_manager_name) unless ou_manager_name.blank?
         
-        # Ensure they have this person as their favorite
-        unless (ou_manager.id == p.id) or (ou_manager.favorites.include? p)
-          # Ensure a manager has all their employees automatically set as favorites
-          # keep adding them as favorites
-          log.debug "Adding favorite of '#{p.loginid}' to OU manager '#{ou_manager_name}' (manager of Organization '#{ou.name}')" unless log.nil?
-          ou_manager.favorites << p
+        if ou_manager
+          # Ensure this manager is recorded for the Organization
+          unless ou.managers.include? ou_manager
+            log.debug "Assigning Person with login ID '#{ou_manager_name}' as a manager of Organization '#{ou.name}'" unless log.nil?
+            ou.managers << ou_manager
+          end
+        
+          # Ensure they have this person as their favorite
+          unless (ou_manager.id == p.id) or (ou_manager.favorites.include? p)
+            # Ensure a manager has all their employees automatically set as favorites
+            # keep adding them as favorites
+            log.debug "Adding favorite of '#{p.loginid}' to OU manager '#{ou_manager_name}' (manager of Organization '#{ou.name}')" unless log.nil?
+            ou_manager.favorites << p
+          end
         end
       else
         log.warn "Unable to assign an Organization for person #{p.loginid}. ucdAppointmentDepartmentCode: '#{ucdAppointmentDepartmentCode}', ucdStudentMajor is '#{ucdStudentMajor}', ou_name resolved to '#{ou_name}'. FIXME" unless log.nil?
