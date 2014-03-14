@@ -30,7 +30,8 @@ namespace :ad do
         log.tagged "person:#{p.loginid}" do
           ad_user = ActiveDirectoryWrapper.fetch_user(p.loginid)
           if ad_user.nil?
-            log.warn "Could not find user in AD"
+            log.warn "Could not find user '#{p.loginid}' in AD, skipping ..."
+            next
           end
 
           # Add them to dss-us-auto-all if necessary
