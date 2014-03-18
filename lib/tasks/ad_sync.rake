@@ -26,7 +26,7 @@ namespace :ad do
       end
       
       # Add active users to dss-us-auto-all, cluster-name-affiliation, and cluster-all groups as necessary
-      Person.where(:active => true).each_with_index do |p, i|
+      Person.each_with_index do |p, i|
         log.tagged "person:#{p.loginid}" do
           ad_user = ActiveDirectoryWrapper.fetch_user(p.loginid)
           if ad_user.nil?
@@ -34,15 +34,28 @@ namespace :ad do
             next
           end
 
-          # Add them to dss-us-auto-all if necessary
-          unless ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
-            if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
-              log.error "Need to add to dss-us-auto-all but operation failed"
+          if p.active
+            # Add them to dss-us-auto-all if necessary
+            unless ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
+              if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
+                log.error "Need to add to dss-us-auto-all but operation failed"
+              else
+                log.info "Added to dss-us-auto-all"
+              end
             else
-              log.info "Added to dss-us-auto-all"
+              log.info "Already in dss-us-auto-all"
             end
           else
-            log.info "Already in dss-us-auto-all"
+            # Remove them from dss-us-auto-all if necessary
+            if ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
+              if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups["dss-us-auto-all"]) == false
+                log.error "Need to remove from dss-us-auto-all but operation failed"
+              else
+                log.info "Removed from dss-us-auto-all"
+              end
+            else
+              log.info "Already non-existent in dss-us-auto-all"
+            end
           end
 
           p.affiliations.each do |affiliation|
@@ -65,14 +78,29 @@ namespace :ad do
                 if groups[caa].nil?
                   groups[caa] = ActiveDirectoryWrapper.fetch_group(caa)
                 end
-                unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
-                  if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[caa]) == false
-                    log.warn "Needed to add to #{caa} but operation failed"
+                
+                if p.active
+                  # Add them if necessary
+                  unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
+                    if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[caa]) == false
+                      log.warn "Needed to add to #{caa} but operation failed"
+                    else
+                      log.info "Added to #{caa}"
+                    end
                   else
-                    log.info "Added to #{caa}"
+                    log.info "Already in #{caa}\n"
                   end
                 else
-                  log.info "Already in #{caa}\n"
+                  # Remove them if necessary
+                  if ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
+                    if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups[caa]) == false
+                      log.warn "Needed to remove from #{caa} but operation failed"
+                    else
+                      log.info "Removed from #{caa}"
+                    end
+                  else
+                    log.info "Already non-existent in #{caa}\n"
+                  end
                 end
 
                 # Write them to cluster-all (dss-us-#{ou_to_short}-all)
@@ -81,14 +109,29 @@ namespace :ad do
                 if groups[ca].nil?
                   groups[ca] = ActiveDirectoryWrapper.fetch_group(ca)
                 end
-                unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
-                  if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[ca]) == false
-                    log.warn "Warning: Needed to add to #{ca} but operation failed"
+                
+                if p.active
+                  # Add if necessary
+                  unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
+                    if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[ca]) == false
+                      log.warn "Needed to add to #{ca} but operation failed"
+                    else
+                      log.info "Added to #{ca}"
+                    end
                   else
-                    log.info "Added to #{ca}"
+                    log.info "Already in #{ca}"
                   end
                 else
-                  log.info "Already in #{ca}"
+                  # Remove if necessary
+                  if ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
+                    if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups[ca]) == false
+                      log.warn "Needed to remove from #{ca} but operation failed"
+                    else
+                      log.info "Removed from #{ca}"
+                    end
+                  else
+                    log.info "Already non-existent in #{ca}"
+                  end
                 end
               end
             end
@@ -208,8 +251,8 @@ namespace :ad do
                 # Remove AD entries which do not match our local database
                 log.info "Removing any entries in AD which do not match our records (this is not the first AD sync for this role)."
                 ad_members.each do |m|
-                  unless role_members.include? m[:samaccountname]
-                    log.info "#{m[:samaccountname]} is in AD but not this role. Will remove from AD ..."
+                  unless role_members.select{ |m| m.active }.include? m[:samaccountname]
+                    log.info "#{m[:samaccountname]} is in AD but not this role or is in this role but marked inactive. Will remove from AD ..."
             
                     ActiveDirectoryWrapper.remove_user_from_group(m, g)
                   else
