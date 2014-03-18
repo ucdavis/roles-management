@@ -26,7 +26,7 @@ namespace :ad do
       end
       
       # Add active users to dss-us-auto-all, cluster-name-affiliation, and cluster-all groups as necessary
-      Person.each_with_index do |p, i|
+      Person.all.each_with_index do |p, i|
         log.tagged "person:#{p.loginid}" do
           ad_user = ActiveDirectoryWrapper.fetch_user(p.loginid)
           if ad_user.nil?
