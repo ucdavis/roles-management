@@ -27,7 +27,7 @@ DSSRM::Application.routes.draw do
   resources :groups
   resources :group_rules
   resources :roles do
-    get "sync" # HTTP GET as we queue this request - we cannot return data immediately
+    get "sync" # Use HTTP GET since this is enqueued - we cannot return a response quick enough
   end
   resources :majors
   resources :titles
@@ -44,7 +44,8 @@ DSSRM::Application.routes.draw do
     
     resources :api_whitelisted_ip_users
     resources :api_key_users
-    resources :queued_jobs # we only use index (most likely, see controller)
+    resources :queued_jobs
+    resources :activity_logs
   end
 
   root :to => redirect("/welcome")

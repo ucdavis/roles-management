@@ -18,6 +18,9 @@ authorization do
     has_permission_on :affiliations, :to => :manage
     has_permission_on :majors, :to => :manage
     has_permission_on :titles, :to => :manage
+    has_permission_on :activity_logs, :to => :manage
+    has_permission_on :activity_log_tags, :to => :manage
+    has_permission_on :activity_log_tag_associations, :to => :manage
     
     # For API keys
     has_permission_on :admin_api_key_users, :to => :manage
@@ -58,6 +61,11 @@ authorization do
   role :access do
     # Allow access to the main page
     has_permission_on :applications, :to => :index
+    
+    # Allow creating Activity Log entries
+    has_permission_on :activity_logs, :to => :create
+    has_permission_on :activity_log_tags, :to => :create
+    has_permission_on :activity_log_tag_associations, :to => :create
     
     # Allow reading of organizations
     has_permission_on :organizations, :to => :read

@@ -11,7 +11,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140307213604) do
+ActiveRecord::Schema.define(:version => 20140320225522) do
+
+  create_table "activity_log_tag_associations", :force => true do |t|
+    t.integer "activity_log_id"
+    t.integer "activity_log_tag_id"
+  end
+
+  create_table "activity_log_tags", :force => true do |t|
+    t.string   "tag"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "activity_logs", :force => true do |t|
+    t.string   "message"
+    t.datetime "performed_at"
+  end
 
   create_table "affiliation_assignments", :force => true do |t|
     t.integer  "affiliation_id"

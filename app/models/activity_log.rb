@@ -1,0 +1,27 @@
+class ActivityLog < ActiveRecord::Base
+  using_access_control
+  
+  attr_accessible :message, :performed_at
+  
+  validates_presence_of :message, :performed_at
+  
+  has_many :activity_log_tag_associations
+  has_many :activity_log_tags, :through => :activity_log_tag_associations
+  
+  before_validation :set_performed_at_field
+  
+  def ActivityLog.record!(message = nil, tags = [])
+    al = ActivityLog.create!({message: message})
+    
+    tags.each do |tag|
+      alt = ActivityLogTag.find_or_create_by_tag(tag)
+      al.activity_log_tags << alt
+    end
+  end
+  
+  private
+  
+  def set_performed_at_field
+    self.performed_at = Time.now unless self.performed_at
+  end
+end

@@ -39,7 +39,9 @@ namespace :ad do
             unless ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
               if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
                 log.error "Need to add to dss-us-auto-all but operation failed"
+                ActivityLog.record!("Needed to add to AD group dss-us-auto-all but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
               else
+                ActivityLog.record!("Added to AD group dss-us-auto-all.", ["person_#{p.id}", 'active_directory'])
                 log.info "Added to dss-us-auto-all"
               end
             else
@@ -50,8 +52,10 @@ namespace :ad do
             if ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
               if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups["dss-us-auto-all"]) == false
                 log.error "Need to remove from dss-us-auto-all but operation failed"
+                ActivityLog.record!("Needed to remove from AD group dss-us-auto-all but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
               else
                 log.info "Removed from dss-us-auto-all"
+                ActivityLog.record!("Removed from AD group dss-us-auto-all.", ["person_#{p.id}", 'active_directory'])
               end
             else
               log.info "Already non-existent in dss-us-auto-all"
@@ -84,8 +88,10 @@ namespace :ad do
                   unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
                     if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[caa]) == false
                       log.warn "Needed to add to #{caa} but operation failed"
+                      ActivityLog.record!("Needed to add to AD group #{caa} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
                     else
                       log.info "Added to #{caa}"
+                      ActivityLog.record!("Added to AD group #{caa}.", ["person_#{p.id}", 'active_directory'])
                     end
                   else
                     log.info "Already in #{caa}\n"
@@ -95,8 +101,10 @@ namespace :ad do
                   if ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
                     if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups[caa]) == false
                       log.warn "Needed to remove from #{caa} but operation failed"
+                      ActivityLog.record!("Needed to remove from AD group #{caa} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
                     else
                       log.info "Removed from #{caa}"
+                      ActivityLog.record!("Removed from AD group #{caa}.", ["person_#{p.id}", 'active_directory'])
                     end
                   else
                     log.info "Already non-existent in #{caa}\n"
@@ -115,8 +123,10 @@ namespace :ad do
                   unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
                     if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[ca]) == false
                       log.warn "Needed to add to #{ca} but operation failed"
+                      ActivityLog.record!("Needed to add to AD group #{ca} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
                     else
                       log.info "Added to #{ca}"
+                      ActivityLog.record!("Added to AD group #{ca}.", ["person_#{p.id}", 'active_directory'])
                     end
                   else
                     log.info "Already in #{ca}"
@@ -126,8 +136,10 @@ namespace :ad do
                   if ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
                     if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups[ca]) == false
                       log.warn "Needed to remove from #{ca} but operation failed"
+                      ActivityLog.record!("Needed to remove from AD group #{ca} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
                     else
                       log.info "Removed from #{ca}"
+                      ActivityLog.record!("Removed from AD group #{ca}.", ["person_#{p.id}", 'active_directory'])
                     end
                   else
                     log.info "Already non-existent in #{ca}"
@@ -204,7 +216,13 @@ namespace :ad do
                 u = ActiveDirectoryWrapper.fetch_user(member.loginid)
                 unless ActiveDirectoryWrapper.in_group(u, g)
                   log.info "Adding user #{member.loginid} to AD group #{r.ad_path}"
-                  ActiveDirectoryWrapper.add_user_to_group(u, g)
+                  if ActiveDirectoryWrapper.add_user_to_group(u, g) == false
+                    ActivityLog.record!("Needed to add #{member.name} to AD group #{r.ad_path} but the operation failed.", ["person_#{member.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                    log.error "Needed to add #{member.name} to AD group #{r.ad_path} but the operation failed."
+                  else
+                    ActivityLog.record!("Added #{member.name} to AD group #{r.ad_path}.", ["person_#{member.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                    log.info "Added #{member.name} to AD group #{r.ad_path}."
+                  end
                 else
                   log.info "User #{member.loginid} is already in AD group #{r.ad_path}"
                 end
@@ -228,6 +246,7 @@ namespace :ad do
                     if p
                       r.entities << p
                       log.info "Adding user #{m[:samaccountname]} from AD group #{r.ad_path} to local group."
+                      ActivityLog.record!("Added #{p.name} to role #{r.token} on #{r.application.name} because they exist in the AD group and this is a first-time sync.", ["person_#{p.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
                     else
                       log.info "Will create user #{m[:samaccountname]} from AD group #{r.ad_path} as they could not be found locally."
 
@@ -235,6 +254,8 @@ namespace :ad do
                       p.loginid = m[:samaccountname]
                       p.last = p.loginid # we need the name set to something. LDAP sync will update this if possible.
                       p.save
+                      
+                      ActivityLog.record!("Creating person with login ID of #{p.loginid} for the role #{r.token} on #{r.application.name} because they exist in the AD group, they do not already exist as a person in RM, and this is a first-time sync.", ["person_#{p.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
 
                       log.info "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check."
 
@@ -254,7 +275,13 @@ namespace :ad do
                   unless role_members.select{ |m| m.active }.include? m[:samaccountname]
                     log.info "#{m[:samaccountname]} is in AD but not this role or is in this role but marked inactive. Will remove from AD ..."
             
-                    ActiveDirectoryWrapper.remove_user_from_group(m, g)
+                    if ActiveDirectoryWrapper.remove_user_from_group(m, g) == false
+                      ActivityLog.record!("Needed to remove #{m[:samaccountname]} from AD group #{r.ad_path} because AD mentions them but RM doesn't, but the operation failed.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                      log.error "Needed to remove #{m[:samaccountname]} from AD group #{r.ad_path} because AD mentions them but RM doesn't, but the operation failed."
+                    else
+                      ActivityLog.record!("Removed #{m[:samaccountname]} from AD group #{r.ad_path} because RM does not agree they should be in that group.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                      log.info "Removed #{m[:samaccountname]} from AD group #{r.ad_path} because RM does not agree they should be in that group."
+                    end
                   else
                     log.info "#{m[:samaccountname]} is in AD and this role. No action taken."
                   end
@@ -262,6 +289,7 @@ namespace :ad do
               end
             else
               log.error "Could not find group (#{r.ad_path}, #{r.ad_guid}) in AD."
+              ActivityLog.record!("Could not find group (#{r.ad_path}, #{r.ad_guid}) in AD.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
             end
 
             log.info "Done syncing role #{r.id} with AD."

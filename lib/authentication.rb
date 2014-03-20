@@ -108,7 +108,8 @@ module Authentication
         @user.save
         Authorization.ignore_access_control(false)
 
-        logger.info "Valid CAS user is in our database. Passes authentication."
+        logger.info "Valid CAS user (#{@user.loginid}) is in our database, passes authentication."
+        ActivityLog.record!("Logged in.", ["person_#{@user.id}"])
         
         if params[:ticket] and params[:ticket].include? "cas"
           # This is a session-initiating CAS login, so remove the damn GET parameter from the URL for UX
@@ -121,7 +122,7 @@ module Authentication
         session[:user_id] = nil
         session[:auth_via] = nil
 
-        logger.warn "Valid CAS user is denied. Not in our local database or is disabled."
+        logger.warn "Valid CAS user (#{@user.loginid}) is denied. Not in our local database or is disabled."
         flash[:error] = 'You have authenticated but are not allowed access.'
 
         redirect_to :controller => "site", :action => "access_denied"
