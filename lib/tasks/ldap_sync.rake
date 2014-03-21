@@ -49,18 +49,14 @@ namespace :ldap do
       for filter in filters
         unless filter.length == 0
           ldap.search(filter) do |entry|
-            p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
-
-            save_or_touch(p, log) if p
+            LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
             
             num_results += 1
-            
-            p = nil
           end
         end
       end
       
-      log.debug "No LDAP results were found." unless num_results > 0
+      log.debug "No LDAP result(s) were found." unless num_results > 0
 
       # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
       # Only do this if we weren't in 'single' import mode
@@ -72,7 +68,6 @@ namespace :ldap do
           
           ldap.search('(uid=' + person.loginid + ')') do |entry|
             p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
-            save_or_touch(p, log) if p
           end
           
           unless p
@@ -81,6 +76,8 @@ namespace :ldap do
             unless person.save
               log.error "Could not save person (#{person.loginid}), reason(s):"
               log.error "\t#{person.errors.full_messages.join(', ')}"
+            else
+              ActivityLog.info!("De-activated #{person.name} as they are not in LDAP.", ["person_#{person.id}", 'ldap'])
             end
           end
         end
@@ -107,48 +104,5 @@ namespace :ldap do
     Rails.logger.info strio.string
 
     Authorization.ignore_access_control(false)
-  end
-
-  def save_or_touch(p, log)
-    if p.valid? == false
-      log.warn "Unable to create or update persion with loginid #{p.loginid}. Reason(s): "
-      p.errors.messages.each do |field,reason|
-        log.warn "\tField #{field} #{reason}"
-      end
-    else
-      if p.active == false
-        log.info "Valid LDAP result #{p.loginid} is inactive in our system. Re-activating ..."
-        
-        p.active = true
-      end
-      
-      if p.changed? == false
-        log.debug "No standard record changes for #{p.loginid}"
-        
-        p.touch
-      else
-        log.debug "Updating the following for #{p.loginid}:"
-        p.changes.each do |field,changes|
-          log.debug "\t#{field}: #{changes[0]} -> #{changes[1]}"
-        end
-        
-        p.save!
-      end
-
-      if p.student
-        if p.student.changed? == false
-          log.debug "Student record exists but there are no changes for #{p.loginid}"
-          
-          p.student.touch
-        else
-          log.debug "Updating the following student records for #{p.loginid}:"
-          p.student.changes.each do |field,changes|
-            log.debug "\t#{field}: #{changes[0]} -> #{changes[1]}"
-          end
-          
-          p.student.save!
-        end
-      end
-    end
   end
 end

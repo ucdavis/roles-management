@@ -29,6 +29,14 @@ module LdapPersonHelper
         log.debug "Creating new person record (#{loginid} is not already in our database)." if log
       else
         log.debug "Updating existing person record (#{loginid} is in our database)." if log
+        
+        unless p.active
+          # We're re-activating a person, and certain LDAP actions such as adding a user to a group may trigger operations (AD sync) which rely on an up-to-date p.active flag.
+          log.info "Existent LDAP result '#{p.loginid}' is inactive in our system. Re-activating ..."
+          ActivityLog.info!("Activating #{p.name} as they are in LDAP.", ["person_#{p.id}", 'ldap'])
+          p.active = true
+          p.save
+        end
       end
       
       p = determine_basic_details(p, entry, log)
@@ -36,6 +44,8 @@ module LdapPersonHelper
       p = determine_title_details(p, entry, log)
       p = determine_student_data(p, entry, log)
       p = determine_ou_memberships(p, entry, log)
+      
+      save_or_touch(p, log) if p
     end
     
     ou = nil
@@ -213,6 +223,7 @@ module LdapPersonHelper
           # Ensure this manager is recorded for the Organization
           unless ou.managers.include? ou_manager
             log.debug "Assigning Person with login ID '#{ou_manager_name}' as a manager of Organization '#{ou.name}'" unless log.nil?
+            ActivityLog.info!("Assigning Person with login ID '#{ou_manager_name}' as a manager of Organization '#{ou.name}'.", ["person_#{ou_manager.id}", "organization_#{ou.id}", 'ldap'])
             ou.managers << ou_manager
           end
         
@@ -220,7 +231,8 @@ module LdapPersonHelper
           unless (ou_manager.id == p.id) or (ou_manager.favorites.include? p)
             # Ensure a manager has all their employees automatically set as favorites
             # keep adding them as favorites
-            log.debug "Adding favorite of '#{p.loginid}' to OU manager '#{ou_manager_name}' (manager of Organization '#{ou.name}')" unless log.nil?
+            log.debug "Adding favorite of '#{p.loginid}' to Organization manager '#{ou_manager_name}' (manager of Organization '#{ou.name}')" unless log.nil?
+            ActivityLog.info!("Adding favorite of '#{p.loginid}' to Organization manager '#{ou_manager_name}' (manager of Organization '#{ou.name}').", ["person_#{ou_manager.id}", 'ldap'])
             ou_manager.favorites << p
           end
         end
@@ -231,6 +243,7 @@ module LdapPersonHelper
 
     unless p.organizations.include?(ou) or ou.nil?
       log.debug "Adding person '#{p.loginid}' to Organization '#{ou.name}'." unless log.nil?
+      ActivityLog.info!("Adding person '#{p.loginid}' to Organization '#{ou.name}'.", ["person_#{p.id}", "organization_#{ou.id}", 'ldap'])
       p.organizations << ou
     end
     
@@ -242,9 +255,10 @@ module LdapPersonHelper
     #       logs (deleting an OU association may trigger a
     #       log message).
     p.organizations.each do |o|
-      if (o != ou) #and (o != company)
+      if (o != ou)
         p.organizations.destroy(o)
-        log.debug "Removing person '#{p.loginid}' from OU '#{o.name}'" unless log.nil?
+        log.debug "Removing person '#{p.loginid}' from Organization '#{o.name}'" unless log.nil?
+        ActivityLog.info!("Removing person '#{p.loginid}' from Organization '#{o.name}'.", ["person_#{p.id}", "organization_#{o.id}", 'ldap'])
       end
     end
     
@@ -287,5 +301,44 @@ module LdapPersonHelper
     end
     
     return majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name
+  end
+  
+  def LdapPersonHelper.save_or_touch(p, log)
+    if p.valid? == false
+      log.warn "Unable to create or update persion with loginid #{p.loginid}. Reason(s): "
+      p.errors.messages.each do |field,reason|
+        log.warn "\tField #{field} #{reason}"
+      end
+    else
+      if p.changed? == false
+        log.debug "No standard record changes for #{p.loginid}"
+        
+        p.touch
+      else
+        log.debug "Updating the following for #{p.loginid}:"
+        p.changes.each do |field,changes|
+          log.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
+          ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{p.id}", 'ldap'])
+        end
+        
+        p.save!
+      end
+
+      if p.student
+        if p.student.changed? == false
+          log.debug "Student record exists but there are no changes for #{p.loginid}"
+          
+          p.student.touch
+        else
+          log.debug "Updating the following student records for #{p.loginid}:"
+          p.student.changes.each do |field,changes|
+            log.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
+            ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{p.id}", 'ldap'])
+          end
+          
+          p.student.save!
+        end
+      end
+    end
   end
 end

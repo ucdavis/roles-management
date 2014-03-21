@@ -31,9 +31,11 @@ class Person < Entity
 
   attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :favorite_ids, :group_memberships_attributes, :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes, :active
 
-  before_save :set_name_if_blank
-  after_save  :recalculate_group_rule_membership
-  after_save  :touch_caches_as_needed
+  before_save  :set_name_if_blank
+  after_save   :recalculate_group_rule_membership
+  after_save   :touch_caches_as_needed
+  after_create  { |person| ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system']) }
+  after_destroy { |person| ActivityLog.info!("Deleted person #{person.name}.", ["person_#{person.id}", 'system']) }
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first, :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline, :active => self.active, :role_assignments => self.role_assignments.includes(:role).map{ |a| { id: a.id, calculated: a.parent_id?, entity_id: a.entity_id, role_id: a.role.id, token: a.role.token, application_name: a.role.application.name, application_id: a.role.application_id, name: a.role.name, description: a.role.description } }, :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } }, :group_memberships => self.group_memberships.includes(:group).map{ |m| { id: m.id, group_id: m.group.id, name: m.group.name, calculated: m.calculated } }, :group_ownerships => self.group_ownerships.includes(:group).map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } }, :group_operatorships => self.group_operatorships.includes(:group).map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } }, :organizations => self.organizations.map{ |o| { id: o.id, name: o.name } }
