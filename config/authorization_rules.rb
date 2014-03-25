@@ -21,6 +21,7 @@ authorization do
     has_permission_on :activity_logs, :to => :manage
     has_permission_on :activity_log_tags, :to => :manage
     has_permission_on :activity_log_tag_associations, :to => :manage
+    has_permission_on :admin_activity_logs, :to => :manage # controller version of model 'activity_logs'
     
     # For API keys
     has_permission_on :admin_api_key_users, :to => :manage

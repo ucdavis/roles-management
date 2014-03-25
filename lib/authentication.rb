@@ -108,7 +108,14 @@ module Authentication
         @user.save
         Authorization.ignore_access_control(false)
 
-        logger.info "Valid CAS user (#{@user.loginid}) is in our database, passes authentication."
+        # They are a valid @user but have no roles, so redirect them to access_denied
+        unless @user.role_symbols.length > 0
+          logger.info "Valid CAS user (#{@user.loginid}) is in our database but has no roles. Fails authentication."
+          redirect_to access_denied_path
+          return
+        end
+
+        logger.info "Valid CAS user (#{@user.loginid}) is in our database and has proper roles. Passes authentication."
         ActivityLog.record!("Logged in.", ["person_#{@user.id}"])
         
         if params[:ticket] and params[:ticket].include? "cas"
@@ -122,7 +129,7 @@ module Authentication
         session[:user_id] = nil
         session[:auth_via] = nil
 
-        logger.warn "Valid CAS user (#{@user.loginid}) is denied. Not in our local database or is disabled."
+        logger.info "Valid CAS user (#{@user.loginid}) is not in our database. Fails authentication."
         flash[:error] = 'You have authenticated but are not allowed access.'
 
         redirect_to :controller => "site", :action => "access_denied"
