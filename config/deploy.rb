@@ -31,13 +31,14 @@ default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
 
 after "deploy", "deploy:cleanup" # keep only the last 5 releases
-#after "deploy", "deploy:migrations" # run any pending migrations
 after "deploy:update_code", "deploy:migrate"
+
+before 'deploy:restart', 'deploy:empty_cache'
 
 namespace :deploy do
   before 'deploy' do
     puts "--> Running tests, please wait ..."
-    unless system "bundle exec rake > #{test_log} 2>&1" #' > /dev/null'
+    unless system "bundle exec rake > #{test_log} 2>&1"
       puts "--> Tests failed. Run `cat #{test_log}` to see what went wrong."
       exit
     else
@@ -84,4 +85,15 @@ namespace :deploy do
     end
   end
   before "deploy", "deploy:check_revision"
+  
+  desc "Empty the main cache (changing view code does not necessarily invalidate cache_keys)"
+  task :empty_cache, roles: :app do
+    puts "--> Emptying cache, please wait ..."
+    unless system "bundle exec rake tmp:cache:clear"
+      puts "--> Emptying cache failed"
+      exit
+    else
+      puts "--> Cache emptied"
+    end
+  end
 end

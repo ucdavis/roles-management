@@ -27,6 +27,12 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
       assert r['name'], "JSON response's 'affiliations' section should include a name"
     end
 
+    assert body.include?('organizations'), 'JSON response should include organizations'
+    body['organizations'].each do |o|
+      assert o['id'], "JSON response's 'organizations' section should include an ID"
+      assert o['name'], "JSON response's 'organizations' section should include a name"
+    end
+
     assert body.include?('role_assignments'), 'JSON response should include role_assignments'
     body['role_assignments'].each do |r|
       assert r['role_id'], "JSON response's 'role_assignments' section should include a role_id field" # we cannot call it 'id' because Backbone won't add it twice then, which we _do_ want due to a person possibly having a role both explicitly and non-explicitly
