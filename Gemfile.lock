@@ -1,12 +1,12 @@
 GIT
-  remote: git://github.com/cthielen/active_directory.git
+  remote: https://github.com/cthielen/active_directory.git
   revision: 4de152eb34b4f3902a92fe019a5c1a7ec5fae584
   specs:
     active_directory (1.2.9)
       net-ldap (>= 0.5.0)
 
 GIT
-  remote: git://github.com/railsware/js-routes.git
+  remote: https://github.com/railsware/js-routes.git
   revision: 7f52df65d500f24541b571cd2c0fe4fb6ff3220c
   specs:
     js-routes (0.9.7)
@@ -14,7 +14,7 @@ GIT
       sprockets-rails
 
 GIT
-  remote: git://github.com/ruby-ldap/ruby-net-ldap.git
+  remote: https://github.com/ruby-ldap/ruby-net-ldap.git
   revision: 210585e458ef809b949c25b1c4592fbd78a1222f
   specs:
     net-ldap (0.5.0)
@@ -168,7 +168,7 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (>= 0.14.6, < 2.0)
-    rake (10.2.0)
+    rake (10.2.1)
     rdoc (3.12.2)
       json (~> 1.4)
     ruby-ldap (0.9.16)
