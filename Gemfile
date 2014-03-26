@@ -45,11 +45,11 @@ gem 'ejs'
 gem 'declarative_authorization', "~> 0.5.7"
 
 # For MS Active Directory support
-gem 'net-ldap', :git => 'git://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
-#gem 'active_directory', :git => 'git://github.com/richardun/active_directory.git', :require => false
-gem 'active_directory', :git => 'git://github.com/cthielen/active_directory.git', :require => false
+gem 'net-ldap', :git => 'https://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
+#gem 'active_directory', :git => 'https://github.com/richardun/active_directory.git', :require => false
+gem 'active_directory', :git => 'https://github.com/cthielen/active_directory.git', :require => false
 
-gem 'js-routes', :git => 'git://github.com/railsware/js-routes.git'
+gem 'js-routes', :git => 'https://github.com/railsware/js-routes.git'
 
 # For JSON templates
 gem 'jbuilder'
