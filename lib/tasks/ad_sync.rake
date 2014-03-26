@@ -70,12 +70,8 @@ namespace :ad do
               short_ou = ou_to_short(p.organizations[0].name)
               flattened_affiliation = flatten_affiliation(affiliation.name)
 
-              # Skip unknown translations
-              if ((short_ou == false) || (flattened_affiliation == false))
-                log.warn "Skipping AD affiliation group sync for user #{p.loginid} as OU shortened translation is unknown for '#{p.organizations[0].name}'." unless short_ou
-                log.warn "Skipping AD affiliation group sync for user #{p.loginid} as affiliation shortened translation is unknown for '#{affiliation.name}'." unless flattened_affiliation
-                next
-              end
+              # Skip unknown or ignored translations
+              next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
 
               unless short_ou.nil? or flattened_affiliation.nil?
                 # Write them to cluster-affiliation-all
@@ -341,11 +337,14 @@ def ensure_magic_descriptor_presence(ad_group)
   end
 end
 
+# Converts common organization names to their AD-mapped equivalents
+# Returns a match, nil (if we know the organization but do not wish to sync it), or
+# false (if we do not know the organization and need to log this missing data).
 def ou_to_short(name)
   name = name.upcase
 
   case name
-  when "DSS IT SERVICE CENTER"
+  when "DSS IT SERVICE CENTER", "DSS IT SHARED SERVICE CENTER"
     return "IT"
   when "DSS HR/PAYROLL SERVICE CENTER"
     return "HR"
@@ -355,7 +354,7 @@ def ou_to_short(name)
     return "UCCS"
   when "HEMISPHERIC INSTITUTE-AMERICAS"
     return "PHE"
-  when "HISTORY PROJECT"
+  when "HISTORY PROJECT", "HISTORY PROJECT UCD"
     return "HP"
   when "SOCIAL SCIENCES PROGRAM"
     return "SSP"
@@ -387,34 +386,49 @@ def ou_to_short(name)
     return "EAS"
   when "INTERNATIONAL RELATIONS"
     return "IRE"
-  when "MIDDLE EAST/SOUTH ASIA STUDIES"
+  when "MIDDLE EAST/SOUTH ASIA STUDIES", "MIDDLE EAST/SOUTH ASIA PROGRAM"
     return "MSA"
   when "SCIENCE & TECHNOLOGY STUDIES"
     return "STS"
-  when "CENTER FOR MIND AND BRAIN"
+  when "CENTER FOR MIND AND BRAIN", "CENTER FOR MIND & BRAIN"
     return "CMB"
   when "SOCIOLOGY"
     return "SOC"
   when "COM, PHIL & LIN RED CLUSTER"
     return "RED"
-  when "POLI SCI, IR ORANGE CLUSTER"
+  when "POLI SCI, IR ORANGE CLUSTER", "SOCIAL SCIENCE ORANGE CLUSTER"
     return "ORANGE"
-  when "ECON, HIS, MS BLUE CLUSTER"
+  when "ECON, HIS, MS BLUE CLUSTER", "SOCIAL SCIENCES BLUE CLUSTER"
     return "BLUE"
-  when "ANT, SOC GREEN CLUSTER"
+  when "ANT, SOC GREEN CLUSTER", "SOCIAL SCIENCES GREEN CLUSTER"
     return "GREEN"
   when "L&S DEANS - SOCIAL SCIENCES"
     return "DEANS"
-  when "PSYCH, CMB YELLOW CLUSTER"
+  when "PSYCH, CMB YELLOW CLUSTER", "SOCIAL SCIENCE YELLOW CLUSTER"
     return "YELLOW"
   when "EDUCATION - PH.D."
     return "EDU"
   when "COMMUNITY DEVELOPMENT"
     return "ComDev"
-  when "NEUROSCIENCE"
+  when "NEUROSCIENCE", "CENTER FOR NEUROSCIENCE"
     return "NueroSci"
   when "CENTER FOR INNOVATION STUDIES"
     return "CSIS"
+  when "ASUCD", "UC DAVIS", "ASIAN AMERICAN", "UNIVERSITY EXTENSION", "CHEDDAR", "STUDENT EMPLOYMENT CENTER",
+    "TEMPORARY EMPLOYMENT SERVICE", "CAMPUS RECREATION AND UNIONS", "CRESS DEPARTMENT", "LIBRARY", "POLICE",
+    "COMPARATIVE LITERATURE", "PRIMATE CENTER", "L&S DEANS - U/G ED & ADVISING", "STATISTICS",
+    "AGR & ENV SCI DEANS OFFICE", "OFFICE OF THE CHANCELLOR", "UNDERGRADUATE ADMISSIONS",
+    "UNIVERSITY WRITING PROGRAM", "TEXTILES & CLOTHING", "STUDENT HOUSING", "ENGLISH", "ANIMAL SCIENCE",
+    "IRB ADMINISTRATION", "SCHOOL OF LAW-DEANS OFFICE", "STUDENT ACADEMIC SUCCESS CTR", "GERMAN & RUSSIAN",
+    "INTERCOLLEGIATE ATHLETICS", "HUMAN ECOLOGY", "GRADUATE DIVISION", "MED: NEUROLOGY",
+    "ENVIRONMENTAL TOXICOLOGY", "SCHOOL OF MED - STAFF", "L&S DEANS - DEVELOPMENT",
+    "TEMPORARY EMPLOYMENT POOL ADMN", "SCHOOL OF MED - APS", "MED: GENERAL PEDIATRICS",
+    "MED:PSYCHIATRY & BEHAV SCI", "NATIVE AMERICAN STUDIES", "ART", "VP UNDERGRADUATE EDUCATION", "GEOLOGY",
+    "VM: CTR COMPARATIVE MEDICINE", "ENGR COMPUTER SCIENCE", "MED: DIV OF INTERNAL MED",
+    "FM: CUSTODIAL SERVICES", "VOORHIES ADMINISTRATIVE UNIT", "MED: OPHTHALMOLOGY", "MED: PUBLIC HEALTH SCIENCES",
+    "NEURO PHYSIO & BEHAVIOR", "INST OF TRANSPORTATION STUDIES", "ENVIRONMENTAL HEALTH & SAFETY",
+    "MEDIEVAL STUDIES", "EDUCATION", "ACADEMIC AFFAIRS", "ANR SUSTAINABLE AG PROG"
+    return nil
   else
     Rails.logger.warn "AD Sync: Missing OU for translation to container name: #{name}"
   end
@@ -422,6 +436,9 @@ def ou_to_short(name)
   return false
 end
 
+# Converts common affiliations to their AD-mapped equivalents
+# Returns a match, nil (if we know the affiliation but do not wish to sync it), or
+# false (if we do not know the affiliation and need to log this missing data).
 def flatten_affiliation(affiliation)
   if affiliation.include? "staff" and not (affiliation.include? ":")
     return "staff-academic"
@@ -446,6 +463,11 @@ def flatten_affiliation(affiliation)
     return "student-graduate"
   when "faculty"
     return "faculty"
+  when "student:undergraduate", "student:law", "visitor:consultant", "student:medicine",
+    "visitor:student:concurrent", "visitor:lecturer", "visitor:faculty:research", "visitor:staff:temporary",
+    "visitor:postdoc:research", "visitor:faculty:teaching", "visitor:student", "student:vetmed", "student",
+    "visitor"
+    return nil
   else
     Rails.logger.warn "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
   end
