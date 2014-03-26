@@ -6,7 +6,7 @@ namespace :ad do
     # require 'stringio'
     require 'active_directory'
     require 'active_directory_wrapper'
-    
+
     # notify_admins = false
 
     # Log to a string so we can both optionally e-mail the log to the admins and merge it into the master log
@@ -17,6 +17,8 @@ namespace :ad do
 
       timestamp_start = Time.now
 
+      Authorization.ignore_access_control(true)
+
       # Cache group 'dss-us-auto-all' because we always need it
       groups["dss-us-auto-all"] = ActiveDirectoryWrapper.fetch_group("dss-us-auto-all")
       if groups["dss-us-auto-all"].nil?
@@ -24,7 +26,7 @@ namespace :ad do
       else
         ensure_magic_descriptor_presence(groups["dss-us-auto-all"])
       end
-      
+
       # Add active users to dss-us-auto-all, cluster-name-affiliation, and cluster-all groups as necessary
       Person.all.each_with_index do |p, i|
         log.tagged "person:#{p.loginid}" do
@@ -82,7 +84,7 @@ namespace :ad do
                 if groups[caa].nil?
                   groups[caa] = ActiveDirectoryWrapper.fetch_group(caa)
                 end
-                
+
                 if p.active
                   # Add them if necessary
                   unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
@@ -117,7 +119,7 @@ namespace :ad do
                 if groups[ca].nil?
                   groups[ca] = ActiveDirectoryWrapper.fetch_group(ca)
                 end
-                
+
                 if p.active
                   # Add if necessary
                   unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
@@ -153,6 +155,8 @@ namespace :ad do
 
       timestamp_finish = Time.now
 
+      Authorization.ignore_access_control(false)
+
       log.info "AD Sync took " + (timestamp_finish - timestamp_start).to_s + " seconds"
     end
 
@@ -164,7 +168,7 @@ namespace :ad do
     #   end
     # end
   end
-  
+
   desc 'Sync all roles against Active Directory.'
   task :sync_all_roles => :environment do
     Role.all.each do |r|
@@ -180,11 +184,11 @@ namespace :ad do
     # require 'stringio'
     require 'active_directory'
     require 'active_directory_wrapper'
-    
+
     log = Rails.logger
-    
+
     timestamp_start = Time.now
-    
+
     log.tagged "ad:sync_role" do
       log.tagged "role:#{args[:role_id]}" do
         r = Role.includes(:entities).find_by_id(args[:role_id])
@@ -194,7 +198,7 @@ namespace :ad do
 
           unless r.ad_path.nil?
             log.info "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD ..."
-            
+
             if r.ad_guid
               g = ActiveDirectoryWrapper.fetch_group_by_guid(r.ad_guid)
             else
@@ -202,9 +206,9 @@ namespace :ad do
               # Record GUID as this is our preferred method of finding an existing group
               r.ad_guid = g.objectguid unless g.nil?
             end
-            
+
             ensure_magic_descriptor_presence(g)
-            
+
             # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
             r.ad_path = g.cn unless g.nil?
 
@@ -232,12 +236,12 @@ namespace :ad do
               # else we will remove any AD members who do not match our local database (one-way sync).
               ad_members = ActiveDirectoryWrapper.list_group_members(g)
               role_members = r.members.select{ |m| m.active }.map{ |x| x.loginid }
-              
+
               if r.last_ad_sync == nil
                 # Add AD entries back as local members
                 log.info "Syncing AD members back to local as this is the first recorded AD sync for this role."
                 log.info "There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start."
-                
+
                 ad_members.each do |m|
                   log.info "Syncing back #{m[:samaccountname]}"
                   unless role_members.include? m[:samaccountname]
@@ -254,13 +258,13 @@ namespace :ad do
                       p.loginid = m[:samaccountname]
                       p.last = p.loginid # we need the name set to something. LDAP sync will update this if possible.
                       p.save
-                      
+
                       ActivityLog.record!("Creating person with login ID of #{p.loginid} for the role #{r.token} on #{r.application.name} because they exist in the AD group, they do not already exist as a person in RM, and this is a first-time sync.", ["person_#{p.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
 
                       log.info "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check."
 
                       Delayed::Job.enqueue(DelayedRake.new("ldap:import[#{m[:samaccountname]}]"))
-                  
+
                       # Ensure role has this individual
                       r.entities << p
                     end
@@ -274,7 +278,7 @@ namespace :ad do
                 ad_members.each do |m|
                   unless role_members.select{ |m| m.active }.include? m[:samaccountname]
                     log.info "#{m[:samaccountname]} is in AD but not this role or is in this role but marked inactive. Will remove from AD ..."
-            
+
                     if ActiveDirectoryWrapper.remove_user_from_group(m, g) == false
                       ActivityLog.err!("Needed to remove #{m[:samaccountname]} from AD group #{r.ad_path} because AD mentions them but RM doesn't, but the operation failed.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
                       log.error "Needed to remove #{m[:samaccountname]} from AD group #{r.ad_path} because AD mentions them but RM doesn't, but the operation failed."
@@ -295,12 +299,12 @@ namespace :ad do
             log.info "Done syncing role #{r.id} with AD."
 
             r.last_ad_sync = Time.now
-            
+
             r.save
           else
             log.info "Not syncing role because no AD path is set."
           end
-          
+
           Authorization.ignore_access_control(false)
         else
           log.warn "Cannot find role with ID #{args[:role_id]}"
@@ -330,7 +334,7 @@ def ensure_magic_descriptor_presence(ad_group)
     # description not set
     g_desc = ""
   end
-  
+
   unless g_desc and g_desc.index MAGIC_DESCRIPTOR
     ad_group.description = "#{g_desc} #{MAGIC_DESCRIPTOR}"
     ad_group.save
