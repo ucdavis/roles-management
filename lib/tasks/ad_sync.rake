@@ -431,6 +431,7 @@ def ou_to_short(name)
     return nil
   else
     Rails.logger.warn "AD Sync: Missing OU for translation to container name: #{name}"
+    ActivityLog.err!("Could not translate unknown organization to AD group equivalent: #{name}", ['active_directory'])
   end
 
   return false
@@ -470,6 +471,7 @@ def flatten_affiliation(affiliation)
     return nil
   else
     Rails.logger.warn "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
+    ActivityLog.err!("Could not translate unknown affiliation to AD group equivalent: #{affiliation}", ['active_directory'])
   end
 
   return false
