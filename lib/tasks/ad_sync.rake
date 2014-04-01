@@ -39,12 +39,16 @@ namespace :ad do
           if p.active
             # Add them to dss-us-auto-all if necessary
             unless ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
-              if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
-                log.error "Need to add to dss-us-auto-all but operation failed"
-                ActivityLog.err!("Needed to add to AD group dss-us-auto-all but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
-              else
-                ActivityLog.record!("Added to AD group dss-us-auto-all.", ["person_#{p.id}", 'active_directory'])
-                log.info "Added to dss-us-auto-all"
+              begin
+                if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
+                  log.error "Need to add to dss-us-auto-all but operation failed"
+                  ActivityLog.err!("Needed to add to AD group dss-us-auto-all but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+                else
+                  ActivityLog.record!("Added to AD group dss-us-auto-all.", ["person_#{p.id}", 'active_directory'])
+                  log.info "Added to dss-us-auto-all"
+                end
+              rescue ArgumentError
+                log.error "FIXME: Unable to add user to group 'dss-us-auto-all' due to code exception: ad_user: #{ad_user.inspect}"
               end
             else
               log.info "Already in dss-us-auto-all"
