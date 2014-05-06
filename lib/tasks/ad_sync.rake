@@ -348,7 +348,7 @@ def ensure_magic_descriptor_presence(ad_group)
   end
 
   unless g_desc and g_desc.index MAGIC_DESCRIPTOR
-    ad_group.description = "#{g_desc} #{MAGIC_DESCRIPTOR}"
+    ad_group.description = "#{MAGIC_DESCRIPTOR} #{g_desc}"
     ad_group.save
   end
 end
