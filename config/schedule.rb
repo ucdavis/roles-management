@@ -5,10 +5,6 @@ every :reboot do
   envcommand 'script/delayed_job restart'
 end
 
-every 30.minutes do
-  rake "exception:generate"
-end
-
 # Run LDAP import updater every 4 hours
 every 4.hours do
   rake "ldap:import"
