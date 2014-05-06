@@ -20,8 +20,6 @@ namespace :ldap do
       log.tagged "ldap:import" do
         timestamp_start = Time.now
 
-        asdlkjasd
-
         #
         # STEP ONE: Connect to LDAP. Query needed data.
         #

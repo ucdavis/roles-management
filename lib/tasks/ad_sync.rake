@@ -3,317 +3,329 @@ require 'rake'
 namespace :ad do
   desc 'Sync the user database with Active Directory'
   task :sync_all_users => :environment do
-    # require 'stringio'
-    require 'active_directory'
-    require 'active_directory_wrapper'
+    begin
+      # require 'stringio'
+      require 'active_directory'
+      require 'active_directory_wrapper'
 
-    # notify_admins = false
+      # notify_admins = false
 
-    # Log to a string so we can both optionally e-mail the log to the admins and merge it into the master log
-    log = Rails.logger
-    log.tagged "ad:sync_all_users" do
-      # Cached groups list
-      groups = {}
+      # Log to a string so we can both optionally e-mail the log to the admins and merge it into the master log
+      log = Rails.logger
+      log.tagged "ad:sync_all_users" do
+        # Cached groups list
+        groups = {}
 
-      timestamp_start = Time.now
+        timestamp_start = Time.now
 
-      Authorization.ignore_access_control(true)
+        Authorization.ignore_access_control(true)
 
-      # Cache group 'dss-us-auto-all' because we always need it
-      groups["dss-us-auto-all"] = ActiveDirectoryWrapper.fetch_group("dss-us-auto-all")
-      if groups["dss-us-auto-all"].nil?
-        log.error "Error: Could not load group dss-us-auto-all"
-      else
-        ensure_magic_descriptor_presence(groups["dss-us-auto-all"])
-      end
+        # Cache group 'dss-us-auto-all' because we always need it
+        groups["dss-us-auto-all"] = ActiveDirectoryWrapper.fetch_group("dss-us-auto-all")
+        if groups["dss-us-auto-all"].nil?
+          log.error "Error: Could not load group dss-us-auto-all"
+        else
+          ensure_magic_descriptor_presence(groups["dss-us-auto-all"])
+        end
 
-      # Add active users to dss-us-auto-all, cluster-name-affiliation, and cluster-all groups as necessary
-      Person.all.each_with_index do |p, i|
-        log.tagged "person:#{p.loginid}" do
-          ad_user = ActiveDirectoryWrapper.fetch_user(p.loginid)
-          if ad_user.nil?
-            log.warn "Could not find user '#{p.loginid}' in AD, skipping ..."
-            next
-          end
-
-          if p.active
-            # Add them to dss-us-auto-all if necessary
-            unless ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
-              begin
-                if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
-                  log.error "Need to add to dss-us-auto-all but operation failed"
-                  ActivityLog.err!("Needed to add to AD group dss-us-auto-all but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
-                else
-                  ActivityLog.record!("Added to AD group dss-us-auto-all.", ["person_#{p.id}", 'active_directory'])
-                  log.info "Added to dss-us-auto-all"
-                end
-              rescue ArgumentError
-                log.error "FIXME: Unable to add user to group 'dss-us-auto-all' due to code exception: ad_user: #{ad_user.inspect}"
-              end
-            else
-              log.info "Already in dss-us-auto-all"
+        # Add active users to dss-us-auto-all, cluster-name-affiliation, and cluster-all groups as necessary
+        Person.all.each_with_index do |p, i|
+          log.tagged "person:#{p.loginid}" do
+            ad_user = ActiveDirectoryWrapper.fetch_user(p.loginid)
+            if ad_user.nil?
+              log.warn "Could not find user '#{p.loginid}' in AD, skipping ..."
+              next
             end
-          else
-            # Remove them from dss-us-auto-all if necessary
-            if ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
-              if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups["dss-us-auto-all"]) == false
-                log.error "Need to remove from dss-us-auto-all but operation failed"
-                ActivityLog.err!("Needed to remove from AD group dss-us-auto-all but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+
+            if p.active
+              # Add them to dss-us-auto-all if necessary
+              unless ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
+                begin
+                  if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups["dss-us-auto-all"]) == false
+                    log.error "Need to add to dss-us-auto-all but operation failed"
+                    ActivityLog.err!("Needed to add to AD group dss-us-auto-all but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+                  else
+                    ActivityLog.record!("Added to AD group dss-us-auto-all.", ["person_#{p.id}", 'active_directory'])
+                    log.info "Added to dss-us-auto-all"
+                  end
+                rescue ArgumentError
+                  log.error "FIXME: Unable to add user to group 'dss-us-auto-all' due to code exception: ad_user: #{ad_user.inspect}"
+                end
               else
-                log.info "Removed from dss-us-auto-all"
-                ActivityLog.record!("Removed from AD group dss-us-auto-all.", ["person_#{p.id}", 'active_directory'])
+                log.info "Already in dss-us-auto-all"
               end
             else
-              log.info "Already non-existent in dss-us-auto-all"
+              # Remove them from dss-us-auto-all if necessary
+              if ActiveDirectoryWrapper.in_group(ad_user, groups["dss-us-auto-all"])
+                if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups["dss-us-auto-all"]) == false
+                  log.error "Need to remove from dss-us-auto-all but operation failed"
+                  ActivityLog.err!("Needed to remove from AD group dss-us-auto-all but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+                else
+                  log.info "Removed from dss-us-auto-all"
+                  ActivityLog.record!("Removed from AD group dss-us-auto-all.", ["person_#{p.id}", 'active_directory'])
+                end
+              else
+                log.info "Already non-existent in dss-us-auto-all"
+              end
             end
-          end
 
-          p.affiliations.each do |affiliation|
-            # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
-            unless p.organizations.length == 0
-              short_ou = ou_to_short(p.organizations[0].name)
-              flattened_affiliation = flatten_affiliation(affiliation.name)
+            p.affiliations.each do |affiliation|
+              # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
+              unless p.organizations.length == 0
+                short_ou = ou_to_short(p.organizations[0].name)
+                flattened_affiliation = flatten_affiliation(affiliation.name)
 
-              # Skip unknown or ignored translations
-              next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
+                # Skip unknown or ignored translations
+                next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
 
-              unless short_ou.nil? or flattened_affiliation.nil?
-                # Write them to cluster-affiliation-all
-                caa = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
-                # Cache group if necessary
-                if groups[caa].nil?
-                  groups[caa] = ActiveDirectoryWrapper.fetch_group(caa)
-                end
-
-                if p.active
-                  # Add them if necessary
-                  unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
-                    if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[caa]) == false
-                      log.warn "Needed to add to #{caa} but operation failed"
-                      ActivityLog.err!("Needed to add to AD group #{caa} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
-                    else
-                      log.info "Added to #{caa}"
-                      ActivityLog.record!("Added to AD group #{caa}.", ["person_#{p.id}", 'active_directory'])
-                    end
-                  else
-                    log.info "Already in #{caa}\n"
+                unless short_ou.nil? or flattened_affiliation.nil?
+                  # Write them to cluster-affiliation-all
+                  caa = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
+                  # Cache group if necessary
+                  if groups[caa].nil?
+                    groups[caa] = ActiveDirectoryWrapper.fetch_group(caa)
                   end
-                else
-                  # Remove them if necessary
-                  if ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
-                    if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups[caa]) == false
-                      log.warn "Needed to remove from #{caa} but operation failed"
-                      ActivityLog.err!("Needed to remove from AD group #{caa} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
-                    else
-                      log.info "Removed from #{caa}"
-                      ActivityLog.record!("Removed from AD group #{caa}.", ["person_#{p.id}", 'active_directory'])
-                    end
-                  else
-                    log.info "Already non-existent in #{caa}\n"
-                  end
-                end
 
-                # Write them to cluster-all (dss-us-#{ou_to_short}-all)
-                ca = "dss-us-#{short_ou}-all".downcase
-                # Cache group if necessary
-                if groups[ca].nil?
-                  groups[ca] = ActiveDirectoryWrapper.fetch_group(ca)
-                end
-
-                if p.active
-                  # Add if necessary
-                  unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
-                    if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[ca]) == false
-                      log.warn "Needed to add to #{ca} but operation failed"
-                      ActivityLog.err!("Needed to add to AD group #{ca} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+                  if p.active
+                    # Add them if necessary
+                    unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
+                      if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[caa]) == false
+                        log.warn "Needed to add to #{caa} but operation failed"
+                        ActivityLog.err!("Needed to add to AD group #{caa} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+                      else
+                        log.info "Added to #{caa}"
+                        ActivityLog.record!("Added to AD group #{caa}.", ["person_#{p.id}", 'active_directory'])
+                      end
                     else
-                      log.info "Added to #{ca}"
-                      ActivityLog.record!("Added to AD group #{ca}.", ["person_#{p.id}", 'active_directory'])
+                      log.info "Already in #{caa}\n"
                     end
                   else
-                    log.info "Already in #{ca}"
+                    # Remove them if necessary
+                    if ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
+                      if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups[caa]) == false
+                        log.warn "Needed to remove from #{caa} but operation failed"
+                        ActivityLog.err!("Needed to remove from AD group #{caa} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+                      else
+                        log.info "Removed from #{caa}"
+                        ActivityLog.record!("Removed from AD group #{caa}.", ["person_#{p.id}", 'active_directory'])
+                      end
+                    else
+                      log.info "Already non-existent in #{caa}\n"
+                    end
                   end
-                else
-                  # Remove if necessary
-                  if ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
-                    if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups[ca]) == false
-                      log.warn "Needed to remove from #{ca} but operation failed"
-                      ActivityLog.err!("Needed to remove from AD group #{ca} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+
+                  # Write them to cluster-all (dss-us-#{ou_to_short}-all)
+                  ca = "dss-us-#{short_ou}-all".downcase
+                  # Cache group if necessary
+                  if groups[ca].nil?
+                    groups[ca] = ActiveDirectoryWrapper.fetch_group(ca)
+                  end
+
+                  if p.active
+                    # Add if necessary
+                    unless ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
+                      if ActiveDirectoryWrapper.add_user_to_group(ad_user, groups[ca]) == false
+                        log.warn "Needed to add to #{ca} but operation failed"
+                        ActivityLog.err!("Needed to add to AD group #{ca} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+                      else
+                        log.info "Added to #{ca}"
+                        ActivityLog.record!("Added to AD group #{ca}.", ["person_#{p.id}", 'active_directory'])
+                      end
                     else
-                      log.info "Removed from #{ca}"
-                      ActivityLog.record!("Removed from AD group #{ca}.", ["person_#{p.id}", 'active_directory'])
+                      log.info "Already in #{ca}"
                     end
                   else
-                    log.info "Already non-existent in #{ca}"
+                    # Remove if necessary
+                    if ActiveDirectoryWrapper.in_group(ad_user, groups[caa])
+                      if ActiveDirectoryWrapper.remove_user_from_group(ad_user, groups[ca]) == false
+                        log.warn "Needed to remove from #{ca} but operation failed"
+                        ActivityLog.err!("Needed to remove from AD group #{ca} but operation unexpectedly failed.", ["person_#{p.id}", 'active_directory'])
+                      else
+                        log.info "Removed from #{ca}"
+                        ActivityLog.record!("Removed from AD group #{ca}.", ["person_#{p.id}", 'active_directory'])
+                      end
+                    else
+                      log.info "Already non-existent in #{ca}"
+                    end
                   end
                 end
               end
             end
           end
         end
+
+        timestamp_finish = Time.now
+
+        Authorization.ignore_access_control(false)
+
+        log.info "AD Sync took " + (timestamp_finish - timestamp_start).to_s + " seconds"
       end
 
-      timestamp_finish = Time.now
-
-      Authorization.ignore_access_control(false)
-
-      log.info "AD Sync took " + (timestamp_finish - timestamp_start).to_s + " seconds"
+      # Email the log
+      # if notify_admins
+      #   admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+      #   Role.find_by_id(admin_role_id).people.each do |admin|
+      #     WheneverMailer.adsync_report(admin.email, strio.string).deliver!
+      #   end
+      # end
+    rescue => exception
+      ExceptionNotifier.notify_exception(exception)
     end
-
-    # Email the log
-    # if notify_admins
-    #   admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-    #   Role.find_by_id(admin_role_id).people.each do |admin|
-    #     WheneverMailer.adsync_report(admin.email, strio.string).deliver!
-    #   end
-    # end
   end
 
   desc 'Sync all roles against Active Directory.'
   task :sync_all_roles => :environment do
-    Role.all.each do |r|
-      if r.ad_path
-        puts "Queueing role #{r.id} (#{r.name} / #{r.application.name}) for background sync ..."
-        Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{r.id}]"))
+    begin
+      Role.all.each do |r|
+        if r.ad_path
+          puts "Queueing role #{r.id} (#{r.name} / #{r.application.name}) for background sync ..."
+          Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{r.id}]"))
+        end
       end
+    rescue => exception
+      ExceptionNotifier.notify_exception(exception)
     end
   end
 
   desc 'Sync a role against Active Directory. May create new users as needed.'
   task :sync_role, [:role_id] => :environment do |t, args|
-    # require 'stringio'
-    require 'active_directory'
-    require 'active_directory_wrapper'
+    begin
+      # require 'stringio'
+      require 'active_directory'
+      require 'active_directory_wrapper'
 
-    log = Rails.logger
+      log = Rails.logger
 
-    timestamp_start = Time.now
+      timestamp_start = Time.now
 
-    log.tagged "ad:sync_role" do
-      log.tagged "role:#{args[:role_id]}" do
-        r = Role.includes(:entities).find_by_id(args[:role_id])
+      log.tagged "ad:sync_role" do
+        log.tagged "role:#{args[:role_id]}" do
+          r = Role.includes(:entities).find_by_id(args[:role_id])
 
-        unless r.nil?
-          Authorization.ignore_access_control(true)
+          unless r.nil?
+            Authorization.ignore_access_control(true)
 
-          unless r.ad_path.nil?
-            log.info "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD ..."
+            unless r.ad_path.nil?
+              log.info "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD ..."
 
-            if r.ad_guid
-              g = ActiveDirectoryWrapper.fetch_group_by_guid(r.ad_guid)
-            else
-              g = ActiveDirectoryWrapper.fetch_group(r.ad_path)
-              # Record GUID as this is our preferred method of finding an existing group
-              r.ad_guid = g.objectguid unless g.nil?
-            end
-
-            ensure_magic_descriptor_presence(g)
-
-            # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
-            r.ad_path = g.cn unless g.nil?
-
-            unless g.nil?
-              log.info "Found group (#{r.ad_path}, #{r.ad_guid}) in AD."
-
-              # Add enabled members to AD
-              r.members.select{ |m| m.active }.each do |member|
-                u = ActiveDirectoryWrapper.fetch_user(member.loginid)
-                unless ActiveDirectoryWrapper.in_group(u, g)
-                  log.info "Adding user #{member.loginid} to AD group #{r.ad_path}"
-                  if ActiveDirectoryWrapper.add_user_to_group(u, g) == false
-                    ActivityLog.err!("Needed to add #{member.name} to AD group #{r.ad_path} but the operation failed.", ["person_#{member.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
-                    log.error "Needed to add #{member.name} to AD group #{r.ad_path} but the operation failed."
-                  else
-                    ActivityLog.record!("Added #{member.name} to AD group #{r.ad_path}.", ["person_#{member.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
-                    log.info "Added #{member.name} to AD group #{r.ad_path}."
-                  end
-                else
-                  log.info "User #{member.loginid} is already in AD group #{r.ad_path}"
-                end
+              if r.ad_guid
+                g = ActiveDirectoryWrapper.fetch_group_by_guid(r.ad_guid)
+              else
+                g = ActiveDirectoryWrapper.fetch_group(r.ad_path)
+                # Record GUID as this is our preferred method of finding an existing group
+                r.ad_guid = g.objectguid unless g.nil?
               end
 
-              # If this is our first AD sync, we will add AD entries not found locally back to our database (two-way sync),
-              # else we will remove any AD members who do not match our local database (one-way sync).
-              ad_members = ActiveDirectoryWrapper.list_group_members(g)
-              role_members = r.members.select{ |m| m.active }.map{ |x| x.loginid }
+              ensure_magic_descriptor_presence(g)
 
-              if r.last_ad_sync == nil
-                # Add AD entries back as local members
-                log.info "Syncing AD members back to local as this is the first recorded AD sync for this role."
-                log.info "There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start."
+              # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
+              r.ad_path = g.cn unless g.nil?
 
-                ad_members.each do |m|
-                  log.info "Syncing back #{m[:samaccountname]}"
-                  unless role_members.include? m[:samaccountname]
-                    log.info "#{m[:samaccountname]} is not already in role_members, going to add ..."
-                    p = Person.find_by_loginid m[:samaccountname]
-                    if p
-                      r.entities << p
-                      log.info "Adding user #{m[:samaccountname]} from AD group #{r.ad_path} to local group."
-                      ActivityLog.record!("Added #{p.name} to role #{r.token} on #{r.application.name} because they exist in the AD group and this is a first-time sync.", ["person_#{p.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+              unless g.nil?
+                log.info "Found group (#{r.ad_path}, #{r.ad_guid}) in AD."
+
+                # Add enabled members to AD
+                r.members.select{ |m| m.active }.each do |member|
+                  u = ActiveDirectoryWrapper.fetch_user(member.loginid)
+                  unless ActiveDirectoryWrapper.in_group(u, g)
+                    log.info "Adding user #{member.loginid} to AD group #{r.ad_path}"
+                    if ActiveDirectoryWrapper.add_user_to_group(u, g) == false
+                      ActivityLog.err!("Needed to add #{member.name} to AD group #{r.ad_path} but the operation failed.", ["person_#{member.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                      log.error "Needed to add #{member.name} to AD group #{r.ad_path} but the operation failed."
                     else
-                      log.info "Will create user #{m[:samaccountname]} from AD group #{r.ad_path} as they could not be found locally."
-
-                      p = Person.new
-                      p.loginid = m[:samaccountname]
-                      p.last = p.loginid # we need the name set to something. LDAP sync will update this if possible.
-                      p.save
-
-                      ActivityLog.record!("Creating person with login ID of #{p.loginid} for the role #{r.token} on #{r.application.name} because they exist in the AD group, they do not already exist as a person in RM, and this is a first-time sync.", ["person_#{p.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
-
-                      log.info "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check."
-
-                      Delayed::Job.enqueue(DelayedRake.new("ldap:import[#{m[:samaccountname]}]"))
-
-                      # Ensure role has this individual
-                      r.entities << p
+                      ActivityLog.record!("Added #{member.name} to AD group #{r.ad_path}.", ["person_#{member.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                      log.info "Added #{member.name} to AD group #{r.ad_path}."
                     end
                   else
-                    log.info "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD."
+                    log.info "User #{member.loginid} is already in AD group #{r.ad_path}"
+                  end
+                end
+
+                # If this is our first AD sync, we will add AD entries not found locally back to our database (two-way sync),
+                # else we will remove any AD members who do not match our local database (one-way sync).
+                ad_members = ActiveDirectoryWrapper.list_group_members(g)
+                role_members = r.members.select{ |m| m.active }.map{ |x| x.loginid }
+
+                if r.last_ad_sync == nil
+                  # Add AD entries back as local members
+                  log.info "Syncing AD members back to local as this is the first recorded AD sync for this role."
+                  log.info "There are #{ad_members.length} listed in AD and #{role_members.length} locally at the start."
+
+                  ad_members.each do |m|
+                    log.info "Syncing back #{m[:samaccountname]}"
+                    unless role_members.include? m[:samaccountname]
+                      log.info "#{m[:samaccountname]} is not already in role_members, going to add ..."
+                      p = Person.find_by_loginid m[:samaccountname]
+                      if p
+                        r.entities << p
+                        log.info "Adding user #{m[:samaccountname]} from AD group #{r.ad_path} to local group."
+                        ActivityLog.record!("Added #{p.name} to role #{r.token} on #{r.application.name} because they exist in the AD group and this is a first-time sync.", ["person_#{p.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                      else
+                        log.info "Will create user #{m[:samaccountname]} from AD group #{r.ad_path} as they could not be found locally."
+
+                        p = Person.new
+                        p.loginid = m[:samaccountname]
+                        p.last = p.loginid # we need the name set to something. LDAP sync will update this if possible.
+                        p.save
+
+                        ActivityLog.record!("Creating person with login ID of #{p.loginid} for the role #{r.token} on #{r.application.name} because they exist in the AD group, they do not already exist as a person in RM, and this is a first-time sync.", ["person_#{p.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+
+                        log.info "Created local user with only loginid #{m[:samaccountname]} and queued LDAP import to check."
+
+                        Delayed::Job.enqueue(DelayedRake.new("ldap:import[#{m[:samaccountname]}]"))
+
+                        # Ensure role has this individual
+                        r.entities << p
+                      end
+                    else
+                      log.info "User #{m[:samaccountname]} is already in RM and doesn't need to be synced back from AD."
+                    end
+                  end
+                else
+                  # Remove AD entries which do not match our local database
+                  log.info "Removing any entries in AD which do not match our records (this is not the first AD sync for this role)."
+                  ad_members.each do |m|
+                    unless role_members.include? m[:samaccountname]
+                      log.info "#{m[:samaccountname]} is in AD but not this role or is in this role but marked inactive. Will remove from AD ..."
+
+                      if ActiveDirectoryWrapper.remove_user_from_group(m, g) == false
+                        ActivityLog.err!("Needed to remove #{m[:samaccountname]} from AD group #{r.ad_path} because AD mentions them but RM doesn't, but the operation failed.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                        log.error "Needed to remove #{m[:samaccountname]} from AD group #{r.ad_path} because AD mentions them but RM doesn't, but the operation failed."
+                      else
+                        ActivityLog.record!("Removed #{m[:samaccountname]} from AD group #{r.ad_path} because RM does not agree they should be in that group.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+                        log.info "Removed #{m[:samaccountname]} from AD group #{r.ad_path} because RM does not agree they should be in that group."
+                      end
+                    else
+                      log.info "#{m[:samaccountname]} is in AD and this role. No action taken."
+                    end
                   end
                 end
               else
-                # Remove AD entries which do not match our local database
-                log.info "Removing any entries in AD which do not match our records (this is not the first AD sync for this role)."
-                ad_members.each do |m|
-                  unless role_members.include? m[:samaccountname]
-                    log.info "#{m[:samaccountname]} is in AD but not this role or is in this role but marked inactive. Will remove from AD ..."
-
-                    if ActiveDirectoryWrapper.remove_user_from_group(m, g) == false
-                      ActivityLog.err!("Needed to remove #{m[:samaccountname]} from AD group #{r.ad_path} because AD mentions them but RM doesn't, but the operation failed.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
-                      log.error "Needed to remove #{m[:samaccountname]} from AD group #{r.ad_path} because AD mentions them but RM doesn't, but the operation failed."
-                    else
-                      ActivityLog.record!("Removed #{m[:samaccountname]} from AD group #{r.ad_path} because RM does not agree they should be in that group.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
-                      log.info "Removed #{m[:samaccountname]} from AD group #{r.ad_path} because RM does not agree they should be in that group."
-                    end
-                  else
-                    log.info "#{m[:samaccountname]} is in AD and this role. No action taken."
-                  end
-                end
+                log.error "Could not find group (#{r.ad_path}, #{r.ad_guid}) in AD."
+                ActivityLog.err!("Could not find group (#{r.ad_path}, #{r.ad_guid}) in AD.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
               end
+
+              log.info "Done syncing role #{r.id} with AD."
+
+              r.last_ad_sync = Time.now
+
+              r.save
             else
-              log.error "Could not find group (#{r.ad_path}, #{r.ad_guid}) in AD."
-              ActivityLog.err!("Could not find group (#{r.ad_path}, #{r.ad_guid}) in AD.", ["role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
+              log.info "Not syncing role because no AD path is set."
             end
 
-            log.info "Done syncing role #{r.id} with AD."
-
-            r.last_ad_sync = Time.now
-
-            r.save
+            Authorization.ignore_access_control(false)
           else
-            log.info "Not syncing role because no AD path is set."
+            log.warn "Cannot find role with ID #{args[:role_id]}"
           end
 
-          Authorization.ignore_access_control(false)
-        else
-          log.warn "Cannot find role with ID #{args[:role_id]}"
+          timestamp_finish = Time.now
+
+          log.info "Sync finished. Time elapsed: " + (timestamp_finish - timestamp_start).to_s + " seconds"
         end
-
-        timestamp_finish = Time.now
-
-        log.info "Sync finished. Time elapsed: " + (timestamp_finish - timestamp_start).to_s + " seconds"
       end
+    rescue => exception
+      ExceptionNotifier.notify_exception(exception)
     end
   end
 end
