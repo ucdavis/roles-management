@@ -9,25 +9,19 @@ group :assets do
 end
 
 group :production do
-  #gem 'syslogger', :git => 'https://github.com/cthielen/syslogger.git'
   gem 'pg'
   gem 'dalli'
-  # gem 'unicorn'
-  # gem 'unicorn-worker-killer'
-  gem 'exception_notification'
 end
 
 group :development do
   gem 'letter_opener'
-  #gem 'ruby-prof', :platform => :mri
-  #gem 'debugger', :platform => :mri
-  #gem 'active_record_query_trace'
 end
+
+gem 'exception_notification'
 
 group :development, :test do
   gem 'jasmine-rails' # for JS unit testing
   gem 'capybara' # for JS integration testing
-  #gem 'selenium-webdriver'
   gem 'poltergeist' # for PhantomJS-based testing with capybara
   gem 'sqlite3'
 end
