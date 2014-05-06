@@ -11,13 +11,12 @@ end
 group :production do
   gem 'pg'
   gem 'dalli'
+  gem 'exception_notification'
 end
 
 group :development do
   gem 'letter_opener'
 end
-
-gem 'exception_notification'
 
 group :development, :test do
   gem 'jasmine-rails' # for JS unit testing
