@@ -276,7 +276,7 @@ namespace :ad do
                 # Remove AD entries which do not match our local database
                 log.info "Removing any entries in AD which do not match our records (this is not the first AD sync for this role)."
                 ad_members.each do |m|
-                  unless role_members.select{ |m| m.active }.include? m[:samaccountname]
+                  unless role_members.include? m[:samaccountname]
                     log.info "#{m[:samaccountname]} is in AD but not this role or is in this role but marked inactive. Will remove from AD ..."
 
                     if ActiveDirectoryWrapper.remove_user_from_group(m, g) == false
