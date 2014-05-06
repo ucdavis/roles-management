@@ -20,7 +20,7 @@ namespace :ldap do
       log.tagged "ldap:import" do
         timestamp_start = Time.now
 
-  asdlkalskd
+        asdlkjasd
 
         #
         # STEP ONE: Connect to LDAP. Query needed data.
@@ -92,23 +92,23 @@ namespace :ldap do
         timestamp_finish = Time.now
 
         log.info "Completed LDAP import. Took " + (timestamp_finish - timestamp_start).to_s + "s. Used #{OS.rss_bytes} KB at the end of the task (varies during operation but generally grows)."
-      rescue => exception
-        ExceptionNotifier.notify_exception(exception)
       end
-    end
 
-    # Email the log
-    # E-mail to each RM admin (anyone with 'admin' permission on this app)
-    if notify_admins
-      include RmBuiltinRoles
+      # Email the log
+      # E-mail to each RM admin (anyone with 'admin' permission on this app)
+      if notify_admins
+        include RmBuiltinRoles
 
-      rm_admin_entities.each do |admin|
-        WheneverMailer.ldap_report(admin.email, strio.string).deliver!
+        rm_admin_entities.each do |admin|
+          WheneverMailer.ldap_report(admin.email, strio.string).deliver!
+        end
       end
+
+      Rails.logger.info strio.string
+
+      Authorization.ignore_access_control(false)
+    rescue => exception
+      ExceptionNotifier.notify_exception(exception)
     end
-
-    Rails.logger.info strio.string
-
-    Authorization.ignore_access_control(false)
   end
 end
