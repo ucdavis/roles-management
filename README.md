@@ -20,8 +20,10 @@ is a requirement for this application.
 
 ## Installation / Deployment
 
-RM is designed to be re-deployable in any organization, though there are a few
-matters of configuration that need to be attended to:
+### Step 1. (Set configuration values)
+
+RM is designed to be re-deployable in any organization, though there
+are a few matters of configuration that need to be attended to:
 
 config/database.example.yml
 	Move this file to config/database.yml and set the appropriate values.
@@ -52,6 +54,28 @@ config/schedule.rb
 
 You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
 in case this README neglects any configuration details.
+
+### Step 2. (Standard Rails procedures)
+
+Run the follow commands in order and ensure they complete successfully:
+
+ * bundle install
+ * bundle exec rake db:schema:load
+ * bundle exec rake db:seed
+
+### Step 3. (Add a user)
+
+The follow steps obtain a user from a configured LDAP server and grant admin
+access:
+
+ * bundle exec rake ldap:import[the_username]
+ * bundle exec rake user:grant_admin[the_username]
+
+### Step 4. (Done!)
+
+Run the application:
+
+ * bundle exec rails server (visit localhost:3000 to view)
 
 ## Screenshots
 ![Group rule editor](http://169.237.101.195/image2.png "Group rule editor")
