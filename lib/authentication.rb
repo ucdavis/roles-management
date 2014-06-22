@@ -14,7 +14,7 @@ module Authentication
       end
     end
   end
-  
+
   # Returns the 'actual' user - usually this matches current_user but when
   # impersonating, it will return the human doing the impersonating, not the
   # account they are pretending to be. Useful for determining if actions like
@@ -50,7 +50,7 @@ module Authentication
       session[:user_id] = request.remote_ip
       session[:auth_via] = :whitelisted_ip
       Authorization.current_user = @whitelisted_user
-      
+
       Authorization.ignore_access_control(true)
       @whitelisted_user.logged_in_at = DateTime.now()
       @whitelisted_user.save
@@ -117,7 +117,7 @@ module Authentication
 
         logger.info "Valid CAS user (#{@user.loginid}) is in our database and has proper roles. Passes authentication."
         ActivityLog.record!("Logged in.", ["person_#{@user.id}"])
-        
+
         if params[:ticket] and params[:ticket].include? "cas"
           # This is a session-initiating CAS login, so remove the damn GET parameter from the URL for UX
           redirect_to :controller => params[:controller], :action => params[:action]
@@ -129,7 +129,7 @@ module Authentication
         session[:user_id] = nil
         session[:auth_via] = nil
 
-        logger.info "Valid CAS user (#{@user.loginid}) is not in our database. Fails authentication."
+        logger.info "Valid CAS user (#{session[:cas_user]}) is not in our database. Fails authentication."
         flash[:error] = 'You have authenticated but are not allowed access.'
 
         redirect_to :controller => "site", :action => "access_denied"
