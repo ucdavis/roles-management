@@ -18,22 +18,23 @@ Linux, Mac OS X, and Windows. It has not been tested with Microsoft's
 IronRuby, and as of this writing, IronRuby does not support Ruby 1.9, which
 is a requirement for this application.
 
-## Deployment
+## Installation / Deployment
 
 RM is designed to be re-deployable in any organization, though there are a few
 matters of configuration that need to be attended to:
 
-config/database.yml.example
+config/database.example.yml
 	Move this file to config/database.yml and set the appropriate values.
 
-config/api_keys.yml.example
-	Move this file to config/api_keys.yml and set the appropriate values.
-
-config/ldap.yml.example
+config/ldap.example.yml
   Move this file to config/ldap.yml and set the appropriate values.
 
-config/active_directory.yml.example
+config/active_directory.example.yml
   Move this file to config/active_directory.yml and set the appropriate values.
+
+config/secret_token.example.yml
+	Move this file to config/secret_token.yml and set the value. It is recommended
+	you use 'rake secret' to obtain a high quality secret.
 
 config/environment.rb
 	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If
