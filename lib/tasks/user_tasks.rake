@@ -9,13 +9,18 @@ namespace :user do
     Authorization.ignore_access_control(true)
 
     args.each do |arg|
-      puts "Granting access to #{arg[1]}..."
-      ra = RoleAssignment.new
-      ra.role_id = rm_access_role_id
-      ra.entity_id = Person.find_by_loginid(arg[1]).id
-      ra.save!
+      p = Person.find_by_loginid(arg[1])
+      if p
+        puts "Granting access to #{arg[1]}..."
+        ra = RoleAssignment.new
+        ra.role_id = rm_access_role_id
+        ra.entity_id = p.id
+        ra.save!
+      else
+        puts "No such user '#{arg[1]}'"
+      end
     end
-    
+
     Authorization.ignore_access_control(false)
   end
 
@@ -25,13 +30,18 @@ namespace :user do
     include RmBuiltinRoles
 
     args.each do |arg|
-      puts "Revoking access from #{arg[1]}..."
-      entity_id = Person.find_by_loginid(arg[1]).id
-      ra = RoleAssignment.find_by_role_id_and_entity_id(rm_access_role_id, entity_id)
-      unless ra.nil?
-        ra.destroy
+      p = Person.find_by_loginid(arg[1])
+      if p
+        puts "Revoking access from #{arg[1]}..."
+        entity_id = p.id
+        ra = RoleAssignment.find_by_role_id_and_entity_id(rm_access_role_id, entity_id)
+        unless ra.nil?
+          ra.destroy
+        else
+          puts "#{arg[1]} is not set for access."
+        end
       else
-        puts "#{arg[1]} is not set for access."
+        puts "No such user '#{arg[1]}'"
       end
     end
   end
@@ -47,18 +57,23 @@ namespace :user do
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
-      puts "Granting admin to #{arg[1]}..."
-      ra = RoleAssignment.new
-      ra.role_id = rm_admin_role_id
-      ra.entity_id = p.id
-      ra.save!
-      
-      # Ensure they have the 'access' role as well
-      if p.roles.where(:application_id => ra.id).where(:token => "access").length == 0
+
+      if p
+        puts "Granting admin to #{arg[1]}..."
         ra = RoleAssignment.new
-        ra.role_id = rm_access_role_id
+        ra.role_id = rm_admin_role_id
         ra.entity_id = p.id
         ra.save!
+
+        # Ensure they have the 'access' role as well
+        if p.roles.where(:application_id => ra.id).where(:token => "access").length == 0
+          ra = RoleAssignment.new
+          ra.role_id = rm_access_role_id
+          ra.entity_id = p.id
+          ra.save!
+        end
+      else
+        puts "No such user '#{arg[1]}'"
       end
     end
 
@@ -73,16 +88,21 @@ namespace :user do
     Authorization.ignore_access_control(true)
 
     args.each do |arg|
-      puts "Revoking admin from #{arg[1]}..."
-      entity_id = Person.find_by_loginid(arg[1]).id
-      ra = RoleAssignment.find_by_role_id_and_entity_id(rm_admin_role_id, entity_id)
-      unless ra.nil?
-        ra.destroy
+      p = Person.find_by_loginid(arg[1])
+      if p
+        puts "Revoking admin from #{arg[1]}..."
+        entity_id = p.id
+        ra = RoleAssignment.find_by_role_id_and_entity_id(rm_admin_role_id, entity_id)
+        unless ra.nil?
+          ra.destroy
+        else
+          puts "#{arg[1]} is not set as admin."
+        end
       else
-        puts "#{arg[1]} is not set as admin."
+        puts "No such user '#{arg[1]}'"
       end
     end
-    
+
     Authorization.ignore_access_control(false)
   end
 end
