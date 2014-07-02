@@ -10,9 +10,9 @@ class EntitiesController < ApplicationController
 
   def show
     @entity = Entity.find(params[:id])
-    
+
     @cache_key = @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
-    
+
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity show view for #{params[:id]}."
 
     respond_with @entity do |format|
@@ -47,7 +47,7 @@ class EntitiesController < ApplicationController
       @entity.owners << current_user
       Authorization.ignore_access_control(false)
     end
-    
+
     @entity.trigger_sync
 
     if @entity.group?
@@ -67,13 +67,13 @@ class EntitiesController < ApplicationController
     end
 
     @entity.update_attributes(params[:entity])
-    
+
     # Groups may change their membership based on rule changes,
     # making our AR object stale.
     #@entity.reload if params[:entity][:type] == "Group"
-    
+
     @entity.trigger_sync
-    
+
     respond_with(@entity) do |format|
       format.json{ render json: @entity }
     end
@@ -90,27 +90,29 @@ class EntitiesController < ApplicationController
       render :nothing => true
     end
   end
-  
+
   protected
-  
+
   def new_entity_from_params
-    # Only allow "Group" and "Person" to be constantized for security
-    if (params[:entity][:type] == "Group") || (params[:entity][:type] == "Person")
-      @entity = params[:entity][:type].constantize.new(params[:entity])
+    # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
+    if params[:entity][:type] == "Group"
+      @entity = Group.new(params[:entity])
+    elsif params[:entity][:type] == "Person"
+      @entity = Person.new(params[:entity])
     else
       @entity = nil
     end
   end
-  
+
   private
-  
+
   def load_entities
     if params[:q]
       entities_table = Entity.arel_table
-      
+
       # Search login IDs in case of an entity-search but looking for person by login ID
       @entities = Entity.with_permissions_to(:read).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
-      
+
       logger.debug "Entities#index searching for '#{params[:q]}'. Found #{@entities.length} results."
     else
       @entities = Entity.with_permissions_to(:read).all
