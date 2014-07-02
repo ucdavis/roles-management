@@ -10,20 +10,26 @@ class LdapHelper
     @conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
     @conn.bind(dn = LDAP_SETTINGS['base_dn'], password = LDAP_SETTINGS['base_pw'] )
   end
-  
+
   def disconnect
     @conn.unbind
   end
-  
+
   # Requires a block be passed:
   #   search("ldap_query").do |p| ... end
+  # Returns false on no results or error, else return is undefined.
   def search(term)
     Rails.logger.debug "LdapHelper searching for '#{term}'"
-    @conn.search(LDAP_SETTINGS['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, term) do |result|
-      yield result
+    begin
+      @conn.search(LDAP_SETTINGS['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, term) do |result|
+        yield result
+      end
+    rescue RuntimeError => e
+      Rails.logger.warning "LdapHelper search resulted in exception. Term: '#{term}'. Exception: #{e}"
+      return false
     end
   end
-  
+
   def build_filters(log = nil)
     # Build needed LDAP filters
     # Staff filter
@@ -58,7 +64,7 @@ class LdapHelper
     # for m in UcdLookups::MANUAL_INCLUDES
     #   manualFilter << '(uid=' + m + ')'
     # end
-    # 
+    #
     # log.debug "Query: " + manualFilter.join(",")
 
     [staffFilter,facultyFilter,studentFilter] #+ manualFilter
