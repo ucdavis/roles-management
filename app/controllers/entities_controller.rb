@@ -68,10 +68,6 @@ class EntitiesController < ApplicationController
 
     @entity.update_attributes(params[:entity])
 
-    # Groups may change their membership based on rule changes,
-    # making our AR object stale.
-    #@entity.reload if params[:entity][:type] == "Group"
-
     @entity.trigger_sync
 
     respond_with(@entity) do |format|
