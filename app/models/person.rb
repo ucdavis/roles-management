@@ -81,15 +81,28 @@ class Person < Entity
   end
 
   # Returns all applications visible to a user
-  # WARNING: This is incredibly slow (due to the .with_permissions_to ?)
   def accessible_applications
-    begin
-      Application.with_permissions_to(:read).includes(:roles)
-    rescue Authorization::NotAuthorized
-      []
+    applications = []
+
+    ApplicationOwnership.eager_load(:application).where(:entity_id => self.id).each do |ao|
+      applications << ao.application
     end
+    ApplicationOperatorship.eager_load(:application).where(:entity_id => self.id).each do |ao|
+      applications << ao.application
+    end
+
+    self.groups.each do |g|
+      ApplicationOwnership.eager_load(:application).where(:entity_id => g.id).each do |ao|
+        applications << ao.application
+      end
+      ApplicationOperatorship.eager_load(:application).where(:entity_id => g.id).each do |ao|
+        applications << ao.application
+      end
+    end
+
+    return applications.uniq
   end
-  
+
   # Returns all applications the user has an ownership or operatorship on
   def manageable_applications
     if role_symbols.include? :admin
@@ -116,9 +129,9 @@ class Person < Entity
       GroupRule.resolve_target!(:loginid, id)
     end
   end
-  
+
   private
-  
+
   # has_many does not have a :touch attribute.
   # If a person goes from inactive to active, we need to ensure
   # any role_assignment or group views are touched correctly.

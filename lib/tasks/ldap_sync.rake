@@ -3,6 +3,9 @@ namespace :ldap do
   require 'ldap_helper'
   require 'ldap_person_helper'
 
+  require 'authentication'
+  include Authentication
+
   desc 'Run the LDAP import'
   task :import, [:loginid] => :environment do |t, args|
     begin
@@ -11,7 +14,7 @@ namespace :ldap do
 
       notify_admins = false
 
-      Authorization.ignore_access_control(true)
+      disable_authorization
 
       # Keep a log to e-mail to the admins
       strio = StringIO.new
@@ -104,7 +107,7 @@ namespace :ldap do
 
       Rails.logger.info strio.string
 
-      Authorization.ignore_access_control(false)
+      enable_authorization
     rescue => exception
       ExceptionNotifier.notify_exception(exception)
     end

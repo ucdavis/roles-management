@@ -7,7 +7,7 @@ class ApplicationsController < ApplicationController
 
   def index
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
-    
+
     respond_with @applications do |format|
       format.html
     end
@@ -15,7 +15,7 @@ class ApplicationsController < ApplicationController
 
   def show
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application show view for #{params[:id]}."
-    
+
     respond_with @application do |format|
       format.csv {
         require 'csv'
@@ -56,7 +56,7 @@ class ApplicationsController < ApplicationController
     else
       logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to create new application, #{params[:application]}."
     end
-    
+
     @application.trigger_sync
 
     respond_with @application
@@ -68,7 +68,7 @@ class ApplicationsController < ApplicationController
     if @application.update_attributes(params[:application])
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
     end
-    
+
     @application.trigger_sync
 
     respond_with @application do |format|
@@ -93,17 +93,17 @@ class ApplicationsController < ApplicationController
 
   def load_applications
     manageable_applications = current_user.manageable_applications
-    
+
     if params[:q]
       apps = Application.arel_table
       @applications = manageable_applications.where(apps[:name].matches("%#{params[:q]}%"))
     else
       @applications = manageable_applications
     end
-    
+
     @applications = @applications.sort_by(&:created_at)
   end
-  
+
   def new_application_from_params
     params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
     params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id

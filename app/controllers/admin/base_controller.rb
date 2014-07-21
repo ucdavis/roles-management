@@ -12,6 +12,6 @@ class Admin::BaseController < ApplicationController
   # Ensure /admin/ operations authorize against the actual user,
   # not an impersonated user.
   def current_user
-    actual_user
+    Authentication.actual_user
   end
 end

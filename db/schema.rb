@@ -73,6 +73,13 @@ ActiveRecord::Schema.define(:version => 20140321005717) do
 
   add_index "application_operatorships", ["application_id", "entity_id", "parent_id"], :name => "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
 
+  create_table "application_ou_assignments", :force => true do |t|
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "application_id"
+    t.integer  "ou_id"
+  end
+
   create_table "application_ownerships", :force => true do |t|
     t.integer  "entity_id"
     t.integer  "application_id"
@@ -147,6 +154,11 @@ ActiveRecord::Schema.define(:version => 20140321005717) do
   add_index "entities", ["name"], :name => "index_entities_on_name"
   add_index "entities", ["ou_id"], :name => "index_entities_on_ou_id"
 
+  create_table "group_group", :id => false, :force => true do |t|
+    t.integer "group_id"
+    t.integer "subgroup_id"
+  end
+
   create_table "group_memberships", :force => true do |t|
     t.integer  "group_id"
     t.integer  "entity_id"
@@ -189,6 +201,21 @@ ActiveRecord::Schema.define(:version => 20140321005717) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "group_id"
+  end
+
+  create_table "groups", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "min_size"
+    t.integer  "max_size"
+    t.integer  "head_id"
+    t.integer  "role_id"
+  end
+
+  create_table "groups_people", :id => false, :force => true do |t|
+    t.integer "group_id"
+    t.integer "person_id"
   end
 
   create_table "majors", :force => true do |t|
@@ -245,6 +272,51 @@ ActiveRecord::Schema.define(:version => 20140321005717) do
   end
 
   add_index "organizations", ["dept_code"], :name => "index_organizations_on_dept_code"
+
+  create_table "ou_assignments", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "person_id"
+    t.integer  "ou_id"
+  end
+
+  create_table "ou_children_assignments", :force => true do |t|
+    t.integer "ou_id"
+    t.integer "child_id"
+  end
+
+  create_table "ou_manager_assignments", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "ou_id"
+    t.integer  "manager_id"
+  end
+
+  create_table "ou_ou_assignments", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "ous", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "code"
+  end
+
+  create_table "people", :force => true do |t|
+    t.string   "first"
+    t.string   "last"
+    t.string   "email"
+    t.string   "loginid"
+    t.string   "preferred_name"
+    t.boolean  "status"
+    t.string   "phone"
+    t.string   "address"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "title_id"
+  end
 
   create_table "person_favorite_assignments", :force => true do |t|
     t.integer  "entity_id"

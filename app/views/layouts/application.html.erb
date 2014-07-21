@@ -19,14 +19,14 @@
     <div class="navbar-inner">
       <div class="container-fluid">
         <%= link_to "Roles Management", applications_url, :class => "brand" %>
-        
+
         <div class="nav-collapse collapse">
           <ul class="nav pull-right">
             <li class="dropdown">
               <% _has_role? :admin do %>
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Administrate <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <% unless session[:impersonation_id].nil? %>
+                <% if _impersonating? %>
                   <li><a href="#unimpersonate">Unimpersonate</a></li>
                 <% else %>
                   <li><a href="#impersonate">Impersonate…</a></li>
@@ -53,7 +53,7 @@
 
   <%= javascript_include_tag "application" %>
   <%= yield :javascript %>
-  
+
   <div id="get-support"><a href="https://sysaid.dss.ucdavis.edu/SubmitSR.jsp?formID=0&reRoute=1&isLogged=1&noframe=null&populateSR_id=0&pageID=1&subPageID=undefined&changes=1&right2left=false&autoDescriptionTemplate=N&problem_type=Websites+and+Web+Apps&subcategory=Error+or+Problem&title=Roles+Management+Bug+Report&desc=What+were+you+doing+when+the+error+occurred%3F%0D%0A%0D%0AIf+you+received+an+error+message%2C+what+was+the+exact+text%3F%0D%0A%0D%0AWhat+web+browser+and+version+were+you+using%3F" target="_blank"><button class="btn btn-danger"><i class="icon-comment icon-white" style="margin-right: 8px;"></i>Report a Problem</button></a></div>
 </body>
 </html>
