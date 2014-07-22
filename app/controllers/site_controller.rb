@@ -17,6 +17,7 @@ class SiteController < ApplicationController
 
   def access_denied
     logger.info "#{request.remote_ip}: Loaded access denied page."
+    @show_unimpersonate_link = impersonating?
     render :status => :forbidden
   end
 

@@ -30,12 +30,12 @@ module Authentication
   end
 
   # To be called from the outside in order to impersonate someone
-  def impersonate(id)
+  def auth_impersonate(id)
     session[:impersonate_id] = id
   end
 
   # Removes any impersonation
-  def unimpersonate
+  def auth_unimpersonate
     session.delete(:impersonate_id)
   end
 
@@ -48,19 +48,26 @@ module Authentication
   # Differs from self.current_user, this method is 'include'd in the
   # ApplicationController and made available to CanCanCan
   def current_user
-    if impersonating?
-      return Authentication.effective_user
-    else
-      return Authentication.actual_user
-      # case session[:auth_via]
-      # when :whitelisted_ip
-      #   return ApiWhitelistedIpUser.find_by_address(session[:user_id])
-      # when :api_key
-      #   return ApiKeyUser.find_by_name(session[:user_id])
-      # when :cas
-      #   return Authorization.current_user
-      # end
+    logger.debug "current_user called"
+
+    case session[:auth_via]
+    when :whitelisted_ip
+      logger.debug "auth_via is :whitelisted_ip"
+      return ApiWhitelistedIpUser.find_by_address(session[:user_id])
+    when :api_key
+      logger.debug "auth_via is :api_key"
+      return ApiKeyUser.find_by_name(session[:user_id])
+    when :cas
+      logger.debug "auth_via is :cas"
+      if self.impersonating?
+        logger.debug "impersonating so returning effective_user (#{Authentication.effective_user})"
+        return Authentication.effective_user
+      else
+        logger.debug "not impersonating so returning actual_user (#{Authentication.actual_user})"
+        return Authentication.actual_user
+      end
     end
+    # end
   end
 
   def authenticated?
@@ -79,17 +86,20 @@ module Authentication
   # Ensure session[:auth_via] exists.
   # This is populated by a whitelisted IP request, a CAS redirect or a HTTP Auth request
   def authenticate
+    logger.debug "authenticate called."
     if authenticated?
+      logger.debug "authenticated? is true, checking auth_via ..."
       case session[:auth_via]
       when :whitelisted_ip
         Authentication.actual_user = ApiWhitelistedIpUser.find_by_address(session[:user_id])
       when :api_key
         Authentication.actual_user = ApiKeyUser.find_by_name(session[:user_id])
       when :cas
+        logger.debug "auth_via is :cas, setting actual_user to #{session[:user_id]}"
+        Authentication.actual_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
         if self.impersonating?
-          Authentication.actual_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonation_id])
-        else
-          Authentication.actual_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
+          logger.debug "impersonating? is true. Also setting effective_user to #{session[:impersonate_id]}"
+          Authentication.effective_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonate_id])
         end
       end
       logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{session[:user_id]}, #{Authorization.current_user}"

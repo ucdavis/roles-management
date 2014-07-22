@@ -7,18 +7,18 @@ class Admin::OpsController < Admin::BaseController
     @person = Person.find_by_loginid(params[:loginid])
 
     unless @person.nil?
-      logger.info "#{actual_user.log_identifier}@#{request.remote_ip}: Impersonating #{params[:loginid]}."
+      logger.info "#{Authentication.actual_user.log_identifier}@#{request.remote_ip}: Impersonating #{params[:loginid]}."
 
-      Authentication.impersonate(@person.id)
+      auth_impersonate(@person.id)
     end
 
     redirect_to applications_url
   end
 
   def unimpersonate
-    logger.info "#{actual_user.log_identifier}@#{request.remote_ip}: Un-impersonating #{session[:impersonation_id]}."
+    logger.info "#{Authentication.actual_user.log_identifier}@#{request.remote_ip}: Un-impersonating #{session[:impersonation_id]}."
 
-    Authentication.unimpersonate
+    auth_unimpersonate
 
     redirect_to applications_url
   end
