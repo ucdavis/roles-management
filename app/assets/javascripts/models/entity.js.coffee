@@ -153,7 +153,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
 
   # Returns true if DssRm.current_user cannot modify this entity
   isReadOnly: ->
-    console.log "isReadOnly called @relationship() and got: #{@relationship()}"
     if @relationship() is 'admin' or @relationship() is 'owner' then return false
     true
 
