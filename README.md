@@ -61,7 +61,6 @@ Run the follow commands in order and ensure they complete successfully:
 
  * bundle install
  * bundle exec rake db:schema:load
- * bundle exec rake db:seed
 
 ### Step 3. (Add a user)
 

@@ -229,9 +229,9 @@ ActiveRecord::Schema.define(:version => 20140321005717) do
 
   create_table "organization_parent_ids", :force => true do |t|
     t.integer  "organization_id"
-    t.integer  "parent_org_id",   :limit => 255
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
+    t.integer  "parent_org_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
   end
 
   add_index "organization_parent_ids", ["organization_id"], :name => "index_organization_parent_ids_on_organization_id"

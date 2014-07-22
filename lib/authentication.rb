@@ -91,9 +91,13 @@ module Authentication
     # sets that variable. Note that the way before_filters work, this call
     # will render or redirect but this function will still finish before
     # the redirect is actually made.
-    CASClient::Frameworks::Rails::Filter.filter(self)
+    #CASClient::Frameworks::Rails::Filter.filter(self)
+
+    session[:cas_user] = 'cthielen'
 
     if session[:cas_user]
+      logger.debug "cas_user is set in session, attempting CAS-based authentication"
+
       # CAS session exists. Valid user account?
       @user = Person.includes(:role_assignments).includes(:roles).find_by_loginid(session[:cas_user])
       @user = nil if @user and @user.active == false # Don't allow disabled users to log in

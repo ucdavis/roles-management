@@ -23,6 +23,7 @@ group :development, :test do
   gem 'capybara' # for JS integration testing
   gem 'poltergeist' # for PhantomJS-based testing with capybara
   gem 'sqlite3'
+  gem 'mysql2'
 end
 
 gem "rubysl", "~> 2.0", :platform => :rbx
