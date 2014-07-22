@@ -16,8 +16,9 @@ DssRm.Models.Entity = Backbone.Model.extend(
 
   initialize: ->
     @resetNestedCollections()
-    @on "sync", @resetNestedCollections, this
-  
+    @on "sync", @resetNestedCollections, this # for save?
+    @on "change", @resetNestedCollections, this # so entity.fetch() updates nestedCollections
+
   resetNestedCollections: ->
     if @type() is EntityTypes.group
       @owners = new DssRm.Collections.Entities if @owners is `undefined`
@@ -30,12 +31,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @operators.reset @get("operators")
       @memberships.reset @get("memberships")
       @rules.reset @get("rules")
-      
-      # Enforce the design pattern by removing from @attributes what is represented in a nested collection
-      delete @attributes.owners
-      delete @attributes.operators
-      delete @attributes.memberships
-      delete @attributes.rules
 
     else if @type() is EntityTypes.person
       # Ensure nested collections exist
@@ -45,7 +40,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_memberships = new Backbone.Collection if @group_memberships is `undefined`
       @role_assignments = new DssRm.Collections.RoleAssignments if @role_assignments is `undefined`
       @organizations = new Backbone.Collection if @organizations is `undefined`
-      
+
       # Reset nested collection data
       @favorites.reset @get("favorites")
       @group_ownerships.reset @get("group_ownerships")
@@ -53,15 +48,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_memberships.reset @get("group_memberships")
       @role_assignments.reset @get("role_assignments")
       @organizations.reset @get("organizations")
-      
-      # Enforce the design pattern by removing from @attributes what is represented in a nested collection
-      delete @attributes.favorites
-      delete @attributes.group_ownerships
-      delete @attributes.group_operatorships
-      delete @attributes.group_memberships
-      delete @attributes.role_assignments
-      delete @attributes.organizations
-  
+
   toJSON: ->
     if @type() is EntityTypes.group
       json = {}
@@ -71,7 +58,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.description = @get("description")
       json.owner_ids = @owners.map (owner) -> owner.id
       json.operator_ids = @operators.map (operator) -> operator.id
-      
+
       # Note: We use Rails' nested attributes here
       explicit_members = @memberships.filter (membership) ->
         membership.get('calculated') == false
@@ -89,13 +76,13 @@ DssRm.Models.Entity = Backbone.Model.extend(
           condition: rule.get('condition')
           value: rule.get('value')
           _destroy: rule.get('_destroy')
-    
+
     else if @type() is EntityTypes.person
-      json = {} 
-      
+      json = {}
+
       # Person-specific JSON
       json.type = "Person"
-      
+
       json.first = @get("first")
       json.last = @get("last")
       json.address = @get("address")
@@ -103,7 +90,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       json.loginid = @get("loginid")
       json.phone = @get("phone")
       json.active = @get("active")
-      
+
       json.favorite_ids = @favorites.map (favorite) -> favorite.id
       if @group_memberships.length
         json.group_memberships_attributes = @group_memberships.map (membership) ->
@@ -112,10 +99,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
           entity_id: membership.get('entity_id')
           group_id: membership.get('group_id')
           _destroy: membership.get('_destroy')
-      # if @organizations.length
-      #   json.organizations_attributes = @organizations.map (organization) ->
-      #     id: organization.get('id')
-      #     _destroy: organization.get('_destroy')
       if @group_operatorships.length
         json.group_operatorships_attributes = @group_operatorships.map (operatorship) ->
           id: operatorship.get('id')
@@ -136,7 +119,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
           role_id: assignment.get('role_id')
           entity_id: assignment.get('entity_id')
           _destroy: assignment.get('_destroy')
-    
+
     entity: json
 
   type: ->
@@ -144,14 +127,14 @@ DssRm.Models.Entity = Backbone.Model.extend(
       result = @get('type').toLowerCase()
     else if @get('group_id')
       result = 'group'
-    
+
     if result == "person"
       return EntityTypes.person
     else if result == "group"
       return EntityTypes.group
-    
+
     return EntityTypes.unknown
-  
+
   # Returns only the "highest" relationship (this order): admin, owner, operator
   # Does not return anything if not admin, owner, or operator on purpose
   # Uses DssRm.current_user as the entity
@@ -167,17 +150,18 @@ DssRm.Models.Entity = Backbone.Model.extend(
       return 'operator' if @operators.find( (o) ->
         o.id is current_user_id
       ) isnt `undefined`
-  
+
   # Returns true if DssRm.current_user cannot modify this entity
   isReadOnly: ->
+    console.log "isReadOnly called @relationship() and got: #{@relationship()}"
     if @relationship() is 'admin' or @relationship() is 'owner' then return false
     true
-  
+
   # Returns only explicit group memberships (valid only for Person entity, not Group)
   uncalculatedGroupMemberships: ->
     if @type() != EntityTypes.person
       return []
-    
+
     @group_memberships.filter( (group) ->
       group.get('calculated') == false
     )
@@ -190,15 +174,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
     @group_memberships.filter( (group) ->
       group.get('calculated') == true
     )
-  
-  # ouGroupMemberships: ->
-  #   unless @group_memberships
-  #     return []
-  # 
-  #   @group_memberships.filter( (group) ->
-  #     group.get('ou') == true
-  #   )
-  
+
   nonOuGroupMemberships: ->
     unless @group_memberships
       return []
@@ -211,7 +187,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
 DssRm.Collections.Entities = Backbone.Collection.extend(
   model: DssRm.Models.Entity
   url: "/entities"
-  
+
   # Two orders of sorting:
   # Calculated entities always come first, then groups
   # So a calculated person (12) comes _before_ a non-calculated group (21),
