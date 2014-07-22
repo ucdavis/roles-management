@@ -1,16 +1,16 @@
-<h3>You don't have permission to do that.</h3>
+<% if @show_unimpersonate_link %>
+  <h3>The impersonated user does not have access.</h3>
+  <p>If desired, <%= link_to "click here to stop impersonating", admin_ops_unimpersonate_url %> or go back.</p>
+<% else %>
+  <h3>You don't have permission to do that.</h3>
 
-<p>There are a few reasons this could be:</p>
-<ul>
-  <li>You haven't been granted access to this system.</li>
-  <li>You don't have the right level of access to this system.</li>
-  <li>Something has gone wrong with the system.</li>
-</ul>
-<p>
-  <b>If you believe this is an error</b>, please contact your supervisor or IT support.
-</p>
-
-<% unless session[:impersonation_id].nil? %>
-  <h3>Wait a sec, you're an administrator!</h3>
-  <p>You probably need this: <%= link_to "unimpersonate link", admin_ops_unimpersonate_url %>.</p>
+  <p>There are a few reasons this could be:</p>
+  <ul>
+    <li>You haven't been granted access to this system.</li>
+    <li>You don't have the right level of access to this system.</li>
+    <li>Something has gone wrong with the system.</li>
+  </ul>
+  <p>
+    <b>If you believe this is an error</b>, please contact your supervisor or IT support.
+  </p>
 <% end %>

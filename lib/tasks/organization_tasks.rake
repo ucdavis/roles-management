@@ -1,9 +1,12 @@
 require 'rake'
 
 namespace :organization do
+  require 'authentication'
+  include Authentication
+
   desc 'Imports organizations from a CSV file'
   task :import_csv, [:csv_file] => :environment do |t, args|
-    Authorization.ignore_access_control(true)
+    disable_authorization
 
     unless args[:csv_file]
       puts "You must specify a CSV file to import."
@@ -20,7 +23,7 @@ namespace :organization do
       puts "Unable to read file #{args[:csv_file]}."
       exit
     end
-    
+
     # We'll grab the parent organization codes while parsing the CSV but will need to
     # analyze them only after the CSV parsing is complete.
     parental_codes = {}
@@ -29,32 +32,32 @@ namespace :organization do
     csv = CSV.parse(csv_text, :headers => true)
     csv.each do |row|
       row_count = row_count + 1
-      
+
       if row["HOME_DEPARTMENT_NUM"].nil?
         puts "Skipping a row with no department code:"
         pp row
         next
       end
-      
+
       # Any organization that reports to itself is expired or invalid
       next if (row["CHART_NUM"] + row["ORG_ID"]) == (row["RPTS_TO_ORG_CHART_NUM"] + row["RPTS_TO_ORG_ID"])
 
       organization = Organization.find_or_initialize_by_dept_code(row["HOME_DEPARTMENT_NUM"])
-      
+
       # Save the basic organization information. Maybe already be set.
       organization.name = row["HOME_DEPARTMENT_PRIMARY_NAME"]
       organization.dept_code = row["HOME_DEPARTMENT_NUM"]
       organization.save!
-      
+
       # Remember the parental code for later analysis
       parental_codes[organization.dept_code] = [] unless parental_codes[organization.dept_code]
       parental_code = row["RPTS_TO_ORG_CHART_NUM"] + row["RPTS_TO_ORG_ID"]
       parental_codes[organization.dept_code] << parental_code unless parental_codes[organization.dept_code].include?(parental_code)
-      
+
       # Add this organization_code to the list of this organization's valid codes
       OrganizationOrgId.create!({ org_id: row["CHART_NUM"] + row["ORG_ID"], organization_id: organization.id })
     end
-    
+
     puts "Finished importing from CSV. Read #{row_count} rows to create #{Organization.count} organizations."
     puts "Parsing organizations to determine parental relationships ..."
 
@@ -63,13 +66,13 @@ namespace :organization do
     # Now that we have all organizations, go through and attempt to build the parent relationships
     Organization.all.each do |organization|
       count = count + 1
-      
+
       # if count == 20
       #   exit
       # end
 
       puts "Parsing #{organization.id} #{organization.dept_code} #{organization.name}"
-      
+
       # Find their parent organization ID by dept code, creating one if necessary
       parent_org_ids = parental_codes[organization.dept_code]
 
@@ -86,19 +89,19 @@ namespace :organization do
         end
 
         parent_organization = parent_organization.first
-        
+
         unless parent_organization
           puts "\tWe need to construct a parent ..."
           # Sadly if this is the case, we know very little about the organization ...
           parent_organization = Organization.create!
           OrganizationOrgId.create!({ org_id: parent_org_id, organization_id: parent_organization.id })
         end
-        
+
         if parent_organization.id != organization.id
           parental_orgs << parent_organization unless parental_orgs.include?(parent_organization)
         end
       end
-      
+
       # Display some debug about whether we found multiple, valid parents
       if parental_orgs.length > 1
         puts "\tHas multiple parental orgs:"
@@ -114,7 +117,7 @@ namespace :organization do
       else
         puts "\tHas single or not parental org: #{parental_orgs.length}"
       end
-      
+
       parental_orgs.each do |parental_org|
         puts "\tAssigning parental_org #{parental_org.id} #{parental_org.name} ..."
         begin
@@ -124,12 +127,12 @@ namespace :organization do
         end
       end
     end
-    
+
     puts "Went through #{count} organizations. #{with_multiple} had multiple parents."
-    
-    Authorization.ignore_access_control(false)
+
+    enable_authorization
   end
-  
+
   # As part of the migration from Groups with codes (to signify OUs) to a proper
   # Organization model we need to ensure every Group with a code is accounted for.
   # This task (temporarily needed) looks for Groups which have no Organization
@@ -138,7 +141,7 @@ namespace :organization do
   task :check_groups => :environment do
     Group.where('code is not null').each do |ou_group|
       organization = Organization.find_by_dept_code(ou_group.code)
-      
+
       if organization
         puts "Group (#{ou_group.name}) has a matching Organization (#{organization.name})"
       else
@@ -151,17 +154,17 @@ namespace :organization do
   # This task is only temporarily needed. Run organization:import_csv first.
   desc 'Check for missing organizations'
   task :migrate_groups => :environment do
-    Authorization.ignore_access_control(true)
-    
+    disable_authorization
+
     Group.where('code is not null').each do |ou_group|
       organization = Organization.find_by_dept_code(ou_group.code)
-      
+
       puts "Group (#{ou_group.name}):"
-      
+
       if organization
         group_rule_counts = {}
         puts "\tHas a matching Organization (#{organization.name}). Converting ..."
-        
+
         # Convert any "OU is..." groups which use this group into an "Organization is..." rule
         GroupRule.where(column: 'ou', value: ou_group.name).each do |group_rule|
           group_rule_counts[group_rule.id] = group_rule.results.length
@@ -171,7 +174,7 @@ namespace :organization do
             puts "\t\t\t#{result.entity.id} #{result.entity.name} (#{result.entity.type})"
           end
         end
-        
+
         # Add members from the OU-Group to the Organization
         ou_group.members.each do |member|
           puts "\t\tAdding member #{member.name} (#{member.type}) to Organization"
@@ -181,18 +184,18 @@ namespace :organization do
             puts "\t\tCould not add member to organization: #{e}. Ignoring ..."
           end
         end
-        
+
         # Remove those members from the OU-Group
         ou_group.memberships.each do |membership|
           puts "\t\tDestroying membership #{membership.id}"
           membership.destroy
         end
-        
+
         # Create a new rule within that group for "Department is..." to restore those members
         # via calculation
         puts "\t\t"
         gr = GroupRule.create!({ column: "organization", condition: "is", value: organization.name, group_id: ou_group.id })
-        
+
         puts "\tConverting group rules using this group ..."
         # Convert any "OU is..." groups which use this group into an "Organization is..." rule
         GroupRule.where(column: 'ou', value: ou_group.name).each do |group_rule|
@@ -212,29 +215,29 @@ namespace :organization do
         end
       else
         puts "\tHas no matching organization, will leave it alone ..."
-        
+
         if GroupRule.where(column: 'ou', value: ou_group.name).length > 0
           puts "\t\tBut this non-matching group has a group rule. This is unsupported in the migration!"
           exit
         end
       end
     end
-    
+
     GroupRule.where(column: 'ou').each do |rule|
       puts "WARNING: A rule exists for 'ou' #{rule.condition} '#{rule.value}'. If this is a group that should have been converted, the name likely couldn't be matched exactly and you will need to migrate the rule yourself. It is attached to group #{rule.group.id}, #{rule.group.name}."
     end
-    
+
     puts "Group rules were generated using 'Organization is'. This should be converted to 'Department is' soon."
-    
-    Authorization.ignore_access_control(false)
+
+    enable_authorization
   end
-  
+
   # The UCD data is bad and contains some parent/child loops. Fortunately, they represent
   # invalid relationships so we'll simply remove them if found.
   desc 'Remove any two-way parent/child relationships'
   task :remove_parental_loops => :environment do
-    Authorization.ignore_access_control(true)
-    
+    disable_authorization
+
     loop_count = 0
     Organization.all.each do |organization|
       organization.parent_organizations.each do |parent|
@@ -245,10 +248,10 @@ namespace :organization do
         end
       end
     end
-    
+
     puts "Destroyed #{loop_count} loops."
-    
-    Authorization.ignore_access_control(false)
+
+    enable_authorization
   end
 
   desc 'List any organization with more than one parent'
@@ -257,14 +260,14 @@ namespace :organization do
       puts "#{organization.name} (#{organization.parent_organizations.length})" if organization.parent_organizations.length > 1
     end
   end
-  
+
   # Verifies all nameless organizations are top-level and combines them into one top-level
   # node. It then attaches any named top-level organizations as children of that node,
   # leaving the org tree with a single top-level parent node.
   desc 'Adds a top-level node containing all the parentless-nodes'
   task :add_top_level_node => :environment do
-    Authorization.ignore_access_control(true)
-    
+    disable_authorization
+
     # Find nameless organizations and verify they are all top-level
     nameless_organizations = []
     Organization.all.each do |organization|
@@ -281,30 +284,30 @@ namespace :organization do
           puts "Found a nameless organization with assigned entities: #{organization.name} (#{organization.id}). This is unexpected. Aborting."
           exit
         end
-        
+
         puts "Found nameless organization: #{organization.id}"
         nameless_organizations << organization
       end
     end
-    
+
     # Combine them into a single top-level organization (we do not have to worry about entities nor dept code due to the checks above)
     top_level = Organization.create!({name: "UC Davis"})
     puts "Created top-level organization 'UC Davis' (#{top_level.id})"
-    
+
     nameless_organizations.each do |nameless_org|
       ## Assign all the org IDs of the nameless organizations to top-level
       nameless_org.org_ids.each do |nameless_org_id|
         puts "\tAssigning nameless org (#{nameless_org.id}) org_id of #{nameless_org_id.org_id} to the top-level ..."
-        
+
         org_id = nameless_org_id.org_id
-        
+
         # We need to delete the org_id before re-assigning it as they must remain unique in the database
         nameless_org_id.destroy
-        
+
         OrganizationOrgId.create!({ org_id: org_id, organization_id: top_level.id })
         puts "\tdone."
       end
-      
+
       ## Assign all the child organizations of the nameless organizations to the top-level
       nameless_org.child_organizations.each do |child_org|
         if top_level.child_organizations.include?(child_org)
@@ -315,13 +318,13 @@ namespace :organization do
           puts "\tdone."
         end
       end
-      
+
       ## Finally, remove the nameless_org
       puts "\tRemoving nameless org #{nameless_org.id} ..."
       nameless_org.destroy
       puts "\tdone."
     end
-    
+
     # Find the remaining orphaned orgs and assign them to the new top-level; they should all have names
     Organization.all.each do |organization|
       unless organization.id == top_level.id # don't want to add the new top-level!
@@ -334,63 +337,63 @@ namespace :organization do
         end
       end
     end
-    
+
     # Verify that there is only one top-level org and print out some stats
     top_orgs = Organization.includes(:parent_org_ids).where(:organization_parent_ids => { id: nil })
     if top_orgs.length != 1
       puts "Uh oh! Looks like there's more than one top-level org even though we're done. There are #{top_orgs.length}."
       exit
     end
-    
+
     top_org = top_orgs[0]
-    
+
     puts "New top-level org #{top_org.name} (#{top_org.id}) has #{top_org.org_ids.length} org IDs and #{top_org.child_organizations.length} children."
-    
-    Authorization.ignore_access_control(false)
+
+    enable_authorization
   end
 
   desc 'Removes a top-level node if one exists'
   task :remove_top_level_node => :environment do
-    Authorization.ignore_access_control(true)
-    
+    disable_authorization
+
     orphaned_organizations = []
-    
+
     Organization.all.each do |organization|
       orphaned_organizations << organization if organization.parent_organizations.length == 0
     end
-    
+
     if orphaned_organizations.length != 1
       puts "Cannot proceed. There are #{orphaned_organizations.length} top-level organizations, not 1."
       exit
     end
-    
+
     top_level = orphaned_organizations[0]
-    
+
     puts "Detaching #{top_level.child_organizations.length} organizations from the top-level node (#{top_level.name}):"
     top_level.child_organizations.each do |org|
       puts "\tDetaching #{org.name} (#{org.id})"
       top_level.child_organizations.destroy(org)
     end
-    
+
     puts "Destroying the top-level node #{top_level.name} (#{top_level.id}) ..."
     top_level.destroy
-    
-    Authorization.ignore_access_control(false)
+
+    enable_authorization
   end
 
   desc 'List any organizations who have a parent which is also a grandparent'
   task :list_dubious_parentage, [:options] => :environment do |t, args|
-    Authorization.ignore_access_control(true)
-    
+    disable_authorization
+
     remove = args[:options] == 'remove'
-    
+
     Organization.all.each do |organization|
       if organization.parent_organizations.length > 1
         parent_ids = organization.parent_organizations.map{ |org| org.id }
         organization.parent_organizations.each do |parent|
           grandparent_ids = parent.parent_organizations.map{ |org| org.id }
           intersections = parent_ids & grandparent_ids
-          
+
           intersections.each do |i|
             puts "#{organization.name} (#{organization.id}) has #{Organization.find_by_id(i).name} (#{Organization.find_by_id(i).id}) as a parent but this is also a grandparent."
             if remove
@@ -405,40 +408,39 @@ namespace :organization do
         end
       end
     end
-    
-    Authorization.ignore_access_control(false)
+
+    enable_authorization
   end
-  
+
   desc 'Drop all organizations'
   task :drop => :environment do
-    Authorization.ignore_access_control(true)
-    
+    disable_authorization
+
     org_count = Organization.count
-    
+
     Organization.destroy_all
-    
-    Authorization.ignore_access_control(false)
-    
+
+    enable_authorization
+
     puts "#{org_count} organization(s) dropped."
   end
-  
+
   desc 'Generate a GraphViz-compatible output to STDOUT'
   task :graphviz => :environment do
-    Authorization.ignore_access_control(true)
-    
+    disable_authorization
+
     puts "digraph unix {"
     puts "\tsize=\"6,6\";"
     puts "\tnode [color=lightblue2, style=filled];"
-    
+
     Organization.all.each do |org|
       org.child_organizations.each do |child|
         puts "\t\"#{org.id}:#{org.name}\" -> \"#{child.id}:#{child.name}\";"
       end
     end
-    
+
     puts "}"
-    
-    Authorization.ignore_access_control(false)
+
+    enable_authorization
   end
 end
-

@@ -16,7 +16,7 @@ class PeopleController < ApplicationController
   def show
     respond_with(@person)
   end
-  
+
   def update
     if params[:id] and params[:person]
       @person = Person.find(params[:id])
@@ -27,25 +27,25 @@ class PeopleController < ApplicationController
       respond_with 422
     end
   end
-  
+
   ## Non-RESTful ACTIONS
-  
+
   # 'search' queries _external_ databases (LDAP, etc.). GET /search?q=loginid (can be partial loginid, * will be appended)
   # If you wish to search the internal databases, use index with GET parameter q=..., e.g. /people?q=somebody
   def search
     require 'ldap_helper'
     require 'ostruct'
-    
+
     @results = []
-    
+
     if params[:term]
       ldap = LdapHelper.new
       ldap.connect
-    
+
       ldap.search("(|(uid=#{params[:term]}*)(cn=#{params[:term]}*)(sn=#{params[:term]}*))") do |result|
         if result.get_values('uid')
           p = OpenStruct.new
-        
+
           p.loginid = result.get_values('uid')[0]
           p.first = result.get_values('givenName')[0]
           p.last = result.get_values('sn')[0]
@@ -57,66 +57,66 @@ class PeopleController < ApplicationController
           p.address = result.get_values('street').to_s[2..-3]
           p.name = result.get_values('displayName')[0]
           p.imported = Person.exists?(:loginid => p.loginid)
-        
+
           @results << p
         end
       end
-      
+
       ldap.disconnect
     end
-    
+
     render "people/search"
     #respond_with @results
   end
-  
+
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
     if params[:loginid]
       require 'ldap'
       require 'ldap_helper'
       require 'ldap_person_helper'
-    
+
       logger.tagged "people#import(#{params[:loginid]})" do
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
-      
+
         import_start = Time.now
 
         # We allow creating people (and titles, etc.) for the purpose of import.
         # User must still have authorization for people#import
-        Authorization.ignore_access_control(true)
-      
+        disable_authorization
+
         if params[:loginid]
           ldap_import_start = Time.now
-        
+
           ldap = LdapHelper.new
           ldap.connect
-    
+
           ldap.search("(uid=" + params[:loginid] + ")") do |result|
             @p = LdapPersonHelper.create_or_update_person_from_ldap(result, Rails.logger)
           end
-      
+
           logger.debug @p.inspect
-    
+
           ldap.disconnect
-        
+
           ldap_import_finish = Time.now
         end
 
         if @p
           @p.save
-          
-          Authorization.ignore_access_control(false)
-          
+
+          enable_authorization
+
           import_finish = Time.now
-        
+
           logger.info "Finished LDAP import request. LDAP operations took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
-        
+
           respond_with @p
         else
-          Authorization.ignore_access_control(false)
-          
+          enable_authorization
+
           logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
-        
+
           raise ActionController::RoutingError.new('Not Found')
         end
       end
@@ -126,14 +126,14 @@ class PeopleController < ApplicationController
       respond_with 400
     end
   end
-  
+
   private
-  
+
   def load_person
     @person = Person.with_permissions_to(:read).find_by_loginid(params[:id])
     @person = Person.with_permissions_to(:read).find_by_id(params[:id]) unless @person
   end
-  
+
   def load_people
     if params[:q]
       people_table = Person.arel_table

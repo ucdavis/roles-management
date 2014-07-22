@@ -1,6 +1,9 @@
 require 'rake'
 
 namespace :ad do
+  require 'authentication'
+  include Authentication
+
   desc 'Sync the user database with Active Directory'
   task :sync_all_users => :environment do
     begin
@@ -18,7 +21,7 @@ namespace :ad do
 
         timestamp_start = Time.now
 
-        Authorization.ignore_access_control(true)
+        disable_authorization
 
         # Cache group 'dss-us-auto-all' because we always need it
         groups["dss-us-auto-all"] = ActiveDirectoryWrapper.fetch_group("dss-us-auto-all")
@@ -156,7 +159,7 @@ namespace :ad do
 
         timestamp_finish = Time.now
 
-        Authorization.ignore_access_control(false)
+        enable_authorization
 
         log.info "AD Sync took " + (timestamp_finish - timestamp_start).to_s + " seconds"
       end
@@ -203,7 +206,7 @@ namespace :ad do
           r = Role.includes(:entities).find_by_id(args[:role_id])
 
           unless r.nil?
-            Authorization.ignore_access_control(true)
+            disable_authorization
 
             unless r.ad_path.nil?
               log.info "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD ..."
@@ -314,7 +317,7 @@ namespace :ad do
               log.info "Not syncing role because no AD path is set."
             end
 
-            Authorization.ignore_access_control(false)
+            enable_authorization
           else
             log.warn "Cannot find role with ID #{args[:role_id]}"
           end

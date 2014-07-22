@@ -36,7 +36,10 @@ gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 
 gem 'ejs'
 
+# Phasing this library out due to bugs ...
 gem 'declarative_authorization', "~> 0.5.7"
+# Using this library instead ...
+gem 'cancancan', '~> 1.8'
 
 # For MS Active Directory support
 gem 'net-ldap', :git => 'https://github.com/ruby-ldap/ruby-net-ldap.git', :require => false

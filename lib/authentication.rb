@@ -1,42 +1,105 @@
 module Authentication
-  # Returns the current_user, which may be 'false' if impersonation is active
-  def current_user
-    if impersonating?
-      return Authorization.current_user
-    else
-      case session[:auth_via]
-      when :whitelisted_ip
-        return ApiWhitelistedIpUser.find_by_address(session[:user_id])
-      when :api_key
-        return ApiKeyUser.find_by_name(session[:user_id])
-      when :cas
-        return Authorization.current_user
-      end
-    end
+  class Error < StandardError; end
+
+  # effective_user = Will return impersonated user if any, else 'actual' user
+  # (the admin who might be impersonating)
+  # actual_user    = Always the actual user regardless of whether impersonation
+  # is being used (i.e. returns the admin doing the impersonating)
+  # Outside code should just call 'current_user'
+
+  # This will be set if and only if somebody is impersonating
+  def self.effective_user
+    Thread.current["_auth_effective_user"] || nil
   end
 
-  # Returns the 'actual' user - usually this matches current_user but when
-  # impersonating, it will return the human doing the impersonating, not the
-  # account they are pretending to be. Useful for determining if actions like
-  # 'un-impersonate' should be made available.
-  def actual_user
-    Person.find_by_id(session[:user_id])
+  def self.effective_user=(user)
+    Thread.current["_auth_effective_user"] = user
+  end
+
+  # Set this to the actual user
+  def self.actual_user
+    Thread.current["_auth_actual_user"] || nil
+  end
+
+  def self.actual_user=(user)
+    Thread.current["_auth_actual_user"] = user
+
+    # Remove the following line once declarative_authorization is
+    # factored out.
+    Authorization.current_user = user
+  end
+
+  # To be called from the outside in order to impersonate someone
+  def auth_impersonate(id)
+    session[:impersonate_id] = id
+  end
+
+  # Removes any impersonation
+  def auth_unimpersonate
+    session.delete(:impersonate_id)
+  end
+
+  def impersonating?
+    session[:impersonate_id]
+  end
+
+  # Returns the effective user, which may differ from the actual user if
+  # impersonation is taking place.
+  # Differs from self.current_user, this method is 'include'd in the
+  # ApplicationController and made available to CanCanCan
+  def current_user
+    logger.debug "current_user called"
+
+    case session[:auth_via]
+    when :whitelisted_ip
+      logger.debug "auth_via is :whitelisted_ip"
+      return ApiWhitelistedIpUser.find_by_address(session[:user_id])
+    when :api_key
+      logger.debug "auth_via is :api_key"
+      return ApiKeyUser.find_by_name(session[:user_id])
+    when :cas
+      logger.debug "auth_via is :cas"
+      if self.impersonating?
+        logger.debug "impersonating so returning effective_user (#{Authentication.effective_user})"
+        return Authentication.effective_user
+      else
+        logger.debug "not impersonating so returning actual_user (#{Authentication.actual_user})"
+        return Authentication.actual_user
+      end
+    end
+    # end
+  end
+
+  def authenticated?
+    session[:auth_via]
+  end
+
+  # Wrapper methods to abstract CanCan, declarative_authorization
+  def disable_authorization
+    Authorization.ignore_access_control(true)
+  end
+
+  def enable_authorization
+    Authorization.ignore_access_control(false)
   end
 
   # Ensure session[:auth_via] exists.
   # This is populated by a whitelisted IP request, a CAS redirect or a HTTP Auth request
   def authenticate
-    if session[:auth_via]
+    logger.debug "authenticate called."
+    if authenticated?
+      logger.debug "authenticated? is true, checking auth_via ..."
       case session[:auth_via]
       when :whitelisted_ip
-        Authorization.current_user = ApiWhitelistedIpUser.find_by_address(session[:user_id])
+        Authentication.actual_user = ApiWhitelistedIpUser.find_by_address(session[:user_id])
       when :api_key
-        Authorization.current_user = ApiKeyUser.find_by_name(session[:user_id])
+        Authentication.actual_user = ApiKeyUser.find_by_name(session[:user_id])
       when :cas
-        if impersonating?
-          Authorization.current_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonation_id])
-        else
-          Authorization.current_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
+        logger.debug "auth_via is :cas, setting actual_user to #{session[:user_id]}"
+        Authentication.actual_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
+        if self.impersonating?
+          logger.debug "impersonating? is true. Also setting effective_user to #{session[:impersonate_id]}"
+          Authentication.effective_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonate_id])
         end
       end
       logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{session[:user_id]}, #{Authorization.current_user}"
@@ -49,7 +112,7 @@ module Authentication
       logger.info "API authenticated via whitelist IP: #{request.remote_ip}"
       session[:user_id] = request.remote_ip
       session[:auth_via] = :whitelisted_ip
-      Authorization.current_user = @whitelisted_user
+      Authentication.actual_user = @whitelisted_user
 
       Authorization.ignore_access_control(true)
       @whitelisted_user.logged_in_at = DateTime.now()
@@ -68,7 +131,7 @@ module Authentication
         logger.info "API authenticated via application key"
         session[:user_id] = name
         session[:auth_via] = :api_key
-        Authorization.current_user = @api_user
+        Authentication.actual_user = @api_user
         Authorization.ignore_access_control(true)
         @api_user.logged_in_at = DateTime.now()
         @api_user.save
@@ -104,7 +167,9 @@ module Authentication
         # Valid user found through CAS.
         session[:user_id] = @user.id
         session[:auth_via] = :cas
-        Authorization.current_user = @user
+
+        Authentication.actual_user = @user
+
         Authorization.ignore_access_control(true)
         @user.logged_in_at = DateTime.now()
         @user.save
@@ -137,10 +202,5 @@ module Authentication
         redirect_to :controller => "site", :action => "access_denied"
       end
     end
-  end
-
-  # Returns true if we're currently impersonating another user
-  def impersonating?
-    session[:impersonation_id] ? true : false
   end
 end

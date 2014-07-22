@@ -1,12 +1,15 @@
 require 'rake'
 
 namespace :user do
+  require 'authentication'
+  include Authentication
+
   desc 'Adds access token to user (basic RM usage).'
   task :grant_access, :arg1 do |t, args|
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
 
-    Authorization.ignore_access_control(true)
+    disable_authorization
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
@@ -21,7 +24,7 @@ namespace :user do
       end
     end
 
-    Authorization.ignore_access_control(false)
+    enable_authorization
   end
 
   desc 'Revokes access from user (separate from regular access).'
@@ -53,7 +56,7 @@ namespace :user do
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
 
-    Authorization.ignore_access_control(true)
+    disable_authorization
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
@@ -77,7 +80,7 @@ namespace :user do
       end
     end
 
-    Authorization.ignore_access_control(false)
+    enable_authorization
   end
 
   desc 'Revokes admin from user (will keep regular access).'
@@ -85,7 +88,7 @@ namespace :user do
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
 
-    Authorization.ignore_access_control(true)
+    disable_authorization
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
@@ -103,6 +106,6 @@ namespace :user do
       end
     end
 
-    Authorization.ignore_access_control(false)
+    enable_authorization
   end
 end

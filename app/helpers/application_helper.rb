@@ -10,4 +10,8 @@ module ApplicationHelper
       yield if has_role?(role)
     end
   end
+
+  def _impersonating?
+    impersonating?
+  end
 end
