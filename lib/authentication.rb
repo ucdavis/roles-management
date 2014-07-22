@@ -91,9 +91,7 @@ module Authentication
     # sets that variable. Note that the way before_filters work, this call
     # will render or redirect but this function will still finish before
     # the redirect is actually made.
-    #CASClient::Frameworks::Rails::Filter.filter(self)
-
-    session[:cas_user] = 'cthielen'
+    CASClient::Frameworks::Rails::Filter.filter(self)
 
     if session[:cas_user]
       logger.debug "cas_user is set in session, attempting CAS-based authentication"
