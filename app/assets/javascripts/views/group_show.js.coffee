@@ -193,6 +193,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       @$el.fadeIn()
       if result
         # delete the group and dismiss the dialog
+        console.log "Deleting group with CID #{@model.cid}"
         @model.destroy()
 
         # dismiss the dialog

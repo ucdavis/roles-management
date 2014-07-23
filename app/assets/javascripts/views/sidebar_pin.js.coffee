@@ -10,31 +10,31 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
 
     @$el.html JST["templates/entities/item"](entity: @model)
     @$el.addClass (@model.get('type') || 'group').toLowerCase()
-    
+
     @highlighted = options.highlighted
     @faded = options.faded
 
   render: ->
     @$("span").html @model.escape('name')
-    
+
     # Highlight this entity?
     if @highlighted
       @$el.addClass "highlighted"
-    
+
     # Change actionable icons depending on ownership
     # if !@assignedToCurrentUser()
     #   @$("i.icon-minus").hide()
-    
+
     # Is this pin unrelated to the current_user? Make it appear faded
     if @faded
       @$el.addClass "faded"
-    
+
     # Is this entity a favorite?
     if @favoritedByCurrentUser()
       @$('a.entity-favorite-link>i').addClass('icon-star').removeClass('icon-star-empty').attr('title', 'Unfavorite')
     else
       @$('a.entity-favorite-link>i').removeClass('icon-star').addClass('icon-star-empty').attr('title', 'Favorite')
-    
+
     # if @model.isReadOnly()
     #   @$("i.icon-remove").hide()
     #   @$("i.icon-search").hide()
@@ -42,22 +42,24 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @$("i.icon-lock").hide()
     @$(".entity-details-link").attr("href", @entityUrl()).on "click", (e) ->
       e.stopPropagation() # stop parent from receiving click
-    
+
     @
 
   entityUrl: ->
     unless @model.get('entity_id')
-      debugger
+      # FIXME: We can set entity_id here if needed but it really should already be set (see 'Create Group')
+      @model.set 'entity_id', @get('group_id') || @get('id')
+      debugger unless @model.get('entity_id')
     "#" + "/entities/" + @model.get('entity_id')
 
   toggleEntityFavorite: (e) ->
     e.stopPropagation()
-    
+
     model_id = (@model.get('group_id') || @model.get('entity_id'))
     favorites_entity = DssRm.current_user.favorites.find((e) ->
       e.id is model_id
     )
-    
+
     if favorites_entity
       # Unfavoriting
       DssRm.current_user.favorites.remove favorites_entity
@@ -68,22 +70,22 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
         entity_id: @model.get('entity_id')
         type: @model.get('type')
         name: @model.get('name')
-    
+
     DssRm.current_user.save()
-  
+
   # True if in current_user's favorites, group ownerships, or group operatorships
   assignedToCurrentUser: ->
     return DssRm.view_state.bookmarks.find (i) =>
       return i.get('id') is @model.get('id')
-  
+
   # Returns true if this entity is favorited by the current user
   favoritedByCurrentUser: ->
     return DssRm.current_user.favorites.find (f) =>
       return f.get('id') is @model.get('entity_id')
-  
+
   pinClicked: (e) ->
     e.stopPropagation()
-    
+
     # Mobile browsers don't support hover, so, if the hover controls haven't appeared
     # by now (as they will on desktop browsers via CSS hover), we'll simply display
     # those hover controls and return. If they 'click' (touch) again, we'll proceed
@@ -91,12 +93,12 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     if @$('i:first').css('display') == 'none'
       @$('i').css('display', 'block')
       return
-    
+
     # do nothing if this pin is faded
     return if @faded
-    
+
     id = @model.get('entity_id')
-    
+
     # If a role is selected, toggle the entity's association with that role.
     # If no role is selected, merely filter the application/role list to display their assignments. (not implemented yet)
     selected_role = DssRm.view_state.getSelectedRole()
@@ -106,11 +108,11 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
       matched = selected_role.assignments.filter((a) ->
         (a.get('entity_id') is id) and (a.get('calculated') == false)
       )
-      
+
       if matched.length > 0
         # toggling off
         matched[0].set('_destroy', true)
-        
+
         selected_role.save()
       else
         # toggling on
