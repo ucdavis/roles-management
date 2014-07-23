@@ -51,12 +51,12 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       if selected_role and selected_role.has_assigned(e, false)
         faded = true
 
-      ep = new Backbone.Model
-        entity_id: (e.get('group_id') || e.get('id'))
-        name: e.get('name')
-        type: e.get('type')
+      # ep = new Backbone.Model
+      #   entity_id: (e.get('group_id') || e.get('id'))
+      #   name: e.get('name')
+      #   type: e.get('type')
 
-      pin = @renderSidebarPin(ep, { highlighted: false, faded: faded })
+      pin = @renderSidebarPin(e, { highlighted: false, faded: faded })
       pins_frag.appendChild pin.el
 
     @$('#bookmark-count').html DssRm.view_state.bookmarks.length

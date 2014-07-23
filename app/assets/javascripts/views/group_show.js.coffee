@@ -167,8 +167,6 @@ class DssRm.Views.GroupShow extends Backbone.View
 
     @$('#apply').attr('disabled', 'disabled').html('Saving ...')
 
-    debugger
-
     # Ensure @model.rules is up-to-date
     _.each $('table#rules>tbody>tr'), (el, i) =>
       cid = $(el).data('rule_cid')
@@ -194,7 +192,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     bootbox.confirm 'Are you sure you want to delete ' + @model.escape('name') + '?', (result) =>
       @$el.fadeIn()
       if result
-        # delete the application and dismiss the dialog
+        # delete the group and dismiss the dialog
         @model.destroy()
 
         # dismiss the dialog
