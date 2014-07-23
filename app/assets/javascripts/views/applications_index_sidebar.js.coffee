@@ -2,23 +2,23 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   tagName: "div"
   id: "sidebar-area"
   className: "span3 disable-text-select"
-  
+
   initialize: (options) ->
     @$el.html JST["templates/applications/sidebar"]()
-    
+
     # Re-render the sidebar when favorites, etc. are added/removed
     DssRm.view_state.bookmarks.on 'reset destroy', @render, this
     DssRm.view_state.on 'change', @render, this
-    
+
     @$("#search_sidebar").on "keyup", (e) =>
       entry = $(e.target).val()
       entity = DssRm.view_state.bookmarks.find( (i) -> i.get('name') == entry )
-      
+
       if entity
         DssRm.view_state.set focused_entity_id: entity.id
       else
         DssRm.view_state.set focused_entity_id: null
-    
+
     @$("#search_sidebar").typeahead
       minLength: 3
       sorter: (items) -> # required to keep the order given to process() in 'source'
@@ -36,31 +36,31 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       updater: (item) =>
         @sidebarSearchResultSelected item, @
       items: 15 # we enforce a limit on this but the bootstrap default is still too low
-  
+
   render: ->
     selected_role = DssRm.view_state.getSelectedRole()
-    
+
     pins_frag = document.createDocumentFragment()
     highlighted_pins_frag = document.createDocumentFragment()
-    
+
     # Render 'bookmarks'
     DssRm.view_state.bookmarks.each (e) =>
       faded = false
-      
+
       # 'Fade' bookmark if it is also going to be in the 'Assigned' section
       if selected_role and selected_role.has_assigned(e, false)
         faded = true
-      
+
       ep = new Backbone.Model
         entity_id: (e.get('group_id') || e.get('id'))
         name: e.get('name')
         type: e.get('type')
-      
+
       pin = @renderSidebarPin(ep, { highlighted: false, faded: faded })
       pins_frag.appendChild pin.el
-    
+
     @$('#bookmark-count').html DssRm.view_state.bookmarks.length
-    
+
     # Render 'Assigned'
     if selected_role
       # We parse assignments to ensure we don't display a calculated assignment
@@ -72,9 +72,9 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         unless a.get('calculated') or a.get('_destroy')
           pin = @renderSidebarPin(a, { highlighted: true, faded: false })
           highlighted_pins_frag.appendChild pin.el
-      
+
       @$('#assigned-count').html member_count
-    
+
     @$('ul#pins').html pins_frag
     @$("ul#highlighted_pins").html highlighted_pins_frag
 
@@ -92,14 +92,14 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       $("ul li").css('cursor', 'pointer')
     else
       $("ul li").css('cursor', 'default')
-    
+
     @
-  
+
   # Renders a single sidebar pin and renders the object. Does not add to DOM.
   renderSidebarPin: (entity, options) ->
     pin = new DssRm.Views.SidebarPin { model: entity, highlighted: options.highlighted, faded: options.faded }
     pin.render()
-  
+
   # Populates the sidebar search with results via async call
   sidebarSearch: (query, process) ->
     $.ajax(
@@ -132,13 +132,15 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
     switch id
       when DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
         DssRm.router.navigate "import/" + label.slice(14), {trigger: true} # slice(14) is removing the "Import Person " prefix
-      
+
       when DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
         DssRm.current_user.group_ownerships.create
           name: label.slice(13) # slice(13) is removing the "Create Group " prefix
           type: "Group"
         ,
           wait: true
+        DssRm.current_user.fetch() # a new GroupOwnership was created by the above
+                                   # and will be properly assigned on .fetch()
       else
         # Specific entity selected.
         # If a role is selected, assign the result to that role
@@ -166,12 +168,14 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
               name: label
             )
             e.fetch success: =>
+              debugger
               DssRm.current_user.favorites.add e
               DssRm.current_user.save()
+              debugger
           else
             # Already in favorites - highlight the result
             DssRm.view_state.set focused_entity_id: id
-    
+
     ""
 
 ,
@@ -179,7 +183,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   FID_ADD_PERSON: -1
   FID_CREATE_GROUP: -2
   SIDEBAR_MAX_LENGTH: 15
-  
+
   # Function defined here for use in onClick.
   # Inline event handler was required on i.sidebar-search to avoid patching
   # Bootstrap's typeahead()

@@ -27,14 +27,14 @@ json.cache! ['entity_show', @cache_key] do
     json.group_ownerships @entity.group_ownerships do |ownership|
       json.group_id ownership.group_id
       json.id ownership.id
-      json.name ownership.entity.name
+      json.name ownership.group.name
     end
 
     json.organizations @entity.organizations do |organization|
       json.id organization.id
       json.name organization.name
     end
-    
+
     json.role_assignments @entity.role_assignments do |role_assignment|
       json.application_id role_assignment.role.application_id
       json.application_name role_assignment.role.application.name
@@ -48,7 +48,7 @@ json.cache! ['entity_show', @cache_key] do
     end
   elsif @entity.type == 'Group'
     json.extract! @entity, :description
-    
+
     json.memberships @entity.memberships.select{ |m| m.entity.active == true } do |membership|
       json.id membership.id
       json.calculated membership.calculated

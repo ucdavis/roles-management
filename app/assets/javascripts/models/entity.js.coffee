@@ -75,8 +75,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
           condition: rule.get('condition')
           value: rule.get('value')
           _destroy: rule.get('_destroy')
-      else
-        debugger
 
     else if @type() is EntityTypes.person
       json = {}
