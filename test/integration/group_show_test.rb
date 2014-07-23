@@ -34,4 +34,8 @@ class GroupShowTest < ActionDispatch::IntegrationTest
 
     # TODO: Finish me.
   end
+
+  # ensure they can add a favorite and server returns success, re-load model and ensure favorite is there, same for unfavorite
+  # ensure they can create a group, delete a group, edit a group
+  # ensure they can import a person, edit a person, deactivate a person
 end
