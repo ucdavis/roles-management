@@ -83,12 +83,19 @@ module Authentication
     Authorization.ignore_access_control(false)
   end
 
+  # Wrapper for disable_authorization -> block -> enable_authorization as
+  # this is a common pattern.
+  def without_authorization
+    disable_authorization
+    yield
+    enable_authorization
+  end
+
   # Ensure session[:auth_via] exists.
   # This is populated by a whitelisted IP request, a CAS redirect or a HTTP Auth request
+  # Main entry point for authentication procedures.
   def authenticate
-    logger.debug "authenticate called."
     if authenticated?
-      logger.debug "authenticated? is true, checking auth_via ..."
       case session[:auth_via]
       when :whitelisted_ip
         Authentication.actual_user = ApiWhitelistedIpUser.find_by_address(session[:user_id])
@@ -114,13 +121,12 @@ module Authentication
       session[:auth_via] = :whitelisted_ip
       Authentication.actual_user = @whitelisted_user
 
-      Authorization.ignore_access_control(true)
-      @whitelisted_user.logged_in_at = DateTime.now()
-      @whitelisted_user.save
-      Authorization.ignore_access_control(false)
+      without_authorization do
+        @whitelisted_user.logged_in_at = DateTime.now()
+        @whitelisted_user.save
+      end
+
       return
-    else
-      logger.debug "authenticate: Not on the API whitelist."
     end
 
     # Check if HTTP Auth is being attempted.
