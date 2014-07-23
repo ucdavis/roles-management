@@ -16,8 +16,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
 
   initialize: ->
     @resetNestedCollections()
-    @on "sync", @resetNestedCollections, this # for save?
-    @on "change", @resetNestedCollections, this # so entity.fetch() updates nestedCollections
+    @on "sync", @resetNestedCollections, this
 
   resetNestedCollections: ->
     if @type() is EntityTypes.group
@@ -76,6 +75,8 @@ DssRm.Models.Entity = Backbone.Model.extend(
           condition: rule.get('condition')
           value: rule.get('value')
           _destroy: rule.get('_destroy')
+      else
+        debugger
 
     else if @type() is EntityTypes.person
       json = {}

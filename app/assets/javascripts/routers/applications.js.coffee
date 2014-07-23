@@ -26,13 +26,13 @@ DssRm.Routers.Applications = Backbone.Router.extend(
       success: ->
         status_bar.hide()
         new DssRm.Views.ApplicationShow(model: application).$el.modal()
-        
+
       error: ->
         status_bar.show "An error occurred while loading the application.", "error"
 
   showEntity: (uid) ->
     uid = parseInt(uid)
-    
+
     status_bar.show "Loading ..."
 
     # Search DssRm.current_user objects first
@@ -40,13 +40,14 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     # changes to propagate
     entity = DssRm.view_state.bookmarks.get(uid)
     entity = DssRm.view_state.bookmarks.findWhere({ group_id: uid }) if entity is undefined
-    
+
     # Fetch it as a last resort - we won't get event updates
     entity = new DssRm.Models.Entity(id: uid) if entity is undefined
-    
+
     entity.fetch
       success: =>
         status_bar.hide()
+        entity.resetNestedCollections()
         new DssRm.Views.EntityShow(entity).entityView.$el.modal()
 
       error: ->
@@ -63,7 +64,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
 
   apiKeysDialog: ->
     status_bar.show "Loading API keys dialog ..."
-    
+
     $.get Routes.admin_api_key_users_path(), (keys) =>
       status_bar.hide()
       api_keys = new DssRm.Collections.ApiKeys(keys)
@@ -79,7 +80,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
 
   queuedJobsDialog: ->
     status_bar.show "Loading Queued Jobs dialog ..."
-    
+
     $.get Routes.admin_queued_jobs_path(), (jobs) =>
       status_bar.hide()
       queued_jobs = new DssRm.Collections.QueuedJobs(jobs)
@@ -87,7 +88,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
 
   eventLogDialog: ->
     # status_bar.show "Loading Event Log dialog ..."
-    # 
+    #
     # $.get Routes.diary_entries_path(), (data) =>
     #   status_bar.hide()
     #   entries = new DssRm.Collections.EventLogEntries(data)

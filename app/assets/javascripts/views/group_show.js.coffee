@@ -167,6 +167,8 @@ class DssRm.Views.GroupShow extends Backbone.View
 
     @$('#apply').attr('disabled', 'disabled').html('Saving ...')
 
+    debugger
+
     # Ensure @model.rules is up-to-date
     _.each $('table#rules>tbody>tr'), (el, i) =>
       cid = $(el).data('rule_cid')
@@ -204,6 +206,7 @@ class DssRm.Views.GroupShow extends Backbone.View
   addRule: (e) ->
     @model.rules.add {}
       #id: 'new_' + (new Date).getTime()
+    debugger
     @renderRules()
 
   removeRule: (e) ->

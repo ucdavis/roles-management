@@ -48,22 +48,15 @@ module Authentication
   # Differs from self.current_user, this method is 'include'd in the
   # ApplicationController and made available to CanCanCan
   def current_user
-    logger.debug "current_user called"
-
     case session[:auth_via]
     when :whitelisted_ip
-      logger.debug "auth_via is :whitelisted_ip"
       return ApiWhitelistedIpUser.find_by_address(session[:user_id])
     when :api_key
-      logger.debug "auth_via is :api_key"
       return ApiKeyUser.find_by_name(session[:user_id])
     when :cas
-      logger.debug "auth_via is :cas"
       if self.impersonating?
-        logger.debug "impersonating so returning effective_user (#{Authentication.effective_user})"
         return Authentication.effective_user
       else
-        logger.debug "not impersonating so returning actual_user (#{Authentication.actual_user})"
         return Authentication.actual_user
       end
     end
@@ -102,10 +95,8 @@ module Authentication
       when :api_key
         Authentication.actual_user = ApiKeyUser.find_by_name(session[:user_id])
       when :cas
-        logger.debug "auth_via is :cas, setting actual_user to #{session[:user_id]}"
         Authentication.actual_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
         if self.impersonating?
-          logger.debug "impersonating? is true. Also setting effective_user to #{session[:impersonate_id]}"
           Authentication.effective_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonate_id])
         end
       end
@@ -154,17 +145,19 @@ module Authentication
       return
     }
 
-    logger.debug "Passed over HTTP Auth."
-
-    # It's important we do this before checking session[:cas_user] as it
-    # sets that variable. Note that the way before_filters work, this call
-    # will render or redirect but this function will still finish before
-    # the redirect is actually made.
-    CASClient::Frameworks::Rails::Filter.filter(self)
+    # If the environment variable _RM_DEV_LOGINID is set, force it as a CAS
+    # login and bypass CAS. Useful for offline development.
+    if ENV["_RM_DEV_LOGINID"]
+      session[:cas_user] = ENV["_RM_DEV_LOGINID"]
+    else
+      # It's important we do this before checking session[:cas_user] as it
+      # sets that variable. Note that the way before_filters work, this call
+      # will render or redirect but this function will still finish before
+      # the redirect is actually made.
+      CASClient::Frameworks::Rails::Filter.filter(self)
+    end
 
     if session[:cas_user]
-      logger.debug "cas_user is set in session, attempting CAS-based authentication"
-
       # CAS session exists. Valid user account?
       @user = Person.includes(:role_assignments).includes(:roles).find_by_loginid(session[:cas_user])
       @user = nil if @user and @user.active == false # Don't allow disabled users to log in
