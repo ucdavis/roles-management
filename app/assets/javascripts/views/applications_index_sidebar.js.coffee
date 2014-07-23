@@ -168,10 +168,13 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
               name: label
             )
             e.fetch success: =>
-              debugger
               DssRm.current_user.favorites.add e
-              DssRm.current_user.save()
-              debugger
+              DssRm.current_user.save {},
+                error: ->
+                  status_bar.show "An error occurred while saving", "error"
+                success: ->
+                  status_bar.show "Saved", "success", 1000
+                  # Do nothing on success
           else
             # Already in favorites - highlight the result
             DssRm.view_state.set focused_entity_id: id

@@ -7,12 +7,12 @@ class GroupOwnership < ActiveRecord::Base
 
   belongs_to :group, :touch => true
   belongs_to :entity, :touch => true
-  
+
   after_save { |ownership| ownership.log_changes(:save) }
   after_destroy { |ownership| ownership.log_changes(:destroy) }
-  
+
   protected
-  
+
   # Explicitly log that this group ownership was created or destroyed
   def log_changes(action)
     Rails.logger.tagged "GroupOwnership #{id}" do
@@ -37,7 +37,7 @@ class GroupOwnership < ActiveRecord::Base
   # Ensure a group does not attempt to own itself
   def group_cannot_own_itself
     if !group.blank? and group == entity
-      errors[:base] << "Group cannot own itself"
+      errors[:base] << "Group (#{group.id}, #{group.name}) cannot own itself (#{entity.id}, #{entity.name})"
     end
   end
 end

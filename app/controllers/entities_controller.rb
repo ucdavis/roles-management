@@ -66,12 +66,16 @@ class EntitiesController < ApplicationController
       @entity = Person.with_permissions_to(:update).find(params[:id])
     end
 
-    @entity.update_attributes(params[:entity])
+    respond_to do |format|
+      if @entity.update_attributes(params[:entity])
+        logger.debug "Entity#update successful. Triggering sync ..."
+        @entity.trigger_sync
 
-    @entity.trigger_sync
-
-    respond_with(@entity) do |format|
-      format.json{ render json: @entity }
+        format.json { render json: @entity }
+      else
+        logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(", ")}"
+        format.json { render json: @entity.errors, status: :unprocessable_entity }
+      end
     end
   end
 
