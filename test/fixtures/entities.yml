@@ -94,3 +94,9 @@ anotherGroupWithNothing:
   type: Group
   name: Another group with nothing
   description: This group has no rules, owners, operators, or members, and is not unique in being so
+
+groupWithAnApplicationOperatorship:
+  id: 12
+  type: Group
+  name: Group with an application operatorship
+  description: This group should have nothing but a single application operatorship
