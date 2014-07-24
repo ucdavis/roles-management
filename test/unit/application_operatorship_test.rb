@@ -96,11 +96,15 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
 
       assert group.members.length == 1, "group should now have one member"
 
+      @person.reload
+
       assert @person.application_operatorships.length == 1, "test user should now have one application operatorship inherited from the group but instead has #{@person.application_operatorships.length}"
 
       # Now remove the user from the group and ensure the inherited application operatorship goes away
       @person.group_memberships.destroy_all
       assert @person.group_memberships.length == 0, "'casuser' should not have group memberships now"
+
+      @person.reload
 
       assert @person.application_operatorships.length == 0, "test user should no longer have an application operatorship but instead has #{@person.application_operatorships.length}"
     end

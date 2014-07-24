@@ -3,10 +3,10 @@
 # block method below.
 class GroupMembership < ActiveRecord::Base
   using_access_control
-  
+
   Thread.current[:destroy_calculated_membership_flag] = false
   Thread.current[:recalculating_membership_flag] = false
-  
+
   def self.destroy_calculated_membership_flag=(val)
     Thread.current[:destroy_calculated_membership_flag] = val
   end
@@ -30,10 +30,13 @@ class GroupMembership < ActiveRecord::Base
   #after_create :recalculate_ou_group_rules_if_necessary
   before_destroy :remove_group_roles_from_member
   #after_destroy :recalculate_ou_group_rules_if_necessary
-  
+
+  after_create :grant_application_operatorships_to_member
+  before_destroy :remove_application_operatorships_from_member
+
   after_save { |membership| membership.log_changes(:save) }
   after_destroy { |membership| membership.log_changes(:destroy) }
-  
+
   def self.destroying_calculated_group_membership
     begin
       Thread.current[:destroy_calculated_membership_flag] = true
@@ -50,9 +53,9 @@ class GroupMembership < ActiveRecord::Base
       Thread.current[:recalculating_membership_flag] = false
     end
   end
-  
+
   protected
-  
+
   # Explicitly log that this group membership was created or destroyed
   def log_changes(action)
     Rails.logger.tagged "GroupMembership #{id}" do
@@ -71,9 +74,9 @@ class GroupMembership < ActiveRecord::Base
       end
     end
   end
-  
+
   private
-  
+
   def membership_cannot_be_cyclical
     if entity.type == 'Group'
       if entity.no_loops_in_group_membership_graph([group_id]) == false
@@ -81,7 +84,7 @@ class GroupMembership < ActiveRecord::Base
       end
     end
   end
-  
+
   # Alerts GroupRule to recalculate OU-based rules for this entity
   # if group is an OU.
   # This logic is located here and not in GroupRule as this is the best
@@ -91,7 +94,7 @@ class GroupMembership < ActiveRecord::Base
   #     GroupRule.resolve_target!(:ou, self.entity_id)
   #   end
   # end
-  
+
   # Grant group's roles to new member (marking as calculated)
   def grant_group_roles_to_member
     Rails.logger.tagged "GroupMembership #{id}" do
@@ -105,7 +108,7 @@ class GroupMembership < ActiveRecord::Base
       end
     end
   end
-  
+
   def remove_group_roles_from_member
     Rails.logger.tagged "GroupMembership #{id}" do
       group.roles.each do |r|
@@ -121,18 +124,48 @@ class GroupMembership < ActiveRecord::Base
       end
     end
   end
-  
+
   # Ensure a group does not attempt to join (member) itself
   def group_cannot_join_itself
     if !group.blank? and group == entity
       errors[:base] << "Group cannot join with itself"
     end
   end
-  
+
   def destroying_calculated_membership_requires_flag
     if calculated and not Thread.current[:destroy_calculated_membership_flag]
       errors.add(:calculated, "can't destroy a calculated group membership without flag properly set")
       return false
+    end
+  end
+
+  # Grant group's application operatorships to new member (marking as calculated)
+  def grant_application_operatorships_to_member
+    Rails.logger.tagged "GroupMembership #{id}" do
+      group.application_operatorships.each do |ao|
+        logger.info "Granting application operatorship (#{ao.id}, App ID #{ao.application_id}) to new group member (#{entity_id}/#{entity.name} joining #{group_id}/#{group.name})"
+        new_ao = ApplicationOperatorship.new
+        new_ao.application_id = ao.application_id
+        new_ao.entity_id = entity_id
+        new_ao.parent_id = group_id
+        new_ao.save!
+      end
+    end
+  end
+
+  def remove_application_operatorships_from_member
+    Rails.logger.tagged "GroupMembership #{id}" do
+      group.application_operatorships.each do |ao|
+        logger.info "Removing application operatorship (#{ao.id}, App ID #{ao.application_id}) from leaving group member (#{entity_id}/#{entity.name} leaving #{group_id}/#{group.name})"
+        inherited_ao = ApplicationOperatorship.find_by_application_id_and_entity_id_and_parent_id(ao.application_id, entity_id, group_id)
+        if inherited_ao
+          destroying_calculated_application_operatorship do
+            inherited_ao.destroy
+          end
+        else
+          logger.warn "Failed to remove application operatorship (#{ao.id}, App ID #{ao.application_id}) assigned to leaving group member (#{entity_id}/#{entity.name}. Could not find in database. This is probably okay."
+        end
+      end
     end
   end
 end

@@ -70,4 +70,15 @@ namespace :group do
 
     enable_authorization
   end
+
+  desc 'Recalculate inherited application operatorships from groups.'
+  task :recalculate_inherited_application_operatorships do
+    Rake::Task['environment'].invoke
+
+    Group.all.each do |g|
+      g.application_operatorships.all.each do |gao|
+        #ApplicationOperatorship.
+      end
+    end
+  end
 end
