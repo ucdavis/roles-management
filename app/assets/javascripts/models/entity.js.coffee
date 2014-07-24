@@ -19,7 +19,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
     @on "sync", @resetNestedCollections, this
 
   resetNestedCollections: ->
-    @set 'entity_id', @get('group_id') || @get('id')
+    @set 'entity_id', @get('group_id') || @get('id') unless @get('entity_id')
 
     if @type() is EntityTypes.group
       @owners = new DssRm.Collections.Entities if @owners is `undefined`
