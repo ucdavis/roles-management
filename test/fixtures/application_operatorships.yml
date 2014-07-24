@@ -3,3 +3,9 @@ groupApplicationOperatorship:
   application_id: 2
   entity_id: 12
   parent_id: nil
+
+inactivePersonApplicationOperatorship:
+  id: 2
+  application_id: 2
+  entity_id: 8
+  parent_id: nil
