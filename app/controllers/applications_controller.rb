@@ -65,14 +65,17 @@ class ApplicationsController < ApplicationController
   def update
     @application = Application.find(params[:id])
 
-    if @application.update_attributes(params[:application])
-      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
-    end
+    respond_to do |format|
+      if @application.update_attributes(params[:application])
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
-    @application.trigger_sync
+        @application.trigger_sync
 
-    respond_with @application do |format|
-      format.json { render :json => @application } # A new role may have been created, so we need to render out to reveal the new ID
+        format.json { render :json => @application }
+      else
+        logger.error "Applications#update failed. Reason(s): #{@application.errors.full_messages.join(", ")}"
+        format.json { render json: @application.errors, status: :unprocessable_entity }
+      end
     end
   end
 
