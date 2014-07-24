@@ -75,10 +75,30 @@ namespace :group do
   task :recalculate_inherited_application_operatorships do
     Rake::Task['environment'].invoke
 
+    disable_authorization
+
+    # For every group ...
     Group.all.each do |g|
+      # For that group's every application operatorship ...
       g.application_operatorships.all.each do |gao|
-        #ApplicationOperatorship.
+        # For each member of the group ...
+        g.members.each do |m|
+          # If they don't already have an _inherited_ application operatorship for this group, grant them one
+          ao = ApplicationOperatorship.find_by_parent_id_and_entity_id_and_application_id(g.id, m.id, gao.application_id)
+          if ao
+            puts "Group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) already had inherited application operatorship for application (#{gao.application_id}, #{gao.application.name})"
+          else
+            iao = ApplicationOperatorship.new
+            iao.parent_id = g.id
+            iao.entity_id = m.id
+            iao.application_id = gao.application_id
+            iao.save!
+            puts "Inheriting new application operatorship for group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) for application (#{gao.application_id}, #{gao.application.name})"
+          end
+        end
       end
     end
+
+    enable_authorization
   end
 end
