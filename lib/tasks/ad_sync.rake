@@ -345,7 +345,7 @@ def ensure_magic_descriptor_presence(ad_group)
   # AD groups don't have to have description fields but we will add one if needed.
   begin
     g_desc = ad_group.description
-  rescue ArgumentError
+  rescue ArgumentError, NoMethodError
     # description not set
     g_desc = ""
   end
