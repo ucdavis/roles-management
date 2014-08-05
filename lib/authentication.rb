@@ -140,7 +140,7 @@ module Authentication
       # Note that they will only get 'access denied' if they supplied a name and
       # failed. If they supplied nothing for HTTP Auth, this block will get passed
       # over.
-      render :text => "Invalid API key.", :status => 401
+      render :text => "Invalid API key (#{name}).", :status => 401
 
       return
     }
