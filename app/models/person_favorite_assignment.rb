@@ -6,6 +6,8 @@ class PersonFavoriteAssignment < ActiveRecord::Base
   using_access_control
 
   validates_uniqueness_of :owner_id, :scope => [:entity_id, :owner_id]
+  validates_presence_of :owner
+  validates_presence_of :entity
 
   # Owner is the person who holds this favorite
   belongs_to :owner, :class_name => "Person", :foreign_key => "owner_id", :touch => true
