@@ -1,6 +1,6 @@
 json.cache! ['api_v1_people_show', @cache_key] do
   json.extract! @person, :address, :byline, :email, :first, :id, :last, :loginid, :name, :phone, :type
-  
+
   if @person.title
     json.title @person.title.name
   else
@@ -16,11 +16,12 @@ json.cache! ['api_v1_people_show', @cache_key] do
     json.name membership.group.name
     json.ou false # this field has been removed from the database for groups but remains here as 'false' for compatibility in API v1
   end
-  
+
   json.organizations @person.organizations do |organization|
     json.extract! organization, :id, :name
+    json.code organization.dept_code
   end
-  
+
   json.group_ownerships @person.group_memberships do |ownership|
     json.extract! ownership, :id, :group_id
     json.name ownership.group.name
@@ -33,7 +34,7 @@ json.cache! ['api_v1_people_show', @cache_key] do
 
   json.role_assignments @person.role_assignments do |assignment|
     json.extract! assignment, :id, :role_id
-    
+
     json.name assignment.role.name
     json.token assignment.role.token
     json.application_id assignment.role.application_id

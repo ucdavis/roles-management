@@ -31,6 +31,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
     body['organizations'].each do |o|
       assert o['id'], "JSON response's 'organizations' section should include an ID"
       assert o['name'], "JSON response's 'organizations' section should include a name"
+      assert o['code'], "JSON response's 'organizations' section should include a code"
     end
 
     assert body.include?('role_assignments'), 'JSON response should include role_assignments'
@@ -40,7 +41,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
       assert r['name'], "JSON response's 'role_assignments' section should include a name"
       assert r['application_id'], "JSON response's 'role_assignments' section should include an application_id"
     end
-    
+
     assert body.include?('group_memberships'), 'JSON response should include group_memberships'
     body['group_memberships'].each do |r|
       assert r['group_id'], "JSON response's 'group_memberships' section should include a group_id field"
@@ -63,7 +64,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
       assert r['name'], "JSON response's 'group_operatorships' section should include a name"
     end
   end
-  
+
   test "JSON show request should not include inactive entities" do
     grant_api_user_access
 
