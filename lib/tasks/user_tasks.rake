@@ -40,6 +40,10 @@ namespace :user do
         ra = RoleAssignment.find_by_role_id_and_entity_id(rm_access_role_id, entity_id)
         unless ra.nil?
           ra.destroy
+          if ra.errors?
+            puts "Could not remove access from user. Reason(s): " + ra.errors.full_messages.join(", ")
+            exit
+          end
         else
           puts "#{arg[1]} is not set for access."
         end
@@ -98,6 +102,10 @@ namespace :user do
         ra = RoleAssignment.find_by_role_id_and_entity_id(rm_admin_role_id, entity_id)
         unless ra.nil?
           ra.destroy
+          if ra.errors?
+            puts "Could not remove admin access from user. Reason(s): " + ra.errors.full_messages.join(", ")
+            exit
+          end
         else
           puts "#{arg[1]} is not set as admin."
         end
