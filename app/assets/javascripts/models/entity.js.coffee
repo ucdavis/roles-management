@@ -68,7 +68,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
           id: membership.get('id')
           calculated: membership.get('calculated')
           entity_id: membership.get('entity_id')
-          group_id: membership.get('group_id')
           _destroy: membership.get('_destroy')
       if @rules.length
         json.rules_attributes = @rules.map (rule) ->
