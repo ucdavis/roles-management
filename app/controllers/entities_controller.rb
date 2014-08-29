@@ -71,7 +71,7 @@ class EntitiesController < ApplicationController
         logger.debug "Entity#update successful. Triggering sync ..."
         @entity.trigger_sync
 
-        format.json { render json: @entity }
+        format.json { render "entities/show", status: :ok }
       else
         logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(", ")}"
         format.json { render json: @entity.errors, status: :unprocessable_entity }
