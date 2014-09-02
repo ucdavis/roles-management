@@ -71,6 +71,8 @@ class EntitiesController < ApplicationController
         logger.debug "Entity#update successful. Triggering sync ..."
         @entity.trigger_sync
 
+        @cache_key = @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+
         format.json { render "entities/show", status: :ok }
       else
         logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(", ")}"
