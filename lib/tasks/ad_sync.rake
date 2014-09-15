@@ -219,12 +219,12 @@ namespace :ad do
                 r.ad_guid = g.objectguid unless g.nil?
               end
 
-              ensure_magic_descriptor_presence(g)
-
-              # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
-              r.ad_path = g.cn unless g.nil?
-
               unless g.nil?
+                ensure_magic_descriptor_presence(g)
+
+                # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
+                r.ad_path = g.cn
+
                 log.info "Found group (#{r.ad_path}, #{r.ad_guid}) in AD."
 
                 # Add enabled members to AD
