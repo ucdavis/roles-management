@@ -11,7 +11,7 @@ class EntitiesController < ApplicationController
   def show
     @entity = Entity.find(params[:id])
 
-    @cache_key = @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity show view for #{params[:id]}."
 
@@ -79,7 +79,7 @@ class EntitiesController < ApplicationController
         logger.debug "Entity#update successful. Triggering sync ..."
         @entity.trigger_sync
 
-        @cache_key = @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+        @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
         format.json { render "entities/show", status: :ok }
       else

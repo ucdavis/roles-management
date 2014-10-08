@@ -8,18 +8,18 @@ module Api
 
       def index
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
-        
-        @cache_key = (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).to_s #Digest::MD5.hexdigest(@entities.map(&:cache_key).to_s)
-        
+
+        @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).to_s
+
         render "api/v1/entities/index"
       end
-      
+
       def show
         if @entity and @entity.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
-          
-          @cache_key = @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
-          
+
+          @cache_key = "api/entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+
           render "api/v1/entities/show"
         elsif @entity and @entity.active == false
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id} but entity is disabled. Returning 404." }
@@ -35,11 +35,11 @@ module Api
       def load_entity
         @entity = Entity.with_permissions_to(:read).find_by_id(params[:id])
       end
-  
+
       def load_entities
         if params[:q]
           entities_table = Entity.arel_table
-      
+
           # Search login IDs in case of an entity-search but looking for person by login ID
           @entities = Entity.with_permissions_to(:read).where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
         else

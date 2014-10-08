@@ -10,7 +10,7 @@ class RolesController < ApplicationController
   end
 
   def show
-    @cache_key = @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = "role/" + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
     respond_with(@role) do |format|
       format.text
@@ -20,10 +20,11 @@ class RolesController < ApplicationController
   def update
     if params[:id] and params[:role]
       if @role.update_attributes(params[:role].except(:id))
+        @role.touch
         # Reload the group in case the after_save callback destroyed role assignments.
         @role.reload
 
-        @cache_key = @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
+        @cache_key = "role/" + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated role #{@role.id} (#{@role.token})."
 
