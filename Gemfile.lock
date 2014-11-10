@@ -428,7 +428,7 @@ DEPENDENCIES
   paperclip (~> 3.0)
   pg
   poltergeist
-  rails (~> 3.2.19)
+  rails (~> 3.2.20)
   ruby-ldap
   rubycas-client!
   rubysl (~> 2.0)
