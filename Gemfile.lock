@@ -15,7 +15,7 @@ GIT
 
 GIT
   remote: https://github.com/ruby-ldap/ruby-net-ldap.git
-  revision: 1dc2907a3b4633ad1ccd0bd660c952b2bb3c4e99
+  revision: fc38d1c96a06800cc22ea7d7379a31fee0679b60
   specs:
     net-ldap (0.9.0)
 
@@ -124,7 +124,7 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.6.1)
     multi_json (1.10.1)
-    mysql2 (0.3.16)
+    mysql2 (0.3.17)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
