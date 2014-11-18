@@ -1,4 +1,6 @@
 class ApiKeyUser < ActiveRecord::Base
+  include ActiveModel::ForbiddenAttributesProtection
+  
   using_access_control
 
   validates :name, :uniqueness => true, :presence => true

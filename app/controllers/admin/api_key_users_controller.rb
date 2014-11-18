@@ -29,14 +29,18 @@ class Admin::ApiKeyUsersController < Admin::BaseController
       format.json { head :no_content, status: :destroyed }
     end
   end
-  
+
   private
-  
+
   def load_api_keys
     @api_keys = ApiKeyUser.all
   end
-  
+
   def new_api_key_user_from_params
-    @api_key_user = ApiKeyUser.new(params[:api_key_user])
+    @api_key_user = ApiKeyUser.new(api_key_params)
+  end
+
+  def api_key_params
+    params.require(:api_key_user).permit(:name)
   end
 end

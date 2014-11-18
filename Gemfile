@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.20'
+gem 'rails', '~> 3.2.21'
 
 group :assets do
   gem 'sass-rails',   ' ~> 3.2.3'
@@ -23,10 +23,12 @@ group :development, :test do
   gem 'capybara' # for JS integration testing
   gem 'poltergeist' # for PhantomJS-based testing with capybara
   gem 'sqlite3'
-  gem 'mysql2'
+  #gem 'mysql2'
 end
 
-gem "rubysl", "~> 2.0", :platform => :rbx
+gem 'strong_parameters'
+
+#gem "rubysl", "~> 2.0", :platform => :rbx
 
 gem 'capistrano', '< 3.0.0'
 
