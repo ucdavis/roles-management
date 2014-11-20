@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140321005717) do
+ActiveRecord::Schema.define(:version => 20141120203425) do
 
   create_table "activity_log_tag_associations", :force => true do |t|
     t.integer "activity_log_id"
@@ -147,12 +147,10 @@ ActiveRecord::Schema.define(:version => 20140321005717) do
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
     t.datetime "logged_in_at"
-    t.integer  "ou_id"
   end
 
   add_index "entities", ["loginid"], :name => "index_entities_on_loginid"
   add_index "entities", ["name"], :name => "index_entities_on_name"
-  add_index "entities", ["ou_id"], :name => "index_entities_on_ou_id"
 
   create_table "group_group", :id => false, :force => true do |t|
     t.integer "group_id"

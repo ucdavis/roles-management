@@ -10,14 +10,7 @@ class GroupsController < ApplicationController
     @cache_key = current_user.loginid + '/' + @groups.max_by(&:updated_at).to_s
 
     render "groups/index"
-    #respond_with @groups
   end
-
-  # def create
-  #   @group.save
-  #   render "groups/create"
-  #   #respond_with @group
-  # end
 
   def update
     if params[:id] and params[:group]
@@ -36,9 +29,8 @@ class GroupsController < ApplicationController
 
   def show
     @cache_key = "group/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
-    
+
     render "groups/show"
-    #respond_with @group
   end
 
   def destroy
