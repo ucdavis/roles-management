@@ -7,6 +7,10 @@ require "whenever/capistrano"
 
 # 'delayed_job' setup
 require "delayed/recipes"
+
+# Use 10 background workers (the same value should be set in config/schedule.rb)
+set :delayed_job_args, "-n 10"
+
 before "deploy:restart", "delayed_job:stop"
 after  "deploy:restart", "delayed_job:start"
 after "deploy:stop",  "delayed_job:stop"
@@ -100,6 +104,6 @@ namespace :deploy do
 
   desc "Updates config/initializers/last_updated.rb with today's date"
   task :update_last_modified_date, roles: :app do
-    run "echo \"LAST_UPDATED = '\"`date`\"'\" >& #{release_path}/config/initializers/last_updated.rb"
+    run "echo 'LAST_UPDATED = \''`date`'\'' >& #{release_path}/config/initializers/last_updated.rb"
   end
 end
