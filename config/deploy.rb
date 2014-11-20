@@ -31,6 +31,7 @@ default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
 
 after "deploy", "deploy:cleanup" # keep only the last 5 releases
+after "deploy", "deploy:update_last_modified_date"
 after "deploy:update_code", "deploy:migrate"
 
 before 'deploy:restart', 'deploy:empty_cache'
@@ -85,7 +86,7 @@ namespace :deploy do
     end
   end
   before "deploy", "deploy:check_revision"
-  
+
   desc "Empty the main cache (changing view code does not necessarily invalidate cache_keys)"
   task :empty_cache, roles: :app do
     puts "--> Emptying cache, please wait ..."
@@ -95,5 +96,10 @@ namespace :deploy do
     else
       puts "--> Cache emptied"
     end
+  end
+
+  desc "Updates config/initializers/last_updated.rb with today's date"
+  task :update_last_modified_date, roles: :app do
+    run "echo \"LAST_UPDATED = '\"`date`\"'\" >& #{release_path}/config/initializers/last_updated.rb"
   end
 end
