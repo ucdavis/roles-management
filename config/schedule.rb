@@ -15,3 +15,8 @@ end
 every 4.hours do
   rake "ad:sync_all_users"
 end
+
+# Temporary test
+every 2.minutes do
+  rake "temp_tasks:throw_exception"
+end
