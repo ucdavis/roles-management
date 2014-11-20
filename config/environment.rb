@@ -2,7 +2,6 @@
 require File.expand_path('../application', __FILE__)
 
 require 'delayed_rake'
-#require 'syslogger'
 
 # Initialize the rails application
 DSSRM::Application.initialize!
