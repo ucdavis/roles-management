@@ -26,7 +26,7 @@ set :deploy_via, :remote_cache
 set :use_sudo, false
 
 set :scm, "git"
-set :repository, "git@github.com:cthielen/#{application}.git"
+set :repository, "git@github.com:dssit/#{application}.git"
 set :branch, "master"
 
 set :test_log, "log/capistrano.test.log"
@@ -42,12 +42,12 @@ before 'deploy:restart', 'deploy:empty_cache'
 
 namespace :deploy do
   before 'deploy' do
-    puts "--> Running tests, please wait ..."
+    puts "    Running tests, please wait ..."
     unless system "bundle exec rake > #{test_log} 2>&1"
-      puts "--> Tests failed. Run `cat #{test_log}` to see what went wrong."
+      puts "    Tests failed. Run `cat #{test_log}` to view errors."
       exit
     else
-      puts "--> Tests passed"
+      puts "    Tests passed."
       system "rm #{test_log}"
     end
   end
@@ -104,6 +104,6 @@ namespace :deploy do
 
   desc "Updates config/initializers/last_updated.rb with today's date"
   task :update_last_modified_date, roles: :app do
-    run "echo 'LAST_UPDATED = \''`date`'\'' >& #{release_path}/config/initializers/last_updated.rb"
+    system "bundle exec rake temp:update_last_updated"
   end
 end
