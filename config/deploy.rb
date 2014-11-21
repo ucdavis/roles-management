@@ -104,6 +104,6 @@ namespace :deploy do
 
   desc "Updates config/initializers/last_updated.rb with today's date"
   task :update_last_modified_date, roles: :app do
-    system "bundle exec rake temp:update_last_updated"
+    system "bundle exec rake misc:update_last_updated"
   end
 end
