@@ -47,8 +47,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
 
   entityUrl: ->
     unless @model.get('entity_id')
-      # FIXME: We can set entity_id here if needed but it really should already be set (see 'Create Group')
-      @model.set 'entity_id', @get('group_id') || @get('id')
+      @model.set 'entity_id', @model.get('group_id') || @model.get('id')
       debugger unless @model.get('entity_id')
     "#" + "/entities/" + @model.get('entity_id')
 
