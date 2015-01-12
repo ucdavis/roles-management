@@ -12,6 +12,7 @@ every 6.hours do
 end
 
 # Sync with Active Directory every 4 hours
-every 4.hours do
+# every 4.hours do
+every 1.day, :at => '1:00 am' do
   rake "ad:sync_all_users"
 end
