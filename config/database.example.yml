@@ -23,9 +23,3 @@ production:
   database: db/production.sqlite3
   pool: 5
   timeout: 5000
-
-ldap:
-  base_dn: dn
-  base_pw: pw
-  search_dn: search_dn
-
