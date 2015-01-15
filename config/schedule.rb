@@ -1,8 +1,8 @@
 job_type :envcommand, 'cd :path && RAILS_ENV=:environment :task'
 
-# Ensure our background processor starts up on reboot (20 processes)
+# Ensure our background processor starts up on reboot (10 processes)
 every :reboot do
-  envcommand 'script/delayed_job -n 20 restart'
+  envcommand 'script/delayed_job -n 10 restart'
 end
 
 # Run LDAP import updater every 6 hours
@@ -12,7 +12,6 @@ every 6.hours do
 end
 
 # Sync with Active Directory every 4 hours
-# every 4.hours do
 every 1.day, :at => '1:00 am' do
   rake "ad:sync_all_users"
 end
