@@ -2,37 +2,37 @@
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ActiveRecord::Base
   using_access_control
-  
+
   VALID_COLUMNS = %w( title major affiliation classification loginid department organization )
-  
+
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => VALID_COLUMNS
   validate :column_cannot_change
-  
+
   belongs_to :group, :touch => true
   has_many :results, :class_name => "GroupRuleResult", :dependent => :destroy
-  
+
   after_save :resolve_if_changed
   after_destroy :group_must_recalculate
-  
+
   # Needed by 'Group' when calculating rules
   def GroupRule.valid_columns
     VALID_COLUMNS
   end
-  
+
   # Class method to recalculate all rules related to column and entity_id.
   # Similar to resolve! but only involves removing/adding results for a specific person
   def GroupRule.resolve_target!(column, entity_id)
     touched_group_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
-    
+
     Rails.logger.tagged "GroupRule.resolve_target!" do
       unless VALID_COLUMNS.include? column.to_s
         raise "Cannot resolve_target for unknown column '#{column}'"
       end
-    
+
       logger.info "Resolving target entity ID #{entity_id} for column #{column}"
-    
+
       # Remove any existing rule results for this (person, column) duple
       expired_rule_results = GroupRuleResult.includes(:group_rule).where(:entity_id => entity_id, :group_rules => { :column => column.to_s })
       expired_rule_results.each do |result|
@@ -40,13 +40,13 @@ class GroupRule < ActiveRecord::Base
       end
       logger.info "Expiring #{expired_rule_results.length} rules"
       expired_rule_results.destroy_all
-    
+
       entity = Entity.find_by_id(entity_id)
       unless entity
         logger.warn "Could not find entity with ID #{entity_id}"
         return
       end
-    
+
       # Figure out which rules the entity matches specifically and add them
       case column
       when :title
@@ -125,7 +125,7 @@ class GroupRule < ActiveRecord::Base
               logger.warn "Cannot GroupRule.resolve_target! for 'Organization is not'. Unimplemented behavior."
             end
           end
-          
+
           touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(organization, entity_id)
         end
       when :classification
@@ -157,14 +157,14 @@ class GroupRule < ActiveRecord::Base
           end
         end
       end
-      
+
       touched_group_ids.flatten.uniq.each do |touched_group_id|
         logger.info "Alerting group ##{touched_group_id} to recalculate as at least one of its rules were touched."
         Group.find_by_id(touched_group_id).recalculate_members!
       end
     end
   end
-  
+
   # This function is used by OrganizationParentId to touch parent(s) GroupRuleResults when relationships are formed
   # between organizations.
   # It takes the entities 'organization' and ensures their names are propagated up through the GroupRuleResults.
@@ -173,14 +173,14 @@ class GroupRule < ActiveRecord::Base
   def GroupRule.resolve_organization_parents!(organization)
     Rails.logger.tagged "GroupRule.resolve_target!" do
       Rails.logger.debug "Will traverse entities of '#{organization.name}' and call resolve_target_assign_organization_parents!. There are #{organization.entity_ids.length} entities to traverse."
-      
+
       organization.entity_ids.each do |entity_id|
         Rails.logger.debug "Calling GroupRule.resolve_target! for entity ID #{entity_id}"
         GroupRule.resolve_target!(:organization, entity_id)
       end
     end
   end
-  
+
   # Assumes rule is 'Organization is...'
   # This function recurses through an organization's parents (and their parents and their parents and...)
   # looks for any GroupRules associated with that organization. If it finds any, it adds entity_id
@@ -189,36 +189,36 @@ class GroupRule < ActiveRecord::Base
   # algorithm by removing all GroupRuleResults for an entity_id.
   def GroupRule.resolve_target_assign_organization_parents!(organization, entity_id)
     touched_group_ids = []
-    
+
     Rails.logger.tagged "GroupRule.resolve_target_assign_organization_parents!" do
       Rails.logger.debug "Called for organzation \"#{organization.name}\"'s parents on #{entity_id}. There are #{organization.parent_organizations.length} parent(s)."
-      
+
       organization.parent_organizations.each do |parent|
         # Find all rules affecting this parent
         rules = GroupRule.where(column: 'organization', condition: 'is', value: parent.name)
-        
+
         Rails.logger.debug "Found #{rules.length} rules for parent \"#{parent.name}\""
-        
+
         rules.each do |rule|
           # Add the entity to the rule's results
           rule.results << GroupRuleResult.new(:entity_id => entity_id)
           touched_group_ids << rule.group.id
         end
-    
+
         # Do the same for this parent's parents
         touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(parent, entity_id)
       end
     end
-    
+
     return touched_group_ids.flatten.uniq
   end
-  
+
   # Calculate the results of the rule and cache in GroupRuleResult instances
   def resolve!
     p = []
-    
+
     logger.info "Resolving (calculating) group rule ##{id}"
-    
+
     case column
     when "title"
       ps = Person.where(:title_id => Title.find_by_name(value))
@@ -325,15 +325,15 @@ class GroupRule < ActiveRecord::Base
       # Undefined column
       logger.warn " -- unhandled column (#{column})"
     end
-    
+
     # Save the result in GroupRuleResults
     results.destroy_all
-    
+
     p.each do |e|
       logger.debug "Generating GroupRuleResult ..."
       results << GroupRuleResult.new(:entity_id => e.id)
     end
-    
+
     logger.info "Resolved group rule ##{id} to have #{results.length} results"
   end
 
@@ -342,8 +342,10 @@ class GroupRule < ActiveRecord::Base
     # 'cond' is a boolean representing this rule's 'is' or 'is not'
     cond = (condition == "is")
     matched = nil
-    
+
     person = Person.find_by_id(person_id)
+
+    return false unless person # 'person_id' not found
 
     case column
     when "title"
@@ -366,7 +368,7 @@ class GroupRule < ActiveRecord::Base
   end
 
   private
-  
+
   # Recalculates group members if anything changed. Called after_save.
   def resolve_if_changed
     Rails.logger.debug "GroupRule.resolve_if_changed called."
@@ -374,12 +376,12 @@ class GroupRule < ActiveRecord::Base
     self.resolve! if self.changed? # recalculate this rule
     self.group.recalculate_members! if self.changed? # tell the group to recombine the results list
   end
-  
+
   # In after_destroy it's important the group recalculate members as this rule is gone
   def group_must_recalculate
     self.group.recalculate_members!
   end
-  
+
   # GroupRules are usually created and destroyed, not edited.
   # It's alright to edit the value but anything else should really
   # be done by destroying and then creating a new GroupRule.
