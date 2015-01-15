@@ -12,13 +12,9 @@ namespace :ldap do
       require 'stringio'
       require 'os'
 
-      notify_admins = false
-
       disable_authorization
 
-      # Keep a log to e-mail to the admins
-      strio = StringIO.new
-      log = ActiveSupport::TaggedLogging.new(Logger.new(strio))
+      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ldap-sync.log')}", 15, 1024000))
 
       log.tagged "ldap:import" do
         timestamp_start = Time.now
@@ -52,7 +48,7 @@ namespace :ldap do
         # Query LDAP
         for filter in filters
           unless filter.length == 0
-            ldap.search(filter) do |entry|
+            ldap.search(filter, log) do |entry|
               LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
 
               num_results += 1
@@ -70,7 +66,7 @@ namespace :ldap do
           Person.find(:all, :conditions => ["updated_at < ?", timestamp_start]).each do |person|
             p = nil
 
-            ldap.search('(uid=' + person.loginid + ')') do |entry|
+            ldap.search('(uid=' + person.loginid + ')', log) do |entry|
               p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
             end
 
@@ -95,17 +91,7 @@ namespace :ldap do
         log.info "Completed LDAP import. Took " + (timestamp_finish - timestamp_start).to_s + "s. Used #{OS.rss_bytes} KB at the end of the task (varies during operation but generally grows)."
       end
 
-      # Email the log
-      # E-mail to each RM admin (anyone with 'admin' permission on this app)
-      if notify_admins
-        include RmBuiltinRoles
-
-        rm_admin_entities.each do |admin|
-          WheneverMailer.ldap_report(admin.email, strio.string).deliver!
-        end
-      end
-
-      Rails.logger.info strio.string
+      #Rails.logger.info strio.string
 
       enable_authorization
     rescue => exception

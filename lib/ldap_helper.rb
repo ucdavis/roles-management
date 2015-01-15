@@ -18,14 +18,14 @@ class LdapHelper
   # Requires a block be passed:
   #   search("ldap_query").do |p| ... end
   # Returns false on no results or error, else return is undefined.
-  def search(term)
-    Rails.logger.debug "LdapHelper searching for '#{term}'"
+  def search(term, log = nil)
+    log.debug "LdapHelper searching for '#{term}'" if log
     begin
       @conn.search(LDAP_SETTINGS['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, term) do |result|
         yield result
       end
     rescue RuntimeError => e
-      Rails.logger.warning "LdapHelper search resulted in exception. Term: '#{term}'. Exception: #{e}"
+      log.warn "LdapHelper search resulted in exception. Term: '#{term}'. Exception: #{e}" if log
       return false
     end
   end
@@ -58,14 +58,6 @@ class LdapHelper
     studentFilter = studentFilter + '))'
 
     log.debug "Query: " + studentFilter if log
-
-    # Manual filter
-    # manualFilter = []
-    # for m in UcdLookups::MANUAL_INCLUDES
-    #   manualFilter << '(uid=' + m + ')'
-    # end
-    #
-    # log.debug "Query: " + manualFilter.join(",")
 
     [staffFilter,facultyFilter,studentFilter] #+ manualFilter
   end
