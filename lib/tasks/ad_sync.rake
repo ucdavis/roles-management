@@ -11,10 +11,8 @@ namespace :ad do
       require 'active_directory'
       require 'active_directory_wrapper'
 
-      # notify_admins = false
+      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ad-sync.log')}", 15, 1024000))
 
-      # Log to a string so we can both optionally e-mail the log to the admins and merge it into the master log
-      log = Rails.logger
       log.tagged "ad:sync_all_users" do
         # Cached groups list
         groups = {}
@@ -163,14 +161,6 @@ namespace :ad do
 
         log.info "AD Sync took " + (timestamp_finish - timestamp_start).to_s + " seconds"
       end
-
-      # Email the log
-      # if notify_admins
-      #   admin_role_id = Application.find_by_name("DSS Rights Management").roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
-      #   Role.find_by_id(admin_role_id).people.each do |admin|
-      #     WheneverMailer.adsync_report(admin.email, strio.string).deliver!
-      #   end
-      # end
     rescue => exception
       ExceptionNotifier.notify_exception(exception)
     end
@@ -197,7 +187,7 @@ namespace :ad do
       require 'active_directory'
       require 'active_directory_wrapper'
 
-      log = Rails.logger
+      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ad-sync.log')}", 15, 1024000))
 
       timestamp_start = Time.now
 
