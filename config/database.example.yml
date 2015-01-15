@@ -29,14 +29,3 @@ ldap:
   base_pw: pw
   search_dn: search_dn
 
-ad_people:
-  host: ad.domain.com
-  user: cn=admin,dc=ad,dc=domain,dc=com
-  pass: secret
-  base: ou=people,dc=ad,dc=domain,dc=com
-  
-ad_groups:
-  host: ad.domain.com
-  user: cn=admin,dc=ad,dc=domain,dc=com
-  pass: secret
-  base: ou=groups,dc=ad,dc=domain,dc=com
