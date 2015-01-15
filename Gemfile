@@ -23,7 +23,7 @@ group :development, :test do
   gem 'capybara' # for JS integration testing
   gem 'poltergeist' # for PhantomJS-based testing with capybara
   gem 'sqlite3'
-  #gem 'mysql2'
+  gem 'byebug' # for Ruby 2.x debugging
 end
 
 gem 'strong_parameters'
