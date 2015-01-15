@@ -23,7 +23,7 @@ namespace :ad do
 
         # Cache group 'dss-us-auto-all' because we always need it
         groups["dss-us-auto-all"] = ActiveDirectoryWrapper.fetch_group("dss-us-auto-all")
-        if groups["dss-us-auto-all"].nil?
+        unless groups["dss-us-auto-all"]
           log.error "Error: Could not load group dss-us-auto-all"
         else
           ensure_magic_descriptor_presence(groups["dss-us-auto-all"])
@@ -195,10 +195,10 @@ namespace :ad do
         log.tagged "role:#{args[:role_id]}" do
           r = Role.includes(:entities).find_by_id(args[:role_id])
 
-          unless r.nil?
+          if r
             disable_authorization
 
-            unless r.ad_path.nil?
+            if r.ad_path
               log.info "Syncing role #{r.id} (#{r.application.name} / #{r.token}) with AD ..."
 
               if r.ad_guid
@@ -209,7 +209,7 @@ namespace :ad do
                 r.ad_guid = g.objectguid unless g.nil?
               end
 
-              unless g.nil?
+              if g
                 ensure_magic_descriptor_presence(g)
 
                 # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
