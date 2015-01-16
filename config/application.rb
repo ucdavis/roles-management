@@ -60,5 +60,12 @@ module DSSRM
 
     config.assets.paths << Rails.root.join("app", "assets", "javascripts", "controllers")
     config.assets.paths << Rails.root.join("app", "assets", "templates")
+
+    config.middleware.swap "Rails::Rack::Logger", "BreakoutLogger",
+                                                :silence => ["/status.json"],
+                                                :breakout => [
+                                                  ["\/api\/[a-zA-Z\/]+\.json$", "api.log"],
+                                                  ["\/roles\/[0-9]+.txt$", "roles_txt.log"]
+                                                ]
   end
 end
