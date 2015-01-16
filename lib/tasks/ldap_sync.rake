@@ -14,7 +14,7 @@ namespace :ldap do
 
       disable_authorization
 
-      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ldap-sync.log')}", 15, 1024000))
+      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ldap-sync.log')}"))
 
       log.tagged "ldap:import" do
         timestamp_start = Time.now

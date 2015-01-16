@@ -11,7 +11,7 @@ namespace :ad do
       require 'active_directory'
       require 'active_directory_wrapper'
 
-      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ad-sync.log')}", 15, 1024000))
+      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ad-sync.log')}"))
 
       log.tagged "ad:sync_all_users" do
         # Cached groups list
@@ -187,7 +187,7 @@ namespace :ad do
       require 'active_directory'
       require 'active_directory_wrapper'
 
-      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ad-sync.log')}", 15, 1024000))
+      log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ad-sync.log')}"))
 
       timestamp_start = Time.now
 
