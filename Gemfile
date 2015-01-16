@@ -28,8 +28,6 @@ end
 
 gem 'strong_parameters'
 
-#gem "rubysl", "~> 2.0", :platform => :rbx
-
 gem 'capistrano', '< 3.0.0'
 
 gem 'ruby-ldap', :require => false
