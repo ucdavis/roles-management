@@ -15,7 +15,7 @@ GIT
 
 GIT
   remote: https://github.com/ruby-ldap/ruby-net-ldap.git
-  revision: 59d8ae9ebb0ac54f264b93b9a786080899e435f7
+  revision: 4feab6f239399137d780c94ce303663f5546fd56
   specs:
     net-ldap (0.10.1)
 
@@ -145,7 +145,7 @@ GEM
       cocaine (~> 0.5.3)
       mime-types
     pg (0.18.1)
-    phantomjs (1.9.7.1)
+    phantomjs (1.9.8.0)
     poltergeist (1.5.1)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
@@ -178,7 +178,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ruby-ldap (0.9.16)
-    sass (3.4.9)
+    sass (3.4.10)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
