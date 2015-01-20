@@ -48,7 +48,7 @@ class EntitiesController < ApplicationController
       end
     end
 
-    @entity.trigger_sync
+    #@entity.trigger_sync
 
     if @entity.group?
       @group = @entity
@@ -68,16 +68,16 @@ class EntitiesController < ApplicationController
 
     respond_to do |format|
       if @entity.update_attributes(params[:entity])
-        @entity.touch # updating a relation will not alter the 'updated_at' timestamp
+        @entity.touch # Updating a relation will not alter the 'updated_at' timestamp
                       # but that timestamp is used when caching a JSON view of this entity
                       # which _will_ include those relations, so 'touch' the timestamp
                       # here to ensure JSON cache is invalidated.
                       # Another option is to calculate cache_keys using the updated_at of
                       # all relations but this could potentially take a long time on very
-                      # large groups
+                      # large groups.
 
-        logger.debug "Entity#update successful. Triggering sync ..."
-        @entity.trigger_sync
+        logger.debug "Entity#update successful." # Triggering sync ..."
+        #@entity.trigger_sync
 
         @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 

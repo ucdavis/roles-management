@@ -42,13 +42,13 @@ class RolesController < ApplicationController
     end
   end
 
-  # Forces a role to sync (used by a button in application modal)
-  def sync
-    @role = Role.find_by_id(params[:role_id])
-    @role.trigger_sync!
-
-    respond_with :ok
-  end
+  # # Forces a role to sync (used by a button in application modal)
+  # def sync
+  #   @role = Role.find_by_id(params[:role_id])
+  #   @role.trigger_sync!
+  #
+  #   respond_with :ok
+  # end
 
   private
 

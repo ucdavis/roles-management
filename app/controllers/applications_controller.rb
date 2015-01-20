@@ -57,7 +57,7 @@ class ApplicationsController < ApplicationController
       logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to create new application, #{params[:application]}."
     end
 
-    @application.trigger_sync
+    #@application.trigger_sync
 
     respond_with @application
   end
@@ -69,7 +69,7 @@ class ApplicationsController < ApplicationController
       if @application.update_attributes(params[:application])
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
-        @application.trigger_sync
+        #@application.trigger_sync
 
         format.json { render :json => @application }
       else

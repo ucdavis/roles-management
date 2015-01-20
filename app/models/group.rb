@@ -84,7 +84,7 @@ class Group < Entity
           logger.debug "Adding #{reduced_results.length} results to the total"
           results << reduced_results
         end
-        
+
         logger.debug "Ending step one with #{results.length} results"
       end
 
@@ -114,7 +114,7 @@ class Group < Entity
           logger.debug "Processing loginid is rule #{rule.value}..."
           results << rule.results.map{ |r| r.entity_id }
         end
-        
+
         logger.debug "'Login ID is' additions yields #{results.length} results"
       end
 
@@ -152,8 +152,7 @@ class Group < Entity
       end
 
       logger.debug "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
-      #diary "Membership recalculated to #{memberships.length} members"
-      
+
       # As promised, now that all the GroupMembership and RoleAssignment objects are created,
       # we will sync roles in one sweep instead of allowing the flurry of activity to create
       # chaotic redundancies with trigger_sync.
@@ -166,7 +165,7 @@ class Group < Entity
       logger.debug "Completed recalculate_members!, including role trigger syncs. Total elapsed time was #{Time.now - recalculate_start}s."
     end
   end
-  
+
   # Records all IDs found while traversing up the parent graph.
   # Algorithm ends either when a duplicate ID is found (indicates a loop)
   # or no more parents exist (indicates no loops).
@@ -181,13 +180,7 @@ class Group < Entity
         return false
       end
     end
-    
-    return true
-  end
 
-  def trigger_sync
-    logger.info "Group #{id}: trigger_sync called, calling trigger_sync on #{roles.count} roles"
-    #diary "Triggering all #{roles.count} roles to sync."
-    roles.all.each { |role| role.trigger_sync! }
+    return true
   end
 end

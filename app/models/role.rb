@@ -1,3 +1,5 @@
+require 'sync'
+
 # A role has both 'entities' and 'members'.
 # Ultimately, 'entities' is the only model assigned to a role.
 # An entity is either a Person or Group.
@@ -67,47 +69,67 @@ class Role < ActiveRecord::Base
     all.uniq{ |x| x.id }
   end
 
+  # Triggers the sync subsystem on this role
+  def sync_role_increment(person_id)
+    Sync.person_added_to_role(person_id, self.id)
+  end
+  def sync_role_decrement(person_id)
+    Sync.person_removed_from_role(person_id, self.id)
+  end
+
   # Syncronizes with AD
   # Note: Due to AD's architecture, this cannot be verified as a success right away
-  def sync_ad
+  def sync_ad_increment(person_id)
     if self.ad_path and (self.ad_path.length > 0)
       require 'rake'
 
       load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
 
       logger.info "Scheduling AD sync for role #{id}"
-      #diary "Queueing Active Directory sync."
       Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
     else
-      #diary "Skipping Active Directory sync as no AD path is set."
+      logger.info "Not scheduling AD sync for role #{id} as AD path is not set."
+    end
+  end
+  # TODO: Make this function and the one above actually selective add/remove.
+  #       Right now they both just take a sledgehammer to the AD role.
+  def sync_ad_decrement(person_id)
+    if self.ad_path and (self.ad_path.length > 0)
+      require 'rake'
+
+      load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
+
+      logger.info "Scheduling AD sync for role #{id}"
+      Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
+    else
       logger.info "Not scheduling AD sync for role #{id} as AD path is not set."
     end
   end
 
-  # trigger_sync! exists in Person and Group as well
-  # It's purpose is to merely handle whatever needs to be done
+  # trigger_sync!'s purpose is to handle whatever needs to be done
   # with the syncing architecture (e.g. person changes, trigger roles to sync so
   # Active Directory, etc. can be updated)
-  def trigger_sync!
+  def trigger_increment_sync!(person_id)
     unless Thread.current[:will_sync_role] and Thread.current[:will_sync_role].include? id
-      logger.info "Role #{id}: trigger_sync! called, calling sync_ad"
-      #diary "Triggering registered sync methods."
-      sync_ad
+      logger.debug "Role #{id}: trigger_increment_sync! called"
+      sync_role_increment(person_id)
+      sync_ad_increment(person_id)
+    else
+      logger.debug "Role #{id}: trigger_sync! called but skipping as will_sync_role lock exists"
+    end
+  end
+
+  def trigger_decrement_sync!(person_id)
+    unless Thread.current[:will_sync_role] and Thread.current[:will_sync_role].include? id
+      logger.debug "Role #{id}: trigger_decrement_sync! called"
+      sync_role_decrement(person_id)
+      sync_ad_decrement(person_id)
     else
       logger.debug "Role #{id}: trigger_sync! called but skipping as will_sync_role lock exists"
     end
   end
 
   private
-
-  # If the ad_path was changed in any way, reset the last_ad_sync to ensure
-  # the next AD sync is a two-way sync. (It is only two-way for the first sync,
-  # one-way after that.)
-  # def reset_last_ad_sync_if_ad_path_changed
-  #   if self.ad_path_changed?
-  #     self.last_ad_sync = nil
-  #   end
-  # end
 
   def ad_path_cannot_be_blank_if_present
     if self.ad_path and self.ad_path.blank?
@@ -122,15 +144,3 @@ class Role < ActiveRecord::Base
     end
   end
 end
-
-# Thread-level list of roles which are scheduled to be synced.
-# Used to avoid multiple role syncs due to the flurry of callbacks
-# that occur when personal data is changed.
-# e.g. Person gains new Title -> recalculates group rule ->
-#      alters group membership -> group has role so trigger_sync
-#      is called for every recalculated group rule member.
-#      Also used when a group gains a role to avoid having all
-#      its members individually trigger role syncs, i.e. because
-#      N-member-role assignments will be created, each calling
-#      trigger_sync.
-#Thread.current[:will_sync_role] = []

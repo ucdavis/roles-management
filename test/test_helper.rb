@@ -23,7 +23,7 @@ class ActiveSupport::TestCase
       assert p.role_symbols.length >= 1, "current_user should have just been assigned a role for this test"
     end
   end
-  
+
   # Gives test user 'casuser' the admin access role for RM
   # Note: This also grants the 'access' token as well, as 'admin' privileges are
   #       a superset of those permissions.
@@ -40,7 +40,7 @@ class ActiveSupport::TestCase
       assert p.role_symbols.length >= 2, "current_user should have just been assigned two roles for this test"
     end
   end
-  
+
   def revoke_test_user_admin_access
     without_access_control do
       p = Person.find_by_loginid("casuser")
@@ -50,15 +50,15 @@ class ActiveSupport::TestCase
       p.roles.destroy(r_admin)
     end
   end
-  
+
   def grant_whitelisted_access
     request.env['REMOTE_ADDR'] = '1.2.3.4'
   end
-  
+
   def grant_api_user_access
     request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
   end
-  
+
   # Removes all means of authentication: CAS, API whitelist, and API key
   def revoke_access
     Authorization.current_user = nil
@@ -67,11 +67,11 @@ class ActiveSupport::TestCase
     request.session.delete(:user_id)
     CASClient::Frameworks::Rails::Filter.fake(nil)
   end
-  
+
   # Ensures Authorization.current_user has no valid permission tokens to RM
   def revoke_rm_permissions
     assert Authorization.current_user, "current_user should be set before calling this function"
-    
+
     without_access_control do
       p = Person.find_by_loginid("casuser")
       a = Application.find_by_name("DSS Roles Management")

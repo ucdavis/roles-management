@@ -85,16 +85,6 @@ class GroupMembership < ActiveRecord::Base
     end
   end
 
-  # Alerts GroupRule to recalculate OU-based rules for this entity
-  # if group is an OU.
-  # This logic is located here and not in GroupRule as this is the best
-  # place to find group memberships being created and destroyed.
-  # def recalculate_ou_group_rules_if_necessary
-  #   if group.ou? and not Thread.current[:recalculating_membership_flag]
-  #     GroupRule.resolve_target!(:ou, self.entity_id)
-  #   end
-  # end
-
   # Grant group's roles to new member (marking as calculated)
   def grant_group_roles_to_member
     Rails.logger.tagged "GroupMembership #{id}" do

@@ -1,3 +1,5 @@
+require 'sync'
+
 # Person shares many attributes with entity.
 # Note that the 'name' field is simply self.first + " " + self.last
 # and is thus read-only. The same does not apply for groups.
@@ -34,17 +36,44 @@ class Person < Entity
   before_save  :set_name_if_blank
   after_save   :recalculate_group_rule_membership
   after_save   :touch_caches_as_needed
-  after_create  { |person| ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system']) }
-  after_destroy { |person| ActivityLog.info!("Deleted person #{person.name}.", ["person_#{person.id}", 'system']) }
+
+  after_create  { |person|
+    ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
+    Sync.person_added_to_system(person.id)
+  }
+  after_destroy { |person|
+    ActivityLog.info!("Deleted person #{person.name}.", ["person_#{person.id}", 'system'])
+    Sync.person_removed_from_system(person.id)
+  }
 
   def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email, :loginid => self.loginid, :first => self.first, :last => self.last, :email => self.email, :phone => self.phone, :address => self.address, :byline => self.byline, :active => self.active, :role_assignments => self.role_assignments.includes(:role).map{ |a| { id: a.id, calculated: a.parent_id?, entity_id: a.entity_id, role_id: a.role.id, token: a.role.token, application_name: a.role.application.name, application_id: a.role.application_id, name: a.role.name, description: a.role.description } }, :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } }, :group_memberships => self.group_memberships.includes(:group).map{ |m| { id: m.id, group_id: m.group.id, name: m.group.name, calculated: m.calculated } }, :group_ownerships => self.group_ownerships.includes(:group).map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } }, :group_operatorships => self.group_operatorships.includes(:group).map{ |o| { id: o.id, group_id: o.group.id, name: o.group.name } }, :organizations => self.organizations.map{ |o| { id: o.id, name: o.name } }
+    { :id => self.id, :name => self.name, :type => 'Person', :email => self.email,
+      :loginid => self.loginid, :first => self.first, :last => self.last,
+      :email => self.email, :phone => self.phone, :address => self.address,
+      :byline => self.byline, :active => self.active,
+      :role_assignments => self.role_assignments.includes(:role).map{ |a| {
+        id: a.id, calculated: a.parent_id?, entity_id: a.entity_id,
+        role_id: a.role.id, token: a.role.token,
+        application_name: a.role.application.name, application_id: a.role.application_id,
+        name: a.role.name, description: a.role.description }
+      },
+      :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
+      :group_memberships => self.group_memberships.includes(:group).map{ |m| {
+        id: m.id, group_id: m.group.id, name: m.group.name, calculated: m.calculated }
+      },
+      :group_ownerships => self.group_ownerships.includes(:group).map{ |o| {
+        id: o.id, group_id: o.group.id, name: o.group.name }
+      },
+      :group_operatorships => self.group_operatorships.includes(:group).map{ |o| {
+        id: o.id, group_id: o.group.id, name: o.group.name }
+      },
+      :organizations => self.organizations.map{ |o| { id: o.id, name: o.name } }
     }
   end
 
   # For CSV export
   def self.csv_header
-    "ID,Login ID, Email, First, Last".split(',')
+    "ID,Login ID,Email,First,Last".split(',')
   end
 
   def to_csv
@@ -112,11 +141,6 @@ class Person < Entity
     end
   end
 
-  def trigger_sync
-    logger.info "Person #{id}: trigger_sync called, calling trigger_sync on #{roles.length} roles"
-    roles.all.each { |role| role.trigger_sync! }
-  end
-
   def recalculate_group_rule_membership
     if changed.include? "title_id"
       GroupRule.resolve_target!(:title, id)
@@ -140,6 +164,12 @@ class Person < Entity
       role_assignments.each { |ra| ra.touch }
       group_memberships.each { |gm| gm.touch }
       organizations.each { |org| org.touch }
+
+      if self.active
+        Sync.person_activated(self.id)
+      else
+        Sync.person_deactivated(self.id)
+      end
     end
   end
 

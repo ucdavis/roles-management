@@ -11,12 +11,12 @@ DSSRM::Application.routes.draw do
       resources :roles
     end
   end
-  
+
   get "/welcome" => 'site#welcome', :format => false, :defaults => { :format => 'html' }
   get "/logout" => 'site#logout'
   get "/access_denied" => 'site#access_denied'
   get "/status" => "site#status"
-  
+
   # Note: 'search' queries external databases. For an internal search, use index action with GET parameter 'q=...'
   get "people/search/:term" => "people#search", :as => :people_search
   post "people/import/:loginid" => "people#import", :as => :person_import
@@ -26,9 +26,7 @@ DSSRM::Application.routes.draw do
   resources :people
   resources :groups
   resources :group_rules
-  resources :roles do
-    get "sync" # Use HTTP GET since this is enqueued - we cannot return a response quick enough
-  end
+  resources :roles
   resources :majors
   resources :titles
   resources :affiliations
@@ -41,7 +39,7 @@ DSSRM::Application.routes.draw do
     get "ops/impersonate/:loginid", :controller => "ops", :action => "impersonate"
     get "ops/unimpersonate"
     get "ad_path_check", :controller => "ops", :action => "ad_path_check"
-    
+
     resources :api_whitelisted_ip_users
     resources :api_key_users
     resources :queued_jobs
