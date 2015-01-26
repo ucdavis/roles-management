@@ -9,7 +9,7 @@ require "whenever/capistrano"
 require "delayed/recipes"
 
 # Use 10 background workers (the same value should be set in config/schedule.rb)
-set :delayed_job_args, "-n 10"
+set :delayed_job_args, "-n 5"
 
 before "deploy:restart", "delayed_job:stop"
 after  "deploy:restart", "delayed_job:start"
