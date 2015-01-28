@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/cthielen/active_directory.git
-  revision: 4de152eb34b4f3902a92fe019a5c1a7ec5fae584
+  revision: 7839289881cc8343852f730c41dd2c24d6594a9b
   specs:
-    active_directory (1.2.9)
-      net-ldap (>= 0.5.0)
+    active_directory (1.5.4)
+      net-ldap (>= 0.1.1)
 
 GIT
   remote: https://github.com/railsware/js-routes.git

@@ -11,8 +11,3 @@ every 6.hours do
   #envcommand 'nice -n 10 bundle exec rake ldap:import' # --silent'
 end
 
-# Sync with Active Directory every 4 hours
-# TODO: Remove this test once the new sync subsystem is in place
-every 1.day, :at => '1:00 am' do
-  rake "ad:sync_all_users"
-end

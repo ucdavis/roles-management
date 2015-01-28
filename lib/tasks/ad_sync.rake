@@ -8,7 +8,6 @@ namespace :ad do
   desc 'Sync the user database with Active Directory'
   task :sync_all_users => :environment do
     begin
-      # require 'stringio'
       require 'active_directory'
       require 'active_directory_wrapper'
 
@@ -167,24 +166,9 @@ namespace :ad do
     end
   end
 
-  # desc 'Sync all roles against Active Directory.'
-  # task :sync_all_roles => :environment do
-  #   begin
-  #     Role.all.each do |r|
-  #       if r.ad_path
-  #         puts "Queueing role #{r.id} (#{r.name} / #{r.application.name}) for background sync ..."
-  #         Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{r.id}]"))
-  #       end
-  #     end
-  #   rescue => exception
-  #     ExceptionNotifier.notify_exception(exception)
-  #   end
-  # end
-
   desc 'Sync a role against Active Directory. May create new users as needed.'
   task :sync_role, [:role_id] => :environment do |t, args|
     begin
-      # require 'stringio'
       require 'active_directory'
       require 'active_directory_wrapper'
 

@@ -18,7 +18,7 @@ class Role < ActiveRecord::Base
   belongs_to :application, :touch => true
 
   # before_save :reset_last_ad_sync_if_ad_path_changed
-  after_save :trigger_sync_if_needed
+  # after_save :trigger_sync_if_needed
 
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
@@ -106,9 +106,10 @@ class Role < ActiveRecord::Base
   #   end
   # end
 
-  # trigger_sync!'s purpose is to handle whatever needs to be done
-  # with the syncing architecture (e.g. person changes, trigger roles to sync so
-  # Active Directory, etc. can be updated)
+  # trigger_sync!'s purpose is to handle whatever needs to be done with
+  # the syncing architecture (e.g. person changes, trigger roles to sync so
+  # Active Directory, etc. can be updated).
+  # It is called when a RoleAssignment is created or destroyed.
   def trigger_increment_sync!(person_id)
     unless Thread.current[:will_sync_role] and Thread.current[:will_sync_role].include? id
       logger.debug "Role #{id}: trigger_increment_sync! called"
@@ -137,10 +138,10 @@ class Role < ActiveRecord::Base
     end
   end
 
-  def trigger_sync_if_needed
-    # ad_path was set for the first time, so sync
-    if self.ad_path and self.ad_path_was == nil
-      self.trigger_sync!
-    end
-  end
+  # def trigger_sync_if_needed
+  #   # ad_path was set for the first time, so sync
+  #   if self.ad_path and self.ad_path_was == nil
+  #     self.trigger_sync!
+  #   end
+  # end
 end

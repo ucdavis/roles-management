@@ -133,4 +133,8 @@ class RoleAssignmentTest < ActiveSupport::TestCase
       assert Sync.trigger_test_count(:remove_from_role) == 1, "remove_from_role should have been triggered but it is #{Sync.trigger_test_count(:remove_from_role)}"
     end
   end
+
+  test "assigning/unassigning a role to a group should not fire off add_to_role/remove_from_role for an inactive group member" do
+    assert false, "Test not implemented."
+  end
 end

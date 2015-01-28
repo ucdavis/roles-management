@@ -11,7 +11,6 @@ end
 group :production do
   gem 'pg'
   gem 'dalli'
-  gem 'exception_notification'
 end
 
 group :development do
@@ -25,6 +24,8 @@ group :development, :test do
   gem 'sqlite3'
   gem 'byebug' # for Ruby 2.x debugging
 end
+
+gem 'exception_notification'
 
 gem 'strong_parameters'
 
@@ -45,6 +46,7 @@ gem 'cancancan', '~> 1.8'
 gem 'net-ldap', :git => 'https://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
 #gem 'active_directory', :git => 'https://github.com/richardun/active_directory.git', :require => false
 gem 'active_directory', :git => 'https://github.com/cthielen/active_directory.git', :require => false
+#gem 'active_directory', :git => 'https://github.com/ajrkerr/active_directory.git', :require => false
 
 gem 'js-routes', :git => 'https://github.com/railsware/js-routes.git'
 

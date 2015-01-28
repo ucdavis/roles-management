@@ -22,31 +22,31 @@ authorization do
     has_permission_on :activity_log_tags, :to => :manage
     has_permission_on :activity_log_tag_associations, :to => :manage
     has_permission_on :admin_activity_logs, :to => :manage # controller version of model 'activity_logs'
-    
+
     # For API keys
     has_permission_on :admin_api_key_users, :to => :manage
     has_permission_on :api_key_users, :to => :manage
-    
+
     # For impersonating
-    has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate, :ad_path_check]
-    
+    has_permission_on :admin_ops, :to => [:impersonate, :unimpersonate] #, :ad_path_check]
+
     # For whitelisted IP users
     has_permission_on :admin_api_whitelisted_ip_users, :to => :manage
     has_permission_on :api_whitelisted_ip_users, :to => :manage
-    
+
     # For viewing enqueued jobs
     has_permission_on :admin_queued_jobs, :to => :manage
-    
+
     includes :api_reader
   end
-  
+
   # API whitelisted users are not quite admins. Grant specific access here
   role :api_whitelist do
     has_permission_on :roles, :to => :read
-    
+
     includes :api_reader
   end
-  
+
   # API key users are not quite admins. Grant specific access here
   role :api_key do
     has_permission_on :roles, :to => :manage
@@ -55,19 +55,19 @@ authorization do
     has_permission_on :group_rules, :to => :manage
     has_permission_on :people, :to => :manage
     has_permission_on :entities, :to => :manage
-    
+
     includes :api_reader
   end
-  
+
   role :access do
     # Allow access to the main page
     has_permission_on :applications, :to => :index
-    
+
     # Allow creating Activity Log entries
     has_permission_on :activity_logs, :to => :create
     has_permission_on :activity_log_tags, :to => :create
     has_permission_on :activity_log_tag_associations, :to => :create
-    
+
     # Allow reading of organizations
     has_permission_on :organizations, :to => :read
 
@@ -76,7 +76,7 @@ authorization do
     has_permission_on :affiliations, :to => :read
     has_permission_on :majors, :to => :read
     has_permission_on :titles, :to => :read
-    
+
     # Owners can read and update their own applications
     has_permission_on :applications, :to => [:read, :update] do
       if_attribute :owners => contains { user }
@@ -86,7 +86,7 @@ authorization do
       if_attribute :operators => contains { user }
     end
     # NOTE: 'access' role cannot create or destroy applications
-    
+
     # Allow creating/updating/reading of roles which belong to an application they own
     has_permission_on :roles, :to => [:read, :update, :create, :delete] do
       if_attribute :application => { :owners => contains { user } }
@@ -101,7 +101,7 @@ authorization do
     has_permission_on :roles, :to => [:show, :read, :update] do
       if_attribute :application => { :operators => contains { user } }
     end
-    
+
     # Owning/operating applications requires reading :entities
     # Create/delete role_assignments for applications they own
     has_permission_on :role_assignments, :to => [:create, :delete] do
@@ -111,10 +111,10 @@ authorization do
     has_permission_on :role_assignments, :to => [:create, :delete] do
       if_attribute :role => { :application => { :operators => contains { user } } }
     end
-    
+
     # Allow viewing/searching of individuals
     has_permission_on :entities, :to => [:index, :show, :read]
-    
+
     has_permission_on :people, :to => :read
     # You can only update your own details
     has_permission_on :people, :to => :update do
@@ -124,12 +124,12 @@ authorization do
     has_permission_on :entities, :to => :update do
       if_attribute :id => is { user.id }
     end
-    
+
     # Allow managing of their own favorites
     has_permission_on :person_favorite_assignments, :to => [:create, :delete] do
       if_attribute :owner_id => is { user.id }
     end
-    
+
     # Allow creating groups
     has_permission_on :entities, :to => :create do
       if_attribute :type => is { 'Group' }
@@ -171,14 +171,14 @@ authorization do
     has_permission_on :group_rules, :to => [:manage] do
       if_attribute :group => { :owners => contains { user } }
     end
-    
+
     # Allow reading of any group
     has_permission_on :groups, :to => [:read, :show]
-    
+
     # Allow searching/importing of people
     has_permission_on :people, :to => [:search, :import]
   end
-  
+
   role :api_reader do
     has_permission_on :api_v1_people, :to => :read
     has_permission_on :api_v1_entities, :to => :read

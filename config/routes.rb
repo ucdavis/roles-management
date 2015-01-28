@@ -38,7 +38,7 @@ DSSRM::Application.routes.draw do
     get "dialogs/ip_whitelist"
     get "ops/impersonate/:loginid", :controller => "ops", :action => "impersonate"
     get "ops/unimpersonate"
-    get "ad_path_check", :controller => "ops", :action => "ad_path_check"
+    #get "ad_path_check", :controller => "ops", :action => "ad_path_check"
 
     resources :api_whitelisted_ip_users
     resources :api_key_users
