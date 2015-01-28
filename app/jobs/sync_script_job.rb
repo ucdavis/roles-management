@@ -15,13 +15,16 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
       pipe.gets(nil)
     end
 
+    # e.g. "638aa9a4-4ef9-4a21-b223-28adfba578a1: active_directory.rb:"
+    log_tag = "#{job_uuid}: #{sync_script.split(File::SEPARATOR)[-1]}:"
+
     if $?.exitstatus != 0
-      Sync.logger.error "#{job_uuid}: #{sync_script}: ERROR"
-      Sync.logger.error "#{job_uuid}: #{sync_script}: \t" + ret.gsub("\n", "\n#{job_uuid}: #{sync_script}: \t") if ret and ret.length > 0
+      Sync.logger.error "#{log_tag} ERROR"
+      Sync.logger.error "#{log_tag} \t" + ret.gsub("\n", "\n#{log_tag} \t") if ret and ret.length > 0
       raise 'Sync script returned an error.'
     else
-      Sync.logger.debug "#{job_uuid}: #{sync_script}: SUCCESS"
-      Sync.logger.info "#{job_uuid}: #{sync_script}: \t" + ret.gsub("\n", "\n#{job_uuid}: #{sync_script}: \t") if ret and ret.length > 0
+      Sync.logger.debug "#{log_tag} SUCCESS"
+      Sync.logger.info "#{log_tag} \t" + ret.gsub("\n", "\n#{log_tag} \t") if ret and ret.length > 0
     end
   end
 
