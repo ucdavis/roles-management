@@ -28,8 +28,8 @@ class RoleAssignment < ActiveRecord::Base
   #       thereby triggering role sync.
   # Note: We skip over groups as their individual members hold their own role assignments which
   #       will catch any needed syncing.
-  after_create { |assignment| Sync.person_added_to_role(assignment.entity.id, assignment.role.id) unless assignment.entity.type == "Group" }
-  after_destroy { |assignment| Sync.person_removed_from_role(assignment.entity.id, assignment.role.id) unless assignment.entity.type == "Group" }
+  after_create { |assignment| Sync.person_added_to_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) unless assignment.entity.type == "Group" }
+  after_destroy { |assignment| Sync.person_removed_from_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) unless assignment.entity.type == "Group" }
 
   after_save { |assignment| assignment.log_changes(:save) }
   after_destroy { |assignment| assignment.log_changes(:destroy) }

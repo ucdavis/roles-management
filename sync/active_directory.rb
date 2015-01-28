@@ -324,9 +324,6 @@ end
 
 @config = YAML.load_file(@sync_data["config_path"] + "/active_directory.yml")
 
-require 'pp'
-pp @sync_data
-
 case @sync_data["mode"]
 when "add_to_system"
   exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)

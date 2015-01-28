@@ -19,58 +19,58 @@ module Sync
   # Triggered whenever somebody is added to a role.
   # If a group is added to a role, this will be called on each group member
   # individually.
-  def Sync.person_added_to_role(person_id, role_id)
+  def Sync.person_added_to_role(person_obj, role_obj)
     job_uuid = SecureRandom.uuid
 
-    Sync.logger.info "#{job_uuid}: Sync will add Person ##{person_id} to Role ##{role_id}"
+    Sync.logger.info "#{job_uuid}: Sync will add Person ##{person_obj[:id]} (#{person_obj[:name]}) to Role ##{role_obj[:id]} (#{role_obj[:application_name]}, #{role_obj[:token]})"
 
     if Rails.env == "test"
       @@trigger_test_counts[:add_to_role] += 1
     else
-      perform_sync(:add_to_role, job_uuid, person_id, { role: get_role_sync_obj(role_id) })
+      perform_sync(:add_to_role, job_uuid, person_obj, { role: role_obj })
     end
   end
 
   # Triggered whenever somebody is removed from a role.
   # If a group is removed from a role, this will be called on each group member
   # individually.
-  def Sync.person_removed_from_role(person_id, role_id)
+  def Sync.person_removed_from_role(person_obj, role_obj)
     job_uuid = SecureRandom.uuid
 
-    Sync.logger.info "#{job_uuid}: Sync will remove Person ##{person_id} from Role ##{role_id}"
+    Sync.logger.info "#{job_uuid}: Sync will remove Person ##{person_obj[:id]} (#{person_obj[:name]}) from Role ##{role_obj[:id]} (#{role_obj[:application_name]}, #{role_obj[:token]})"
 
     if Rails.env == "test"
       @@trigger_test_counts[:remove_from_role] += 1
     else
-      perform_sync(:remove_from_role, job_uuid, person_id, { role: get_role_sync_obj(role_id) })
+      perform_sync(:remove_from_role, job_uuid, person_obj, { role: role_obj })
     end
   end
 
   # Triggered when a new person is added to the system. Should they be granted
   # roles as well, person_added_to_role() will be called separately.
-  def Sync.person_added_to_system(person_id)
+  def Sync.person_added_to_system(person_obj)
     job_uuid = SecureRandom.uuid
 
-    Sync.logger.info "#{job_uuid}: Sync will add Person ##{person_id} to system"
+    Sync.logger.info "#{job_uuid}: Sync will add Person ##{person_obj[:id]} (#{person_obj[:name]}) to system"
 
     if Rails.env == "test"
       @@trigger_test_counts[:add_to_system] += 1
     else
-      perform_sync(:add_to_system, job_uuid, person_id)
+      perform_sync(:add_to_system, job_uuid, person_obj)
     end
   end
 
   # Triggered when a person is removed from the system. Should they have roles
   # to be removed, person_removed_from_role() will be called separately.
-  def Sync.person_removed_from_system(person_id)
+  def Sync.person_removed_from_system(person_obj)
     job_uuid = SecureRandom.uuid
 
-    Sync.logger.info "#{job_uuid}: Sync will remove Person ##{person_id} from system"
+    Sync.logger.info "#{job_uuid}: Sync will remove Person ##{person_obj[:id]} (#{person_obj[:name]}) from system"
 
     if Rails.env == "test"
       @@trigger_test_counts[:remove_from_system] += 1
     else
-      perform_sync(:remove_from_system, job_uuid, person_id)
+      perform_sync(:remove_from_system, job_uuid, person_obj)
     end
   end
 
@@ -78,29 +78,47 @@ module Sync
   # Note: They are active by default and this callback will not be called
   #       (use person_added_to_system() to capture that case). This will
   #       only be called if they are deactivated and then reactivated.
-  def Sync.person_activated(person_id)
+  def Sync.person_activated(person_obj)
     job_uuid = SecureRandom.uuid
 
-    Sync.logger.info "#{job_uuid}: Sync will activate Person ##{person_id}"
+    Sync.logger.info "#{job_uuid}: Sync will activate Person ##{person_obj[:id]} (#{person_obj[:name]})"
 
     if Rails.env == "test"
       @@trigger_test_counts[:activate_person] += 1
     else
-      perform_sync(:activate_person, job_uuid, person_id)
+      perform_sync(:activate_person, job_uuid, person_obj)
     end
   end
 
   # Triggered when a person is deactivated.
-  def Sync.person_deactivated(person_id)
+  def Sync.person_deactivated(person_obj)
     job_uuid = SecureRandom.uuid
 
-    Sync.logger.info "#{job_uuid}: Sync will deactivate Person ##{person_id}"
+    Sync.logger.info "#{job_uuid}: Sync will deactivate Person ##{person_obj[:id]} (#{person_obj[:name]})"
 
     if Rails.env == "test"
       @@trigger_test_counts[:deactivate_person] += 1
     else
-      perform_sync(:deactivate_person, job_uuid, person_id)
+      perform_sync(:deactivate_person, job_uuid, person_obj)
     end
+  end
+
+  # Encodes a Person or Role object into a flattened JSON object to be passed
+  # into the sync system. This allows the sync system to avoid using the database
+  # when a job runs potentially much later in time when the original object
+  # may no longer be in the database (such as when deleting a person or role).
+  # We have Sync encode the object even though it is called in the Person and
+  # Role class because we would like to control the format of the data in Sync
+  # where it matters most.
+  def Sync.encode(obj)
+    case obj
+    when Role
+      return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid, application_id: obj.application.id, application_name: obj.application.name }
+    when Person
+      return { id: obj.id, name: obj.name, loginid: obj.loginid, email: obj.email }
+    end
+
+    return nil
   end
 
   def Sync.logger
@@ -109,50 +127,24 @@ module Sync
 
   module_function
 
-  def perform_sync(sync_mode, job_uuid, person_id, opts = {})
+  def perform_sync(sync_mode, job_uuid, person_obj, opts = {})
     require 'json'
 
-    Sync.logger.info "#{job_uuid}: Queueing all sync scripts at #{Time.now}."
+    Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
 
     sync_json = JSON.generate(
       {
         config_path: Rails.root.join('sync', 'config').to_s,
         mode: sync_mode,
-        person: get_person_sync_obj(person_id)
+        person: person_obj
       }.merge(opts)
     )
-
-    # Keep some statistics for the log
-    sync_successes = 0
-    sync_failures = 0
 
     sync_scripts.each do |sync_script|
       Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), :queue => 'sync'
     end
-
-    Sync.logger.info "#{job_uuid}: Finished queueing sync scripts at #{Time.now}."
   end
   handle_asynchronously :perform_sync, :queue => 'sync'
-
-  def get_person_sync_obj(person_id)
-    p = Person.find_by_id(person_id)
-    if p == nil
-      Sync.logger.error("Sync was asked to find person with ID #{person_id} but they do not exist.")
-      return nil
-    end
-
-    { id: p.id, name: p.name, loginid: p.loginid, email: p.email }
-  end
-
-  def get_role_sync_obj(role_id)
-    r = Role.find_by_id(role_id)
-    if r == nil
-      Sync.logger.error("Sync was asked to find role ID #{role_id} but it does not exist.")
-      return nil
-    end
-
-    { id: r.id, token: r.token, ad_path: r.ad_path, ad_guid: r.ad_guid, application_id: r.application.id, application_name: r.application.name }
-  end
 
   def sync_scripts
     Dir[Rails.root.join("sync", "*")].select{ |f| File.file?(f) }

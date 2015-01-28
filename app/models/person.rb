@@ -39,11 +39,11 @@ class Person < Entity
 
   after_create  { |person|
     ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
-    Sync.person_added_to_system(person.id)
+    Sync.person_added_to_system(Sync.encode(person))
   }
   after_destroy { |person|
     ActivityLog.info!("Deleted person #{person.name}.", ["person_#{person.id}", 'system'])
-    Sync.person_removed_from_system(person.id)
+    Sync.person_removed_from_system(Sync.encode(person))
   }
 
   def as_json(options={})
@@ -166,9 +166,9 @@ class Person < Entity
       organizations.each { |org| org.touch }
 
       if self.active
-        Sync.person_activated(self.id)
+        Sync.person_activated(Sync.encode(self))
       else
-        Sync.person_deactivated(self.id)
+        Sync.person_deactivated(Sync.encode(self))
       end
     end
   end
