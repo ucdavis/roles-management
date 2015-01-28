@@ -205,6 +205,90 @@ def remove_user_from_group(user, group)
   group.remove user
 end
 
+def ensure_user_in_group(loginid, ad_path, ad_guid)
+  if ad_path
+    if ad_guid
+      g = fetch_ad_group_by_guid(ad_guid)
+    else
+      g = fetch_ad_group(ad_path)
+      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
+      # Record GUID as this is our preferred method of finding an existing group
+      #r.ad_guid = g.objectguid unless g.nil?
+    end
+
+    if g
+      ensure_magic_descriptor_presence(g)
+
+      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
+      # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
+      #r.ad_path = g.cn
+
+      # Add person to AD
+      u = fetch_ad_user(loginid)
+
+      unless in_ad_group?(u, g)
+        if add_user_to_group(u, g) == false
+          STDERR.puts "AD add operation failed."
+          return false
+        else
+          STDOUT.puts "AD add operation succeeded."
+          return true
+        end
+      else
+        STDOUT.puts "AD add operation unnecessary, user is already in group."
+        return true
+      end
+    else
+      STDERR.puts "Could not find AD group using GUID \"#{@sync_data["role"]["ad_guid"]}\" or path \"#{@sync_data["role"]["ad_path"]}\""
+      return false
+    end
+  end
+
+  return false
+end
+
+def ensure_user_not_in_group(loginid, ad_path, ad_guid)
+  if ad_path
+    if ad_guid
+      g = fetch_ad_group_by_guid(ad_guid)
+    else
+      g = fetch_ad_group(ad_path)
+      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
+      # Record GUID as this is our preferred method of finding an existing group
+      #r.ad_guid = g.objectguid unless g.nil?
+    end
+
+    if g
+      ensure_magic_descriptor_presence(g)
+
+      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
+      # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
+      #r.ad_path = g.cn
+
+      # Remove person from AD
+      u = fetch_ad_user(loginid)
+
+      if in_ad_group?(u, g)
+        if remove_user_from_group(u, g) == false
+          STDERR.puts "AD remove operation failed."
+          return false
+        else
+          STDOUT.puts "AD remove operation succeeded."
+          return true
+        end
+      else
+        STDOUT.puts "AD remove operation unnecessary, user is not in group."
+        return true
+      end
+    else
+      STDERR.puts "Could not find AD group using GUID \"#{@sync_data["role"]["ad_guid"]}\" or path \"#{@sync_data["role"]["ad_path"]}\""
+      return false
+    end
+  end
+
+  return false
+end
+
 # The magic descriptor used by ensure_magic_descriptor_presence
 MAGIC_DESCRIPTOR = "(RM Sync)"
 
@@ -232,8 +316,6 @@ end
 #  Start of main script.
 # -----------------------
 
-abort "This job is purposefully failing for debug purposes."
-
 begin
   @sync_data = JSON.parse(STDIN.read)
 rescue JSON::ParserError
@@ -247,57 +329,16 @@ pp @sync_data
 
 case @sync_data["mode"]
 when "add_to_system"
-  puts "add_to_system"
+  exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
 
 when "remove_from_system"
-  puts "remove_from_system"
+  exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
 
 when "add_to_role"
-  puts "trying add_to_role ... (token: #{@sync_data["role"]["token"]} for loginid: #{@sync_data["person"]["loginid"]})"
-
-  if @sync_data["role"]["ad_path"]
-    if @sync_data["role"]["ad_guid"]
-      g = fetch_ad_group_by_guid(@sync_data["role"]["ad_guid"])
-    else
-      g = fetch_ad_group(@sync_data["role"]["ad_path"])
-      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
-      # Record GUID as this is our preferred method of finding an existing group
-      #r.ad_guid = g.objectguid unless g.nil?
-    end
-
-    if g
-      ensure_magic_descriptor_presence(g)
-
-      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
-      # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
-      #r.ad_path = g.cn
-
-      # Add person to AD
-      u = fetch_ad_user(@sync_data["person"]["loginid"])
-      unless in_ad_group?(u, g)
-        if add_user_to_group(u, g) == false
-          #ActivityLog.err!("Needed to add #{member.name} to AD group #{r.ad_path} but the operation failed.", ["person_#{member.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
-          STDERR.puts "AD add operation failed."
-          exit(1)
-        else
-          #ActivityLog.record!("Added #{member.name} to AD group #{r.ad_path}.", ["person_#{member.id}", "role_#{r.id}", "application_#{r.application_id}", 'active_directory'])
-          STDOUT.puts "AD add operation succeeded."
-          exit(0)
-        end
-      #else
-        #log.info "User #{member.loginid} is already in AD group #{r.ad_path}"
-      end
-    else
-      STDERR.puts "Could not find AD group using GUID \"#{@sync_data["role"]["ad_guid"]}\" or path \"#{@sync_data["role"]["ad_path"]}\""
-      exit(1)
-    end
-  else
-    STDOUT.puts "Doing nothing as AD path not set."
-    exit(0)
-  end
+  exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"], @sync_data["role"]["ad_guid"])
 
 when "remove_from_role"
-  puts "remove_from_role"
+  exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"], @sync_data["role"]["ad_guid"])
 
 when "activate_person"
   puts "activate_person"
@@ -308,3 +349,6 @@ when "deactivate_person"
 else
   abort "This script does not understand sync mode: #{@sync_data["mode"]}"
 end
+
+# We will only get here on error.
+exit(1)
