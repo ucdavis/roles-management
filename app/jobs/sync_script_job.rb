@@ -16,12 +16,12 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
     end
 
     if $?.exitstatus != 0
-      Sync.logger.error "#{job_uuid}: ERROR \"#{sync_script}\""
-      Sync.logger.error "#{job_uuid}: \t" + ret.gsub("\n", "\n#{job_uuid}: \t") if ret and ret.length > 0
+      Sync.logger.error "#{job_uuid}: #{sync_script}: ERROR"
+      Sync.logger.error "#{job_uuid}: #{sync_script}: \t" + ret.gsub("\n", "\n#{job_uuid}: #{sync_script}: \t") if ret and ret.length > 0
       raise 'Sync script returned an error.'
     else
-      Sync.logger.debug "#{job_uuid}: SUCCESS \"#{sync_script}\""
-      Sync.logger.info "#{job_uuid}: \t" + ret.gsub("\n", "\n#{job_uuid}: \t") if ret and ret.length > 0
+      Sync.logger.debug "#{job_uuid}: #{sync_script}: SUCCESS"
+      Sync.logger.info "#{job_uuid}: #{sync_script}: \t" + ret.gsub("\n", "\n#{job_uuid}: #{sync_script}: \t") if ret and ret.length > 0
     end
   end
 
@@ -34,9 +34,10 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
   # def success(job)
   # end
 
-  def error(job, exception)
-    ExceptionNotifier.notify_exception(exception)
-  end
+  # We don't need to care about error because we throw the error ourselves
+  # in 'perform' if the external script fails.
+  # def error(job, exception)
+  # end
 
   def failure(job)
     # TODO: Make the failure e-mail delivery address configurable
