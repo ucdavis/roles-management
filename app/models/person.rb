@@ -166,9 +166,13 @@ class Person < Entity
       organizations.each { |org| org.touch }
 
       if self.active
-        Sync.person_activated(Sync.encode(self))
+        self.roles.each do |role|
+          Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
+        end
       else
-        Sync.person_deactivated(Sync.encode(self))
+        self.roles.each do |role|
+          Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
+        end
       end
     end
   end

@@ -74,35 +74,6 @@ module Sync
     end
   end
 
-  # Triggered when a person is activated.
-  # Note: They are active by default and this callback will not be called
-  #       (use person_added_to_system() to capture that case). This will
-  #       only be called if they are deactivated and then reactivated.
-  def Sync.person_activated(person_obj)
-    job_uuid = SecureRandom.uuid
-
-    Sync.logger.info "#{job_uuid}: Sync will activate Person ##{person_obj[:id]} (#{person_obj[:name]})"
-
-    if Rails.env == "test"
-      @@trigger_test_counts[:activate_person] += 1
-    else
-      perform_sync(:activate_person, job_uuid, person_obj)
-    end
-  end
-
-  # Triggered when a person is deactivated.
-  def Sync.person_deactivated(person_obj)
-    job_uuid = SecureRandom.uuid
-
-    Sync.logger.info "#{job_uuid}: Sync will deactivate Person ##{person_obj[:id]} (#{person_obj[:name]})"
-
-    if Rails.env == "test"
-      @@trigger_test_counts[:deactivate_person] += 1
-    else
-      perform_sync(:deactivate_person, job_uuid, person_obj)
-    end
-  end
-
   # Encodes a Person or Role object into a flattened JSON object to be passed
   # into the sync system. This allows the sync system to avoid using the database
   # when a job runs potentially much later in time when the original object

@@ -50,39 +50,43 @@ class PersonTest < ActiveSupport::TestCase
     end
   end
 
-  test "activating a person fires off 'activate_person' trigger" do
+  test "activating a person fires off 'person_added_to_role' for each of their roles" do
     without_access_control do
-      p = entities(:casuser)
+      # p = entities(:casuser)
+      #
+      # p.active = false
+      #
+      # p.save!
+      #
+      # Sync.reset_trigger_test_counts
+      #
+      # p.active = true
+      #
+      # p.save!
+      #
+      # assert Sync.trigger_test_count(:activate_person) == 1, "activate_person should have been triggered"
 
-      p.active = false
-
-      p.save!
-
-      Sync.reset_trigger_test_counts
-
-      p.active = true
-
-      p.save!
-
-      assert Sync.trigger_test_count(:activate_person) == 1, "activate_person should have been triggered"
+      assert false, "test not implemented"
     end
   end
 
-  test "deactivating a person fires off 'deactivate_person' trigger" do
+  test "deactivating a person fires off 'person_removed_from_role' for each of their roles" do
     without_access_control do
-      p = entities(:casuser)
-
-      p.active = true
-
-      p.save!
-
-      Sync.reset_trigger_test_counts
-
-      p.active = false
-
-      p.save!
-
-      assert Sync.trigger_test_count(:deactivate_person) == 1, "deactivate_person should have been triggered"
+      # p = entities(:casuser)
+      #
+      # p.active = true
+      #
+      # p.save!
+      #
+      # Sync.reset_trigger_test_counts
+      #
+      # p.active = false
+      #
+      # p.save!
+      #
+      # assert Sync.trigger_test_count(:deactivate_person) == 1, "deactivate_person should have been triggered"
+      
+      assert false, "test not implemented"
     end
   end
 end

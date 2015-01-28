@@ -242,6 +242,9 @@ def ensure_user_in_group(loginid, ad_path, ad_guid)
       STDERR.puts "Could not find AD group using GUID \"#{@sync_data["role"]["ad_guid"]}\" or path \"#{@sync_data["role"]["ad_path"]}\""
       return false
     end
+  else
+    # Role has no AD path to sync.
+    return true
   end
 
   return false
@@ -284,6 +287,9 @@ def ensure_user_not_in_group(loginid, ad_path, ad_guid)
       STDERR.puts "Could not find AD group using GUID \"#{@sync_data["role"]["ad_guid"]}\" or path \"#{@sync_data["role"]["ad_path"]}\""
       return false
     end
+  else
+    # Role has no AD path to sync.
+    return true
   end
 
   return false
@@ -336,12 +342,6 @@ when "add_to_role"
 
 when "remove_from_role"
   exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"], @sync_data["role"]["ad_guid"])
-
-when "activate_person"
-  puts "activate_person"
-
-when "deactivate_person"
-  puts "deactivate_person"
 
 else
   abort "This script does not understand sync mode: #{@sync_data["mode"]}"
