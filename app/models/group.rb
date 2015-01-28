@@ -121,15 +121,6 @@ class Group < Entity
       results.flatten!
       logger.debug "Results flattened, count now at #{results.length} results"
 
-      # Ensure the mass GroupMembership creation (and subsequent mass RoleAssignment creation)
-      # doesn't trigger a flurry of trigger_sync - we can intelligently do this group's roles
-      # after the new RoleAssignments are created.
-      Thread.current[:will_sync_role] = [] unless Thread.current[:will_sync_role]
-      roles.each do |r|
-        Thread.current[:will_sync_role] << r.id
-        logger.debug "Locking role #{r.id} against syncing - we will call trigger_sync! after recalculation."
-      end
-
       # Look for memberships which need to be removed
       GroupMembership.where(:group_id => self.id, :calculated => true).each do |membership|
         # Note: Array.delete returns nil iff result is not in array
@@ -152,17 +143,7 @@ class Group < Entity
       end
 
       logger.debug "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
-
-      # As promised, now that all the GroupMembership and RoleAssignment objects are created,
-      # we will sync roles in one sweep instead of allowing the flurry of activity to create
-      # chaotic redundancies with trigger_sync.
-      roles.each do |r|
-        Thread.current[:will_sync_role].delete(r.id)
-        logger.debug "Unlocking role #{r.id} for syncing and calling trigger_sync!."
-        r.trigger_sync!
-      end
-
-      logger.debug "Completed recalculate_members!, including role trigger syncs. Total elapsed time was #{Time.now - recalculate_start}s."
+      logger.debug "Completed recalculate_members!. Total elapsed time was #{Time.now - recalculate_start}s."
     end
   end
 

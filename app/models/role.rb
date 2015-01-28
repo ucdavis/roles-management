@@ -1,5 +1,3 @@
-require 'sync'
-
 # A role has both 'entities' and 'members'.
 # Ultimately, 'entities' is the only model assigned to a role.
 # An entity is either a Person or Group.
@@ -69,67 +67,6 @@ class Role < ActiveRecord::Base
     all.uniq{ |x| x.id }
   end
 
-  # Triggers the sync subsystem on this role
-  def sync_role_increment(person_id)
-    Sync.person_added_to_role(person_id, self.id)
-  end
-  def sync_role_decrement(person_id)
-    Sync.person_removed_from_role(person_id, self.id)
-  end
-
-  # Syncronizes with AD
-  # Note: Due to AD's architecture, this cannot be verified as a success right away
-  # def sync_ad_increment(person_id)
-  #   if self.ad_path and (self.ad_path.length > 0)
-  #     require 'rake'
-  #
-  #     load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
-  #
-  #     logger.info "Scheduling AD sync for role #{id}"
-  #     Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
-  #   else
-  #     logger.info "Not scheduling AD sync for role #{id} as AD path is not set."
-  #   end
-  # end
-  # TODO: Make this function and the one above actually selective add/remove.
-  #       Right now they both just take a sledgehammer to the AD role.
-  # def sync_ad_decrement(person_id)
-  #   if self.ad_path and (self.ad_path.length > 0)
-  #     require 'rake'
-  #
-  #     load File.join(Rails.root, 'lib', 'tasks', 'ad_sync.rake')
-  #
-  #     logger.info "Scheduling AD sync for role #{id}"
-  #     Delayed::Job.enqueue(DelayedRake.new("ad:sync_role[#{id}]"))
-  #   else
-  #     logger.info "Not scheduling AD sync for role #{id} as AD path is not set."
-  #   end
-  # end
-
-  # trigger_sync!'s purpose is to handle whatever needs to be done with
-  # the syncing architecture (e.g. person changes, trigger roles to sync so
-  # Active Directory, etc. can be updated).
-  # It is called when a RoleAssignment is created or destroyed.
-  def trigger_increment_sync!(person_id)
-    unless Thread.current[:will_sync_role] and Thread.current[:will_sync_role].include? id
-      logger.debug "Role #{id}: trigger_increment_sync! called"
-      sync_role_increment(person_id)
-      # sync_ad_increment(person_id)
-    else
-      logger.debug "Role #{id}: trigger_sync! called but skipping as will_sync_role lock exists"
-    end
-  end
-
-  def trigger_decrement_sync!(person_id)
-    unless Thread.current[:will_sync_role] and Thread.current[:will_sync_role].include? id
-      logger.debug "Role #{id}: trigger_decrement_sync! called"
-      sync_role_decrement(person_id)
-      # sync_ad_decrement(person_id)
-    else
-      logger.debug "Role #{id}: trigger_sync! called but skipping as will_sync_role lock exists"
-    end
-  end
-
   private
 
   def ad_path_cannot_be_blank_if_present
@@ -137,11 +74,4 @@ class Role < ActiveRecord::Base
       self.ad_path = nil
     end
   end
-
-  # def trigger_sync_if_needed
-  #   # ad_path was set for the first time, so sync
-  #   if self.ad_path and self.ad_path_was == nil
-  #     self.trigger_sync!
-  #   end
-  # end
 end
