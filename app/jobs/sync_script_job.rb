@@ -44,7 +44,7 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
 
   def failure(job)
     # TODO: Make the failure e-mail delivery address configurable
-    WheneverMailer.sync_script_failed("dssit-devs@ucdavis.edu", job).deliver!
+    AdminMailer.sync_script_failed("dssit-devs@ucdavis.edu", job).deliver!
   end
 
   def reschedule_at(current_time, attempts)

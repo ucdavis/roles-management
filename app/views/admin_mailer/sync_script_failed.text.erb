@@ -1,0 +1,13 @@
+A sync script has failed (<%= @job.attempts %> attempts).
+
+Failed at:
+
+<%= @job.failed_at %>
+
+Job:
+
+<%= @job.handler %>
+
+Last error:
+
+<%= @job.last_error %>
