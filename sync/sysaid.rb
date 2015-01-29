@@ -220,30 +220,22 @@ end
 case @sync_data["mode"]
 
 when "add_to_system"
-  exit(0) # We don't care about this
+  abort unless log_into_sysaid
+  abort unless add_user_to_sysaid(@sync_data["person"])
+
+  exit(0)
 
 when "remove_from_system"
-  exit(0) # We don't care about this
+  abort unless log_into_sysaid
+  abort unless add_user_to_sysaid(@sync_data["person"])
+
+  exit(0)
 
 when "add_to_role"
-  if @sync_data["role"]["id"].to_s == "111" and @sync_data["role"]["token"] == "import"
-    abort unless log_into_sysaid
-    abort unless add_user_to_sysaid(@sync_data["person"])
-
-    exit(0)
-  else
-    exit(0) # We don't care about this
-  end
+  exit(0) # We don't care about this
 
 when "remove_from_role"
-  if @sync_data["role"]["id"].to_s == "111" and @sync_data["role"]["token"] == "import"
-    abort unless log_into_sysaid
-    abort unless remove_user_from_sysaid(@sync_data["person"])
-
-    exit(0)
-  else
-    exit(0) # We don't care about this
-  end
+  exit(0) # We don't care about this
 
 when "add_to_organization"
   exit(0) # We don't care about this
