@@ -65,3 +65,5 @@ gem 'paperclip', '~> 3.0'
 
 # For memory usage checks
 gem 'os', :require => false
+
+gem 'sysaid'

@@ -1,0 +1,6 @@
+# Move this file to sysaid.yml and set the appropriate values below.
+
+account: "account"
+user: "user"
+password: "password"
+uri: "https://sysaid/services/SysaidApiService?wsdl"

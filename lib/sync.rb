@@ -110,9 +110,12 @@ module Sync
   def Sync.encode(obj)
     case obj
     when Role
-      return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid, application_id: obj.application.id, application_name: obj.application.name }
+      return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
+               application_id: obj.application.id, application_name: obj.application.name }
     when Person
-      return { id: obj.id, name: obj.name, loginid: obj.loginid, email: obj.email, affiliations: obj.affiliations.map { |a| a.name } }
+      return { id: obj.id, name: obj.name, first: obj.first, last: obj.last, loginid: obj.loginid,
+               email: obj.email, address: obj.address, title: obj.title ? obj.title.name : nil, phone: obj.phone,
+               affiliations: obj.affiliations.map { |a| a.name }, organizations: obj.organizations.map { |o| o.name } }
     when Organization
       return { id: obj.id, name: obj.name }
     end
