@@ -74,6 +74,32 @@ module Sync
     end
   end
 
+  # Triggered when a person is added to an organization.
+  def Sync.person_added_to_organization(person_obj, organization_obj)
+    job_uuid = SecureRandom.uuid
+
+    Sync.logger.info "#{job_uuid}: Sync will add Person ##{person_obj[:id]} (#{person_obj[:name]}) to Organization ##{organization_obj[:id]} (#{organization_obj[:name]})"
+
+    if Rails.env == "test"
+      @@trigger_test_counts[:add_to_organization] += 1
+    else
+      perform_sync(:add_to_organization, job_uuid, person_obj, { organization: organization_obj })
+    end
+  end
+
+  # Triggered when a person is removed from an organization.
+  def Sync.person_removed_from_organization(person_obj, organization_obj)
+    job_uuid = SecureRandom.uuid
+
+    Sync.logger.info "#{job_uuid}: Sync will remove Person ##{person_obj[:id]} (#{person_obj[:name]}) from Organization ##{organization_obj[:id]} (#{organization_obj[:name]})"
+
+    if Rails.env == "test"
+      @@trigger_test_counts[:remove_from_organization] += 1
+    else
+      perform_sync(:remove_from_organization, job_uuid, person_obj, { organization: organization_obj })
+    end
+  end
+
   # Encodes a Person or Role object into a flattened JSON object to be passed
   # into the sync system. This allows the sync system to avoid using the database
   # when a job runs potentially much later in time when the original object
@@ -86,7 +112,9 @@ module Sync
     when Role
       return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid, application_id: obj.application.id, application_name: obj.application.name }
     when Person
-      return { id: obj.id, name: obj.name, loginid: obj.loginid, email: obj.email }
+      return { id: obj.id, name: obj.name, loginid: obj.loginid, email: obj.email, affiliations: obj.affiliations.map { |a| a.name } }
+    when Organization
+      return { id: obj.id, name: obj.name }
     end
 
     return nil

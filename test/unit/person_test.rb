@@ -50,7 +50,7 @@ class PersonTest < ActiveSupport::TestCase
     end
   end
 
-  test "activating a person fires off 'person_added_to_role' for each of their roles" do
+  test "activating a person fires off the 'person_added_to_role' and 'person_added_to_organization' sync signals for each of their roles" do
     without_access_control do
       # p = entities(:casuser)
       #
@@ -70,7 +70,7 @@ class PersonTest < ActiveSupport::TestCase
     end
   end
 
-  test "deactivating a person fires off 'person_removed_from_role' for each of their roles" do
+  test "deactivating a person fires off the 'person_removed_from_role' and 'person_removed_from_organization' sync signals for each of their roles" do
     without_access_control do
       # p = entities(:casuser)
       #
@@ -85,7 +85,13 @@ class PersonTest < ActiveSupport::TestCase
       # p.save!
       #
       # assert Sync.trigger_test_count(:deactivate_person) == 1, "deactivate_person should have been triggered"
-      
+
+      assert false, "test not implemented"
+    end
+  end
+
+  test "setting or changing a person's organization fires off 'add_to_organization' or 'remove_from_organization' sync signals" do
+    without_access_control do
       assert false, "test not implemented"
     end
   end

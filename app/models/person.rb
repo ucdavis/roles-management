@@ -165,13 +165,21 @@ class Person < Entity
       group_memberships.each { |gm| gm.touch }
       organizations.each { |org| org.touch }
 
+      # Activating/de-activating a person emulates them losing all their
+      # roles and organizations
       if self.active
         self.roles.each do |role|
           Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
         end
+        self.organizations.each do |organization|
+          Sync.person_added_to_organization(Sync.encode(self), Sync.encode(organization))
+        end
       else
         self.roles.each do |role|
           Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
+        end
+        self.organizations.each do |organization|
+          Sync.person_removed_from_organization(Sync.encode(self), Sync.encode(organization))
         end
       end
     end

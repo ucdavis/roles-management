@@ -205,90 +205,94 @@ def remove_user_from_group(user, group)
   group.remove user
 end
 
-def ensure_user_in_group(loginid, ad_path, ad_guid)
-  if ad_path
+# User may be a loginid (string) or ActiveDirectory::User object
+# Group may be an AD path (string) or ActiveDirectory::Group object
+# ad_guid may be provided (optional) and will be prefered over AD Path if
+# 'group' is a string (AD Path)
+def ensure_user_in_group(user, group, ad_guid = nil)
+  if user.is_a? ActiveDirectory::User
+    u = user
+  else
+    u = fetch_ad_user(user)
+    if u.nil?
+      STDERR.puts "Could not find AD user \"#{user}\""
+      return false
+    end
+  end
+
+  if group.is_a? ActiveDirectory::Group
+    g = group
+  else
     if ad_guid
       g = fetch_ad_group_by_guid(ad_guid)
     else
-      g = fetch_ad_group(ad_path)
-      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
-      # Record GUID as this is our preferred method of finding an existing group
-      #r.ad_guid = g.objectguid unless g.nil?
+      g = fetch_ad_group(group)
     end
+    if g.nil?
+      STDERR.puts "Could not find AD group using GUID \"#{ad_guid}\" or path \"#{group}\""
+      return false
+    end
+  end
 
-    if g
-      ensure_magic_descriptor_presence(g)
+  ensure_magic_descriptor_presence(g)
 
-      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
-      # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
-      #r.ad_path = g.cn
-
-      # Add person to AD
-      u = fetch_ad_user(loginid)
-
-      unless in_ad_group?(u, g)
-        if add_user_to_group(u, g) == false
-          STDERR.puts "AD add operation failed."
-          return false
-        else
-          STDOUT.puts "AD add operation succeeded."
-          return true
-        end
-      else
-        STDOUT.puts "AD add operation unnecessary, user is already in group."
-        return true
-      end
+  unless in_ad_group?(u, g)
+    if add_user_to_group(u, g)
+      STDOUT.puts "AD add operation succeeded."
+      return true
     else
-      STDERR.puts "Could not find AD group using GUID \"#{@sync_data["role"]["ad_guid"]}\" or path \"#{@sync_data["role"]["ad_path"]}\""
+      STDERR.puts "AD add operation failed."
       return false
     end
   else
-    # Role has no AD path to sync.
+    STDOUT.puts "AD add operation unnecessary, user is already in group."
     return true
   end
 
   return false
 end
 
-def ensure_user_not_in_group(loginid, ad_path, ad_guid)
-  if ad_path
+# User may be a loginid (string) or ActiveDirectory::User object
+# Group may be an AD path (string) or ActiveDirectory::Group object
+# ad_guid may be provided (optional) and will be prefered over AD Path if
+# 'group' is a string (AD Path)
+def ensure_user_not_in_group(user, group, ad_guid = nil)
+  if user.is_a? ActiveDirectory::User
+    u = user
+  else
+    u = fetch_ad_user(user)
+    if u.nil?
+      STDERR.puts "Could not find AD user \"#{user}\""
+      return false
+    end
+  end
+
+  if group.is_a? ActiveDirectory::Group
+    g = group
+  else
     if ad_guid
       g = fetch_ad_group_by_guid(ad_guid)
     else
-      g = fetch_ad_group(ad_path)
-      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
-      # Record GUID as this is our preferred method of finding an existing group
-      #r.ad_guid = g.objectguid unless g.nil?
+      g = fetch_ad_group(group)
     end
+    if g.nil?
+      STDERR.puts "Could not find AD group using GUID \"#{ad_guid}\" or path \"#{group}\""
+      return false
+    end
+  end
 
-    if g
-      ensure_magic_descriptor_presence(g)
+  ensure_magic_descriptor_presence(g)
 
-      # FIXME: What are we going to do about AD-specific information (or syncing specific information in general?)
-      # Ensure name is up-to-date as GUID-based lookups allow for object name changes without affecting us
-      #r.ad_path = g.cn
-
-      # Remove person from AD
-      u = fetch_ad_user(loginid)
-
-      if in_ad_group?(u, g)
-        if remove_user_from_group(u, g) == false
-          STDERR.puts "AD remove operation failed."
-          return false
-        else
-          STDOUT.puts "AD remove operation succeeded."
-          return true
-        end
-      else
-        STDOUT.puts "AD remove operation unnecessary, user is not in group."
-        return true
-      end
+  if in_ad_group?(u, g)
+    if remove_user_from_group(u, g)
+      STDOUT.puts "AD remove operation succeeded."
+      return true
     else
-      STDERR.puts "Could not find AD group using GUID \"#{@sync_data["role"]["ad_guid"]}\" or path \"#{@sync_data["role"]["ad_path"]}\""
+      STDERR.puts "AD remove operation failed."
       return false
     end
   else
-    # Role has no AD path to sync.
+    STDOUT.puts "AD remove operation unnecessary, user is not in group."
     return true
   end
 
@@ -318,6 +322,144 @@ def ensure_magic_descriptor_presence(ad_group)
   end
 end
 
+# Converts common organization names to their AD-mapped equivalents
+# Returns a match, nil (if we know the organization but do not wish to sync it), or
+# false (if we do not know the organization and need to log this missing data).
+def ou_to_short(name)
+  name = name.upcase
+
+  case name
+  when "DSS IT SERVICE CENTER", "DSS IT SHARED SERVICE CENTER"
+    return "IT"
+  when "DSS HR/PAYROLL SERVICE CENTER"
+    return "HR"
+  when "CALIFORNIA HISTORY SS PROJECT"
+    return "CHP"
+  when "UC CENTER SACRAMENTO"
+    return "UCCS"
+  when "HEMISPHERIC INSTITUTE-AMERICAS"
+    return "PHE"
+  when "HISTORY PROJECT", "HISTORY PROJECT UCD"
+    return "HP"
+  when "SOCIAL SCIENCES PROGRAM"
+    return "SSP"
+  when "PHYSICAL EDUCATION PROGRAM"
+    return "PHE"
+  when "DSS RESEARCH SERVICE CENTER"
+    return "RSC"
+  when "GEOGRAPHY"
+    return "GEO"
+  when "ANTHROPOLOGY"
+    return "ANT"
+  when "COMMUNICATION"
+    return "CMN"
+  when "ECONOMICS"
+    return "ECN"
+  when "HISTORY"
+    return "HIS"
+  when "LINGUISTICS"
+    return "LIN"
+  when "MILITARY SCIENCE"
+    return "MSC"
+  when "PHILOSOPHY"
+    return "PHI"
+  when "POLITICAL SCIENCE"
+    return "POL"
+  when "PSYCHOLOGY"
+    return "PSC"
+  when "EASTERN ASIAN STUDIES"
+    return "EAS"
+  when "INTERNATIONAL RELATIONS"
+    return "IRE"
+  when "MIDDLE EAST/SOUTH ASIA STUDIES", "MIDDLE EAST/SOUTH ASIA PROGRAM"
+    return "MSA"
+  when "SCIENCE & TECHNOLOGY STUDIES"
+    return "STS"
+  when "CENTER FOR MIND AND BRAIN", "CENTER FOR MIND & BRAIN"
+    return "CMB"
+  when "SOCIOLOGY"
+    return "SOC"
+  when "COM, PHIL & LIN RED CLUSTER"
+    return "RED"
+  when "POLI SCI, IR ORANGE CLUSTER", "SOCIAL SCIENCE ORANGE CLUSTER"
+    return "ORANGE"
+  when "ECON, HIS, MS BLUE CLUSTER", "SOCIAL SCIENCES BLUE CLUSTER"
+    return "BLUE"
+  when "ANT, SOC GREEN CLUSTER", "SOCIAL SCIENCES GREEN CLUSTER"
+    return "GREEN"
+  when "L&S DEANS - SOCIAL SCIENCES"
+    return "DEANS"
+  when "PSYCH, CMB YELLOW CLUSTER", "SOCIAL SCIENCE YELLOW CLUSTER"
+    return "YELLOW"
+  when "EDUCATION - PH.D."
+    return "EDU"
+  when "COMMUNITY DEVELOPMENT"
+    return "ComDev"
+  when "NEUROSCIENCE", "CENTER FOR NEUROSCIENCE"
+    return "NueroSci"
+  when "CENTER FOR INNOVATION STUDIES"
+    return "CSIS"
+  when "ASUCD", "UC DAVIS", "ASIAN AMERICAN", "UNIVERSITY EXTENSION", "CHEDDAR", "STUDENT EMPLOYMENT CENTER",
+    "TEMPORARY EMPLOYMENT SERVICE", "CAMPUS RECREATION AND UNIONS", "CRESS DEPARTMENT", "LIBRARY", "POLICE",
+    "COMPARATIVE LITERATURE", "PRIMATE CENTER", "L&S DEANS - U/G ED & ADVISING", "STATISTICS",
+    "AGR & ENV SCI DEANS OFFICE", "OFFICE OF THE CHANCELLOR", "UNDERGRADUATE ADMISSIONS",
+    "UNIVERSITY WRITING PROGRAM", "TEXTILES & CLOTHING", "STUDENT HOUSING", "ENGLISH", "ANIMAL SCIENCE",
+    "IRB ADMINISTRATION", "SCHOOL OF LAW-DEANS OFFICE", "STUDENT ACADEMIC SUCCESS CTR", "GERMAN & RUSSIAN",
+    "INTERCOLLEGIATE ATHLETICS", "HUMAN ECOLOGY", "GRADUATE DIVISION", "MED: NEUROLOGY",
+    "ENVIRONMENTAL TOXICOLOGY", "SCHOOL OF MED - STAFF", "L&S DEANS - DEVELOPMENT",
+    "TEMPORARY EMPLOYMENT POOL ADMN", "SCHOOL OF MED - APS", "MED: GENERAL PEDIATRICS",
+    "MED:PSYCHIATRY & BEHAV SCI", "NATIVE AMERICAN STUDIES", "ART", "VP UNDERGRADUATE EDUCATION", "GEOLOGY",
+    "VM: CTR COMPARATIVE MEDICINE", "ENGR COMPUTER SCIENCE", "MED: DIV OF INTERNAL MED",
+    "FM: CUSTODIAL SERVICES", "VOORHIES ADMINISTRATIVE UNIT", "MED: OPHTHALMOLOGY", "MED: PUBLIC HEALTH SCIENCES",
+    "NEURO PHYSIO & BEHAVIOR", "INST OF TRANSPORTATION STUDIES", "ENVIRONMENTAL HEALTH & SAFETY",
+    "MEDIEVAL STUDIES", "EDUCATION", "ACADEMIC AFFAIRS", "ANR SUSTAINABLE AG PROG"
+    return nil
+  else
+    STDOUT.puts "AD Sync: Missing OU for translation to container name: #{name}"
+  end
+
+  return false
+end
+
+# Converts common affiliations to their AD-mapped equivalents
+# Returns a match, nil (if we know the affiliation but do not wish to sync it), or
+# false (if we do not know the affiliation and need to log this missing data).
+def flatten_affiliation(affiliation)
+  if affiliation.include? "staff" and not (affiliation.include? ":")
+    return "staff-academic"
+  end
+
+  case affiliation
+  when "faculty:senate"
+    return "faculty"
+  when "faculty:federation"
+    return "lecturer"
+  when "staff:career"
+    return "staff"
+  when "staff:casual"
+    return "staff"
+  when "staff:contract"
+    return "staff"
+  when "staff:student"
+    return "staff-student"
+  when "student:graduate"
+    return "student-graduate"
+  when "visitor:student:graduate"
+    return "student-graduate"
+  when "faculty"
+    return "faculty"
+  when "student:undergraduate", "student:law", "visitor:consultant", "student:medicine",
+    "visitor:student:concurrent", "visitor:lecturer", "visitor:faculty:research", "visitor:staff:temporary",
+    "visitor:postdoc:research", "visitor:faculty:teaching", "visitor:student", "student:vetmed", "student",
+    "visitor"
+    return nil
+  else
+    STDOUT.puts "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
+  end
+
+  return false
+end
+
 # -----------------------
 #  Start of main script.
 # -----------------------
@@ -331,6 +473,7 @@ end
 @config = YAML.load_file(@sync_data["config_path"] + "/active_directory.yml")
 
 case @sync_data["mode"]
+
 when "add_to_system"
   exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
 
@@ -338,10 +481,54 @@ when "remove_from_system"
   exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
 
 when "add_to_role"
+  # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
+  exit(0) unless @sync_data["role"]["ad_path"] or @sync_data["role"]["ad_guid"]
   exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"], @sync_data["role"]["ad_guid"])
 
 when "remove_from_role"
+  # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
+  exit(0) unless @sync_data["role"]["ad_path"] or @sync_data["role"]["ad_guid"]
   exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"], @sync_data["role"]["ad_guid"])
+
+when "add_to_organization"
+  ad_user = fetch_ad_user(@sync_data["person"]["loginid"])
+
+  @sync_data["person"]["affiliations"].each do |affiliation|
+    # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
+    short_ou = ou_to_short(@sync_data["organization"]["name"])
+    flattened_affiliation = flatten_affiliation(affiliation)
+
+    # Skip unknown or ignored translations
+    next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
+
+    # Write them to cluster-affiliation-all
+    abort unless ensure_user_in_group(ad_user, "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
+
+    # Write them to cluster-all (dss-us-#{ou_to_short}-all)
+    abort unless ensure_user_in_group(ad_user, "dss-us-#{short_ou}-all".downcase)
+  end
+
+  exit(0)
+
+when "remove_from_organization"
+  ad_user = fetch_ad_user(@sync_data["person"]["loginid"])
+
+  @sync_data["person"]["affiliations"].each do |affiliation|
+    # Remove them from cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
+    short_ou = ou_to_short(@sync_data["organization"]["name"])
+    flattened_affiliation = flatten_affiliation(affiliation)
+
+    # Skip unknown or ignored translations
+    next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
+
+    # Remove them from cluster-affiliation-all
+    abort unless ensure_user_not_in_group(ad_user, "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
+
+    # Remove them from cluster-all (dss-us-#{ou_to_short}-all)
+    abort unless ensure_user_not_in_group(ad_user, "dss-us-#{short_ou}-all".downcase)
+  end
+
+  exit(0)
 
 else
   abort "This script does not understand sync mode: #{@sync_data["mode"]}"
