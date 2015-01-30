@@ -62,10 +62,12 @@ namespace :deploy do
     sudo "ln -nfs #{current_path}/config/nginx.conf /etc/nginx/sites-enabled/#{application}"
     sudo "ln -nfs #{current_path}/config/unicorn_init.sh /etc/init.d/unicorn_#{application}"
     run "mkdir -p #{shared_path}/config"
+    run "mkdir -p #{shared_path}/sync/config"
     put File.read("config/database.example.yml"), "#{shared_path}/config/database.yml"
     put File.read("config/api_keys.example.yml"), "#{shared_path}/config/api_keys.yml"
     put File.read("config/ldap.example.yml"), "#{shared_path}/config/ldap.yml"
-    put File.read("config/active_directory.example.yml"), "#{shared_path}/config/active_directory.yml"
+    put File.read("sync/config/active_directory.example.yml"), "#{shared_path}/sync/config/active_directory.yml"
+    put File.read("sync/config/sysaid.example.yml"), "#{shared_path}/sync/config/sysaid.yml"
     put File.read("config/secret_token.example.yml"), "#{shared_path}/config/secret_token.yml"
     puts "Now edit the config files in #{shared_path}."
   end
@@ -76,7 +78,8 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"
     run "ln -nfs #{shared_path}/config/ldap.yml #{release_path}/config/ldap.yml"
-    run "ln -nfs #{shared_path}/config/active_directory.yml #{release_path}/config/active_directory.yml"
+    run "ln -nfs #{shared_path}/sync/config/active_directory.yml #{release_path}/sync/config/active_directory.yml"
+    run "ln -nfs #{shared_path}/sync/config/sysaid.yml #{release_path}/sync/config/sysaid.yml"
     run "ln -nfs #{shared_path}/config/secret_token.yml #{release_path}/config/secret_token.yml"
   end
   after "deploy:finalize_update", "deploy:symlink_config"
