@@ -142,10 +142,13 @@ module Sync
       }.merge(opts)
     )
 
+    Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
+
     sync_scripts.each do |sync_script|
       Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), :queue => 'sync'
     end
   end
+  # FIXME: 'handle_asynchronously' doesn't seem to work
   handle_asynchronously :perform_sync, :queue => 'sync'
 
   def sync_scripts
