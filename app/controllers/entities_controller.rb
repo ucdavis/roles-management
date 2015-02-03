@@ -61,9 +61,14 @@ class EntitiesController < ApplicationController
   def update
     # declarative_authorization requires we not use polymorphism *headache*
     if params[:entity][:type] == "Group"
-      @entity = Group.with_permissions_to(:update).find(params[:id])
+      # with_permission_to appears to be buggy. It changes the number of
+      # group owners loaded even when permissions appear correct.
+      #@entity = Group.with_permissions_to(:update).find(params[:id])
+      @entity = Group.find(params[:id])
     elsif params[:entity][:type] == "Person"
-      @entity = Person.with_permissions_to(:update).find(params[:id])
+      # with_permission_to appears to be buggy. See similar comment above.
+      #@entity = Person.with_permissions_to(:update).find(params[:id])
+      @entity = Person.find(params[:id])
     end
 
     respond_to do |format|

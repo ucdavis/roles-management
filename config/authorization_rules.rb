@@ -130,45 +130,47 @@ authorization do
       if_attribute :owner_id => is { user.id }
     end
 
-    # Allow creating groups
+    # # Allow creating groups
     has_permission_on :entities, :to => :create do
       if_attribute :type => is { 'Group' }
     end
     has_permission_on :groups, :to => :create
-    has_permission_on :group_owner_assignments, :to => :create do
-      if_attribute :entity_id => is { user.id }
-    end
     # Allow deleting groups they own
-    has_permission_on :entities, :to => [:update, :delete] do
-      if_attribute :owners => contains { user }
-    end
-    has_permission_on :groups, :to => [:update, :delete] do
+    has_permission_on :entities, :to => :manage do
       if_attribute :owners => contains { user }
     end
     # Allow updating groups they operate
-    has_permission_on :entities, :to => [:update] do
+    has_permission_on :entities, :to => :update do
       if_attribute :operators => contains { user }
     end
-    has_permission_on :groups, :to => [:update] do
-      if_attribute :operators => contains { user }
+    # Enabling this next rule triggers a bug where non-admin group owners
+    # cannot add members to a group.
+    # It doesn't seem to affect an operator simply adding a person to
+    # a group but not having this does prevent an operator from updating
+    # basic group attributes like name.
+    # has_permission_on :groups, :to => :update do
+    #   if_attribute :operators => contains { user }
+    # end
+    has_permission_on :groups, :to => :manage do
+      if_attribute :owners => contains { user }
     end
-    has_permission_on :group_ownerships, :to => [:create, :update, :delete] do
+    has_permission_on :group_ownerships, :to => :manage do
       if_attribute :group => { :owners => contains { user } }
     end
-    has_permission_on :group_memberships, :to => [:create, :update, :delete] do
+    has_permission_on :group_operatorships, :to => :manage do
       if_attribute :group => { :owners => contains { user } }
     end
-    has_permission_on :group_operatorships, :to => [:create, :update, :delete] do
-      if_attribute :group => { :owners => contains { user } }
-    end
-    has_permission_on :group_operatorships, :to => [:create, :update, :delete] do
+    has_permission_on :group_operatorships, :to => :manage do
       if_attribute :group => { :operators => contains { user } }
     end
-    has_permission_on :group_memberships, :to => [:create, :update, :delete] do
+    has_permission_on :group_memberships, :to => :manage do
+      if_attribute :group => { :owners => contains { user } }
+    end
+    has_permission_on :group_memberships, :to => :manage do
       if_attribute :group => { :operators => contains { user } }
     end
     # Allow manging rules on groups they own
-    has_permission_on :group_rules, :to => [:manage] do
+    has_permission_on :group_rules, :to => :manage do
       if_attribute :group => { :owners => contains { user } }
     end
 

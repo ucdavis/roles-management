@@ -27,9 +27,7 @@ class GroupMembership < ActiveRecord::Base
   # as group memberships can be created outside the Group class causing
   # that Group's callbacks to go unused
   after_create :grant_group_roles_to_member
-  #after_create :recalculate_ou_group_rules_if_necessary
   before_destroy :remove_group_roles_from_member
-  #after_destroy :recalculate_ou_group_rules_if_necessary
 
   after_create :grant_application_operatorships_to_member
   before_destroy :remove_application_operatorships_from_member
@@ -88,6 +86,12 @@ class GroupMembership < ActiveRecord::Base
   # Grant group's roles to new member (marking as calculated)
   def grant_group_roles_to_member
     Rails.logger.tagged "GroupMembership #{id}" do
+      # Our auth rules are not complex enough for the case where an operator adds
+      # a group member causing that member to gain the group's roles but the operator
+      # in question does not have permission to create those role assignments.
+      # For this reason, we assume recursive group member-based role granting/revoking
+      # can be safely done without authorization rules.
+      Authorization.ignore_access_control(true)
       group.roles.each do |r|
         logger.info "Granting role (#{r.id}, #{r.token}, App ID #{r.application_id}) to new group member (#{entity.id}/#{entity.name} joining #{group.id}/#{group.name})"
         ra = RoleAssignment.new
@@ -96,11 +100,20 @@ class GroupMembership < ActiveRecord::Base
         ra.parent_id = group.id
         ra.save!
       end
+      Authorization.ignore_access_control(false)
     end
+    
+    return true
   end
 
   def remove_group_roles_from_member
     Rails.logger.tagged "GroupMembership #{id}" do
+      # Our auth rules are not complex enough for the case where an operator adds
+      # a group member causing that member to gain the group's roles but the operator
+      # in question does not have permission to create those role assignments.
+      # For this reason, we assume recursive group member-based role granting/revoking
+      # can be safely done without authorization rules.
+      Authorization.ignore_access_control(true)
       group.roles.each do |r|
         logger.info "Removing role (#{r.id}, #{r.token}, App ID #{r.application_id}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
         ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(r.id, entity.id, group.id)
@@ -112,7 +125,10 @@ class GroupMembership < ActiveRecord::Base
           logger.warn "Failed to remove role (#{r.id}, #{r.token}, App ID #{r.application_id}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database. This is probably okay."
         end
       end
+      Authorization.ignore_access_control(false)
     end
+
+    return true
   end
 
   # Ensure a group does not attempt to join (member) itself

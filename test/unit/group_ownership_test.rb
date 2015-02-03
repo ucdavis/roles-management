@@ -32,6 +32,10 @@ class GroupOwnershipTest < ActiveSupport::TestCase
     # FIXME: This test needs to be written
   end
 
+  test "ensure a group owner can remove themselves from ownership" do
+    # FIXME: This test needs to be written
+  end
+
   # For some reason (a bug?) if our config/authorization_rules.rb has both
   # :manage in the :groups context and you also specify :update in the :groups
   # context, group.owners will be missing some owners.
