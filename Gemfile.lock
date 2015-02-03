@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/cthielen/active_directory.git
-  revision: d50e5c6f9d41bc3d4fa2ef4ec92af0af0e07059f
+  revision: 348984e8359f639802198b029e19d18a3a648115
   specs:
     active_directory (1.2.9)
       net-ldap (>= 0.1.1)
