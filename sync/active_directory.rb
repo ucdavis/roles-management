@@ -425,15 +425,13 @@ end
 # Returns a match, nil (if we know the affiliation but do not wish to sync it), or
 # false (if we do not know the affiliation and need to log this missing data).
 def flatten_affiliation(affiliation)
-  if affiliation.include? "staff" and not (affiliation.include? ":")
-    return "staff-academic"
-  end
-
   case affiliation
   when "faculty:senate"
     return "faculty"
   when "faculty:federation"
     return "lecturer"
+  when "staff"
+    return "staff"
   when "staff:career"
     return "staff"
   when "staff:casual"
