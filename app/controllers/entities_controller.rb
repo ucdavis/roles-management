@@ -76,8 +76,7 @@ class EntitiesController < ApplicationController
                       # all relations but this could potentially take a long time on very
                       # large groups.
 
-        logger.debug "Entity#update successful." # Triggering sync ..."
-        #@entity.trigger_sync
+        logger.debug "Entity#update successful."
 
         @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
