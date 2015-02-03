@@ -1,4 +1,10 @@
 GIT
+  remote: git@github.com:stffn/declarative_authorization.git
+  revision: 45e91af20eba71b2828c5c84066bcce3ef032e8a
+  specs:
+    declarative_authorization (1.0.0.pre)
+
+GIT
   remote: https://github.com/cthielen/active_directory.git
   revision: 348984e8359f639802198b029e19d18a3a648115
   specs:
@@ -96,7 +102,6 @@ GEM
     daemons (1.1.9)
     dalli (2.7.2)
     debugger-linecache (1.2.0)
-    declarative_authorization (0.5.7)
     delayed_job (4.0.6)
       activesupport (>= 3.0, < 5.0)
     delayed_job_active_record (4.0.3)
@@ -107,7 +112,7 @@ GEM
     exception_notification (4.0.1)
       actionmailer (>= 3.0.4)
       activesupport (>= 3.0.4)
-    execjs (2.2.2)
+    execjs (2.3.0)
     gyoku (1.2.2)
       builder (>= 2.1.2)
     highline (1.6.21)
@@ -254,7 +259,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.1)
   daemons
   dalli
-  declarative_authorization (~> 0.5.7)
+  declarative_authorization!
   delayed_job_active_record
   ejs
   exception_notification

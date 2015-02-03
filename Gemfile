@@ -38,7 +38,8 @@ gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 gem 'ejs'
 
 # Phasing this library out due to bugs ...
-gem 'declarative_authorization', "~> 0.5.7"
+#gem 'declarative_authorization', "~> 0.5.7"
+gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_authorization.git'
 # Using this library instead ...
 gem 'cancancan', '~> 1.8'
 
