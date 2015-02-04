@@ -111,7 +111,7 @@ def add_user_to_sysaid(person_sync_data)
       end
 
       if not c_idx and not d_idx
-        unknown_ous << ou.name
+        unknown_ous << ou
       end
     end
 
