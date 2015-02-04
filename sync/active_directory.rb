@@ -14,6 +14,9 @@
 require 'json'
 require 'yaml'
 require 'active_directory'
+require 'logger'
+
+logger = Logger.new(@sync_data["config_path"] + "/../../log/active_directory_activity.log", 10, 1024000)
 
 # Takes loginid as a string (e.g. 'jsmith') and returns an ActiveDirectory::User object
 def fetch_ad_user(loginid)
@@ -34,6 +37,7 @@ def fetch_ad_user(loginid)
 
     ActiveDirectory::Base.setup(settings)
     u = ActiveDirectory::User.find(:first, :samaccountname => loginid)
+    logger.info "#{Time.now} fetch_ad_user() called for #{loginid}"
     break unless u.nil?
   end
 
@@ -58,6 +62,7 @@ def fetch_ad_group(group_name)
 
   begin
     ActiveDirectory::Group.find(:first, :cn => group_name)
+    logger.info "#{Time.now} fetch_ad_group() called for #{group_name}"
   rescue SystemCallError
     # Usually occurs when AD can't be reached (times out)
     return nil
@@ -82,6 +87,7 @@ def fetch_ad_group_by_guid(guid)
 
   begin
     ActiveDirectory::Group.find(:first, :objectguid => guid)
+    logger.info "#{Time.now} fetch_ad_group_by_guid() called for #{guid}"
   rescue SystemCallError
     # Usually occurs when AD can't be reached (times out)
     return nil
@@ -117,6 +123,7 @@ def add_user_to_group(user, group)
 
   ActiveDirectory::Base.setup(settings)
 
+  logger.info "#{Time.now} add_user_to_group() called for user #{user}, group #{group}"
   group.add user
 end
 
@@ -144,6 +151,7 @@ def list_group_members(group)
     ActiveDirectory::Base.setup(settings)
 
     begin
+      logger.info "#{Time.now} list_group_members() called for #{group}"
       members += group.member_users
     rescue NoMethodError
       # active_directory gem throws a NoMethodError if the group is blank
@@ -171,6 +179,7 @@ def in_ad_group?(user, group)
 
   begin
     unless user.nil? or group.nil?
+      logger.info "#{Time.now} in_ad_group?() called for user #{user}, group #{group}"
       if user.member_of? group
         return true
       end
@@ -202,6 +211,7 @@ def remove_user_from_group(user, group)
 
   ActiveDirectory::Base.setup(settings)
 
+  logger.info "#{Time.now} remove_user_from_group() called for user #{user}, group #{group}"
   group.remove user
 end
 
@@ -317,6 +327,7 @@ def ensure_magic_descriptor_presence(ad_group)
   end
 
   unless g_desc and g_desc.index MAGIC_DESCRIPTOR
+    logger.info "#{Time.now} ensure_magic_descriptor_presence() called for #{ad_group}"
     ad_group.description = "#{MAGIC_DESCRIPTOR} #{g_desc}"
     ad_group.save
   end
