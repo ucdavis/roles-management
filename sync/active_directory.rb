@@ -40,11 +40,13 @@ def fetch_ad_user(loginid)
     break unless u.nil?
   end
 
-  u
+  return u
 end
 
 # Takes name as a string (e.g. 'this-that') and returns an ActiveDirectory::Group object
 def fetch_ad_group(group_name)
+  g = nil
+
   settings = {
       :host => @config['ad_groups']['host'],
       :base => @config['ad_groups']['base'],
@@ -60,16 +62,20 @@ def fetch_ad_group(group_name)
   ActiveDirectory::Base.setup(settings)
 
   begin
-    ActiveDirectory::Group.find(:first, :cn => group_name)
+    g = ActiveDirectory::Group.find(:first, :cn => group_name)
     @logger.info "#{Time.now} fetch_ad_group() called for #{group_name}"
   rescue SystemCallError
     # Usually occurs when AD can't be reached (times out)
     return nil
   end
+
+  return g
 end
 
 # Takes objectGuid as a hex string and returns an ActiveDirectory::Group object
 def fetch_ad_group_by_guid(guid)
+  g = nil
+
   settings = {
       :host => @config['ad_groups']['host'],
       :base => @config['ad_groups']['base'],
@@ -85,12 +91,14 @@ def fetch_ad_group_by_guid(guid)
   ActiveDirectory::Base.setup(settings)
 
   begin
-    ActiveDirectory::Group.find(:first, :objectguid => guid)
+    g = ActiveDirectory::Group.find(:first, :objectguid => guid)
     @logger.info "#{Time.now} fetch_ad_group_by_guid() called for #{guid}"
   rescue SystemCallError
     # Usually occurs when AD can't be reached (times out)
     return nil
   end
+
+  return g
 end
 
 # Takes name as a string (e.g. 'this-that') and returns true or false
