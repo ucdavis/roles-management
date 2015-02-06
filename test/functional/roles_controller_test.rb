@@ -5,19 +5,13 @@ class RolesControllerTest < ActionController::TestCase
   # Used by RM UI when clicking on a role
   test "JSON request should include certain attributes" do
     CASClient::Frameworks::Rails::Filter.fake("casuser")
-    
+
     grant_test_user_admin_access
-  
+
     get :show, :format => :json, :id => '1'
-  
+
     body = JSON.parse(response.body)
-  
-    # assert body.include?('id'), 'JSON response does not include id field'
-    # assert body.include?('token'), 'JSON response does not include token field'
-    # assert body.include?('name'), 'JSON response does not include name field'
-    # assert body.include?('application_id'), 'JSON response does not include application_id field'
-    # assert body.include?('description'), 'JSON response should include description'
-    
+
     assert body.include?('assignments'), 'JSON response should include assignments'
     # body['assignments'] should include certain attributes
     body['assignments'].each do |e|
@@ -33,19 +27,40 @@ class RolesControllerTest < ActionController::TestCase
     grant_whitelisted_access
 
     get :show, :format => :txt, :id => '1'
-    
+
     assert_response :success
   end
-  
+
+  test ".txt output should not include inactive users" do
+    grant_whitelisted_access
+
+    inactive_p = entities(:inactivePerson)
+    active_p = entities(:personWithARole)
+    r = roles(:boring_role)
+
+    assert r.members.include?(inactive_p), "role should include the inactive person"
+    assert r.members.include?(active_p), "role should include the inactive person"
+
+    assert active_p.active, "active person should be marked active"
+    assert inactive_p.active == false, "inactive person should be marked inactive"
+
+    get :show, :format => :txt, :id => r.id
+
+    assert_response :success
+
+    assert response.body.include?(inactive_p.email) == false, ".txt should not include inactive individual"
+    assert response.body.include?(active_p.email), ".txt should include an active individual"
+  end
+
   test "Role#update should function correctly" do
     CASClient::Frameworks::Rails::Filter.fake("casuser")
-    
+
     grant_test_user_admin_access
 
     @role = roles(:boring_role)
-    
+
     put :update, id: @role, role: { token: 'not boring' }, :format => :json
-    
+
     assert_response :success
   end
 end

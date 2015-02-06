@@ -27,3 +27,8 @@ assign_cthielen_rm_admin:
   id: 6
   entity_id: 9
   role_id: 2
+
+assigns_rolemember_user_a_role:
+  id: 7
+  entity_id: 13
+  role_id: 3

@@ -100,3 +100,15 @@ groupWithAnApplicationOperatorship:
   type: Group
   name: Group with an application operatorship
   description: This group should have nothing but a single application operatorship
+
+personWithARole:
+  id: 13
+  type: Person
+  first: Rob
+  last: Rolemember
+  name: Rob Rolemember
+  email: rolemember-testing@ucdavis.edu
+  loginid: robrolemember
+  active: true
+  phone: 8005551515
+  address: 272 Testing Drive

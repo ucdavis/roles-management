@@ -34,7 +34,7 @@ class ApplicationsControllerTest < ActionController::TestCase
     assert body.include?('name'), 'JSON response does not include name field'
     assert body.include?('description'), 'JSON response does not include description field'
     assert body.include?('roles'), 'JSON response should include roles'
-    
+
     # body['roles'] should include entities which include name and id (for frontend interface role assignment, applicaiton saving, and new role creation saving (temp ID -> real ID), etc.)
     body['roles'].each do |r|
       assert r["id"], "JSON response's 'roles' section should include an ID field"
@@ -51,10 +51,32 @@ class ApplicationsControllerTest < ActionController::TestCase
       assert o["name"], "JSON response's 'owners' section's 'members' should include a name"
     end
 
-    assert body["operatorships"], "JSON response should include an 'operatorships' section"    
+    assert body["operatorships"], "JSON response should include an 'operatorships' section"
     body["operatorships"].each do |o|
       assert o["id"], "JSON response's 'operatorships' section should include an ID"
       assert o["name"], "JSON response's 'operatorships' section should include a name"
     end
+  end
+
+  test "application CSV request should not include inactive members" do
+    grant_test_user_admin_access
+
+    inactive_p = entities(:inactivePerson)
+    active_p = entities(:personWithARole)
+    a = applications(:regular_app)
+
+    assert a.roles.length == 1, "application should have one role"
+    r = a.roles[0]
+
+    assert r.members.include?(inactive_p), "role should include the inactive person"
+    assert r.members.include?(active_p), "role should include the inactive person"
+
+    assert active_p.active, "active person should be marked active"
+    assert inactive_p.active == false, "inactive person should be marked inactive"
+
+    get :show, :format => :csv, :id => a.id
+
+    assert response.body.include?(inactive_p.loginid) == false, "CSV should not include inactive individual"
+    assert response.body.include?(active_p.loginid), "CSV should include an active individual"
   end
 end

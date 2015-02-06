@@ -4,7 +4,7 @@ require 'test_helper'
 class EntitiesControllerTest < ActionController::TestCase
   setup do
     CASClient::Frameworks::Rails::Filter.fake("casuser")
-    
+
     @person = entities(:casuser)
     @group = entities(:groupA)
   end
@@ -15,7 +15,7 @@ class EntitiesControllerTest < ActionController::TestCase
     get :show, :format => :json, :id => @group.id
 
     body = JSON.parse(response.body)
-    
+
     assert body.include?('id'), 'JSON response should include id field'
     assert body.include?('name'), 'JSON response should include name field'
     assert body.include?('description'), 'JSON response should include description field'
@@ -119,5 +119,24 @@ class EntitiesControllerTest < ActionController::TestCase
       assert a["role_id"], "JSON response's 'role_assignments' section should include role_id"
       assert a["token"], "JSON response's 'role_assignments' section should include token"
     end
+  end
+
+  test "entities (group) CSV request should not include inactive members" do
+    grant_test_user_admin_access
+
+    inactive_p = entities(:inactivePerson)
+    active_p = entities(:group_memberA)
+    g = entities(:groupA)
+
+    assert g.members.include?(inactive_p), "group should include the inactive person"
+    assert inactive_p.active == false, "inactive person should be marked inactive"
+
+    assert g.members.include?(active_p), "group should include an active person"
+    assert active_p.active == true, "active person should be marked active"
+
+    get :show, :format => :csv, :id => g.id
+
+    assert response.body.include?(inactive_p.loginid) == false, "CSV should not include inactive individual"
+    assert response.body.include?(active_p.loginid), "CSV should include an active individual"
   end
 end
