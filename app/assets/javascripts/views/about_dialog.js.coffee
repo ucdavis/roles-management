@@ -9,7 +9,7 @@ DssRm.Views.AboutDialog = Backbone.View.extend(
     @$el.html JST["templates/application/about_dialog"]()
 
   render: ->
-    @$("span#last_updated").html window.application_last_updated
+    @$("span#last_updated").html "N/A"
     @
 
   cleanUpModal: ->

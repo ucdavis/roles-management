@@ -35,7 +35,6 @@ default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
 
 after "deploy", "deploy:cleanup" # keep only the last 5 releases
-after "deploy", "deploy:update_last_modified_date"
 after "deploy:update_code", "deploy:migrate"
 
 before 'deploy:restart', 'deploy:empty_cache'
@@ -103,10 +102,5 @@ namespace :deploy do
     else
       puts "--> Cache emptied"
     end
-  end
-
-  desc "Updates config/initializers/last_updated.rb with today's date"
-  task :update_last_modified_date, roles: :app do
-    system "bundle exec rake misc:update_last_updated"
   end
 end

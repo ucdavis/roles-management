@@ -12,12 +12,6 @@
 </head>
 <body>
 
-  <% _has_role? :admin do %>
-  <script type="text/javascript">
-    window.application_last_updated = "<%= LAST_UPDATED %>";
-  </script>
-  <% end %>
-
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
