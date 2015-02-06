@@ -131,8 +131,6 @@ module Sync
 
   def perform_sync(sync_mode, job_uuid, person_obj, opts = {})
     require 'json'
-    require 'base64' # we're temporarily MIME-encoding the JSON string until
-                     # a bug is fixed: https://bugs.ruby-lang.org/issues/10824
 
     Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
 
@@ -147,7 +145,7 @@ module Sync
     Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
 
     sync_scripts.each do |sync_script|
-      Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, Base64.encode64(sync_json)), :queue => 'sync'
+      Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), :queue => 'sync'
     end
   end
   # FIXME: 'handle_asynchronously' doesn't seem to work
