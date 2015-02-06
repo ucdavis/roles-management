@@ -205,7 +205,6 @@ class DssRm.Views.GroupShow extends Backbone.View
   addRule: (e) ->
     @model.rules.add {}
       #id: 'new_' + (new Date).getTime()
-    debugger
     @renderRules()
 
   removeRule: (e) ->
