@@ -7,5 +7,5 @@ require 'delayed_rake'
 DSSRM::Application.initialize!
 
 CASClient::Frameworks::Rails::Filter.configure(
-  :cas_base_url => "https://cas.ucdavis.edu/cas/"
+  :cas_base_url => $DSS_RM_CONFIG["cas"]["base_url"]
 )
