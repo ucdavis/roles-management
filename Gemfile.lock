@@ -62,7 +62,7 @@ GEM
     activesupport (3.2.21)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    addressable (2.3.6)
+    addressable (2.3.7)
     akami (1.2.2)
       gyoku (>= 0.4.0)
       nokogiri
@@ -161,7 +161,7 @@ GEM
       mime-types
     pg (0.18.1)
     phantomjs (1.9.8.0)
-    poltergeist (1.5.1)
+    poltergeist (1.6.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
@@ -192,7 +192,7 @@ GEM
     rake (10.4.2)
     rdoc (3.12.2)
       json (~> 1.4)
-    ruby-ldap (0.9.16)
+    ruby-ldap (0.9.17)
     sass (3.4.11)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
