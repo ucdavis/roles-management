@@ -511,6 +511,8 @@ when "remove_from_role"
 when "add_to_organization"
   ad_user = fetch_ad_user(@sync_data["person"]["loginid"])
 
+  abort("Could not find AD user \"#{@sync_data["person"]["loginid"]}\"") if ad_user.nil?
+
   @sync_data["person"]["affiliations"].each do |affiliation|
     # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
     short_ou = ou_to_short(@sync_data["organization"]["name"])
@@ -530,6 +532,8 @@ when "add_to_organization"
 
 when "remove_from_organization"
   ad_user = fetch_ad_user(@sync_data["person"]["loginid"])
+
+  abort("Could not find AD user \"#{@sync_data["person"]["loginid"]}\"") if ad_user.nil?
 
   @sync_data["person"]["affiliations"].each do |affiliation|
     # Remove them from cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
