@@ -16,6 +16,10 @@ namespace :ldap do
 
       log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ldap-sync.log')}"))
 
+      # Track who was found in LDAP so we can compare against existing users
+      # to find users who have since disappeared from LDAP.
+      loginids_touched = []
+
       log.tagged "ldap:import" do
         timestamp_start = Time.now
 
@@ -49,7 +53,8 @@ namespace :ldap do
         for filter in filters
           unless filter.length == 0
             ldap.search(filter, log) do |entry|
-              LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
+              p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
+              loginids_touched << p.loginid unless p.nil?
 
               num_results += 1
             end
@@ -63,21 +68,23 @@ namespace :ldap do
         if args[:loginid].nil?
           log.debug "Processing additional login IDs existing locally but not found in the standard LDAP queries."
 
-          Person.find(:all, :conditions => ["updated_at < ?", timestamp_start]).each do |person|
-            p = nil
+          if loginids_touched.count > 0
+            Person.where("active = true AND loginid NOT IN (?)", loginids_touched).each do |person|
+              p = nil
 
-            ldap.search('(uid=' + person.loginid + ')', log) do |entry|
-              p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
-            end
+              ldap.search('(uid=' + person.loginid + ')', log) do |entry|
+                p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
+              end
 
-            unless p
-              log.debug "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
-              person.active = false
-              unless person.save
-                log.error "Could not save person (#{person.loginid}), reason(s):"
-                log.error "\t#{person.errors.full_messages.join(', ')}"
-              else
-                ActivityLog.info!("De-activated #{person.name} as they are not in LDAP.", ["person_#{person.id}", 'ldap'])
+              unless p
+                log.info "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
+                person.active = false
+                unless person.save
+                  log.error "Could not save person (#{person.loginid}), reason(s):"
+                  log.error "\t#{person.errors.full_messages.join(', ')}"
+                else
+                  ActivityLog.info!("De-activated #{person.name} as they are not in LDAP.", ["person_#{person.id}", 'ldap'])
+                end
               end
             end
           end

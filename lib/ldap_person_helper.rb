@@ -318,10 +318,12 @@ module LdapPersonHelper
         log.warn "\tField #{field} #{reason}"
       end
     else
+      # Person is valid.
       if p.changed? == false
         log.debug "No standard record changes for #{p.loginid}"
 
-        p.touch
+        # Why would we touch records which haven't changed? For caching purposes?
+        #p.touch
       else
         log.debug "Updating the following for #{p.loginid}:"
         p.changes.each do |field,changes|
@@ -336,7 +338,8 @@ module LdapPersonHelper
         if p.student.changed? == false
           log.debug "Student record exists but there are no changes for #{p.loginid}"
 
-          p.student.touch
+          # Why would we touch records which haven't changed? For caching purposes?
+          #p.student.touch
         else
           log.debug "Updating the following student records for #{p.loginid}:"
           p.student.changes.each do |field,changes|
