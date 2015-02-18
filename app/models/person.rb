@@ -174,6 +174,8 @@ class Person < Entity
         self.organizations.each do |organization|
           Sync.person_added_to_organization(Sync.encode(self), Sync.encode(organization))
         end
+
+        Sync.person_added_to_system(Sync.encode(self))
       else
         self.roles.each do |role|
           Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
@@ -181,6 +183,8 @@ class Person < Entity
         self.organizations.each do |organization|
           Sync.person_removed_from_organization(Sync.encode(self), Sync.encode(organization))
         end
+        
+        Sync.person_removed_from_system(Sync.encode(self))
       end
     end
   end

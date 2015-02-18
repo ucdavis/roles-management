@@ -27,9 +27,11 @@ class PersonTest < ActiveSupport::TestCase
       p.name = nil
       p.loginid = "deleteme"
 
+      Sync.reset_trigger_test_counts
+
       p.save!
 
-      assert Sync.trigger_test_count(:add_to_system) == 1, "add_to_system should have been triggered"
+      assert Sync.trigger_test_count(:add_to_system) == 1, "add_to_system should have been triggered once but was triggered #{Sync.trigger_test_count(:add_to_system)} times"
     end
   end
 
@@ -44,13 +46,15 @@ class PersonTest < ActiveSupport::TestCase
 
       p.save!
 
+      Sync.reset_trigger_test_counts
+
       p.destroy
 
-      assert Sync.trigger_test_count(:remove_from_system) == 1, "remove_from_system should have been triggered"
+      assert Sync.trigger_test_count(:remove_from_system) == 1, "remove_from_system should have been triggered once but was triggered #{Sync.trigger_test_count(:remove_from_system)} times"
     end
   end
 
-  test "activating a person fires off the 'person_added_to_role' and 'person_added_to_organization' sync signals for each of their roles" do
+  test "activating a person fires off the 'person_added_to_role', 'person_added_to_organization', and 'person_added_to_system' sync signals for each of their roles" do
     without_access_control do
       p = entities(:casuser)
 
@@ -69,10 +73,11 @@ class PersonTest < ActiveSupport::TestCase
 
       assert Sync.trigger_test_count(:add_to_role) == 2, "add_to_role should have been triggered twice"
       assert Sync.trigger_test_count(:add_to_organization) == 1, "add_to_organization should have been triggered"
+      assert Sync.trigger_test_count(:add_to_system) == 1, "add_to_system should have been triggered"
     end
   end
 
-  test "deactivating a person fires off the 'person_removed_from_role' and 'person_removed_from_organization' sync signals for each of their roles" do
+  test "deactivating a person fires off the 'person_removed_from_role', 'person_removed_from_organization', and 'person_removed_from_system' sync signals for each of their roles" do
     without_access_control do
       p = entities(:casuser)
 
@@ -91,6 +96,7 @@ class PersonTest < ActiveSupport::TestCase
 
       assert Sync.trigger_test_count(:remove_from_role) == 2, "remove_from_role should have been triggered twice"
       assert Sync.trigger_test_count(:remove_from_organization) == 1, "remove_from_organization should have been triggered"
+      assert Sync.trigger_test_count(:remove_from_system) == 1, "remove_from_system should have been triggered"
     end
   end
 
