@@ -16,7 +16,7 @@ class Role < ActiveRecord::Base
   belongs_to :application, :touch => true
 
   # before_save :reset_last_ad_sync_if_ad_path_changed
-  # after_save :trigger_sync_if_needed
+  after_save :trigger_sync_if_needed
 
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
@@ -73,5 +73,15 @@ class Role < ActiveRecord::Base
     if self.ad_path and self.ad_path.blank?
       self.ad_path = nil
     end
+  end
+
+  def trigger_sync_if_needed
+    # if changed.include?("ad_path") and self.ad_path.present?
+    #
+    #   self.role_assignments.each do |role_assignment|
+    #     Sync.person_added_to_role(Sync.encode(self), Sync.encode(role)) if role_assignment.entity.active
+    #   end
+    #
+    # end
   end
 end

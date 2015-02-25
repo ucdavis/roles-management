@@ -334,9 +334,9 @@ def ensure_magic_descriptor_presence(ad_group)
   end
 
   unless g_desc and g_desc.index MAGIC_DESCRIPTOR
-    #@logger.info "#{Time.now} ensure_magic_descriptor_presence() called for #{ad_group}"
-    #ad_group.description = "#{MAGIC_DESCRIPTOR} #{g_desc}"
-    #ad_group.save
+    STDOUT.puts "Added '#{MAGIC_DESCRIPTOR}' to AD group description."
+    ad_group.description = "#{MAGIC_DESCRIPTOR} #{g_desc}"
+    ad_group.save
   end
 end
 
