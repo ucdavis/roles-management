@@ -63,4 +63,70 @@ class RolesControllerTest < ActionController::TestCase
 
     assert_response :success
   end
+
+  test "assigning an entity to a role touches the timestamp on it's application" do
+    r = Role.first
+    p = Person.find_by_loginid('bob')
+
+    assert r.members.include?(p) == false, "role should not include person"
+    assert r.application != nil, "role should have an application"
+    application_timestamp = r.application.updated_at
+
+    p.roles << r
+    r.reload
+    assert r.members.include?(p) == true, "role should include person now"
+
+    assert r.application.updated_at > application_timestamp, "application timestamp should have been udpated"
+  end
+
+  test "un-assigning an entity to a role touches the timestamp on it's application" do
+    r = Role.first
+    p = Person.find_by_loginid('bob')
+
+    assert r.members.include?(p) == false, "role should not include person"
+    assert r.application != nil, "role should have an application"
+
+    p.roles << r
+    r.reload
+    assert r.members.include?(p) == true, "role should include person now"
+    application_timestamp = r.application.updated_at
+
+    p.roles.delete(r)
+    r.reload
+
+    assert r.application.updated_at > application_timestamp, "application timestamp should have been udpated"
+  end
+
+  test "assigning an entity to a role touches the timestamp on the role" do
+    r = Role.first
+    p = Person.find_by_loginid('bob')
+
+    assert r.members.include?(p) == false, "role should not include person"
+    assert r.application != nil, "role should have an application"
+    role_timestamp = r.updated_at
+
+    p.roles << r
+    r.reload
+    assert r.members.include?(p) == true, "role should include person now"
+
+    assert r.updated_at > role_timestamp, "role timestamp should have been udpated"
+  end
+
+  test "un-assigning an entity to a role touches the timestamp on the role" do
+    r = Role.first
+    p = Person.find_by_loginid('bob')
+
+    assert r.members.include?(p) == false, "role should not include person"
+    assert r.application != nil, "role should have an application"
+
+    p.roles << r
+    r.reload
+    assert r.members.include?(p) == true, "role should include person now"
+    role_timestamp = r.updated_at
+
+    p.roles.delete(r)
+    r.reload
+
+    assert r.updated_at > role_timestamp, "application timestamp should have been udpated"
+  end
 end
