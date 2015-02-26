@@ -32,7 +32,11 @@ class RolesController < ApplicationController
           format.json { render "roles/show", status: :ok }
         end
       else
-        logger.error "#{current_user.log_identifier}@#{request.remote_ip}: Failed to update role #{@role.id}. Reason(s): #{@role.errors.full_messages.join(", ")}"
+        log_message = "#{current_user.log_identifier}@#{request.remote_ip}: Failed to update role #{@role.id}. Reason(s): #{@role.errors.full_messages.join(", ")}"
+        logger.error log_message
+
+        AdminMailer.application_error_occurred("dssit-devs-exceptions@ucdavis.edu", log_message).deliver!
+
         respond_with(@role) do |format|
           format.json { render json: @role.errors, status: :unprocessable_entity }
         end

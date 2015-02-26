@@ -6,6 +6,15 @@ class ApplicationController < ActionController::Base
 
   before_filter :authenticate
 
+  rescue_from ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved, ActionController::InvalidAuthenticityToken, ActionController::RoutingError do |exception|
+    log_message = "An exception occurred:\n#{exception}"
+    logger.error log_message
+
+    AdminMailer.application_error_occurred("dssit-devs-exceptions@ucdavis.edu", log_message).deliver!
+
+    raise exception
+  end
+
   protected
 
   def permission_denied
