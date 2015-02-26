@@ -79,4 +79,119 @@ class ApplicationsControllerTest < ActionController::TestCase
     assert response.body.include?(inactive_p.loginid) == false, "CSV should not include inactive individual"
     assert response.body.include?(active_p.loginid), "CSV should include an active individual"
   end
+
+  test "updating a role touches the timestamp on it's application" do
+    a = Application.find_by_id(2)
+    application_timestamp = a.updated_at
+
+    assert a.roles.length == 1, "application should have one role"
+    r = a.roles[0]
+
+    r.touch
+
+    a = Application.find_by_id(2)
+
+    assert a.updated_at > application_timestamp, "application timestamp should have updated"
+  end
+
+  test "creating a role touches the timestamp on it's application" do
+    a = Application.find_by_id(2)
+    application_timestamp = a.updated_at
+
+    r = Role.new
+    r.token = "something"
+    r.name = "Something"
+    r.description = "Does something"
+    r.application = a
+    r.save!
+
+    a = Application.find_by_id(2)
+
+    assert a.updated_at > application_timestamp, "application timestamp should have updated"
+  end
+
+  test "deleting a role touches the timestamp on it's application" do
+    a = Application.find_by_id(2)
+
+    r = Role.new
+    r.token = "something"
+    r.name = "Something"
+    r.description = "Does something"
+    r.application = a
+    r.save!
+
+    a = Application.find_by_id(2)
+    application_timestamp = a.updated_at
+
+    # Delete the role
+    r.destroy
+
+    a = Application.find_by_id(2)
+
+    assert a.updated_at > application_timestamp, "application timestamp should have updated"
+  end
+
+  test "assigning an owner touches the timestamp on the application" do
+    a = Application.find_by_id(2)
+    application_timestamp = a.updated_at
+
+    p = Person.first
+    assert a.owners.include?(p) == false, "person should not already be an owner"
+
+    a.owners << p
+    assert a.owners.include?(p) == true, "person should now be an owner"
+
+    a = Application.find_by_id(2)
+    assert a.updated_at > application_timestamp, "application timestamp should have updated"
+  end
+
+  test "un-assigning an owner touches the timestamp on the application" do
+    a = Application.find_by_id(2)
+    application_timestamp = a.updated_at
+
+    p = Person.first
+    assert a.owners.include?(p) == false, "person should not already be an owner"
+
+    a.owners << p
+    assert a.owners.include?(p) == true, "person should now be an owner"
+
+    a = Application.find_by_id(2)
+    a.owners.delete(p)
+    assert a.owners.include?(p) == false, "person should not be an owner anymore"
+
+    a = Application.find_by_id(2)
+    assert a.updated_at > application_timestamp, "application timestamp should have updated"
+  end
+
+  test "assigning an operator touches the timestamp on the application" do
+    a = Application.find_by_id(2)
+    application_timestamp = a.updated_at
+
+    p = Person.first
+    assert a.operators.include?(p) == false, "person should not already be an operator"
+
+    a.operators << p
+    assert a.operators.include?(p) == true, "person should now be an operator"
+
+    a = Application.find_by_id(2)
+    assert a.updated_at > application_timestamp, "application timestamp should have updated"
+  end
+
+  test "un-assigning an operator touches the timestamp on the application" do
+    a = Application.find_by_id(2)
+    application_timestamp = a.updated_at
+
+    p = Person.first
+    assert a.operators.include?(p) == false, "person should not already be an operator"
+
+    a.operators << p
+    assert a.operators.include?(p) == true, "person should now be an operator"
+
+    a = Application.find_by_id(2)
+    a.operators.delete(p)
+    assert a.operators.include?(p) == false, "person should not be an operator anymore"
+
+    a = Application.find_by_id(2)
+    assert a.updated_at > application_timestamp, "application timestamp should have updated"
+  end
 end
