@@ -97,7 +97,7 @@ GEM
     coffee-script (2.3.0)
       coffee-script-source
       execjs
-    coffee-script-source (1.9.0)
+    coffee-script-source (1.9.1)
     columnize (0.9.0)
     daemons (1.1.9)
     dalli (2.7.2)
@@ -115,7 +115,7 @@ GEM
     execjs (2.3.0)
     gyoku (1.2.2)
       builder (>= 2.1.2)
-    highline (1.6.21)
+    highline (1.7.1)
     hike (1.2.3)
     httpi (2.3.0)
       rack
@@ -126,7 +126,7 @@ GEM
       phantomjs (< 2.0)
       railties (>= 3.1.0)
       sprockets-rails
-    jbuilder (2.2.7)
+    jbuilder (2.2.8)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     journey (1.0.4)
@@ -239,9 +239,9 @@ GEM
       httpi (~> 2.0)
       mime-types (< 2.0.0)
       nokogiri (>= 1.4.0)
-    websocket-driver (0.5.1)
+    websocket-driver (0.5.3)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.1)
+    websocket-extensions (0.1.2)
     whenever (0.9.4)
       chronic (>= 0.6.3)
     xpath (2.0.0)
