@@ -9,7 +9,7 @@ module Api
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid}." }
 
           @cache_key = "api/person/" + @person.loginid + '/' + @person.updated_at.try(:utc).try(:to_s, :number)
-          
+
           render "api/v1/people/show"
         elsif @person and @person.active == false
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid} but person is disabled. Returning 404." }
@@ -23,8 +23,13 @@ module Api
       private
 
       def load_person
-        @person = Person.with_permissions_to(:read).find_by_loginid(params[:id])
-        @person = Person.with_permissions_to(:read).find_by_id(params[:id]) unless @person
+        begin
+          @person = Person.with_permissions_to(:read).find_by_loginid(params[:id])
+          @person = Person.with_permissions_to(:read).find_by_id(params[:id]) unless @person
+        rescue ActiveRecord::RecordNotFound
+          # This exception is acceptable. We catch it to avoid triggering the
+          # uncaught exceptions handler in ApplicationController.
+        end
       end
     end
   end
