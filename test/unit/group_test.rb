@@ -310,7 +310,7 @@ class GroupTest < ActiveSupport::TestCase
   end
 
   # Test runs as non-admin
-  test "group operators cannot update attributes" do
+  test "group operators can update attributes" do
     p = entities(:personWithNothing)
 
     grant_user_basic_access(p)
@@ -337,16 +337,12 @@ class GroupTest < ActiveSupport::TestCase
 
     Authorization.current_user = p
 
-    unauthorized_exception_count = 0
-
     begin
       g.description = "something"
       g.save!
     rescue Authorization::NotAuthorized
-      unauthorized_exception_count = unauthorized_exception_count + 1
+      assert false, "authorization should not have failed"
     end
-
-    assert unauthorized_exception_count == 1, "authorization exception should have occurred"
   end
 
   # Test runs as non-admin

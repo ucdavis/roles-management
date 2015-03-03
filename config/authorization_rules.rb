@@ -148,9 +148,9 @@ authorization do
     # It doesn't seem to affect an operator simply adding a person to
     # a group but not having this does prevent an operator from updating
     # basic group attributes like name.
-    # has_permission_on :groups, :to => :update do
-    #   if_attribute :operators => contains { user }
-    # end
+    has_permission_on :groups, :to => :update do
+      if_attribute :operators => contains { user }
+    end
     has_permission_on :groups, :to => :manage do
       if_attribute :owners => contains { user }
     end
