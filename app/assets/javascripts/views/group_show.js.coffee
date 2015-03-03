@@ -69,7 +69,14 @@ class DssRm.Views.GroupShow extends Backbone.View
         else
           # Normal member being removed - no rule needed
           membership = @model.memberships.get(item.id)
-          membership.set('_destroy', true)
+          if membership
+            membership.set('_destroy', true)
+          else
+            # They added a token that was never saved and are now removing it.
+            membership = @model.memberships.find (i) ->
+              i.get('entity_id') == item.id
+            @model.memberships.remove membership
+
 
   render: ->
     readonly = @model.isReadOnly()
