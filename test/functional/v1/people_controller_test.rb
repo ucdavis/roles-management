@@ -74,4 +74,12 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
 
     assert_response :missing
   end
+
+  test "unauthenticated requests should not be honored" do
+    revoke_api_user_access
+
+    get :show, :format => :json, :id => 'casuser'
+
+    assert_response 401
+  end
 end

@@ -59,6 +59,10 @@ class ActiveSupport::TestCase
     request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(api_key_users(:apiuser).name, api_key_users(:apiuser).secret)
   end
 
+  def revoke_api_user_access
+    request.env['HTTP_AUTHORIZATION'] = nil
+  end
+
   # Removes all means of authentication: CAS, API whitelist, and API key
   def revoke_access
     Authorization.current_user = nil
