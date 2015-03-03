@@ -112,3 +112,15 @@ personWithARole:
   active: true
   phone: 8005551515
   address: 272 Testing Drive
+
+personWithNothing:
+  id: 14
+  type: Person
+  first: Chip
+  last: Nadda
+  name: Chip Nadda
+  email: chip-rm-guy-testing23@ucdavis.edu
+  loginid: cnadda
+  active: true
+  phone: 8005550005
+  address: 1 Empty Nest
