@@ -4,6 +4,10 @@
 # 'Members' refers only to people and is calculated by flattening
 # groups down to people.
 class Role < ActiveRecord::Base
+  # SYNC_ROLE_ATTRS is the list of role attribtues we care to notify
+  # the sync subsystem about.
+  SYNC_ROLE_ATTRS = ["ad_path", "token", "name", "description"]
+
   using_access_control
 
   validates :application_id, :presence => true
@@ -15,8 +19,7 @@ class Role < ActiveRecord::Base
 
   belongs_to :application, :touch => true
 
-  # before_save :reset_last_ad_sync_if_ad_path_changed
-  after_save :trigger_sync_if_needed
+  after_save :trigger_sync_if_changed
 
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
@@ -75,13 +78,9 @@ class Role < ActiveRecord::Base
     end
   end
 
-  def trigger_sync_if_needed
-    # if changed.include?("ad_path") and self.ad_path.present?
-    #
-    #   self.role_assignments.each do |role_assignment|
-    #     Sync.person_added_to_role(Sync.encode(self), Sync.encode(role)) if role_assignment.entity.active
-    #   end
-    #
-    # end
+  def trigger_sync_if_changed
+    if (self.changed & SYNC_ROLE_ATTRS).length > 0
+      Sync.role_changed(Sync.encode(self, true).merge({ :changes => self.changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } }))
+    end
   end
 end

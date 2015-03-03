@@ -245,6 +245,9 @@ when "add_to_organization"
 when "remove_from_organization"
   exit(0) # We don't care about this
 
+when "role_change"
+  exit(0) # We don't care about this
+
 else
   abort "This script does not understand sync mode: #{@sync_data["mode"]}"
 end

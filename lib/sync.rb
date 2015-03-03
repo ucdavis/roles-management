@@ -100,6 +100,20 @@ module Sync
     end
   end
 
+  # Triggered when a role has one or more attribute(s) changed.
+  # This is not triggered for role assignment / unassignment.
+  def Sync.role_changed(role_obj)
+    job_uuid = SecureRandom.uuid
+
+    Sync.logger.info "#{job_uuid}: Sync will respond to role attribute change(s) for Role ##{role_obj[:id]} (#{role_obj[:application_name]}, #{role_obj[:token]})"
+
+    if Rails.env == "test"
+      @@trigger_test_counts[:role_change] += 1
+    else
+      perform_sync(:role_change, job_uuid, role_obj )
+    end
+  end
+
   # Encodes a Person or Role object into a flattened JSON object to be passed
   # into the sync system. This allows the sync system to avoid using the database
   # when a job runs potentially much later in time when the original object
@@ -107,11 +121,17 @@ module Sync
   # We have Sync encode the object even though it is called in the Person and
   # Role class because we would like to control the format of the data in Sync
   # where it matters most.
-  def Sync.encode(obj)
+  def Sync.encode(obj, detailed = false)
     case obj
     when Role
-      return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
-               application_id: obj.application.id, application_name: obj.application.name }
+      if detailed
+        return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
+                 application_id: obj.application.id, application_name: obj.application.name,
+                 members: obj.members.select { |m| m.active == true }.map{ |m| m.loginid } }
+      else
+        return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
+                 application_id: obj.application.id, application_name: obj.application.name }
+      end
     when Person
       return { id: obj.id, name: obj.name, first: obj.first, last: obj.last, loginid: obj.loginid,
                email: obj.email, address: obj.address, title: obj.title ? obj.title.name : nil, phone: obj.phone,
@@ -129,18 +149,23 @@ module Sync
 
   module_function
 
-  def perform_sync(sync_mode, job_uuid, person_obj, opts = {})
+  def perform_sync(sync_mode, job_uuid, sync_obj, opts = {})
     require 'json'
 
     Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
 
-    sync_json = JSON.generate(
-      {
-        config_path: Rails.root.join('sync', 'config').to_s,
-        mode: sync_mode,
-        person: person_obj
-      }.merge(opts)
-    )
+    sync_json = {
+      config_path: Rails.root.join('sync', 'config').to_s,
+      mode: sync_mode
+    }.merge(opts)
+
+    if sync_mode == :role_change
+      sync_json[:role] = sync_obj
+    else
+      sync_json[:person] = sync_obj
+    end
+
+    sync_json = JSON.generate(sync_json)
 
     Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
 

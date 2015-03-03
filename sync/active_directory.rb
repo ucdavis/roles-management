@@ -500,13 +500,13 @@ when "remove_from_system"
 
 when "add_to_role"
   # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
-  exit(0) unless @sync_data["role"]["ad_path"] or @sync_data["role"]["ad_guid"]
-  exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"], @sync_data["role"]["ad_guid"])
+  exit(0) unless @sync_data["role"]["ad_path"] #or @sync_data["role"]["ad_guid"]
+  exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
 
 when "remove_from_role"
   # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
-  exit(0) unless @sync_data["role"]["ad_path"] or @sync_data["role"]["ad_guid"]
-  exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"], @sync_data["role"]["ad_guid"])
+  exit(0) unless @sync_data["role"]["ad_path"] #or @sync_data["role"]["ad_guid"]
+  exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
 
 when "add_to_organization"
   ad_user = fetch_ad_user(@sync_data["person"]["loginid"])
@@ -548,6 +548,34 @@ when "remove_from_organization"
 
     # Remove them from cluster-all (dss-us-#{ou_to_short}-all)
     abort unless ensure_user_not_in_group(ad_user, "dss-us-#{short_ou}-all".downcase)
+  end
+
+  exit(0)
+
+when "role_change"
+  @sync_data["role"]["changes"].each do |field, values|
+    if field == "ad_path"
+      if (values[0] == nil) and (values[1] != nil)
+        # AD path set for the first time. Add all members to the AD group.
+        @sync_data["role"]["members"].each do |loginid|
+          abort unless ensure_user_in_group(loginid, values[1])
+        end
+      elsif (values[0] != nil) and (values[1] == nil)
+        # AD path was set but is now unset. Remove all members from the AD group.
+        @sync_data["role"]["members"].each do |loginid|
+          abort unless ensure_user_not_in_group(loginid, values[0])
+        end
+      else
+        # AD path went from one non-empty value to another non-empty value.
+        # Remove users from the first group and add them to the second.
+        @sync_data["role"]["members"].each do |loginid|
+          abort unless ensure_user_not_in_group(loginid, values[0])
+        end
+        @sync_data["role"]["members"].each do |loginid|
+          abort unless ensure_user_in_group(loginid, values[1])
+        end
+      end
+    end
   end
 
   exit(0)
