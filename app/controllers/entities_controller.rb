@@ -73,13 +73,10 @@ class EntitiesController < ApplicationController
 
     respond_to do |format|
       if @entity.update_attributes(params[:entity])
-        @entity.touch # Updating a relation will not alter the 'updated_at' timestamp
-                      # but that timestamp is used when caching a JSON view of this entity
-                      # which _will_ include those relations, so 'touch' the timestamp
-                      # here to ensure JSON cache is invalidated.
-                      # Another option is to calculate cache_keys using the updated_at of
-                      # all relations but this could potentially take a long time on very
-                      # large groups.
+        # The update may have only touched associations and not @entity directly,
+        # so we'll touch the timestamp ourselves to match sure our caches are
+        # invlidated correctly.
+        @entity.touch
 
         logger.debug "Entity#update successful."
 

@@ -25,12 +25,14 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         items
       highlighter: (item) ->
         parts = item.split("####")
-        item = parts[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+        enabled = parts[1]
+        item = parts[2] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
         query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
         ret = item.replace(new RegExp("(" + query + ")", "ig"), ($1, match) ->
           "<strong>" + match + "</strong>"
         )
-        ret = ret + parts[3] if parts[3] isnt `undefined`
+        ret = "<s>" + ret + "</s>" if enabled == "false"
+        ret = ret + parts[4] if parts[4] isnt `undefined`
         ret
       source: @sidebarSearch
       updater: (item) =>
@@ -50,11 +52,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       # 'Fade' bookmark if it is also going to be in the 'Assigned' section
       if selected_role and selected_role.has_assigned(e, false)
         faded = true
-
-      # ep = new Backbone.Model
-      #   entity_id: (e.get('group_id') || e.get('id'))
-      #   name: e.get('name')
-      #   type: e.get('type')
 
       pin = @renderSidebarPin(e, { highlighted: false, faded: faded })
       pins_frag.appendChild pin.el
@@ -115,19 +112,22 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         # and don't want them cut off if the search results list is long
         if entities.length < (DssRm.Views.ApplicationsIndexSidebar.SIDEBAR_MAX_LENGTH - 2)
           exact_match_found = true if query.toLowerCase() is entity.name.toLowerCase()
-          entities.push entity.id + "####" + entity.name + "####" + entity.loginid + "####<i class=\"icon-search sidebar-search-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; event.stopPropagation(); DssRm.Views.ApplicationsIndexSidebar.sidebarDetails(event);\" />"
+          entities.push entity.id + "####" + entity.active + "####" + entity.name + "####" + entity.loginid + "####<i class=\"icon-search sidebar-search-details\" rel=\"tooltip\" title=\"See details\" onClick=\"var event = arguments[0] || window.event; event.stopPropagation(); DssRm.Views.ApplicationsIndexSidebar.sidebarDetails(event);\" />"
 
       if exact_match_found is false
         # Add the option to create a new one with this query (-1 and -2 are invalid IDs to indicate these choices)
-        entities.push DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON + "####Import Person " + query
-        entities.push DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP + "####Create Group " + query
+        entities.push DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON + "####1####Import Person " + query
+        entities.push DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP + "####1####Create Group " + query
 
       process entities
 
-  sidebarSearchResultSelected: (item) ->
+  sidebarSearchResultSelected: (item, a, b, c) ->
     parts = item.split("####")
     id = parseInt(parts[0])
-    label = parts[1]
+    active = parts[1]
+    label = parts[2]
+
+    return if active == "false"
 
     switch id
       when DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
@@ -152,7 +152,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
             selected_role.assignments.add
               entity_id: entity_to_assign.id
               calculated: false
-            #selected_role.entities.add entity_to_assign
             selected_role.save {},
               success: =>
                 DssRm.view_state.trigger('change')
