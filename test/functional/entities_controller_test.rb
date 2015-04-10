@@ -139,4 +139,37 @@ class EntitiesControllerTest < ActionController::TestCase
     assert response.body.include?(inactive_p.loginid) == false, "CSV should not include inactive individual"
     assert response.body.include?(active_p.loginid), "CSV should include an active individual"
   end
+
+  test "entites#update should allow operators to update group attributes" do
+    grant_test_user_basic_access
+    revoke_test_user_admin_access
+
+
+
+    #assert false, "test not implemented"
+  end
+
+  test "entites#update should allow operators to add members" do
+    #assert false, "test not implemented"
+  end
+
+  test "entites#update should allow operators to remove members" do
+    #assert false, "test not implemented"
+  end
+
+  test "entites#update should allow owners to update a group" do
+    #assert false, "test not implemented"
+  end
+
+  test "entites#update should allow owners to add members" do
+    #assert false, "test not implemented"
+  end
+
+  test "entites#update should allow owners to remove members" do
+    #assert false, "test not implemented"
+  end
+
+  test "entites#update should not allow non-owners/non-operators to update attributes" do
+    #assert false, "test not implemented"
+  end
 end
