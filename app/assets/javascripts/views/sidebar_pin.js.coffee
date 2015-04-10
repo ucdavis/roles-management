@@ -110,9 +110,13 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
 
       if matched.length > 0
         # toggling off
-        matched[0].set('_destroy', true)
-
-        selected_role.save()
+        new (DssRm.Views.ConfirmDialog)(
+          entity: matched[0],
+          role: selected_role,
+          confirm: ->
+            matched[0].set('_destroy', true)
+            selected_role.save()
+        ).render().$el.modal()
       else
         # toggling on
         new_entity = new DssRm.Models.Entity(id: id)
