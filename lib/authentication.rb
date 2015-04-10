@@ -92,15 +92,19 @@ module Authentication
       case session[:auth_via]
       when :whitelisted_ip
         Authentication.actual_user = ApiWhitelistedIpUser.find_by_address(session[:user_id])
+        logger.info "Authentication passed with existing session (whitelisted IP): IP: #{session[:user_id]}"
       when :api_key
         Authentication.actual_user = ApiKeyUser.find_by_name(session[:user_id])
+        logger.info "Authentication passed with existing session (API key): #{session[:user_id]}"
       when :cas
         Authentication.actual_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
+        logger.info "Authentication passed with existing session (CAS): ID: #{session[:user_id]}, login ID: #{Authentication.actual_user.loginid}"
         if self.impersonating?
           Authentication.effective_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonate_id])
+          logger.info "Authentication is impersonating: ID: #{session[:impersonate_id]}, login ID: #{Authentication.effective_user.loginid}"
         end
       end
-      logger.info "User authentication passed due to existing session: #{session[:auth_via]}, #{session[:user_id]}, #{Authorization.current_user}"
+
       return
     end
 
