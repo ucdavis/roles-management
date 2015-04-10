@@ -57,7 +57,7 @@ class Person < Entity
         application_name: a.role.application.name, application_id: a.role.application_id,
         name: a.role.name, description: a.role.description }
       },
-      :favorites => self.favorites.map{ |f| { id: f.id, name: f.name, type: f.type } },
+      :favorites => self.favorites.select{ |f| f.active == true }.map{ |f| { id: f.id, name: f.name, type: f.type } },
       :group_memberships => self.group_memberships.includes(:group).map{ |m| {
         id: m.id, group_id: m.group.id, name: m.group.name, calculated: m.calculated }
       },
@@ -183,7 +183,7 @@ class Person < Entity
         self.organizations.each do |organization|
           Sync.person_removed_from_organization(Sync.encode(self), Sync.encode(organization))
         end
-        
+
         Sync.person_removed_from_system(Sync.encode(self))
       end
     end
