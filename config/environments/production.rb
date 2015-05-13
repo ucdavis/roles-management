@@ -5,6 +5,8 @@ DSSRM::Application.configure do
   # Code is not reloaded between requests
   config.cache_classes = true
 
+  config.eager_load = true
+
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
@@ -21,7 +23,7 @@ DSSRM::Application.configure do
   # Use a syslog-based logger for distributed log collection
   # config.logger = Syslogger.new("roles-management", Syslog::LOG_PID, Syslog::LOG_LOCAL0)
   # config.logger.level = Logger::INFO
-  
+
   config.cache_store = :dalli_store #:mem_cache_store, "localhost"
 
   # Use a different cache store in production
@@ -47,12 +49,8 @@ DSSRM::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  config.active_record.auto_explain_threshold_in_seconds = 0.3
-
   # Compress JavaScripts and CSS
-  config.assets.compress = true
+  config.assets.js_compressor = :uglifier
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = true
@@ -62,7 +60,7 @@ DSSRM::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
-  
+
   # Force SSL in production
   config.force_ssl = true
 

@@ -12,6 +12,7 @@ SECRET_TOKEN_FILE = Rails.root.join( "config", "secret_token.yml")
 if File.file?(SECRET_TOKEN_FILE)
   SECRET_TOKEN_SETTINGS = YAML.load_file(SECRET_TOKEN_FILE)
   DSSRM::Application.config.secret_token = SECRET_TOKEN_SETTINGS["SECRET_TOKEN"]
+  DSSRM::Application.config.secret_key_base = SECRET_TOKEN_SETTINGS["SECRET_BASE"]
 else
   puts "You need to set up config/secret_token.yml before running this application."
   exit

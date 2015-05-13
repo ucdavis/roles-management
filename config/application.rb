@@ -8,7 +8,7 @@ if defined?(Bundler)
   # If you want your assets lazily compiled in production, use this line
   # Bundler.require(:default, :assets, Rails.env)
 
-  Bundler.require(*Rails.groups(:assets => %w(development test)))
+  Bundler.require(*Rails.groups)
 end
 
 module DSSRM
@@ -44,7 +44,7 @@ module DSSRM
     config.i18n.default_locale = :en
 
     # JavaScript files you want as :defaults (application.js is always included).
-    config.action_view.javascript_expansions[:defaults] = ['jquery']
+    #config.action_view.javascript_expansions[:defaults] = ['jquery']
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
@@ -61,11 +61,11 @@ module DSSRM
     config.assets.paths << Rails.root.join("app", "assets", "javascripts", "controllers")
     config.assets.paths << Rails.root.join("app", "assets", "templates")
 
-    config.middleware.swap "Rails::Rack::Logger", "BreakoutLogger",
-                                                :silence => ["/status.json"],
-                                                :breakout => [
-                                                  ["\/api\/[a-zA-Z\/]+\.json$", "api.log"],
-                                                  ["\/roles\/[0-9]+.txt$", "roles_txt.log"]
-                                                ]
+    # config.middleware.swap "Rails::Rack::Logger", "BreakoutLogger",
+    #                                             :silence => ["/status.json"],
+    #                                             :breakout => [
+    #                                               ["\/api\/[a-zA-Z\/]+\.json$", "api.log"],
+    #                                               ["\/roles\/[0-9]+.txt$", "roles_txt.log"]
+    #                                             ]
   end
 end

@@ -1,5 +1,5 @@
 class OrganizationEntityAssociation < ActiveRecord::Base
-  attr_accessible :entity_id, :organization_id, :title_id
+  #attr_accessible :entity_id, :organization_id, :title_id
 
   belongs_to :organization, :touch => true
   belongs_to :entity, :touch => true

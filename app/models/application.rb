@@ -9,7 +9,7 @@ class Application < ActiveRecord::Base
   has_many :operatorships, :dependent => :destroy, :class_name => "ApplicationOperatorship"
   has_many :operators, :through => :operatorships, :source => :entity
 
-  attr_accessible :name, :description, :roles_attributes, :owner_ids, :operatorships_attributes, :url
+  #attr_accessible :name, :description, :roles_attributes, :owner_ids, :operatorships_attributes, :url, :icon
 
   accepts_nested_attributes_for :roles, :allow_destroy => true
   accepts_nested_attributes_for :operatorships, :allow_destroy => true

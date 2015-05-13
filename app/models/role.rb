@@ -24,7 +24,7 @@ class Role < ActiveRecord::Base
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
   # This is noted in the Rails documentation. Remove entities via roles_attributes.
-  attr_accessible :token, :role_assignments_attributes, :name, :description, :ad_path, :application_id
+  #attr_accessible :token, :role_assignments_attributes, :name, :description, :ad_path, :application_id
   accepts_nested_attributes_for :role_assignments, :allow_destroy => true
 
   def as_json(options={})

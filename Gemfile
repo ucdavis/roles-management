@@ -1,12 +1,27 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.22'
+gem 'rails', '~> 4.0.13'
 
-group :assets do
-  gem 'sass-rails',   ' ~> 3.2.3'
-  gem 'coffee-rails', ' ~> 3.2.1'
-  gem 'uglifier',     ' >= 1.0.3'
+# Use SCSS for stylesheets
+gem 'sass-rails', '~> 4.0.2'
+
+# Use Uglifier as compressor for JavaScript assets
+gem 'uglifier', '>= 1.3.0'
+
+# Use CoffeeScript for .js.coffee assets and views
+gem 'coffee-rails', '~> 4.0.0'
+
+# Use jquery as the JavaScript library
+#gem 'jquery-rails'
+
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jbuilder', '~> 1.2'
+
+group :doc do
+  # bundle exec rake doc:rails generates the API under doc/api.
+  gem 'sdoc', require: false
 end
+
 
 group :production do
   gem 'pg'
@@ -27,8 +42,6 @@ end
 
 gem 'exception_notification'
 
-gem 'strong_parameters'
-
 gem 'capistrano', '< 3.0.0'
 
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
@@ -42,9 +55,6 @@ gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_autho
 gem 'net-ldap', :require => false
 
 gem 'js-routes', '~> 1.1.2' # 1.2.2 has a sprockets < 3.x bug
-
-# For JSON templates
-gem 'jbuilder'
 
 # For scheduled tasks
 gem 'whenever', :require => false
