@@ -251,6 +251,7 @@ def ensure_user_in_group(user, group, ad_guid = nil)
     end
   end
 
+  # TODO: Maybe call this sentinel.
   ensure_magic_descriptor_presence(g)
 
   unless in_ad_group?(u, g)
@@ -557,17 +558,21 @@ when "role_change"
     if field == "ad_path"
       if (values[0] == nil) and (values[1] != nil)
         # AD path set for the first time. Add all members to the AD group.
+        # TODO: Should be a merge, not a one-way sync
         @sync_data["role"]["members"].each do |loginid|
           abort unless ensure_user_in_group(loginid, values[1])
         end
       elsif (values[0] != nil) and (values[1] == nil)
         # AD path was set but is now unset. Remove all members from the AD group.
+        # TODO: Remove the (RM Sync) sentinel but do not remove the members
         @sync_data["role"]["members"].each do |loginid|
           abort unless ensure_user_not_in_group(loginid, values[0])
         end
       else
         # AD path went from one non-empty value to another non-empty value.
         # Remove users from the first group and add them to the second.
+        # TODO: Leave the first group alone (removing the sentienl)
+        #       perform the fist-time merge on the second group
         @sync_data["role"]["members"].each do |loginid|
           abort unless ensure_user_not_in_group(loginid, values[0])
         end
