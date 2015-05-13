@@ -56,7 +56,7 @@ gem 'cancancan', '~> 1.10'
 # For MS Active Directory support
 gem 'net-ldap', :require => false
 
-gem 'js-routes', '~> 1.1.2' # 1.2.2 has a sprockets < 3.x bug
+gem 'js-routes'
 
 # For scheduled tasks
 gem 'whenever', :require => false
