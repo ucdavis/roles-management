@@ -5,6 +5,8 @@ DSSRM::Application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
+      get "/validate" => "base#validate"
+
       resources :people
       resources :entities
       resources :applications
