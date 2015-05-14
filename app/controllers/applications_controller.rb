@@ -91,7 +91,8 @@ class ApplicationsController < ApplicationController
   protected
 
   def load_application
-    @application = Application.with_permissions_to(:read).find(params[:id])
+    # TODO: add equivalent .with_permissions_to(read:)
+    @application = Application.find(params[:id])
   end
 
   def load_applications

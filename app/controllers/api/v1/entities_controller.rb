@@ -43,7 +43,7 @@ module Api
           # Search login IDs in case of an entity-search but looking for person by login ID
           @entities = Entity.with_permissions_to(:read).where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
         else
-          @entities = Entity.with_permissions_to(:read).where(:active => true).all
+          @entities = Entity.with_permissions_to(:read).where(:active => true)#.all
         end
       end
     end

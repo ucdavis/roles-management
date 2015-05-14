@@ -50,6 +50,8 @@ gem 'ejs'
 
 # Possibly phasing this library out due to bugs / weird issues ...
 gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_authorization.git'
+# Considering using this library instead ...
+gem 'cancancan', '~> 1.10'
 
 # For MS Active Directory support
 gem 'net-ldap', :require => false

@@ -40,7 +40,7 @@ class Group < Entity
   def flattened_members
     results = []
 
-    members.all.each do |e|
+    members.to_a.each do |e| #all.each do |e|
       if e.type == "Group"
         e.flattened_members.each do |m|
           results << m

@@ -8,7 +8,7 @@ class Person < Entity
   include RmBuiltinRoles
 
   has_many :affiliation_assignments, :dependent => :destroy
-  has_many :affiliations, :through => :affiliation_assignments, :uniq => true
+  has_many :affiliations, -> { uniq }, :through => :affiliation_assignments
   has_many :group_memberships, :foreign_key => "entity_id", :dependent => :destroy
   has_many :groups, :through => :group_memberships, :source => :group
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy

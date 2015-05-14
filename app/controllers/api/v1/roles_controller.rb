@@ -39,7 +39,8 @@ module Api
       private
 
       def load_role
-        @role = Role.with_permissions_to(:read).find_by_id(params[:id])
+        # TODO: add equivalent .with_permissions_to(read:)
+        @role = Role.find_by_id(params[:id])
       end
     end
   end

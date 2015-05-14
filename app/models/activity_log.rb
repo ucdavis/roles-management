@@ -17,7 +17,7 @@ class ActivityLog < ActiveRecord::Base
     al = ActivityLog.create!({message: message, level: LOG_LEVELS[level]})
 
     tags.each do |tag|
-      alt = ActivityLogTag.find_or_create_by_tag(tag)
+      alt = ActivityLogTag.find_or_create_by(tag: tag)
       al.activity_log_tags << alt
     end
   end

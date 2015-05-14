@@ -28,7 +28,7 @@ class Organization < ActiveRecord::Base
     end
 
     # Add all children organization's entities
-    child_organizations.all.each do |o|
+    child_organizations.to_a.each do |o| #all.each do |o|
       o.flattened_entities.each do |e|
         results << e
       end
