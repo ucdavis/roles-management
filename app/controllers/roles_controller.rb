@@ -48,19 +48,18 @@ class RolesController < ApplicationController
 
   private
 
-    def load_role
-      # TODO: add equivalent .with_permissions_to(read:)
-      @role = Role.find_by_id(params[:id])
-    end
+  def load_role
+    # TODO: add equivalent .with_permissions_to(read:)
+    @role = Role.find_by_id(params[:id])
+  end
 
-    def load_roles
-      if params[:application_id]
-        # TODO: add equivalent .with_permissions_to(read:)
-        @roles = Role.where(:application_id => params[:application_id])
-      else
-        # TODO: add equivalent .with_permissions_to(read:)
-        @roles = Role.all
-      end
+  def load_roles
+    if params[:application_id]
+      # TODO: add equivalent .with_permissions_to(read:)
+      @roles = Role.where(:application_id => params[:application_id])
+    else
+      # TODO: add equivalent .with_permissions_to(read:)
+      @roles = Role.all
     end
 
     def role_params
