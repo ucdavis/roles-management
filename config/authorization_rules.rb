@@ -189,6 +189,7 @@ authorization do
     has_permission_on :api_v1_entities, :to => :read
     has_permission_on :api_v1_applications, :to => :read
     has_permission_on :api_v1_roles, :to => :read
+    has_permission_on :api_v1_base, :to => [:validate]
   end
 end
 

@@ -49,7 +49,7 @@ class Person < Entity
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Person', :email => self.email,
       :loginid => self.loginid, :first => self.first, :last => self.last,
-      :email => self.email, :phone => self.phone, :address => self.address,
+      :phone => self.phone, :address => self.address,
       :byline => self.byline, :active => self.active,
       :role_assignments => self.role_assignments.includes(:role).map{ |a| {
         id: a.id, calculated: a.parent_id?, entity_id: a.entity_id,

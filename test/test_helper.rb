@@ -98,6 +98,7 @@ class ActiveSupport::TestCase
   # Removes all means of authentication: CAS, API whitelist, and API key
   def revoke_access
     Authorization.current_user = nil
+    request.env['HTTP_AUTHORIZATION'] = nil
     request.env.delete('REMOTE_ADDR')
     request.session.delete(:auth_via)
     request.session.delete(:user_id)
