@@ -12,6 +12,12 @@ GIT
       net-ldap (>= 0.1.1)
 
 GIT
+  remote: https://github.com/dssit/roles-management-api.git
+  revision: 2e8e73817b509b4ec116c44b2759aa15f1193f6d
+  specs:
+    roles-management-api (0.1.0)
+
+GIT
   remote: https://github.com/railsware/js-routes.git
   revision: 42fc4863a398902d86867f3fbf1f58d2838a35d3
   specs:
@@ -268,6 +274,7 @@ DEPENDENCIES
   pg
   poltergeist
   rails (~> 3.2.21)
+  roles-management-api!
   ruby-ldap
   rubycas-client!
   sass-rails (~> 3.2.3)

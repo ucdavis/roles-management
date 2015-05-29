@@ -14,3 +14,8 @@ ad_groups:
   user: 'DC=user,DC=example,DC=com'
   pass: ''
   base: 'DC=ou,DC=example,DC=com'
+
+rm_endpoint:
+  host: 'https://example.roles.com/api'
+  user: 'API Key Name'
+  pass: 'API Key'

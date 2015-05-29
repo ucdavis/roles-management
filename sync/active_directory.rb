@@ -1,7 +1,6 @@
 #! /usr/bin/env ruby
 
 # Concerns migrating this away from the main RM program:
-#   * ensure_magic_descriptor_presence() is currently broken
 #   * AD Path is specific to this sync script yet needs to be in the UI
 #   * GUID was found via this code and stored in RM's Role model. What now?
 #   * ad_path was updated via the 'cn' property if it differed. What now?
@@ -16,6 +15,7 @@ require 'json'
 require 'yaml'
 require 'active_directory'
 require 'logger'
+require 'roles-management-api'
 
 # Takes loginid as a string (e.g. 'jsmith') and returns an ActiveDirectory::User object
 def fetch_ad_user(loginid)
@@ -192,7 +192,6 @@ def in_ad_group?(user, group)
       end
     end
   rescue ArgumentError
-    # puts "Skipping user due to ArgumentError exception"
     return false
   end
 
@@ -251,8 +250,7 @@ def ensure_user_in_group(user, group, ad_guid = nil)
     end
   end
 
-  # TODO: Maybe call this sentinel.
-  ensure_magic_descriptor_presence(g)
+  ensure_sentinel_descriptor_presence(g)
 
   unless in_ad_group?(u, g)
     if add_user_to_group(u, g)
@@ -299,7 +297,7 @@ def ensure_user_not_in_group(user, group, ad_guid = nil)
     end
   end
 
-  ensure_magic_descriptor_presence(g)
+  ensure_sentinel_descriptor_presence(g)
 
   if in_ad_group?(u, g)
     if remove_user_from_group(u, g)
@@ -317,14 +315,14 @@ def ensure_user_not_in_group(user, group, ad_guid = nil)
   return false
 end
 
-# The magic descriptor used by ensure_magic_descriptor_presence
-MAGIC_DESCRIPTOR = "(RM Sync)"
+# The sentinel descriptor used by ensure_sentinel_descriptor_presence
+SENTINEL_DESCRIPTOR = "(RM Sync)"
 
-# Adds the MAGIC_DESCRIPTOR text to an AD group's description field if
+# Adds the SENTINEL_DESCRIPTOR text to an AD group's description field if
 # it is not present.
 #
 # +ad_group+ is an AD group object required by the active_record gem
-def ensure_magic_descriptor_presence(ad_group)
+def ensure_sentinel_descriptor_presence(ad_group)
   # Use exceptions as activedirectory gem will throw an ArgumentError if no description exists.
   # AD groups don't have to have description fields but we will add one if needed.
   begin
@@ -334,11 +332,68 @@ def ensure_magic_descriptor_presence(ad_group)
     g_desc = ""
   end
 
-  unless g_desc and g_desc.index MAGIC_DESCRIPTOR
-    STDOUT.puts "Added '#{MAGIC_DESCRIPTOR}' to AD group description."
-    ad_group.description = "#{MAGIC_DESCRIPTOR} #{g_desc}"
+  unless g_desc and g_desc.index SENTINEL_DESCRIPTOR
+    STDOUT.puts "Adding '#{SENTINEL_DESCRIPTOR}' to AD group description."
+    ad_group.description = "#{SENTINEL_DESCRIPTOR} #{g_desc}"
     ad_group.save
   end
+end
+
+# Removes the SENTINEL_DESCRIPTOR text from an AD group's description field if
+# it is present.
+#
+# +ad_group+ is an AD group object required by the active_record gem
+def ensure_sentinel_descriptor_absence(ad_group)
+  # Use exceptions as activedirectory gem will throw an ArgumentError if no description exists.
+  # AD groups don't have to have description fields but we will add one if needed.
+  begin
+    g_desc = ad_group.description
+  rescue ArgumentError, NoMethodError
+    # description not set
+    g_desc = ""
+  end
+
+  if g_desc and g_desc.index SENTINEL_DESCRIPTOR
+    STDOUT.puts "Removing '#{SENTINEL_DESCRIPTOR}' from AD group description."
+    g_desc.slice! "(RM Sync)"
+    g_desc.lstrip!
+    ad_group.description = g_desc
+    ad_group.save
+  end
+end
+
+# Retrieves all members from both the role in RM and the AD group and ensures
+# both have the same members by adding any missing members from one to the other
+# (inclusively).
+def merge_role_and_ad_group(role_id, ad_group)
+  unless ad_group.is_a? ActiveDirectory::Group
+    abort("merge_role_and_ad_group was not passed a valid ActiveDirectory::Group object")
+  end
+
+  rm_client = RolesManagementAPI.login(@config['rm_endpoint']['host'], @config['rm_endpoint']['user'], @config['rm_endpoint']['pass'])
+
+  abort("Could not connect to RM to merge role and AD group") unless rm_client.connected?
+
+  role = rm_client.find_role_by_id(role_id)
+
+  # Add any role members to the AD group
+  role.members.each do |member|
+    ensure_user_in_group(member.loginid, ad_group)
+  end
+
+  # Simple flag to avoid unnecessary RM activity
+  role_changed = false
+
+  # Add any AD group members to the role
+  list_group_members(ad_group).each do |ad_member|
+    p = rm_client.find_person_by_loginid(ad_member[:samaccountname])
+    unless role.members.map{ |m| m.loginid }.include? p.loginid
+      role.assignments << p
+      role_changed = true
+    end
+  end
+
+  rm_client.save(role) if role_changed
 end
 
 # Converts common organization names to their AD-mapped equivalents
@@ -557,28 +612,24 @@ when "role_change"
   @sync_data["role"]["changes"].each do |field, values|
     if field == "ad_path"
       if (values[0] == nil) and (values[1] != nil)
-        # AD path set for the first time. Add all members to the AD group.
-        # TODO: Should be a merge, not a one-way sync
-        @sync_data["role"]["members"].each do |loginid|
-          abort unless ensure_user_in_group(loginid, values[1])
-        end
+        # AD path set for the first time. Merge role and AD group.
+        # TESTME
+        ad_group = fetch_ad_group(values[1])
+        merge_role_and_ad_group(@sync_data["role"]["id"], ad_group)
       elsif (values[0] != nil) and (values[1] == nil)
-        # AD path was set but is now unset. Remove all members from the AD group.
-        # TODO: Remove the (RM Sync) sentinel but do not remove the members
-        @sync_data["role"]["members"].each do |loginid|
-          abort unless ensure_user_not_in_group(loginid, values[0])
-        end
+        # AD path was set but is now unset. Leave all members but remove sentinel
+        group = fetch_ad_group(values[0])
+        ensure_sentinel_descriptor_absence(group)
       else
         # AD path went from one non-empty value to another non-empty value.
-        # Remove users from the first group and add them to the second.
-        # TODO: Leave the first group alone (removing the sentienl)
-        #       perform the fist-time merge on the second group
-        @sync_data["role"]["members"].each do |loginid|
-          abort unless ensure_user_not_in_group(loginid, values[0])
-        end
-        @sync_data["role"]["members"].each do |loginid|
-          abort unless ensure_user_in_group(loginid, values[1])
-        end
+        # Leave the users in the first group (removing the sentienl) but
+        # merge the second AD path with the role.
+        old_group = fetch_ad_group(values[0])
+        ensure_sentinel_descriptor_absence(old_group)
+
+        # TESTME
+        ad_group = fetch_ad_group(values[1])
+        merge_role_and_ad_group(@sync_data["role"]["id"], ad_group)
       end
     end
   end
@@ -591,3 +642,6 @@ end
 
 # We will only get here on error.
 exit(1)
+
+# Possible tests to add:
+# Ensure removing AD Path from a role removes the sentinel but leaves the members in the AD group

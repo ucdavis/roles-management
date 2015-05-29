@@ -19,10 +19,10 @@ end
 
 group :development, :test do
   gem 'jasmine-rails' # for JS unit testing
-  gem 'capybara' # for JS integration testing
-  gem 'poltergeist' # for PhantomJS-based testing with capybara
+  gem 'capybara'      # for JS integration testing
+  gem 'poltergeist'   # for PhantomJS-based testing with capybara
   gem 'sqlite3'
-  gem 'byebug' # for Ruby 2.x debugging
+  gem 'byebug'        # for Ruby 2.x debugging
 end
 
 gem 'exception_notification'
@@ -67,4 +67,6 @@ gem 'paperclip', '~> 3.0'
 # For memory usage checks
 gem 'os', :require => false
 
+# Sync script dependencies
 gem 'sysaid'
+gem 'roles-management-api', :git => 'https://github.com/dssit/roles-management-api.git'
