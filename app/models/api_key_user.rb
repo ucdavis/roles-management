@@ -1,6 +1,6 @@
 class ApiKeyUser < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
-  
+
   using_access_control
 
   validates :name, :uniqueness => true, :presence => true
@@ -14,7 +14,7 @@ class ApiKeyUser < ActiveRecord::Base
   end
 
   def role_symbols
-    [:access, :api_key]
+    [:api_key]
   end
 
   def ensure_secret_exists

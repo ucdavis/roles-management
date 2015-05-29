@@ -11,7 +11,6 @@ class Api::V1::BaseControllerTest < ActionController::TestCase
   end
 
   test "validate should return HTTP Unauthorized on invalid key" do
-    #revoke_api_user_access
     revoke_access
 
     get :validate, :format => :json

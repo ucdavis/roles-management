@@ -50,11 +50,14 @@ authorization do
   # API key users are not quite admins. Grant specific access here
   role :api_key do
     has_permission_on :roles, :to => :manage
+    has_permission_on :role_assignments, :to => :manage
     has_permission_on :applications, :to => :manage
     has_permission_on :groups, :to => :manage
     has_permission_on :group_rules, :to => :manage
     has_permission_on :people, :to => :manage
     has_permission_on :entities, :to => :manage
+
+    has_permission_on :api_v1_roles, :to => :manage
 
     includes :api_reader
   end
