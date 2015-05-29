@@ -57,7 +57,7 @@ GEM
       nokogiri
     arel (4.0.2)
     builder (3.1.4)
-    byebug (4.0.5)
+    byebug (5.0.0)
       columnize (= 0.9.0)
     cancancan (1.10.1)
     capistrano (2.15.5)
@@ -115,13 +115,13 @@ GEM
     json (1.8.2)
     launchy (2.4.3)
       addressable (~> 2.3)
-    letter_opener (1.4.0)
+    letter_opener (1.4.1)
       launchy (~> 2.2)
     macaddr (1.7.1)
       systemu (~> 2.6.2)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
-    mime-types (2.5)
+    mime-types (2.6.1)
     mini_portile (0.6.2)
     minitest (4.7.5)
     multi_json (1.11.0)
@@ -166,6 +166,7 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
     rdoc (4.2.0)
+      json (~> 1.4)
     ruby-ldap (0.9.17)
     sass (3.2.19)
     sass-rails (4.0.5)
@@ -239,6 +240,7 @@ DEPENDENCIES
   pg
   poltergeist
   rails (~> 4.0.13)
+  roles-management-api!
   ruby-ldap
   rubycas-client!
   sass-rails (~> 4.0.2)
