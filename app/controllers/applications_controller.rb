@@ -91,10 +91,10 @@ class ApplicationsController < ApplicationController
 
   protected
 
-  def load_application
-    # TODO: add equivalent .with_permissions_to(read:)
-    @application = Application.find(params[:id])
-  end
+    def load_application
+      # TODO: add equivalent .with_permissions_to(read:)
+      @application = Application.find(params[:id])
+    end
 
     def load_applications
       manageable_applications = current_user.manageable_applications
