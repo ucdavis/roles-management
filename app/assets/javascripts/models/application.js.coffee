@@ -79,7 +79,7 @@ DssRm.Models.Application = Backbone.Model.extend(
         role_json._destroy = role.get('_destroy')
         role_json
 
-    json
+    application: json
 )
 
 DssRm.Collections.Applications = Backbone.Collection.extend(

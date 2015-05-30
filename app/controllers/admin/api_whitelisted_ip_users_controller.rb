@@ -31,14 +31,19 @@ class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
       format.json { head :no_content, status: :destroyed }
     end
   end
-  
+
   private
-  
-  def load_whitelisted_users
-    @addresses = ApiWhitelistedIpUser.all
-  end
-  
-  def new_api_whitelisted_ip_user_from_params
-    @api_whitelisted_ip_user = ApiWhitelistedIpUser.new(params[:api_whitelisted_ip_user])
-  end
+
+    def load_whitelisted_users
+      @addresses = ApiWhitelistedIpUser.all
+    end
+
+    def new_api_whitelisted_ip_user_from_params
+      @api_whitelisted_ip_user = ApiWhitelistedIpUser.new(api_whitelisted_ip_user_params)
+    end
+
+    def api_whitelisted_ip_user_params
+      params.require(:api_whitelisted_ip_user).permit(:address, :reason)
+    end
+
 end

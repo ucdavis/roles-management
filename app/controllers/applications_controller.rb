@@ -57,19 +57,20 @@ class ApplicationsController < ApplicationController
       logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to create new application, #{params[:application]}."
     end
 
-    #@application.trigger_sync
-
     respond_with @application
   end
 
   def update
     @application = Application.find(params[:id])
 
-    respond_to do |format|
-      if @application.update_attributes(params[:application])
-        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
+    logger.info "params:"
+    logger.info params
+    logger.info "application_params:"
+    logger.info application_params
 
-        #@application.trigger_sync
+    respond_to do |format|
+      if @application.update_attributes(application_params)
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
         format.json { render :json => @application }
       else
@@ -90,27 +91,33 @@ class ApplicationsController < ApplicationController
 
   protected
 
-  def load_application
-    # TODO: add equivalent .with_permissions_to(read:)
-    @application = Application.find(params[:id])
-  end
-
-  def load_applications
-    manageable_applications = current_user.manageable_applications
-
-    if params[:q]
-      apps = Application.arel_table
-      @applications = manageable_applications.where(apps[:name].matches("%#{params[:q]}%"))
-    else
-      @applications = manageable_applications
+    def load_application
+      # TODO: add equivalent .with_permissions_to(read:)
+      @application = Application.find(params[:id])
     end
 
-    @applications = @applications.sort_by(&:created_at)
-  end
+    def load_applications
+      manageable_applications = current_user.manageable_applications
 
-  def new_application_from_params
-    params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
-    params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id
-    @application = Application.new(params[:application])
-  end
+      if params[:q]
+        apps = Application.arel_table
+        @applications = manageable_applications.where(apps[:name].matches("%#{params[:q]}%"))
+      else
+        @applications = manageable_applications
+      end
+
+      @applications = @applications.sort_by(&:created_at)
+    end
+
+    def new_application_from_params
+      params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
+      params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id
+      @application = Application.new(application_params)
+    end
+
+    def application_params
+      params.require(:application).permit(:name, :description, :url,
+                                      roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy], :owner_ids => [])
+    end
+
 end
