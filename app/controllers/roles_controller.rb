@@ -19,7 +19,7 @@ class RolesController < ApplicationController
 
   def update
     if params[:id] and params[:role]
-      if @role.update_attributes(params[:role].except(:id))
+      if @role.update_attributes(role_params)
         @role.touch
         # Reload the group in case the after_save callback destroyed role assignments.
         @role.reload
@@ -48,18 +48,24 @@ class RolesController < ApplicationController
 
   private
 
-  def load_role
-    # TODO: add equivalent .with_permissions_to(read:)
-    @role = Role.find_by_id(params[:id])
-  end
-
-  def load_roles
-    if params[:application_id]
+    def load_role
       # TODO: add equivalent .with_permissions_to(read:)
-      @roles = Role.where(:application_id => params[:application_id])
-    else
-      # TODO: add equivalent .with_permissions_to(read:)
-      @roles = Role.all
+      @role = Role.find_by_id(params[:id])
     end
-  end
+
+    def load_roles
+      if params[:application_id]
+        # TODO: add equivalent .with_permissions_to(read:)
+        @roles = Role.where(:application_id => params[:application_id])
+      else
+        # TODO: add equivalent .with_permissions_to(read:)
+        @roles = Role.all
+      end
+    end
+
+    def role_params
+      params.require(:role).permit(:name, :token, :description, :ad_path,
+                                      {role_assignments_attributes: [:id, :entity_id, :role_id, :_destroy]})
+    end
+
 end

@@ -72,7 +72,7 @@ class EntitiesController < ApplicationController
     end
 
     respond_to do |format|
-      if @entity.update_attributes(params[:entity])
+      if @entity.update_attributes(entity_params)
         # The update may have only touched associations and not @entity directly,
         # so we'll touch the timestamp ourselves to match sure our caches are
         # invlidated correctly.
@@ -117,17 +117,21 @@ class EntitiesController < ApplicationController
 
   private
 
-  def load_entities
-    if params[:q]
-      entities_table = Entity.arel_table
+    def load_entities
+      if params[:q]
+        entities_table = Entity.arel_table
 
-      # Search login IDs in case of an entity-search but looking for person by login ID.
-      # Show active and inactive. Consumer will be responsible for filtering if necessary.
-      @entities = Entity.with_permissions_to(:read).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+        # Search login IDs in case of an entity-search but looking for person by login ID
+        @entities = Entity.with_permissions_to(:read).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
 
-      logger.debug "Entities#index searching for '#{params[:q]}'. Found #{@entities.length} results."
-    else
-      @entities = Entity.with_permissions_to(:read).all
+        logger.debug "Entities#index searching for '#{params[:q]}'. Found #{@entities.length} results."
+      else
+        @entities = Entity.with_permissions_to(:read).all
+      end
     end
-  end
+
+    def entity_params
+      params.require(:entity).permit(:name, :type, :description, :owner_ids,
+                                      :operator_ids, {memberships_attributes: [:id, :calculated, :entity_id, :_destroy]})
+    end
 end

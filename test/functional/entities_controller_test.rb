@@ -232,4 +232,19 @@ class EntitiesControllerTest < ActionController::TestCase
   # test "universal operators should be able to activate/deactivate individuals" do
   #   assert false, "test not implemented"
   # end
+  test "entities#update should work" do
+    grant_test_user_admin_access
+
+    # TODO: It should try to add a member to a group and have it return 200 and
+    #       check that the member was added. Maybe rename the test then? The basic
+    #       gist is that this basic controller action broke during the Rails 3->4 upgrade
+    #       and that really should have been caught.
+
+    @entity = entities(:groupA)
+
+    patch :update, id: @entity, entity: { name: @entity.name, type: @entity.type, description: @entity.description,
+                                          owner_ids: @entity.owner_ids, operator_ids: @entity.operator_ids, memberships_attributes: @entity.memberships_attributes }
+
+    assert_response :success
+  end
 end
