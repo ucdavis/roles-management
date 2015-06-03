@@ -8,11 +8,11 @@ class AdminMailer < ActionMailer::Base
     @details = YAML::load(job[:handler])
     failed_script_file = @details[:sync_script].match(/\/([^\/]+)$/).captures[0]
 
-    mail(:to => email, :subject => "DSS-RM: Sync failure (#{failed_script_file})")
+    mail(:to => email, :subject => "Sync failure (#{failed_script_file})")
   end
 
   def application_error_occurred(email, message)
     @message = message
-    mail(:to => email, :subject => "DSS-RM: Application error occurred")
+    mail(:to => email, :subject => "Application error occurred")
   end
 end
