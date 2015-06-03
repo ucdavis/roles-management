@@ -38,16 +38,13 @@ gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 gem 'ejs'
 
 # Possibly phasing this library out due to bugs / weird issues ...
-#gem 'declarative_authorization', "~> 0.5.7"
 gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_authorization.git'
 # Considering using this library instead ...
 gem 'cancancan', '~> 1.8'
 
 # For MS Active Directory support
-gem 'net-ldap', :git => 'https://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
-#gem 'active_directory', :git => 'https://github.com/richardun/active_directory.git', :require => false
-gem 'active_directory', :git => 'https://github.com/cthielen/active_directory.git', :require => false
-#gem 'active_directory', :git => 'https://github.com/ajrkerr/active_directory.git', :require => false
+#gem 'net-ldap', :git => 'https://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
+gem 'net-ldap', :require => false
 
 gem 'js-routes', :git => 'https://github.com/railsware/js-routes.git'
 

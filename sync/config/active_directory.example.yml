@@ -10,10 +10,10 @@ ad_people:
     base: 'DC=ou,DC=example,DC=com'
 
 ad_groups:
-  host: 'example.com'
-  user: 'DC=user,DC=example,DC=com'
-  pass: ''
-  base: 'DC=ou,DC=example,DC=com'
+  - host: 'example.com'
+    user: 'DC=user,DC=example,DC=com'
+    pass: ''
+    base: 'DC=ou,DC=example,DC=com'
 
 rm_endpoint:
   host: 'https://example.roles.com/api'

@@ -13,16 +13,21 @@
 
 require 'json'
 require 'yaml'
-require 'active_directory'
-require 'logger'
+require 'net-ldap'
 require 'roles-management-api'
 
-# Takes loginid as a string (e.g. 'jsmith') and returns an ActiveDirectory::User object
-def fetch_ad_user(loginid)
-  u = nil
+class ActiveDirectory
+  LDAP_ALREADY_EXISTS = 68
+  LDAP_UNWILLING_TO_PERFORM = 53
 
-  @config['ad_people'].each do |entry|
-    settings = {
+  @ldap = {}
+
+  def ActiveDirectory.configure(settings)
+    @ldap[:people] = []
+    @ldap[:groups] = []
+
+    settings['people'].each do |entry|
+      server = {
         :host => entry['host'],
         :base => entry['base'],
         :port => 636,
@@ -32,118 +37,16 @@ def fetch_ad_user(loginid)
           :username => entry['user'],
           :password => entry['pass']
         }
-    }
-
-    ActiveDirectory::Base.setup(settings)
-    u = ActiveDirectory::User.find(:first, :samaccountname => loginid)
-    @logger.info "#{Time.now} fetch_ad_user() called for #{loginid}"
-    break unless u.nil?
-  end
-
-  return u
-end
-
-# Takes name as a string (e.g. 'this-that') and returns an ActiveDirectory::Group object
-def fetch_ad_group(group_name)
-  g = nil
-
-  settings = {
-      :host => @config['ad_groups']['host'],
-      :base => @config['ad_groups']['base'],
-      :port => 636,
-      :encryption => :simple_tls,
-      :auth => {
-        :method => :simple,
-        :username => @config['ad_groups']['user'],
-        :password => @config['ad_groups']['pass']
       }
-  }
 
-  ActiveDirectory::Base.setup(settings)
+      conn = Net::LDAP.new(server)
+      conn.bind
 
-  begin
-    g = ActiveDirectory::Group.find(:first, :cn => group_name)
-    @logger.info "#{Time.now} fetch_ad_group() called for #{group_name}"
-  rescue SystemCallError
-    # Usually occurs when AD can't be reached (times out)
-    return nil
-  end
+      @ldap[:people] << conn
+    end
 
-  return g
-end
-
-# Takes objectGuid as a hex string and returns an ActiveDirectory::Group object
-def fetch_ad_group_by_guid(guid)
-  g = nil
-
-  settings = {
-      :host => @config['ad_groups']['host'],
-      :base => @config['ad_groups']['base'],
-      :port => 636,
-      :encryption => :simple_tls,
-      :auth => {
-        :method => :simple,
-        :username => @config['ad_groups']['user'],
-        :password => @config['ad_groups']['pass']
-      }
-  }
-
-  ActiveDirectory::Base.setup(settings)
-
-  begin
-    g = ActiveDirectory::Group.find(:first, :objectguid => guid)
-    @logger.info "#{Time.now} fetch_ad_group_by_guid() called for #{guid}"
-  rescue SystemCallError
-    # Usually occurs when AD can't be reached (times out)
-    return nil
-  end
-
-  return g
-end
-
-# Takes name as a string (e.g. 'this-that') and returns true or false
-def ad_group_exists?(group_name)
-  if fetch_ad_group(group_name).nil?
-    return false
-  else
-    return true
-  end
-end
-
-# Takes user as an ActiveDirectory::User object and group as a ActiveDirectory::Group object and returns boolean
-def add_user_to_group(user, group)
-  if group.nil?
-    return false
-  end
-
-  settings = {
-      :host => @config['ad_groups']['host'],
-      :base => @config['ad_groups']['base'],
-      :port => 636,
-      :encryption => :simple_tls,
-      :auth => {
-        :method => :simple,
-        :username => @config['ad_groups']['user'],
-        :password => @config['ad_groups']['pass']
-      }
-  }
-
-  ActiveDirectory::Base.setup(settings)
-
-  @logger.info "#{Time.now} add_user_to_group() called for user #{user}, group #{group}"
-  group.add user
-end
-
-# Takes group as an ActiveDirectory::Group object and returns an array of users
-def list_group_members(group)
-  members = []
-
-  if group.nil?
-    return []
-  end
-
-  @config['ad_people'].each do |entry|
-    settings = {
+    settings['groups'].each do |entry|
+      server = {
         :host => entry['host'],
         :base => entry['base'],
         :port => 636,
@@ -153,166 +56,159 @@ def list_group_members(group)
           :username => entry['user'],
           :password => entry['pass']
         }
-    }
+      }
 
-    ActiveDirectory::Base.setup(settings)
+      conn = Net::LDAP.new(server)
+      conn.bind
 
-    begin
-      @logger.info "#{Time.now} list_group_members() called for #{group}"
-      members += group.member_users
-    rescue NoMethodError
-      # active_directory gem throws a NoMethodError if the group is blank
+      @ldap[:groups] << conn
     end
   end
 
-  members
-end
+  def ActiveDirectory.get_user(loginid)
+    @ldap[:people].each do |conn|
+      result = conn.search(:filter => Net::LDAP::Filter.eq("sAMAccountName", loginid))
+      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
 
-# Returns true if 'user' is in 'group' (both objects should be queried using fetch_user and fetch_group)
-def in_ad_group?(user, group)
-  settings = {
-      :host => @config['ad_groups']['host'],
-      :base => @config['ad_groups']['base'],
-      :port => 636,
-      :encryption => :simple_tls,
-      :auth => {
-        :method => :simple,
-        :username => @config['ad_groups']['user'],
-        :password => @config['ad_groups']['pass']
-      }
-  }
-
-  ActiveDirectory::Base.setup(settings)
-
-  begin
-    unless user.nil? or group.nil?
-      @logger.info "#{Time.now} in_ad_group?() called for user #{user}, group #{group}"
-      if user.member_of? group
-        return true
+      if result.length > 0
+        return result[0]
       end
     end
-  rescue ArgumentError
+
+    return nil
+  end
+
+  def ActiveDirectory.get_group(group_name)
+    @ldap[:groups].each do |conn|
+      result = conn.search(:filter => Net::LDAP::Filter.eq("cn", group_name))
+      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+
+      if result.length > 0
+        return result[0]
+      end
+    end
+
+    return nil
+  end
+
+  def ActiveDirectory.add_user_to_group(user, group)
+    unless user.is_a? Net::LDAP::Entry
+      raise "Must pass valid user."
+    end
+    unless group.is_a? Net::LDAP::Entry
+      raise "Must pass valid group."
+    end
+
+    @ldap[:groups].each do |conn|
+      result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
+  				[ :add, :member, user[:distinguishedname][0] ]
+  			])
+
+      if conn.get_operation_result.code == LDAP_ALREADY_EXISTS
+        return true # user was already in this group
+      end
+
+      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+
+      # result will be 'true' if user was successfully added
+      return result
+    end
+
     return false
   end
 
-  return false
-end
+  def ActiveDirectory.remove_user_from_group(user, group)
+    unless user.is_a? Net::LDAP::Entry
+      raise "Must pass valid user."
+    end
+    unless group.is_a? Net::LDAP::Entry
+      raise "Must pass valid group."
+    end
 
-def remove_user_from_group(user, group)
-  if group.nil?
+    @ldap[:groups].each do |conn|
+      result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
+				[ :delete, :member, user[:distinguishedname][0] ]
+			])
+
+      if conn.get_operation_result.code == LDAP_UNWILLING_TO_PERFORM
+        return true # user was already not in the group
+      end
+
+      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+
+      # result will be 'true' if user was successfully removed
+      return result
+    end
+
     return false
   end
 
-  settings = {
-      :host => @config['ad_groups']['host'],
-      :base => @config['ad_groups']['base'],
-      :port => 636,
-      :encryption => :simple_tls,
-      :auth => {
-        :method => :simple,
-        :username => @config['ad_groups']['user'],
-        :password => @config['ad_groups']['pass']
-      }
-  }
+  def ActiveDirectory.update_group_description(group, description)
+    unless group.is_a? Net::LDAP::Entry
+      raise "Must pass valid group."
+    end
 
-  ActiveDirectory::Base.setup(settings)
+    @ldap[:groups].each do |conn|
+      result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
+				[ :replace, 'description', description ]
+			])
 
-  @logger.info "#{Time.now} remove_user_from_group() called for user #{user}, group #{group}"
-  group.remove user
+      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+
+      # result will be 'true' if user was successfully removed
+      return result
+    end
+
+    return false
+  end
+
+  def ActiveDirectory.list_group_members(group)
+    unless group.is_a? Net::LDAP::Entry
+      group = get_group(group)
+    end
+
+    members = []
+
+    group[:member].each do |member|
+      members << member.match(/CN=([^,]+),/).captures[0]
+    end
+
+    return members
+  end
 end
 
-# User may be a loginid (string) or ActiveDirectory::User object
-# Group may be an AD path (string) or ActiveDirectory::Group object
+# User may be a loginid (string) or Net::LDAP::Entry object
+# Group may be an AD path (string) or Net::LDAP::Entry object
 # ad_guid may be provided (optional) and will be prefered over AD Path if
 # 'group' is a string (AD Path)
 def ensure_user_in_group(user, group, ad_guid = nil)
-  if user.is_a? ActiveDirectory::User
-    u = user
-  else
-    u = fetch_ad_user(user)
-    if u.nil?
-      STDERR.puts "Could not find AD user \"#{user}\""
-      return false
-    end
+  unless user.is_a? Net::LDAP::Entry
+    user = ActiveDirectory.get_user(user)
+  end
+  unless group.is_a? Net::LDAP::Entry
+    group = ActiveDirectory.get_group(group)
   end
 
-  if group.is_a? ActiveDirectory::Group
-    g = group
-  else
-    if ad_guid
-      g = fetch_ad_group_by_guid(ad_guid)
-    else
-      g = fetch_ad_group(group)
-    end
-    if g.nil?
-      STDERR.puts "Could not find AD group using GUID \"#{ad_guid}\" or path \"#{group}\""
-      return false
-    end
-  end
+  ensure_sentinel_descriptor_presence(group)
 
-  ensure_sentinel_descriptor_presence(g)
-
-  unless in_ad_group?(u, g)
-    if add_user_to_group(u, g)
-      STDOUT.puts "AD add operation succeeded."
-      return true
-    else
-      STDERR.puts "AD add operation failed."
-      return false
-    end
-  else
-    STDOUT.puts "AD add operation unnecessary, user is already in group."
-    return true
-  end
-
-  return false
+  ActiveDirectory.add_user_to_group(user, group)
 end
 
-# User may be a loginid (string) or ActiveDirectory::User object
-# Group may be an AD path (string) or ActiveDirectory::Group object
+# User may be a loginid (string) or Net::LDAP::Entry object
+# Group may be an AD path (string) or Net::LDAP::Entry object
 # ad_guid may be provided (optional) and will be prefered over AD Path if
 # 'group' is a string (AD Path)
 def ensure_user_not_in_group(user, group, ad_guid = nil)
-  if user.is_a? ActiveDirectory::User
-    u = user
-  else
-    u = fetch_ad_user(user)
-    if u.nil?
-      STDERR.puts "Could not find AD user \"#{user}\""
-      return false
-    end
+  unless user.is_a? Net::LDAP::Entry
+    user = ActiveDirectory.get_user(user)
+  end
+  unless group.is_a? Net::LDAP::Entry
+    group = ActiveDirectory.get_group(group)
   end
 
-  if group.is_a? ActiveDirectory::Group
-    g = group
-  else
-    if ad_guid
-      g = fetch_ad_group_by_guid(ad_guid)
-    else
-      g = fetch_ad_group(group)
-    end
-    if g.nil?
-      STDERR.puts "Could not find AD group using GUID \"#{ad_guid}\" or path \"#{group}\""
-      return false
-    end
-  end
+  ensure_sentinel_descriptor_presence(group)
 
-  ensure_sentinel_descriptor_presence(g)
-
-  if in_ad_group?(u, g)
-    if remove_user_from_group(u, g)
-      STDOUT.puts "AD remove operation succeeded."
-      return true
-    else
-      STDERR.puts "AD remove operation failed."
-      return false
-    end
-  else
-    STDOUT.puts "AD remove operation unnecessary, user is not in group."
-    return true
-  end
-
-  return false
+  ActiveDirectory.remove_user_from_group(user, group)
 end
 
 # The sentinel descriptor used by ensure_sentinel_descriptor_presence
@@ -321,53 +217,48 @@ SENTINEL_DESCRIPTOR = "(RM Sync)"
 # Adds the SENTINEL_DESCRIPTOR text to an AD group's description field if
 # it is not present.
 #
-# +ad_group+ is an AD group object required by the active_record gem
-def ensure_sentinel_descriptor_presence(ad_group)
-  # Use exceptions as activedirectory gem will throw an ArgumentError if no description exists.
-  # AD groups don't have to have description fields but we will add one if needed.
-  begin
-    g_desc = ad_group.description
-  rescue ArgumentError, NoMethodError
-    # description not set
-    g_desc = ""
+# +group+ is a Net::LDAP::Entry object or a string
+def ensure_sentinel_descriptor_presence(group)
+  unless group.is_a? Net::LDAP::Entry
+    group = ActiveDirectory.get_group(group)
   end
+
+  g_desc = group[:description][0]
 
   unless g_desc and g_desc.index SENTINEL_DESCRIPTOR
     STDOUT.puts "Adding '#{SENTINEL_DESCRIPTOR}' to AD group description."
-    ad_group.description = "#{SENTINEL_DESCRIPTOR} #{g_desc}"
-    ad_group.save
+    g_desc = "#{SENTINEL_DESCRIPTOR} #{g_desc}"
+    ActiveDirectory.update_group_description(group, g_desc)
   end
 end
 
 # Removes the SENTINEL_DESCRIPTOR text from an AD group's description field if
 # it is present.
 #
-# +ad_group+ is an AD group object required by the active_record gem
-def ensure_sentinel_descriptor_absence(ad_group)
-  # Use exceptions as activedirectory gem will throw an ArgumentError if no description exists.
-  # AD groups don't have to have description fields but we will add one if needed.
-  begin
-    g_desc = ad_group.description
-  rescue ArgumentError, NoMethodError
-    # description not set
-    g_desc = ""
+# +group+ is a Net::LDAP::Entry object or a string
+def ensure_sentinel_descriptor_absence(group)
+  unless group.is_a? Net::LDAP::Entry
+    group = ActiveDirectory.get_group(group)
   end
+
+  g_desc = group[:description][0]
 
   if g_desc and g_desc.index SENTINEL_DESCRIPTOR
     STDOUT.puts "Removing '#{SENTINEL_DESCRIPTOR}' from AD group description."
     g_desc.slice! "(RM Sync)"
     g_desc.lstrip!
-    ad_group.description = g_desc
-    ad_group.save
+    ActiveDirectory.update_group_description(group, g_desc)
   end
 end
 
 # Retrieves all members from both the role in RM and the AD group and ensures
 # both have the same members by adding any missing members from one to the other
 # (inclusively).
-def merge_role_and_ad_group(role_id, ad_group)
-  unless ad_group.is_a? ActiveDirectory::Group
-    abort("merge_role_and_ad_group was not passed a valid ActiveDirectory::Group object")
+def merge_role_and_ad_group(role_id, group_name)
+  ad_group = ActiveDirectory.get_group(group_name)
+
+  unless ad_group.is_a? Net::LDAP::Entry
+    abort("Could not retrieve #{group_name}")
   end
 
   rm_client = RolesManagementAPI.login(@config['rm_endpoint']['host'], @config['rm_endpoint']['user'], @config['rm_endpoint']['pass'])
@@ -385,8 +276,8 @@ def merge_role_and_ad_group(role_id, ad_group)
   role_changed = false
 
   # Add any AD group members to the role
-  list_group_members(ad_group).each do |ad_member|
-    p = rm_client.find_person_by_loginid(ad_member[:samaccountname])
+  ActiveDirectory.list_group_members(ad_group).each do |ad_member|
+    p = rm_client.find_person_by_loginid(ad_member)
     unless role.members.map{ |m| m.loginid }.include? p.loginid
       role.assignments << p
       role_changed = true
@@ -489,7 +380,7 @@ def ou_to_short(name)
     "MEDIEVAL STUDIES", "EDUCATION", "ACADEMIC AFFAIRS", "ANR SUSTAINABLE AG PROG"
     return nil
   else
-    STDOUT.puts "AD Sync: Missing OU for translation to container name: #{name}"
+    STDERR.puts "AD Sync: Missing OU for translation to container name: #{name}"
   end
 
   return false
@@ -526,7 +417,7 @@ def flatten_affiliation(affiliation)
     "visitor"
     return nil
   else
-    STDOUT.puts "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
+    STDERR.puts "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
   end
 
   return false
@@ -544,7 +435,7 @@ end
 
 @config = YAML.load_file(@sync_data["config_path"] + "/active_directory.yml")
 
-@logger = Logger.new(@sync_data["config_path"] + "/../../log/active_directory_activity.log", 10, 1024000)
+ActiveDirectory.configure(@config)
 
 case @sync_data["mode"]
 
@@ -565,10 +456,6 @@ when "remove_from_role"
   exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
 
 when "add_to_organization"
-  ad_user = fetch_ad_user(@sync_data["person"]["loginid"])
-
-  abort("Could not find AD user \"#{@sync_data["person"]["loginid"]}\"") if ad_user.nil?
-
   @sync_data["person"]["affiliations"].each do |affiliation|
     # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
     short_ou = ou_to_short(@sync_data["organization"]["name"])
@@ -578,19 +465,15 @@ when "add_to_organization"
     next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
 
     # Write them to cluster-affiliation-all
-    abort unless ensure_user_in_group(ad_user, "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
+    abort unless ensure_user_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
 
     # Write them to cluster-all (dss-us-#{ou_to_short}-all)
-    abort unless ensure_user_in_group(ad_user, "dss-us-#{short_ou}-all".downcase)
+    abort unless ensure_user_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-all".downcase)
   end
 
   exit(0)
 
 when "remove_from_organization"
-  ad_user = fetch_ad_user(@sync_data["person"]["loginid"])
-
-  abort("Could not find AD user \"#{@sync_data["person"]["loginid"]}\"") if ad_user.nil?
-
   @sync_data["person"]["affiliations"].each do |affiliation|
     # Remove them from cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
     short_ou = ou_to_short(@sync_data["organization"]["name"])
@@ -600,10 +483,10 @@ when "remove_from_organization"
     next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
 
     # Remove them from cluster-affiliation-all
-    abort unless ensure_user_not_in_group(ad_user, "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
+    abort unless ensure_user_not_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
 
     # Remove them from cluster-all (dss-us-#{ou_to_short}-all)
-    abort unless ensure_user_not_in_group(ad_user, "dss-us-#{short_ou}-all".downcase)
+    abort unless ensure_user_not_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-all".downcase)
   end
 
   exit(0)
@@ -614,22 +497,18 @@ when "role_change"
       if (values[0] == nil) and (values[1] != nil)
         # AD path set for the first time. Merge role and AD group.
         # TESTME
-        ad_group = fetch_ad_group(values[1])
-        merge_role_and_ad_group(@sync_data["role"]["id"], ad_group)
+        merge_role_and_ad_group(@sync_data["role"]["id"], values[1])
       elsif (values[0] != nil) and (values[1] == nil)
         # AD path was set but is now unset. Leave all members but remove sentinel
-        group = fetch_ad_group(values[0])
-        ensure_sentinel_descriptor_absence(group)
+        ensure_sentinel_descriptor_absence(values[0])
       else
         # AD path went from one non-empty value to another non-empty value.
         # Leave the users in the first group (removing the sentienl) but
         # merge the second AD path with the role.
-        old_group = fetch_ad_group(values[0])
-        ensure_sentinel_descriptor_absence(old_group)
+        ensure_sentinel_descriptor_absence(values[0])
 
         # TESTME
-        ad_group = fetch_ad_group(values[1])
-        merge_role_and_ad_group(@sync_data["role"]["id"], ad_group)
+        merge_role_and_ad_group(@sync_data["role"]["id"], values[1])
       end
     end
   end
@@ -642,6 +521,3 @@ end
 
 # We will only get here on error.
 exit(1)
-
-# Possible tests to add:
-# Ensure removing AD Path from a role removes the sentinel but leaves the members in the AD group

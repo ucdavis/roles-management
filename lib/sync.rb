@@ -144,7 +144,13 @@ module Sync
   end
 
   def Sync.logger
-    @@sync_logger ||= ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'sync.log')}"))
+    unless defined?(@@sync_logger)
+      logger = Logger.new("#{Rails.root.join('log', 'sync.log')}")
+      logger.level = Logger::DEBUG
+      logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+      logger = ActiveSupport::TaggedLogging.new(logger)
+    end
+    @@sync_logger ||= logger #ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'sync.log')}"))
   end
 
   module_function

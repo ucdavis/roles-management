@@ -4,7 +4,15 @@ class AdminMailer < ActionMailer::Base
   def sync_script_failed(email, job)
     @job = job
     logger.info "Sending sync_script_failed e-mail to #{email}..."
-    mail(:to => email, :subject => "DSS-RM: Sync Script Failed")
+
+    logger.info("job is:")
+    logger.info(job)
+    logger.info("that's what it is.")
+
+    @details = YAML::load(job[:handler])
+    failed_script_file = @details[:sync_script].match(/\/([^\/]+)$/).captures[0]
+
+    mail(:to => email, :subject => "DSS-RM: Sync failure (#{failed_script_file})")
   end
 
   def application_error_occurred(email, message)

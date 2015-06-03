@@ -24,17 +24,18 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
 
     # e.g. "638aa9a4-4ef9-4a21-b223-28adfba578a1: active_directory.rb:"
     log_tag = "#{job_uuid}: #{sync_script.split(File::SEPARATOR)[-1]}:"
-    
+
     if script_finish_ts - script_start_ts > SLOW_SCRIPT_WARNING
       Sync.logger.warn "#{log_tag} SLOW SCRIPT (#{script_finish_ts - script_start_ts}s)"
     end
 
     if $?.exitstatus != 0
-      Sync.logger.error "#{log_tag} ERROR (#{script_finish_ts - script_start_ts}s)"
-      Sync.logger.error "#{log_tag} \t" + ret.gsub("\n", "\n#{log_tag} \t") if ret and ret.length > 0
-      raise 'Sync script returned an error.'
+      log_txt = "#{log_tag} ERROR (#{script_finish_ts - script_start_ts}s)\n"
+      log_txt += "#{log_tag} \t" + ret.gsub("\n", "\n#{log_tag} \t") if ret and ret.length > 0
+      Sync.logger.error(log_txt)
+      raise log_txt # this will allow our script output to appear in Delayed::Job.last_error
     else
-      Sync.logger.debug "#{log_tag} SUCCESS (#{script_finish_ts - script_start_ts}s)"
+      Sync.logger.info "#{log_tag} SUCCESS (#{script_finish_ts - script_start_ts}s)"
       Sync.logger.info "#{log_tag} \t" + ret.gsub("\n", "\n#{log_tag} \t") if ret and ret.length > 0
     end
   end
