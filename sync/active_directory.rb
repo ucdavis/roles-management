@@ -75,6 +75,8 @@ class ActiveDirectory
       end
     end
 
+    STDERR.puts "Unable to find user '#{loginid}'"
+
     return nil
   end
 
@@ -87,6 +89,8 @@ class ActiveDirectory
         return result[0]
       end
     end
+
+    STDERR.puts "Unable to find group '#{group_name}'"
 
     return nil
   end
@@ -114,6 +118,8 @@ class ActiveDirectory
       return result
     end
 
+    STDERR.puts "Unable to add user (#{user[:distinguishedname][0]}) to group (#{group[:distinguishedname][0]})"
+
     return false
   end
 
@@ -140,6 +146,8 @@ class ActiveDirectory
       return result
     end
 
+    STDERR.puts "Unable to remove user (#{user[:distinguishedname][0]}) from group (#{group[:distinguishedname][0]})"
+
     return false
   end
 
@@ -159,12 +167,19 @@ class ActiveDirectory
       return result
     end
 
+    STDERR.puts "Unable to update group description (#{group[:distinguishedname][0]})"
+
     return false
   end
 
   def ActiveDirectory.list_group_members(group)
     unless group.is_a? Net::LDAP::Entry
       group = get_group(group)
+    end
+
+    if group.nil?
+      STDERR.puts "Unable to list group members; group is nil."
+      return nil
     end
 
     members = []
