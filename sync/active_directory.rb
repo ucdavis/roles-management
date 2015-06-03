@@ -224,12 +224,15 @@ def ensure_sentinel_descriptor_presence(group)
   end
 
   g_desc = group[:description][0]
+  g_desc = "" if g_desc.nil?
 
-  unless g_desc and g_desc.index SENTINEL_DESCRIPTOR
+  # Ensure the sentinel exists
+  unless g_desc.index SENTINEL_DESCRIPTOR
     STDOUT.puts "Adding '#{SENTINEL_DESCRIPTOR}' to AD group description."
     g_desc = "#{SENTINEL_DESCRIPTOR} #{g_desc}"
     ActiveDirectory.update_group_description(group, g_desc)
   end
+
 end
 
 # Removes the SENTINEL_DESCRIPTOR text from an AD group's description field if
