@@ -5,10 +5,6 @@ class AdminMailer < ActionMailer::Base
     @job = job
     logger.info "Sending sync_script_failed e-mail to #{email}..."
 
-    logger.info("job is:")
-    logger.info(job)
-    logger.info("that's what it is.")
-
     @details = YAML::load(job[:handler])
     failed_script_file = @details[:sync_script].match(/\/([^\/]+)$/).captures[0]
 
