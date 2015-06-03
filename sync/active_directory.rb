@@ -232,7 +232,6 @@ def ensure_sentinel_descriptor_presence(group)
     g_desc = "#{SENTINEL_DESCRIPTOR} #{g_desc}"
     ActiveDirectory.update_group_description(group, g_desc)
   end
-
 end
 
 # Removes the SENTINEL_DESCRIPTOR text from an AD group's description field if
@@ -281,9 +280,13 @@ def merge_role_and_ad_group(role_id, group_name)
   # Add any AD group members to the role
   ActiveDirectory.list_group_members(ad_group).each do |ad_member|
     p = rm_client.find_person_by_loginid(ad_member)
-    unless role.members.map{ |m| m.loginid }.include? p.loginid
-      role.assignments << p
-      role_changed = true
+    if p
+      unless role.members.map{ |m| m.loginid }.include? p.loginid
+        role.assignments << p
+        role_changed = true
+      end
+    else
+      STDERR.puts "RM could not find AD member #{ad_member}. Unable to copy back into role."
     end
   end
 
