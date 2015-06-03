@@ -68,14 +68,14 @@ class ActiveDirectory
   def ActiveDirectory.get_user(loginid)
     @ldap[:people].each do |conn|
       result = conn.search(:filter => Net::LDAP::Filter.eq("sAMAccountName", loginid))
-      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise "LDAP error while fetching user #{loginid}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
 
       if result.length > 0
         return result[0]
       end
     end
 
-    STDERR.puts "Unable to find user '#{loginid}'"
+    STDERR.puts "Unable to find AD user '#{loginid}'"
 
     return nil
   end
@@ -83,14 +83,14 @@ class ActiveDirectory
   def ActiveDirectory.get_group(group_name)
     @ldap[:groups].each do |conn|
       result = conn.search(:filter => Net::LDAP::Filter.eq("cn", group_name))
-      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise "LDAP error while fetching group #{group_name}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
 
       if result.length > 0
         return result[0]
       end
     end
 
-    STDERR.puts "Unable to find group '#{group_name}'"
+    STDERR.puts "Unable to find AD group '#{group_name}'"
 
     return nil
   end
@@ -112,7 +112,7 @@ class ActiveDirectory
         return true # user was already in this group
       end
 
-      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise "LDAP error while adding user (#{user[:distinguishedname][0]}) to group (#{group[:distinguishedname][0]}). Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
 
       # result will be 'true' if user was successfully added
       return result
@@ -140,7 +140,7 @@ class ActiveDirectory
         return true # user was already not in the group
       end
 
-      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise "LDAP error while removing user (#{user[:distinguishedname][0]}) from group (#{group[:distinguishedname][0]}). Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
 
       # result will be 'true' if user was successfully removed
       return result
@@ -161,7 +161,7 @@ class ActiveDirectory
 				[ :replace, 'description', description ]
 			])
 
-      raise "LDAP error. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise "LDAP error while updating description for #{group[:distinguishedname][0]}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
 
       # result will be 'true' if user was successfully removed
       return result
@@ -199,6 +199,7 @@ end
 def ensure_user_in_group(user, group, ad_guid = nil)
   unless user.is_a? Net::LDAP::Entry
     user = ActiveDirectory.get_user(user)
+    return false if user.nil?
   end
   unless group.is_a? Net::LDAP::Entry
     group = ActiveDirectory.get_group(group)
@@ -216,6 +217,7 @@ end
 def ensure_user_not_in_group(user, group, ad_guid = nil)
   unless user.is_a? Net::LDAP::Entry
     user = ActiveDirectory.get_user(user)
+    return false if user.nil?
   end
   unless group.is_a? Net::LDAP::Entry
     group = ActiveDirectory.get_group(group)
