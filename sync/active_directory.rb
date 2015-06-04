@@ -519,7 +519,6 @@ when "role_change"
     if field == "ad_path"
       if (values[0] == nil) and (values[1] != nil)
         # AD path set for the first time. Merge role and AD group.
-        # TESTME
         merge_role_and_ad_group(@sync_data["role"]["id"], values[1])
       elsif (values[0] != nil) and (values[1] == nil)
         # AD path was set but is now unset. Leave all members but remove sentinel
@@ -530,7 +529,6 @@ when "role_change"
         # merge the second AD path with the role.
         ensure_sentinel_descriptor_absence(values[0])
 
-        # TESTME
         merge_role_and_ad_group(@sync_data["role"]["id"], values[1])
       end
     end
