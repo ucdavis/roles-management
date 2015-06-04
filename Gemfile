@@ -65,5 +65,5 @@ gem 'paperclip', '~> 3.0'
 gem 'os', :require => false
 
 # Sync script dependencies
-gem 'sysaid'
+gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'
 gem 'roles-management-api', :git => 'https://github.com/dssit/roles-management-api.git'

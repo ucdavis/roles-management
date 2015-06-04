@@ -11,6 +11,13 @@ GIT
     roles-management-api (0.1.0)
 
 GIT
+  remote: https://github.com/dssit/ruby-sysaid.git
+  revision: 2ad5fe78bd94c0de4654f23283695e7814939bf1
+  specs:
+    sysaid (0.3.4)
+      savon (~> 2.3, >= 2.3.0)
+
+GIT
   remote: https://github.com/railsware/js-routes.git
   revision: 42fc4863a398902d86867f3fbf1f58d2838a35d3
   specs:
@@ -211,8 +218,6 @@ GEM
       activemodel (~> 3.0)
       activesupport (~> 3.0)
       railties (~> 3.0)
-    sysaid (0.3.4)
-      savon (~> 2.3, >= 2.3.0)
     systemu (2.6.5)
     thor (0.19.1)
     tilt (1.4.1)
@@ -267,6 +272,6 @@ DEPENDENCIES
   sass-rails (~> 3.2.3)
   sqlite3
   strong_parameters
-  sysaid
+  sysaid!
   uglifier (>= 1.0.3)
   whenever
