@@ -30,12 +30,18 @@ class RoleAssignment < ActiveRecord::Base
   #       will catch any needed syncing.
   after_create { |assignment|
     unless assignment.entity.type == "Group"
-      Sync.person_added_to_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
+      # Only trigger person_added_to_role if this is the first time they gained the role
+      if assignment.entity.role_assignments.map{|ra| ra.role.id}.count {|role_id| role_id == assignment.role.id } == 1
+        Sync.person_added_to_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
+      end
     end
   }
   after_destroy { |assignment|
     unless assignment.entity.type == "Group"
-      Sync.person_removed_from_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
+      # Only trigger person_removed_from_role if they lost this role entirely (they may still have it through a group assignment)
+      unless assignment.entity.role_assignments.map{|ra| ra.role.id}.include? assignment.role.id
+        Sync.person_removed_from_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
+      end
     end
   }
 
