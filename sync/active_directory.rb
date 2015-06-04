@@ -463,20 +463,24 @@ ActiveDirectory.configure(@config)
 case @sync_data["mode"]
 
 when "add_to_system"
-  exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
+  ensure_user_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
+  exit(0)
 
 when "remove_from_system"
-  exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
+  ensure_user_not_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
+  exit(0)
 
 when "add_to_role"
   # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
   exit(0) unless @sync_data["role"]["ad_path"] #or @sync_data["role"]["ad_guid"]
-  exit(0) if ensure_user_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
+  ensure_user_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
+  exit(0)
 
 when "remove_from_role"
   # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
   exit(0) unless @sync_data["role"]["ad_path"] #or @sync_data["role"]["ad_guid"]
-  exit(0) if ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
+  ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
+  exit(0)
 
 when "add_to_organization"
   @sync_data["person"]["affiliations"].each do |affiliation|
@@ -488,10 +492,10 @@ when "add_to_organization"
     next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
 
     # Write them to cluster-affiliation-all
-    abort unless ensure_user_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
+    ensure_user_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
 
     # Write them to cluster-all (dss-us-#{ou_to_short}-all)
-    abort unless ensure_user_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-all".downcase)
+    ensure_user_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-all".downcase)
   end
 
   exit(0)
