@@ -157,9 +157,16 @@ class ActiveDirectory
     end
 
     @ldap[:groups].each do |conn|
-      result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
-				[ :replace, 'description', description ]
-			])
+      if description and description.length > 0
+        result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
+  				[ :replace, 'description', description ]
+  			])
+      else
+        # Setting description to blank means we delete the description attribute
+        result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
+  				[ :delete, 'description' ]
+  			])
+      end
 
       raise "LDAP error while updating description for #{group[:distinguishedname][0]}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
 
@@ -261,7 +268,7 @@ def ensure_sentinel_descriptor_absence(group)
   unless group.is_a? Net::LDAP::Entry
     group = ActiveDirectory.get_group(group)
   end
-  
+
   return false if group.nil?
 
   g_desc = group[:description][0]
