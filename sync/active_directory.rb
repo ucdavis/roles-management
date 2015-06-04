@@ -510,10 +510,10 @@ when "remove_from_organization"
     next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
 
     # Remove them from cluster-affiliation-all
-    abort unless ensure_user_not_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
+    ensure_user_not_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
 
     # Remove them from cluster-all (dss-us-#{ou_to_short}-all)
-    abort unless ensure_user_not_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-all".downcase)
+    ensure_user_not_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-all".downcase)
   end
 
   exit(0)
