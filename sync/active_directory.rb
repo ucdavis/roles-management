@@ -240,6 +240,8 @@ def ensure_sentinel_descriptor_presence(group)
     group = ActiveDirectory.get_group(group)
   end
 
+  return false if group.nil?
+
   g_desc = group[:description][0]
   g_desc = "" if g_desc.nil?
 
@@ -259,6 +261,8 @@ def ensure_sentinel_descriptor_absence(group)
   unless group.is_a? Net::LDAP::Entry
     group = ActiveDirectory.get_group(group)
   end
+  
+  return false if group.nil?
 
   g_desc = group[:description][0]
 
