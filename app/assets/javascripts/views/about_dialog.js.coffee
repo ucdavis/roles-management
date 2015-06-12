@@ -9,12 +9,12 @@ DssRm.Views.AboutDialog = Backbone.View.extend(
     @$el.html JST["templates/application/about_dialog"]()
 
   render: ->
-    @$("span#last_updated").html "N/A"
+    @$("span#last_updated").html window.rm_last_updated
     @
 
   cleanUpModal: ->
     @remove()
-    
+
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
 )

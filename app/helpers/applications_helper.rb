@@ -12,4 +12,17 @@ module ApplicationsHelper
     max_updated_at = current_user.updated_at.try(:utc).try(:to_s, :number)
     "#{loginid}/current_user/#{max_updated_at}"
   end
+
+  # This helper exists under 'applications' because the 'About' dialog is
+  # technically served by Applications#index. Not great but not bad either.
+  #
+  # Attempts to obtain the last updated date by asking git
+  def get_last_updated
+    begin
+      output = IO.popen('git show --pretty=%cD')
+      return output.read.gsub(/\n/, "") # git show ends with two newline characters
+    rescue Errno::ENOENT => e
+      return nil # Command not found, oh well ...
+    end
+  end
 end
