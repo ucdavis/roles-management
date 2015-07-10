@@ -12,6 +12,10 @@ namespace :ldap do
       require 'stringio'
       require 'os'
 
+      # If 'loginid' was specified, we're only importing a single login ID,
+      # else we import everyone.
+      single_import_mode = args[:loginid].nil? ? false : true
+
       disable_authorization
 
       log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ldap-sync.log')}"))
@@ -27,14 +31,17 @@ namespace :ldap do
         # STEP ONE: Connect to LDAP. Query needed data.
         #
         ldap = LdapHelper.new
-        ldap.connect
-
-        log.debug "Connected to ldap.ucdavis.edu on port 636, LDAP protocol version 3."
+        unless ldap.connect(log)
+          log.error "Cannot run LDAP import task; could not connect to LDAP."
+          raise "Cannot run LDAP import task; could not connect to LDAP."
+        else
+          log.debug "Connected to ldap.ucdavis.edu on port 636, LDAP protocol version 3."
+        end
 
         filters = []
 
         # If a login ID was specified, process only that login ID, else, process the standard (broad) filters
-        if args[:loginid]
+        if single_import_mode
           # Specified a loginid
           manualFilter = []
           manualFilter << '(uid=' + args[:loginid] + ')'
@@ -65,7 +72,7 @@ namespace :ldap do
 
         # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
         # Only do this if we weren't in 'single' import mode
-        if args[:loginid].nil?
+        unless single_import_mode
           log.debug "Processing additional login IDs existing locally but not found in the standard LDAP queries."
 
           if loginids_touched.count > 0
@@ -97,8 +104,6 @@ namespace :ldap do
 
         log.info "Completed LDAP import. Took " + (timestamp_finish - timestamp_start).to_s + "s. Used #{OS.rss_bytes} KB at the end of the task (varies during operation but generally grows)."
       end
-
-      #Rails.logger.info strio.string
 
       enable_authorization
     rescue => exception

@@ -4,15 +4,29 @@ class LdapHelper
   LDAP_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
 
   # Connects to the LDAP server. Settings are stored in Rails.root/config/ldap.yml (LDAP_SETTINGS)
-  def connect
-    # Connect to LDAP
-    @conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )
-    @conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
-    @conn.bind(dn = LDAP_SETTINGS['base_dn'], password = LDAP_SETTINGS['base_pw'] )
+  def connect(log = nil)
+    begin
+      # Connect to LDAP
+      @conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )
+      @conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
+      @conn.bind(dn = LDAP_SETTINGS['base_dn'], password = LDAP_SETTINGS['base_pw'] )
+    rescue LDAP::Error => e
+      log.error "LdapHelper could not connect to LDAP. Exception: #{e}" if log
+      return false
+    end
+
+    return true
   end
 
   def disconnect
-    @conn.unbind
+    begin
+      @conn.unbind
+    rescue LDAP::Error => e
+      log.error "LdapHelper could not disconnect from LDAP. Exception: #{e}" if log
+      return false
+    end
+
+    return true
   end
 
   # Requires a block be passed:
@@ -59,6 +73,6 @@ class LdapHelper
 
     log.debug "Query: " + studentFilter if log
 
-    [staffFilter,facultyFilter,studentFilter] #+ manualFilter
+    [staffFilter,facultyFilter,studentFilter]
   end
 end
