@@ -35,6 +35,10 @@ class Role < ActiveRecord::Base
      }
   end
 
+  def name_with_application
+    "#{self.application.name} / #{self.name}"
+  end
+
   # Returns identifying string for logging purposes. Other classes implement this too.
   # Format: (Class name:id,identifying fields)
   def log_identifier
