@@ -137,7 +137,10 @@ class PeopleController < ApplicationController
   def load_people
     if params[:q]
       people_table = Person.arel_table
-      @people = Person.with_permissions_to(:read).where(people_table[:name].matches("%#{params[:q]}%").or(people_table[:loginid].matches("%#{params[:q]}%")).or(people_table[:first].matches("%#{params[:q]}%")).or(people_table[:last].matches("%#{params[:q]}%")))
+      # Only show active people in the search. The group membership token input, for example, uses this method
+      # to query people but it does not show deactivated people. This hides potential members and if they are
+      # added again, it'll throw an error that the membership already exists.
+      @people = Person.with_permissions_to(:read).where(:active => true).where(people_table[:name].matches("%#{params[:q]}%").or(people_table[:loginid].matches("%#{params[:q]}%")).or(people_table[:first].matches("%#{params[:q]}%")).or(people_table[:last].matches("%#{params[:q]}%")))
 
       @people.map()
     else
