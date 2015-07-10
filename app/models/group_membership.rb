@@ -61,12 +61,14 @@ class GroupMembership < ActiveRecord::Base
       when :save
         if created_at_changed?
           logger.info "Created membership between #{entity.log_identifier} and #{group.log_identifier}."
+          ActivityLog.info!("Added #{entity.name} to #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
         else
           # RoleAssignments should really only be created or destroyed, not updated.
           logger.error "log_changes called for existing GroupMembership. This shouldn't happen. Membership is between #{entity.log_identifier} and #{group.log_identifier}."
         end
       when :destroy
         logger.info "Removed membership between #{entity.log_identifier} and #{group.log_identifier}."
+        ActivityLog.info!("Removed #{entity.name} from #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
       else
         logger.warn "Unknown action in log_changes #{action}."
       end
