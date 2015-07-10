@@ -189,7 +189,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ruby-ldap (0.9.17)
-    sass (3.4.15)
+    sass (3.4.16)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
