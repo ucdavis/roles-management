@@ -3,8 +3,6 @@ require 'rake'
 namespace :sync do
   desc 'Updates jobs in the queue to use the updated deploy path.'
   task :update_job_script_paths, [:updated_timestamp] => :environment do |t, args|
-    require 'pp'
-
     load Rails.root.join('app', 'jobs', 'sync_script_job.rb')
 
     Delayed::Job.all.each do |j|
@@ -24,6 +22,17 @@ namespace :sync do
       j.handler = YAML.dump(config)
       j.save
     end
+  end
 
+  desc 'Reschedules failed jobs (failed jobs will not run again by default).'
+  task :reschedule_failed_jobs => :environment do
+    Delayed::Job.all.each do |j|
+      if j.failed_at
+        j.failed_at = nil
+        j.attempts = 0
+        j.run_at = Time.now
+        j.save
+      end
+    end
   end
 end
