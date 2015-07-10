@@ -120,9 +120,13 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
       else
         # toggling on
         new_entity = new DssRm.Models.Entity(id: id)
-        new_entity.fetch success: =>
-          selected_role.assignments.add
-            entity_id: new_entity.id
-            calculated: false
-          selected_role.save()
+
+        new_entity.fetch
+          success: =>
+            selected_role.assignments.add
+              entity_id: new_entity.id
+              calculated: false
+            selected_role.save()
+          error: ->
+            status_bar.show "An error occurred while fetching information about the entity.", "error"
 )
