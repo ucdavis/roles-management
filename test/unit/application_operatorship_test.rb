@@ -109,4 +109,8 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
       assert @person.application_operatorships.length == 0, "test user should no longer have an application operatorship but instead has #{@person.application_operatorships.length}"
     end
   end
+  
+  test "universal operators are able to assign a person to a role in applications they otherwise do not own or operate" do
+    assert false, "test not implemented"
+  end
 end

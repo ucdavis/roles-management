@@ -62,6 +62,14 @@ authorization do
     includes :api_reader
   end
 
+  role :operate do
+    has_permission_on :applications, :to => :read
+
+    has_permission_on :roles, :to => [:show, :read, :update] do
+      if_attribute :application => { :name => is_not { 'DSS Roles Management' } }
+    end
+  end
+
   role :access do
     # Allow access to the main page
     has_permission_on :applications, :to => :index

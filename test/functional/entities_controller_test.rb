@@ -172,4 +172,13 @@ class EntitiesControllerTest < ActionController::TestCase
   test "entites#update should not allow non-owners/non-operators to update attributes" do
     #assert false, "test not implemented"
   end
+
+  test "universal operators should not be able to give themselves RM administrator rights" do
+    assert false, "test not implemented"
+  end
+
+  test "universal operators should be able to activate/deactivate individuals" do
+    assert false, "test not implemented"
+  end
+
 end

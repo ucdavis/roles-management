@@ -41,4 +41,8 @@ class GroupOperatorshipTest < ActiveSupport::TestCase
 
     assert group.members.length == 1, "group should have one member"
   end
+
+  test "universal operators are able to add group members to groups they otherwise do not own or operate" do
+    assert false, "test not implemented"
+  end
 end

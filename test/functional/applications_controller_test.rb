@@ -194,4 +194,11 @@ class ApplicationsControllerTest < ActionController::TestCase
     a = Application.find_by_id(2)
     assert a.updated_at > application_timestamp, "application timestamp should have updated"
   end
+
+  test "universal operator should see all applications" do
+    assert false, "test not implemented yet"
+
+    # grant universal operator status to a user, query their current_user.manageable_applications,
+    # ensure it equals Application.count
+  end
 end
