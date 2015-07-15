@@ -32,6 +32,8 @@ namespace :user do
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
 
+    disable_authorization
+
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
       if p
@@ -51,6 +53,61 @@ namespace :user do
         puts "No such user '#{arg[1]}'"
       end
     end
+
+    enable_authorization
+  end
+
+  desc 'Adds operate token to user (less powerful type of admin).'
+  task :grant_operate, :arg1 do |t, args|
+    Rake::Task['environment'].invoke
+    include RmBuiltinRoles
+
+    disable_authorization
+
+    args.each do |arg|
+      p = Person.find_by_loginid(arg[1])
+      if p
+        puts "Granting operate to #{arg[1]}..."
+        ra = RoleAssignment.new
+        ra.role_id = rm_operate_role_id
+        ra.entity_id = p.id
+        ra.save!
+      else
+        puts "No such user '#{arg[1]}'"
+      end
+    end
+
+    enable_authorization
+  end
+
+  desc 'Revokes operate status from user (less poweful type of admin).'
+  task :revoke_operate, :arg1 do |t, args|
+    Rake::Task['environment'].invoke
+    include RmBuiltinRoles
+
+    disable_authorization
+
+    args.each do |arg|
+      p = Person.find_by_loginid(arg[1])
+      if p
+        puts "Revoking operate from #{arg[1]}..."
+        entity_id = p.id
+        ra = RoleAssignment.find_by_role_id_and_entity_id(rm_operate_role_id, entity_id)
+        unless ra.nil?
+          ret = ra.destroy
+          if ret == false
+            puts "Could not remove operate from user. Reason(s): " + ra.errors.full_messages.join(", ")
+            exit
+          end
+        else
+          puts "#{arg[1]} is not set for operate."
+        end
+      else
+        puts "No such user '#{arg[1]}'"
+      end
+    end
+
+    enable_authorization
   end
 
   desc 'Adds admin token to user (admin RM usage) and regular access if needed.'
