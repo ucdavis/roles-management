@@ -134,7 +134,7 @@ class Person < Entity
 
   # Returns all applications the user has an ownership or operatorship on
   def manageable_applications
-    if role_symbols.include? :admin
+    if role_symbols.include?(:admin) || role_symbols.include?(:operate)
       Application.all
     else
       application_ownerships.map{ |o| o.application } + application_operatorships.map{ |o| o.application }
