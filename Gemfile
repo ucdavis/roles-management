@@ -39,8 +39,6 @@ gem 'ejs'
 
 # Possibly phasing this library out due to bugs / weird issues ...
 gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_authorization.git'
-# Considering using this library instead ...
-gem 'cancancan', '~> 1.8'
 
 # For MS Active Directory support
 #gem 'net-ldap', :git => 'https://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
