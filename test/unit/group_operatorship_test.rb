@@ -43,6 +43,23 @@ class GroupOperatorshipTest < ActiveSupport::TestCase
   end
 
   test "universal operators are able to add group members to groups they otherwise do not own or operate" do
-    assert false, "test not implemented"
+    revoke_test_user_basic_access
+    revoke_test_user_admin_access
+    grant_test_user_operate_access
+
+    a_group = entities(:groupA)
+
+    # Ensure 'casuser' is not an owner or operator
+    a_group.owners.destroy @person if a_group.owners.include? @person
+    a_group.operators.destroy @person if a_group.operators.include? @person
+
+    assert @person.role_symbols.include?(:operate), "casuser should be a universal operator"
+    assert @person.role_symbols.length == 1, "casuser should only be a universal operator"
+
+    random_person = entities(:personWithNothing)
+
+    with_user(@person) do
+      a_group.members << random_person
+    end
   end
 end

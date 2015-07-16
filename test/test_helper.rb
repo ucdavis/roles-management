@@ -49,6 +49,42 @@ class ActiveSupport::TestCase
     end
   end
 
+  # Gives test user 'casuser' the operate role for RM
+  def grant_test_user_operate_access
+    p = Person.find_by_loginid("casuser")
+
+    grant_user_operate_access(p)
+  end
+
+  def revoke_test_user_operate_access
+    p = Person.find_by_loginid("casuser")
+
+    revoke_user_operate_access(p)
+  end
+
+  # Gives user 'p' the operate role for RM
+  def grant_user_operate_access(p)
+    assert p != nil, "grant_user_operate_access should not have been passed a nil user"
+
+    without_access_control do
+      r = Application.find_by_name("DSS Roles Management").roles.find_by_token("operate")
+      assert r, "DSS Roles Management 'operate' token appears to be missing"
+      p.roles << r unless p.roles.include? r
+      assert p.role_symbols.length >= 1, "user should have just been assigned a role for this test"
+    end
+  end
+
+  def revoke_user_operate_access(p)
+    assert p != nil, "revoke_user_operate_access should not have been passed a nil user"
+
+    without_access_control do
+      a = Application.find_by_name("DSS Roles Management")
+      r_operate = a.roles.find_by_token("operate")
+      assert r_operate, "DSS Roles Management 'operate' token appears to be missing"
+      p.roles.destroy(r_operate)
+    end
+  end
+
   # Gives test user 'casuser' the admin access role for RM
   # Note: This also grants the 'access' token as well, as 'admin' privileges are
   #       a superset of those permissions.

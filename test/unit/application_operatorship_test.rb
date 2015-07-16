@@ -109,8 +109,26 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
       assert @person.application_operatorships.length == 0, "test user should no longer have an application operatorship but instead has #{@person.application_operatorships.length}"
     end
   end
-  
+
   test "universal operators are able to assign a person to a role in applications they otherwise do not own or operate" do
-    assert false, "test not implemented"
+    revoke_test_user_basic_access
+    revoke_test_user_admin_access
+    grant_test_user_operate_access
+
+    an_app = applications(:regular_app)
+    an_app_role = roles(:boring_role)
+
+    # Ensure 'casuser' is not an owner or operator
+    an_app.owners.destroy @person if an_app.owners.include? @person
+    an_app.operators.destroy @person if an_app.operators.include? @person
+
+    assert @person.role_symbols.include?(:operate), "casuser should be a universal operator"
+    assert @person.role_symbols.length == 1, "casuser should only be a universal operator"
+
+    random_person = entities(:personWithNothing)
+
+    with_user(@person) do
+      an_app_role.members << random_person
+    end
   end
 end

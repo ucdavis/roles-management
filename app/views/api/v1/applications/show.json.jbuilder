@@ -1,8 +1,6 @@
 json.cache! ['api_v1_applications_show', @cache_key] do
   json.extract! @application, :description, :id, :name, :url
 
-  json.icon @application.icon.url(:normal)
-
   json.operators @application.operators.select{ |o| o.active == true } do |operator|
     json.extract! operator, :id, :name
   end

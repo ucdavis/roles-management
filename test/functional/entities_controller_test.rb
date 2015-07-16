@@ -174,11 +174,37 @@ class EntitiesControllerTest < ActionController::TestCase
   end
 
   test "universal operators should not be able to give themselves RM administrator rights" do
-    assert false, "test not implemented"
+    revoke_test_user_basic_access
+    revoke_test_user_admin_access
+    grant_test_user_operate_access
+
+    rm_app = applications(:dssrm)
+    rm_admin_role = roles(:dssrm_admin)
+
+    # Ensure 'casuser' is not an RM owner or operator
+    rm_app.owners.destroy @person if rm_app.owners.include? @person
+    rm_app.operators.destroy @person if rm_app.operators.include? @person
+
+    assert @person.role_symbols.include? :operate
+    assert @person.role_symbols.length == 1
+
+    exception_thrown = false
+
+    with_user(@person) do
+      begin
+        @person.roles << rm_admin_role
+      rescue Authorization::AttributeAuthorizationError => e
+        # We're expecting this ...
+        exception_thrown = true
+      end
+    end
+
+    assert exception_thrown == true, "NotAuthorizated exception should have been thrown."
+    assert @person.roles.include?(rm_admin_role) == false
   end
 
-  test "universal operators should be able to activate/deactivate individuals" do
-    assert false, "test not implemented"
-  end
-
+  # # There doesn't appear to be attribute-specific options in declarative_authorization ...
+  # test "universal operators should be able to activate/deactivate individuals" do
+  #   assert false, "test not implemented"
+  # end
 end

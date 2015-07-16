@@ -18,3 +18,10 @@ boring_role:
   description: I'm just a plain ol' boring role
   token: boring
   application_id: 2
+
+dssrm_operate:
+  id: 4
+  name: Operate
+  description: Provides operate (reduced super user / root) access
+  token: operate
+  application_id: 1

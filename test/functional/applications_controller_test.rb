@@ -195,10 +195,15 @@ class ApplicationsControllerTest < ActionController::TestCase
     assert a.updated_at > application_timestamp, "application timestamp should have updated"
   end
 
-  test "universal operator should see all applications" do
-    assert false, "test not implemented yet"
+  test "universal operator should see all applications except DSS RM" do
+    @person = entities(:casuser)
 
-    # grant universal operator status to a user, query their current_user.manageable_applications,
-    # ensure it equals Application.count
+    revoke_test_user_basic_access
+    revoke_test_user_admin_access
+    grant_test_user_operate_access
+
+    with_user(@person) do
+      assert @person.manageable_applications.length == (Application.count - 1), "Universal operator should see all applications except DSS RM"
+    end
   end
 end
