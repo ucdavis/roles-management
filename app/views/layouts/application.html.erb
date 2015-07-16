@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
 	<title>Roles Management</title>
-  
+
   <link rel="shortcut icon" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/favicon.png" />
 
@@ -38,7 +38,8 @@
                 <li><a href="#about">About…</a></li>
               </ul>
               <% end %>
-              <li><%= link_to "Log out", logout_url %></li>
+              <li><a href="https://sysaid.dss.ucdavis.edu/SubmitSR.jsp?formID=0&reRoute=1&isLogged=1&noframe=null&populateSR_id=0&pageID=1&subPageID=undefined&changes=1&right2left=false&autoDescriptionTemplate=N&problem_type=Websites+and+Web+Apps&subcategory=Error+or+Problem&title=Roles+Management+Bug+Report&desc=What+were+you+doing+when+the+error+occurred%3F%0D%0A%0D%0AIf+you+received+an+error+message%2C+what+was+the+exact+text%3F%0D%0A%0D%0AWhat+web+browser+and+version+were+you+using%3F" target="_blank"><i class="icon-comment icon-white" style="margin-right: 8px;"></i>Report a Problem</a></li>
+              <li><%= link_to '<i class="icon-off icon-white" style="margin-right: 8px;"></i> Log out'.html_safe, logout_url %></li>
             </li>
           </ul>
         </div><!-- /.nav-collapse -->
@@ -50,7 +51,5 @@
 
   <%= javascript_include_tag "application" %>
   <%= yield :javascript %>
-
-  <div id="get-support"><a href="https://sysaid.dss.ucdavis.edu/SubmitSR.jsp?formID=0&reRoute=1&isLogged=1&noframe=null&populateSR_id=0&pageID=1&subPageID=undefined&changes=1&right2left=false&autoDescriptionTemplate=N&problem_type=Websites+and+Web+Apps&subcategory=Error+or+Problem&title=Roles+Management+Bug+Report&desc=What+were+you+doing+when+the+error+occurred%3F%0D%0A%0D%0AIf+you+received+an+error+message%2C+what+was+the+exact+text%3F%0D%0A%0D%0AWhat+web+browser+and+version+were+you+using%3F" target="_blank"><button class="btn btn-danger"><i class="icon-comment icon-white" style="margin-right: 8px;"></i>Report a Problem</button></a></div>
 </body>
 </html>

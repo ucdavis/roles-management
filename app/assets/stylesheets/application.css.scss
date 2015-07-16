@@ -109,33 +109,3 @@ div#entityShowModal #corner_summary #group_member_count {
   font-size: 20pt;
   color: #333;
 }
-
-#get-support {
-  opacity: 0.4;
-  filter: alpha(opacity=40);
-  position: fixed;
-  bottom: 2%;
-  right: 1%;
-  border-radius: 4px;
-  padding: 2px;
-  background-color: #fff;
-  border: 1px solid #bbb;
-
-  $fade-speed: 0.3s;
-
-  -webkit-transition: opacity $fade-speed ease-in;
-  -moz-transition: opacity $fade-speed ease-in;
-  -o-transition: opacity $fade-speed ease-in;
-  -ms-transition: opacity $fade-speed ease-in;
-  transition: opacity $fade-speed ease-in;
-
-  &:hover {
-    -webkit-transition: opacity $fade-speed ease-in;
-    -moz-transition: opacity $fade-speed ease-in;
-    -o-transition: opacity $fade-speed ease-in;
-    -ms-transition: opacity $fade-speed ease-in;
-    transition: opacity $fade-speed ease-in;
-    opacity: 1.0;
-    filter: alpha(opacity=100);
-  };
-}
