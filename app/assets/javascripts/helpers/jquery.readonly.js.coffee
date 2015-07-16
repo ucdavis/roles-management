@@ -23,7 +23,6 @@ $.fn.extend
 
     # _Insert magic here._
     return @each () ->
-      #log "Option 1 value: #{settings.debug}"
       $(@).attr('disabled', 'disabled')
       $(@).css('border', 'none')
       $(@).css('box-shadow', 'none')
@@ -31,4 +30,4 @@ $.fn.extend
       $(@).css('background-color', 'transparent')
       $(@).css('color', '#000')
       $(@).find('.token-input-delete-token-facebook').hide()
-      
+      $(@).css('resize', 'none')
