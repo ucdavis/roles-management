@@ -4,10 +4,10 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
   events:
     "click .role": "selectRole"
 
-  initialize: (options) ->
+  initialize: ->
     @listenTo @model, "sync", @render
     @listenTo DssRm.view_state, "change", @render
-    
+
     owner_ids = @model.owners.map (i) -> i.get "id"
     @relationship = @model.relationship()
     @$el.html JST["templates/applications/item"](application: @model)
@@ -17,20 +17,20 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
   render: ->
     @$("#application-name").html @model.escape("name")
     @$(".card-title").attr "title", @model.get("description")
-    
+
     if @relationship is "admin" or @relationship is "operator"
       @$("h6").html "Owned by " + @model.ownerNames()
       @$("h6").show()
     else
       @$("h6").hide()
     @$("i.details").hide() if @relationship is "operator"
-    
+
     # Highlight this application?
     if DssRm.view_state.getSelectedApplication() == @model
       @$el.css("box-shadow", "#08C 0 0 10px").css "border", "1px solid #08C"
     else
       @$el.css("box-shadow", "0 1px 3px rgba(0, 0, 0, 0.3)").css "border", "1px solid #CCC"
-    
+
     # Shade/unshade this application? (based on DssRm.view_state focus)
     focused_application_id = DssRm.view_state.get 'focused_application_id'
     if focused_application_id
@@ -40,15 +40,15 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
         @$el.css "opacity", "0.4"
     else
       @$el.css "opacity", "1.0"
-    
+
     # Roles area needed?
     if @model.roles.length then @$(".roles").show() else @$(".roles").hide()
-    
+
     @$(".roles").empty()
     @model.roles.each (r) =>
       $role_item = @renderRoleItem(r)
       @$(".roles").append $role_item
-    
+
     @
 
   renderRoleItem: (role) ->
@@ -66,11 +66,11 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
 
   selectRole: (e) ->
     e.stopPropagation()
-    
+
     role_id = parseInt($(e.currentTarget).attr("data-role-id"))
     role = @model.roles.get(role_id)
     previous_selected_role_id = DssRm.view_state.get('selected_role_id')
-    
+
     if previous_selected_role_id == role_id
       # Toggling off
       DssRm.view_state.set
@@ -80,18 +80,18 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
         focused_entity_id: null
     else
       # Toggling on
-      status_bar.show "Fetching role details ..."
+      toastr["info"]("Fetching role details ...")
       $loading = $('<i class="loading" />')
       $(e.currentTarget).append $loading
-      
+
       role.fetch
         success: =>
           $loading.remove()
-          status_bar.hide()
-        
+          toastr.remove()
+
           DssRm.view_state.set
             selected_application_id: @model.get('id')
             selected_role_id: role_id
         error: ->
-          status_bar.show "An error occurred while fetching information about the role.", "error"
+          toastr["error"]("Error while fetching role information.")
 )

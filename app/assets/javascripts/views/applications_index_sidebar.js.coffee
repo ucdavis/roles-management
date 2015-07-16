@@ -3,7 +3,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
   id: "sidebar-area"
   className: "span3 disable-text-select"
 
-  initialize: (options) ->
+  initialize: ->
     @$el.html JST["templates/applications/sidebar"]()
 
     # Re-render the sidebar when favorites, etc. are added/removed
@@ -77,12 +77,12 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
 
     if @$("ul#highlighted_pins>li").length
       # Show the 'Assigned' section
-      @$('h5#highlighted_pins').slideDown('slow')
-      @$('ul#highlighted_pins').slideDown('slow')
+      @$('h5#highlighted_pins').slideDown('fast')
+      @$('ul#highlighted_pins').slideDown('fast')
     else
       # Hide the 'Assigned' section
-      @$('h5#highlighted_pins').slideUp('slow')
-      @$('ul#highlighted_pins').slideUp('slow')
+      @$('h5#highlighted_pins').slideUp('fast')
+      @$('ul#highlighted_pins').slideUp('fast')
 
     # Sidebar pins are clickable only if a role is selected.
     if selected_role
@@ -143,18 +143,27 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
                                    # and will be properly assigned on .fetch()
       else
         # Specific entity selected.
+
         # If a role is selected, assign the result to that role
         # and do not add to favorites.
         selected_role = DssRm.view_state.getSelectedRole()
         if selected_role and not selected_role.has_assigned(id)
           entity_to_assign = new DssRm.Models.Entity(id: id)
-          entity_to_assign.fetch success: =>
-            selected_role.assignments.add
-              entity_id: entity_to_assign.id
-              calculated: false
-            selected_role.save {},
-              success: =>
-                DssRm.view_state.trigger('change')
+          toastr["info"]("Updating person or group ...")
+          entity_to_assign.fetch
+            success: =>
+              toastr.remove()
+              selected_role.assignments.add
+                entity_id: entity_to_assign.id
+                calculated: false
+              selected_role.save {},
+                success: =>
+                  toastr["success"]("#{entity_to_assign.get('name')} added to role.")
+                  DssRm.view_state.trigger('change')
+                error: =>
+                  toastr["error"]("Error while assigning #{entity_to_assign.get('name')} to role.")
+            error: =>
+              toastr["error"]("Error while updating person or group. Role assignment failed.")
         else
           # No role selected, either add entity to their favorites (default behavior)
           # or highlight the result if they're already a favorite.
@@ -170,9 +179,9 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
               DssRm.current_user.favorites.add e
               DssRm.current_user.save {},
                 error: ->
-                  status_bar.show "An error occurred while saving", "error"
+                  toastr["error"]("Error while adding person or group to favorites.")
                 success: ->
-                  status_bar.show "Saved", "success", 1000
+                  toastr["success"]("Person or group successfully added to favorites.")
                   # Do nothing on success
           else
             # Already in favorites - highlight the result

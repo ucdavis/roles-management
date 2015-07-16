@@ -10,23 +10,11 @@ DssRm.Models.Role = Backbone.Model.extend(
       @assignments = new Backbone.Collection
       @assignments.comparator = (assignment) -> assignment.get('type') + assignment.get('name')
 
-    # _.each @get('assignments'), (a) =>
-    #   if a._destroy
-    #     debugger
-
     # Reset nested collection data
     @assignments.reset @get('assignments')
 
-    # if @get('assignments')
-    #   if @assignments.length != @get('assignments').length
-    #     debugger
-
     # Enforce the design pattern by removing from @attributes what is represented in a nested collection
     delete @attributes.assignments
-
-    # @assignments.each (a) =>
-    #   if a.get('_destroy')
-    #     debugger
 
   tokenize: (str) ->
     String(str).replace(RegExp(" ", "g"), "-").replace(/'/g, "").replace(/"/g, "").toLowerCase()

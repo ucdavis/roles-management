@@ -6,7 +6,7 @@
 //= require backbone
 //
 //= require bootstrap
-//= require status_bar
+//= require toastr
 //= require bootbox
 //= require bootstrap-modal-alert
 //= require jquery.tokeninput-modified

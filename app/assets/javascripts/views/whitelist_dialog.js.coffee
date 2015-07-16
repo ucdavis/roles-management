@@ -43,7 +43,7 @@ DssRm.Views.WhitelistDialog = Backbone.View.extend(
 
   cleanUpModal: ->
     @remove()
-    
+
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
 )

@@ -21,10 +21,6 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     if @highlighted
       @$el.addClass "highlighted"
 
-    # Change actionable icons depending on ownership
-    # if !@assignedToCurrentUser()
-    #   @$("i.icon-minus").hide()
-
     # Is this pin unrelated to the current_user? Make it appear faded
     if @faded
       @$el.addClass "faded"
@@ -35,10 +31,6 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     else
       @$('a.entity-favorite-link>i').removeClass('icon-star').addClass('icon-star-empty').attr('title', 'Favorite')
 
-    # if @model.isReadOnly()
-    #   @$("i.icon-remove").hide()
-    #   @$("i.icon-search").hide()
-    # else
     @$("i.icon-lock").hide()
     @$(".entity-details-link").attr("href", @entityUrl()).on "click", (e) ->
       e.stopPropagation() # stop parent from receiving click
@@ -54,6 +46,9 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
   toggleEntityFavorite: (e) ->
     e.stopPropagation()
 
+    # Favoriting or unfavoriting? Will need it to display correct toaster.
+    unfavoriting = false
+
     model_id = (@model.get('group_id') || @model.get('entity_id'))
     favorites_entity = DssRm.current_user.favorites.find((e) ->
       e.id is model_id
@@ -61,6 +56,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
 
     if favorites_entity
       # Unfavoriting
+      unfavoriting = true
       DssRm.current_user.favorites.remove favorites_entity
     else
       # Favoriting
@@ -70,7 +66,17 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
         type: @model.get('type')
         name: @model.get('name')
 
-    DssRm.current_user.save()
+    DssRm.current_user.save {},
+      success: =>
+        if unfavoriting
+          toastr["success"]("Removed #{favorites_entity.get('name')} from favorites.")
+        else
+          toastr["success"]("Added #{@model.get('name')} to favorites.")
+      error: =>
+        if unfavoriting
+          toastr["error"]("Error while removing #{favorites_entity.get('name')} from favorites.")
+        else
+          toastr["error"]("Error while removing #{@model.get('name')} from favorites.")
 
   # True if in current_user's favorites, group ownerships, or group operatorships
   assignedToCurrentUser: ->
@@ -115,18 +121,35 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
           role: selected_role,
           confirm: ->
             matched[0].set('_destroy', true)
-            selected_role.save()
+            toastr["info"]("Saving ...")
+            selected_role.save {},
+              success: =>
+                toastr.remove()
+                toastr["success"]("#{matched[0].get('name')} removed from role.")
+              error: =>
+                toastr.remove()
+                toastr["error"]("Error while removing #{matched[0].get('name')} from role.")
         ).render().$el.modal()
       else
         # toggling on
         new_entity = new DssRm.Models.Entity(id: id)
 
+        toastr["info"]("Updating ...")
         new_entity.fetch
           success: =>
+            toastr.remove()
             selected_role.assignments.add
               entity_id: new_entity.id
               calculated: false
-            selected_role.save()
+            toastr["info"]("Saving ...")
+            selected_role.save {},
+              success: =>
+                toastr.remove()
+                toastr["success"]("#{new_entity.get('name')} assigned to role successfully.")
+              error: =>
+                toastr.remove()
+                toastr["error"]("Error while assigning #{new_entity.get('name')} to role.")
           error: ->
-            status_bar.show "An error occurred while fetching information about the entity.", "error"
+            toastr.remove()
+            toastr["error"]("Error while updating #{new_entity.get('name')}. Role not assigned.")
 )

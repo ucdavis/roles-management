@@ -6,6 +6,7 @@
 *= require applications
 *= require groups
 *= require sidebar
+*= require toastr
 *= require_self
 */
 
@@ -36,31 +37,6 @@ input#search_applications {
 
 #main-body {
   margin-top: 43px;
-}
-
-.status-bar {
-  min-width: 13%;
-  height: 20px;
-  position: fixed;
-  bottom: 14px;
-  left: 14px;
-  z-index: 100000;
-  box-shadow: 0px 0px 3px #7f7f7f;
-  -webkit-box-shadow: 0px 0px 3px #7f7f7f;
-  -moz-box-shadow: 0px 0px 3px #7f7f7f;
-  display: none;
-  padding-left: 24px;
-  padding-right: 0.5em;
-  background: #fff 3px 2px url('/assets/loading.gif') no-repeat;
-  line-height: 20px;
-  opacity: 0.7;
-  filter: alpha(opacity = 70); /* IE8 and earlier */
-}
-.status-bar-error {
-  background-image: none !important;
-  background-color: #B50015 !important;
-  color: #fff !important;
-  padding-left: 0.5em;
 }
 
 ul.token-input-list-facebook {
@@ -144,7 +120,7 @@ div#entityShowModal #corner_summary #group_member_count {
   padding: 2px;
   background-color: #fff;
   border: 1px solid #bbb;
-  
+
   $fade-speed: 0.3s;
 
   -webkit-transition: opacity $fade-speed ease-in;
@@ -152,7 +128,7 @@ div#entityShowModal #corner_summary #group_member_count {
   -o-transition: opacity $fade-speed ease-in;
   -ms-transition: opacity $fade-speed ease-in;
   transition: opacity $fade-speed ease-in;
-  
+
   &:hover {
     -webkit-transition: opacity $fade-speed ease-in;
     -moz-transition: opacity $fade-speed ease-in;
@@ -160,6 +136,6 @@ div#entityShowModal #corner_summary #group_member_count {
     -ms-transition: opacity $fade-speed ease-in;
     transition: opacity $fade-speed ease-in;
     opacity: 1.0;
-    filter: alpha(opacity=100);    
+    filter: alpha(opacity=100);
   };
 }

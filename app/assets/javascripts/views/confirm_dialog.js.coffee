@@ -6,7 +6,8 @@ DssRm.Views.ConfirmDialog = Backbone.View.extend(
     "hidden"         : "cleanUpModal"
     "click a#confirm": "userConfirmed"
 
-  initialize: ->
+  initialize: (options) ->
+    @options = options
     @$el.html JST["templates/application/confirm_dialog"]()
 
   render: ->

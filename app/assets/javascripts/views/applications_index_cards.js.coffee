@@ -4,17 +4,17 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
   className: "span9 disable-text-select"
   events:
     "click #cards" : "deselectAll"
-  
-  initialize: (options) ->
+
+  initialize: ->
     @$el.html JST["templates/applications/cards"]()
-    
+
     DssRm.applications.on "add", ((o) =>
       @$('#cards').append(@renderCard(o).el)
     ), this
     DssRm.applications.on "remove", ((o) =>
       @$('#cards').find(".card#application_" + o.id).remove()
     ), this
-    
+
     @$("#search_applications").on "keyup", (e) =>
       entry = $(e.target).val()
       DssRm.view_state.focusApplicationByTerm entry
@@ -36,26 +36,26 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
       updater: (item) =>
         @applicationSearchResultSelected item, @
       items: 15
-    
+
     @$("#search_applications").off("focus").on "focus", (e) ->
       $(this).select()
       typeahead = $(e.target).data('typeahead')
       typeahead.focused = true;
-  
+
   render: ->
     frag = document.createDocumentFragment()
-    
+
     DssRm.applications.each (application) =>
       frag.appendChild @renderCard(application).el
-    
+
     @$('#cards').append frag
     @
-  
+
   renderCard: (application) ->
     card = new DssRm.Views.ApplicationItem(
       model: application
     ).render()
-  
+
   applicationSearch: (query, process) ->
     # I have no idea why we must delay ever so slightly.
     # Bootstrap v2.3.1 takes source: ["red", "black"] just fine
@@ -70,11 +70,11 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
           if ~app.get("name").toLowerCase().indexOf(query.toLowerCase())
             exact_match_found = true  if app.get("name").toLowerCase() is query.toLowerCase()
             entities.push app.get("id") + "####" + app.get("name")
-    
+
       if DssRm.admin_logged_in()
         # Add the option to create a new one with this query
         entities.push DssRm.Views.ApplicationsIndexCards.FID_CREATE_APPLICATION + "####Create " + query  if exact_match_found is false
-    
+
       process entities
     , 10)
 
@@ -97,12 +97,12 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
         return ""
       else
         DssRm.view_state.set focused_application_id: id
-        
+
         # Scroll the view to the application
         $('html, body').animate
           scrollTop: $("div.card#application_#{id}").offset().top
         , 1000
-        
+
         return label
 
   deselectAll: (e) ->
@@ -112,7 +112,7 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
         selected_role_id: null
         focused_application_id: null
         focused_entity_id: null
-      
+
 ,
   # Constants used in this view
   FID_CREATE_APPLICATION: -1

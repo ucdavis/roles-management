@@ -4,7 +4,7 @@ class DssRm.Views.PersonShow extends Backbone.View
   tagName: "div"
   className: "modal"
   id: "entityShowModal"
-  
+
   events:
     "click #apply"                                  : "save"
     "click a#rescan"                                : "rescan"
@@ -17,10 +17,10 @@ class DssRm.Views.PersonShow extends Backbone.View
     @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
     @readonly = @model.isReadOnly()
-    
+
     @initializeRelationsTab()
     @initializeRolesTab()
-  
+
   initializeRelationsTab: ->
     @$("input[name=favorites]").tokenInput Routes.people_path(),
       crossDomain: false
@@ -89,7 +89,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       onDelete: (item) =>
         organization = @model.organizations.get(item.id)
         organization.set('_destroy', true)
-  
+
   initializeRolesTab: ->
     @$("#add_role_assignment_application_search").typeahead
       minLength: 3
@@ -112,11 +112,11 @@ class DssRm.Views.PersonShow extends Backbone.View
   resetRolesTab: ->
     $rolesTab = @$("div#role_assignments")
     $rolesTab.empty()
-    
+
     _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
       application_name = role_assignment_set[0].get("application_name")
       application_id = role_assignment_set[0].get("application_id")
-      
+
       $rolesTab.append @renderRoleAssignmentTokenInput(application_name, application_id)
 
   # Renders and initializes a single tokenInput for the role (assignment) tab.
@@ -151,14 +151,14 @@ class DssRm.Views.PersonShow extends Backbone.View
     @$("input[name=loginid]").val @model.escape("loginid")
     @$("input[name=phone]").val @formatPhone(@model.get("phone"))
     @$("input[name=address]").val @model.get("address")
-    
+
     if @model.get("active")
       @$('button#status-active').addClass 'active'
       @$('button#status-inactive').removeClass 'active'
     else
       @$('button#status-active').removeClass 'active'
       @$('button#status-inactive').addClass 'active'
-    
+
     favorites_tokeninput = @$("input[name=favorites]")
     favorites_tokeninput.tokenInput "clear"
     @model.favorites.each (favorite) =>
@@ -166,7 +166,7 @@ class DssRm.Views.PersonShow extends Backbone.View
         id: favorite.get('id')
         name: favorite.get('name')
         readonly: @readonly
-        
+
     group_ownership_tokeninput = @$("input[name=group_ownerships]")
     group_ownership_tokeninput.tokenInput "clear"
     @model.group_ownerships.each (ownership) =>
@@ -184,7 +184,7 @@ class DssRm.Views.PersonShow extends Backbone.View
           id: operatorship.get('id')
           name: operatorship.get('name')
           readonly: @readonly
-    
+
     non_ou_group_membership_tokeninput = @$("input[name=non_ou_group_memberships]")
     non_ou_group_membership_tokeninput.tokenInput "clear"
     _.each @model.nonOuGroupMemberships(), (membership) =>
@@ -210,7 +210,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
       app_name = role_assignment_set[0].get("application_name")
       app_id = role_assignment_set[0].get("application_id")
-      
+
       role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
       role_tokeninput.tokenInput "clear"
       _.each role_assignment_set, (role_assignment) ->
@@ -222,7 +222,7 @@ class DssRm.Views.PersonShow extends Backbone.View
             name: role_assignment.get("name")
             readonly: @readonly || role_assignment.get('calculated')
             class: (if role_assignment.get('calculated') then "calculated" else "")
-    
+
     if @readonly
       @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
@@ -233,10 +233,10 @@ class DssRm.Views.PersonShow extends Backbone.View
 
   save: (e) ->
     e.preventDefault()
-    
-    unless @model.isReadOnly()      
+
+    unless @model.isReadOnly()
       @$('#apply').attr('disabled', 'disabled').html('Saving ...')
-      
+
       @model.set
         first: @$("input[name=first]").val()
         last: @$("input[name=last]").val()
@@ -254,12 +254,12 @@ class DssRm.Views.PersonShow extends Backbone.View
           @$('#apply').addClass('btn-danger').html('Error')
 
   rescan: (e) ->
-    status_bar.show "Re-scanning ..."
-    
+    toastr["info"]("Re-scanning ...")
+
     # Disable all form elements while rescanning
     $('.modal-body div.tab-content').children().each (i, el) ->
       $(el).attr("disabled", true)
-    
+
     @model.fetch
       url: Routes.person_import_path @model.get('loginid')
       type: 'POST'
@@ -267,35 +267,35 @@ class DssRm.Views.PersonShow extends Backbone.View
         # Re-enable all form elements
         $('.modal-body div.tab-content').children().each (i, el) ->
           $(el).attr("disabled", false)
-        status_bar.hide()
+        toastr.remove()
       failure: (data) ->
-        status_bar.show "An error occurred while re-scanning.", "error"
-    
+        toastr["error"]("An error occurred while re-scanning.")
+
     false
 
   deleteEntity: ->
     unless @model.isReadOnly()
       @$el.fadeOut()
-    
+
       bootbox.confirm "Are you sure you want to delete " + @model.escape("name") + "?", (result) =>
         @$el.fadeIn()
         if result
           # delete the application and dismiss the dialog
           @model.destroy()
-        
+
           # dismiss the dialog
           @$(".modal-header a.close").trigger "click"
 
     false
-  
+
   addRoleAssignmentApplication: ->
     # Add new tokenInput to DOM
     application_id = @$("#add_role_assignment_application_search").data('selected-id')
     application_name = @$("#add_role_assignment_application_search").val()
     @$("div#role_assignments").append @renderRoleAssignmentTokenInput(application_name, application_id)
-    
+
     @$("#add_role_assignment_application_search").val('')
-  
+
   # Populates the role assignment application search with results via async call
   roleAssignmentApplicationSearch: (query, process) ->
     $.ajax(
@@ -314,11 +314,11 @@ class DssRm.Views.PersonShow extends Backbone.View
     parts = item.split("####")
     id = parseInt(parts[0])
     label = parts[1]
-    
+
     @$("#add_role_assignment_application_search").data('selected-id', id)
-    
+
     label
-  
+
   # Attempt to render the phone number in a more readable format.
   # Assumes phone comes in like '8005551234' or '5551234'
   formatPhone: (phone) ->
@@ -332,6 +332,6 @@ class DssRm.Views.PersonShow extends Backbone.View
 
   cleanUpModal: ->
     @remove()
-    
+
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"

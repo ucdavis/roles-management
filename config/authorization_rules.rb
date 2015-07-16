@@ -68,6 +68,8 @@ authorization do
     has_permission_on :roles, :to => [:show, :read, :update] do
       if_attribute :application => { :name => is_not { 'DSS Roles Management' } }
     end
+    
+    includes :access
   end
 
   role :access do
