@@ -56,9 +56,6 @@ gem 'whenever', :require => false
 gem 'delayed_job_active_record'
 gem 'daemons'
 
-# For icon processing
-gem 'paperclip', '~> 3.0'
-
 # For memory usage checks
 gem 'os', :require => false
 

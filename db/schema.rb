@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150715180506) do
+ActiveRecord::Schema.define(:version => 20150716194554) do
 
   create_table "activity_log_tag_associations", :force => true do |t|
     t.integer "activity_log_id"
@@ -83,14 +83,10 @@ ActiveRecord::Schema.define(:version => 20150715180506) do
 
   create_table "applications", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
     t.text     "description"
     t.string   "url"
-    t.string   "icon_file_name"
-    t.string   "icon_content_type"
-    t.integer  "icon_file_size"
-    t.datetime "icon_updated_at"
   end
 
   add_index "applications", ["name"], :name => "index_applications_on_name"
