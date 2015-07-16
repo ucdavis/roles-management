@@ -69,6 +69,11 @@ authorization do
       if_attribute :application => { :name => is_not { 'DSS Roles Management' } }
     end
     
+    has_permission_on :role_assignments, :to => [:create, :delete] do
+      # Do not allow operators to make assignments against DSS RM card
+      if_attribute :role => { :application => { :name => is_not { 'DSS Roles Management' } } }
+    end
+
     includes :access
   end
 
