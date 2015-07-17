@@ -59,6 +59,11 @@ authorization do
 
     has_permission_on :api_v1_roles, :to => :manage
 
+    # Allow creating Activity Log entries
+    has_permission_on :activity_logs, :to => :create
+    has_permission_on :activity_log_tags, :to => :create
+    has_permission_on :activity_log_tag_associations, :to => :create
+
     includes :api_reader
   end
 
