@@ -2,9 +2,9 @@ module UcdLookups
   MAJORS = {}
   DEPT_CODES = {}
   TITLE_CODES = {}
-  
+
   #MANUAL_INCLUDES = ['aeguyer','millerlm','djmoglen','mebalvin','mckinney','ssantam','tmheath','rnanakul','olichney','sukkim','jpokorny','bgrunewa','rabronst','kbaynes','szneena','pcmundy','wjarrold','julieluu','steichho','chuff','cmachado','alamsyah','schuang','clare186','ladyd252','aheusser','pkubitz','kshap','bbrelles','blmiss','pjdegenn','cdaniels','jyiwang','anschnei','eaisham','ralatif','cwbishop','fddiaz','jinchen','ajkou','sphan127','ndelie','weidner']
-  
+
   DEPT_TRANSLATIONS = {
       'AFRICAN AMERICAN AFRICAN STDS' => 'HISTORY',
       'ASIAN AMERICAN' => 'HISTORY',
@@ -35,7 +35,7 @@ module UcdLookups
       'TEMPORARY EMPLOYMENT SERVICES (TES)' => 'TEMPORARY EMPLOYMENT SERVICES',
       'MICROBIOLOGY' => 'DSS IT SERVICE CENTER'
   }
-  
+
 	MAJORS["Anthropology"] = "040020"
 	MAJORS["Linguistics"] = "040210"
 	MAJORS["Philosophy"] = "040250"
@@ -165,6 +165,11 @@ module UcdLookups
 		DEPT_CODES["040113"]["name"] = "PSYCH, CMB YELLOW CLUSTER"
 		DEPT_CODES["040113"]["company"] = "040113"
 		DEPT_CODES["040113"]["manager"] = "crcasell"
+
+	DEPT_CODES["040116"] = {}
+		DEPT_CODES["040116"]["name"] = "Institute for Social Sciences"
+		DEPT_CODES["040116"]["company"] = "040111"
+		DEPT_CODES["040116"]["manager"] = "keminer"
 
 	DEPT_CODES["040235"] = {}
 		DEPT_CODES["040235"]["name"] = "CENTER FOR MIND & BRAIN"
