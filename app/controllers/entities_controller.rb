@@ -121,12 +121,9 @@ class EntitiesController < ApplicationController
     if params[:q]
       entities_table = Entity.arel_table
 
-      # Only show active entities in the search. The application ownership token input, for example, uses this method
-      # to query people but it does not show deactivated people. This hides potential members and if they are
-      # added again, it'll throw an error that the membership already exists.
-
-      # Search login IDs in case of an entity-search but looking for person by login ID
-      @entities = Entity.with_permissions_to(:read).where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+      # Search login IDs in case of an entity-search but looking for person by login ID.
+      # Show active and inactive. Consumer will be responsible for filtering if necessary.
+      @entities = Entity.with_permissions_to(:read).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
 
       logger.debug "Entities#index searching for '#{params[:q]}'. Found #{@entities.length} results."
     else

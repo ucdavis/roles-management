@@ -9,6 +9,31 @@ class EntitiesControllerTest < ActionController::TestCase
     @group = entities(:groupA)
   end
 
+  # Sidebar search needs to show inactive entities
+  test 'JSON index search request includes inactive entities' do
+    grant_test_user_admin_access
+
+    # Last name 'Natinabled' is marked inactive in fixture
+    get :index, :format => :json, :q => 'Natinabled'
+
+    body = JSON.parse(response.body)
+
+    found_inactive = false
+
+    body.each do |entity|
+      assert entity.include?('id'), 'JSON response should include id field'
+      assert entity.include?('name'), 'JSON response should include name field'
+      assert entity.include?('active'), 'JSON response should include active field'
+
+      if entity['active'] == false
+        found_inactive = true
+        break
+      end
+    end
+
+    assert found_inactive == true, 'should have found at least one inactive entity'
+  end
+
   test 'JSON show request for a Group should include certain attributes' do
     grant_test_user_admin_access
 
