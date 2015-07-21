@@ -62,3 +62,6 @@ gem 'os', :require => false
 # Sync script dependencies
 gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'
 gem 'roles-management-api', :git => 'https://github.com/dssit/roles-management-api.git'
+
+# For New Relic monitoring integration
+gem 'newrelic_rpm'
