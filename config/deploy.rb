@@ -11,10 +11,10 @@ require "delayed/recipes"
 # Use 10 background workers (the same value should be set in config/schedule.rb)
 set :delayed_job_args, "-n 5"
 
-before "deploy:restart", "delayed_job:stop"
-after  "deploy:restart", "delayed_job:start"
-after "deploy:stop",  "delayed_job:stop"
-after "deploy:start", "delayed_job:start"
+#before "deploy", "delayed_job:stop"
+#after  "deploy", "delayed_job:start"
+#after "deploy:stop",  "delayed_job:stop"
+#after "deploy:start", "delayed_job:start"
 
 server "169.237.120.176", :web, :app, :db, primary: true
 
@@ -30,6 +30,8 @@ set :repository, "git@github.com:dssit/#{application}.git"
 set :branch, "master"
 
 set :test_log, "log/capistrano.test.log"
+
+set :linked_dirs, %w{tmp/pids}
 
 default_run_options[:pty] = true
 ssh_options[:forward_agent] = true
@@ -54,6 +56,7 @@ namespace :deploy do
   desc "Restart Passenger server"
   task :restart, roles: :app, except: {no_release: true} do
     run "touch #{current_path}/tmp/restart.txt"
+    invoke 'delayed_job:restart'
   end
 
   desc "First-time config setup"
@@ -77,6 +80,7 @@ namespace :deploy do
   task :symlink_config, roles: :app do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"
+    run "ln -nfs #{shared_path}/config/newrelic.yml #{release_path}/config/newrelic.yml"
     run "ln -nfs #{shared_path}/config/ldap.yml #{release_path}/config/ldap.yml"
     run "ln -nfs #{shared_path}/config/general.yml #{release_path}/config/general.yml"
     run "ln -nfs #{shared_path}/sync/config/active_directory.yml #{release_path}/sync/config/active_directory.yml"
