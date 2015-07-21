@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150716194554) do
+ActiveRecord::Schema.define(:version => 20150721190626) do
 
   create_table "activity_log_tag_associations", :force => true do |t|
     t.integer "activity_log_id"
@@ -138,8 +138,10 @@ ActiveRecord::Schema.define(:version => 20150716194554) do
     t.datetime "logged_in_at"
   end
 
+  add_index "entities", ["id"], :name => "index_entities_on_id"
   add_index "entities", ["loginid"], :name => "index_entities_on_loginid"
   add_index "entities", ["name"], :name => "index_entities_on_name"
+  add_index "entities", ["type"], :name => "index_entities_on_type"
 
   create_table "group_memberships", :force => true do |t|
     t.integer  "group_id"
@@ -251,6 +253,7 @@ ActiveRecord::Schema.define(:version => 20150716194554) do
 
   add_index "role_assignments", ["role_id", "entity_id", "parent_id"], :name => "index_role_assignments_on_role_id_and_entity_id_and_parent_id"
   add_index "role_assignments", ["role_id", "entity_id"], :name => "index_role_assignments_on_role_id_and_entity_id"
+  add_index "role_assignments", ["role_id", "parent_id", "entity_id"], :name => "index_role_assignments_on_role_id_and_parent_id_and_entity_id"
 
   create_table "roles", :force => true do |t|
     t.string   "token"
@@ -263,6 +266,8 @@ ActiveRecord::Schema.define(:version => 20150716194554) do
     t.datetime "last_ad_sync"
     t.string   "ad_guid"
   end
+
+  add_index "roles", ["id"], :name => "index_roles_on_id"
 
   create_table "student_levels", :force => true do |t|
     t.string   "name"
