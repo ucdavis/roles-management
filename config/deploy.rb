@@ -11,8 +11,8 @@ require "delayed/recipes"
 # Use 10 background workers (the same value should be set in config/schedule.rb)
 set :delayed_job_args, "-n 5"
 
-#before "deploy", "delayed_job:stop"
-#after  "deploy", "delayed_job:start"
+before "deploy", "delayed_job:stop"
+after  "deploy", "delayed_job:start"
 #after "deploy:stop",  "delayed_job:stop"
 #after "deploy:start", "delayed_job:start"
 
@@ -56,7 +56,6 @@ namespace :deploy do
   desc "Restart Passenger server"
   task :restart, roles: :app, except: {no_release: true} do
     run "touch #{current_path}/tmp/restart.txt"
-    invoke 'delayed_job:restart'
   end
 
   desc "First-time config setup"
