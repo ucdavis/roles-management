@@ -139,8 +139,24 @@ namespace :ad do
 
     ActiveDirectory.configure(@config)
 
+    # Ensure all roles are up-to-date
     Role.where('ad_path is not null').each do |role|
       ensure_sentinel_descriptor_presence(role.ad_path, role.application.name, role.name)
     end
+
+    ous = ["IT", "HR", "CHP", "UCCS", "PHE", "HP", "SSP", "PHE", "RSC", "GEO", "ANT", "CMN", "ECN", "HIS", "LIN", "MSC", "PHI", "POL",
+      "PSC", "EAS", "IRE", "MSA", "STS", "CMB", "SOC", "RED", "ORANGE", "BLUE", "GREEN", "DEANS", "YELLOW", "EDU", "ComDev", "NueroSci", "CSIS"]
+    affiliations = ["faculty", "lecturer", "staff", "staff-student", "student-graduate"]
+
+    ous.each do |ou|
+      affiliations.each do |affiliation|
+        cluster_affiliation_all_group_name = "dss-us-#{ou}-#{affiliation}".downcase
+        ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
+      end
+      
+      cluster_all_group_name = "dss-us-#{ou}-all".downcase
+      ensure_sentinel_descriptor_presence(cluster_all_group_name)
+    end
+
   end
 end
