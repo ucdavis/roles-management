@@ -125,11 +125,11 @@ module Sync
     case obj
     when Role
       if detailed
-        return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
+        return { id: obj.id, token: obj.token, role_name: obj.name, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
                  application_id: obj.application.id, application_name: obj.application.name,
                  members: obj.members.select { |m| m.active == true }.map{ |m| m.loginid } }
       else
-        return { id: obj.id, token: obj.token, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
+        return { id: obj.id, token: obj.token, role_name: obj.name, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
                  application_id: obj.application.id, application_name: obj.application.name }
       end
     when Person

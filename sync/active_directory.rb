@@ -212,8 +212,6 @@ def ensure_user_in_group(user, group, ad_guid = nil)
     group = ActiveDirectory.get_group(group)
   end
 
-  ensure_sentinel_descriptor_presence(group)
-
   ActiveDirectory.add_user_to_group(user, group)
 end
 
@@ -230,19 +228,16 @@ def ensure_user_not_in_group(user, group, ad_guid = nil)
     group = ActiveDirectory.get_group(group)
   end
 
-  ensure_sentinel_descriptor_presence(group)
-
   ActiveDirectory.remove_user_from_group(user, group)
 end
-
-# The sentinel descriptor used by ensure_sentinel_descriptor_presence
-SENTINEL_DESCRIPTOR = "(RM Sync)"
 
 # Adds the SENTINEL_DESCRIPTOR text to an AD group's description field if
 # it is not present.
 #
 # +group+ is a Net::LDAP::Entry object or a string
-def ensure_sentinel_descriptor_presence(group)
+# +application_name+ is an optional string of the application's name, if applicable
+# +role_name+ is an optional string of the role's name, if applicable
+def ensure_sentinel_descriptor_presence(group, application_name = nil, role_name = nil)
   unless group.is_a? Net::LDAP::Entry
     group = ActiveDirectory.get_group(group)
   end
@@ -252,10 +247,22 @@ def ensure_sentinel_descriptor_presence(group)
   g_desc = group[:description][0]
   g_desc = "" if g_desc.nil?
 
+  if(application_name and role_name)
+    sentinel_txt = "(RM Sync: #{application_name} / #{role_name})"
+  else
+    sentinel_txt = "(RM Sync: Universal)"
+  end
+
+  # Remove the old-style sentinel if it exists
+  if g_desc.index "(RM Sync)"
+    g_desc.slice! "(RM Sync)"
+    g_desc.lstrip!
+  end
+
   # Ensure the sentinel exists
-  unless g_desc.index SENTINEL_DESCRIPTOR
-    STDOUT.puts "Adding '#{SENTINEL_DESCRIPTOR}' to AD group description."
-    g_desc = "#{SENTINEL_DESCRIPTOR} #{g_desc}"
+  unless g_desc.index sentinel_txt
+    STDOUT.puts "Adding '#{sentinel_txt}' to AD group description."
+    g_desc = "#{sentinel_txt} #{g_desc}"
     ActiveDirectory.update_group_description(group, g_desc)
   end
 end
@@ -272,10 +279,13 @@ def ensure_sentinel_descriptor_absence(group)
   return false if group.nil?
 
   g_desc = group[:description][0]
+  return unless g_desc
 
-  if g_desc and g_desc.index SENTINEL_DESCRIPTOR
-    STDOUT.puts "Removing '#{SENTINEL_DESCRIPTOR}' from AD group description."
-    g_desc.slice! "(RM Sync)"
+  matches = /\(RM Sync[\s\S]*\)/.match(g_desc)
+
+  if matches != nil
+    STDOUT.puts "Removing '#{matches.to_s}' from AD group description."
+    g_desc.sub! /\(RM Sync[\s\S]*\)/, ''
     g_desc.lstrip!
     ActiveDirectory.update_group_description(group, g_desc)
   end
@@ -299,6 +309,7 @@ def merge_role_and_ad_group(role_id, group_name)
 
   # Add any role members to the AD group
   role.members.each do |member|
+    STDOUT.puts "Ensuring #{member.loginid} is in AD group #{group_name} ..."
     ensure_user_in_group(member.loginid, ad_group)
   end
 
@@ -309,6 +320,7 @@ def merge_role_and_ad_group(role_id, group_name)
   ActiveDirectory.list_group_members(ad_group).each do |ad_member|
     p = rm_client.find_person_by_loginid(ad_member)
     if p
+      STDOUT.puts "Ensuring #{p.loginid} is in RM role #{role} ..."
       unless role.members.map{ |m| m.loginid }.include? p.loginid
         role.assignments << p
         role_changed = true
@@ -475,22 +487,30 @@ case @sync_data["mode"]
 
 when "add_to_system"
   ensure_user_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
+  STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is in AD group dss-us-auto-all ..."
+  # Note: the dss-us-auto-all group does not have a sentinel descriptor
   exit(0)
 
 when "remove_from_system"
   ensure_user_not_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil)
+  STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is not in AD group dss-us-auto-all ..."
+  # Note: the dss-us-auto-all group does not have a sentinel descriptor
   exit(0)
 
 when "add_to_role"
   # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
-  exit(0) unless @sync_data["role"]["ad_path"] #or @sync_data["role"]["ad_guid"]
-  ensure_user_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
+  exit(0) unless @sync_data["role"]["ad_path"]
+  STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is in AD group #{@sync_data["role"]["ad_path"]} ..."
+  ensure_user_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"])
+  ensure_sentinel_descriptor_presence(@sync_data["role"]["ad_path"], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
   exit(0)
 
 when "remove_from_role"
   # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
-  exit(0) unless @sync_data["role"]["ad_path"] #or @sync_data["role"]["ad_guid"]
-  ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"]) #, @sync_data["role"]["ad_guid"])
+  exit(0) unless @sync_data["role"]["ad_path"]
+  STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is not in AD group #{@sync_data["role"]["ad_path"]} ..."
+  ensure_user_not_in_group(@sync_data["person"]["loginid"], @sync_data["role"]["ad_path"])
+  ensure_sentinel_descriptor_presence(@sync_data["role"]["ad_path"], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
   exit(0)
 
 when "add_to_organization"
@@ -503,10 +523,16 @@ when "add_to_organization"
     next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
 
     # Write them to cluster-affiliation-all
-    ensure_user_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
+    cluster_affiliation_all_group_name = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
+    STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is in AD group #{cluster_affiliation_all_group_name} ..."
+    ensure_user_in_group(@sync_data["person"]["loginid"], cluster_affiliation_all_group_name)
+    ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
 
     # Write them to cluster-all (dss-us-#{ou_to_short}-all)
-    ensure_user_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-all".downcase)
+    cluster_all_group_name = "dss-us-#{short_ou}-all".downcase
+    STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is in AD group #{cluster_all_group_name} ..."
+    ensure_user_in_group(@sync_data["person"]["loginid"], cluster_all_group_name)
+    ensure_sentinel_descriptor_presence(cluster_all_group_name)
   end
 
   exit(0)
@@ -521,10 +547,16 @@ when "remove_from_organization"
     next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
 
     # Remove them from cluster-affiliation-all
-    ensure_user_not_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-#{flattened_affiliation}".downcase)
+    cluster_affiliation_all_group_name = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
+    STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is not in AD group #{cluster_affiliation_all_group_name} ..."
+    ensure_user_not_in_group(@sync_data["person"]["loginid"], cluster_affiliation_all_group_name)
+    ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
 
     # Remove them from cluster-all (dss-us-#{ou_to_short}-all)
-    ensure_user_not_in_group(@sync_data["person"]["loginid"], "dss-us-#{short_ou}-all".downcase)
+    cluster_all_group_name = "dss-us-#{short_ou}-all".downcase
+    STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is not in AD group #{cluster_all_group_name} ..."
+    ensure_user_not_in_group(@sync_data["person"]["loginid"], cluster_all_group_name)
+    ensure_sentinel_descriptor_presence(cluster_all_group_name)
   end
 
   exit(0)
@@ -535,6 +567,7 @@ when "role_change"
       if (values[0] == nil) and (values[1] != nil)
         # AD path set for the first time. Merge role and AD group.
         merge_role_and_ad_group(@sync_data["role"]["id"], values[1])
+        ensure_sentinel_descriptor_presence(values[1], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
       elsif (values[0] != nil) and (values[1] == nil)
         # AD path was set but is now unset. Leave all members but remove sentinel
         ensure_sentinel_descriptor_absence(values[0])
@@ -545,6 +578,7 @@ when "role_change"
         ensure_sentinel_descriptor_absence(values[0])
 
         merge_role_and_ad_group(@sync_data["role"]["id"], values[1])
+        ensure_sentinel_descriptor_presence(values[1], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
       end
     end
   end
