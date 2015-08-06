@@ -101,6 +101,11 @@ module UcdLookups
 		DEPT_CODES["040256"]["company"] = "040390"
 		DEPT_CODES["040256"]["manager"] = "laklkegr"
 
+	DEPT_CODES["040117"] = {}
+		DEPT_CODES["040117"]["name"] = "CENTER FOR POVERTY RESEARCH"
+		DEPT_CODES["040117"]["company"] = "040111"
+		DEPT_CODES["040117"]["manager"] = "gsanchez"
+
 	DEPT_CODES["040076"] = {}
 		DEPT_CODES["040076"]["name"] = "SOCIAL SCIENCES COMPUTING LAB"
 		DEPT_CODES["040076"]["company"] = "040114"
