@@ -8,6 +8,7 @@ DSSRM::Application.routes.draw do
       get "/validate" => "base#validate"
 
       resources :people
+      resources :groups
       resources :entities
       resources :applications
       resources :roles
