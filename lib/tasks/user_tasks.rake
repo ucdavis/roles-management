@@ -14,14 +14,21 @@ namespace :user do
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
       if p
-        puts "Granting access to #{arg[1]}..."
-        ra = RoleAssignment.new
-        ra.role_id = rm_access_role_id
-        ra.entity_id = p.id
-        ra.save!
+        if p.role_ids.include?(rm_access_role_id)
+          puts "#{arg[1]} already has access"
+          next
+        else
+          ra = RoleAssignment.new
+          ra.role_id = rm_access_role_id
+          ra.entity_id = p.id
+          ra.save!
+        end
       else
         puts "No such user '#{arg[1]}'"
+        next
       end
+
+      puts "Granted access to #{arg[1]}"
     end
 
     enable_authorization
@@ -37,9 +44,9 @@ namespace :user do
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
       if p
-        puts "Revoking access from #{arg[1]}..."
         entity_id = p.id
         ra = RoleAssignment.find_by_role_id_and_entity_id(rm_access_role_id, entity_id)
+
         unless ra.nil?
           ret = ra.destroy
           if ret == false
@@ -48,7 +55,10 @@ namespace :user do
           end
         else
           puts "#{arg[1]} is not set for access."
+          next
         end
+
+        puts "Revoked access from #{arg[1]}."
       else
         puts "No such user '#{arg[1]}'"
       end
@@ -67,13 +77,21 @@ namespace :user do
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
       if p
-        puts "Granting operate to #{arg[1]}..."
-        ra = RoleAssignment.new
-        ra.role_id = rm_operate_role_id
-        ra.entity_id = p.id
-        ra.save!
+        if p.role_ids.include?(rm_operate_role_id)
+          puts "#{arg[1]} already has operate"
+          next
+        else
+          ra = RoleAssignment.new
+          ra.role_id = rm_operate_role_id
+          ra.entity_id = p.id
+          ra.save!
+
+          puts "Granted operate to #{arg[1]}"
+          next
+        end
       else
         puts "No such user '#{arg[1]}'"
+        next
       end
     end
 
@@ -90,9 +108,9 @@ namespace :user do
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
       if p
-        puts "Revoking operate from #{arg[1]}..."
         entity_id = p.id
         ra = RoleAssignment.find_by_role_id_and_entity_id(rm_operate_role_id, entity_id)
+
         unless ra.nil?
           ret = ra.destroy
           if ret == false
@@ -101,7 +119,10 @@ namespace :user do
           end
         else
           puts "#{arg[1]} is not set for operate."
+          next
         end
+
+        puts "Revoked operate from #{arg[1]}"
       else
         puts "No such user '#{arg[1]}'"
       end
@@ -158,9 +179,9 @@ namespace :user do
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
       if p
-        puts "Revoking admin from #{arg[1]}..."
         entity_id = p.id
         ra = RoleAssignment.find_by_role_id_and_entity_id(rm_admin_role_id, entity_id)
+
         unless ra.nil?
           ret = ra.destroy
           if ret == false
@@ -169,7 +190,10 @@ namespace :user do
           end
         else
           puts "#{arg[1]} is not set as admin."
+          next
         end
+
+        puts "Revoked admin from #{arg[1]}"
       else
         puts "No such user '#{arg[1]}'"
       end
