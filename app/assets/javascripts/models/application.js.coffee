@@ -18,6 +18,11 @@ DssRm.Models.Application = Backbone.Model.extend(
     delete @attributes.owners
     delete @attributes.operatorships
 
+  # Returns true if DssRm.current_user cannot modify this entity
+  isReadOnly: ->
+    if @relationship() is 'admin' or @relationship() is 'owner' then return false
+    true
+
   # Returns only the "highest" relationship (this order): admin, owner, operator
   # Uses DssRm.current_user as the entity
   relationship: ->
