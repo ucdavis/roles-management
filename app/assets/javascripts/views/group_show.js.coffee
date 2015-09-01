@@ -124,12 +124,15 @@ class DssRm.Views.GroupShow extends Backbone.View
       @$('.token-input-list-facebook').readonly()
       @$('input').readonly()
       @$('textarea').readonly()
+      @$('button#apply').hide()
 
     @renderRules()
 
     @
 
   renderRules: ->
+    readonly = @model.isReadOnly()
+
     rules_table = @$("table#rules tbody")
     rules_table.empty()
     @model.rules.each (rule, i) =>
@@ -140,6 +143,12 @@ class DssRm.Views.GroupShow extends Backbone.View
       rules_table.hide()
     else
       rules_table.show()
+
+    if readonly
+      @$('button#remove_group_rule').hide()
+      @$('button#group_rule_add').hide()
+      @$('select').attr('disabled', true)
+      @$('input').readonly()
 
     @
 

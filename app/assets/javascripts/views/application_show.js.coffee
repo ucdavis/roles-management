@@ -18,10 +18,13 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     @listenTo @model, "sync", @render
     @listenTo @model.roles, "add remove", @renderRoles
 
+    readonly = @model.isReadOnly()
+
     @$("input[name=owners]").tokenInput Routes.entities_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
+      disabled: readonly
       onAdd: (item) => @model.owners.add item
       onDelete: (item) => @model.owners.remove item
 
@@ -29,6 +32,7 @@ class DssRm.Views.ApplicationShow extends Backbone.View
       crossDomain: false
       defaultText: ""
       theme: "facebook"
+      disabled: readonly
       onAdd: (item) =>
         @model.operatorships.add
           calculated: false
@@ -46,6 +50,8 @@ class DssRm.Views.ApplicationShow extends Backbone.View
           operatorship.set('_destroy', true)
 
   render: ->
+    readonly = @model.isReadOnly()
+
     # Summary tab
     @$("h3").html @model.escape('name')
     @$("input[name=name]").val @model.get('name')
@@ -83,9 +89,18 @@ class DssRm.Views.ApplicationShow extends Backbone.View
       roleItem.render()
       @$("div#ad_fields").append roleItem.el
 
+    if readonly
+      @$('.token-input-list-facebook').readonly()
+      @$('input').readonly()
+      @$('textarea').readonly()
+      @$('button#add_role').hide()
+      @$('button#apply').hide()
+
     @
 
   renderRoles: ->
+    readonly = @model.isReadOnly()
+
     # Roles tab
     @$("table#roles tbody").empty()
     @model.roles.each (role) =>
@@ -93,6 +108,9 @@ class DssRm.Views.ApplicationShow extends Backbone.View
         roleItem = new DssRm.Views.ApplicationShowRole(model: role)
         roleItem.render()
         @$("table#roles tbody").append roleItem.el
+
+    if readonly
+      @$('button#remove_role').hide()
 
   save: ->
     @$('#apply').attr('disabled', 'disabled').html('Saving ...')
