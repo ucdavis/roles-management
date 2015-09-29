@@ -19,6 +19,7 @@ namespace :ldap do
       disable_authorization
 
       log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ldap-sync.log')}"))
+      log.formatter = Logger::Formatter.new # ensure log is timestamped
 
       # Track who was found in LDAP so we can compare against existing users
       # to find users who have since disappeared from LDAP.

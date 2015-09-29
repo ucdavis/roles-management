@@ -149,8 +149,9 @@ module Sync
       logger.level = Logger::DEBUG
       logger.datetime_format = "%Y-%m-%d %H:%M:%S"
       logger = ActiveSupport::TaggedLogging.new(logger)
+      logger.formatter = Logger::Formatter.new
     end
-    @@sync_logger ||= logger #ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'sync.log')}"))
+    @@sync_logger ||= logger
   end
 
   module_function
