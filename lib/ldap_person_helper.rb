@@ -12,7 +12,7 @@ module LdapPersonHelper
     loginid = determine_loginid(entry, log)
 
     unless loginid
-      log.debug "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry.get_values('ucdPersonUUID').to_s unless log.nil?
+      log.debug "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry[:ucdPersonUUID][0].to_s unless log.nil?
       return nil
     end
 
@@ -58,11 +58,11 @@ module LdapPersonHelper
   # Resolves loginid based on eduPersonPrincipalName (preferred) or uid
   def LdapPersonHelper.determine_loginid(entry, log = nil)
     # First, determine their login ID from the principal name
-    eduPersonPrincipalName = entry.get_values('eduPersonPrincipalName').to_s[2..-3]
+    eduPersonPrincipalName = entry[:eduPersonPrincipalName][0]
     if eduPersonPrincipalName.nil?
       # If they don't have an eduPersonPrincipalName, we'll take the uid, else we'll just log this entry and skip it
-      unless entry.get_values('uid').to_s[2..-3].nil?
-        loginid = entry.get_values('uid').to_s[2..-3]
+      unless entry[:uid][0].nil?
+        loginid = entry[:uid][0]
       else
         # Give up
         return nil
@@ -76,9 +76,9 @@ module LdapPersonHelper
 
   # Resolve basic details like first and last name, email, i.e. simple values which do not require relations.
   def LdapPersonHelper.determine_basic_details(p, entry, log = nil)
-    p.first = entry.get_values('givenName')[0]
-    p.last = entry.get_values('sn')[0]
-    p.email = entry.get_values('mail').to_s[2..-3]
+    p.first = entry[:givenName][0]
+    p.last = entry[:sn][0]
+    p.email = entry[:mail][0]
 
     if p.email and p.email.include? "ucdmc.ucdavis.edu"
       # Override ucdmc.ucdavis.edu e-mails.
@@ -87,13 +87,13 @@ module LdapPersonHelper
       p.email = p.loginid + "@ucdavis.edu"
     end
 
-    p.phone = entry.get_values('telephoneNumber').to_s[2..-3]
+    p.phone = entry[:telephoneNumber][0]
     unless p.phone.nil?
       # Clean up number
       p.phone = p.phone.sub("+1 ", "").gsub(" ", "")
     end
-    p.address = entry.get_values('street').to_s[2..-3]
-    p.name = entry.get_values('displayName')[0]
+    p.address = entry[:street][0]
+    p.name = entry[:displayName][0]
 
     # If no displayName exists, construct one from p.first and p.last
     if p.name.nil? and p.first and p.last
@@ -109,8 +109,8 @@ module LdapPersonHelper
   # Resolve student data e.g. ucdStudentMajor, ucdStudentLevel (if applicable)
   def LdapPersonHelper.determine_student_data(p, entry, log = nil)
     # Handle student-specific data
-    ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
-    ucdStudentLevel = entry.get_values('ucdStudentLevel').to_s[2..-3]
+    ucdStudentMajor = entry[:ucdStudentMajor][0]
+    ucdStudentLevel = entry[:ucdStudentLevel][0]
 
     # If they have any student data, ensure they own a corresponding 'student' model
     if ucdStudentMajor or ucdStudentLevel
@@ -119,13 +119,13 @@ module LdapPersonHelper
 
     # Update the list of majors if needed and record the major if needed
     unless ucdStudentMajor.nil?
-      major = Major.find_or_create_by_name ucdStudentMajor
+      major = Major.find_or_create_by_name(ucdStudentMajor)
       p.major = major
     end
 
     # Update the list of student levels if needed and record the student level if needed
     unless ucdStudentLevel.nil?
-      level = StudentLevel.find_or_create_by_name ucdStudentLevel
+      level = StudentLevel.find_or_create_by_name(ucdStudentLevel)
       p.student.level = level
     end
 
@@ -137,10 +137,10 @@ module LdapPersonHelper
     seen_affiliations = []
 
     # A person may have multiple affiliations
-    entry.get_values('ucdPersonAffiliation').each do |affiliation_name|
+    entry[:ucdPersonAffiliation].each do |affiliation_name|
       seen_affiliations << affiliation_name
       affiliation = Affiliation.find_or_create_by_name(affiliation_name)
-      unless p.affiliations.include? affiliation
+      unless p.affiliations.include?(affiliation)
         p.affiliations << affiliation
       end
     end
@@ -158,8 +158,8 @@ module LdapPersonHelper
   # should not be considered reliable.
   def LdapPersonHelper.determine_title_details(p, entry, log = nil)
     # Set title: take the original unless there is a translation from UcdLookups
-    title_name_from_ldap = entry.get_values('title').to_s[2..-3]
-    title_code = entry.get_values('ucdAppointmentTitleCode').to_s[2..-3]
+    title_name_from_ldap = entry[:title][0]
+    title_code = entry[:ucdAppointmentTitleCode][0]
 
     title_code = title_code.rjust(4, '0') unless title_code.blank?
 
@@ -183,11 +183,11 @@ module LdapPersonHelper
 
   # Creates and assigns OUs as needed based on
   def LdapPersonHelper.determine_ou_memberships(p, entry, log = nil)
-    ucdStudentMajor = entry.get_values('ucdStudentMajor').to_s[2..-3]
-    ucdStudentLevel = entry.get_values('ucdStudentLevel').to_s[2..-3]
+    ucdStudentMajor = entry[:ucdStudentMajor][0]
+    ucdStudentLevel = entry[:ucdStudentLevel][0]
 
     # Prefer UcdLookups for OU, company, and manager information if available
-    ucdAppointmentDepartmentCode = entry.get_values('ucdAppointmentDepartmentCode').to_s[2..-3]
+    ucdAppointmentDepartmentCode = entry[:ucdAppointmentDepartmentCode][0]
 
     majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name = resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
 
@@ -196,11 +196,6 @@ module LdapPersonHelper
       log.warn "Individual (#{p.loginid}) has neither a ucdAppointmentDepartmentCode nor a ucdStudentMajor. FIXME" unless log.nil?
       return p
     end
-
-    # DEPT_TRANSLATIONS helps similar names (alternate spellings, etc.) into a consistent name
-    # if UcdLookups::DEPT_TRANSLATIONS.keys().include? ou_name
-    #   ou_name = UcdLookups::DEPT_TRANSLATIONS[ou_name]
-    # end
 
     # OU treatment varies for graduate students vs everybody else
     if p.affiliations.collect{ |x| x.name }.include?("student:graduate") and ucdStudentMajor
@@ -321,9 +316,6 @@ module LdapPersonHelper
       # Person is valid.
       if p.changed? == false
         log.debug "No standard record changes for #{p.loginid}"
-
-        # Why would we touch records which haven't changed? For caching purposes?
-        #p.touch
       else
         log.debug "Updating the following for #{p.loginid}:"
         p.changes.each do |field,changes|
@@ -337,9 +329,6 @@ module LdapPersonHelper
       if p.student
         if p.student.changed? == false
           log.debug "Student record exists but there are no changes for #{p.loginid}"
-
-          # Why would we touch records which haven't changed? For caching purposes?
-          #p.student.touch
         else
           log.debug "Updating the following student records for #{p.loginid}:"
           p.student.changes.each do |field,changes|

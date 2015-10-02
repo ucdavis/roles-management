@@ -42,6 +42,7 @@ class PeopleController < ApplicationController
       ldap = LdapHelper.new
       ldap.connect
 
+      # LDAPTODO: Update this to use new return values
       ldap.search("(|(uid=#{params[:term]}*)(cn=#{params[:term]}*)(sn=#{params[:term]}*))") do |result|
         if result.get_values('uid')
           p = OpenStruct.new
@@ -72,7 +73,6 @@ class PeopleController < ApplicationController
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
     if params[:loginid]
-      require 'ldap'
       require 'ldap_helper'
       require 'ldap_person_helper'
 

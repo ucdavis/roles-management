@@ -31,8 +31,6 @@ gem 'strong_parameters'
 
 gem 'capistrano', '< 3.0.0'
 
-gem 'ruby-ldap', :require => false
-
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 
 gem 'ejs'
@@ -41,7 +39,6 @@ gem 'ejs'
 gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_authorization.git'
 
 # For MS Active Directory support
-#gem 'net-ldap', :git => 'https://github.com/ruby-ldap/ruby-net-ldap.git', :require => false
 gem 'net-ldap', :require => false
 
 gem 'js-routes', :git => 'https://github.com/railsware/js-routes.git'
@@ -55,9 +52,6 @@ gem 'whenever', :require => false
 # For background processing
 gem 'delayed_job_active_record'
 gem 'daemons'
-
-# For memory usage checks
-gem 'os', :require => false
 
 # Sync script dependencies
 gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'

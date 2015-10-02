@@ -1,28 +1,28 @@
 class LdapHelper
-  require 'ldap'
+  require 'net-ldap'
 
   LDAP_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
 
   # Connects to the LDAP server. Settings are stored in Rails.root/config/ldap.yml (LDAP_SETTINGS)
   def connect(log = nil)
+    server = {
+      :host => 'ldap.ucdavis.edu',
+      :base => 'ou=People,dc=ucdavis,dc=edu',
+      :port => 636,
+      :encryption => :simple_tls,
+      :auth => {
+        :method => :simple,
+        :username => LDAP_SETTINGS['base_dn'],
+        :password => LDAP_SETTINGS['base_pw']
+      }
+    }
+
+    @conn = Net::LDAP.new(server)
+
     begin
-      # Connect to LDAP
-      @conn = LDAP::SSLConn.new( 'ldap.ucdavis.edu', 636 )
-      @conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
-      @conn.bind(dn = LDAP_SETTINGS['base_dn'], password = LDAP_SETTINGS['base_pw'] )
-    rescue LDAP::Error => e
+      @conn.bind
+    rescue Net::LDAP::Error => e
       log.error "LdapHelper could not connect to LDAP. Exception: #{e}" if log
-      return false
-    end
-
-    return true
-  end
-
-  def disconnect
-    begin
-      @conn.unbind
-    rescue LDAP::Error => e
-      log.error "LdapHelper could not disconnect from LDAP. Exception: #{e}" if log
       return false
     end
 
@@ -34,14 +34,15 @@ class LdapHelper
   # Returns false on no results or error, else return is undefined.
   def search(term, log = nil)
     log.debug "LdapHelper searching for '#{term}'" if log
+
     begin
-      @conn.search(LDAP_SETTINGS['search_dn'], LDAP::LDAP_SCOPE_SUBTREE, term) do |result|
-        yield result
-      end
-    rescue RuntimeError => e
-      log.warn "LdapHelper search resulted in exception. Term: '#{term}'. Exception: #{e}" if log
+      results = @conn.search(:filter => Net::LDAP::Filter.construct(term))
+    rescue Net::LDAP::Error => e
+      log.error "LdapHelper hit an error while querying LDAP with term '#{term}'. Exception: #{e}" if log
       return false
     end
+
+    return results
   end
 
   def build_filters(log = nil)

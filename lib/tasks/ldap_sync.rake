@@ -1,16 +1,14 @@
 namespace :ldap do
-  require 'ldap'
   require 'ldap_helper'
   require 'ldap_person_helper'
 
   require 'authentication'
   include Authentication
 
-  desc 'Run the LDAP import'
+  desc 'Import users from LDAP based on filters, or by login ID'
   task :import, [:loginid] => :environment do |t, args|
     begin
       require 'stringio'
-      require 'os'
 
       # If 'loginid' was specified, we're only importing a single login ID,
       # else we import everyone.
@@ -60,11 +58,17 @@ namespace :ldap do
         # Query LDAP
         for filter in filters
           unless filter.length == 0
-            ldap.search(filter, log) do |entry|
-              p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
+            results = ldap.search(filter, log)
+
+            log.debug "LDAP filter(s) search returned #{results.length} results."
+
+            results.each_with_index do |result, i|
+              p = LdapPersonHelper.create_or_update_person_from_ldap(result, log)
               loginids_touched << p.loginid unless p.nil?
 
               num_results += 1
+
+              log.debug "Processed #{i} of #{results.length} results" if (i % 10) == 0
             end
           end
         end
@@ -80,30 +84,34 @@ namespace :ldap do
             Person.where("active = true AND loginid NOT IN (?)", loginids_touched).each do |person|
               p = nil
 
-              ldap.search('(uid=' + person.loginid + ')', log) do |entry|
-                p = LdapPersonHelper.create_or_update_person_from_ldap(entry, log)
-              end
+              results = ldap.search('(uid=' + person.loginid + ')', log)
 
-              unless p
-                log.info "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
-                person.active = false
-                unless person.save
-                  log.error "Could not save person (#{person.loginid}), reason(s):"
-                  log.error "\t#{person.errors.full_messages.join(', ')}"
-                else
-                  ActivityLog.info!("De-activated #{person.name} as they are not in LDAP.", ["person_#{person.id}", 'ldap'])
+              unless results == false
+                if results.length > 0
+                  p = LdapPersonHelper.create_or_update_person_from_ldap(results[0], log)
                 end
+
+                unless p
+                  log.info "Person with login ID '#{person.loginid}' not found in LDAP, disabling ..."
+                  person.active = false
+                  unless person.save
+                    log.error "Could not save person (#{person.loginid}), reason(s):"
+                    log.error "\t#{person.errors.full_messages.join(', ')}"
+                  else
+                    ActivityLog.info!("De-activated #{person.name} as they are not in LDAP.", ["person_#{person.id}", 'ldap'])
+                  end
+                end
+              else
+                log.warn "'#{person.loginid}' was not found during mass LDAP import but could not be looked up individually due to an LDAP error. RM will take no action on this record at this time."
+                next
               end
             end
           end
         end
 
-        # Disconnect
-        ldap.disconnect
-
         timestamp_finish = Time.now
 
-        log.info "Completed LDAP import. Took " + (timestamp_finish - timestamp_start).to_s + "s. Used #{OS.rss_bytes} KB at the end of the task (varies during operation but generally grows)."
+        log.info "Completed LDAP import. Took " + (timestamp_finish - timestamp_start).to_s + "s."
       end
 
       enable_authorization

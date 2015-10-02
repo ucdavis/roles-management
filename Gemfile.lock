@@ -116,7 +116,7 @@ GEM
       phantomjs (>= 1.9)
       railties (>= 3.2.0)
       sprockets-rails
-    jbuilder (2.3.1)
+    jbuilder (2.3.2)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
     journey (1.0.4)
@@ -143,10 +143,9 @@ GEM
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
     nori (2.6.0)
-    os (0.9.6)
     pg (0.18.3)
     phantomjs (1.9.8.0)
-    poltergeist (1.6.0)
+    poltergeist (1.7.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
@@ -177,7 +176,6 @@ GEM
     rake (10.4.2)
     rdoc (3.12.2)
       json (~> 1.4)
-    ruby-ldap (0.9.17)
     sass (3.4.18)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -244,12 +242,10 @@ DEPENDENCIES
   letter_opener
   net-ldap
   newrelic_rpm
-  os
   pg
   poltergeist
   rails (~> 3.2.22)
   roles-management-api!
-  ruby-ldap
   rubycas-client!
   sass-rails (~> 3.2.3)
   sqlite3
