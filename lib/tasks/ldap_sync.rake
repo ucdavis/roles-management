@@ -68,10 +68,12 @@ namespace :ldap do
 
               num_results += 1
 
-              log.debug "Processed #{i} of #{results.length} results" if (i % 10) == 0
+              log.debug "Processed #{i + 1} of #{results.length} results" if (i % 10) == 0
             end
           end
         end
+
+        log.debug "Finished processing #{num_results} of #{results.length} results"
 
         log.debug "No LDAP result(s) were found." unless num_results > 0
 
