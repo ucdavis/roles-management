@@ -46,16 +46,16 @@ class PeopleController < ApplicationController
       entries.each do |entry|
         p = OpenStruct.new
 
-        p.loginid = entry[:uid]
-        p.first = entry[:givenName]
-        p.last = entry[:sn]
-        p.email = entry[:mail]
-        p.phone = entry[:telephoneNumber]
+        p.loginid = entry[:uid][0]
+        p.first = entry[:givenName][0]
+        p.last = entry[:sn][0]
+        p.email = entry[:mail][0]
+        p.phone = entry[:telephoneNumber][0]
         unless p.phone.nil?
           p.phone = p.phone.sub("+1 ", "").gsub(" ", "") # clean up number
         end
-        p.address = entry[:street]
-        p.name = entry[:displayName]
+        p.address = entry[:street][0]
+        p.name = entry[:displayName][0]
         p.imported = Person.exists?(:loginid => p.loginid)
 
         @results << p
