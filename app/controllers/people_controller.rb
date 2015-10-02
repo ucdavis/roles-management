@@ -42,32 +42,27 @@ class PeopleController < ApplicationController
       ldap = LdapHelper.new
       ldap.connect
 
-      # LDAPTODO: Update this to use new return values
-      ldap.search("(|(uid=#{params[:term]}*)(cn=#{params[:term]}*)(sn=#{params[:term]}*))") do |result|
-        if result.get_values('uid')
-          p = OpenStruct.new
+      entries = ldap.search("(|(uid=#{params[:term]}*)(cn=#{params[:term]}*)(sn=#{params[:term]}*))")
+      entries.each do |entry|
+        p = OpenStruct.new
 
-          p.loginid = result.get_values('uid')[0]
-          p.first = result.get_values('givenName')[0]
-          p.last = result.get_values('sn')[0]
-          p.email = result.get_values('mail').to_s[2..-3]
-          p.phone = result.get_values('telephoneNumber').to_s[2..-3]
-          unless p.phone.nil?
-            p.phone = p.phone.sub("+1 ", "").gsub(" ", "") # clean up number
-          end
-          p.address = result.get_values('street').to_s[2..-3]
-          p.name = result.get_values('displayName')[0]
-          p.imported = Person.exists?(:loginid => p.loginid)
-
-          @results << p
+        p.loginid = entry[:uid]
+        p.first = entry[:givenName]
+        p.last = entry[:sn]
+        p.email = entry[:mail]
+        p.phone = entry[:telephoneNumber]
+        unless p.phone.nil?
+          p.phone = p.phone.sub("+1 ", "").gsub(" ", "") # clean up number
         end
-      end
+        p.address = entry[:street]
+        p.name = entry[:displayName]
+        p.imported = Person.exists?(:loginid => p.loginid)
 
-      ldap.disconnect
+        @results << p
+      end
     end
 
     render "people/search"
-    #respond_with @results
   end
 
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
@@ -91,13 +86,11 @@ class PeopleController < ApplicationController
           ldap = LdapHelper.new
           ldap.connect
 
-          ldap.search("(uid=" + params[:loginid] + ")") do |result|
-            @p = LdapPersonHelper.create_or_update_person_from_ldap(result, Rails.logger)
+          results = ldap.search("(uid=" + params[:loginid] + ")")
+
+          if results.length > 0
+            @p = LdapPersonHelper.create_or_update_person_from_ldap(results[0], Rails.logger)
           end
-
-          logger.debug @p.inspect
-
-          ldap.disconnect
 
           ldap_import_finish = Time.now
         end
