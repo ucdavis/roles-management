@@ -3,8 +3,6 @@ module UcdLookups
   DEPT_CODES = {}
   TITLE_CODES = {}
 
-  #MANUAL_INCLUDES = ['aeguyer','millerlm','djmoglen','mebalvin','mckinney','ssantam','tmheath','rnanakul','olichney','sukkim','jpokorny','bgrunewa','rabronst','kbaynes','szneena','pcmundy','wjarrold','julieluu','steichho','chuff','cmachado','alamsyah','schuang','clare186','ladyd252','aheusser','pkubitz','kshap','bbrelles','blmiss','pjdegenn','cdaniels','jyiwang','anschnei','eaisham','ralatif','cwbishop','fddiaz','jinchen','ajkou','sphan127','ndelie','weidner']
-
   DEPT_TRANSLATIONS = {
       'AFRICAN AMERICAN AFRICAN STDS' => 'HISTORY',
       'ASIAN AMERICAN' => 'HISTORY',
@@ -46,10 +44,30 @@ module UcdLookups
 	MAJORS["Sociology"] = "040320"
 	MAJORS["History"] = "040180"
 
+	DEPT_CODES["040000"] = {}
+		DEPT_CODES["040000"]["name"] = "L&S DEANS OFC - ADMIN"
+		DEPT_CODES["040000"]["company"] = "040003"
+		DEPT_CODES["040000"]["manager"] = "irblake"
+
+	DEPT_CODES["040001"] = {}
+		DEPT_CODES["040001"]["name"] = "L&S DEANS - DEVELOPMENT"
+		DEPT_CODES["040001"]["company"] = "040003"
+		DEPT_CODES["040001"]["manager"] = "cmattiso"
+
 	DEPT_CODES["040002"] = {}
 		DEPT_CODES["040002"]["name"] = "L&S DEANS - U/G ED & ADVISING"
 		DEPT_CODES["040002"]["company"] = "040008"
-		DEPT_CODES["040002"]["manager"] = "jsmcclai"
+		DEPT_CODES["040002"]["manager"] = "bfloyd"
+
+	DEPT_CODES["040003"] = {}
+		DEPT_CODES["040003"]["name"] = "L&S DEANS - HACS"
+		DEPT_CODES["040003"]["company"] = "040003"
+		DEPT_CODES["040003"]["manager"] = "irblake"
+
+	DEPT_CODES["040007"] = {}
+		DEPT_CODES["040007"]["name"] = "L&S DEANS - MATH/PAHYS SCIENCES"
+		DEPT_CODES["040007"]["company"] = "040007"
+		DEPT_CODES["040007"]["manager"] = "buzzy"
 
 	DEPT_CODES["040325"] = {}
 		DEPT_CODES["040325"]["name"] = "SOCIAL SCIENCES PROGRAM"
