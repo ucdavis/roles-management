@@ -13,9 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20150721190626) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "activity_log_tag_associations", force: true do |t|
     t.integer "activity_log_id"
     t.integer "activity_log_tag_id"
@@ -44,7 +41,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.string "name"
   end
 
-  add_index "affiliations", ["name"], name: "index_affiliations_on_name", using: :btree
+  add_index "affiliations", ["name"], name: "index_affiliations_on_name"
 
   create_table "api_key_users", force: true do |t|
     t.string   "secret"
@@ -54,7 +51,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "logged_in_at"
   end
 
-  add_index "api_key_users", ["name", "secret"], name: "index_api_key_users_on_name_and_secret", using: :btree
+  add_index "api_key_users", ["name", "secret"], name: "index_api_key_users_on_name_and_secret"
 
   create_table "api_whitelisted_ip_users", force: true do |t|
     t.string   "address"
@@ -64,7 +61,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "logged_in_at"
   end
 
-  add_index "api_whitelisted_ip_users", ["address"], name: "index_api_whitelisted_ip_users_on_address", using: :btree
+  add_index "api_whitelisted_ip_users", ["address"], name: "index_api_whitelisted_ip_users_on_address"
 
   create_table "application_operatorships", force: true do |t|
     t.integer  "application_id"
@@ -74,7 +71,14 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.integer  "parent_id"
   end
 
-  add_index "application_operatorships", ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id", using: :btree
+  add_index "application_operatorships", ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
+
+  create_table "application_ou_assignments", force: true do |t|
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.integer  "application_id"
+    t.integer  "ou_id"
+  end
 
   create_table "application_ou_assignments", :force => true do |t|
     t.datetime "created_at",     :null => false
@@ -93,21 +97,21 @@ ActiveRecord::Schema.define(version: 20150721190626) do
 
   create_table "applications", force: true do |t|
     t.string   "name"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.text     "description"
     t.string   "url"
   end
 
-  add_index "applications", ["name"], name: "index_applications_on_name", using: :btree
+  add_index "applications", ["name"], name: "index_applications_on_name"
 
   create_table "classifications", force: true do |t|
     t.string   "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "classifications", ["name"], name: "index_classifications_on_name", using: :btree
+  add_index "classifications", ["name"], name: "index_classifications_on_name"
 
   create_table "classifications_titles", force: true do |t|
     t.integer "classification_id"
@@ -128,7 +132,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at",             null: false
   end
 
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
 
   create_table "entities", force: true do |t|
     t.string   "type"
@@ -148,10 +152,15 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "logged_in_at"
   end
 
-  add_index "entities", ["id"], name: "index_entities_on_id", using: :btree
-  add_index "entities", ["loginid"], name: "index_entities_on_loginid", using: :btree
-  add_index "entities", ["name"], name: "index_entities_on_name", using: :btree
-  add_index "entities", ["type"], name: "index_entities_on_type", using: :btree
+  add_index "entities", ["id"], name: "index_entities_on_id"
+  add_index "entities", ["loginid"], name: "index_entities_on_loginid"
+  add_index "entities", ["name"], name: "index_entities_on_name"
+  add_index "entities", ["type"], name: "index_entities_on_type"
+
+  create_table "group_group", id: false, force: true do |t|
+    t.integer "group_id"
+    t.integer "subgroup_id"
+  end
 
   create_table "group_group", :id => false, :force => true do |t|
     t.integer "group_id"
@@ -202,6 +211,21 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.integer  "group_id"
   end
 
+  create_table "groups", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "min_size"
+    t.integer  "max_size"
+    t.integer  "head_id"
+    t.integer  "role_id"
+  end
+
+  create_table "groups_people", id: false, force: true do |t|
+    t.integer "group_id"
+    t.integer "person_id"
+  end
+
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.datetime "created_at", :null => false
@@ -223,7 +247,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "majors", ["name"], name: "index_majors_on_name", using: :btree
+  add_index "majors", ["name"], name: "index_majors_on_name"
 
   create_table "organization_entity_associations", force: true do |t|
     t.integer  "organization_id"
@@ -240,8 +264,8 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "organization_managers", ["manager_id"], name: "index_organization_managers_on_manager_id", using: :btree
-  add_index "organization_managers", ["organization_id"], name: "index_organization_managers_on_organization_id", using: :btree
+  add_index "organization_managers", ["manager_id"], name: "index_organization_managers_on_manager_id"
+  add_index "organization_managers", ["organization_id"], name: "index_organization_managers_on_organization_id"
 
   create_table "organization_org_ids", force: true do |t|
     t.integer  "organization_id"
@@ -250,18 +274,18 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "organization_org_ids", ["org_id"], name: "index_organization_org_ids_on_org_id", using: :btree
-  add_index "organization_org_ids", ["organization_id"], name: "index_organization_org_ids_on_organization_id", using: :btree
+  add_index "organization_org_ids", ["org_id"], name: "index_organization_org_ids_on_org_id"
+  add_index "organization_org_ids", ["organization_id"], name: "index_organization_org_ids_on_organization_id"
 
   create_table "organization_parent_ids", force: true do |t|
     t.integer  "organization_id"
-    t.integer  "parent_org_id",   default: 1
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.integer  "parent_org_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "organization_parent_ids", ["organization_id"], name: "index_organization_parent_ids_on_organization_id", using: :btree
-  add_index "organization_parent_ids", ["parent_org_id"], name: "index_organization_parent_ids_on_parent_org_id", using: :btree
+  add_index "organization_parent_ids", ["organization_id"], name: "index_organization_parent_ids_on_organization_id"
+  add_index "organization_parent_ids", ["parent_org_id"], name: "index_organization_parent_ids_on_parent_org_id"
 
   create_table "organizations", force: true do |t|
     t.string   "name"
@@ -270,7 +294,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "organizations", ["dept_code"], name: "index_organizations_on_dept_code", using: :btree
+  add_index "organizations", ["dept_code"], name: "index_organizations_on_dept_code"
 
   create_table "ou_assignments", :force => true do |t|
     t.datetime "created_at", :null => false
@@ -332,13 +356,13 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.integer  "parent_id"
   end
 
-  add_index "role_assignments", ["role_id", "entity_id", "parent_id"], :name => "index_role_assignments_on_role_id_and_entity_id_and_parent_id"
-  add_index "role_assignments", ["role_id", "entity_id"], :name => "index_role_assignments_on_role_id_and_entity_id"
+  add_index "role_assignments", ["role_id", "entity_id", "parent_id"], name: "index_role_assignments_on_role_id_and_entity_id_and_parent_id"
+  add_index "role_assignments", ["role_id", "entity_id"], name: "index_role_assignments_on_role_id_and_entity_id"
 
   create_table "roles", force: true do |t|
     t.string   "token"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "application_id"
     t.string   "name"
     t.string   "description"
@@ -347,7 +371,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.string   "ad_guid"
   end
 
-  add_index "roles", ["id"], name: "index_roles_on_id", using: :btree
+  add_index "roles", ["id"], name: "index_roles_on_id"
 
   create_table "student_levels", force: true do |t|
     t.string   "name"
@@ -367,7 +391,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.string "code"
   end
 
-  add_index "titles", ["code"], name: "index_titles_on_code", using: :btree
+  add_index "titles", ["code"], name: "index_titles_on_code"
 
   create_table "versions", force: true do |t|
     t.integer  "versioned_id"
@@ -379,15 +403,15 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.integer  "number"
     t.integer  "reverted_from"
     t.string   "tag"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "versions", ["created_at"], name: "index_versions_on_created_at", using: :btree
-  add_index "versions", ["number"], name: "index_versions_on_number", using: :btree
-  add_index "versions", ["tag"], name: "index_versions_on_tag", using: :btree
-  add_index "versions", ["user_id", "user_type"], name: "index_versions_on_user_id_and_user_type", using: :btree
-  add_index "versions", ["user_name"], name: "index_versions_on_user_name", using: :btree
-  add_index "versions", ["versioned_id", "versioned_type"], name: "index_versions_on_versioned_id_and_versioned_type", using: :btree
+  add_index "versions", ["created_at"], name: "index_versions_on_created_at"
+  add_index "versions", ["number"], name: "index_versions_on_number"
+  add_index "versions", ["tag"], name: "index_versions_on_tag"
+  add_index "versions", ["user_id", "user_type"], name: "index_versions_on_user_id_and_user_type"
+  add_index "versions", ["user_name"], name: "index_versions_on_user_name"
+  add_index "versions", ["versioned_id", "versioned_type"], name: "index_versions_on_versioned_id_and_versioned_type"
 
 end
