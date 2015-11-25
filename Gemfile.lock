@@ -19,7 +19,7 @@ GIT
 
 GIT
   remote: https://github.com/railsware/js-routes.git
-  revision: 7e914fe8172d409e8f63ea8dbbd6aa0937c01b54
+  revision: 13cb243fe35af561d84b17f8efd8b3da336a126b
   specs:
     js-routes (1.1.2)
       railties (>= 3.2)
@@ -145,7 +145,7 @@ GEM
     nori (2.6.0)
     pg (0.18.4)
     phantomjs (1.9.8.0)
-    poltergeist (1.8.0)
+    poltergeist (1.8.1)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
