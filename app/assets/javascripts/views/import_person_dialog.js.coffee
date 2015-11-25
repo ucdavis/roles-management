@@ -32,7 +32,8 @@ DssRm.Views.ImportPersonDialog = Backbone.View.extend(
     if @results.length
       # Render the result rows
       @results.each (r) =>
-        @$('#results>tbody').append(new DssRm.Views.ImportPersonDialogResult(person: r).render().el)
+        if r.get('loginid') and r.get('email') and r.get('name')
+          @$('#results>tbody').append(new DssRm.Views.ImportPersonDialogResult(person: r).render().el)
     else
       @$('#results>tbody').append(new DssRm.Views.ImportPersonDialogResult(person: null).render().el)
 
