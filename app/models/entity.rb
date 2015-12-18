@@ -21,7 +21,7 @@ class Entity < ActiveRecord::Base
   end
 
   # Retrieve 'rows' number of ActivityLog for this entity, if any
-  def activity(rows = 15)
+  def activity(rows = 25)
     tag = ActivityLogTag.find_by_tag("#{self.class.to_s.downcase}_#{self.id}")
     return nil unless tag
     return tag.activity_logs.order('performed_at DESC').limit(rows)
