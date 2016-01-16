@@ -41,7 +41,7 @@ gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_autho
 # For MS Active Directory support
 gem 'net-ldap', :require => false
 
-gem 'js-routes', '~> 1.2.2'
+gem 'js-routes', '~> 1.1.2' # 1.2.2 has a sprockets < 3.x bug
 
 # For JSON templates
 gem 'jbuilder'
