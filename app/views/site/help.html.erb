@@ -1,0 +1,81 @@
+<div>
+		<h1>Help Manual</h1>
+		<p class="lead">Roles Management</p>
+
+		<div id="contents">
+			<h1>Contents</h1>
+			<ul style="list-style-type: none;">
+				<li><a href="#1">1. Summary</a></li>
+				<li>
+					<a href="#2">2. Sync System</a>
+					<ul>
+						<li><a href="#2a">2a. Automatic activating/de-activating of an individual</a></li>
+            <li><a href="#2b">2b. Common sync scenarios</a></li>
+					</ul>
+				</li>
+				<li><a href="#3">3. Comments? Questions?</a>
+			</ul>
+		</div>
+
+		<a name="1"></a>
+		<h2>1. Summary</h2>
+		<p>
+      Roles Management is a web application authored at UC Davis to provide an interface for creating groups and assigning roles to UCD-affiliated people. Roles Management can formulate groups automatically using rules, provide role information through a REST API, as well as sync role information to Active Directory, Sympa, and other systems via built-in scripting.
+		</p>
+		<p>
+			This manual documents the various features of the application. If you have any questions, please get in touch with the <a href="https://it.dss.ucdavis.edu/">UC Davis DSS IT group</a>.
+		</p>
+
+		<a name="2"></a>
+		<h2>2. Sync System</h2>
+		<p>
+			Roles Management is primarily designed as an interface to create role information for people and groups. As such, it is important to import and export data with it in order to make this information useful.
+		</p>
+
+		<a name="2a"></a>
+		<h3>2a. Automatic activating/de-activating of an individual</h3>
+		<p>
+			Roles Management automatically syncs individuals from ldap.ucdavis.edu by querying for specific UCD department codes. LDAP is considered the primary source of information and has such:
+      <ul>
+        <li>If an individual appears in LDAP, they are added to RM or re-activated</li>
+        <li>If an individual disappears in LDAP, they are de-activated (effectively deleted but can be easily re-activated)</li>
+      </ul>
+		</p>
+    <p>
+      RM responds to changes in the LDAP record by triggering the sync subsystem. RM currently includes the following sync actions:
+      <ul>
+        <li>Role AD path added/removed/changed</li>
+        <li>Person added to role</li>
+        <li>Person removed from role</li>
+        <li>Person added to system</li>
+        <li>Person removed from system</li>
+        <li>Person added to organization</li>
+        <li>Person removed from organization</li>
+      </ul>
+      Note that activating or de-activating a person effectively creates or deletes them and triggers the appropriate "added to role", "removed from system", etc. above.
+    </p>
+
+		<a name="2b"></a>
+		<h3>2b. Common sync scenarios</h3>
+		<p>
+			Below are a few scenarios to better illustrate the information above:
+    </p>
+
+    <h4>Individual active in RM disappears from LDAP</h4>
+    <p>
+      If an active RM individual disappears from LDAP they will be automatically marked as inactive. They will no longer appear as members of any group nor any role. The sync subsystem will attempt to remove them from Active Directory groups and employ any other appropriate triggers.
+    </p>
+
+    <h4>Individual inactive in RM is re-activated manually</h4>
+    <p>
+      If an inactive RM individual is re-activated manually, they will again appear as members of any groups or roles. The sync subsystem will attempt to add them to Active Directory groups and employ any other appropriate triggers. Note that a manually re-activated individual may quickly become de-activated again should they fail to appear in LDAP.
+    </p>
+
+
+		<a name="3"></a>
+		<h2>3. Comments? Questions?</h2>
+		<p>
+			If you have any comments or questions, please get in touch with the <a href="https://it.dss.ucdavis.edu/">UC Davis DSS IT group</a>.
+		</p>
+		<br /><br /><br /> <!-- TODO: Fix the bottom padding/margin using CSS -->
+	</div>

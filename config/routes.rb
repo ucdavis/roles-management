@@ -16,6 +16,7 @@ DSSRM::Application.routes.draw do
   end
 
   get "/welcome" => 'site#welcome', :format => false, :defaults => { :format => 'html' }
+  get "/help" => 'site#help', :format => false, :defaults => { :format => 'html' }
   get "/logout" => 'site#logout'
   get "/access_denied" => 'site#access_denied'
   get "/status" => "site#status"
