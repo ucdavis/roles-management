@@ -18,14 +18,6 @@ GIT
       savon (~> 2.3, >= 2.3.0)
 
 GIT
-  remote: https://github.com/railsware/js-routes.git
-  revision: 5a6502d75b47e73ba999fe794443b847016c8fb3
-  specs:
-    js-routes (1.2.2)
-      railties (>= 3.2)
-      sprockets-rails
-
-GIT
   remote: https://github.com/rubycas/rubycas-client.git
   revision: 195a4b70333029be474b0ac70efdc85bd4288861
   specs:
@@ -120,6 +112,9 @@ GEM
       activesupport (>= 3.0.0, < 5.1)
       multi_json (~> 1.2)
     journey (1.0.4)
+    js-routes (1.2.2)
+      railties (>= 3.2)
+      sprockets-rails
     json (1.8.3)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -238,7 +233,7 @@ DEPENDENCIES
   exception_notification
   jasmine-rails
   jbuilder
-  js-routes!
+  js-routes (~> 1.2.2)
   letter_opener
   net-ldap
   newrelic_rpm

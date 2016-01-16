@@ -41,7 +41,7 @@ gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_autho
 # For MS Active Directory support
 gem 'net-ldap', :require => false
 
-gem 'js-routes', :git => 'https://github.com/railsware/js-routes.git'
+gem 'js-routes', '~> 1.2.2'
 
 # For JSON templates
 gem 'jbuilder'
