@@ -38,7 +38,7 @@ gem 'ejs'
 # Possibly phasing this library out due to bugs / weird issues ...
 gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_authorization.git'
 
-# For MS Active Directory support
+# For LDAP & Active Directory support
 gem 'net-ldap', :require => false
 
 gem 'js-routes', '~> 1.1.2' # 1.2.2 has a sprockets < 3.x bug
