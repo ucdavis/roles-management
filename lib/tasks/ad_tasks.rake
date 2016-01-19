@@ -43,8 +43,10 @@ namespace :ad do
     ad_enabled_roles = Role.where('ad_path is not null')
     puts "Auditing #{ad_enabled_roles.count} AD-enabled roles ..."
 
+    num_out_of_sync_roles = 0
+
     ad_enabled_roles.each do |role|
-      print "Role (#{role.application.name} / #{role.name}) at '#{role.ad_path}' ... "
+      print "#{role.application.name} / #{role.name} -> #{role.ad_path} ... "
       ad_group = ActiveDirectory.get_group(role.ad_path)
 
       unless ad_group.is_a? Net::LDAP::Entry
@@ -58,16 +60,19 @@ namespace :ad do
       if(ad_members - role_members) == []
         print "fully synced.\n"
       else
-        print "not fully synced:\n"
-        puts "\tMissing from RM:"
+        num_out_of_sync_roles = num_out_of_sync_roles + 1
+        print "not fully synced (#{((role_members.length - (role_members - ad_members).length) / role_members.length) * 100}% synced):\n"
+        puts "\tMembers in AD but not RM (should be deleted from AD):"
         (ad_members - role_members).each do |missing|
           puts "\t\t#{missing}"
         end
-        puts "\tMissing from AD:"
+        puts "\tMembers in RM but not AD (should be added to AD):"
         (role_members - ad_members).each do |missing|
           puts "\t\t#{missing}"
         end
       end
     end
+
+    puts "Found #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s) in need of syncing."
   end
 end
