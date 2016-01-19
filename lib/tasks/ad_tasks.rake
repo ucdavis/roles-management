@@ -61,12 +61,24 @@ namespace :ad do
         print "fully synced.\n"
       else
         num_out_of_sync_roles = num_out_of_sync_roles + 1
-        print "not fully synced (#{((role_members.length - (role_members - ad_members).length) / role_members.length) * 100}% synced):\n"
-        puts "\tMembers in AD but not RM (should be deleted from AD):"
+        print "not fully synced:\n"
+        print "\tMembers in AD but not RM ("
+        if ad_members.length > 0
+          print ((ad_members - role_members).length.to_f / ad_members.length.to_f) * 100.0
+        else
+          print "100"
+        end
+        print "% different, should be deleted from AD):\n"
         (ad_members - role_members).each do |missing|
           puts "\t\t#{missing}"
         end
-        puts "\tMembers in RM but not AD (should be added to AD):"
+        print "\tMembers in RM but not AD ("
+        if role_members.length > 0
+          print ((role_members - ad_members).length.to_f / role_members.length.to_f) * 100.0
+        else
+          print "100"
+        end
+        print "% different, should be added to AD):\n"
         (role_members - ad_members).each do |missing|
           puts "\t\t#{missing}"
         end
