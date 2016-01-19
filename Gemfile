@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.0.13'
+gem 'rails', '~> 4.1.14'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.2'
@@ -31,6 +31,8 @@ end
 group :development do
   gem 'letter_opener'
 end
+
+gem 'spring', group: :development
 
 group :development, :test do
   gem 'jasmine-rails' # for JS unit testing
