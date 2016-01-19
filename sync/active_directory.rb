@@ -13,7 +13,6 @@
 
 require 'json'
 require 'yaml'
-require 'roles-management-api'
 
 begin
   @sync_data = JSON.parse(STDIN.read)

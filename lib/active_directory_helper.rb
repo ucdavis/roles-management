@@ -1,3 +1,5 @@
+require 'roles-management-api'
+
 class ActiveDirectoryHelper
   # Adds the SENTINEL_DESCRIPTOR text to an AD group's description field if
   # it is not present.
