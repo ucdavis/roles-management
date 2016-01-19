@@ -164,6 +164,7 @@ class ActiveDirectory
   end
 
   # Returns an array of login IDs for the group's members, if any, if possible
+  # This function purposefully ignores UCD's OU-based members, e.g. DC=ou
   def ActiveDirectory.list_group_members(group)
     unless group.is_a? Net::LDAP::Entry
       group = get_group(group)
@@ -177,7 +178,10 @@ class ActiveDirectory
     members = []
 
     group[:member].each do |member|
-      members << member.match(/CN=([^,]+),/).captures[0]
+      # Ignore DC=ou members
+      if member.scan(/DC=ou/i).length == 0
+        members << member.match(/CN=([^,]+),/).captures[0]
+      end
     end
 
     return members
