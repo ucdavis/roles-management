@@ -53,7 +53,7 @@ gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_autho
 # Considering using this library instead ...
 gem 'cancancan', '~> 1.10'
 
-# For MS Active Directory support
+# For LDAP & Active Directory support
 gem 'net-ldap', :require => false
 
 gem 'js-routes'

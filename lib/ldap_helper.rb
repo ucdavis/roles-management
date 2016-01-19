@@ -9,7 +9,7 @@ class LdapHelper
       :host => 'ldap.ucdavis.edu',
       :base => 'ou=People,dc=ucdavis,dc=edu',
       :port => 636,
-      :encryption => :simple_tls,
+      :encryption => { :method => :simple_tls },
       :auth => {
         :method => :simple,
         :username => LDAP_SETTINGS['base_dn'],
