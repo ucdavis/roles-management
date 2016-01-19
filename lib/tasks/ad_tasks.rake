@@ -3,134 +3,8 @@ require 'yaml'
 require 'net-ldap'
 require 'roles-management-api'
 
-class ActiveDirectory
-  LDAP_ALREADY_EXISTS = 68
-  LDAP_UNWILLING_TO_PERFORM = 53
-
-  @ldap = {}
-
-  def ActiveDirectory.configure(settings)
-    @ldap[:people] = []
-    @ldap[:groups] = []
-
-    settings['people'].each do |entry|
-      server = {
-        :host => entry['host'],
-        :base => entry['base'],
-        :port => 636,
-        :encryption => :simple_tls,
-        :auth => {
-          :method => :simple,
-          :username => entry['user'],
-          :password => entry['pass']
-        }
-      }
-
-      conn = Net::LDAP.new(server)
-      conn.bind
-
-      @ldap[:people] << conn
-    end
-
-    settings['groups'].each do |entry|
-      server = {
-        :host => entry['host'],
-        :base => entry['base'],
-        :port => 636,
-        :encryption => :simple_tls,
-        :auth => {
-          :method => :simple,
-          :username => entry['user'],
-          :password => entry['pass']
-        }
-      }
-
-      conn = Net::LDAP.new(server)
-      conn.bind
-
-      @ldap[:groups] << conn
-    end
-  end
-
-  def ActiveDirectory.get_group(group_name)
-    @ldap[:groups].each do |conn|
-      result = conn.search(:filter => Net::LDAP::Filter.eq("cn", group_name))
-      raise "LDAP error while fetching group #{group_name}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
-
-      if result.length > 0
-        return result[0]
-      end
-    end
-
-    STDERR.puts "Unable to find AD group '#{group_name}'"
-
-    return nil
-  end
-
-  def ActiveDirectory.update_group_description(group, description)
-    unless group.is_a? Net::LDAP::Entry
-      raise "Must pass valid group."
-    end
-
-    @ldap[:groups].each do |conn|
-      if description and description.length > 0
-        result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
-  				[ :replace, 'description', description ]
-  			])
-      else
-        # Setting description to blank means we delete the description attribute
-        result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
-  				[ :delete, 'description' ]
-  			])
-      end
-
-      raise "LDAP error while updating description for #{group[:distinguishedname][0]}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
-
-      # result will be 'true' if user was successfully removed
-      return result
-    end
-
-    STDERR.puts "Unable to update group description (#{group[:distinguishedname][0]})"
-
-    return false
-  end
-end
-
-# Adds the SENTINEL_DESCRIPTOR text to an AD group's description field if
-# it is not present.
-#
-# +group+ is a Net::LDAP::Entry object or a string
-# +application_name+ is an optional string of the application's name, if applicable
-# +role_name+ is an optional string of the role's name, if applicable
-def ensure_sentinel_descriptor_presence(group, application_name = nil, role_name = nil)
-  unless group.is_a? Net::LDAP::Entry
-    group = ActiveDirectory.get_group(group)
-  end
-
-  return false if group.nil?
-
-  g_desc = group[:description][0]
-  g_desc = "" if g_desc.nil?
-
-  if(application_name and role_name)
-    sentinel_txt = "(RM Sync: #{application_name} / #{role_name})"
-  else
-    sentinel_txt = "(RM Sync: Universal)"
-  end
-
-  # Remove the old-style sentinel if it exists
-  if g_desc.index "(RM Sync)"
-    g_desc.slice! "(RM Sync)"
-    g_desc.lstrip!
-  end
-
-  # Ensure the sentinel exists
-  unless g_desc.index sentinel_txt
-    STDOUT.puts "Adding '#{sentinel_txt}' to AD group description."
-    g_desc = "#{sentinel_txt} #{g_desc}"
-    ActiveDirectory.update_group_description(group, g_desc)
-  end
-end
+load "#{Rails.root.join('lib', 'active_directory')}.rb"
+load "#{Rails.root.join('lib', 'active_directory_helper')}.rb"
 
 namespace :ad do
   desc 'Ensure the modern AD sentinel is in use'
@@ -141,7 +15,7 @@ namespace :ad do
 
     # Ensure all roles are up-to-date
     Role.where('ad_path is not null').each do |role|
-      ensure_sentinel_descriptor_presence(role.ad_path, role.application.name, role.name)
+      ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(role.ad_path, role.application.name, role.name)
     end
 
     ous = ["IT", "HR", "CHP", "UCCS", "PHE", "HP", "SSP", "PHE", "RSC", "GEO", "ANT", "CMN", "ECN", "HIS", "LIN", "MSC", "PHI", "POL",
@@ -151,12 +25,49 @@ namespace :ad do
     ous.each do |ou|
       affiliations.each do |affiliation|
         cluster_affiliation_all_group_name = "dss-us-#{ou}-#{affiliation}".downcase
-        ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
+        ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
       end
-      
-      cluster_all_group_name = "dss-us-#{ou}-all".downcase
-      ensure_sentinel_descriptor_presence(cluster_all_group_name)
-    end
 
+      cluster_all_group_name = "dss-us-#{ou}-all".downcase
+      ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_all_group_name)
+    end
+  end
+
+  desc 'Audit AD for membership differences in AD-enabled roles'
+  task :audit_roles => :environment do
+    @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
+
+    ActiveDirectory.configure(@config)
+
+    # Audit each role
+    ad_enabled_roles = Role.where('ad_path is not null')
+    puts "Auditing #{ad_enabled_roles.count} AD-enabled roles ..."
+
+    ad_enabled_roles.each do |role|
+      print "Role (#{role.application.name} / #{role.name}) at '#{role.ad_path}' ... "
+      ad_group = ActiveDirectory.get_group(role.ad_path)
+
+      unless ad_group.is_a? Net::LDAP::Entry
+        print "unknown. Could not retrieve #{role.ad_path} from AD. Skipping ...\n"
+        next
+      end
+
+      ad_members = ActiveDirectory.list_group_members(ad_group)
+      role_members = role.members.map{ |m| m.loginid }
+
+      if(ad_members - role_members) == []
+        print "fully synced.\n"
+      else
+        print "not fully synced:\n"
+        puts "\tMissing from RM:"
+        (ad_members - role_members).each do |missing|
+          puts "\t\t#{missing}"
+        end
+        puts "\tMissing from AD:"
+        (role_members - ad_members).each do |missing|
+          puts "\t\t#{missing}"
+        end
+      end
+    end
   end
 end
