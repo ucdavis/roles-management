@@ -87,4 +87,51 @@ namespace :ad do
 
     puts "Found #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s) in need of syncing."
   end
+
+  desc 'Re-sync roles to AD groups (destructive)'
+  task :resync_roles => :environment do
+    @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
+
+    ActiveDirectory.configure(@config)
+
+    # Check each role
+    ad_enabled_roles = Role.where('ad_path is not null')
+    puts "Checking #{ad_enabled_roles.count} AD-enabled roles for re-syncing ..."
+
+    num_out_of_sync_roles = 0
+
+    ad_enabled_roles.each do |role|
+      print "#{role.application.name} / #{role.name} -> #{role.ad_path} ... "
+      ad_group = ActiveDirectory.get_group(role.ad_path)
+
+      unless ad_group.is_a? Net::LDAP::Entry
+        print "unknown. Could not retrieve #{role.ad_path} from AD. Skipping ...\n"
+        next
+      end
+
+      ad_members = ActiveDirectory.list_group_members(ad_group)
+      role_members = role.members.select{|m| m.active == true}.map{ |m| m.loginid }
+
+      if(ad_members - role_members) == []
+        print "fully synced.\n"
+      else
+        num_out_of_sync_roles = num_out_of_sync_roles + 1
+        print "not fully synced:\n"
+
+        puts "\tMembers in AD but not RM (will be removed from AD)"
+        (ad_members - role_members).each do |missing|
+          puts "\t\t#{missing} ..."
+          ActiveDirectoryHelper.ensure_user_not_in_group(missing, ad_group)
+        end
+
+        puts "\tMembers in RM but not AD (will be added to AD)"
+        (role_members - ad_members).each do |missing|
+          puts "\t\t#{missing} ..."
+          ActiveDirectoryHelper.ensure_user_in_group(missing, ad_group)
+        end
+      end
+    end
+
+    puts "Re-synced #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s)."
+  end
 end
