@@ -2,10 +2,11 @@ class EntitiesController < ApplicationController
   before_filter :new_entity_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_entities
-  respond_to :json
 
   def index
-    respond_with @entities
+    respond_to do |format|
+      format.json { render json: @entities }
+    end
   end
 
   def show
@@ -15,8 +16,8 @@ class EntitiesController < ApplicationController
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity show view for #{params[:id]}."
 
-    respond_with @entity do |format|
-      format.json
+    respond_to do |format|
+      format.json  { render json: @entity }
       format.csv {
         require 'csv'
 
@@ -48,13 +49,13 @@ class EntitiesController < ApplicationController
       end
     end
 
-    #@entity.trigger_sync
-
     if @entity.group?
       @group = @entity
       render "groups/create"
     else
-      respond_with @entity
+      respond_to do |format|
+        format.json { render json: @entity }
+      end
     end
   end
 
@@ -99,6 +100,10 @@ class EntitiesController < ApplicationController
       entity.destroy
 
       render :nothing => true
+    end
+
+    respond_to do |format|
+      format.json { render json: nil }
     end
   end
 

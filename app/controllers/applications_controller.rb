@@ -3,20 +3,21 @@ class ApplicationsController < ApplicationController
   before_filter :new_application_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_applications
-  respond_to :json
 
   def index
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
 
-    respond_with @applications do |format|
+    respond_to do |format|
       format.html
+      format.json { render json: @applications }
     end
   end
 
   def show
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application show view for #{params[:id]}."
 
-    respond_with @application do |format|
+    respond_to do |format|
+      format.json { render json: @application }
       format.csv {
         require 'csv'
 
@@ -47,7 +48,9 @@ class ApplicationsController < ApplicationController
   def new
     @application = Application.new
 
-    respond_with @application
+    respond_to do |format|
+      format.json { render json: @application }
+    end
   end
 
   def create
@@ -57,7 +60,9 @@ class ApplicationsController < ApplicationController
       logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to create new application, #{params[:application]}."
     end
 
-    respond_with @application
+    respond_to do |format|
+      format.json { render json: @application }
+    end
   end
 
   def update
@@ -86,7 +91,9 @@ class ApplicationsController < ApplicationController
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted application, #{params[:application]}."
 
-    respond_with @application
+    respond_to do |format|
+      format.json { render json: @application }
+    end
   end
 
   protected

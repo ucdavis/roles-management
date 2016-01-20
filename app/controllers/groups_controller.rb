@@ -2,14 +2,15 @@ class GroupsController < ApplicationController
   before_filter :new_group_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_groups
-  respond_to :json
 
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
     @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') + '/' + @groups.max_by(&:updated_at).to_s
 
-    render "groups/index"
+    respond_to do |format|
+      format.html { render: "groups/index" }
+    end
   end
 
   def update
@@ -21,22 +22,30 @@ class GroupsController < ApplicationController
       # setting GroupRule.group_id instead of trying Group.rules << GroupRule.
       @group.update_attributes(params[:group].except(:id, :members, :operators, :owners, :rules))
 
-      respond_with @group
+      respond_to do |format|
+        format.json { render json: @group }
+      end
     else
-      respond_with 422
+      respond_to do |format|
+        format.json { render json: @group, status: 422 }
+      end
     end
   end
 
   def show
     @cache_key = "group/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
 
-    render "groups/show"
+    respond_to do |format|
+      format.html { render "groups/show" }
+    end
   end
 
   def destroy
     @group.destroy
 
-    respond_with @group
+    respond_to do |format|
+      format.json { render json: @group }
+    end
   end
 
   protected

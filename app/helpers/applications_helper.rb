@@ -20,7 +20,7 @@ module ApplicationsHelper
   def get_last_updated
     begin
       output = IO.popen('git show --pretty=%cD')
-      return output.read.gsub(/\n/, "") # git show ends with two newline characters
+      return output.readline.gsub(/\n/, "") # git show ends with two newline characters
     rescue Errno::ENOENT => e
       return nil # Command not found, oh well ...
     end

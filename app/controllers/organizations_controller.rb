@@ -1,7 +1,6 @@
 class OrganizationsController < ApplicationController
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_organizations
-  respond_to :json
 
   # GET /organizations.json
   # It's assumed that organizations are never scoped per-user or per-permission. If this
@@ -11,16 +10,22 @@ class OrganizationsController < ApplicationController
 
     if params[:tree]
       Rails.logger.debug "Rendering organization index tree"
-      render "organizations/index_tree"
+      respond_to do |format|
+        format.html { render "organizations/index_tree" }
+      end
     else
       Rails.logger.debug "Rendering organization index (non-tree)"
-      render "organizations/index"
+      respond_to do |format|
+        format.html { render "organizations/index" }
+      end
     end
   end
 
   # GET /organizations/1.json
   def show
-    respond_with @organization
+    respond_to do |format|
+      format.json { render json: @organization }
+    end
   end
 
   private

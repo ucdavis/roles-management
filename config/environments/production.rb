@@ -55,9 +55,6 @@ DSSRM::Application.configure do
   # Don't fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = true
 
-  # Don't forget additional files requiring compilation
-  config.assets.precompile += ['cards.js', 'controllers/applications.js', 'controllers/templates.js', 'site.css', 'bootstrap.css']
-
   # Generate digests for assets URLs
   config.assets.digest = true
 

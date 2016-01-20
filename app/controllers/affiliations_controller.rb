@@ -1,13 +1,14 @@
 class AffiliationsController < ApplicationController
   filter_access_to :all, :attribute_check => true, :load_method => :load_affiliations
-  respond_to :json
 
   def index
-    respond_with @affiliations
+    respond_to do |format|
+      format.json { render json: @affiliations }
+    end
   end
-  
+
   private
-  
+
   def load_affiliations
     if params[:q]
       affiliations_table = Affiliation.arel_table

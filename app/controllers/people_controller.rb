@@ -3,18 +3,21 @@ class PeopleController < ApplicationController
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_people
   filter_access_to [:search, :import], :attribute_check => false
-  respond_to :json
 
   ## RESTful ACTIONS
 
   # Used by the API and various Person-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
-    respond_with @people
+    respond_to do |format|
+      format.json { render json: @people }
+    end
   end
 
   def show
-    respond_with(@person)
+    respond_to do |format|
+      format.json { render json: @person }
+    end
   end
 
   def update
@@ -22,9 +25,13 @@ class PeopleController < ApplicationController
       @person = Person.find(params[:id])
       @person.update_attributes(params[:person].except(:id, :name, :roles))
 
-      respond_with @person
+      respond_to do |format|
+        format.json { render json: @person }
+      end
     else
-      respond_with 422
+      respond_to do |format|
+        format.json { render json: @person, status: 422 }
+      end
     end
   end
 
@@ -62,7 +69,9 @@ class PeopleController < ApplicationController
       end
     end
 
-    render "people/search"
+    respond_to do |format|
+      format.json { render "people/search" }
+    end
   end
 
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
@@ -104,7 +113,9 @@ class PeopleController < ApplicationController
 
           logger.info "Finished LDAP import request. LDAP operations took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
 
-          respond_with @p
+          respond_to do |format|
+            format.json { render json: @p }
+          end
         else
           enable_authorization
 
@@ -116,7 +127,9 @@ class PeopleController < ApplicationController
     else
       logger.error "Invalid request for LDAP person import. Did not specify loginid."
 
-      respond_with 400
+      respond_to do |format|
+        format.json { render json: nil, status: 400 }
+      end
     end
   end
 

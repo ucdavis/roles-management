@@ -1,14 +1,15 @@
 class ClassificationsController < ApplicationController
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_classifications
-  respond_to :json
 
   def index
-    respond_with @classifications
+    respond_to do |format|
+      format.json { render json: @classifications }
+    end
   end
-  
+
   private
-  
+
   def load_classifications
     if params[:q]
       classifications_table = Classification.arel_table

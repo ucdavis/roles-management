@@ -1,13 +1,14 @@
 class TitlesController < ApplicationController
   filter_access_to :all, :attribute_check => true, :load_method => :load_titles
-  respond_to :json
 
   def index
-    respond_with @titles
+    respond_to do |format|
+      format.json { render json: @titles }
+    end
   end
-  
+
   private
-  
+
   def load_titles
     if params[:q]
       titles_table = Title.arel_table

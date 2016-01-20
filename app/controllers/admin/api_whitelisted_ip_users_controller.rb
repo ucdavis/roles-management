@@ -2,10 +2,11 @@ class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
   before_filter :new_api_whitelisted_ip_user_from_params, :only => :create
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_whitelisted_users
-  respond_to :json
 
   def index
-    respond_with @addresses
+    respond_to do |format|
+      format.json { render json: @addresses }
+    end
   end
 
   # POST /admin/api_whitelisted_ips.json
@@ -45,5 +46,4 @@ class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
     def api_whitelisted_ip_user_params
       params.require(:api_whitelisted_ip_user).permit(:address, :reason)
     end
-
 end

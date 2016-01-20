@@ -2,18 +2,20 @@ class RolesController < ApplicationController
   before_filter :load_role, :only => :show
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_roles
-  respond_to :json
 
   # Optionally takes application_id parameter to filter index to only roles from that application
   def index
-    respond_with @roles
+    respond_to do |format|
+      format.json { render json: @roles }
+    end
   end
 
   def show
     @cache_key = "role/" + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
-    respond_with(@role) do |format|
-      format.text
+    respond_to do |format|
+      format.json { render json: @role }
+      format.text { render: @role }
     end
   end
 
@@ -28,7 +30,7 @@ class RolesController < ApplicationController
 
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated role #{@role.id} (#{@role.token})."
 
-        respond_with(@role) do |format|
+        respond_to do |format|
           format.json { render "roles/show", status: :ok }
         end
       else
@@ -37,12 +39,14 @@ class RolesController < ApplicationController
 
         AdminMailer.application_error_occurred("dssit-devs-exceptions@ucdavis.edu", log_message).deliver!
 
-        respond_with(@role) do |format|
+        respond_to do |format|
           format.json { render json: @role.errors, status: :unprocessable_entity }
         end
       end
     else
-      respond_with 422
+      respond_to do |format|
+        format.json { render json: nil, status: 422 }
+      end
     end
   end
 

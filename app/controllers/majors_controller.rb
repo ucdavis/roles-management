@@ -1,13 +1,14 @@
 class MajorsController < ApplicationController
   filter_access_to :all, :attribute_check => true, :load_method => :load_majors
-  respond_to :json
 
   def index
-    respond_with @majors
+    respond_to do |format|
+      format.json { render json: @majors }
+    end
   end
-  
+
   private
-  
+
   def load_majors
     if params[:q]
       majors_table = Major.arel_table

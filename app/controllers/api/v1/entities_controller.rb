@@ -4,14 +4,15 @@ module Api
       filter_access_to :all, :attribute_check => true
       before_filter :load_entity, :only => :show
       filter_access_to :index, :attribute_check => true, :load_method => :load_entities
-      respond_to :json
 
       def index
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
 
         @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).to_s
 
-        render "api/v1/entities/index"
+        respond_to do |format|
+          format.json { render "api/v1/entities/index" }
+        end
       end
 
       def show
@@ -20,13 +21,19 @@ module Api
 
           @cache_key = "api/entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
-          render "api/v1/entities/show"
+          respond_to do |format|
+            format.json { render "api/v1/entities/show" }
+          end
         elsif @entity and @entity.active == false
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id} but entity is disabled. Returning 404." }
-          render :json => "", :status => 404
+          respond_to do |format|
+            render :json => "", :status => 404
+          end
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load entity view (show) for invalid ID #{params[:id]}." }
-          render :text => "Invalid entity ID '#{params[:id]}'.", :status => 404
+          respond_to do |format|
+            render :text => "Invalid entity ID '#{params[:id]}'.", :status => 404
+          end
         end
       end
 

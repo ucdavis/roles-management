@@ -1,10 +1,11 @@
 class Admin::QueuedJobsController < Admin::BaseController
   filter_access_to :all, :attribute_check => true
   filter_access_to :index, :attribute_check => true, :load_method => :load_queued_jobs
-  respond_to :json
 
   def index
-    respond_with @queued_jobs
+    respond_to do |format|
+      format.json { render json: @queued_jobs }
+    end
   end
 
   private
