@@ -2,14 +2,9 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
-if defined?(Bundler)
-  # If you precompile assets before deploying to production, use this line
-  # Bundler.require *Rails.groups(:assets => %w(development test))
-  # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
-
-  Bundler.require(*Rails.groups)
-end
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups)
 
 module DSSRM
   class Application < Rails::Application
@@ -21,10 +16,6 @@ module DSSRM
     # config.autoload_paths += %W(#{config.root}/extras)
     config.autoload_paths += %W(#{config.root}/lib)
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
-    config.autoload_paths += %W(
-      #{config.root}/app/controllers/concerns
-      #{config.root}/app/models/concerns
-    )
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -55,17 +46,10 @@ module DSSRM
     # Enable the asset pipeline
     config.assets.enabled = true
 
-    # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.3'
-
     config.assets.paths << Rails.root.join("app", "assets", "javascripts", "controllers")
     config.assets.paths << Rails.root.join("app", "assets", "templates")
 
-    # config.middleware.swap "Rails::Rack::Logger", "BreakoutLogger",
-    #                                             :silence => ["/status.json"],
-    #                                             :breakout => [
-    #                                               ["\/api\/[a-zA-Z\/]+\.json$", "api.log"],
-    #                                               ["\/roles\/[0-9]+.txt$", "roles_txt.log"]
-    #                                             ]
+    # Do not swallow errors in after_commit/after_rollback callbacks.
+    config.active_record.raise_in_transactional_callbacks = true
   end
 end
