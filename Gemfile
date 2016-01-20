@@ -23,6 +23,7 @@ group :development, :test do
   gem 'poltergeist'   # for PhantomJS-based testing with capybara
   gem 'sqlite3'
   gem 'byebug'        # for Ruby 2.x debugging
+  gem 'test-unit', '~> 3.0'
 end
 
 gem 'exception_notification'
