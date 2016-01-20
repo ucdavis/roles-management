@@ -9,8 +9,10 @@
 				<li>
 					<a href="#2">2. Sync System</a>
 					<ul>
-						<li><a href="#2a">2a. Automatic activating/de-activating of an individual</a></li>
-            <li><a href="#2b">2b. Common sync scenarios</a></li>
+						<li><a href="#2a">2a. LDAP One-Way Sync</a></li>
+						<li><a href="#2b">2b. Automatic activating/de-activating of an individual</a></li>
+						<li><a href="#2c">Active Directory Sync</a></li>
+						<li><a href="#2d">2d. Common sync scenarios</a></li>
 					</ul>
 				</li>
 				<li><a href="#3">3. Comments? Questions?</a>
@@ -20,7 +22,7 @@
 		<a name="1"></a>
 		<h2>1. Summary</h2>
 		<p>
-      Roles Management is a web application authored at UC Davis to provide an interface for creating groups and assigning roles to UCD-affiliated people. Roles Management can formulate groups automatically using rules, provide role information through a REST API, as well as sync role information to Active Directory, Sympa, and other systems via built-in scripting.
+      Roles Management (referred to often in this document as 'RM') is a web application authored at UC Davis to provide an interface for creating groups and assigning roles to UCD-affiliated people. Roles Management can formulate groups automatically using rules, provide role information through a REST API, as well as sync role information to Active Directory, Sympa, and other systems via built-in scripting.
 		</p>
 		<p>
 			This manual documents the various features of the application. If you have any questions, please get in touch with the <a href="https://it.dss.ucdavis.edu/">UC Davis DSS IT group</a>.
@@ -29,11 +31,17 @@
 		<a name="2"></a>
 		<h2>2. Sync System</h2>
 		<p>
-			Roles Management is primarily designed as an interface to create role information for people and groups. As such, it is important to import and export data with it in order to make this information useful.
+			Roles Management ('RM') is primarily designed as an interface to create role information for people and groups. As such, it is important to import and export data with it in order to make this information useful.
 		</p>
 
 		<a name="2a"></a>
-		<h3>2a. Automatic activating/de-activating of an individual</h3>
+		<h3>2a. LDAP One-Way Sync</h3>
+		<p>
+			RM is designed to get most of its information about people, their titles, affiliations, and organizations via LDAP. By default, it pulls from UCD's campus LDAP server, ldap.ucdavis.edu, every 8 hours. The particular start time of the 8 hour cycle is based simply on when the application was last started and is therefore not predictable.
+		</p>
+
+		<a name="2b"></a>
+		<h3>2b. Automatic activating/de-activating of an individual</h3>
 		<p>
 			Roles Management automatically syncs individuals from ldap.ucdavis.edu by querying for specific UCD department codes. LDAP is considered the primary source of information and has such:
       <ul>
@@ -55,8 +63,17 @@
       Note that activating or de-activating a person effectively creates or deletes them and triggers the appropriate "added to role", "removed from system", etc. above.
     </p>
 
-		<a name="2b"></a>
-		<h3>2b. Common sync scenarios</h3>
+		<a name="2c"></a>
+		<h3>2c. Active Directory Sync</h3>
+		<p>
+			Microsoft(tm) Active Directory is an immensely popular LDAP implementation used to administer networks of tens of thousands of computers and as such, is of prime interest to RM.
+		</p>
+		<p>
+			Individual application roles can be given an AD Path which will be used to sync whatever changes occur to that role. Upon first setting the AD path, <b>RM will perform a two-way, one-time sync</b> with that role to ensure any members mentioned in RM are listed in AD, and that any members listed in AD are mentioned in RM. <b>After that, all AD syncs are one-way coming from RM, destroying any changes made in AD.</b> The purpose of this design is to encourage the use of RM with any role-attached AD groups.
+		</p>
+
+		<a name="2d"></a>
+		<h3>2d. Common sync scenarios</h3>
 		<p>
 			Below are a few scenarios to better illustrate the information above:
     </p>
