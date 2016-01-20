@@ -1,10 +1,10 @@
 class LdapHelper
   require 'net-ldap'
 
-  LDAP_SETTINGS = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
-
-  # Connects to the LDAP server. Settings are stored in Rails.root/config/ldap.yml (LDAP_SETTINGS)
+  # Connects to the LDAP server. Settings are stored in Rails.root/config/ldap.yml
   def connect(log = nil)
+    ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
+    
     server = {
       :host => 'ldap.ucdavis.edu',
       :base => 'ou=People,dc=ucdavis,dc=edu',
@@ -12,8 +12,8 @@ class LdapHelper
       :encryption => { :method => :simple_tls },
       :auth => {
         :method => :simple,
-        :username => LDAP_SETTINGS['base_dn'],
-        :password => LDAP_SETTINGS['base_pw']
+        :username => ldap_settings['base_dn'],
+        :password => ldap_settings['base_pw']
       }
     }
 
