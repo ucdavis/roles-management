@@ -1,22 +1,14 @@
 # DSS Roles Management
 
-Roles Management (RM) is a people, roles, and application management web
-application developed by the UC Davis Division of Social Science.
+Roles Management (RM) is a web-based management interface for people, roles, and applications, developed by the UC Davis Division of Social Science.
 
 ![Main screen with role selected](http://169.237.101.195/image1.png "Main screen with role selected")
 
-The purpose of DSS RM is to allow anyone with subordinate employees and
-virtual appliances (file servers, mailing lists, web applications) to
-manage and assign their people and groups whatever permissions they wish
-without requiring the help of IT.
+RM is designed to allow anyone with employees or  virtual appliances (file servers, mailing lists, web applications) to manage and assign people and groups whatever permissions they wish without requiring the help of IT.
 
 ## Requirements
 
-RM was written for Ruby 1.9 and Rails 3.2 and is deployed using Unicorn and
-PostgreSQL. It has been tested on Apache and Nginix and should run fine on
-Linux, Mac OS X, and Windows. It has not been tested with Microsoft's
-IronRuby, and as of this writing, IronRuby does not support Ruby 1.9, which
-is a requirement for this application.
+RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, PostgreSQL, and Linux. It should work fine with the Passenger web application server as well.
 
 ## Installation / Deployment
 
@@ -34,8 +26,8 @@ config/ldap.example.yml
 config/active_directory.example.yml
   Move this file to config/active_directory.yml and set the appropriate values.
 
-config/secret_token.example.yml
-	Move this file to config/secret_token.yml and set the value. It is recommended
+config/secrets.example.yml
+	Move this file to config/secrets.yml and set the value. It is recommended
 	you use 'rake secret' to obtain a high quality secret.
 
 config/environment.rb
