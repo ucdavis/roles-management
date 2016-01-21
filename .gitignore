@@ -22,4 +22,5 @@ vendor/bundle/
 vendor/cache/
 .powenv
 .ruby-version
+.byebug_history
 
