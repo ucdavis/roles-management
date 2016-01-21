@@ -15,7 +15,7 @@ class RolesController < ApplicationController
 
     respond_to do |format|
       format.json { render json: @role }
-      format.text { render: @role }
+      format.text { render text: @role }
     end
   end
 
