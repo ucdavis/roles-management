@@ -4,6 +4,8 @@ require 'test_helper'
 class ApplicationsControllerTest < ActionController::TestCase
   setup do
     CASClient::Frameworks::Rails::Filter.fake("casuser")
+
+    Authorization.current_user = Person.find_by_loginid('casuser')
   end
 
   test "valid cas user with no roles should get denied" do
