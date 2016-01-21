@@ -23,7 +23,7 @@ module LdapPersonHelper
       log.debug "Processing LDAP record for #{loginid}" unless log.nil?
 
       # Find or create the Person object
-      p = Person.find_or_initialize_by_loginid(loginid)
+      p = Person.find_or_initialize_by( loginid: loginid )
 
       if p.new_record?
         log.debug "Creating new person record (#{loginid} is not already in our database)." if log
@@ -119,13 +119,13 @@ module LdapPersonHelper
 
     # Update the list of majors if needed and record the major if needed
     unless ucdStudentMajor.nil?
-      major = Major.find_or_create_by_name(ucdStudentMajor)
+      major = Major.find_or_create_by( name: ucdStudentMajor )
       p.major = major
     end
 
     # Update the list of student levels if needed and record the student level if needed
     unless ucdStudentLevel.nil?
-      level = StudentLevel.find_or_create_by_name(ucdStudentLevel)
+      level = StudentLevel.find_or_create_by( name: ucdStudentLevel )
       p.student.level = level
     end
 
@@ -139,7 +139,7 @@ module LdapPersonHelper
     # A person may have multiple affiliations
     entry[:ucdPersonAffiliation].each do |affiliation_name|
       seen_affiliations << affiliation_name
-      affiliation = Affiliation.find_or_create_by_name(affiliation_name)
+      affiliation = Affiliation.find_or_create_by( name: affiliation_name )
       unless p.affiliations.include?(affiliation)
         p.affiliations << affiliation
       end
@@ -167,7 +167,7 @@ module LdapPersonHelper
 
     # Only update the person if a title code was found in LDAP
     unless title_code.blank?
-      title = Title.find_or_create_by_code(title_code)
+      title = Title.find_or_create_by( code: title_code )
 
       # Update the title name if necessary
       if title.name.blank?
@@ -220,7 +220,7 @@ module LdapPersonHelper
 
       if ou
         # Set OU manager to be an owner of their OU
-        ou_manager = Person.find_or_create_by_loginid(ou_manager_name) unless ou_manager_name.blank?
+        ou_manager = Person.find_or_create_by( loginid: ou_manager_name ) unless ou_manager_name.blank?
 
         if ou_manager
           # Ensure this manager is recorded for the Organization
