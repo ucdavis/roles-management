@@ -35,7 +35,7 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     
-    post :create, api_key_user: { name: 'Tester' }, :format => :json
+    post :create, api_whitelisted_ip_user: { name: 'Tester' }, :format => :json
     assert_response :unauthorized
     
     # Ensure authorized non-admin user has no access
@@ -45,13 +45,13 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
     grant_test_user_basic_access
     revoke_test_user_admin_access
     
-    post :create, api_key_user: { name: 'Tester' }, :format => :json
+    post :create, api_whitelisted_ip_user: { name: 'Tester' }, :format => :json
     assert_response :forbidden
     
     # Ensure authorized admin users have access
     grant_test_user_admin_access
   
-    post :create, api_key_user: { name: 'Tester' }, :format => :json
+    post :create, api_whitelisted_ip_user: { name: 'Tester' }, :format => :json
     assert_response :created
   end
   
