@@ -6,6 +6,8 @@ class PeopleControllerTest < ActionController::TestCase
     CASClient::Frameworks::Rails::Filter.fake("casuser")
 
     @person = entities(:casuser)
+
+    Authorization.current_user = @person
   end
 
   # loginid required for: impersonate dialog, group rule "loginid is"
@@ -52,6 +54,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "un-assigning a role touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     r = Role.first
 
@@ -74,6 +78,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "creating a favorite touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     favorite_person = Person.find_by_loginid('casuser')
 
@@ -91,6 +97,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "deleting a favorite touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     favorite_person = Person.find_by_loginid('casuser')
 
@@ -111,6 +119,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "gaining a group membership touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     g = entities(:groupWithNothing)
 
@@ -128,6 +138,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "losing a group membership touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     g = entities(:groupWithNothing)
 
@@ -150,6 +162,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "gaining a group operatorship touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     g = entities(:groupWithNothing)
 
@@ -167,6 +181,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "losing a group operatorship touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     g = entities(:groupWithNothing)
 
@@ -189,6 +205,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "gaining a group ownership touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     g = entities(:groupWithNothing)
 
@@ -206,6 +224,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "losing a group ownership touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     g = entities(:groupWithNothing)
 
@@ -228,6 +248,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "gaining an organization touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     o = organizations(:orphaned_org)
 
@@ -245,6 +267,8 @@ class PeopleControllerTest < ActionController::TestCase
   end
 
   test "losing an organization touches the timestamp on the person" do
+    grant_test_user_admin_access
+
     p = Person.find_by_loginid('bob')
     o = organizations(:orphaned_org)
 
