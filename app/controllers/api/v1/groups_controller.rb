@@ -11,12 +11,12 @@ module Api
           @cache_key = "api/groups/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
 
           respond_to do |format|
-            format.html { render "api/v1/groups/show" }
+            format.json { render "api/v1/groups/show" }
           end
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load group view (show) for invalid ID #{params[:id]}." }
           repsond_to do |format|
-            format.text { render :text => "Invalid group ID '#{params[:id]}'.", :status => 404 }
+            format.json { render :text => "Invalid group ID '#{params[:id]}'.", :status => 404 }
           end
         end
       end

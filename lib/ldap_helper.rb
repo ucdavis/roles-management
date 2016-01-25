@@ -3,7 +3,12 @@ class LdapHelper
 
   # Connects to the LDAP server. Settings are stored in Rails.root/config/ldap.yml
   def connect(log = nil)
-    ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
+    begin
+      ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
+    rescue Errno::ENOENT => e
+      STDERR.puts "You need to configure #{Rails.root.join('config', 'ldap.yml')}."
+      return false
+    end
     
     server = {
       :host => 'ldap.ucdavis.edu',

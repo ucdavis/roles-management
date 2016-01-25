@@ -9,7 +9,7 @@ class GroupsController < ApplicationController
     @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') + '/' + @groups.max_by(&:updated_at).to_s
 
     respond_to do |format|
-      format.html { render: "groups/index" }
+      format.json { render json: "groups/index" }
     end
   end
 

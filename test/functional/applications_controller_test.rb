@@ -4,6 +4,8 @@ require 'test_helper'
 class ApplicationsControllerTest < ActionController::TestCase
   setup do
     CASClient::Frameworks::Rails::Filter.fake("casuser")
+
+    Authorization.current_user = Person.find_by_loginid('casuser')
   end
 
   test "valid cas user with no roles should get denied" do
@@ -81,6 +83,8 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "updating a role touches the timestamp on it's application" do
+    grant_test_user_admin_access
+
     a = Application.find_by_id(2)
     application_timestamp = a.updated_at
 
@@ -95,6 +99,8 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "creating a role touches the timestamp on it's application" do
+    grant_test_user_admin_access
+
     a = Application.find_by_id(2)
     application_timestamp = a.updated_at
 
@@ -111,6 +117,8 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "deleting a role touches the timestamp on it's application" do
+    grant_test_user_admin_access
+
     a = Application.find_by_id(2)
 
     r = Role.new
@@ -132,6 +140,8 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "assigning an owner touches the timestamp on the application" do
+    grant_test_user_admin_access
+
     a = Application.find_by_id(2)
     application_timestamp = a.updated_at
 
@@ -146,6 +156,8 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "un-assigning an owner touches the timestamp on the application" do
+    grant_test_user_admin_access
+
     a = Application.find_by_id(2)
     application_timestamp = a.updated_at
 
@@ -164,6 +176,8 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "assigning an operator touches the timestamp on the application" do
+    grant_test_user_admin_access
+
     a = Application.find_by_id(2)
     application_timestamp = a.updated_at
 
@@ -178,6 +192,8 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test "un-assigning an operator touches the timestamp on the application" do
+    grant_test_user_admin_access
+
     a = Application.find_by_id(2)
     application_timestamp = a.updated_at
 

@@ -242,8 +242,7 @@ class EntitiesControllerTest < ActionController::TestCase
 
     @entity = entities(:groupA)
 
-    patch :update, id: @entity, entity: { name: @entity.name, type: @entity.type, description: @entity.description,
-                                          owner_ids: @entity.owner_ids, operator_ids: @entity.operator_ids, memberships_attributes: @entity.memberships_attributes }
+    patch :update, id: @entity, entity: { name: @entity.name, type: @entity.type, description: @entity.description, owner_ids: @entity.owner_ids, operator_ids: @entity.operator_ids, memberships_attributes: @entity.memberships_attributes }
 
     assert_response :success
   end

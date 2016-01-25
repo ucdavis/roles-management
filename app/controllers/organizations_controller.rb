@@ -11,12 +11,12 @@ class OrganizationsController < ApplicationController
     if params[:tree]
       Rails.logger.debug "Rendering organization index tree"
       respond_to do |format|
-        format.html { render "organizations/index_tree" }
+        format.json { render "organizations/index_tree" }
       end
     else
       Rails.logger.debug "Rendering organization index (non-tree)"
       respond_to do |format|
-        format.html { render "organizations/index" }
+        format.json { render "organizations/index" }
       end
     end
   end

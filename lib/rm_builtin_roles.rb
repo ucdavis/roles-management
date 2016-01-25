@@ -12,17 +12,17 @@ module RmBuiltinRoles
 
   # Returns the ID of the internal admin role
   def rm_admin_role_id
-    @rm_admin_role_id ||= rm_roles.find(:first, :conditions => [ "lower(token) = 'admin'" ]).id
+    @rm_admin_role_id ||= rm_roles.where("lower(token) = 'admin'").first.id
   end
 
   # Returns the ID of the internal access role
   def rm_access_role_id
-    @rm_access_role_id ||= rm_roles.find(:first, :conditions => [ "lower(token) = 'access'" ]).id
+    @rm_access_role_id ||= rm_roles.where("lower(token) = 'access'").first.id
   end
   
   # Returns the ID of the internal operate role
   def rm_operate_role_id
-    @rm_operate_role_id ||= rm_roles.find(:first, :conditions => [ "lower(token) = 'operate'" ]).id
+    @rm_operate_role_id ||= rm_roles.where("lower(token) = 'operate'").first.id
   end
 
   # Returns all entities which are listed as administrators of RM

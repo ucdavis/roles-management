@@ -8,8 +8,8 @@ class Admin::OpsControllerTest < ActionController::TestCase
     assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
 
-    get "impersonate", loginid: 'someone'
-    assert_response :redirect
+    get "impersonate", loginid: 'someone', format: :json
+    assert_response 401
 
     # Ensure authorized non-admin user has no access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
@@ -18,13 +18,13 @@ class Admin::OpsControllerTest < ActionController::TestCase
     grant_test_user_basic_access
     revoke_test_user_admin_access
 
-    get "impersonate", loginid: 'someone'
-    assert_response 406
+    get "impersonate", loginid: 'someone', format: :json
+    assert_response 403
 
     # Ensure authorized admin users have access
     grant_test_user_admin_access
 
-    get "impersonate", loginid: 'someone'
+    get "impersonate", loginid: 'someone', format: :json
     assert_response :redirect
   end
 
