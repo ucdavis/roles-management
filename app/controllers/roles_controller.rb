@@ -71,5 +71,4 @@ class RolesController < ApplicationController
       params.require(:role).permit(:name, :token, :description, :ad_path,
                                       {role_assignments_attributes: [:id, :entity_id, :role_id, :_destroy]})
     end
-
 end

@@ -20,20 +20,20 @@ class PeopleController < ApplicationController
     end
   end
 
-  def update
-    if params[:id] and params[:person]
-      @person = Person.find(params[:id])
-      @person.update_attributes(params[:person].except(:id, :name, :roles))
+#   def update
+#     if params[:id] and params[:person]
+#       @person = Person.find(params[:id])
+#       @person.update_attributes(person_params)
 
-      respond_to do |format|
-        format.json { render json: @person }
-      end
-    else
-      respond_to do |format|
-        format.json { render json: @person, status: 422 }
-      end
-    end
-  end
+#       respond_to do |format|
+#         format.json { render json: @person }
+#       end
+#     else
+#       respond_to do |format|
+#         format.json { render json: @person, status: 422 }
+#       end
+#     end
+#   end
 
   ## Non-RESTful ACTIONS
 
@@ -140,22 +140,27 @@ class PeopleController < ApplicationController
 
   private
 
-  def load_person
-    @person = Person.with_permissions_to(:read).find_by_loginid(params[:id])
-    @person = Person.with_permissions_to(:read).find_by_id(params[:id]) unless @person
-  end
-
-  def load_people
-    if params[:q]
-      people_table = Person.arel_table
-      # Only show active people in the search. The group membership token input, for example, uses this method
-      # to query people but it does not show deactivated people. This hides potential members and if they are
-      # added again, it'll throw an error that the membership already exists.
-      @people = Person.with_permissions_to(:read).where(:active => true).where(people_table[:name].matches("%#{params[:q]}%").or(people_table[:loginid].matches("%#{params[:q]}%")).or(people_table[:first].matches("%#{params[:q]}%")).or(people_table[:last].matches("%#{params[:q]}%")))
-
-      @people.map()
-    else
-      @people = Person.with_permissions_to(:read).all
+    def load_person
+        @person = Person.with_permissions_to(:read).find_by_loginid(params[:id])
+        @person = Person.with_permissions_to(:read).find_by_id(params[:id]) unless @person
     end
-  end
+
+    def load_people
+        if params[:q]
+        people_table = Person.arel_table
+        # Only show active people in the search. The group membership token input, for example, uses this method
+        # to query people but it does not show deactivated people. This hides potential members and if they are
+        # added again, it'll throw an error that the membership already exists.
+        @people = Person.with_permissions_to(:read).where(:active => true).where(people_table[:name].matches("%#{params[:q]}%").or(people_table[:loginid].matches("%#{params[:q]}%")).or(people_table[:first].matches("%#{params[:q]}%")).or(people_table[:last].matches("%#{params[:q]}%")))
+
+        @people.map()
+        else
+        @people = Person.with_permissions_to(:read).all
+        end
+    end
+    
+    def person_params
+      #params[:person].except(:id, :name, :roles)
+      params.require(:person).permit(:first, :last, :address, :email)
+    end
 end

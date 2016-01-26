@@ -13,24 +13,24 @@ class GroupsController < ApplicationController
     end
   end
 
-  def update
-    if params[:id] and params[:group]
-      @group = Group.find(params[:id])
+#   def update
+#     if params[:id] and params[:group]
+#       @group = Group.find(params[:id])
 
-      # ActiveResource (for API access) sends us members, operators, etc.
-      # API access will have to rely on other methods for assocating objects with a group, e.g.
-      # setting GroupRule.group_id instead of trying Group.rules << GroupRule.
-      @group.update_attributes(params[:group].except(:id, :members, :operators, :owners, :rules))
+#       # ActiveResource (for API access) sends us members, operators, etc.
+#       # API access will have to rely on other methods for assocating objects with a group, e.g.
+#       # setting GroupRule.group_id instead of trying Group.rules << GroupRule.
+#       @group.update_attributes(group_params)
 
-      respond_to do |format|
-        format.json { render json: @group }
-      end
-    else
-      respond_to do |format|
-        format.json { render json: @group, status: 422 }
-      end
-    end
-  end
+#       respond_to do |format|
+#         format.json { render json: @group }
+#       end
+#     else
+#       respond_to do |format|
+#         format.json { render json: @group, status: 422 }
+#       end
+#     end
+#   end
 
   def show
     @cache_key = "group/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
@@ -50,18 +50,23 @@ class GroupsController < ApplicationController
 
   protected
 
-  def new_group_from_params
-    @group = Group.new(params[:group])
-  end
+    def new_group_from_params
+        @group = Group.new(params[:group])
+    end
 
   private
 
-  def load_groups
-    if params[:q]
-      groups_table = Group.arel_table
-      @groups = Group.with_permissions_to(:read).where(groups_table[:name].matches("%#{params[:q]}%"))
-    else
-      @groups = Group.with_permissions_to(:read).all
+    def load_groups
+      if params[:q]
+        groups_table = Group.arel_table
+        @groups = Group.with_permissions_to(:read).where(groups_table[:name].matches("%#{params[:q]}%"))
+      else
+        @groups = Group.with_permissions_to(:read).all
+      end
     end
-  end
+  
+    def group_params
+      #params[:group].except(:id, :members, :operators, :owners, :rules)
+      params.require(:group).permit(:name)
+    end
 end

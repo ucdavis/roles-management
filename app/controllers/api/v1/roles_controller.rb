@@ -21,8 +21,6 @@ module Api
         if @role
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updating role for #{@role.id}." }
 
-          role_params = params.select {|k,v| ["role_assignments_attributes", "application_id", "description", "name", "token"].include?(k) }
-
           if @role.update_attributes(role_params)
             @role.touch
 
@@ -41,6 +39,11 @@ module Api
       def load_role
         # TODO: add equivalent .with_permissions_to(read:)
         @role = Role.find_by_id(params[:id])
+      end
+      
+      def role_params
+        params.permit(:name, :token, :description, :application_id,
+                                        {role_assignments_attributes: [:role_id, :entity_id, :_destroy]})
       end
     end
   end
