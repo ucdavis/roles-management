@@ -104,6 +104,27 @@ class EntitiesController < ApplicationController
       format.json { render json: nil }
     end
   end
+  
+  def activity
+    entity = Entity.find(params[:id])
+    
+    @activity = entity.activity(8)
+    tag = ActivityLogTag.find_by_tag("#{entity.class.to_s.downcase}_#{entity.id}")
+    if tag
+      logs = tag.activity_logs.order(performed_at: :desc)
+      if logs.length > 0
+        @cache_key = "entity/" + @entity.id.to_s + '/activity/' + logs[0].performed_at.try(:utc).try(:to_s, :number)
+      else
+        @cache_key = nil
+      end
+    else
+      @cache_key = nil
+    end
+
+    respond_to do |format|
+      format.json { render "entities/activity" }
+    end
+  end
 
   protected
 

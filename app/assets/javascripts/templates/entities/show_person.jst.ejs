@@ -1,7 +1,7 @@
 <div class="modal-header">
   <a class="close" data-dismiss="modal">×</a>
-  <h3>name</h3>
-  <h5>byline</h5>
+  <h3>Name</h3>
+  <h5>Byline</h5>
 </div>
 <div class="modal-body">
   <div class="tabbable tabs-left">
@@ -9,6 +9,7 @@
       <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
       <li><a href="#relations" data-toggle="tab">Relations</a></li>
       <li><a href="#roles" data-toggle="tab">Roles</a></li>
+      <li><a href="#activity" data-toggle="tab">Activity</a></li>
     </ul>
     <div class="tab-content">
       <div class="tab-pane fade in active" id="summary">
@@ -39,6 +40,7 @@
           <input type="text" name="address" class="text input-xlarge" />
         </span>
       </div>
+      
       <div class="tab-pane fade" id="relations">
         <label for="favorites">Favorites</label>
         <p>
@@ -64,7 +66,8 @@
         <p>
           <input type="text" name="ou_group_memberships" class="token_input" />
         </p>
-      </div>
+      </div> <!-- #relations -->
+      
       <div class="tab-pane fade" id="roles">
         <div id="role_assignments" />
         
@@ -76,8 +79,25 @@
             <button type="button" class="btn" id="add_role_assignment_application_button">Add</button>
           </div>
         </div>
-      </div>
+      </div> <!-- #roles -->
+      
+      <div class="tab-pane fade" id="activity">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Activity</th><th>Occurred</th>
+              </tr>
+            </thead>
+            <tbody id="activity_log">
+              <tr>
+                <td>Added to system.</td><td>3 days ago</td>
+              </tr>
+            </tbody>
+          </table>
+      </div> <!-- #activity -->
+
     </div>
+    
   </div> <!-- /tabbable -->
 </div>
 <div class="modal-footer" style="text-align: center;">

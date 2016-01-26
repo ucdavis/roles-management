@@ -20,6 +20,7 @@ class DssRm.Views.PersonShow extends Backbone.View
 
     @initializeRelationsTab()
     @initializeRolesTab()
+    @initializeActivityTab()
 
   initializeRelationsTab: ->
     @$("input[name=favorites]").tokenInput Routes.people_path(),
@@ -108,6 +109,25 @@ class DssRm.Views.PersonShow extends Backbone.View
       updater: (item) =>
         @roleAssignmentApplicationSearchResultSelected item, @
       items: 5
+
+  initializeActivityTab: ->
+    $activityTable = @$("tbody#activity_log")
+    $activityTable.empty()
+    
+    $.ajax(
+      url: Routes.entity_path(@model.id) + "/activity"
+      type: 'GET'
+    ).done( (res) =>
+      _.each res.activities, (entry) =>
+        $activityTable.append @renderActivityLogRow(entry)
+    ).fail( (data) ->
+    #   toastr["error"]("An error occurred while fetching the activity logs. Try again later.")
+    )
+  
+  # Renders a single Activity Log row.
+  renderActivityLogRow: (entry) ->
+    $row = $("<tr><td>#{entry.message}</td><td>#{jQuery.timeago(entry.performed_at)}</td></tr>")
+    return $row
 
   resetRolesTab: ->
     $rolesTab = @$("div#role_assignments")

@@ -138,7 +138,7 @@ authorization do
     end
 
     # Allow viewing/searching of individuals
-    has_permission_on :entities, :to => [:index, :show, :read]
+    has_permission_on :entities, :to => [:index, :show, :read, :activity]
 
     has_permission_on :people, :to => :read
     # You can only update your own details
