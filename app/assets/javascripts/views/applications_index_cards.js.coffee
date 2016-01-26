@@ -9,7 +9,7 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
     @$el.html JST["templates/applications/cards"]()
 
     DssRm.applications.on "add", ((o) =>
-      @$('#cards').append(@renderCard(o).el)
+      @render() #$('#cards').append(@renderCard(o).el)
     ), this
     DssRm.applications.on "remove", ((o) =>
       @$('#cards').find(".card#application_" + o.id).remove()
@@ -43,12 +43,14 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
       typeahead.focused = true;
 
   render: ->
-    frag = document.createDocumentFragment()
+    @$('#cards').empty()
+    
+    fragment = document.createDocumentFragment()
 
     DssRm.applications.each (application) =>
-      frag.appendChild @renderCard(application).el
+      fragment.appendChild @renderCard(application).el
 
-    @$('#cards').append frag
+    @$('#cards').append(fragment)
     @
 
   renderCard: (application) ->
@@ -85,6 +87,7 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
     switch id
       when DssRm.Views.ApplicationsIndexCards.FID_CREATE_APPLICATION
         name = label.slice(18) # slice(18) is removing the "Create application " prefix
+        toastr["info"]("Creating application ...")
         DssRm.applications.create
           name: name
           owners: [
@@ -93,6 +96,12 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
             type: "Person"
           ]
         ,
+          success: () ->
+            toastr.remove()
+            toastr["success"]("Application created.")
+          error: () ->
+            toastr.remove()
+            toastr["error"]("Error while creating application. Try again later.")
           wait: true
         return ""
       else
