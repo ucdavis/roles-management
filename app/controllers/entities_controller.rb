@@ -137,7 +137,10 @@ class EntitiesController < ApplicationController
 
     def entity_params
       if params[:entity]
+        # Workaround for deep_munge issues (http://stackoverflow.com/questions/20164354/rails-strong-parameters-with-empty-arrays)
         params[:entity][:favorite_ids] ||= [] if params[:entity].has_key?(:favorite_ids)
+        params[:entity][:owner_ids] ||= [] if params[:entity].has_key?(:owner_ids)
+        params[:entity][:operator_ids] ||= [] if params[:entity].has_key?(:operator_ids)
       end
       params.require(:entity).permit(:name, :type, :description, :first, :last, :address, :email, :loginid,
                                     :phone, :active, {owner_ids: []}, {favorite_ids: []}, {operator_ids: []}, {rules_attributes: [ :id, :column, :condition, :value ]},

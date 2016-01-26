@@ -123,6 +123,10 @@ class ApplicationsController < ApplicationController
     end
 
     def application_params
+      if params[:application]
+        # Workaround for deep_munge issues (http://stackoverflow.com/questions/20164354/rails-strong-parameters-with-empty-arrays)
+        params[:application][:owner_ids] ||= [] if params[:application].has_key?(:owner_ids)
+      end
       params.require(:application).permit(:name, :description, :url,
                                       {roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []} )
     end
