@@ -68,11 +68,6 @@ class ApplicationsController < ApplicationController
   def update
     @application = Application.find(params[:id])
 
-    logger.info "params:"
-    logger.info params
-    logger.info "application_params:"
-    logger.info application_params
-
     respond_to do |format|
       if @application.update_attributes(application_params)
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
@@ -128,7 +123,7 @@ class ApplicationsController < ApplicationController
         params[:application][:owner_ids] ||= [] if params[:application].has_key?(:owner_ids)
       end
       params.require(:application).permit(:name, :description, :url,
-                                      {roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []} )
+                                      {roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []},
+                                      {operatorships_attributes: [:id, :entity_id, :application_id, :_destroy]} )
     end
-
 end
