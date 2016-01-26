@@ -624,13 +624,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.length == 1, "group should have a member"
 
       person = entities(:cthielen)
-      begin
-        person.destroy
-      rescue ActiveRecord::RecordNotDestroyed => invalid
-        require 'pp'
-        pp invalid.record.errors
-        raise ActiveRecord::RecordNotDestroyed
-      end
+      person.destroy
 
       group.reload
 

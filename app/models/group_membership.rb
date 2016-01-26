@@ -35,6 +35,15 @@ class GroupMembership < ActiveRecord::Base
   after_save { |membership| membership.log_changes(:save) }
   after_destroy { |membership| membership.log_changes(:destroy) }
 
+  # Used by the valid case of Person.destroy being called. It is not correct
+  # to destroy a group membership outside of a group (i.e. a person cannot just
+  # destroy a single calculated group membership because they don't want it)
+  # unless it is the case that a person is being destroyed, in which case
+  # their group membership is useless anyway.
+  def self.can_destroy_calculated_group_membership(flag)
+    Thread.current[:destroy_calculated_membership_flag] = flag
+  end
+
   def self.destroying_calculated_group_membership
     begin
       Thread.current[:destroy_calculated_membership_flag] = true

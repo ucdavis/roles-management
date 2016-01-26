@@ -34,11 +34,14 @@ class Person < Entity
   after_save   :recalculate_group_rule_membership
   after_save   :touch_caches_as_needed
 
+  before_destroy :allow_group_membership_destruction, prepend: true
+
   after_create  { |person|
     ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
     Sync.person_added_to_system(Sync.encode(person))
   }
   after_destroy { |person|
+    GroupMembership.can_destroy_calculated_group_membership(false)
     ActivityLog.info!("Deleted person #{person.name}.", ["person_#{person.id}", 'system'])
     Sync.person_removed_from_system(Sync.encode(person))
   }
@@ -203,5 +206,11 @@ class Person < Entity
         self.name = self.loginid
       end
     end
+  end
+
+  def allow_group_membership_destruction
+    # Destroying a person may involve the valid case of destroying
+    # calculated group memberships.
+    GroupMembership.can_destroy_calculated_group_membership(true)
   end
 end
