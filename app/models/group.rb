@@ -18,6 +18,13 @@ class Group < Entity
 
   accepts_nested_attributes_for :rules, :allow_destroy => true
   accepts_nested_attributes_for :memberships, :allow_destroy => true
+  
+  before_destroy :allow_group_membership_destruction, prepend: true
+  after_destroy { |group|
+    GroupMembership.can_destroy_calculated_group_membership(false)
+    ActivityLog.info!("Deleted group #{group.name}.", ['system'])
+  }
+
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
@@ -161,5 +168,13 @@ class Group < Entity
     end
 
     return true
+  end
+  
+  private
+  
+  def allow_group_membership_destruction
+    # Destroying a person may involve the valid case of destroying
+    # calculated group memberships.
+    GroupMembership.can_destroy_calculated_group_membership(true)
   end
 end
