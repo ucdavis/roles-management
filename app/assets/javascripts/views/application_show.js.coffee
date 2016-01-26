@@ -181,10 +181,16 @@ class DssRm.Views.ApplicationShow extends Backbone.View
             focused_entity_id: null
 
         # Delete the application and dismiss the dialog
-        @model.destroy()
-
-        # Dismiss the dialog
-        @$(".modal-header a.close").trigger "click"
+        toastr["info"]("Deleting application ...")
+        @model.destroy
+          success: () ->
+            toastr.remove()
+            toastr["success"]("Application deleted.")
+            # Dismiss the dialog
+            @$(".modal-header a.close").trigger "click"
+          error: () ->
+            toastr.remove()
+            toastr["error"]("Unable to delete application. Try again later.")
 
       # Ensure applications_index is updated
       else
