@@ -124,7 +124,7 @@ class ApplicationsController < ApplicationController
 
     def application_params
       params.require(:application).permit(:name, :description, :url,
-                                      roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy], :owner_ids => [])
+                                      {roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []} )
     end
 
 end

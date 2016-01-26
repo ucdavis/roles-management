@@ -136,8 +136,8 @@ class EntitiesController < ApplicationController
     end
 
     def entity_params
-      params.require(:entity).permit(:name, :type, :description, :owner_ids, :first, :last, :address, :email, :loginid,
-                                    :phone, :active, :owner_ids, :favorite_ids, :operator_ids, {rules_attributes: [ :id, :column, :condition, :value ]},
+      params.require(:entity).permit(:name, :type, :description, :first, :last, :address, :email, :loginid,
+                                    :phone, :active, {owner_ids: []}, {favorite_ids: []}, {operator_ids: []}, {rules_attributes: [ :id, :column, :condition, :value ]},
                                     {memberships_attributes: [:id, :calculated, :entity_id, :_destroy]},
                                     {group_memberships_attributes: []}, {group_ownerships_attributes: []}, {role_assignments_attributes: [ :id, :role_id, :entity_id ]})
     end
