@@ -50,13 +50,12 @@
   -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   color: #333;
-  /*float: none !important;*/
   margin: 15px;
   padding-bottom: 4px;
   padding-left: 8px;
   padding-right: 8px;
   padding-top: 4px;
-  display: inline-block !important;
+  display: inline-block;
   width: 300px;
 
   .card-title {
@@ -133,8 +132,28 @@
         text-decoration: inherit;
         color: #08C;
         text-shadow: inherit;
-        /*cursor: default;*/
       }
     }
+  }
+}
+
+.hide-card {
+  display: none !important;
+}
+
+input#search_applications {
+  margin-bottom: 6px;
+  margin-top: 3px;
+  margin-left: 15px;
+}
+
+span#clear_search_applications {
+  position: relative;
+  left: -2em;
+  display: none;
+  
+  i {
+    opacity: 0.65;
+    cursor: pointer;
   }
 }

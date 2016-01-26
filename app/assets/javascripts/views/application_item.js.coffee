@@ -35,11 +35,14 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     focused_application_id = DssRm.view_state.get 'focused_application_id'
     if focused_application_id
       if focused_application_id is @model.id
-        @$el.css "opacity", "1.0"
+        #@$el.css "opacity", "1.0"
+        @$el.removeClass "hide-card"
       else
-        @$el.css "opacity", "0.4"
+        #@$el.css "opacity", "0.4"
+        @$el.addClass "hide-card"
     else
-      @$el.css "opacity", "1.0"
+      #@$el.css "opacity", "1.0"
+      @$el.removeClass "hide-card"
 
     # Roles area needed?
     if @model.roles.length then @$(".roles").show() else @$(".roles").hide()

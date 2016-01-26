@@ -3,13 +3,13 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
   id: "cards-area"
   className: "span9 disable-text-select"
   events:
-    "click #cards" : "deselectAll"
+    "click #clear_search_applications" : "deselectAll"
 
   initialize: ->
     @$el.html JST["templates/applications/cards"]()
 
     DssRm.applications.on "add", ((o) =>
-      @render() #$('#cards').append(@renderCard(o).el)
+      @render()
     ), this
     DssRm.applications.on "remove", ((o) =>
       @$('#cards').find(".card#application_" + o.id).remove()
@@ -17,6 +17,11 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
 
     @$("#search_applications").on "keyup", (e) =>
       entry = $(e.target).val()
+      # Show/hide input clear 'X'
+      if entry.length > 0
+        @$('#clear_search_applications').show()
+      else
+        @$('#clear_search_applications').hide()
       DssRm.view_state.focusApplicationByTerm entry
 
     @$("#search_applications").typeahead
@@ -110,17 +115,19 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
         # Scroll the view to the application
         $('html, body').animate
           scrollTop: $("div.card#application_#{id}").offset().top
-        , 1000
+        , 500
 
         return label
 
   deselectAll: (e) ->
-    if e.target.id == "cards"
-      DssRm.view_state.set
-        selected_application_id: null
-        selected_role_id: null
-        focused_application_id: null
-        focused_entity_id: null
+    DssRm.view_state.set
+      selected_application_id: null
+      selected_role_id: null
+      focused_application_id: null
+      focused_entity_id: null
+    @$("#search_applications").val("")
+    @$('#clear_search_applications').hide()
+
 
 ,
   # Constants used in this view
