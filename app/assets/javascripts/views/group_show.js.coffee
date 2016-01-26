@@ -208,12 +208,17 @@ class DssRm.Views.GroupShow extends Backbone.View
     bootbox.confirm 'Are you sure you want to delete ' + @model.escape('name') + '?', (result) =>
       @$el.fadeIn()
       if result
-        # delete the group and dismiss the dialog
-        #console.log "Deleting group with CID #{@model.cid}"
-        @model.destroy()
-
-        # dismiss the dialog
-        @$(".modal-header a.close").trigger "click"
+        toastr["info"]("Deleting group ...")
+        # Delete the group
+        @model.destroy
+          success: () ->
+            toastr.remove()
+            toastr["success"]("Group deleted.")
+            # Dismiss the dialog
+            @$(".modal-header a.close").trigger "click"
+          error: () ->
+            toastr.remove()
+            toastr["error"]("Unable to delete group. Try again later.")
 
     false
 
