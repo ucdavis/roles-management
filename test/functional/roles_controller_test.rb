@@ -4,9 +4,10 @@ require 'test_helper'
 class RolesControllerTest < ActionController::TestCase
   # Used by RM UI when clicking on a role
   test "JSON request should include certain attributes" do
+    revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
-
     grant_test_user_admin_access
+    Authorization.current_user = Person.find_by_loginid("casuser")
 
     get :show, :format => :json, :id => '1'
 
@@ -24,6 +25,7 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   test ".txt output should work for a particular role" do
+    revoke_access
     grant_whitelisted_access
 
     get :show, :format => :txt, :id => '1'
@@ -32,6 +34,7 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   test ".txt output should not include inactive users" do
+    revoke_access
     grant_whitelisted_access
 
     inactive_p = entities(:inactivePerson)
@@ -53,9 +56,10 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   test "Role#update should function correctly" do
+    revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
-
     grant_test_user_admin_access
+    Authorization.current_user = Person.find_by_loginid("casuser")
 
     @role = roles(:boring_role)
 
@@ -65,6 +69,11 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   test "assigning an entity to a role touches the timestamp on it's application" do
+    revoke_access
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    grant_test_user_admin_access
+    Authorization.current_user = Person.find_by_loginid("casuser")
+
     r = Role.first
     p = Person.find_by_loginid('bob')
 
@@ -80,6 +89,11 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   test "un-assigning an entity to a role touches the timestamp on it's application" do
+    revoke_access
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    grant_test_user_admin_access
+    Authorization.current_user = Person.find_by_loginid("casuser")
+
     r = Role.first
     p = Person.find_by_loginid('bob')
 
@@ -98,6 +112,11 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   test "assigning an entity to a role touches the timestamp on the role" do
+    revoke_access
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    grant_test_user_admin_access
+    Authorization.current_user = Person.find_by_loginid("casuser")
+
     r = Role.first
     p = Person.find_by_loginid('bob')
 
@@ -113,6 +132,11 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   test "un-assigning an entity to a role touches the timestamp on the role" do
+    revoke_access
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    grant_test_user_admin_access
+    Authorization.current_user = Person.find_by_loginid("casuser")
+
     r = Role.first
     p = Person.find_by_loginid('bob')
 

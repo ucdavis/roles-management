@@ -1,6 +1,4 @@
 class OrganizationManager < ActiveRecord::Base
-  #attr_accessible :manager_id, :organization_id
-
   belongs_to :organization, :touch => true
   belongs_to :manager, :class_name => 'Entity', :touch => true
 

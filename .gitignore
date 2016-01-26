@@ -23,4 +23,5 @@ vendor/cache/
 .powenv
 .ruby-version
 .byebug_history
+.vscode
 

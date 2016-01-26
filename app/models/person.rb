@@ -30,8 +30,6 @@ class Person < Entity
 
   validates :loginid, :presence => true, :uniqueness => true
 
-  #attr_accessible :first, :last, :loginid, :email, :phone, :address, :type, :favorite_ids, :group_memberships_attributes, :group_ownerships_attributes, :group_operatorships_attributes, :role_assignments_attributes, :active
-
   before_save  :set_name_if_blank
   after_save   :recalculate_group_rule_membership
   after_save   :touch_caches_as_needed

@@ -3,8 +3,6 @@ class ActivityLog < ActiveRecord::Base
 
   LOG_LEVELS = { :info => 0, :warn => 1, :err => 2 }
 
-  #attr_accessible :message, :performed_at, :level
-
   validates_presence_of :message, :performed_at
   validates_inclusion_of :level, :in => LOG_LEVELS.values()
 

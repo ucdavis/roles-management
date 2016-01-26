@@ -16,8 +16,6 @@ class Group < Entity
 
   validates_presence_of :name
 
-  #attr_accessible :name, :description, :type, :owner_ids, :operator_ids, :rules_attributes, :memberships_attributes
-
   accepts_nested_attributes_for :rules, :allow_destroy => true
   accepts_nested_attributes_for :memberships, :allow_destroy => true
 

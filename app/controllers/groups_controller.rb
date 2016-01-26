@@ -36,7 +36,7 @@ class GroupsController < ApplicationController
     @cache_key = "group/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
 
     respond_to do |format|
-      format.html { render "groups/show" }
+      format.json { render "groups/show" }
     end
   end
 

@@ -14,8 +14,6 @@ class Organization < ActiveRecord::Base
   validate :no_loops_in_organization_relationship_graph
   before_validation :ensure_dept_code_is_left_padded
 
-  #attr_accessible :dept_code, :name, :parent_organization_id
-
   # Returns all people associated with this organization and all organizations within
   # the children trees. Does _not_ include members of groups associated with any of
   # those organizations by design.

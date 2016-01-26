@@ -76,7 +76,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
   end
 
   test "unauthenticated requests should not be honored" do
-    revoke_api_user_access
+    revoke_access
 
     get :show, :format => :json, :id => 'casuser'
 

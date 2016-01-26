@@ -7,6 +7,8 @@ class EntitiesControllerTest < ActionController::TestCase
 
     @person = entities(:casuser)
     @group = entities(:groupA)
+
+    Authorization.current_user = @person
   end
 
   # Sidebar search needs to show inactive entities
@@ -242,7 +244,7 @@ class EntitiesControllerTest < ActionController::TestCase
 
     @entity = entities(:groupA)
 
-    patch :update, id: @entity, entity: { name: @entity.name, type: @entity.type, description: @entity.description, owner_ids: @entity.owner_ids, operator_ids: @entity.operator_ids, memberships_attributes: @entity.memberships_attributes }
+    patch :update, format: :json, id: @entity, entity: { name: @entity.name, type: @entity.type, description: @entity.description, owner_ids: @entity.owner_ids, operator_ids: @entity.operator_ids, memberships: @entity.memberships }
 
     assert_response :success
   end
