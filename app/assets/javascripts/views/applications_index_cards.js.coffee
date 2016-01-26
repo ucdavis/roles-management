@@ -73,7 +73,7 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
 
       if DssRm.admin_logged_in()
         # Add the option to create a new one with this query
-        entities.push DssRm.Views.ApplicationsIndexCards.FID_CREATE_APPLICATION + "####Create " + query  if exact_match_found is false
+        entities.push DssRm.Views.ApplicationsIndexCards.FID_CREATE_APPLICATION + "####Create application " + query  if exact_match_found is false
 
       process entities
     , 10)
@@ -84,7 +84,7 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
     label = parts[1]
     switch id
       when DssRm.Views.ApplicationsIndexCards.FID_CREATE_APPLICATION
-        name = label.slice(7) # slice(7) is removing the "Create " prefix
+        name = label.slice(18) # slice(18) is removing the "Create application " prefix
         DssRm.applications.create
           name: name
           owners: [
