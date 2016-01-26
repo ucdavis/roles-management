@@ -104,7 +104,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       data:
         q: query
       type: 'GET'
-    ).always (data) ->
+    ).done( (data) ->
       entities = []
       exact_match_found = false
       _.each data, (entity) ->
@@ -120,6 +120,9 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         entities.push DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP + "####1####Create Group " + query
 
       process entities
+    ).fail( (data) ->
+      toastr["error"]("An error occurred while searching people and groups. Try again later.")
+    )
 
   sidebarSearchResultSelected: (item, a, b, c) ->
     parts = item.split("####")
