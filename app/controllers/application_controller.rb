@@ -4,8 +4,6 @@ class ApplicationController < ActionController::Base
   helper :all
   protect_from_forgery
 
-  # TODO: Add Rails 4-style params() to all controllers.
-
   before_filter :authenticate
 
   rescue_from ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved, ActionController::InvalidAuthenticityToken, ActionController::RoutingError do |exception|
