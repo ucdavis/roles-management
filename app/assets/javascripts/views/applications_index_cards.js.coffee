@@ -3,7 +3,8 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
   id: "cards-area"
   className: "span9 disable-text-select"
   events:
-    "click #clear_search_applications" : "deselectAll"
+    "click #clear_search_applications" : "clearSearch"
+    "click #cards"                     : "deselectAll"
 
   initialize: ->
     @$el.html JST["templates/applications/cards"]()
@@ -119,15 +120,18 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
 
         return label
 
-  deselectAll: (e) ->
+  clearSearch: (e) ->
     DssRm.view_state.set
-      selected_application_id: null
-      selected_role_id: null
       focused_application_id: null
       focused_entity_id: null
     @$("#search_applications").val("")
     @$('#clear_search_applications').hide()
 
+  deselectAll: (e) ->
+    if e.target.id == "cards"
+      DssRm.view_state.set
+        selected_application_id: null
+        selected_role_id: null
 
 ,
   # Constants used in this view
