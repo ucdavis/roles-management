@@ -98,8 +98,6 @@ class EntitiesController < ApplicationController
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted entity, #{entity}."
 
       entity.destroy
-
-      render :nothing => true
     end
 
     respond_to do |format|
