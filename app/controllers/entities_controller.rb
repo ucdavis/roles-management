@@ -136,9 +136,12 @@ class EntitiesController < ApplicationController
     end
 
     def entity_params
+      if params[:entity]
+        params[:entity][:favorite_ids] ||= [] if params[:entity].has_key?(:favorite_ids)
+      end
       params.require(:entity).permit(:name, :type, :description, :first, :last, :address, :email, :loginid,
                                     :phone, :active, {owner_ids: []}, {favorite_ids: []}, {operator_ids: []}, {rules_attributes: [ :id, :column, :condition, :value ]},
                                     {memberships_attributes: [:id, :calculated, :entity_id, :_destroy]},
-                                    {group_memberships_attributes: []}, {group_ownerships_attributes: []}, {role_assignments_attributes: [ :id, :role_id, :entity_id ]})
+                                    {group_memberships_attributes: [:id, :calculated, :group_id, :_destroy]}, {group_ownerships_attributes: []}, {role_assignments_attributes: [ :id, :role_id, :entity_id ]})
     end
 end
