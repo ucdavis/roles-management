@@ -144,6 +144,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         ,
           success: (res) ->
             toastr.remove()
+            toastr["success"]("Group created.")
             DssRm.current_user.fetch() # a new GroupOwnership was created by the above
                                        # and will be properly assigned on .fetch()
           error: (res) ->
