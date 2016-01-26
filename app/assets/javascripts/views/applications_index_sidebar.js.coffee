@@ -137,13 +137,20 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         DssRm.router.navigate "import/" + label.slice(14), {trigger: true} # slice(14) is removing the "Import Person " prefix
 
       when DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
-        DssRm.current_user.group_ownerships.create
+        toastr["info"]("Creating group ...")
+        DssRm.current_user.group_ownerships.create(
           name: label.slice(13) # slice(13) is removing the "Create Group " prefix
           type: "Group"
         ,
+          success: (res) ->
+            toastr.remove()
+            DssRm.current_user.fetch() # a new GroupOwnership was created by the above
+                                       # and will be properly assigned on .fetch()
+          error: (res) ->
+            toastr.remove()
+            toastr["error"]("Error while creating group. Try again later.")
           wait: true
-        DssRm.current_user.fetch() # a new GroupOwnership was created by the above
-                                   # and will be properly assigned on .fetch()
+        )
       else
         # Specific entity selected.
 
