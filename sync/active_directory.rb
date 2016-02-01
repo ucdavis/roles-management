@@ -108,9 +108,12 @@ when "remove_from_organization"
 when "role_change"
   @sync_data["role"]["changes"].each do |field, values|
     if field == "ad_path"
+      rm_client = RolesManagementAPI.login(@config['rm_endpoint']['host'], @config['rm_endpoint']['user'], @config['rm_endpoint']['pass'])
+      abort("Could not connect to RM to merge role and AD group") unless rm_client.connected?
+
       if (values[0] == nil) and (values[1] != nil)
         # AD path set for the first time. Merge role and AD group.
-        ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data["role"]["id"], values[1])
+        ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data["role"]["id"], values[1], rm_client)
         ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(values[1], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
       elsif (values[0] != nil) and (values[1] == nil)
         # AD path was set but is now unset. Leave all members but remove sentinel
@@ -121,7 +124,7 @@ when "role_change"
         # merge the second AD path with the role.
         ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(values[0])
 
-        ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data["role"]["id"], values[1])
+        ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data["role"]["id"], values[1], rm_client)
         ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(values[1], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
       end
     end

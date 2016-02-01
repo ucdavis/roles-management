@@ -96,16 +96,13 @@ class ActiveDirectoryHelper
   # Retrieves all members from both the role in RM and the AD group and ensures
   # both have the same members by adding any missing members from one to the other
   # (inclusively).
-  def ActiveDirectoryHelper.merge_role_and_ad_group(role_id, group_name)
+  def ActiveDirectoryHelper.merge_role_and_ad_group(role_id, group_name, rm_client)
     ad_group = ActiveDirectory.get_group(group_name)
 
     unless ad_group.is_a? Net::LDAP::Entry
       abort("Could not retrieve #{group_name}")
     end
 
-    rm_client = RolesManagementAPI.login(@config['rm_endpoint']['host'], @config['rm_endpoint']['user'], @config['rm_endpoint']['pass'])
-
-    abort("Could not connect to RM to merge role and AD group") unless rm_client.connected?
 
     role = rm_client.find_role_by_id(role_id)
 
