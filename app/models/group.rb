@@ -66,7 +66,7 @@ class Group < Entity
 
       recalculate_start = Time.now
 
-      logger.debug "Reassembling group members using rule result cache ..."
+      logger.debug "Re-assembling group members using rule result cache ..."
 
       # Step One: Build groups out of each 'is' rule,
       #           groupping rules of similar type together via OR
