@@ -24,3 +24,4 @@ vendor/cache/
 .ruby-version
 .byebug_history
 .vscode
+.byebug_history
