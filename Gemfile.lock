@@ -70,7 +70,7 @@ GEM
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
-    byebug (8.2.1)
+    byebug (8.2.2)
     cancancan (1.13.1)
     capistrano (2.15.7)
       highline
@@ -156,7 +156,7 @@ GEM
     nori (2.6.0)
     pg (0.18.4)
     phantomjs (2.1.1.0)
-    poltergeist (1.8.1)
+    poltergeist (1.9.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
