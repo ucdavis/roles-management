@@ -1,5 +1,5 @@
 class MajorsController < ApplicationController
-  filter_access_to :all, :attribute_check => true, :load_method => :load_majors
+  before_filter :load_majors, :only => :index
 
   def index
     respond_to do |format|
@@ -12,9 +12,9 @@ class MajorsController < ApplicationController
   def load_majors
     if params[:q]
       majors_table = Major.arel_table
-      @majors = Major.with_permissions_to(:read).where(majors_table[:name].matches("%#{params[:q]}%"))
+      @majors = Major.where(majors_table[:name].matches("%#{params[:q]}%"))
     else
-      @majors = Major.with_permissions_to(:read).all
+      @majors = Major.all
     end
   end
 end

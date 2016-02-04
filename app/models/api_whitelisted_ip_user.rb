@@ -1,6 +1,4 @@
 class ApiWhitelistedIpUser < ActiveRecord::Base
-  using_access_control
-
   def log_identifier
     "Whitelisted(#{address})"
   end

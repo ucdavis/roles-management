@@ -1,10 +1,4 @@
 GIT
-  remote: git@github.com:stffn/declarative_authorization.git
-  revision: 45e91af20eba71b2828c5c84066bcce3ef032e8a
-  specs:
-    declarative_authorization (1.0.0.pre)
-
-GIT
   remote: https://github.com/dssit/roles-management-api.git
   revision: 3a0a0606d2a2e198bec12a3b4d1abd0816c3e3f6
   specs:
@@ -71,7 +65,6 @@ GEM
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
     byebug (8.2.2)
-    cancancan (1.13.1)
     capistrano (2.15.7)
       highline
       net-scp (>= 1.0.0)
@@ -249,13 +242,11 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
-  cancancan (~> 1.10)
   capistrano (< 3.0.0)
   capybara
   coffee-rails (~> 4.1.0)
   daemons
   dalli
-  declarative_authorization!
   delayed_job_active_record
   ejs
   exception_notification

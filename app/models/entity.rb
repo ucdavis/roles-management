@@ -1,6 +1,4 @@
 class Entity < ActiveRecord::Base
-  using_access_control
-
   has_many :organization_entity_associations, :dependent => :destroy
   has_many :organizations, :through => :organization_entity_associations
   # 'favored_by_relationships' exists solely so favorite assignments are removed when an entity is deleted.

@@ -1,7 +1,5 @@
 # Misc. admin operations controller
 class Admin::OpsController < Admin::BaseController
-  filter_access_to :all, :attribute_check => false
-
   # GET /admin/ops/impersonate/[loginid]
   def impersonate
     @person = Person.find_by_loginid(params[:loginid])

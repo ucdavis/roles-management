@@ -4,8 +4,6 @@ require 'sync'
 # e.g. through a group. A group accomplishes this by using the destroying_calculated_role_assignment do ... end
 # block method below.
 class RoleAssignment < ActiveRecord::Base
-  using_access_control
-
   belongs_to :role, :touch => true
   belongs_to :entity, :touch => true
 

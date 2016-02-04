@@ -1,6 +1,5 @@
 class Admin::ActivityLogsController < Admin::BaseController
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_activity_logs
+  before_filter :load_activity_logs, :only => :index
 
   def index
     respond_to do |format|

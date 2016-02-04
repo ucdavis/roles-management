@@ -1,6 +1,5 @@
 class ClassificationsController < ApplicationController
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_classifications
+  before_filter :load_classifications, :only => :index
 
   def index
     respond_to do |format|
@@ -13,9 +12,9 @@ class ClassificationsController < ApplicationController
   def load_classifications
     if params[:q]
       classifications_table = Classification.arel_table
-      @classifications = Classification.with_permissions_to(:read).where(classifications_table[:name].matches("%#{params[:q]}%"))
+      @classifications = Classification.where(classifications_table[:name].matches("%#{params[:q]}%"))
     else
-      @classifications = Classification.with_permissions_to(:read).all
+      @classifications = Classification.all
     end
   end
 end

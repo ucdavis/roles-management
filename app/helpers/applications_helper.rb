@@ -1,7 +1,7 @@
 module ApplicationsHelper
   def cache_key_for_applications
     # Admins share the same application list
-    loginid        = has_role?(:admin) ? 'admin' : 'access-' + current_user.loginid
+    loginid        = 'access-' + current_user.loginid
     count          = Application.count
     max_updated_at = Application.maximum(:updated_at).try(:utc).try(:to_s, :number)
     "#{loginid}/applications/all-#{count}-#{max_updated_at}"

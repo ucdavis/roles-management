@@ -161,11 +161,11 @@ authorization do
     end
     has_permission_on :groups, :to => :create
     # Allow deleting groups they own
-    has_permission_on :entities, :to => :manage do
+    has_permission_on :groups, :to => :manage do
       if_attribute :owners => contains { user }
     end
     # Allow updating groups they operate
-    has_permission_on :entities, :to => :update do
+    has_permission_on :groups, :to => :update do
       if_attribute :operators => contains { user }
     end
     # Enabling this next rule triggers a bug where non-admin group owners

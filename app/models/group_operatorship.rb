@@ -1,6 +1,4 @@
 class GroupOperatorship < ActiveRecord::Base
-  using_access_control
-
   validates_presence_of :group, :entity
   validate :group_cannot_operate_itself
 

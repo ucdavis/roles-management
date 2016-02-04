@@ -1,8 +1,7 @@
 class ApplicationsController < ApplicationController
   before_filter :load_application, :only => :show
   before_filter :new_application_from_params, :only => :create
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_applications
+  before_filter :load_applications, :only => :index
 
   def index
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
@@ -94,7 +93,6 @@ class ApplicationsController < ApplicationController
   protected
 
     def load_application
-      # TODO: add equivalent .with_permissions_to(read:)
       @application = Application.find(params[:id])
     end
 

@@ -1,6 +1,5 @@
 class OrganizationsController < ApplicationController
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_organizations
+  before_filter :load_organizations, :only => :index
 
   # GET /organizations.json
   # It's assumed that organizations are never scoped per-user or per-permission. If this
@@ -35,12 +34,10 @@ class OrganizationsController < ApplicationController
       organizations_table = Organization.arel_table
 
       # Search login IDs in case of an entity-search but looking for person by login ID
-      # TODO: add equivalent .with_permissions_to(read:)
       @organizations = Organization.where(organizations_table[:name].matches("%#{params[:q]}%").or(organizations_table[:dept_code].matches("%#{params[:q]}%")))
 
       logger.debug "Organizations#index searching for '#{params[:q]}'. Found #{@organizations.length} results."
     else
-      # TODO: add equivalent .with_permissions_to(read:)
       @organizations = Organization.all
 
       if params[:tree]

@@ -1,6 +1,4 @@
 class Classification < ActiveRecord::Base
-  using_access_control
-
   has_and_belongs_to_many :titles
 
   validates :name, :presence => true, :uniqueness => true

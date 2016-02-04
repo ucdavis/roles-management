@@ -1,6 +1,4 @@
 class ApplicationOwnership < ActiveRecord::Base
-  using_access_control
-
   belongs_to :application, :touch => true
   belongs_to :entity, :touch => true
   

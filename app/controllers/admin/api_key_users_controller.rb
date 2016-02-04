@@ -1,7 +1,6 @@
 class Admin::ApiKeyUsersController < Admin::BaseController
   before_filter :new_api_key_user_from_params, :only => :create
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_api_keys
+  before_filter :load_api_keys, :only => :index
 
   def index
     respond_to do |format|

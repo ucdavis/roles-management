@@ -26,7 +26,7 @@ module Authentication
 
     # Remove the following line once declarative_authorization is
     # factored out.
-    Authorization.current_user = user
+    #Authorization.current_user = user
   end
 
   # To be called from the outside in order to impersonate someone
@@ -69,11 +69,11 @@ module Authentication
 
   # Wrapper methods to abstract CanCan, declarative_authorization
   def disable_authorization
-    Authorization.ignore_access_control(true)
+    #Authorization.ignore_access_control(true)
   end
 
   def enable_authorization
-    Authorization.ignore_access_control(false)
+    #Authorization.ignore_access_control(false)
   end
 
   # Wrapper for disable_authorization -> block -> enable_authorization as
@@ -116,10 +116,10 @@ module Authentication
       session[:auth_via] = :whitelisted_ip
       Authentication.actual_user = @whitelisted_user
 
-      without_authorization do
+      #without_authorization do
         @whitelisted_user.logged_in_at = DateTime.now()
         @whitelisted_user.save
-      end
+      #end
 
       return
     end
@@ -132,11 +132,11 @@ module Authentication
         logger.info "API authenticated via application key"
         session[:user_id] = name
         session[:auth_via] = :api_key
-        Authentication.actual_user = @api_user
-        Authorization.ignore_access_control(true)
+        #Authentication.actual_user = @api_user
+        #Authorization.ignore_access_control(true)
         @api_user.logged_in_at = DateTime.now()
         @api_user.save
-        Authorization.ignore_access_control(false)
+        #Authorization.ignore_access_control(false)
         return
       end
 
@@ -173,10 +173,10 @@ module Authentication
 
         Authentication.actual_user = @user
 
-        Authorization.ignore_access_control(true)
+        #Authorization.ignore_access_control(true)
         @user.logged_in_at = DateTime.now()
         @user.save
-        Authorization.ignore_access_control(false)
+        #Authorization.ignore_access_control(false)
 
         # They are a valid @user but have no roles, so redirect them to access_denied
         unless @user.role_symbols.length > 0

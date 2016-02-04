@@ -1,7 +1,6 @@
 class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
   before_filter :new_api_whitelisted_ip_user_from_params, :only => :create
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_whitelisted_users
+  before_filter :load_whitelisted_users, :only => :index
 
   def index
     respond_to do |format|

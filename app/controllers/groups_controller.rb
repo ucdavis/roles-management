@@ -1,36 +1,18 @@
 class GroupsController < ApplicationController
   before_filter :new_group_from_params, :only => :create
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_groups
+  before_filter :load_groups, :only => :index
 
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
-    @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') + '/' + @groups.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+    if @groups.count > 0
+      @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') + '/' + @groups.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+    end
 
     respond_to do |format|
-      format.json { render json: "groups/index" }
+      format.json { render "groups/index" }
     end
   end
-
-#   def update
-#     if params[:id] and params[:group]
-#       @group = Group.find(params[:id])
-
-#       # ActiveResource (for API access) sends us members, operators, etc.
-#       # API access will have to rely on other methods for assocating objects with a group, e.g.
-#       # setting GroupRule.group_id instead of trying Group.rules << GroupRule.
-#       @group.update_attributes(group_params)
-
-#       respond_to do |format|
-#         format.json { render json: @group }
-#       end
-#     else
-#       respond_to do |format|
-#         format.json { render json: @group, status: 422 }
-#       end
-#     end
-#   end
 
   def show
     @cache_key = "group/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
@@ -59,14 +41,13 @@ class GroupsController < ApplicationController
     def load_groups
       if params[:q]
         groups_table = Group.arel_table
-        @groups = Group.with_permissions_to(:read).where(groups_table[:name].matches("%#{params[:q]}%"))
+        @groups = Group.where(groups_table[:name].matches("%#{params[:q]}%"))
       else
-        @groups = Group.with_permissions_to(:read).all
+        @groups = Group.all
       end
     end
   
     def group_params
-      #params[:group].except(:id, :members, :operators, :owners, :rules)
       params.require(:group).permit(:name)
     end
 end

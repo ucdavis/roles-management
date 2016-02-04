@@ -1,7 +1,6 @@
 class RolesController < ApplicationController
   before_filter :load_role, :only => :show
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_roles
+  before_filter :load_roles, :only => :index
 
   # Optionally takes application_id parameter to filter index to only roles from that application
   def index
@@ -53,16 +52,13 @@ class RolesController < ApplicationController
   private
 
     def load_role
-      # TODO: add equivalent .with_permissions_to(read:)
       @role = Role.find_by_id(params[:id])
     end
 
     def load_roles
       if params[:application_id]
-        # TODO: add equivalent .with_permissions_to(read:)
         @roles = Role.where(:application_id => params[:application_id])
       else
-        # TODO: add equivalent .with_permissions_to(read:)
         @roles = Role.all
       end
     end

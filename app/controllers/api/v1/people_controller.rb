@@ -2,7 +2,6 @@ module Api
   module V1
     class PeopleController < ApplicationController
       before_filter :load_person, :only => :show
-      filter_access_to :all, :attribute_check => false
 
       def show
         if @person and @person.active
@@ -25,8 +24,8 @@ module Api
       def load_person
         begin
           @params_id = CGI::escapeHTML(params[:id])
-          @person = Person.with_permissions_to(:read).find_by_loginid(@params_id)
-          @person = Person.with_permissions_to(:read).find_by_id(@params_id) unless @person
+          @person = Person.find_by_loginid(@params_id)
+          @person = Person.find_by_id(@params_id) unless @person
         rescue ActiveRecord::RecordNotFound
           # This exception is acceptable. We catch it to avoid triggering the
           # uncaught exceptions handler in ApplicationController.

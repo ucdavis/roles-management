@@ -8,8 +8,6 @@ class Role < ActiveRecord::Base
   # the sync subsystem about.
   SYNC_ROLE_ATTRS = ["ad_path", "token", "name", "description"]
 
-  using_access_control
-
   validates :application_id, :presence => true
   validates :token, :uniqueness => { :scope => :application_id, :message => "token must be unique per application" }
   validate :ad_path_cannot_be_blank_if_present

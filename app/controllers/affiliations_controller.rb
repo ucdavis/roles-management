@@ -1,5 +1,5 @@
 class AffiliationsController < ApplicationController
-  filter_access_to :all, :attribute_check => true, :load_method => :load_affiliations
+  before_filter :load_affiliations, :only => :index
 
   def index
     respond_to do |format|
@@ -12,9 +12,9 @@ class AffiliationsController < ApplicationController
   def load_affiliations
     if params[:q]
       affiliations_table = Affiliation.arel_table
-      @as = Affiliation.with_permissions_to(:read).where(affiliations_table[:name].matches("%#{params[:q]}%"))
+      @as = Affiliation.where(affiliations_table[:name].matches("%#{params[:q]}%"))
     else
-      @as = Affiliation.with_permissions_to(:read).all
+      @as = Affiliation.all
     end
 
     @affiliations = @as.map{ |x| { id: x.id, name: x.name } }

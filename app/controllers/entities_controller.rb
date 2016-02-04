@@ -1,7 +1,6 @@
 class EntitiesController < ApplicationController
   before_filter :new_entity_from_params, :only => :create
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_entities
+  before_filter :load_entities, :only => :index
 
   def index
     respond_to do |format|
@@ -62,13 +61,8 @@ class EntitiesController < ApplicationController
   def update
     # declarative_authorization requires we not use polymorphism *headache*
     if params[:entity][:type] == "Group"
-      # with_permission_to appears to be buggy. It changes the number of
-      # group owners loaded even when permissions appear correct.
-      #@entity = Group.with_permissions_to(:update).find(params[:id])
       @entity = Group.find(params[:id])
     elsif params[:entity][:type] == "Person"
-      # with_permission_to appears to be buggy. See similar comment above.
-      #@entity = Person.with_permissions_to(:update).find(params[:id])
       @entity = Person.find(params[:id])
     end
 
@@ -146,11 +140,11 @@ class EntitiesController < ApplicationController
         entities_table = Entity.arel_table
 
         # Search login IDs in case of an entity-search but looking for person by login ID
-        @entities = Entity.with_permissions_to(:read).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+        @entities = Entity.where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
 
         logger.debug "Entities#index searching for '#{params[:q]}'. Found #{@entities.length} results."
       else
-        @entities = Entity.with_permissions_to(:read).all
+        @entities = Entity.all
       end
     end
 

@@ -2,7 +2,6 @@ module Api
   module V1
     class RolesController < ApplicationController
       before_filter :load_role, :only => [:show, :update]
-      filter_access_to :all, :attribute_check => true
 
       def show
         if @role
@@ -37,7 +36,6 @@ module Api
       private
 
       def load_role
-        # TODO: add equivalent .with_permissions_to(read:)
         @role_id = params[:id].to_i # sanitize
         @role = Role.find_by_id(@role_id)
       end

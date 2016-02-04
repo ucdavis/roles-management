@@ -4,7 +4,6 @@ require 'sync'
 # Note that the 'name' field is simply self.first + " " + self.last
 # and is thus read-only. The same does not apply for groups.
 class Person < Entity
-  using_access_control
   include RmBuiltinRoles
 
   has_many :affiliation_assignments, :dependent => :destroy

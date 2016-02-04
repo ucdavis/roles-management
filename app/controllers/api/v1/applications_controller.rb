@@ -2,8 +2,7 @@ module Api
   module V1
     class ApplicationsController < ApplicationController
       before_filter :load_application, :only => :show
-      filter_access_to :all, :attribute_check => true
-      filter_access_to :index, :attribute_check => true, :load_method => :load_applications
+      before_filter :load_applications, :only => :index
 
       # GET /applications
       def index
@@ -33,7 +32,6 @@ module Api
       private
 
       def load_application
-        # TODO: add equivalent .with_permissions_to(read:)
         @application_id = params[:id].to_i # sanitize
         @application = Application.find_by_id(@application_id)
       end
@@ -41,9 +39,9 @@ module Api
       def load_applications
         if params[:q]
           apps = Application.arel_table
-          @applications = Application.with_permissions_to(:read).includes(:roles).where(apps[:name].matches("%#{params[:q]}%"))
+          @applications = Application.includes(:roles).where(apps[:name].matches("%#{params[:q]}%"))
         else
-          @applications = Application.with_permissions_to(:read).includes(:roles)
+          @applications = Application.includes(:roles)
         end
       end
     end

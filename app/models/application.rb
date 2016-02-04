@@ -1,6 +1,4 @@
 class Application < ActiveRecord::Base
-  using_access_control
-
   validates :name, :presence => true, :uniqueness => true
 
   has_many :roles, :dependent => :destroy

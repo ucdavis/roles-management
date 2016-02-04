@@ -1,9 +1,8 @@
 module Api
   module V1
     class EntitiesController < ApplicationController
-      filter_access_to :all, :attribute_check => true
       before_filter :load_entity, :only => :show
-      filter_access_to :index, :attribute_check => true, :load_method => :load_entities
+      before_filter :load_entities, :only => :index
 
       def index
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
@@ -41,7 +40,7 @@ module Api
 
       def load_entity
         @entity_id = params[:id].to_i
-        @entity = Entity.with_permissions_to(:read).find_by_id(@entity_id)
+        @entity = Entity.find_by_id(@entity_id)
       end
 
       def load_entities
@@ -49,9 +48,9 @@ module Api
           entities_table = Entity.arel_table
 
           # Search login IDs in case of an entity-search but looking for person by login ID
-          @entities = Entity.with_permissions_to(:read).where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+          @entities = Entity.where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
         else
-          @entities = Entity.with_permissions_to(:read).where(:active => true)#.all
+          @entities = Entity.where(:active => true)#.all
         end
       end
     end

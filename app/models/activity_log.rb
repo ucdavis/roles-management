@@ -1,6 +1,4 @@
 class ActivityLog < ActiveRecord::Base
-  using_access_control
-
   LOG_LEVELS = { :info => 0, :warn => 1, :err => 2 }
 
   validates_presence_of :message, :performed_at

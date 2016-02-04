@@ -1,6 +1,5 @@
 class Admin::QueuedJobsController < Admin::BaseController
-  filter_access_to :all, :attribute_check => true
-  filter_access_to :index, :attribute_check => true, :load_method => :load_queued_jobs
+  before_filter :load_queued_jobs, :only => :index
 
   def index
     respond_to do |format|

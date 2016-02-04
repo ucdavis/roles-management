@@ -1,7 +1,5 @@
 # Group shares many attributes with entity.
 class Group < Entity
-  using_access_control
-
   has_many :memberships, :class_name => "GroupMembership", :dependent => :destroy
   has_many :members, :through => :memberships, :source => :entity
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy

@@ -2,7 +2,6 @@ module Api
   module V1
     class GroupsController < ApplicationController
       before_filter :load_group, :only => :show
-      filter_access_to :all, :attribute_check => false
 
       def show
         if @group
@@ -26,7 +25,7 @@ module Api
       def load_group
         begin
           @group_id = params[:id].to_i
-          @group = Group.with_permissions_to(:read).find_by_id(@group_id)
+          @group = Group.find_by_id(@group_id)
         rescue ActiveRecord::RecordNotFound
           # This exception is acceptable. We catch it to avoid triggering the
           # uncaught exceptions handler in ApplicationController.
