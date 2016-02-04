@@ -63,7 +63,7 @@ class DssRm.Views.PersonShow extends Backbone.View
         operatorship = @model.group_operatorships.get(item.id)
         operatorship.set('_destroy', true)
 
-    @$("input[name=non_ou_group_memberships]").tokenInput Routes.groups_path(),
+    @$("input[name=group_memberships]").tokenInput Routes.groups_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
@@ -78,7 +78,7 @@ class DssRm.Views.PersonShow extends Backbone.View
         membership = @model.group_memberships.get(item.id)
         membership.set('_destroy', true)
 
-    @$("input[name=ou_group_memberships]").tokenInput Routes.organizations_path(),
+    @$("input[name=organization_associations]").tokenInput Routes.organizations_path(),
       crossDomain: false
       defaultText: ""
       theme: "facebook"
@@ -205,21 +205,21 @@ class DssRm.Views.PersonShow extends Backbone.View
           name: operatorship.get('name')
           readonly: @readonly
 
-    non_ou_group_membership_tokeninput = @$("input[name=non_ou_group_memberships]")
-    non_ou_group_membership_tokeninput.tokenInput "clear"
-    _.each @model.nonOuGroupMemberships(), (membership) =>
+    group_membership_tokeninput = @$("input[name=group_memberships]")
+    group_membership_tokeninput.tokenInput "clear"
+    @model.group_memberships.each (membership) =>
       unless membership.get('_destroy')
-        non_ou_group_membership_tokeninput.tokenInput "add",
+        group_membership_tokeninput.tokenInput "add",
           id: membership.get('id')
           name: membership.get('name')
           readonly: @readonly || membership.get('calculated')
           class: (if membership.get('calculated') then "calculated" else "")
 
-    ou_group_membership_tokeninput = @$("input[name=ou_group_memberships]")
-    ou_group_membership_tokeninput.tokenInput "clear"
+    organization_association_tokeninput = @$("input[name=organization_associations]")
+    organization_association_tokeninput.tokenInput "clear"
     @model.organizations.each (organization) =>
       unless organization.get('_destroy')
-        ou_group_membership_tokeninput.tokenInput "add",
+        organization_association_tokeninput.tokenInput "add",
           id: organization.get('id')
           name: organization.get('name')
           readonly: true #@readonly || membership.get('calculated')

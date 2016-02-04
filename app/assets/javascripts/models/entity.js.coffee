@@ -173,14 +173,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
     @group_memberships.filter( (group) ->
       group.get('calculated') == true
     )
-
-  nonOuGroupMemberships: ->
-    unless @group_memberships
-      return []
-
-    @group_memberships.filter( (group) ->
-      group.get('ou') == false
-    )
 )
 
 DssRm.Collections.Entities = Backbone.Collection.extend(
