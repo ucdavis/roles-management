@@ -8,7 +8,7 @@ module Api
       def index
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
 
-        @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).to_s
+        @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
 
         respond_to do |format|
           format.json { render "api/v1/entities/index" }

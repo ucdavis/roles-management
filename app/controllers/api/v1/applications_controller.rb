@@ -11,7 +11,7 @@ module Api
 
         # API users currently share access to all resources. If this changes, we will need to alter our
         # cache_key to avoid leaking data across accounts via stale caches.
-        @cache_key = "api/application/" + (params[:q] ? params[:q] : '') + '/' + @applications.max_by(&:updated_at).to_s
+        @cache_key = "api/application/" + (params[:q] ? params[:q] : '') + '/' + @applications.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
 
         render "api/v1/applications/index"
       end

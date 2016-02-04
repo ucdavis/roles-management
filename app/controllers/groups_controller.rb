@@ -6,7 +6,7 @@ class GroupsController < ApplicationController
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
-    @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') + '/' + @groups.max_by(&:updated_at).to_s
+    @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') + '/' + @groups.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
 
     respond_to do |format|
       format.json { render json: "groups/index" }
