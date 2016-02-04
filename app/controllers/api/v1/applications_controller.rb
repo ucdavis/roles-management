@@ -25,8 +25,8 @@ module Api
 
           render "api/v1/applications/show"
         else
-          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load application view (show) for invalid ID #{params[:id]}." }
-          render :text => "Invalid application ID '#{params[:id]}'.", :status => 404
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load application view (show) for invalid ID #{@application_id}." }
+          render :text => "Invalid application ID '#{@application_id}'.", :status => 404
         end
       end
 
@@ -34,7 +34,8 @@ module Api
 
       def load_application
         # TODO: add equivalent .with_permissions_to(read:)
-        @application = Application.find_by_id(params[:id])
+        @application_id = params[:id].to_i # sanitize
+        @application = Application.find_by_id(@application_id)
       end
 
       def load_applications

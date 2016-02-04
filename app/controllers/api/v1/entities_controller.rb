@@ -30,9 +30,9 @@ module Api
             format.json { render :json => "", :status => 404 }
           end
         else
-          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load entity view (show) for invalid ID #{params[:id]}." }
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load entity view (show) for invalid ID #{@entity_id}." }
           respond_to do |format|
-            format.text { render :text => "Invalid entity ID '#{params[:id]}'.", :status => 404 }
+            format.text { render :text => "Invalid entity ID '#{@entity_id}'.", :status => 404 }
           end
         end
       end
@@ -40,7 +40,8 @@ module Api
       private
 
       def load_entity
-        @entity = Entity.with_permissions_to(:read).find_by_id(params[:id])
+        @entity_id = params[:id].to_i
+        @entity = Entity.with_permissions_to(:read).find_by_id(@entity_id)
       end
 
       def load_entities

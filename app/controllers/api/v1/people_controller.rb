@@ -15,8 +15,8 @@ module Api
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid} but person is disabled. Returning 404." }
           render :json => "", :status => 404
         else
-          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load person view (show) for invalid ID #{params[:id]}." }
-          render :text => "Invalid person ID '#{params[:id]}'.", :status => 404
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load person view (show) for invalid ID #{@params_id}." }
+          render :text => "Invalid person ID '#{@params_id}'.", :status => 404
         end
       end
 
@@ -24,8 +24,9 @@ module Api
 
       def load_person
         begin
-          @person = Person.with_permissions_to(:read).find_by_loginid(params[:id])
-          @person = Person.with_permissions_to(:read).find_by_id(params[:id]) unless @person
+          @params_id = CGI::escapeHTML(params[:id])
+          @person = Person.with_permissions_to(:read).find_by_loginid(@params_id)
+          @person = Person.with_permissions_to(:read).find_by_id(@params_id) unless @person
         rescue ActiveRecord::RecordNotFound
           # This exception is acceptable. We catch it to avoid triggering the
           # uncaught exceptions handler in ApplicationController.

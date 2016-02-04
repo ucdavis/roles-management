@@ -14,9 +14,9 @@ module Api
             format.json { render "api/v1/groups/show" }
           end
         else
-          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load group view (show) for invalid ID #{params[:id]}." }
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load group view (show) for invalid ID #{@group_id}." }
           repsond_to do |format|
-            format.json { render :text => "Invalid group ID '#{params[:id]}'.", :status => 404 }
+            format.json { render :text => "Invalid group ID '#{@group_id}'.", :status => 404 }
           end
         end
       end
@@ -25,7 +25,8 @@ module Api
 
       def load_group
         begin
-          @group = Group.with_permissions_to(:read).find_by_id(params[:id])
+          @group_id = params[:id].to_i
+          @group = Group.with_permissions_to(:read).find_by_id(@group_id)
         rescue ActiveRecord::RecordNotFound
           # This exception is acceptable. We catch it to avoid triggering the
           # uncaught exceptions handler in ApplicationController.

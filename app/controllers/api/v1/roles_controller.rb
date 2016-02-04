@@ -1,7 +1,7 @@
 module Api
   module V1
     class RolesController < ApplicationController
-      before_filter :load_role, :only => :show
+      before_filter :load_role, :only => [:show, :update]
       filter_access_to :all, :attribute_check => true
 
       def show
@@ -12,8 +12,8 @@ module Api
 
           render "api/v1/roles/show"
         else
-          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load role view (show) for invalid ID #{params[:id]}." }
-          render :text => "Invalid role ID '#{params[:id]}'.", :status => 404
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load role view (show) for invalid ID #{@role_id}." }
+          render :text => "Invalid role ID '#{@role_id}'.", :status => 404
         end
       end
 
@@ -26,11 +26,11 @@ module Api
 
             render json: {}, status: 200
           else
-            render :text => "Found role but could not update for ID '#{params[:id]}'.", :status => 500
+            render :text => "Found role but could not update for ID '#{@role_id}'.", :status => 500
           end
         else
-          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to update role for invalid ID #{params[:id]}." }
-          render :text => "Invalid role ID '#{params[:id]}'.", :status => 404
+          logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to update role for invalid ID #{@role_id}." }
+          render :text => "Invalid role ID '#{@role_id}'.", :status => 404
         end
       end
 
@@ -38,7 +38,8 @@ module Api
 
       def load_role
         # TODO: add equivalent .with_permissions_to(read:)
-        @role = Role.find_by_id(params[:id])
+        @role_id = params[:id].to_i # sanitize
+        @role = Role.find_by_id(@role_id)
       end
       
       def role_params
