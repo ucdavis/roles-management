@@ -107,7 +107,7 @@ class EntitiesController < ApplicationController
     if tag
       logs = tag.activity_logs.order(performed_at: :desc)
       if logs.length > 0
-        @cache_key = "entity/" + @entity.id.to_s + '/activity/' + logs[0].performed_at.try(:utc).try(:to_s, :number)
+        @cache_key = "entity/" + entity.id.to_s + '/activity/' + logs[0].performed_at.try(:utc).try(:to_s, :number)
       else
         @cache_key = nil
       end
