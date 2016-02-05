@@ -4,6 +4,8 @@ class ApplicationsController < ApplicationController
   before_filter :load_applications, :only => :index
 
   def index
+    authorize Application
+    
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
 
     respond_to do |format|
@@ -13,6 +15,8 @@ class ApplicationsController < ApplicationController
   end
 
   def show
+    authorize @application
+    
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application show view for #{params[:id]}."
 
     respond_to do |format|
@@ -45,6 +49,8 @@ class ApplicationsController < ApplicationController
   end
 
   def new
+    authorize Application
+    
     @application = Application.new
 
     respond_to do |format|
@@ -53,6 +59,8 @@ class ApplicationsController < ApplicationController
   end
 
   def create
+    authorize @application
+    
     if @application.save
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new application, #{params[:application]}."
     else
@@ -66,6 +74,8 @@ class ApplicationsController < ApplicationController
 
   def update
     @application = Application.find(params[:id])
+    
+    authorize @application
 
     respond_to do |format|
       if @application.update_attributes(application_params)
@@ -81,6 +91,9 @@ class ApplicationsController < ApplicationController
 
   def destroy
     @application = Application.find(params[:id])
+    
+    authorize @application
+    
     @application.destroy
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted application, #{params[:application]}."

@@ -4,12 +4,16 @@ class RolesController < ApplicationController
 
   # Optionally takes application_id parameter to filter index to only roles from that application
   def index
+    authorize Role
+    
     respond_to do |format|
       format.json { render json: @roles }
     end
   end
 
   def show
+    authorize @role
+    
     @cache_key = "role/" + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
     respond_to do |format|
@@ -19,6 +23,8 @@ class RolesController < ApplicationController
   end
 
   def update
+    authorize @role
+    
     if params[:id] and params[:role]
       if @role.update_attributes(role_params)
         @role.touch

@@ -5,6 +5,8 @@ class GroupsController < ApplicationController
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
+    authorize Group
+    
     if @groups.count > 0
       @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') + '/' + @groups.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
     end
@@ -15,6 +17,8 @@ class GroupsController < ApplicationController
   end
 
   def show
+    authorize @group
+    
     @cache_key = "group/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
 
     respond_to do |format|
@@ -23,6 +27,8 @@ class GroupsController < ApplicationController
   end
 
   def destroy
+    authorize @group
+    
     @group.destroy
 
     respond_to do |format|

@@ -20,14 +20,14 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def permission_denied
-    if session[:auth_via] == :cas
-      # Human-facing error
-      flash[:error] = "Sorry, you are not allowed to access that page."
-      redirect_to access_denied_path
-    else
-      # Machine-facing error
-      render :text => "Permission denied.", :status => 403
+    def permission_denied
+        if session[:auth_via] == :cas
+        # Human-facing error
+        flash[:error] = "Sorry, you are not allowed to access that page."
+        redirect_to access_denied_path
+        else
+        # Machine-facing error
+        render :text => "Permission denied.", :status => 403
+        end
     end
-  end
 end

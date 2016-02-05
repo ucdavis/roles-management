@@ -3,6 +3,8 @@ class EntitiesController < ApplicationController
   before_filter :load_entities, :only => :index
 
   def index
+    authorize Entity
+    
     respond_to do |format|
       format.json { render json: @entities }
     end
@@ -10,6 +12,8 @@ class EntitiesController < ApplicationController
 
   def show
     @entity = Entity.find(params[:id])
+    
+    authorize @entity
 
     @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
@@ -35,6 +39,8 @@ class EntitiesController < ApplicationController
   end
 
   def create
+    authorize @entity
+    
     @entity.save
 
     if params[:entity][:type] == "Group"
@@ -59,6 +65,8 @@ class EntitiesController < ApplicationController
   end
 
   def update
+    authorize @entity
+    
     # declarative_authorization requires we not use polymorphism *headache*
     if params[:entity][:type] == "Group"
       @entity = Group.find(params[:id])
@@ -86,12 +94,14 @@ class EntitiesController < ApplicationController
   end
 
   def destroy
-    entity = Entity.find(params[:id])
+    @entity = Entity.find(params[:id])
+    
+    authorize @entity
 
-    if entity.type == "Group"
+    if @entity.type == "Group"
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted entity, #{entity}."
 
-      entity.destroy
+      @entity.destroy
     end
 
     respond_to do |format|
@@ -100,14 +110,16 @@ class EntitiesController < ApplicationController
   end
   
   def activity
-    entity = Entity.find(params[:id])
+    @entity = Entity.find(params[:id])
     
-    @activity = entity.activity(8)
-    tag = ActivityLogTag.find_by_tag("#{entity.class.to_s.downcase}_#{entity.id}")
+    authorize @entity
+    
+    @activity = @entity.activity(8)
+    tag = ActivityLogTag.find_by_tag("#{@entity.class.to_s.downcase}_#{@entity.id}")
     if tag
       logs = tag.activity_logs.order(performed_at: :desc)
       if logs.length > 0
-        @cache_key = "entity/" + entity.id.to_s + '/activity/' + logs[0].performed_at.try(:utc).try(:to_s, :number)
+        @cache_key = "entity/" + @entity.id.to_s + '/activity/' + logs[0].performed_at.try(:utc).try(:to_s, :number)
       else
         @cache_key = nil
       end
@@ -122,16 +134,16 @@ class EntitiesController < ApplicationController
 
   protected
 
-  def new_entity_from_params
-    # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
-    if params[:entity][:type] == "Group"
-      @entity = Group.new(entity_params)
-    elsif params[:entity][:type] == "Person"
-      @entity = Person.new(entity_params)
-    else
-      @entity = nil
+    def new_entity_from_params
+        # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
+        if params[:entity][:type] == "Group"
+        @entity = Group.new(entity_params)
+        elsif params[:entity][:type] == "Person"
+        @entity = Person.new(entity_params)
+        else
+        @entity = nil
+        end
     end
-  end
 
   private
 

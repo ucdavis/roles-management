@@ -7,6 +7,8 @@ class PeopleController < ApplicationController
   # Used by the API and various Person-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
+    authorize Person
+    
     respond_to do |format|
       format.json { render json: @people }
     end
@@ -68,6 +70,8 @@ class PeopleController < ApplicationController
 
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
+    authorize Person
+    
     if params[:loginid]
       require 'ldap_helper'
       require 'ldap_person_helper'
@@ -147,7 +151,6 @@ class PeopleController < ApplicationController
     end
     
     def person_params
-      #params[:person].except(:id, :name, :roles)
       params.require(:person).permit(:first, :last, :address, :email)
     end
 end

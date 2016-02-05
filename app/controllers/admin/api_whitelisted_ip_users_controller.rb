@@ -3,6 +3,8 @@ class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
   before_filter :load_whitelisted_users, :only => :index
 
   def index
+    authorize ApiWhitelistedIpUser
+  
     respond_to do |format|
       format.json { render json: @addresses }
     end
@@ -10,6 +12,8 @@ class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
 
   # POST /admin/api_whitelisted_ips.json
   def create
+    authorize @api_whitelisted_ip_user
+  
     respond_to do |format|
       if @api_whitelisted_ip_user.save
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new whitelisted IP address, #{params[:api_whitelisted_ip]}."
@@ -23,6 +27,9 @@ class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
   # DELETE /admin/api_whitelisted_ips/1.json
   def destroy
     @address = ApiWhitelistedIpUser.find(params[:id])
+    
+    authorize @address
+    
     @address.destroy
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted whitelisted IP address, #{params[:address]}."
