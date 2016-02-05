@@ -108,6 +108,10 @@ class Person < Entity
     roles.select{ |r| rm_roles_ids.include? r.id }.map{ |r| r.token.underscore.to_sym }.uniq
   end
   
+  def has_access?
+    return role_symbols.include?(:admin) || role_symbols.include?(:access)
+  end
+  
   def is_admin?
     return role_symbols.include?(:admin)
   end
