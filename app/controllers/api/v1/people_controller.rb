@@ -4,6 +4,8 @@ module Api
       before_filter :load_person, :only => :show
 
       def show
+        authorize :api_v1, :use?
+        
         if @person and @person.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid}." }
 
@@ -21,16 +23,17 @@ module Api
 
       private
 
-      def load_person
-        begin
-          @params_id = CGI::escapeHTML(params[:id])
-          @person = Person.find_by_loginid(@params_id)
-          @person = Person.find_by_id(@params_id) unless @person
-        rescue ActiveRecord::RecordNotFound
-          # This exception is acceptable. We catch it to avoid triggering the
-          # uncaught exceptions handler in ApplicationController.
+        def load_person
+            begin
+            @params_id = CGI::escapeHTML(params[:id])
+            @person = Person.find_by_loginid(@params_id)
+            @person = Person.find_by_id(@params_id) unless @person
+            rescue ActiveRecord::RecordNotFound
+            # This exception is acceptable. We catch it to avoid triggering the
+            # uncaught exceptions handler in ApplicationController.
+            end
         end
-      end
+
     end
   end
 end

@@ -4,6 +4,8 @@ module Api
       before_filter :load_group, :only => :show
 
       def show
+        authorize :api_v1, :use?
+        
         if @group
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded group view (show) for #{@group.id}." }
 
@@ -22,15 +24,16 @@ module Api
 
       private
 
-      def load_group
-        begin
-          @group_id = params[:id].to_i
-          @group = Group.find_by_id(@group_id)
-        rescue ActiveRecord::RecordNotFound
-          # This exception is acceptable. We catch it to avoid triggering the
-          # uncaught exceptions handler in ApplicationController.
+        def load_group
+            begin
+            @group_id = params[:id].to_i
+            @group = Group.find_by_id(@group_id)
+            rescue ActiveRecord::RecordNotFound
+            # This exception is acceptable. We catch it to avoid triggering the
+            # uncaught exceptions handler in ApplicationController.
+            end
         end
-      end
+
     end
   end
 end

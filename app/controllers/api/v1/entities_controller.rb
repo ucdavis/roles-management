@@ -5,6 +5,8 @@ module Api
       before_filter :load_entities, :only => :index
 
       def index
+        authorize :api_v1, :use?
+        
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
 
         @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
@@ -15,6 +17,8 @@ module Api
       end
 
       def show
+        authorize :api_v1, :use?
+        
         if @entity and @entity.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
 
@@ -38,21 +42,22 @@ module Api
 
       private
 
-      def load_entity
-        @entity_id = params[:id].to_i
-        @entity = Entity.find_by_id(@entity_id)
-      end
-
-      def load_entities
-        if params[:q]
-          entities_table = Entity.arel_table
-
-          # Search login IDs in case of an entity-search but looking for person by login ID
-          @entities = Entity.where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
-        else
-          @entities = Entity.where(:active => true)#.all
+        def load_entity
+            @entity_id = params[:id].to_i
+            @entity = Entity.find_by_id(@entity_id)
         end
-      end
+
+        def load_entities
+            if params[:q]
+            entities_table = Entity.arel_table
+
+            # Search login IDs in case of an entity-search but looking for person by login ID
+            @entities = Entity.where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+            else
+            @entities = Entity.where(:active => true)#.all
+            end
+        end
+
     end
   end
 end

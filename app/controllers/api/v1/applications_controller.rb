@@ -6,6 +6,8 @@ module Api
 
       # GET /applications
       def index
+        authorize :api_v1, :use?
+      
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched applications index." }
 
         # API users currently share access to all resources. If this changes, we will need to alter our
@@ -17,6 +19,8 @@ module Api
 
       # GET /applications/1
       def show
+        authorize :api_v1, :use?
+      
         if @application
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application view (show) for #{@application.id}." }
 
@@ -31,19 +35,20 @@ module Api
 
       private
 
-      def load_application
-        @application_id = params[:id].to_i # sanitize
-        @application = Application.find_by_id(@application_id)
-      end
-
-      def load_applications
-        if params[:q]
-          apps = Application.arel_table
-          @applications = Application.includes(:roles).where(apps[:name].matches("%#{params[:q]}%"))
-        else
-          @applications = Application.includes(:roles)
+        def load_application
+            @application_id = params[:id].to_i # sanitize
+            @application = Application.find_by_id(@application_id)
         end
-      end
+
+        def load_applications
+            if params[:q]
+            apps = Application.arel_table
+            @applications = Application.includes(:roles).where(apps[:name].matches("%#{params[:q]}%"))
+            else
+            @applications = Application.includes(:roles)
+            end
+        end
+
     end
   end
 end
