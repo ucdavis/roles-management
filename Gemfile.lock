@@ -155,6 +155,8 @@ GEM
       multi_json (~> 1.0)
       websocket-driver (>= 0.2.0)
     power_assert (0.2.7)
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -258,6 +260,7 @@ DEPENDENCIES
   newrelic_rpm
   pg
   poltergeist
+  pundit
   rails (~> 4.2.5)
   roles-management-api!
   rubycas-client!

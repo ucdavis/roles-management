@@ -107,6 +107,10 @@ class Person < Entity
   def role_symbols
     roles.select{ |r| rm_roles_ids.include? r.id }.map{ |r| r.token.underscore.to_sym }.uniq
   end
+  
+  def is_admin?
+    return role_symbols.include?(:admin)
+  end
 
   # Returns all applications visible to a user
   def accessible_applications

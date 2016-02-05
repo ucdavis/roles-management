@@ -45,9 +45,13 @@ gem 'exception_notification'
 
 gem 'capistrano', '< 3.0.0'
 
+# For CAS authentication
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 
 gem 'ejs'
+
+# For authorization
+gem 'pundit'
 
 # For LDAP & Active Directory support
 gem 'net-ldap', :require => false

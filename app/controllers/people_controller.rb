@@ -13,6 +13,8 @@ class PeopleController < ApplicationController
   end
 
   def show
+    authorize @person
+  
     respond_to do |format|
       format.json { render json: @person }
     end
@@ -23,6 +25,8 @@ class PeopleController < ApplicationController
   # 'search' queries _external_ databases (LDAP, etc.). GET /search?q=loginid (can be partial loginid, * will be appended)
   # If you wish to search the internal databases, use index with GET parameter q=..., e.g. /people?q=somebody
   def search
+    authorize Person
+  
     require 'ldap_helper'
     require 'ostruct'
 

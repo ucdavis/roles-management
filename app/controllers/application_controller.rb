@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Authentication
+  include Pundit
   include SafeFilename
   helper :all
   protect_from_forgery with: :exception
