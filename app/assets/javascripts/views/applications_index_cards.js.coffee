@@ -92,7 +92,7 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
     label = parts[1]
     switch id
       when DssRm.Views.ApplicationsIndexCards.FID_CREATE_APPLICATION
-        name = label.slice(18) # slice(18) is removing the "Create application " prefix
+        name = label.slice(19) # slice(19) is removing the "Create application " prefix
         toastr["info"]("Creating application ...")
         DssRm.applications.create
           name: name
