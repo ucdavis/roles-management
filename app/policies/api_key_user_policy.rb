@@ -1,0 +1,2 @@
+class ApiKeyUserPolicy < BasePolicy
+end

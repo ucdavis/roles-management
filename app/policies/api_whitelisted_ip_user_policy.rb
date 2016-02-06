@@ -1,0 +1,2 @@
+class ApiWhitelistedIpUserPolicy < BasePolicy
+end

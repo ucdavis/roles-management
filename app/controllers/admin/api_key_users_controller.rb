@@ -26,7 +26,7 @@ class Admin::ApiKeyUsersController < Admin::BaseController
   def destroy
     @api_key = ApiKeyUser.find_by_id(params[:id])
     
-    authorize @api_key_user
+    authorize @api_key
     
     @api_key.destroy
 

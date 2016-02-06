@@ -24,13 +24,29 @@ DssRm.Views.ApiKeysDialog = Backbone.View.extend(
   newApiKey: (e) ->
     name = $(e.currentTarget).find("input[name=name]").val()
     @$("form#new-key input[name=name]").val "" # clear the input
-    @api_keys.create name: name
+    toastr["info"]("Creating API key ...")
+    @api_keys.create
+      name: name
+    ,
+      success: () ->
+        toastr.remove()
+        toastr["success"]("API key created.")
+      error: () ->
+        toastr.remove()
+        toastr["error"]("Unable to create API key. Try again later.")      
     false
 
   removeApiKey: (e) ->
     key_id = $(e.currentTarget).parents("tr").data("key-id")
     model = @api_keys.get(key_id)
-    model.destroy()
+    toastr["info"]("Removing API key ...")
+    model.destroy
+      success: () ->
+        toastr.remove()
+        toastr["success"]("API key removed.")
+      error: () ->
+        toastr.remove()
+        toastr["error"]("Unable to remove API key. Try again later.")
     @api_keys.remove model
     false
 

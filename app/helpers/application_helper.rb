@@ -3,7 +3,7 @@ module ApplicationHelper
   include Authentication
 
   def has_role?(role)
-    if current_user && (current_user.role_symbols.include?(role) || current_user.role_symbols.include?(:admin))
+    if current_user && ((current_user.role_symbols.include?(role) || current_user.role_symbols.include?(:admin)) || impersonating?)
       return true
     end
     

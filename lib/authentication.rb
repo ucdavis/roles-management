@@ -40,7 +40,7 @@ module Authentication
   end
 
   def impersonating?
-    session[:impersonate_id]
+    session[:impersonate_id].present?
   end
 
   # Returns the effective user, which may differ from the actual user if
