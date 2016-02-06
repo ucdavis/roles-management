@@ -1,6 +1,7 @@
 class EntitiesController < ApplicationController
   before_filter :new_entity_from_params, :only => :create
   before_filter :load_entities, :only => :index
+  before_filter :load_entity, :only => [:show, :update]
 
   def index
     authorize Entity
@@ -11,8 +12,6 @@ class EntitiesController < ApplicationController
   end
 
   def show
-    @entity = Entity.find(params[:id])
-    
     authorize @entity
 
     @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
@@ -66,13 +65,6 @@ class EntitiesController < ApplicationController
 
   def update
     authorize @entity
-    
-    # declarative_authorization requires we not use polymorphism *headache*
-    if params[:entity][:type] == "Group"
-      @entity = Group.find(params[:id])
-    elsif params[:entity][:type] == "Person"
-      @entity = Person.find(params[:id])
-    end
 
     respond_to do |format|
       if @entity.update_attributes(entity_params)
@@ -99,7 +91,7 @@ class EntitiesController < ApplicationController
     authorize @entity
 
     if @entity.type == "Group"
-      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted entity, #{entity}."
+      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted entity, #{@entity}."
 
       @entity.destroy
     end
@@ -146,6 +138,10 @@ class EntitiesController < ApplicationController
     end
 
   private
+  
+    def load_entity
+      @entity = Entity.find(params[:id])
+    end
 
     def load_entities
       if params[:q]

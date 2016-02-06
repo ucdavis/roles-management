@@ -7,15 +7,18 @@ class BasePolicy
   end
 
   def index?
+    return true if user.is_admin?
     false
   end
 
   def show?
+    return true if user.is_admin?
     false
     #scope.where(:id => record.id).exists?
   end
 
   def create?
+    return true if user.is_admin?
     false
   end
 
@@ -24,6 +27,7 @@ class BasePolicy
   end
 
   def update?
+    return true if user.is_admin?
     false
   end
 
@@ -32,6 +36,7 @@ class BasePolicy
   end
 
   def destroy?
+    return true if user.is_admin?
     false
   end
 
