@@ -4,10 +4,7 @@ class ApplicationPolicy < BasePolicy
   end
   
   def show?
-    # A user can view an application ...
-    
-    # if they are an admin
-    return true if user.is_admin?
+    # A user can show an application ...
     
     # if they own it
     return true if record.owners.include?(user)
@@ -15,20 +12,17 @@ class ApplicationPolicy < BasePolicy
     # if they operate it
     return true if record.operators.include?(user)
     
-    false
+    super
   end
   
   def update?
     # A user can update an application ...
-    
-    # if they are an admin
-    return true if user.is_admin?
     
     # if they own it
     return true if record.owners.include?(user)
     
     # operators cannot update an application
     
-    false
+    super
   end
 end

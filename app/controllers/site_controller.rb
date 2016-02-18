@@ -1,6 +1,7 @@
 class SiteController < ApplicationController
   layout 'site'
   skip_before_filter :authenticate, :only => [:status, :welcome, :access_denied, :manual]
+  skip_after_filter :verify_authorized, :only => [:status, :welcome, :access_denied, :manual]
 
   def welcome
     respond_to do |format|
