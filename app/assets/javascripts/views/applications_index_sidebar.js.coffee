@@ -186,14 +186,18 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
               id: id
               name: label
             )
-            e.fetch success: =>
-              DssRm.current_user.favorites.add e
-              DssRm.current_user.save {},
-                error: ->
-                  toastr["error"]("Error while adding person or group to favorites.")
-                success: ->
-                  toastr["success"]("Person or group successfully added to favorites.")
-                  # Do nothing on success
+            toastr["info"]("Adding to favorites ...")
+            e.fetch
+              success: =>
+                DssRm.current_user.favorites.add e
+                DssRm.current_user.save {},
+                    error: ->
+                      toastr["error"]("Error while adding person or group to favorites.")
+                    success: ->
+                      toastr["success"]("Person or group successfully added to favorites.")
+                      # Do nothing on success
+              error: =>
+                toastr["error"]("Error while adding to favorites.")
           else
             # Already in favorites - highlight the result
             DssRm.view_state.set focused_entity_id: id
