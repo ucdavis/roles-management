@@ -201,6 +201,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
           else
             # Already in favorites - highlight the result
             DssRm.view_state.set focused_entity_id: id
+            toastr["info"]("Person or group is already in favorites.")
 
     ""
 
