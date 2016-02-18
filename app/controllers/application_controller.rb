@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   include SafeFilename
   helper :all
   protect_from_forgery with: :exception
+  after_action :verify_authorized
 
   before_filter :authenticate
 
