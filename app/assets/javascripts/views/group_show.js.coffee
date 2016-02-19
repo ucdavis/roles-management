@@ -125,6 +125,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       @$('input').readonly()
       @$('textarea').readonly()
       @$('button#apply').hide()
+      @$('a#delete').hide()
 
     @renderRules()
 
