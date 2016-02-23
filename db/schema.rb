@@ -173,13 +173,6 @@ ActiveRecord::Schema.define(version: 20150721190626) do
 
   add_index "group_operatorships", ["group_id", "entity_id", "parent_id"], name: "idx_group_opships_on_g_id_and_entity_id_and_parent_id"
 
-  create_table "group_owner_assignments", force: :cascade do |t|
-    t.integer  "group_id"
-    t.integer  "owner_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "group_ownerships", force: :cascade do |t|
     t.integer  "group_id"
     t.datetime "created_at"
@@ -324,13 +317,6 @@ ActiveRecord::Schema.define(version: 20150721190626) do
   create_table "person_favorite_assignments", force: :cascade do |t|
     t.integer  "entity_id"
     t.integer  "owner_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "person_manager_assignments", force: :cascade do |t|
-    t.integer  "person_id"
-    t.integer  "manager_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
