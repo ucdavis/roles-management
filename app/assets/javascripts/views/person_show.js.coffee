@@ -222,8 +222,8 @@ class DssRm.Views.PersonShow extends Backbone.View
         organization_association_tokeninput.tokenInput "add",
           id: organization.get('id')
           name: organization.get('name')
-          readonly: true #@readonly || membership.get('calculated')
-          class: "calculated" #class: (if membership.get('calculated') then "calculated" else "")
+          readonly: true
+          class: "calculated"
 
     # Roles tab
     $rolesTab = @$("div#role_assignments")
