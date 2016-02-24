@@ -111,18 +111,23 @@ class DssRm.Views.PersonShow extends Backbone.View
       items: 5
 
   initializeActivityTab: ->
-    $activityTable = @$("tbody#activity_log")
-    $activityTable.empty()
-    
-    $.ajax(
-      url: Routes.entity_path(@model.id) + "/activity"
-      type: 'GET'
-    ).done( (res) =>
-      _.each res.activities, (entry) =>
-        $activityTable.append @renderActivityLogRow(entry)
-    ).fail( (data) ->
-    #   toastr["error"]("An error occurred while fetching the activity logs. Try again later.")
-    )
+    if DssRm.admin_logged_in()
+      $activityTable = @$("tbody#activity_log")
+      $activityTable.empty()
+
+      $.ajax(
+        url: Routes.entity_path(@model.id) + "/activity"
+        type: 'GET'
+      ).done( (res) =>
+        _.each res.activities, (entry) =>
+          $activityTable.append @renderActivityLogRow(entry)
+      ).fail( (data) ->
+          toastr["error"]("An error occurred while fetching the activity logs. Try again later.")
+      )
+    else
+      # Hide the tab
+      @$(".tab-pane#activity").hide()
+      @$("ul.nav>li#activity").hide()
   
   # Renders a single Activity Log row.
   renderActivityLogRow: (entry) ->
