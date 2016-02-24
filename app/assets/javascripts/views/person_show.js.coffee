@@ -178,7 +178,8 @@ class DssRm.Views.PersonShow extends Backbone.View
     else
       @$('button#status-active').removeClass 'active'
       @$('button#status-inactive').addClass 'active'
-
+      
+    # Relations tab
     favorites_tokeninput = @$("input[name=favorites]")
     favorites_tokeninput.tokenInput "clear"
     @model.favorites.each (favorite) =>
@@ -211,7 +212,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       unless membership.get('_destroy')
         group_membership_tokeninput.tokenInput "add",
           id: membership.get('id')
-          name: membership.get('name')
+          name: membership.get('group_name')
           readonly: @readonly || membership.get('calculated')
           class: (if membership.get('calculated') then "calculated" else "")
 

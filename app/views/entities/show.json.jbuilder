@@ -14,6 +14,7 @@ json.cache! ['entity_show', @cache_key] do
     json.group_memberships @entity.group_memberships do |membership|
       json.calculated membership.calculated
       json.group_id membership.group_id
+      json.group_name membership.group.name
       json.id membership.id
       json.name membership.entity.name
     end
