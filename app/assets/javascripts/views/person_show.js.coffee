@@ -233,21 +233,24 @@ class DssRm.Views.PersonShow extends Backbone.View
 
     # Roles tab
     $rolesTab = @$("div#role_assignments")
-    _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
-      app_name = role_assignment_set[0].get("application_name")
-      app_id = role_assignment_set[0].get("application_id")
+    if @model.role_assignments.length == 0
+      $rolesTab.append("<center><i>User has no role assignments.</i></center>")
+    else
+      _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
+        app_name = role_assignment_set[0].get("application_name")
+        app_id = role_assignment_set[0].get("application_id")
 
-      role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
-      role_tokeninput.tokenInput "clear"
-      _.each role_assignment_set, (role_assignment) ->
-        unless role_assignment.get('_destroy')
-          role_tokeninput.tokenInput "add",
-            id: role_assignment.get("id")
-            role_id: role_assignment.get("role_id")
-            entity_id: role_assignment.get("entity_id")
-            name: role_assignment.get("name")
-            readonly: @readonly || role_assignment.get('calculated')
-            class: (if role_assignment.get('calculated') then "calculated" else "")
+        role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
+        role_tokeninput.tokenInput "clear"
+        _.each role_assignment_set, (role_assignment) ->
+          unless role_assignment.get('_destroy')
+            role_tokeninput.tokenInput "add",
+              id: role_assignment.get("id")
+              role_id: role_assignment.get("role_id")
+              entity_id: role_assignment.get("entity_id")
+              name: role_assignment.get("name")
+              readonly: @readonly || role_assignment.get('calculated')
+              class: (if role_assignment.get('calculated') then "calculated" else "")
 
     if @readonly
       @$('.token-input-list-facebook').readonly()
