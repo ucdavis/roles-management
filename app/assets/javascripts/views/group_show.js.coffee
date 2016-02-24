@@ -85,7 +85,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
     @$("textarea[name=description]").val @model.get("description")
-    @$("span#group_member_count").html @model.memberships.length
+    @$("span#group_member_count").html @model.memberships.filter( (m) -> m.get('active') ).length
 
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
@@ -106,7 +106,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     members_tokeninput = @$("input[name=memberships]")
     members_tokeninput.tokenInput "clear"
     @model.memberships.each (membership) ->
-      unless membership.get('_destroy')
+      unless membership.get('_destroy') || (membership.get('active') == false)
         members_tokeninput.tokenInput "add",
           id: membership.id
           entity_id: membership.get('entity_id')

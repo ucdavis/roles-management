@@ -49,12 +49,13 @@ json.cache! ['entity_show', @cache_key] do
   elsif @entity.type == 'Group'
     json.extract! @entity, :description
 
-    json.memberships @entity.memberships.select{ |m| m.entity.active == true } do |membership|
+    json.memberships @entity.memberships do |membership|
       json.id membership.id
       json.calculated membership.calculated
       json.loginid membership.entity.loginid
       json.name membership.entity.name
       json.entity_id membership.entity_id
+      json.active membership.entity.active
     end
     json.operators @entity.operators.select{ |m| m.active == true } do |operator|
       json.extract! operator, :id, :name, :loginid

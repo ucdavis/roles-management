@@ -19,7 +19,7 @@ class EntitiesController < ApplicationController
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity show view for #{params[:id]}."
 
     respond_to do |format|
-      format.json  { render json: @entity }
+      format.json { render "entities/show", status: :ok }
       format.csv {
         require 'csv'
 
@@ -65,7 +65,7 @@ class EntitiesController < ApplicationController
 
   def update
     authorize @entity
-
+    
     respond_to do |format|
       if @entity.update_attributes(entity_params)
         # The update may have only touched associations and not @entity directly,
@@ -76,7 +76,7 @@ class EntitiesController < ApplicationController
         logger.debug "Entity#update successful."
 
         @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
-
+        
         format.json { render "entities/show", status: :ok }
       else
         logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(", ")}"
