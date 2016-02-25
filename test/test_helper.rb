@@ -118,7 +118,6 @@ class ActiveSupport::TestCase
 
   # Removes all means of authentication: CAS, API whitelist, and API key
   def revoke_access
-    Authorization.current_user = nil
     request.env['HTTP_AUTHORIZATION'] = nil
     request.env.delete('REMOTE_ADDR')
     request.session.delete(:auth_via)
@@ -126,10 +125,8 @@ class ActiveSupport::TestCase
     CASClient::Frameworks::Rails::Filter.fake(nil)
   end
 
-  # Ensures Authorization.current_user has no valid permission tokens to RM
+  # Ensures 'casuser' has no valid permission tokens to RM
   def revoke_rm_permissions
-    assert Authorization.current_user, "current_user should be set before calling this function"
-
     p = Person.find_by_loginid("casuser")
     a = Application.find_by_name("DSS Roles Management")
     r_admin = a.roles.find_by_token("admin")

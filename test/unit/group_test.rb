@@ -42,20 +42,16 @@ class GroupTest < ActiveSupport::TestCase
 
     assert p.group_ownerships.length == 0, "person should not own any groups"
 
-    without_access_control do
-      go = GroupOwnership.new
-      go.entity = p
-      go.group = g
-      go.save!
-    end
+    go = GroupOwnership.new
+    go.entity = p
+    go.group = g
+    go.save!
 
     g.reload
     assert g.owners.length == 1, "group should have one owner"
 
     p.reload
     assert p.group_ownerships.length == 1, "person should own one group"
-
-    Authorization.current_user = p
 
     begin
       g.description = "something"
@@ -77,20 +73,16 @@ class GroupTest < ActiveSupport::TestCase
 
     assert p.group_ownerships.length == 0, "person should not own any groups"
 
-    without_access_control do
-      go = GroupOwnership.new
-      go.entity = p
-      go.group = g
-      go.save!
-    end
+    go = GroupOwnership.new
+    go.entity = p
+    go.group = g
+    go.save!
 
     g.reload
     assert g.owners.length == 1, "group should have one owner"
 
     p.reload
     assert p.group_ownerships.length == 1, "person should own one group"
-
-    Authorization.current_user = p
 
     begin
       g.destroy
@@ -112,20 +104,16 @@ class GroupTest < ActiveSupport::TestCase
     assert p.group_ownerships.length == 0, "person should not own any groups"
     assert p.group_operatorships.length == 0, "person should not own any groups"
 
-    without_access_control do
-      go = GroupOwnership.new
-      go.entity = p
-      go.group = g
-      go.save!
-    end
+    go = GroupOwnership.new
+    go.entity = p
+    go.group = g
+    go.save!
 
     g.reload
     assert g.owners.length == 1, "group should have one owner"
 
     p.reload
     assert p.group_ownerships.length == 1, "person should own one group"
-
-    Authorization.current_user = p
 
     member = entities(:casuser)
 
@@ -153,12 +141,10 @@ class GroupTest < ActiveSupport::TestCase
     assert p.group_ownerships.length == 0, "person should not own any groups"
     assert p.group_operatorships.length == 0, "person should not own any groups"
 
-    without_access_control do
-      go = GroupOwnership.new
-      go.entity = p
-      go.group = g
-      go.save!
-    end
+    go = GroupOwnership.new
+    go.entity = p
+    go.group = g
+    go.save!
 
     g.reload
     assert g.owners.length == 1, "group should have one owner"
@@ -166,15 +152,11 @@ class GroupTest < ActiveSupport::TestCase
     p.reload
     assert p.group_ownerships.length == 1, "person should own one group"
 
-    Authorization.current_user = p
-
     member = entities(:casuser)
 
     assert g.members.include?(member) == false, "group should not include casuser"
 
-    without_access_control do
-      g.members << member
-    end
+    g.members << member
 
     assert g.members.include?(member) == true, "group should include casuser"
 
@@ -200,8 +182,6 @@ class GroupTest < ActiveSupport::TestCase
     assert p.group_ownerships.length == 0, "person should not own any groups"
     assert p.group_operatorships.length == 0, "person should not own any groups"
 
-    Authorization.current_user = p
-
     unauthorized_exception_count = 0
 
     begin
@@ -226,8 +206,6 @@ class GroupTest < ActiveSupport::TestCase
 
     assert p.group_ownerships.length == 0, "person should not own any groups"
     assert p.group_operatorships.length == 0, "person should not own any groups"
-
-    Authorization.current_user = p
 
     member = entities(:casuser)
 
@@ -259,15 +237,11 @@ class GroupTest < ActiveSupport::TestCase
     assert p.group_ownerships.length == 0, "person should not own any groups"
     assert p.group_operatorships.length == 0, "person should not own any groups"
 
-    Authorization.current_user = p
-
     member = entities(:casuser)
 
     assert g.members.include?(member) == false, "group should not include casuser"
 
-    without_access_control do
-      g.members << member
-    end
+    g.members << member
 
     assert g.members.include?(member) == true, "group should include casuser"
 
@@ -296,8 +270,6 @@ class GroupTest < ActiveSupport::TestCase
 
     assert p.group_ownerships.length == 0, "person should not own any groups"
 
-    Authorization.current_user = p
-
     unauthorized_exception_count = 0
 
     begin
@@ -322,20 +294,16 @@ class GroupTest < ActiveSupport::TestCase
     assert p.group_ownerships.length == 0, "person should not own any groups"
     assert p.group_operatorships.length == 0, "person should not own any groups"
 
-    without_access_control do
-      go = GroupOperatorship.new
-      go.entity = p
-      go.group = g
-      go.save!
-    end
+    go = GroupOperatorship.new
+    go.entity = p
+    go.group = g
+    go.save!
 
     g.reload
     assert g.operators.length == 1, "group should have one operator"
 
     p.reload
     assert p.group_operatorships.length == 1, "person should operate one group"
-
-    Authorization.current_user = p
 
     begin
       g.description = "something"
@@ -357,20 +325,16 @@ class GroupTest < ActiveSupport::TestCase
 
     assert p.group_ownerships.length == 0, "person should not own any groups"
 
-    without_access_control do
-      go = GroupOperatorship.new
-      go.entity = p
-      go.group = g
-      go.save!
-    end
+    go = GroupOperatorship.new
+    go.entity = p
+    go.group = g
+    go.save!
 
     g.reload
     assert g.operators.length == 1, "group should have one operator"
 
     p.reload
     assert p.group_operatorships.length == 1, "person should operate one group"
-
-    Authorization.current_user = p
 
     unauthorized_exception_count = 0
 
@@ -396,20 +360,16 @@ class GroupTest < ActiveSupport::TestCase
     assert p.group_ownerships.length == 0, "person should not own any groups"
     assert p.group_operatorships.length == 0, "person should not own any groups"
 
-    without_access_control do
-      go = GroupOperatorship.new
-      go.entity = p
-      go.group = g
-      go.save!
-    end
+    go = GroupOperatorship.new
+    go.entity = p
+    go.group = g
+    go.save!
 
     g.reload
     assert g.operators.length == 1, "group should have one operator"
 
     p.reload
     assert p.group_operatorships.length == 1, "person should operate one group"
-
-    Authorization.current_user = p
 
     member = entities(:casuser)
 
@@ -437,12 +397,10 @@ class GroupTest < ActiveSupport::TestCase
     assert p.group_ownerships.length == 0, "person should not own any groups"
     assert p.group_operatorships.length == 0, "person should not own any groups"
 
-    without_access_control do
-      go = GroupOperatorship.new
-      go.entity = p
-      go.group = g
-      go.save!
-    end
+    go = GroupOperatorship.new
+    go.entity = p
+    go.group = g
+    go.save!
 
     g.reload
     assert g.operators.length == 1, "group should have one operator"
@@ -450,15 +408,11 @@ class GroupTest < ActiveSupport::TestCase
     p.reload
     assert p.group_operatorships.length == 1, "person should operate one group"
 
-    Authorization.current_user = p
-
     member = entities(:casuser)
 
     assert g.members.include?(member) == false, "group should not include casuser"
 
-    without_access_control do
-      g.members << member
-    end
+    g.members << member
 
     assert g.members.include?(member) == true, "group should include casuser"
 

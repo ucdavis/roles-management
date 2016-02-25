@@ -6,8 +6,6 @@ class PeopleControllerTest < ActionController::TestCase
     CASClient::Frameworks::Rails::Filter.fake("casuser")
 
     @person = entities(:casuser)
-
-    Authorization.current_user = @person
   end
 
   # loginid required for: impersonate dialog, group rule "loginid is"

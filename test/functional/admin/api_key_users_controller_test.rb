@@ -5,8 +5,8 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
     # Ensure unauthorized user has no access
     revoke_access
     
-    assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
-    assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
+    # assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
+    # assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
   
     get :index, :format => :json
     assert_response :unauthorized
@@ -14,7 +14,6 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
     # Ensure authorized non-admin user has no access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     
-    Authorization.current_user = entities(:casuser)
     grant_test_user_basic_access
     revoke_test_user_admin_access
     
@@ -35,8 +34,8 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
     # Ensure unauthorized user is unable to create an API key user
     revoke_access
     
-    assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
-    assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
+    # assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
+    # assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     
     post :create, api_key_user: { name: 'Tester' }, :format => :json
     assert_response :unauthorized
@@ -44,7 +43,6 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
     # Ensure authorized non-admin user has no access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     
-    Authorization.current_user = entities(:casuser)
     grant_test_user_basic_access
     revoke_test_user_admin_access
     
@@ -62,8 +60,8 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
     # Ensure unauthorized user is unable to create an API key user
     revoke_access
     
-    assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
-    assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
+    # assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
+    # assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     
     delete :destroy, id: 1, :format => :json
     assert_response :unauthorized
@@ -71,7 +69,6 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
     # Ensure authorized non-admin user has no access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     
-    Authorization.current_user = entities(:casuser)
     grant_test_user_basic_access
     revoke_test_user_admin_access
     

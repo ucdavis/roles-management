@@ -7,7 +7,6 @@ class RolesControllerTest < ActionController::TestCase
     revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     grant_test_user_admin_access
-    Authorization.current_user = Person.find_by_loginid("casuser")
 
     get :show, :format => :json, :id => '1'
 
@@ -59,7 +58,6 @@ class RolesControllerTest < ActionController::TestCase
     revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     grant_test_user_admin_access
-    Authorization.current_user = Person.find_by_loginid("casuser")
 
     @role = roles(:boring_role)
 
@@ -72,7 +70,6 @@ class RolesControllerTest < ActionController::TestCase
     revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     grant_test_user_admin_access
-    Authorization.current_user = Person.find_by_loginid("casuser")
 
     r = Role.first
     p = Person.find_by_loginid('bob')
@@ -92,7 +89,6 @@ class RolesControllerTest < ActionController::TestCase
     revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     grant_test_user_admin_access
-    Authorization.current_user = Person.find_by_loginid("casuser")
 
     r = Role.first
     p = Person.find_by_loginid('bob')
@@ -115,7 +111,6 @@ class RolesControllerTest < ActionController::TestCase
     revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     grant_test_user_admin_access
-    Authorization.current_user = Person.find_by_loginid("casuser")
 
     r = Role.first
     p = Person.find_by_loginid('bob')
@@ -135,7 +130,6 @@ class RolesControllerTest < ActionController::TestCase
     revoke_access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     grant_test_user_admin_access
-    Authorization.current_user = Person.find_by_loginid("casuser")
 
     r = Role.first
     p = Person.find_by_loginid('bob')
