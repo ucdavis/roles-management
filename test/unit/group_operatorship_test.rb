@@ -22,18 +22,14 @@ class GroupOperatorshipTest < ActiveSupport::TestCase
 
     group = entities(:groupWithARole)
 
-    without_access_control do
-      group.operators << @person
-      group.roles.destroy_all
-    end
+    group.operators << @person
+    group.roles.destroy_all
 
     assert group.owners.include?(@person) == false, "casuser should not be an owner of groupWithARole"
     assert group.operators.include?(@person), "casuser should be an operator of groupWithARole"
 
     assert group.owners.length == 0, "group should not have any owners"
     assert group.operators.length == 1, "group should only have one operator"
-
-    Authorization.current_user = @person
 
     assert group.members.length == 0, "group should not have any members"
 
@@ -58,8 +54,6 @@ class GroupOperatorshipTest < ActiveSupport::TestCase
 
     random_person = entities(:personWithNothing)
 
-    with_user(@person) do
-      a_group.members << random_person
-    end
+    a_group.members << random_person
   end
 end

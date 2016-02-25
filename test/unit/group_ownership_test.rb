@@ -10,13 +10,9 @@ class GroupOwnershipTest < ActiveSupport::TestCase
   test "group owners are able to update groups" do
     group = entities(:groupWithARole)
 
-    without_access_control do
-      group.owners << @person
-    end
+    group.owners << @person
 
     assert group.owners.include?(@person), "casuser should be an owner of groupWithARole"
-
-    Authorization.current_user = @person
 
     assert group.members.length == 0, "group should not have any members"
 
