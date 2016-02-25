@@ -56,7 +56,6 @@ module Authentication
         return Authentication.actual_user
       end
     end
-    # end
   end
 
   def authenticated?
@@ -95,10 +94,8 @@ module Authentication
       session[:auth_via] = :whitelisted_ip
       Authentication.actual_user = @whitelisted_user
 
-      #without_authorization do
-        @whitelisted_user.logged_in_at = DateTime.now()
-        @whitelisted_user.save
-      #end
+      @whitelisted_user.logged_in_at = DateTime.now()
+      @whitelisted_user.save
 
       return
     end

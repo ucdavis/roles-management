@@ -7,6 +7,10 @@ class ApplicationController < ActionController::Base
   after_action :verify_authorized
 
   before_filter :authenticate
+  
+  rescue_from Pundit::NotAuthorizedError do |exception|
+    permission_denied
+  end
 
   rescue_from ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved, ActionController::InvalidAuthenticityToken, ActionController::RoutingError, ActiveRecord::RecordNotDestroyed do |exception|
     unless exception.class == ActiveRecord::RecordNotFound
@@ -22,13 +26,12 @@ class ApplicationController < ActionController::Base
   protected
 
     def permission_denied
-        if session[:auth_via] == :cas
-        # Human-facing error
-        flash[:error] = "Sorry, you are not allowed to access that page."
-        redirect_to access_denied_path
-        else
-        # Machine-facing error
-        render :text => "Permission denied.", :status => 403
-        end
+      flash[:error] = "You do not have permission to access that page."
+      # Machine-facing error
+      respond_to do |format|
+        format.html { redirect_to access_denied_path }
+        format.text { render "Permission denied.", status: 403 }
+        format.json { render json: {}, status: :forbidden }
+      end
     end
 end
