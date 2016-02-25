@@ -4,14 +4,12 @@ require 'test_helper'
 class ApplicationsControllerTest < ActionController::TestCase
   setup do
     CASClient::Frameworks::Rails::Filter.fake("casuser")
-
-    Authorization.current_user = Person.find_by_loginid('casuser')
+    @casuser = Person.find_by_loginid('casuser')
   end
 
   test "valid cas user with no roles should get denied" do
-    Authorization.current_user.roles.delete_all # ensure they have no roles
-    puts Authorization.current_user.role_symbols
-    assert Authorization.current_user.role_symbols.length == 0, "current_user should not have had any roles for this test"
+    @casuser.roles.delete_all # ensure they have no roles
+    assert @casuser.role_symbols.length == 0, "current_user should not have had any roles for this test"
     get :index
     assert_redirected_to(:controller => "site", :action => "access_denied")
   end
@@ -218,8 +216,6 @@ class ApplicationsControllerTest < ActionController::TestCase
     revoke_test_user_admin_access
     grant_test_user_operate_access
 
-    with_user(@person) do
-      assert @person.manageable_applications.length == (Application.count - 1), "Universal operator should see all applications except DSS RM"
-    end
+    assert @person.manageable_applications.length == (Application.count - 1), "Universal operator should see all applications except DSS RM"
   end
 end

@@ -21,12 +21,10 @@ class ActiveSupport::TestCase
   def grant_user_basic_access(p)
     assert p != nil, "grant_user_basic_access should not have been passed a nil user"
 
-    without_access_control do
-      r = Application.find_by_name("DSS Roles Management").roles.find_by_token("access")
-      assert r, "DSS Roles Management 'access' token appears to be missing"
-      p.roles << r unless p.roles.include? r
-      assert p.role_symbols.length >= 1, "user should have just been assigned a role for this test"
-    end
+    r = Application.find_by_name("DSS Roles Management").roles.find_by_token("access")
+    assert r, "DSS Roles Management 'access' token appears to be missing"
+    p.roles << r unless p.roles.include? r
+    assert p.role_symbols.length >= 1, "user should have just been assigned a role for this test"
   end
 
   def revoke_test_user_basic_access
@@ -38,12 +36,10 @@ class ActiveSupport::TestCase
   def revoke_user_basic_access(p)
     assert p != nil, "revoke_user_basic_access should not have been passed a nil user"
 
-    without_access_control do
-      a = Application.find_by_name("DSS Roles Management")
-      r_access = a.roles.find_by_token("access")
-      assert r_access, "DSS Roles Management 'access' token appears to be missing"
-      p.roles.destroy(r_access)
-    end
+    a = Application.find_by_name("DSS Roles Management")
+    r_access = a.roles.find_by_token("access")
+    assert r_access, "DSS Roles Management 'access' token appears to be missing"
+    p.roles.destroy(r_access)
   end
 
   # Gives test user 'casuser' the operate role for RM
@@ -63,40 +59,34 @@ class ActiveSupport::TestCase
   def grant_user_operate_access(p)
     assert p != nil, "grant_user_operate_access should not have been passed a nil user"
 
-    without_access_control do
-      r = Application.find_by_name("DSS Roles Management").roles.find_by_token("operate")
-      assert r, "DSS Roles Management 'operate' token appears to be missing"
-      p.roles << r unless p.roles.include? r
-      assert p.role_symbols.length >= 1, "user should have just been assigned a role for this test"
-    end
+    r = Application.find_by_name("DSS Roles Management").roles.find_by_token("operate")
+    assert r, "DSS Roles Management 'operate' token appears to be missing"
+    p.roles << r unless p.roles.include? r
+    assert p.role_symbols.length >= 1, "user should have just been assigned a role for this test"
   end
 
   def revoke_user_operate_access(p)
     assert p != nil, "revoke_user_operate_access should not have been passed a nil user"
 
-    without_access_control do
-      a = Application.find_by_name("DSS Roles Management")
-      r_operate = a.roles.find_by_token("operate")
-      assert r_operate, "DSS Roles Management 'operate' token appears to be missing"
-      p.roles.destroy(r_operate)
-    end
+    a = Application.find_by_name("DSS Roles Management")
+    r_operate = a.roles.find_by_token("operate")
+    assert r_operate, "DSS Roles Management 'operate' token appears to be missing"
+    p.roles.destroy(r_operate)
   end
 
   # Gives test user 'casuser' the admin access role for RM
   # Note: This also grants the 'access' token as well, as 'admin' privileges are
   #       a superset of those permissions.
   def grant_test_user_admin_access
-    without_access_control do
-      p = Person.find_by_loginid("casuser")
-      a = Application.find_by_name("DSS Roles Management")
-      r_access = a.roles.find_by_token("access")
-      assert r_access, "DSS Roles Management 'access' token appears to be missing"
-      p.roles << r_access unless p.roles.include? r_access
-      r_admin = a.roles.find_by_token("admin")
-      assert r_admin, "DSS Roles Management 'admin' token appears to be missing"
-      p.roles << r_admin unless p.roles.include? r_admin
-      assert p.role_symbols.length >= 2, "current_user should have just been assigned two roles for this test"
-    end
+    p = Person.find_by_loginid("casuser")
+    a = Application.find_by_name("DSS Roles Management")
+    r_access = a.roles.find_by_token("access")
+    assert r_access, "DSS Roles Management 'access' token appears to be missing"
+    p.roles << r_access unless p.roles.include? r_access
+    r_admin = a.roles.find_by_token("admin")
+    assert r_admin, "DSS Roles Management 'admin' token appears to be missing"
+    p.roles << r_admin unless p.roles.include? r_admin
+    assert p.role_symbols.length >= 2, "current_user should have just been assigned two roles for this test"
   end
 
   def revoke_test_user_admin_access
@@ -108,12 +98,10 @@ class ActiveSupport::TestCase
   def revoke_user_admin_access(p)
     assert p != nil, "revoke_user_admin_access should not have been passed a nil user"
 
-    without_access_control do
-      a = Application.find_by_name("DSS Roles Management")
-      r_admin = a.roles.find_by_token("admin")
-      assert r_admin, "DSS Roles Management 'admin' token appears to be missing"
-      p.roles.destroy(r_admin)
-    end
+    a = Application.find_by_name("DSS Roles Management")
+    r_admin = a.roles.find_by_token("admin")
+    assert r_admin, "DSS Roles Management 'admin' token appears to be missing"
+    p.roles.destroy(r_admin)
   end
 
   def grant_whitelisted_access
@@ -142,14 +130,12 @@ class ActiveSupport::TestCase
   def revoke_rm_permissions
     assert Authorization.current_user, "current_user should be set before calling this function"
 
-    without_access_control do
-      p = Person.find_by_loginid("casuser")
-      a = Application.find_by_name("DSS Roles Management")
-      r_admin = a.roles.find_by_token("admin")
-      r_access = a.roles.find_by_token("access")
-      p.roles.destroy(r_admin)
-      p.roles.destroy(r_access)
-      p.save!
-    end
+    p = Person.find_by_loginid("casuser")
+    a = Application.find_by_name("DSS Roles Management")
+    r_admin = a.roles.find_by_token("admin")
+    r_access = a.roles.find_by_token("access")
+    p.roles.destroy(r_admin)
+    p.roles.destroy(r_access)
+    p.save!
   end
 end
