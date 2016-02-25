@@ -95,13 +95,6 @@ class GroupMembership < ActiveRecord::Base
   # Grant group's roles to new member (marking as calculated)
   def grant_group_roles_to_member
     Rails.logger.tagged "GroupMembership #{id}" do
-      # Our auth rules are not complex enough for the case where an operator adds
-      # a group member causing that member to gain the group's roles but the operator
-      # in question does not have permission to create those role assignments.
-      # For this reason, we assume recursive group member-based role granting/revoking
-      # can be safely done without authorization rules.
-      #previous_access_control = Authorization.ignore_access_control
-      #Authorization.ignore_access_control(true)
       group.roles.each do |r|
         logger.info "Granting role (#{r.id}, #{r.token}, App ID #{r.application_id}) to new group member (#{entity.id}/#{entity.name} joining #{group.id}/#{group.name})"
         ra = RoleAssignment.new
@@ -110,7 +103,6 @@ class GroupMembership < ActiveRecord::Base
         ra.parent_id = group.id
         ra.save!
       end
-      #Authorization.ignore_access_control(previous_access_control)
     end
 
     return true
@@ -118,13 +110,6 @@ class GroupMembership < ActiveRecord::Base
 
   def remove_group_roles_from_member
     Rails.logger.tagged "GroupMembership #{id}" do
-      # Our auth rules are not complex enough for the case where an operator adds
-      # a group member causing that member to gain the group's roles but the operator
-      # in question does not have permission to create those role assignments.
-      # For this reason, we assume recursive group member-based role granting/revoking
-      # can be safely done without authorization rules.
-      #previous_access_control = Authorization.ignore_access_control
-      #Authorization.ignore_access_control(true)
       group.roles.each do |r|
         logger.info "Removing role (#{r.id}, #{r.token}, App ID #{r.application_id}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
         ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(r.id, entity.id, group.id)
@@ -136,7 +121,6 @@ class GroupMembership < ActiveRecord::Base
           logger.warn "Failed to remove role (#{r.id}, #{r.token}, App ID #{r.application_id}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database. This is probably okay."
         end
       end
-      #Authorization.ignore_access_control(previous_access_control)
     end
 
     return true

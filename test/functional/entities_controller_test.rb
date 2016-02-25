@@ -230,7 +230,6 @@ class EntitiesControllerTest < ActionController::TestCase
     assert @person.roles.include?(rm_admin_role) == false
   end
 
-  # # There doesn't appear to be attribute-specific options in declarative_authorization ...
   # test "universal operators should be able to activate/deactivate individuals" do
   #   assert false, "test not implemented"
   # end

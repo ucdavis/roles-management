@@ -43,14 +43,7 @@ class EntitiesController < ApplicationController
     @entity.save
 
     if params[:entity][:type] == "Group"
-      without_authorization do
-        # It's impossible for the authorization rules to allow this action
-        # as we cannot verify they own the group before we assign them
-        # as owner of the group.
-        # This is safe however as the exception only applies to new groups
-        # created by the user with the system deciding they are the owner.
-        @entity.owners << current_user
-      end
+      @entity.owners << current_user
     end
 
     if @entity.group?

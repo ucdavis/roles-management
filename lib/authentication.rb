@@ -23,10 +23,6 @@ module Authentication
 
   def self.actual_user=(user)
     Thread.current["_auth_actual_user"] = user
-
-    # Remove the following line once declarative_authorization is
-    # factored out.
-    #Authorization.current_user = user
   end
 
   # To be called from the outside in order to impersonate someone
@@ -65,23 +61,6 @@ module Authentication
 
   def authenticated?
     session[:auth_via]
-  end
-
-  # Wrapper methods to abstract CanCan, declarative_authorization
-  def disable_authorization
-    #Authorization.ignore_access_control(true)
-  end
-
-  def enable_authorization
-    #Authorization.ignore_access_control(false)
-  end
-
-  # Wrapper for disable_authorization -> block -> enable_authorization as
-  # this is a common pattern.
-  def without_authorization
-    disable_authorization
-    yield
-    enable_authorization
   end
 
   # Ensure session[:auth_via] exists.
@@ -132,11 +111,8 @@ module Authentication
         logger.info "API authenticated via application key"
         session[:user_id] = name
         session[:auth_via] = :api_key
-        #Authentication.actual_user = @api_user
-        #Authorization.ignore_access_control(true)
         @api_user.logged_in_at = DateTime.now()
         @api_user.save
-        #Authorization.ignore_access_control(false)
         return
       end
 
@@ -173,10 +149,8 @@ module Authentication
 
         Authentication.actual_user = @user
 
-        #Authorization.ignore_access_control(true)
         @user.logged_in_at = DateTime.now()
         @user.save
-        #Authorization.ignore_access_control(false)
 
         # They are a valid @user but have no roles, so redirect them to access_denied
         unless @user.role_symbols.length > 0

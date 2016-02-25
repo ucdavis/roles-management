@@ -6,9 +6,7 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
     revoke_access
 
     assert @request.env['REMOTE_ADDR'] != '1.2.3.4'
-    # Even if we unset Authorization.current_user, declarative_authorization sets it as "AnonymousUser" with role :guest, so check for that instead of nil
-    assert Authorization.current_user.role_symbols.include?(:guest), "current_user should have :guest role for this test"
-    assert Authorization.current_user.role_symbols.length == 1, "current_user should not have more than :guest role for this test"
+    assert Authorization.current_user == nil
     assert session[:auth_via] != :cas, "authentication should not be set"
 
     # We have to pass 'auth_via' as '' to ensure it is set to an empty string
