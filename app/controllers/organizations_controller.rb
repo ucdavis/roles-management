@@ -1,5 +1,6 @@
 class OrganizationsController < ApplicationController
   before_filter :load_organizations, :only => :index
+  before_filter :load_organization, :only => :show
 
   # GET /organizations.json
   # It's assumed that organizations are never scoped per-user or per-permission. If this
@@ -33,26 +34,30 @@ class OrganizationsController < ApplicationController
 
   private
 
+    def load_organization
+      @organization = Organization.find(params[:id])
+    end
+
     def load_organizations
-        if params[:q]
+      if params[:q]
         organizations_table = Organization.arel_table
 
         # Search login IDs in case of an entity-search but looking for person by login ID
         @organizations = Organization.where(organizations_table[:name].matches("%#{params[:q]}%").or(organizations_table[:dept_code].matches("%#{params[:q]}%")))
 
         logger.debug "Organizations#index searching for '#{params[:q]}'. Found #{@organizations.length} results."
-        else
+      else
         @organizations = Organization.all
 
         if params[:tree]
-            @top_level_organizations = []
+          @top_level_organizations = []
 
-            @organizations.each do |organization|
+          @organizations.each do |organization|
             if organization.parent_organizations.length == 0
-                @top_level_organizations << organization
+              @top_level_organizations << organization
             end
-            end
+          end
         end
-        end
+      end
     end
 end
