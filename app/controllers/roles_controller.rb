@@ -1,5 +1,5 @@
 class RolesController < ApplicationController
-  before_filter :load_role, :only => :show
+  before_filter :load_role, :only => [:show, :update]
   before_filter :load_roles, :only => :index
 
   # Optionally takes application_id parameter to filter index to only roles from that application

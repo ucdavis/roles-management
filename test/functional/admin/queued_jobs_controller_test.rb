@@ -28,31 +28,26 @@ class Admin::QueuedJobsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-#   test "queued jobs index requires admin access" do
-#     # Ensure unauthorized user has no access
-#     revoke_access
+  test "queued jobs index requires admin access" do
+    # Ensure unauthorized user has no access
+    revoke_access
     
-#     get :index, :format => :json
-#     assert_response :unauthorized
+    get :index, :format => :json
+    assert_response :unauthorized
     
-#     # Ensure authorized non-admin user has no access
-#     CASClient::Frameworks::Rails::Filter.fake("casuser")
+    # Ensure authorized non-admin user has no access
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
     
-#     grant_test_user_basic_access
-#     revoke_test_user_admin_access
+    grant_test_user_basic_access
+    revoke_test_user_admin_access
     
-#     get :index, :format => :json
-#     assert_response :forbidden
+    get :index, :format => :json
+    assert_response :forbidden
     
-#     # Ensure authorized admin users have access
-#     grant_test_user_admin_access
+    # Ensure authorized admin users have access
+    grant_test_user_admin_access
     
-#     Rails.logger.info "getting index for SUCCESS"
-#     Rails.logger.info Person.find_by_loginid('casuser').roles.length
-    
-#     byebug
-  
-#     get :index, :format => :json
-#     assert_response :success
-#   end
+    get :index, :format => :json
+    assert_response :success
+  end
 end

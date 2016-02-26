@@ -1,16 +1,15 @@
 require 'test_helper'
 
 class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
-  test "whitelisted IP users index requires admin access" do
+  test "unauthenticated users cannot access whitelisted IP users index" do
     # Ensure unauthorized user has no access
     revoke_access
     
-    # assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
-    # assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
-  
     get :index, :format => :json
     assert_response :unauthorized
-    
+  end
+  
+  test "authenticated but unauthorized users cannot access whitelisted IP users index" do  
     # Ensure authorized non-admin user has no access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     
@@ -19,8 +18,11 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
     
     get :index, :format => :json
     assert_response :forbidden
-    
+  end
+  
+  test "authorized admin users can access whitelisted IP users index" do
     # Ensure authorized admin users have access
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
     grant_test_user_admin_access
   
     get :index, :format => :json
@@ -30,9 +32,6 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
   test "creating a whitelisted IP user requires admin access" do
     # Ensure unauthorized user is unable to create an API key user
     revoke_access
-    
-    # assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
-    # assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
     
     post :create, api_whitelisted_ip_user: { name: 'Tester' }, :format => :json
     assert_response :unauthorized
@@ -53,16 +52,15 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
     assert_response :created
   end
   
-  test "deleting a whitelisted IP user requires admin access" do
+  test "unauthenticated user cannot delete a whitelisted IP user" do
     # Ensure unauthorized user is unable to create an API key user
     revoke_access
     
-    # assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
-    # assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
-    
     delete :destroy, id: 1, :format => :json
     assert_response :unauthorized
-    
+  end
+  
+  test "unauthorized but authenticated user cannot delete a whitelisted IP user" do
     # Ensure authorized non-admin user has no access
     CASClient::Frameworks::Rails::Filter.fake("casuser")
     
@@ -71,6 +69,10 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
     
     delete :destroy, id: 1, :format => :json
     assert_response :forbidden
+  end
+  
+  test "authorized users can delete a whitelisted IP user" do
+    CASClient::Frameworks::Rails::Filter.fake("casuser")
     
     # Ensure authorized admin users have access
     grant_test_user_admin_access

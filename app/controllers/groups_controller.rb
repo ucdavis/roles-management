@@ -1,6 +1,7 @@
 class GroupsController < ApplicationController
   before_filter :new_group_from_params, :only => :create
   before_filter :load_groups, :only => :index
+  before_filter :load_group, :only => :show
 
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
@@ -43,6 +44,10 @@ class GroupsController < ApplicationController
     end
 
   private
+
+    def load_group
+      @group = Group.find_by_id(params[:id])
+    end
 
     def load_groups
       if params[:q]

@@ -8,6 +8,8 @@ class RolePolicy < BasePolicy
     # if they operate the role's application
     return true if record.application.operators.include?(user)
   
+    return true if user.is_a? ApiWhitelistedIpUser
+  
     super
   end
 end
