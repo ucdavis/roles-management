@@ -46,9 +46,9 @@ module Authentication
   def current_user
     case session[:auth_via]
     when :whitelisted_ip
-      return ApiWhitelistedIpUser.find_by_address(session[:user_id])
+      return Authentication.actual_user
     when :api_key
-      return ApiKeyUser.find_by_name(session[:user_id])
+      return Authentication.actual_user
     when :cas
       if self.impersonating?
         return Authentication.effective_user
@@ -110,6 +110,7 @@ module Authentication
         session[:auth_via] = :api_key
         @api_user.logged_in_at = DateTime.now()
         @api_user.save
+        Authentication.actual_user = @api_user
         return
       end
 
@@ -133,7 +134,7 @@ module Authentication
       # the redirect is actually made.
       CASClient::Frameworks::Rails::Filter.filter(self)
     end
-
+    
     if session[:cas_user]
       # CAS session exists. Valid user account?
       @user = Person.includes(:role_assignments).includes(:roles).find_by_loginid(session[:cas_user])
