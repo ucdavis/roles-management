@@ -9,8 +9,6 @@ namespace :user do
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
 
-    disable_authorization
-
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
       if p
@@ -30,16 +28,12 @@ namespace :user do
 
       puts "Granted access to #{arg[1]}"
     end
-
-    enable_authorization
   end
 
   desc 'Revokes access from user (separate from regular access).'
   task :revoke_access, :arg1 do |t, args|
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
-
-    disable_authorization
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
@@ -63,16 +57,12 @@ namespace :user do
         puts "No such user '#{arg[1]}'"
       end
     end
-
-    enable_authorization
   end
 
   desc 'Adds operate token to user (less powerful type of admin).'
   task :grant_operate, :arg1 do |t, args|
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
-
-    disable_authorization
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
@@ -94,16 +84,12 @@ namespace :user do
         next
       end
     end
-
-    enable_authorization
   end
 
   desc 'Revokes operate status from user (less poweful type of admin).'
   task :revoke_operate, :arg1 do |t, args|
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
-
-    disable_authorization
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
@@ -127,8 +113,6 @@ namespace :user do
         puts "No such user '#{arg[1]}'"
       end
     end
-
-    enable_authorization
   end
 
   desc 'Adds admin token to user (admin RM usage) and regular access if needed.'
@@ -137,8 +121,6 @@ namespace :user do
   task :grant_admin, :arg1 do |t, args|
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
-
-    disable_authorization
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
@@ -165,16 +147,12 @@ namespace :user do
         puts "No such user '#{arg[1]}'"
       end
     end
-
-    enable_authorization
   end
 
   desc 'Revokes admin from user (will keep regular access).'
   task :revoke_admin, :arg1 do |t, args|
     Rake::Task['environment'].invoke
     include RmBuiltinRoles
-
-    disable_authorization
 
     args.each do |arg|
       p = Person.find_by_loginid(arg[1])
@@ -198,7 +176,5 @@ namespace :user do
         puts "No such user '#{arg[1]}'"
       end
     end
-
-    enable_authorization
   end
 end
