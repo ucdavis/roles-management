@@ -169,11 +169,14 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
                 calculated: false
               selected_role.save {},
                 success: =>
+                  toastr.remove()
                   toastr["success"]("#{entity_to_assign.get('name')} added to role.")
                   DssRm.view_state.trigger('change')
                 error: =>
+                  toastr.remove()
                   toastr["error"]("Error while assigning #{entity_to_assign.get('name')} to role.")
             error: =>
+              toastr.remove()
               toastr["error"]("Error while updating person or group. Role assignment failed.")
         else
           # No role selected, either add entity to their favorites (default behavior)
@@ -192,11 +195,14 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
                 DssRm.current_user.favorites.add e
                 DssRm.current_user.save {},
                     error: ->
+                      toastr.remove()
                       toastr["error"]("Error while adding person or group to favorites.")
                     success: ->
+                      toastr.remove()
                       toastr["success"]("Person or group successfully added to favorites.")
                       # Do nothing on success
               error: =>
+                toastr.remove()
                 toastr["error"]("Error while adding to favorites.")
           else
             # Already in favorites - highlight the result
