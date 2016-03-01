@@ -37,7 +37,7 @@ gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
 gem 'ejs'
 
 # Possibly phasing this library out due to bugs / weird issues ...
-gem 'declarative_authorization', :git => 'git@github.com:stffn/declarative_authorization.git'
+gem 'declarative_authorization', :git => 'https://github.com/stffn/declarative_authorization.git'
 
 # For LDAP & Active Directory support
 gem 'net-ldap', :require => false
