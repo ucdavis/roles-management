@@ -157,8 +157,12 @@ class EntitiesController < ApplicationController
         params[:entity][:operator_ids] ||= [] if params[:entity].has_key?(:operator_ids)
       end
       params.require(:entity).permit(:name, :type, :description, :first, :last, :address, :email, :loginid,
-                                    :phone, :active, {owner_ids: []}, {favorite_ids: []}, {operator_ids: []}, {rules_attributes: [:id, :column, :condition, :value, :_destroy]},
+                                    :phone, :active, {owner_ids: []}, {favorite_ids: []}, {operator_ids: []},
+                                    {rules_attributes: [:id, :column, :condition, :value, :_destroy]},
                                     {memberships_attributes: [:id, :calculated, :entity_id, :_destroy]},
-                                    {group_memberships_attributes: [:id, :calculated, :group_id, :_destroy]}, {group_ownerships_attributes: [:id, :entity_id, :group_id, :_destroy]}, {role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy]})
+                                    {group_memberships_attributes: [:id, :calculated, :group_id, :_destroy]},
+                                    {group_ownerships_attributes: [:id, :entity_id, :group_id, :_destroy]},
+                                    {role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy]},
+                                    {group_operatorships_attributes: [:id, :group_id, :entity_id, :_destroy]})
     end
 end
