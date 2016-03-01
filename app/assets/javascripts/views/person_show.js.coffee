@@ -208,7 +208,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       unless operatorship.get('_destroy')
         group_operatorship_tokeninput.tokenInput "add",
           id: operatorship.get('id')
-          name: operatorship.get('name')
+          name: operatorship.get('group_name')
           readonly: @readonly
 
     group_membership_tokeninput = @$("input[name=group_memberships]")

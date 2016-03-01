@@ -23,6 +23,7 @@ json.cache! ['entity_show', @cache_key] do
       json.group_id operatorship.group_id
       json.id operatorship.id
       json.name operatorship.entity.name
+      json.group_name operatorship.group.name
     end
 
     json.group_ownerships @entity.group_ownerships do |ownership|
