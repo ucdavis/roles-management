@@ -14,8 +14,6 @@ namespace :title do
 
     require 'csv'
 
-    disable_authorization
-
     titles_csv = CSV.read(args[:csv_file_path])
     titles_csv.each do |row|
       code = "%04d" % row[0] # pad leading zeroes to ensure codes are always 4 digits (by definition)
@@ -34,7 +32,5 @@ namespace :title do
         t.save!
       end
     end
-
-    enable_authorization
   end
 end

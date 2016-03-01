@@ -81,10 +81,6 @@ class PeopleController < ApplicationController
 
         import_start = Time.now
 
-        # We allow creating people (and titles, etc.) for the purpose of import.
-        # User must still have authorization for people#import
-        disable_authorization
-
         if params[:loginid]
           ldap_import_start = Time.now
 
@@ -103,8 +99,6 @@ class PeopleController < ApplicationController
         if @p
           @p.save
 
-          enable_authorization
-
           import_finish = Time.now
 
           logger.info "Finished LDAP import request. LDAP operations took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
@@ -113,8 +107,6 @@ class PeopleController < ApplicationController
             format.json { render json: @p }
           end
         else
-          enable_authorization
-
           logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
 
           raise ActionController::RoutingError.new('Not Found')

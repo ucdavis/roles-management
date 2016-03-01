@@ -8,8 +8,6 @@ namespace :person do
   task :remove_bad_favorites do
     Rake::Task['environment'].invoke
 
-    disable_authorization
-
     count = 0
 
     PersonFavoriteAssignment.all.each do |pfa|
@@ -21,7 +19,5 @@ namespace :person do
     end
 
     puts "Found and removed #{count} bad favorites."
-
-    enable_authorization
   end
 end

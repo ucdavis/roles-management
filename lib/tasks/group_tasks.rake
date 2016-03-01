@@ -11,8 +11,6 @@ namespace :group do
     # Record groups which will need to recalculate their membership
     touched_group_ids = []
 
-    disable_authorization
-
     puts "Recalculating #{GroupRule.count} group rules."
 
     # Recalculate all group rule caches
@@ -34,8 +32,6 @@ namespace :group do
       group.reload
       puts "\tGroup ##{group.id} (#{group.name}) went from #{old_count} to #{group.members.length} members"
     end
-
-    enable_authorization
   end
 
   desc 'Recalculate the rule-based members of a specific group.'
@@ -51,8 +47,6 @@ namespace :group do
       exit
     end
 
-    disable_authorization
-
     puts "Group (#{g.id}, #{g.name}) has #{g.rules.length} rules."
 
     # Recalculate the group's rule caches
@@ -67,15 +61,11 @@ namespace :group do
     g.recalculate_members!
     g.reload
     puts "\tGroup ##{g.id} (#{g.name}) went from #{old_count} to #{g.members.length} members"
-
-    enable_authorization
   end
 
   desc 'Recalculate inherited application operatorships from groups.'
   task :recalculate_inherited_application_operatorships do
     Rake::Task['environment'].invoke
-
-    disable_authorization
 
     # For every group ...
     Group.all.each do |g|
@@ -98,7 +88,5 @@ namespace :group do
         end
       end
     end
-
-    enable_authorization
   end
 end

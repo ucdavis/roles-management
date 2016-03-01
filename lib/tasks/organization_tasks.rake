@@ -6,8 +6,6 @@ namespace :organization do
 
   desc 'Imports organizations from a CSV file'
   task :import_csv, [:csv_file] => :environment do |t, args|
-    disable_authorization
-
     unless args[:csv_file]
       puts "You must specify a CSV file to import."
       exit
@@ -67,10 +65,6 @@ namespace :organization do
     Organization.all.each do |organization|
       count = count + 1
 
-      # if count == 20
-      #   exit
-      # end
-
       puts "Parsing #{organization.id} #{organization.dept_code} #{organization.name}"
 
       # Find their parent organization ID by dept code, creating one if necessary
@@ -129,8 +123,6 @@ namespace :organization do
     end
 
     puts "Went through #{count} organizations. #{with_multiple} had multiple parents."
-
-    enable_authorization
   end
 
   # As part of the migration from Groups with codes (to signify OUs) to a proper
@@ -154,8 +146,6 @@ namespace :organization do
   # This task is only temporarily needed. Run organization:import_csv first.
   desc 'Check for missing organizations'
   task :migrate_groups => :environment do
-    disable_authorization
-
     Group.where('code is not null').each do |ou_group|
       organization = Organization.find_by_dept_code(ou_group.code)
 
@@ -228,16 +218,12 @@ namespace :organization do
     end
 
     puts "Group rules were generated using 'Organization is'. This should be converted to 'Department is' soon."
-
-    enable_authorization
   end
 
   # The UCD data is bad and contains some parent/child loops. Fortunately, they represent
   # invalid relationships so we'll simply remove them if found.
   desc 'Remove any two-way parent/child relationships'
   task :remove_parental_loops => :environment do
-    disable_authorization
-
     loop_count = 0
     Organization.all.each do |organization|
       organization.parent_organizations.each do |parent|
@@ -250,8 +236,6 @@ namespace :organization do
     end
 
     puts "Destroyed #{loop_count} loops."
-
-    enable_authorization
   end
 
   desc 'List any organization with more than one parent'
@@ -266,8 +250,6 @@ namespace :organization do
   # leaving the org tree with a single top-level parent node.
   desc 'Adds a top-level node containing all the parentless-nodes'
   task :add_top_level_node => :environment do
-    disable_authorization
-
     # Find nameless organizations and verify they are all top-level
     nameless_organizations = []
     Organization.all.each do |organization|
@@ -348,14 +330,10 @@ namespace :organization do
     top_org = top_orgs[0]
 
     puts "New top-level org #{top_org.name} (#{top_org.id}) has #{top_org.org_ids.length} org IDs and #{top_org.child_organizations.length} children."
-
-    enable_authorization
   end
 
   desc 'Removes a top-level node if one exists'
   task :remove_top_level_node => :environment do
-    disable_authorization
-
     orphaned_organizations = []
 
     Organization.all.each do |organization|
@@ -377,14 +355,10 @@ namespace :organization do
 
     puts "Destroying the top-level node #{top_level.name} (#{top_level.id}) ..."
     top_level.destroy
-
-    enable_authorization
   end
 
   desc 'List any organizations who have a parent which is also a grandparent'
   task :list_dubious_parentage, [:options] => :environment do |t, args|
-    disable_authorization
-
     remove = args[:options] == 'remove'
 
     Organization.all.each do |organization|
@@ -408,27 +382,19 @@ namespace :organization do
         end
       end
     end
-
-    enable_authorization
   end
 
   desc 'Drop all organizations'
   task :drop => :environment do
-    disable_authorization
-
     org_count = Organization.count
 
     Organization.destroy_all
-
-    enable_authorization
 
     puts "#{org_count} organization(s) dropped."
   end
 
   desc 'Generate a GraphViz-compatible output to STDOUT'
   task :graphviz => :environment do
-    disable_authorization
-
     puts "digraph unix {"
     puts "\tsize=\"6,6\";"
     puts "\tnode [color=lightblue2, style=filled];"
@@ -440,7 +406,5 @@ namespace :organization do
     end
 
     puts "}"
-
-    enable_authorization
   end
 end

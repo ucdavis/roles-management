@@ -14,8 +14,6 @@ namespace :ldap do
       # else we import everyone.
       single_import_mode = args[:loginid].nil? ? false : true
 
-      disable_authorization
-
       log = ActiveSupport::TaggedLogging.new(Logger.new("#{Rails.root.join('log', 'ldap-sync.log')}"))
       #log.formatter = Logger::Formatter.new # ensure log is timestamped
 
@@ -115,8 +113,6 @@ namespace :ldap do
 
         log.info "Completed LDAP import. Took " + (timestamp_finish - timestamp_start).to_s + "s."
       end
-
-      enable_authorization
     rescue => e
       ExceptionNotifier.notify_exception(e)
       raise e
