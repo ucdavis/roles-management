@@ -1,10 +1,4 @@
 GIT
-  remote: git@github.com:stffn/declarative_authorization.git
-  revision: 45e91af20eba71b2828c5c84066bcce3ef032e8a
-  specs:
-    declarative_authorization (1.0.0.pre)
-
-GIT
   remote: https://github.com/dssit/roles-management-api.git
   revision: 3a0a0606d2a2e198bec12a3b4d1abd0816c3e3f6
   specs:
@@ -23,6 +17,12 @@ GIT
   specs:
     rubycas-client (2.3.10.rc1)
       activesupport
+
+GIT
+  remote: https://github.com/stffn/declarative_authorization.git
+  revision: 45e91af20eba71b2828c5c84066bcce3ef032e8a
+  specs:
+    declarative_authorization (1.0.0.pre)
 
 GEM
   remote: https://rubygems.org/
