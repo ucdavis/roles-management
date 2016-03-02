@@ -88,13 +88,5 @@ namespace :db do
         puts "\t##{gr.id} invalid: #{gr.errors.full_messages.join(",")}"
       end
     end
-
-    # Activity logs
-    puts "Validating activity logs (#{ActivityLog.count}) ..."
-    ActivityLog.all.each do |al|
-      if al.valid? == false
-        puts "\t##{al.id} invalid: #{al.errors.full_messages.join(",")}"
-      end
-    end
   end
 end
