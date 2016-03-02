@@ -120,14 +120,14 @@ class EntitiesController < ApplicationController
   protected
 
     def new_entity_from_params
-        # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
-        if params[:entity][:type] == "Group"
+      # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
+      if params[:entity][:type] == "Group"
         @entity = Group.new(entity_params)
-        elsif params[:entity][:type] == "Person"
+      elsif params[:entity][:type] == "Person"
         @entity = Person.new(entity_params)
-        else
+      else
         @entity = nil
-        end
+      end
     end
 
   private
