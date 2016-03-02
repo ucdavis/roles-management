@@ -126,7 +126,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       )
     else
       # Hide the tab
-      @$(".tab-pane#activity").hide()
+      @$(".tab-pane#activity-pane").hide()
       @$("ul.nav>li#activity").hide()
   
   # Renders a single Activity Log row.
