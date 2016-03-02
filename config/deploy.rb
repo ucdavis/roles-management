@@ -1,109 +1,54 @@
-require "bundler/capistrano"
-require 'delayed_job_active_record'
+# config valid only for current version of Capistrano
+lock '3.4.0'
 
-# 'whenever' setup
-set :whenever_command, "bundle exec whenever"
-require "whenever/capistrano"
+set :application, 'roles-management'
+set :repo_url, 'git@github.com:dssit/roles-management.git'
 
-# 'delayed_job' setup
-require "delayed/recipes"
+# Temporary fix for restarting the application until Passenger v5.0.10
+set :passenger_restart_with_touch, true
 
-# Use 10 background workers (the same value should be set in config/schedule.rb)
-set :delayed_job_args, "-n 10 -p roles"
+# Default branch is :master
+# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
-before "deploy", "delayed_job:stop"
-after  "deploy", "delayed_job:start"
+# Default deploy_to directory is /var/www/my_app_name
+set :deploy_to, "/home/deployer/apps/#{fetch(:application)}"
 
-server "169.237.120.176", :web, :app, :db, primary: true
+# Default value for :scm is :git
+set :scm, :git
 
-set :application, "roles-management"
-set :url, "https://roles.dss.ucdavis.edu/"
-set :user, "deployer"
-set :deploy_to, "/home/#{user}/apps/#{application}"
-set :deploy_via, :remote_cache
-set :use_sudo, false
+# Default value for :format is :pretty
+set :format, :pretty
 
-set :scm, "git"
-set :repository, "git@github.com:dssit/#{application}.git"
-set :branch, "master"
+# Default value for :log_level is :debug
+set :log_level, :debug
 
-set :test_log, "log/capistrano.test.log"
+# Default value for :pty is false
+# set :pty, true
 
-set :linked_dirs, %w{tmp/pids}
+# Default value for :linked_files is []
+set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secret_token.yml', 'config/general.yml', 'config/api_keys.yml', 'config/ldap.yml', 'config/newrelic.yml')
 
-default_run_options[:pty] = true
-ssh_options[:forward_agent] = true
+# Default value for linked_dirs is []
+set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
 
-after "deploy", "deploy:cleanup" # keep only the last 5 releases
-after "deploy:update_code", "deploy:migrate"
+# Default value for default_env is {}
+# set :default_env, { path: "/opt/ruby/bin:$PATH" }
 
-before 'deploy:restart', 'deploy:empty_cache'
+# Default value for keep_releases is 5
+set :keep_releases, 5
+
+set :delayed_job_workers, 10
+set :delayed_job_prefix, :roles
 
 namespace :deploy do
-  before 'deploy' do
-    puts "    Running tests, please wait ..."
-    unless system "bundle exec rake > #{test_log} 2>&1"
-      puts "    Tests failed. Run `cat #{test_log}` to view errors."
-      exit
-    else
-      puts "    Tests passed."
-      system "rm #{test_log}"
+
+  after :restart, :clear_cache do
+    on roles(:web), in: :groups, limit: 3, wait: 10 do
+      # Here we can do anything such as:
+      # within release_path do
+      #   execute :rake, 'cache:clear'
+      # end
     end
   end
 
-  desc "Restart Passenger server"
-  task :restart, roles: :app, except: {no_release: true} do
-    run "touch #{current_path}/tmp/restart.txt"
-  end
-
-  desc "First-time config setup"
-  task :setup_config, roles: :app do
-    sudo "ln -nfs #{current_path}/config/nginx.conf /etc/nginx/sites-enabled/#{application}"
-    sudo "ln -nfs #{current_path}/config/unicorn_init.sh /etc/init.d/unicorn_#{application}"
-    run "mkdir -p #{shared_path}/config"
-    run "mkdir -p #{shared_path}/sync/config"
-    put File.read("config/database.example.yml"), "#{shared_path}/config/database.yml"
-    put File.read("config/api_keys.example.yml"), "#{shared_path}/config/api_keys.yml"
-    put File.read("config/ldap.example.yml"), "#{shared_path}/config/ldap.yml"
-    put File.read("config/general.example.yml"), "#{shared_path}/config/general.yml"
-    put File.read("sync/config/active_directory.example.yml"), "#{shared_path}/sync/config/active_directory.yml"
-    put File.read("sync/config/sysaid.example.yml"), "#{shared_path}/sync/config/sysaid.yml"
-    put File.read("config/secret_token.example.yml"), "#{shared_path}/config/secret_token.yml"
-    puts "Now edit the config files in #{shared_path}."
-  end
-  after "deploy:setup", "deploy:setup_config"
-
-  desc "Symlink config from shared to the newly deployed copy"
-  task :symlink_config, roles: :app do
-    run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
-    run "ln -nfs #{shared_path}/config/api_keys.yml #{release_path}/config/api_keys.yml"
-    run "ln -nfs #{shared_path}/config/newrelic.yml #{release_path}/config/newrelic.yml"
-    run "ln -nfs #{shared_path}/config/ldap.yml #{release_path}/config/ldap.yml"
-    run "ln -nfs #{shared_path}/config/general.yml #{release_path}/config/general.yml"
-    run "ln -nfs #{shared_path}/sync/config/active_directory.yml #{release_path}/sync/config/active_directory.yml"
-    run "ln -nfs #{shared_path}/sync/config/sysaid.yml #{release_path}/sync/config/sysaid.yml"
-    run "ln -nfs #{shared_path}/config/secret_token.yml #{release_path}/config/secret_token.yml"
-  end
-  after "deploy:finalize_update", "deploy:symlink_config"
-
-  desc "Make sure local git is in sync with remote."
-  task :check_revision, roles: :web do
-    unless `git rev-parse HEAD` == `git rev-parse origin/master`
-      puts "WARNING: HEAD is not the same as origin/master"
-      puts "Run `git push` to sync changes."
-      exit
-    end
-  end
-  before "deploy", "deploy:check_revision"
-
-  desc "Empty the main cache (changing view code does not necessarily invalidate cache_keys)"
-  task :empty_cache, roles: :app do
-    puts "--> Emptying cache, please wait ..."
-    unless system "bundle exec rake tmp:cache:clear"
-      puts "--> Emptying cache failed"
-      exit
-    else
-      puts "--> Cache emptied"
-    end
-  end
 end

@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2.5'
+gem 'rails', '~> 4.2.5.2'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -27,6 +27,13 @@ end
 
 group :development do
   gem 'letter_opener'
+  gem 'capistrano', '~> 3.0', require: false
+  gem 'capistrano-rails',   '~> 1.1', require: false
+  gem 'capistrano-bundler', '~> 1.1', require: false
+  gem 'capistrano-passenger', require: false
+  # We use our fork of capistrano3-delayed-job due to a bug in 'daemons' where delayed_job
+  # will not stop correctly if not passed the number of workers in the 'stop' command
+  gem 'capistrano3-delayed-job', git: 'git@github.com:cthielen/capistrano3-delayed-job.git'
 end
 
 gem 'spring', group: :development
@@ -42,8 +49,6 @@ group :development, :test do
 end
 
 gem 'exception_notification'
-
-gem 'capistrano', '< 3.0.0'
 
 # For CAS authentication
 gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
