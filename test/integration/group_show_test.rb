@@ -52,7 +52,7 @@ class GroupShowTest < ActionDispatch::IntegrationTest
         if el.text == 'Create Group Some New Group'
             el.click()
             el_found = true
-            break;
+            break
         end
     end
     
