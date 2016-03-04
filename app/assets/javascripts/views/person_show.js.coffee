@@ -119,7 +119,8 @@ class DssRm.Views.PersonShow extends Backbone.View
         url: Routes.entity_path(@model.id) + "/activity"
         type: 'GET'
       ).done( (res) =>
-        _.each res.activities, (entry) =>
+        # Show the first 8 entries
+        _.each _.first(res.activities, 8), (entry) =>
           $activityTable.append @renderActivityLogRow(entry)
       ).fail( (data) ->
           toastr["error"]("An error occurred while fetching the activity logs. Try again later.")

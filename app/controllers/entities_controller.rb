@@ -94,21 +94,29 @@ class EntitiesController < ApplicationController
     end
   end
   
+  #NUM_ACTIVITY_PER_PAGE = 8
   def activity
     @entity = Entity.find(params[:id])
     
     authorize @entity
     
-    @activity = @entity.activity(8)
-    tag = ActivityLogTag.find_by_tag("#{@entity.class.to_s.downcase}_#{@entity.id}")
-    if tag
-      logs = tag.activity_logs.order(performed_at: :desc)
-      if logs.length > 0
-        @cache_key = "entity/" + @entity.id.to_s + '/activity/' + logs[0].performed_at.try(:utc).try(:to_s, :number)
+    # Page parameter starts at 0
+    #page = (params[:page] || 1) - 1
+    
+    activity = @entity.activity
+    if activity
+      @activity = @entity.activity #.offset(page * NUM_ACTIVITY_PER_PAGE).limit(NUM_ACTIVITY_PER_PAGE)
+      #@page_count = (Float(@entity.activity.count) / NUM_ACTIVITY_PER_PAGE).ceil
+      
+      if @activity.length > 0
+        #@cache_key = "entity/" + @entity.id.to_s + '/activity/' + page.to_s + '/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
+        @cache_key = "entity/" + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
       else
         @cache_key = nil
       end
     else
+      @activity = nil
+      #@page_count = 0
       @cache_key = nil
     end
 
