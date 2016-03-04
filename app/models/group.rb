@@ -17,12 +17,15 @@ class Group < Entity
   accepts_nested_attributes_for :rules, :allow_destroy => true
   accepts_nested_attributes_for :memberships, :allow_destroy => true
   
+  after_create { |group|
+    ActivityLog.info!("Created group #{group.name}.", ["group_#{group.id}", 'system'])
+  }
+
   before_destroy :allow_group_membership_destruction, prepend: true
   after_destroy { |group|
     GroupMembership.can_destroy_calculated_group_membership(false)
     ActivityLog.info!("Deleted group #{group.name}.", ['system'])
   }
-
 
   def as_json(options={})
     { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
