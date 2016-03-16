@@ -10,6 +10,7 @@ class RoleAssignment < ActiveRecord::Base
   validates :role, :entity, :presence => true
   validates_uniqueness_of :role_id, :scope => [:entity_id, :parent_id]
   validate :assignment_cannot_be_cyclical # must come before the possibly cyclical operations of granting role assignments in after_create
+  validate :parent_must_exist_if_set
 
   before_destroy :cannot_destroy_calculated_assignment_without_flag
 
@@ -130,6 +131,13 @@ class RoleAssignment < ActiveRecord::Base
   def cannot_destroy_calculated_assignment_without_flag
     if parent_id and not Thread.current[:role_assignment_destroying_calculated_flag]
       errors.add(:parent_id, "can't destroy a calculated role assignment without flag properly set")
+      return false
+    end
+  end
+
+  def parent_must_exist_if_set
+    if parent_id && (RoleAssignment.find_by_id(parent_id) == nil)
+      errors.add(:parent_id, "parent_id must be a valid RoleAssignment")
       return false
     end
   end
