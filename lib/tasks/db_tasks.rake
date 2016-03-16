@@ -80,7 +80,7 @@ namespace :db do
         puts "\t##{go.id} invalid: #{go.errors.full_messages.join(",")}"
       end
     end
-    
+
     # Group rule result
     puts "Validating group rule (#{GroupRule.count}) ..."
     GroupRule.all.each do |gr|

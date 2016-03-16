@@ -25,6 +25,12 @@ GIT
     rubycas-client (2.3.10.rc1)
       activesupport
 
+GIT
+  remote: https://github.com/stffn/declarative_authorization.git
+  revision: 45e91af20eba71b2828c5c84066bcce3ef032e8a
+  specs:
+    declarative_authorization (1.0.0.pre)
+
 GEM
   remote: https://rubygems.org/
   specs:
