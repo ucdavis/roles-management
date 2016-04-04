@@ -40,16 +40,16 @@ after "deploy:update_code", "deploy:migrate"
 before 'deploy:restart', 'deploy:empty_cache'
 
 namespace :deploy do
-  before 'deploy' do
-    puts "    Running tests, please wait ..."
-    unless system "bundle exec rake > #{test_log} 2>&1"
-      puts "    Tests failed. Run `cat #{test_log}` to view errors."
-      exit
-    else
-      puts "    Tests passed."
-      system "rm #{test_log}"
-    end
-  end
+  # before 'deploy' do
+  #   puts "    Running tests, please wait ..."
+  #   unless system "bundle exec rake > #{test_log} 2>&1"
+  #     puts "    Tests failed. Run `cat #{test_log}` to view errors."
+  #     exit
+  #   else
+  #     puts "    Tests passed."
+  #     system "rm #{test_log}"
+  #   end
+  # end
 
   desc "Restart Passenger server"
   task :restart, roles: :app, except: {no_release: true} do
