@@ -17,6 +17,7 @@ class DssRm.Views.PersonShow extends Backbone.View
     @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
     @readonly = @model.isReadOnly()
+    @activities_per_page = 8
 
     @initializeRelationsTab()
     @initializeRolesTab()
@@ -82,7 +83,7 @@ class DssRm.Views.PersonShow extends Backbone.View
       crossDomain: false
       defaultText: ""
       theme: "facebook"
-      disabled: true #@readonly
+      disabled: true
       onAdd: (item) =>
         @model.organizations.add
           id: item.id
@@ -112,23 +113,41 @@ class DssRm.Views.PersonShow extends Backbone.View
 
   initializeActivityTab: ->
     if DssRm.admin_logged_in()
-      $activityTable = @$("tbody#activity_log")
-      $activityTable.empty()
-
       $.ajax(
         url: Routes.entity_path(@model.id) + "/activity"
         type: 'GET'
       ).done( (res) =>
-        # Show the first 8 entries
-        _.each _.first(res.activities, 8), (entry) =>
-          $activityTable.append @renderActivityLogRow(entry)
+        # Store pagination and calculate number of pages
+        @activity = res.activities
+        @num_activity_pages = Math.ceil(@activity.length / @activities_per_page)
+        @current_activity_page = 1
+        
+        @renderActivity() # AJAX likely finished after last render, so re-render
       ).fail( (data) ->
           toastr["error"]("An error occurred while fetching the activity logs. Try again later.")
       )
     else
-      # Hide the tab
+      # Hide the tab as user is not admin
       @$(".tab-pane#activity-pane").hide()
       @$("ul.nav>li#activity").hide()
+  
+  # Renders the activity table based on the current page
+  renderActivity: ->
+    $activityTable = @$("tbody#activity_log")
+    $activityTable.empty()
+    
+    $pagination = @$("#activity-pane>div.pagination>ul")
+    $pagination.empty()
+
+    for i in [1..@num_activity_pages]
+      if i == @current_activity_page
+        $pagination.append("<li class='active' style='display: inline;'><a href='#'>#{i}</a></li>")
+      else
+        $pagination.append("<li><a href='#'>#{i}</a></li>")
+  
+    # Show @activities_per_page entries for the given @current_activity_page
+    _.each _.first(_.rest(@activity, (@current_activity_page * @activities_per_page) - @activities_per_page), @activities_per_page), (entry) =>
+      $activityTable.append @renderActivityLogRow(entry)
   
   # Renders a single Activity Log row.
   renderActivityLogRow: (entry) ->
@@ -252,6 +271,9 @@ class DssRm.Views.PersonShow extends Backbone.View
               name: role_assignment.get("name")
               readonly: @readonly || role_assignment.get('calculated')
               class: (if role_assignment.get('calculated') then "calculated" else "")
+    
+    if DssRm.admin_logged_in()
+      @renderActivity()
 
     if @readonly
       @$('.token-input-list-facebook').readonly()
