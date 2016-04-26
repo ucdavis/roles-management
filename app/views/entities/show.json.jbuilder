@@ -15,13 +15,13 @@ json.cache! ['entity_show', @cache_key] do
       json.calculated membership.calculated
       json.group_id membership.group_id
       json.id membership.id
-      json.name membership.entity.name
+      json.name membership.group.name
     end
 
     json.group_operatorships @entity.group_operatorships do |operatorship|
       json.group_id operatorship.group_id
       json.id operatorship.id
-      json.name operatorship.entity.name
+      json.name operatorship.group.name
     end
 
     json.group_ownerships @entity.group_ownerships do |ownership|

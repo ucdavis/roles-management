@@ -187,7 +187,7 @@ class DssRm.Views.PersonShow extends Backbone.View
 
     non_ou_group_membership_tokeninput = @$("input[name=non_ou_group_memberships]")
     non_ou_group_membership_tokeninput.tokenInput "clear"
-    _.each @model.nonOuGroupMemberships(), (membership) =>
+    @model.group_memberships.each (membership) =>
       unless membership.get('_destroy')
         non_ou_group_membership_tokeninput.tokenInput "add",
           id: membership.get('id')
