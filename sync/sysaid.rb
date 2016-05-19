@@ -118,7 +118,7 @@ def add_user_to_sysaid(person_sync_data)
     end
 
     if person_sync_data["organizations"].length == 0
-      #STDOUT.puts "User '#{loginid}' has no OUs in RM so they will not have a Company or Department in SysAid. Maybe local Company/Department list needs updating?"
+      STDOUT.puts "User '#{person_sync_data["loginid"]}' has no OUs in RM so they will not have a Company or Department in SysAid. Maybe local Company/Department list needs updating?"
     end
 
     if user.company.nil?
