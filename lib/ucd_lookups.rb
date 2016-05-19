@@ -152,7 +152,7 @@ module UcdLookups
 	DEPT_CODES["040114"] = {}
 		DEPT_CODES["040114"]["name"] = "POLI SCI, IR ORANGE CLUSTER"
 		DEPT_CODES["040114"]["company"] = "040114"
-		DEPT_CODES["040114"]["manager"] = "cckoga"
+		DEPT_CODES["040114"]["manager"] = "murrayj"
 
 	DEPT_CODES["040115"] = {}
 		DEPT_CODES["040115"]["name"] = "UC CENTER SACRAMENTO"
