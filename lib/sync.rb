@@ -181,9 +181,15 @@ module Sync
     end
   end
   # FIXME: 'handle_asynchronously' doesn't seem to work
-  handle_asynchronously :perform_sync, :queue => 'sync'
+  #handle_asynchronously :perform_sync, :queue => 'sync'
 
   def sync_scripts
-    Dir[Rails.root.join("sync", "*")].select{ |f| File.file?(f) }
+    if Rails.env.development?
+      # In development mode, only run the test script (simply prints job details to STDOUT).
+      # This is to avoid accidentally modifying Active Directory, SysAid, etc.
+      Dir[Rails.root.join("sync", "test.rb")]
+    else
+      Dir[Rails.root.join("sync", "*")].select{ |f| File.file?(f) }
+    end
   end
 end
