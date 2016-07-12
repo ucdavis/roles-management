@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20150721190626) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "activity_log_tag_associations", force: :cascade do |t|
     t.integer "activity_log_id"
     t.integer "activity_log_tag_id"
@@ -33,15 +36,15 @@ ActiveRecord::Schema.define(version: 20150721190626) do
   create_table "affiliation_assignments", force: :cascade do |t|
     t.integer  "affiliation_id"
     t.integer  "person_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
   create_table "affiliations", force: :cascade do |t|
     t.string "name", limit: 255
   end
 
-  add_index "affiliations", ["name"], name: "index_affiliations_on_name"
+  add_index "affiliations", ["name"], name: "index_affiliations_on_name", using: :btree
 
   create_table "api_key_users", force: :cascade do |t|
     t.string   "secret",       limit: 255
@@ -51,7 +54,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "logged_in_at"
   end
 
-  add_index "api_key_users", ["name", "secret"], name: "index_api_key_users_on_name_and_secret"
+  add_index "api_key_users", ["name", "secret"], name: "index_api_key_users_on_name_and_secret", using: :btree
 
   create_table "api_whitelisted_ip_users", force: :cascade do |t|
     t.string   "address",      limit: 255
@@ -61,7 +64,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "logged_in_at"
   end
 
-  add_index "api_whitelisted_ip_users", ["address"], name: "index_api_whitelisted_ip_users_on_address"
+  add_index "api_whitelisted_ip_users", ["address"], name: "index_api_whitelisted_ip_users_on_address", using: :btree
 
   create_table "application_operatorships", force: :cascade do |t|
     t.integer  "application_id"
@@ -71,14 +74,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.integer  "parent_id"
   end
 
-  add_index "application_operatorships", ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
-
-  create_table "application_ou_assignments", force: :cascade do |t|
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-    t.integer  "application_id"
-    t.integer  "ou_id"
-  end
+  add_index "application_operatorships", ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id", using: :btree
 
   create_table "application_ownerships", force: :cascade do |t|
     t.integer  "entity_id"
@@ -90,21 +86,21 @@ ActiveRecord::Schema.define(version: 20150721190626) do
 
   create_table "applications", force: :cascade do |t|
     t.string   "name",        limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
     t.text     "description"
     t.string   "url",         limit: 255
   end
 
-  add_index "applications", ["name"], name: "index_applications_on_name"
+  add_index "applications", ["name"], name: "index_applications_on_name", using: :btree
 
   create_table "classifications", force: :cascade do |t|
     t.string   "name",       limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
-  add_index "classifications", ["name"], name: "index_classifications_on_name"
+  add_index "classifications", ["name"], name: "index_classifications_on_name", using: :btree
 
   create_table "classifications_titles", force: :cascade do |t|
     t.integer "classification_id"
@@ -125,7 +121,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at",                         null: false
   end
 
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "entities", force: :cascade do |t|
     t.string   "type",         limit: 255
@@ -145,15 +141,10 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "logged_in_at"
   end
 
-  add_index "entities", ["id"], name: "index_entities_on_id"
-  add_index "entities", ["loginid"], name: "index_entities_on_loginid"
-  add_index "entities", ["name"], name: "index_entities_on_name"
-  add_index "entities", ["type"], name: "index_entities_on_type"
-
-  create_table "group_group", id: false, force: :cascade do |t|
-    t.integer "group_id"
-    t.integer "subgroup_id"
-  end
+  add_index "entities", ["id"], name: "index_entities_on_id", using: :btree
+  add_index "entities", ["loginid"], name: "index_entities_on_loginid", using: :btree
+  add_index "entities", ["name"], name: "index_entities_on_name", using: :btree
+  add_index "entities", ["type"], name: "index_entities_on_type", using: :btree
 
   create_table "group_memberships", force: :cascade do |t|
     t.integer  "group_id"
@@ -168,27 +159,14 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "entity_id"
-    t.integer  "parent_id"
-  end
-
-  add_index "group_operatorships", ["group_id", "entity_id", "parent_id"], name: "idx_group_opships_on_g_id_and_entity_id_and_parent_id"
-
-  create_table "group_owner_assignments", force: :cascade do |t|
-    t.integer  "group_id"
-    t.integer  "owner_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "group_ownerships", force: :cascade do |t|
     t.integer  "group_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer  "entity_id"
-    t.integer  "parent_id"
   end
-
-  add_index "group_ownerships", ["group_id", "entity_id", "parent_id"], name: "idx_group_ownships_on_g_id_and_entity_id_and_parent_id"
 
   create_table "group_rule_results", force: :cascade do |t|
     t.integer  "group_rule_id"
@@ -201,24 +179,9 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.string   "column",     limit: 255
     t.string   "condition",  limit: 255
     t.string   "value",      limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "group_id"
-  end
-
-  create_table "groups", force: :cascade do |t|
-    t.string   "name",       limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
-    t.integer  "min_size"
-    t.integer  "max_size"
-    t.integer  "head_id"
-    t.integer  "role_id"
-  end
-
-  create_table "groups_people", id: false, force: :cascade do |t|
-    t.integer "group_id"
-    t.integer "person_id"
+    t.integer  "group_id"
   end
 
   create_table "majors", force: :cascade do |t|
@@ -227,7 +190,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at",             null: false
   end
 
-  add_index "majors", ["name"], name: "index_majors_on_name"
+  add_index "majors", ["name"], name: "index_majors_on_name", using: :btree
 
   create_table "organization_entity_associations", force: :cascade do |t|
     t.integer  "organization_id"
@@ -244,8 +207,8 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "organization_managers", ["manager_id"], name: "index_organization_managers_on_manager_id"
-  add_index "organization_managers", ["organization_id"], name: "index_organization_managers_on_organization_id"
+  add_index "organization_managers", ["manager_id"], name: "index_organization_managers_on_manager_id", using: :btree
+  add_index "organization_managers", ["organization_id"], name: "index_organization_managers_on_organization_id", using: :btree
 
   create_table "organization_org_ids", force: :cascade do |t|
     t.integer  "organization_id"
@@ -254,18 +217,18 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at",                  null: false
   end
 
-  add_index "organization_org_ids", ["org_id"], name: "index_organization_org_ids_on_org_id"
-  add_index "organization_org_ids", ["organization_id"], name: "index_organization_org_ids_on_organization_id"
+  add_index "organization_org_ids", ["org_id"], name: "index_organization_org_ids_on_org_id", using: :btree
+  add_index "organization_org_ids", ["organization_id"], name: "index_organization_org_ids_on_organization_id", using: :btree
 
   create_table "organization_parent_ids", force: :cascade do |t|
     t.integer  "organization_id"
-    t.integer  "parent_org_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.integer  "parent_org_id",   default: 1
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
-  add_index "organization_parent_ids", ["organization_id"], name: "index_organization_parent_ids_on_organization_id"
-  add_index "organization_parent_ids", ["parent_org_id"], name: "index_organization_parent_ids_on_parent_org_id"
+  add_index "organization_parent_ids", ["organization_id"], name: "index_organization_parent_ids_on_organization_id", using: :btree
+  add_index "organization_parent_ids", ["parent_org_id"], name: "index_organization_parent_ids_on_parent_org_id", using: :btree
 
   create_table "organizations", force: :cascade do |t|
     t.string   "name",       limit: 255
@@ -274,82 +237,30 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "updated_at",             null: false
   end
 
-  add_index "organizations", ["dept_code"], name: "index_organizations_on_dept_code"
-
-  create_table "ou_assignments", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer  "person_id"
-    t.integer  "ou_id"
-  end
-
-  create_table "ou_children_assignments", force: :cascade do |t|
-    t.integer "ou_id"
-    t.integer "child_id"
-  end
-
-  create_table "ou_manager_assignments", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer  "ou_id"
-    t.integer  "manager_id"
-  end
-
-  create_table "ou_ou_assignments", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "ous", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.string   "code",       limit: 255
-  end
-
-  create_table "people", force: :cascade do |t|
-    t.string   "first",          limit: 255
-    t.string   "last",           limit: 255
-    t.string   "email",          limit: 255
-    t.string   "loginid",        limit: 255
-    t.string   "preferred_name", limit: 255
-    t.boolean  "status"
-    t.string   "phone",          limit: 255
-    t.string   "address",        limit: 255
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-    t.integer  "title_id"
-  end
+  add_index "organizations", ["dept_code"], name: "index_organizations_on_dept_code", using: :btree
 
   create_table "person_favorite_assignments", force: :cascade do |t|
     t.integer  "entity_id"
     t.integer  "owner_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "person_manager_assignments", force: :cascade do |t|
-    t.integer  "person_id"
-    t.integer  "manager_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "role_assignments", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer  "role_id"
     t.integer  "entity_id"
     t.integer  "parent_id"
   end
 
-  add_index "role_assignments", ["role_id", "entity_id", "parent_id"], name: "index_role_assignments_on_role_id_and_entity_id_and_parent_id"
-  add_index "role_assignments", ["role_id", "entity_id"], name: "index_role_assignments_on_role_id_and_entity_id"
+  add_index "role_assignments", ["role_id", "entity_id", "parent_id"], name: "index_role_assignments_on_role_id_and_entity_id_and_parent_id", using: :btree
+  add_index "role_assignments", ["role_id", "entity_id"], name: "index_role_assignments_on_role_id_and_entity_id", using: :btree
 
   create_table "roles", force: :cascade do |t|
     t.string   "token",          limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.integer  "application_id"
     t.string   "name",           limit: 255
     t.string   "description",    limit: 255
@@ -358,7 +269,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.string   "ad_guid",        limit: 255
   end
 
-  add_index "roles", ["id"], name: "index_roles_on_id"
+  add_index "roles", ["id"], name: "index_roles_on_id", using: :btree
 
   create_table "student_levels", force: :cascade do |t|
     t.string   "name",       limit: 255
@@ -378,7 +289,7 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.string "code", limit: 255
   end
 
-  add_index "titles", ["code"], name: "index_titles_on_code"
+  add_index "titles", ["code"], name: "index_titles_on_code", using: :btree
 
   create_table "versions", force: :cascade do |t|
     t.integer  "versioned_id"
@@ -390,15 +301,15 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.integer  "number"
     t.integer  "reverted_from"
     t.string   "tag",            limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
-  add_index "versions", ["created_at"], name: "index_versions_on_created_at"
-  add_index "versions", ["number"], name: "index_versions_on_number"
-  add_index "versions", ["tag"], name: "index_versions_on_tag"
-  add_index "versions", ["user_id", "user_type"], name: "index_versions_on_user_id_and_user_type"
-  add_index "versions", ["user_name"], name: "index_versions_on_user_name"
-  add_index "versions", ["versioned_id", "versioned_type"], name: "index_versions_on_versioned_id_and_versioned_type"
+  add_index "versions", ["created_at"], name: "index_versions_on_created_at", using: :btree
+  add_index "versions", ["number"], name: "index_versions_on_number", using: :btree
+  add_index "versions", ["tag"], name: "index_versions_on_tag", using: :btree
+  add_index "versions", ["user_id", "user_type"], name: "index_versions_on_user_id_and_user_type", using: :btree
+  add_index "versions", ["user_name"], name: "index_versions_on_user_name", using: :btree
+  add_index "versions", ["versioned_id", "versioned_type"], name: "index_versions_on_versioned_id_and_versioned_type", using: :btree
 
 end
