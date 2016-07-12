@@ -72,19 +72,30 @@ div#modal_container tr.fields button {
   }
 }
 
-div#entityShowModal #corner_summary {
-  float: right;
-  text-align: center;
-  color: #666;
-  font-size: 8pt;
-  margin-right: 5px;
-  margin-top: 5px;
-}
+div#entityShowModal {
+  #corner_summary {
+    float: right;
+    text-align: center;
+    color: #666;
+    font-size: 8pt;
+    margin-right: 5px;
+    margin-top: 5px;
 
-div#entityShowModal #corner_summary #group_member_count {
-  font-weight: bold;
-  font-size: 20pt;
-  color: #333;
+    #group_member_count {
+      font-weight: bold;
+      font-size: 20pt;
+      color: #333;
+    }
+  }
+
+  .byline {
+    font-weight: normal;
+  }
+
+  a.close {
+    /* attempt to fix the slightly off-centering the close button causes our entity show modal's h1 */
+    margin-left: -12px;
+  }
 }
 
 div#entityShowModal #activity table {
