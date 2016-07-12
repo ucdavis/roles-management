@@ -99,13 +99,13 @@ class GroupMembership < ActiveRecord::Base
   # Grant group's roles to new member (marking as calculated)
   def grant_group_roles_to_member
     Rails.logger.tagged "GroupMembership #{id}" do
-      group.roles.each do |r|
-        logger.info "Granting role (#{r.id}, #{r.token}, App ID #{r.application_id}) to new group member (#{entity.id}/#{entity.name} joining #{group.id}/#{group.name})"
-        ra = RoleAssignment.new
-        ra.role_id = r.id
-        ra.entity_id = entity.id
-        ra.parent_id = group.id
-        ra.save!
+      group.role_assignments.each do |ra|
+        logger.info "Granting role (#{ra.role_id}, #{ra.role.token}, App ID #{ra.role.application_id}) to new group member (#{entity.id}/#{entity.name} joining #{group.id}/#{group.name})"
+        member_ra = RoleAssignment.new
+        member_ra.role_id = ra.role_id
+        member_ra.entity_id = entity.id
+        member_ra.parent_id = ra.id
+        member_ra.save!
       end
     end
 
@@ -114,16 +114,16 @@ class GroupMembership < ActiveRecord::Base
 
   def remove_group_roles_from_member
     Rails.logger.tagged "GroupMembership #{id}" do
-      group.roles.each do |r|
+      group.role_assignments.each do |ra|
         if entity
-          logger.info "Removing role (#{r.id}, #{r.token}, App ID #{r.application_id}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
-          ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(r.id, entity.id, group.id)
-          if ra
+          logger.info "Removing role (#{ra.role_id}, #{ra.role.token}, App ID #{ra.role.application_id}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
+          member_ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(ra.role_id, entity.id, ra.id)
+          if member_ra
             destroying_calculated_role_assignment do
-              ra.destroy
+              member_ra.destroy
             end
           else
-            logger.warn "Failed to remove role (#{r.id}, #{r.token}, App ID #{r.application_id}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database. This is probably okay."
+            logger.warn "Failed to remove role (#{ra.role_id}, #{ra.role.token}, App ID #{ra.role.application_id}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database."
           end
         else
           logger.error "Asked to remove role for leaving group member but member is non-existent. Entity ID should be #{entity_id}"
