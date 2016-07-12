@@ -23,6 +23,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 group :production do
   gem 'pg'
   gem 'dalli'
+  # For New Relic monitoring integration
+  gem 'newrelic_rpm'
 end
 
 group :development do
@@ -73,6 +75,3 @@ gem 'daemons'
 # Sync script dependencies
 gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'
 gem 'roles-management-api', :git => 'https://github.com/dssit/roles-management-api.git'
-
-# For New Relic monitoring integration
-gem 'newrelic_rpm'
