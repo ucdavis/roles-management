@@ -2,7 +2,7 @@
 lock '3.5.0'
 
 set :application, 'roles-management'
-set :repo_url, 'git@github.com:dssit/roles-management.git'
+set :repo_url, 'https://github.com/dssit/roles-management.git'
 
 # Temporary fix for restarting the application until Passenger v5.0.10
 set :passenger_restart_with_touch, true
