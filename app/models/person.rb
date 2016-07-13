@@ -142,11 +142,12 @@ class Person < Entity
   # Returns all applications the user has an ownership or operatorship on
   def manageable_applications
     if role_symbols.include?(:admin)
-      Application.all
+      Application.includes(:roles, :application_ownerships, :operatorships).all
     elsif role_symbols.include?(:operate)
-      Application.all.select{ |a| a.name != "DSS Roles Management" }
+      Application.includes(:roles, :application_ownerships, :operatorships).all.select{ |a| a.name != "DSS Roles Management" }
     else
-      application_ownerships.map{ |o| o.application } + application_operatorships.map{ |o| o.application }
+      application_ids = (application_ownerships.map{ |o| o.application_id } + application_operatorships.map{ |o| o.application_id }).uniq
+      Application.includes(:roles, :application_ownerships, :operatorships).where(:id => application_ids)
     end
   end
 

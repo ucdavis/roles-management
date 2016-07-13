@@ -75,7 +75,7 @@ module Authentication
         Authentication.actual_user = ApiKeyUser.find_by_name(session[:user_id])
         logger.info "Authentication passed with existing session (API key): #{session[:user_id]}"
       when :cas
-        Authentication.actual_user = Person.includes(:role_assignments).includes(:roles).includes(:affiliations).find_by_id(session[:user_id])
+        Authentication.actual_user = Person.includes(:role_assignments, :roles, :affiliations).find_by_id(session[:user_id])
         logger.info "Authentication passed with existing session (CAS): ID: #{session[:user_id]}, login ID: #{Authentication.actual_user.loginid}"
         if self.impersonating?
           Authentication.effective_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonate_id])
@@ -137,7 +137,7 @@ module Authentication
     
     if session[:cas_user]
       # CAS session exists. Valid user account?
-      @user = Person.includes(:role_assignments).includes(:roles).find_by_loginid(session[:cas_user])
+      @user = Person.includes(:role_assignments, :roles).find_by_loginid(session[:cas_user])
       @user = nil if @user and @user.active == false # Don't allow disabled users to log in
 
       if @user
