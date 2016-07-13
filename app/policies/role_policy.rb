@@ -1,4 +1,6 @@
 class RolePolicy < BasePolicy
+  include RmBuiltinRoles
+
   def show?
     # A user can show a role ...
   
@@ -15,6 +17,9 @@ class RolePolicy < BasePolicy
 
   def update?
     # A user can update a role ...
+
+    # (they cannot if the role is the internal admin role and they are not admin)
+    return false if (record.id == rm_admin_role_id) && (user.is_admin? == false)
 
     # if they own the role's application
     return true if record.application.owners.include?(user)

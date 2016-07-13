@@ -4,6 +4,9 @@ class GroupPolicy < BasePolicy
     
     # if they're an admin
     return true if user.is_admin?
+
+    # if they're an operator
+    return true if user.is_operator?
     
     # if they own the group
     return true if record.owners.include?(user)

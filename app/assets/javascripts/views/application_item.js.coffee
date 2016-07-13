@@ -35,13 +35,10 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
     focused_application_id = DssRm.view_state.get 'focused_application_id'
     if focused_application_id
       if focused_application_id is @model.id
-        #@$el.css "opacity", "1.0"
         @$el.removeClass "hide-card"
       else
-        #@$el.css "opacity", "0.4"
         @$el.addClass "hide-card"
     else
-      #@$el.css "opacity", "1.0"
       @$el.removeClass "hide-card"
 
     # Roles area needed?
@@ -49,8 +46,15 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
 
     @$(".roles").empty()
     @model.roles.each (r) =>
-      $role_item = @renderRoleItem(r)
-      @$(".roles").append $role_item
+      if((@model.get('name') == "DSS Roles Management") && (r.get("name") == "Administrative Rights"))
+        # Only render the internal RM "Administrative Rights" role if user is admin. Backend also
+        # performs this security check.
+        if DssRm.is_admin?
+          $role_item = @renderRoleItem(r)
+          @$(".roles").append $role_item
+      else
+        $role_item = @renderRoleItem(r)
+        @$(".roles").append $role_item
 
     @
 

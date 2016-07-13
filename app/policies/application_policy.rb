@@ -22,6 +22,7 @@ class ApplicationPolicy < BasePolicy
     return true if record.owners.include?(user)
     
     # operators cannot update an application
+    # (it would be a security risk as the application model accepts nested roles, notably the admin role)
     
     super
   end

@@ -1,6 +1,6 @@
 <div id="applications"></div>
 
-<!-- current_user_admin is merely for UI purposes - backend performs its own checks -->
+<!-- current_user_admin/operator is merely for UI purposes - backend performs its own checks -->
 <script type="text/json" id="bootstrap">
   {
     <% cache(cache_key_for_current_user) do %>
@@ -9,7 +9,8 @@
     <% cache(cache_key_for_applications) do %>
     "applications"      : <%= @applications.to_json %>,
     <% end %>
-    "current_user_admin": <%= has_role?(:admin) %>
+    "current_user_admin": <%= has_role?(:admin) %>,
+    "current_user_operator": <%= has_role?(:operate) %>
   }
 </script>
 

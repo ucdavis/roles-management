@@ -116,6 +116,10 @@ class Person < Entity
     return role_symbols.include?(:admin)
   end
 
+  def is_operator?
+    return role_symbols.include?(:operate)
+  end
+
   # Returns all applications visible to a user
   def accessible_applications
     applications = []
@@ -141,10 +145,8 @@ class Person < Entity
 
   # Returns all applications the user has an ownership or operatorship on
   def manageable_applications
-    if role_symbols.include?(:admin)
+    if role_symbols.include?(:admin) || role_symbols.include?(:operate)
       Application.includes(:roles, :application_ownerships, :operatorships).all
-    elsif role_symbols.include?(:operate)
-      Application.includes(:roles, :application_ownerships, :operatorships).all.select{ |a| a.name != "DSS Roles Management" }
     else
       application_ids = (application_ownerships.map{ |o| o.application_id } + application_operatorships.map{ |o| o.application_id }).uniq
       Application.includes(:roles, :application_ownerships, :operatorships).where(:id => application_ids)

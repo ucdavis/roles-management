@@ -116,7 +116,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
 
       if exact_match_found is false
         # Add the option to create a new one with this query (-1 and -2 are invalid IDs to indicate these choices)
-        entities.push DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON + "####1####Import Person " + query
+        if DssRm.admin_logged_in() || DssRm.operator_logged_in()
+          entities.push DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON + "####1####Import Person " + query
         entities.push DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP + "####1####Create Group " + query
 
       process entities

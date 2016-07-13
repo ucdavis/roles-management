@@ -27,6 +27,7 @@ window.DssRm =
 
     @current_user = new DssRm.Models.Entity data.current_user
     @current_user.set 'admin', data.current_user_admin
+    @current_user.set 'operator', data.current_user_operator
 
     # Create a view state to be shared amongst all views
     @view_state = new DssRm.Models.ViewState()
@@ -53,3 +54,6 @@ window.DssRm =
 
   admin_logged_in: ->
     DssRm.current_user.get 'admin'
+
+  operator_logged_in: ->
+    DssRm.current_user.get 'operator'
