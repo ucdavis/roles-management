@@ -1,3 +1,6 @@
+## 2016-07-13
+- Added user:audit rake task to see user roles from CLI
+
 ## 2016-07-11
 - Only run sync/test.rb if Rails.env.development? is true. Avoids accidental
 production syncs.

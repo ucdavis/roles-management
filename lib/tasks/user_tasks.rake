@@ -177,4 +177,22 @@ namespace :user do
       end
     end
   end
+
+  desc 'Audit user(s).'
+  task :audit, :arg1 do |t, args|
+    Rake::Task['environment'].invoke
+    include RmBuiltinRoles
+
+    args.each do |arg|
+      p = Person.find_by_loginid(arg[1])
+      if p
+        puts "#{p.name} (#{p.roles.length} roles):"
+        p.role_assignments.each do |ra|
+          printf "\t%-32s / %-16s %s\n", ra.role.application.name, ra.role.token, ra.created_at.strftime("%b %d, %Y %H:%M")
+        end
+      else
+        puts "No such user '#{arg[1]}'"
+      end
+    end
+  end
 end
