@@ -35,7 +35,7 @@ group :development do
   gem 'capistrano-passenger', require: false
   # We use our fork of capistrano3-delayed-job due to a bug in 'daemons' where delayed_job
   # will not stop correctly if not passed the number of workers in the 'stop' command
-  gem 'capistrano3-delayed-job', git: 'git@github.com:cthielen/capistrano3-delayed-job.git'
+  gem 'capistrano3-delayed-job', git: 'https://github.com/cthielen/capistrano3-delayed-job.git'
 end
 
 gem 'spring', group: :development
