@@ -44,9 +44,13 @@ DssRm.Views.ImportPersonDialog = Backbone.View.extend(
     @$('.form-search').children().each (i, el) ->
       $(el).prop "disabled", true
 
-    $.get(Routes.people_search_path(@term), (data) =>
-      @results.reset data
-    )
+    $.ajax
+      type: "GET"
+      url: Routes.people_search_path(@term)
+      success: (data) =>
+        @results.reset data
+      error: (data) =>
+        @$('table#results tbody').html('<tr><td colspan="4" style="text-align: center;"><h4>Error while loading results</h4></td></tr>')
 
   performSearch: (e) ->
     e.preventDefault()
