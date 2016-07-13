@@ -18,11 +18,12 @@ module ApplicationsHelper
   #
   # Attempts to obtain the last updated date by asking git
   def get_last_updated
-    begin
-      output = IO.popen('git show --pretty=%cD')
-      return output.readline.gsub(/\n/, "") # git show ends with two newline characters
-    rescue Errno::ENOENT => e
-      return nil # Command not found, oh well ...
-    end
+    return nil
+    # begin
+    #   output = IO.popen('git show --pretty=%cD')
+    #   return output.readline.gsub(/\n/, "") # git show ends with two newline characters
+    # rescue Errno::ENOENT => e
+    #   return nil # Command not found, oh well ...
+    # end
   end
 end
