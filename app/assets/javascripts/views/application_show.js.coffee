@@ -83,11 +83,16 @@ class DssRm.Views.ApplicationShow extends Backbone.View
     @renderRoles()
 
     # Active Directory tab
-    @$("div#ad_fields").empty()
-    @model.roles.each (role) =>
-      roleItem = new DssRm.Views.ApplicationShowAD(model: role)
-      roleItem.render()
-      @$("div#ad_fields").append roleItem.el
+    if DssRm.admin_logged_in()
+      @$("div#ad_fields").empty()
+      @model.roles.each (role) =>
+        roleItem = new DssRm.Views.ApplicationShowAD(model: role)
+        roleItem.render()
+        @$("div#ad_fields").append roleItem.el
+    else
+      # Do not show non-admins the Active Directory tab
+      @$("li#ad").hide()
+      @$("div#ad").hide()
 
     if readonly
       @$('.token-input-list-facebook').readonly()
