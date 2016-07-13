@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:cthielen/capistrano3-delayed-job.git
+  remote: https://github.com/cthielen/capistrano3-delayed-job.git
   revision: 073365f9f9d30fa2acee482403537b697d4f1db0
   specs:
     capistrano3-delayed-job (1.4.0)
