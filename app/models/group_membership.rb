@@ -14,8 +14,7 @@ class GroupMembership < ActiveRecord::Base
 
   validates_presence_of :group, :entity
   validates_uniqueness_of :group_id, :scope => [:entity_id, :calculated]
-  validate :group_cannot_join_itself
-  validate :membership_cannot_be_cyclical
+  validate :members_cannot_be_other_groups
   before_destroy :destroying_calculated_membership_requires_flag
 
   belongs_to :group, :touch => true
@@ -88,11 +87,9 @@ class GroupMembership < ActiveRecord::Base
 
   private
 
-  def membership_cannot_be_cyclical
+  def members_cannot_be_other_groups
     if entity.type == 'Group'
-      if entity.no_loops_in_group_membership_graph([group_id]) == false
-        errors.add(:base, "group memberships cannot form loop in membership tree graph")
-      end
+      errors.add(:base, "groups cannot be members of other groups")
     end
   end
 
@@ -132,13 +129,6 @@ class GroupMembership < ActiveRecord::Base
     end
 
     return true
-  end
-
-  # Ensure a group does not attempt to join (member) itself
-  def group_cannot_join_itself
-    if !group.blank? and group == entity
-      errors[:base] << "Group cannot join with itself"
-    end
   end
 
   def destroying_calculated_membership_requires_flag

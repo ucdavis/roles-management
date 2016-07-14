@@ -1,3 +1,6 @@
+## 2016-07-14
+- Disallow groups to be members of other groups
+
 ## 2016-07-13
 - Added user:audit rake task to see user roles from CLI
 
