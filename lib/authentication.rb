@@ -98,6 +98,8 @@ module Authentication
       @whitelisted_user.save
 
       return
+    else
+      logger.debug "#{request.remote_ip} is not a whitelist IP user. Continuing auth chain."
     end
 
     # Check if HTTP Auth is being attempted.
