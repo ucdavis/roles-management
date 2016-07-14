@@ -16,7 +16,7 @@ class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
   
     respond_to do |format|
       if @api_whitelisted_ip_user.save
-        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new whitelisted IP address, #{params[:api_whitelisted_ip]}."
+        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new whitelisted IP address, #{params[:api_whitelisted_ip_user]}."
         format.json { render json: @api_whitelisted_ip_user, status: :created }
       else
         format.json { render json: @api_whitelisted_ip_user.errors, status: :unprocessable_entity }
