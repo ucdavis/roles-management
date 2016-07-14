@@ -91,7 +91,7 @@ class DssRm.Views.ApplicationShow extends Backbone.View
         @$("div#ad_fields").append roleItem.el
     else
       # Do not show non-admins the Active Directory tab
-      @$("li#ad").hide()
+      @$("li#ad_li").hide()
       @$("div#ad").hide()
 
     if readonly
