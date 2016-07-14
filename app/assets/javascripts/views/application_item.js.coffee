@@ -49,7 +49,7 @@ DssRm.Views.ApplicationItem = Backbone.View.extend(
       if((@model.get('name') == "DSS Roles Management") && (r.get("name") == "Administrative Rights"))
         # Only render the internal RM "Administrative Rights" role if user is admin. Backend also
         # performs this security check.
-        if DssRm.is_admin?
+        if DssRm.admin_logged_in()
           $role_item = @renderRoleItem(r)
           @$(".roles").append $role_item
       else
