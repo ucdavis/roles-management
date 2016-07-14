@@ -89,4 +89,55 @@ namespace :group do
       end
     end
   end
+
+  desc 'Recalculate inherited roles from groups for a given person.'
+  task :recalculate_inherited_roles, [:loginid] => :environment do |t, args|
+    unless args[:loginid]
+      puts "You must specify a login ID to recalculate."
+      exit
+    end
+
+    p = Person.find_by_loginid(args[:loginid])
+    unless p
+      puts "Could not find a person with login ID #{args[:loginid]}"
+      exit
+    end
+
+    calculated_ras = []
+    p.role_assignments.each do |ra|
+      if ra.parent_id != nil
+        calculated_ras << ra
+      end
+    end
+
+    puts "#{p.loginid} has #{calculated_ras.length} inherited roles out of #{p.role_assignments.length} total roles."
+
+    # First remove the calculated role assignments
+    Thread.current[:role_assignment_destroying_calculated_flag] = true
+    calculated_ras.each do |ra|
+      ra.destroy
+    end
+    Thread.current[:role_assignment_destroying_calculated_flag] = nil
+
+    puts "All calculated role assignments destroyed."
+
+    # Now re-create them based on each group's role assignment
+    p.group_memberships.each do |gm|
+      puts "Group (ID: #{gm.group_id} / #{gm.group.name}) has #{gm.group.roles.length} roles ..."
+      gm.group.role_assignments.each do |group_ra|
+        if(RoleAssignment.find_by(entity_id: p.id, role_id: group_ra.role_id, parent_id: group_ra.id) == nil)
+          ra = RoleAssignment.new
+          ra.entity_id = p.id
+          ra.role_id = group_ra.role_id
+          ra.parent_id = group_ra.id
+
+          puts "\tGranting role (ID: #{group_ra.role_id} / #{group_ra.role.application.name}, #{group_ra.role.token}) with parent assignment #{group_ra.id} ..."
+
+          ra.save!
+        else
+          puts "\tSkipping role grant as it already exists: role (ID: #{group_ra.role_id} / #{group_ra.role.application.name}, #{group_ra.role.token}) with parent assignment #{group_ra.id}. "
+        end
+      end
+    end
+  end
 end
