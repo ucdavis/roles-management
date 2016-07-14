@@ -11,7 +11,9 @@ class RolePolicy < BasePolicy
     return true if record.application.operators.include?(user)
   
     return true if user.is_a? ApiWhitelistedIpUser
-  
+
+    return true if user.is_operator?
+
     super
   end
 
@@ -28,6 +30,8 @@ class RolePolicy < BasePolicy
     return true if record.application.operators.include?(user)
   
     return true if user.is_a? ApiWhitelistedIpUser
+
+    return true if user.is_operator?
 
     super
   end
