@@ -216,7 +216,7 @@ module LdapPersonHelper
       # Likely staff or faculty
 
       ou = Organization.find_by_dept_code(ucdAppointmentDepartmentCode)
-      ou = Organization.find(:first, :conditions => [ "lower(name) = ?", ou_name.downcase ]) if ou.nil? and ou_name
+      ou = Organization.where('lower(name) = ?', ou_name.downcase).first if ou.nil? and ou_name
 
       if ou
         # Set OU manager to be an owner of their OU
