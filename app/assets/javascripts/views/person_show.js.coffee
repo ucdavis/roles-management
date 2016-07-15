@@ -6,18 +6,22 @@ class DssRm.Views.PersonShow extends Backbone.View
   id: "entityShowModal"
 
   events:
-    "click #apply"                                  : "save"
-    "click a#rescan"                                : "rescan"
-    "hidden"                                        : "cleanUpModal"
-    "click #delete"                                 : "deleteEntity"
-    "click #add_role_assignment_application_button" : "addRoleAssignmentApplication"
+    "click #apply"                                        : "save"
+    "click a#rescan"                                      : "rescan"
+    "hidden"                                              : "cleanUpModal"
+    "click #delete"                                       : "deleteEntity"
+    "click #add_role_assignment_application_button"       : "addRoleAssignmentApplication"
+    "click #activity-pane .pagination>ul>li>a[data-page]" : "paginateActivity"
+    "click #activity-pane .pagination>ul>li>a#prev-page"  : "paginatePrevious"
+    "click #activity-pane .pagination>ul>li>a#next-page"  : "paginateNext"
 
   initialize: ->
     @$el.html JST["templates/entities/show_person"](model: @model)
     @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
     @readonly = @model.isReadOnly()
-    @activities_per_page = 8
+    @activities_per_page = 6
+    @page_selector_size = 10
 
     @initializeRelationsTab()
     @initializeRolesTab()
@@ -139,12 +143,30 @@ class DssRm.Views.PersonShow extends Backbone.View
     $pagination = @$("#activity-pane>div.pagination>ul")
     $pagination.empty()
 
-    for i in [1..@num_activity_pages]
+    if(@current_activity_page == 1)
+      $pagination.append("<li><a href='#' style='background-color: #f5f5f5; color: #666; cursor: default;'>Prev</a></li>")
+    else
+      $pagination.append("<li><a id='prev-page' href='#'>Prev</a></li>")
+
+    starting_page = 1
+    if @current_activity_page > 5
+      starting_page = @current_activity_page - 5
+    if @num_activity_pages > @page_selector_size
+      if starting_page > (@num_activity_pages - @page_selector_size)
+        starting_page = @num_activity_pages - @page_selector_size + 1
+
+    for i in [starting_page..@num_activity_pages]
+      break if (i - starting_page) >= @page_selector_size
       if i == @current_activity_page
-        $pagination.append("<li class='active' style='display: inline;'><a href='#'>#{i}</a></li>")
+        $pagination.append("<li class='active' style='display: inline;'><a data-page='#{i}' href='#'>#{i}</a></li>")
       else
-        $pagination.append("<li><a href='#'>#{i}</a></li>")
-  
+        $pagination.append("<li><a data-page='#{i}' href='#'>#{i}</a></li>")
+
+    if(@current_activity_page == @num_activity_pages)
+      $pagination.append("<li><a href='#' style='background-color: #f5f5f5; color: #666; cursor: default;'>Next</a></li>")
+    else
+      $pagination.append("<li><a id='next-page' href='#'>Next</a></li>")
+
     # Show @activities_per_page entries for the given @current_activity_page
     _.each _.first(_.rest(@activity, (@current_activity_page * @activities_per_page) - @activities_per_page), @activities_per_page), (entry) =>
       $activityTable.append @renderActivityLogRow(entry)
@@ -387,3 +409,20 @@ class DssRm.Views.PersonShow extends Backbone.View
 
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
+  
+  paginateActivity: (e) =>
+    desired_page = $(e.target).data('page')
+    if desired_page?
+      # Change currently selected page to 'desired_page'
+      @current_activity_page = desired_page
+      @renderActivity()
+
+  paginatePrevious: ->
+    @current_activity_page = @current_activity_page - 1
+    @current_activity_page = 1 if @current_activity_page <= 0
+    @renderActivity()
+
+  paginateNext: ->
+    @current_activity_page = @current_activity_page + 1
+    @current_activity_page = @num_activity_pages if @current_activity_page > @num_activity_pages
+    @renderActivity()
