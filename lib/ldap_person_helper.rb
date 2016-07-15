@@ -201,16 +201,12 @@ module LdapPersonHelper
     if p.affiliations.collect{ |x| x.name }.include?("student:graduate") and ucdStudentMajor
       # Graduate student
       # make sure they're in the ucdAppointmentDepartmentCode, ucdStudentMajor
-      #ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
-      ou = Organization.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) #|| Group.create(:name => ucdStudentMajor)
+      ou = Organization.where('lower(name) = ?', ucdStudentMajor.downcase).first
       # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
-      #ou.save!
     elsif p.affiliations.collect{ |x| x.name }.include?("student:undergraduate") and ucdStudentMajor and not ucdAppointmentDepartmentCode
       # Undergraduate with no employment
-      #ou = Group.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) || Group.create(:name => ucdStudentMajor)
-      ou = Organization.find(:first, :conditions => [ "lower(name) = ?", ucdStudentMajor.downcase ]) #|| Group.create(:name => ucdStudentMajor)
+      ou = Organization.where('lower(name) = ?', ucdStudentMajor.downcase).first
       # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
-      #ou.save!
     else
       # Neither an undergraduate student nor a graduate student
       # Likely staff or faculty
