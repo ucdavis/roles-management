@@ -9,43 +9,45 @@ module LdapPersonHelper
     # Include the large lot of UCD info (dept codes, title codes, etc.)
     require 'ucd_lookups'
 
-    loginid = determine_loginid(entry, log)
-
-    unless loginid
-      log.debug "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry[:ucdPersonUUID][0].to_s unless log.nil?
-      return nil
-    end
-
     # We need 'p' outside the scope of log.tagged later
     p = nil
 
-    log.tagged loginid do
-      log.debug "Processing LDAP record for #{loginid}" unless log.nil?
+    ActiveRecord::Base.transaction do
+      loginid = determine_loginid(entry, log)
 
-      # Find or create the Person object
-      p = Person.find_or_initialize_by( loginid: loginid )
-
-      if p.new_record?
-        log.debug "Creating new person record (#{loginid} is not already in our database)." if log
-      else
-        log.debug "Updating existing person record (#{loginid} is in our database)." if log
-
-        unless p.active
-          # We're re-activating a person, and certain LDAP actions such as adding a user to a group may trigger operations (AD sync) which rely on an up-to-date p.active flag.
-          log.info "Existent LDAP result '#{p.loginid}' is inactive in our system. Re-activating ..."
-          ActivityLog.info!("Activating #{p.name} as they are in LDAP.", ["person_#{p.id}", 'ldap'])
-          p.active = true
-          p.save
-        end
+      unless loginid
+        log.debug "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry[:ucdPersonUUID][0].to_s unless log.nil?
+        return nil
       end
 
-      p = determine_basic_details(p, entry, log)
-      p = determine_affiliation_details(p, entry, log)
-      p = determine_title_details(p, entry, log)
-      p = determine_student_data(p, entry, log)
-      p = determine_ou_memberships(p, entry, log)
+      log.tagged loginid do
+        log.debug "Processing LDAP record for #{loginid}" unless log.nil?
 
-      save_or_touch(p, log) if p
+        # Find or create the Person object
+        p = Person.find_or_create_by( loginid: loginid )
+
+        if p.new_record?
+          log.debug "Creating new person record (#{loginid} is not already in our database)." if log
+        else
+          log.debug "Updating existing person record (#{loginid} is in our database)." if log
+
+          unless p.active
+            # We're re-activating a person, and certain LDAP actions such as adding a user to a group may trigger operations (AD sync) which rely on an up-to-date p.active flag.
+            log.info "Existent LDAP result '#{p.loginid}' is inactive in our system. Re-activating ..."
+            ActivityLog.info!("Activating #{p.name} as they are in LDAP.", ["person_#{p.id}", 'ldap'])
+            p.active = true
+            p.save
+          end
+        end
+
+        p = determine_basic_details(p, entry, log)
+        p = determine_affiliation_details(p, entry, log)
+        p = determine_title_details(p, entry, log)
+        p = determine_student_data(p, entry, log)
+        p = determine_ou_memberships(p, entry, log)
+
+        save_or_touch(p, log) if p
+      end
     end
 
     ou = nil

@@ -107,7 +107,7 @@ class PeopleController < ApplicationController
             format.json { render json: @p }
           end
         else
-          logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
+          logger.error "Could not import person #{params[:loginid]}, no results from LDAP or error while saving."
 
           raise ActionController::RoutingError.new('Not Found')
         end
