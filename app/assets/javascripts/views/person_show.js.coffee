@@ -11,9 +11,6 @@ class DssRm.Views.PersonShow extends Backbone.View
     "hidden"                                              : "cleanUpModal"
     "click #delete"                                       : "deleteEntity"
     "click #add_role_assignment_application_button"       : "addRoleAssignmentApplication"
-    "click #activity-pane .pagination>ul>li>a[data-page]" : "paginateActivity"
-    "click #activity-pane .pagination>ul>li>a#prev-page"  : "paginatePrevious"
-    "click #activity-pane .pagination>ul>li>a#next-page"  : "paginateNext"
 
   initialize: ->
     @$el.html JST["templates/entities/show_person"](model: @model)

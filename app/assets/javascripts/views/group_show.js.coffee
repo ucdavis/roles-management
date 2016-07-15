@@ -76,7 +76,30 @@ class DssRm.Views.GroupShow extends Backbone.View
             membership = @model.memberships.find (i) ->
               i.get('entity_id') == item.id
             @model.memberships.remove membership
+    
+    @initializeActivityTab()
 
+  initializeActivityTab: ->
+    if DssRm.admin_logged_in()
+      $.ajax(
+        url: Routes.entity_path(@model.id) + "/activity"
+        type: 'GET'
+      ).done( (res) =>
+        # Store pagination and calculate number of pages
+        @activity = res.activities
+        
+        @activityView = new DssRm.Views.ActivityTable(
+          model: @activity
+        ).render()
+
+        @$("#activity-pane").append(@activityView.el)
+      ).fail( (data) ->
+        toastr["error"]("An error occurred while fetching the activity logs. Try again later.")
+      )
+    else
+      # Hide the tab as user is not admin
+      @$(".tab-pane#activity-pane").hide()
+      @$("ul.nav>li#activity").hide()
 
   render: ->
     readonly = @model.isReadOnly()
