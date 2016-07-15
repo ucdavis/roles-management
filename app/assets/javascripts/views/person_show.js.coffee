@@ -20,8 +20,6 @@ class DssRm.Views.PersonShow extends Backbone.View
     @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
     @readonly = @model.isReadOnly()
-    @activities_per_page = 6
-    @page_selector_size = 10
 
     @initializeRelationsTab()
     @initializeRolesTab()
@@ -123,58 +121,19 @@ class DssRm.Views.PersonShow extends Backbone.View
       ).done( (res) =>
         # Store pagination and calculate number of pages
         @activity = res.activities
-        @num_activity_pages = Math.ceil(@activity.length / @activities_per_page)
-        @current_activity_page = 1
         
-        @renderActivity() # AJAX likely finished after last render, so re-render
+        @activityView = new DssRm.Views.ActivityTable(
+          model: @activity
+        ).render()
+
+        @$("#activity-pane").append(@activityView.el)
       ).fail( (data) ->
-          toastr["error"]("An error occurred while fetching the activity logs. Try again later.")
+        toastr["error"]("An error occurred while fetching the activity logs. Try again later.")
       )
     else
       # Hide the tab as user is not admin
       @$(".tab-pane#activity-pane").hide()
       @$("ul.nav>li#activity").hide()
-  
-  # Renders the activity table based on the current page
-  renderActivity: ->
-    $activityTable = @$("tbody#activity_log")
-    $activityTable.empty()
-    
-    $pagination = @$("#activity-pane>div.pagination>ul")
-    $pagination.empty()
-
-    if(@current_activity_page == 1)
-      $pagination.append("<li><a href='#' style='background-color: #f5f5f5; color: #666; cursor: default;'>Prev</a></li>")
-    else
-      $pagination.append("<li><a id='prev-page' href='#'>Prev</a></li>")
-
-    starting_page = 1
-    if @current_activity_page > 5
-      starting_page = @current_activity_page - 5
-    if @num_activity_pages > @page_selector_size
-      if starting_page > (@num_activity_pages - @page_selector_size)
-        starting_page = @num_activity_pages - @page_selector_size + 1
-
-    for i in [starting_page..@num_activity_pages]
-      break if (i - starting_page) >= @page_selector_size
-      if i == @current_activity_page
-        $pagination.append("<li class='active' style='display: inline;'><a data-page='#{i}' href='#'>#{i}</a></li>")
-      else
-        $pagination.append("<li><a data-page='#{i}' href='#'>#{i}</a></li>")
-
-    if(@current_activity_page == @num_activity_pages)
-      $pagination.append("<li><a href='#' style='background-color: #f5f5f5; color: #666; cursor: default;'>Next</a></li>")
-    else
-      $pagination.append("<li><a id='next-page' href='#'>Next</a></li>")
-
-    # Show @activities_per_page entries for the given @current_activity_page
-    _.each _.first(_.rest(@activity, (@current_activity_page * @activities_per_page) - @activities_per_page), @activities_per_page), (entry) =>
-      $activityTable.append @renderActivityLogRow(entry)
-  
-  # Renders a single Activity Log row.
-  renderActivityLogRow: (entry) ->
-    $row = $("<tr><td>#{entry.message}</td><td>#{jQuery.timeago(entry.performed_at)}</td></tr>")
-    return $row
 
   resetRolesTab: ->
     $rolesTab = @$("div#role_assignments")
@@ -293,9 +252,6 @@ class DssRm.Views.PersonShow extends Backbone.View
               name: role_assignment.get("name")
               readonly: @readonly || role_assignment.get('calculated')
               class: (if role_assignment.get('calculated') then "calculated" else "")
-    
-    if DssRm.admin_logged_in()
-      @renderActivity()
 
     if @readonly
       @$('.token-input-list-facebook').readonly()
@@ -409,20 +365,3 @@ class DssRm.Views.PersonShow extends Backbone.View
 
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
-  
-  paginateActivity: (e) =>
-    desired_page = $(e.target).data('page')
-    if desired_page?
-      # Change currently selected page to 'desired_page'
-      @current_activity_page = desired_page
-      @renderActivity()
-
-  paginatePrevious: ->
-    @current_activity_page = @current_activity_page - 1
-    @current_activity_page = 1 if @current_activity_page <= 0
-    @renderActivity()
-
-  paginateNext: ->
-    @current_activity_page = @current_activity_page + 1
-    @current_activity_page = @num_activity_pages if @current_activity_page > @num_activity_pages
-    @renderActivity()
