@@ -19,6 +19,14 @@ class Role < ActiveRecord::Base
 
   after_save :trigger_sync_if_changed
 
+  # Role activity is tagged under the application the role belongs to.
+  after_create  { |role|
+    ActivityLog.info!("Created role #{role.token}.", ["application_#{role.application_id}"])
+  }
+  after_destroy { |role|
+    ActivityLog.info!("Deleted role #{role.token}.", ["application_#{role.application_id}"])
+  }
+
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
   # This is noted in the Rails documentation. Remove entities via roles_attributes.

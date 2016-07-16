@@ -10,6 +10,13 @@ class Application < ActiveRecord::Base
   accepts_nested_attributes_for :roles, :allow_destroy => true
   accepts_nested_attributes_for :operatorships, :allow_destroy => true
 
+  after_create  { |application|
+    ActivityLog.info!("Created application #{application.name}.", ["application_#{application.id}"])
+  }
+  after_destroy { |application|
+    ActivityLog.info!("Deleted application #{application.name}.", ["application_#{application.id}"])
+  }
+
   # Note the nested 'role' JSON includes "members" and "entities."
   # 'members' are people only - flattened entities.
   # 'entities' are what actually exists in the database but includes groups.
@@ -28,5 +35,12 @@ class Application < ActiveRecord::Base
 
   def self.csv_header
     "Role,ID,Login ID,Email,First,Last".split(',')
+  end
+
+  # Retrieve ActivityLog for this application order by most recent. nil if none
+  def activity
+    tag = ActivityLogTag.find_by_tag("application_#{self.id}")
+    return nil unless tag
+    return tag.activity_logs.order('performed_at DESC')
   end
 end

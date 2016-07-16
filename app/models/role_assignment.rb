@@ -30,7 +30,7 @@ class RoleAssignment < ActiveRecord::Base
   after_create { |assignment|
     # Only trigger person_added_to_role if this is the first time they gained the role
     if assignment.entity.role_assignments.map{|ra| ra.role.id}.count {|role_id| role_id == assignment.role.id } == 1
-      ActivityLog.info!("Added #{assignment.entity.name} to role (#{assignment.role.name_with_application}).", ["#{assignment.entity.type.downcase}_#{assignment.entity.id}"])
+      ActivityLog.info!("Added #{assignment.entity.name} to role (#{assignment.role.name_with_application}).", ["#{assignment.entity.type.downcase}_#{assignment.entity.id}", "application_#{assignment.role.application_id}"])
       unless assignment.entity.type == "Group"
         Sync.person_added_to_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
       end
@@ -39,7 +39,7 @@ class RoleAssignment < ActiveRecord::Base
   after_destroy { |assignment|
     # Only trigger person_removed_from_role if they lost this role entirely (they may still have it through a group assignment)
     unless assignment.entity.role_assignments.map{|ra| ra.role.id}.include? assignment.role.id
-      ActivityLog.info!("Removed #{assignment.entity.name} from role (#{assignment.role.name_with_application}).", ["#{assignment.entity.type.downcase}_#{assignment.entity.id}"])
+      ActivityLog.info!("Removed #{assignment.entity.name} from role (#{assignment.role.name_with_application}).", ["#{assignment.entity.type.downcase}_#{assignment.entity.id}", "application_#{assignment.role.application_id}"])
       unless assignment.entity.type == "Group"
         Sync.person_removed_from_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
       end
