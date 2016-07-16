@@ -117,7 +117,7 @@ class GroupMembership < ActiveRecord::Base
           member_ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(ra.role_id, entity.id, ra.id)
           if member_ra
             destroying_calculated_role_assignment do
-              member_ra.destroy
+              member_ra.destroy!
             end
           else
             logger.warn "Failed to remove role (#{ra.role_id}, #{ra.role.token}, App ID #{ra.role.application_id}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database."
@@ -146,7 +146,7 @@ class GroupMembership < ActiveRecord::Base
         new_ao = ApplicationOperatorship.new
         new_ao.application_id = ao.application_id
         new_ao.entity_id = entity_id
-        new_ao.parent_id = group_id
+        new_ao.parent_id = ao.id
         new_ao.save!
       end
     end
@@ -155,14 +155,14 @@ class GroupMembership < ActiveRecord::Base
   def remove_application_operatorships_from_member
     Rails.logger.tagged "GroupMembership #{id}" do
       group.application_operatorships.each do |ao|
-        logger.info "Removing application operatorship (#{ao.id}, App ID #{ao.application_id}) from leaving group member (#{entity_id}/#{entity.name} leaving #{group_id}/#{group.name})"
-        inherited_ao = ApplicationOperatorship.find_by_application_id_and_entity_id_and_parent_id(ao.application_id, entity_id, group_id)
+        logger.info "Removing application operatorship (#{ao.id}, application ID #{ao.application_id}) from leaving group member (#{entity_id}/#{entity.name} leaving #{group_id}/#{group.name})"
+        inherited_ao = ApplicationOperatorship.find_by_application_id_and_entity_id_and_parent_id(ao.application_id, entity_id, ao.id)
         if inherited_ao
           destroying_calculated_application_operatorship do
-            inherited_ao.destroy
+            inherited_ao.destroy!
           end
         else
-          logger.warn "Failed to remove application operatorship (#{ao.id}, App ID #{ao.application_id}) assigned to leaving group member (#{entity_id}/#{entity.name}. Could not find in database. This is probably okay."
+          logger.warn "Failed to remove application operatorship (#{ao.id}, App ID #{ao.application_id}) assigned to leaving group member (#{entity_id}/#{entity.name}. Could not find in database."
         end
       end
     end

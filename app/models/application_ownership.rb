@@ -46,10 +46,8 @@ class ApplicationOwnership < ActiveRecord::Base
           ao = ApplicationOwnership.new
           ao.application_id = application_id
           ao.entity_id = m.id
-          ao.parent_id = entity.id
-          if ao.save == false
-            logger.error "  -- Failed to grant application ownership!"
-          end
+          ao.parent_id = self.id
+          ao.save!
         end
       end
     end
@@ -62,10 +60,10 @@ class ApplicationOwnership < ActiveRecord::Base
       Rails.logger.tagged "ApplicationOwnership #{id}" do
         entity.members.each do |m|
           logger.info "Removing application ownership (#{id}, #{application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
-          ao = ApplicationOwnership.find_by_application_id_and_entity_id_and_parent_id(application_id, m.id, entity.id)
+          ao = ApplicationOwnership.find_by_application_id_and_entity_id_and_parent_id(application_id, m.id, self.id)
           if ao
             destroying_calculated_application_ownership do
-              ao.destroy
+              ao.destroy!
             end
           else
             logger.warn "Failed to remove application ownership (#{id}, #{application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that ownership."
