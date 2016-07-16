@@ -26,6 +26,7 @@ DSSRM::Application.routes.draw do
   post "people/import/:loginid" => "people#import", :as => :person_import
   
   get "entities/:id/activity" => "entities#activity"
+  get "applications/:id/activity" => "applications#activity"
 
   resources :applications
   resources :entities

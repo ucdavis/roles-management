@@ -40,7 +40,7 @@ class Application < ActiveRecord::Base
   # Retrieve ActivityLog for this application order by most recent. nil if none
   def activity
     tag = ActivityLogTag.find_by_tag("application_#{self.id}")
-    return nil unless tag
+    return [] unless tag
     return tag.activity_logs.order('performed_at DESC')
   end
 end

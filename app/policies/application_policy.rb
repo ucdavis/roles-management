@@ -26,4 +26,9 @@ class ApplicationPolicy < BasePolicy
     
     super
   end
+
+  def activity?
+    return true if user.is_admin?
+    false
+  end
 end

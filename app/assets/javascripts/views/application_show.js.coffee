@@ -48,6 +48,30 @@ class DssRm.Views.ApplicationShow extends Backbone.View
           # Normal member being removed - no rule needed
           operatorship = @model.operatorships.get(item.id)
           operatorship.set('_destroy', true)
+    
+    @initializeActivityTab()
+  
+  initializeActivityTab: ->
+    if DssRm.admin_logged_in()
+      $.ajax(
+        url: Routes.application_path(@model.id) + "/activity"
+        type: 'GET'
+      ).done( (res) =>
+        # Store pagination and calculate number of pages
+        @activity = res.activities
+        
+        @activityView = new DssRm.Views.ActivityTable(
+          model: @activity
+        ).render()
+
+        @$("#activity-pane").append(@activityView.el)
+      ).fail( (data) ->
+        toastr["error"]("An error occurred while fetching the activity logs. Try again later.")
+      )
+    else
+      # Hide the tab as user is not admin
+      @$(".tab-pane#activity-pane").hide()
+      @$("ul.nav>li#activity").hide()
 
   render: ->
     readonly = @model.isReadOnly()

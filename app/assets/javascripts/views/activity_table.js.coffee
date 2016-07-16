@@ -15,6 +15,7 @@ class DssRm.Views.ActivityTable extends Backbone.View
     @activities_per_page = 6
     @page_selector_size = 10
     @num_activity_pages = Math.ceil(@activity.length / @activities_per_page)
+    @num_activity_pages = 1 if @num_activity_pages < 1
     @current_activity_page = 1
 
     @$el.html JST["templates/shared/activity_table"]()
@@ -53,7 +54,11 @@ class DssRm.Views.ActivityTable extends Backbone.View
     # Show @activities_per_page entries for the given @current_activity_page
     _.each _.first(_.rest(@activity, (@current_activity_page * @activities_per_page) - @activities_per_page), @activities_per_page), (entry) =>
       $activityTable.append $("<tr><td>#{entry.message}</td><td>#{jQuery.timeago(entry.performed_at)}</td></tr>")
-  
+
+    # Display 'No Activity' message if necessary
+    if @activity.length == 0
+      $activityTable.append $("<tr><td colspan='2'><center>No activity found</center></td></tr>")
+
     @
 
   paginateActivity: (e) =>

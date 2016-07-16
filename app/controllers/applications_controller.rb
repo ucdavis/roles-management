@@ -1,5 +1,5 @@
 class ApplicationsController < ApplicationController
-  before_filter :load_application, :only => :show
+  before_filter :load_application, :only => [:show, :activity]
   before_filter :new_application_from_params, :only => :create
   before_filter :load_applications, :only => :index
 
@@ -100,6 +100,26 @@ class ApplicationsController < ApplicationController
 
     respond_to do |format|
       format.json { render json: @application }
+    end
+  end
+
+  def activity
+    authorize @application
+    
+    @activity = @application.activity
+    if @activity
+      if @activity.length > 0
+        @cache_key = "application/" + @application.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
+      else
+        @cache_key = nil
+      end
+    else
+      @activity = nil
+      @cache_key = nil
+    end
+
+    respond_to do |format|
+      format.json { render "shared/activity" }
     end
   end
 
