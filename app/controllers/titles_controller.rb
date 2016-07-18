@@ -12,11 +12,11 @@ class TitlesController < ApplicationController
   private
 
     def load_titles
-        if params[:q]
+      if params[:q]
         titles_table = Title.arel_table
         @titles = Title.where(titles_table[:name].matches("%#{params[:q]}%").or(titles_table[:code].matches("%#{params[:q]}%")))
-        else
+      else
         @titles = Title.all
-        end
+      end
     end
 end
