@@ -126,7 +126,7 @@ class ApplicationsController < ApplicationController
   protected
 
     def load_application
-      @application = Application.find(params[:id])
+      @application = Application.find_by_id!(params[:id])
     end
 
     def load_applications

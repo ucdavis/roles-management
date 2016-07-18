@@ -46,7 +46,7 @@ class GroupsController < ApplicationController
   private
 
     def load_group
-      @group = Group.find_by_id(params[:id])
+      @group = Group.find_by_id!(params[:id])
     end
 
     def load_groups

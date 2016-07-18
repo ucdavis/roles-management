@@ -125,7 +125,7 @@ class PeopleController < ApplicationController
 
     def load_person
         @person = Person.find_by_loginid(params[:id])
-        @person = Person.find_by_id(params[:id]) unless @person
+        @person = Person.find_by_id!(params[:id]) unless @person
     end
 
     def load_people

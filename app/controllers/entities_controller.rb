@@ -132,7 +132,7 @@ class EntitiesController < ApplicationController
   private
   
     def load_entity
-      @entity = Entity.find(params[:id])
+      @entity = Entity.find_by_id!(params[:id])
     end
 
     def load_entities
