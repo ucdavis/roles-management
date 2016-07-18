@@ -9,7 +9,9 @@ module Api
         
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
 
-        @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+        if @entities.length > 0
+          @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+        end
 
         respond_to do |format|
           format.json { render "api/v1/entities/index" }
@@ -43,21 +45,20 @@ module Api
       private
 
         def load_entity
-            @entity_id = params[:id].to_i
-            @entity = Entity.find_by_id(@entity_id)
+          @entity_id = params[:id].to_i
+          @entity = Entity.find_by_id(@entity_id)
         end
 
         def load_entities
-            if params[:q]
+          if params[:q]
             entities_table = Entity.arel_table
 
             # Search login IDs in case of an entity-search but looking for person by login ID
             @entities = Entity.where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
-            else
-            @entities = Entity.where(:active => true)#.all
-            end
+          else
+            @entities = Entity.where(:active => true)
+          end
         end
-
     end
   end
 end

@@ -12,7 +12,9 @@ module Api
 
         # API users currently share access to all resources. If this changes, we will need to alter our
         # cache_key to avoid leaking data across accounts via stale caches.
-        @cache_key = "api/application/" + (params[:q] ? params[:q] : '') + '/' + @applications.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+        if @applications.length > 0
+          @cache_key = "api/application/" + (params[:q] ? params[:q] : '') + '/' + @applications.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+        end
 
         render "api/v1/applications/index"
       end
@@ -36,17 +38,17 @@ module Api
       private
 
         def load_application
-            @application_id = params[:id].to_i # sanitize
-            @application = Application.find_by_id(@application_id)
+          @application_id = params[:id].to_i # sanitize
+          @application = Application.find_by_id(@application_id)
         end
 
         def load_applications
-            if params[:q]
+          if params[:q]
             apps = Application.arel_table
             @applications = Application.includes(:roles).where(apps[:name].matches("%#{params[:q]}%"))
-            else
+          else
             @applications = Application.includes(:roles)
-            end
+          end
         end
 
     end
