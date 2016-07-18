@@ -26,12 +26,12 @@ class PersonPolicy < BasePolicy
   end
   
   def search?
-    return true if (user.is_admin? || user.is_operator?)
+    return true if user.has_access?
     false
   end
   
   def import?
-    return true if (user.is_admin? || user.is_operator?)
+    return true if user.has_access?
     false
   end
   

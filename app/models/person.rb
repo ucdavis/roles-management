@@ -108,6 +108,7 @@ class Person < Entity
     roles.select{ |r| rm_roles_ids.include? r.id }.map{ |r| r.token.underscore.to_sym }.uniq
   end
   
+  # Returns true if this person has access to the RM application in any form
   def has_access?
     return role_symbols.include?(:admin) || role_symbols.include?(:access)
   end

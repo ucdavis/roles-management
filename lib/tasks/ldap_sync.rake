@@ -5,7 +5,7 @@ namespace :ldap do
   require 'authentication'
   include Authentication
 
-  desc 'Import users from LDAP based on filters, or by login ID'
+  desc 'Import users from LDAP based on provided filters, or by login ID'
   task :import, [:loginid] => :environment do |t, args|
     begin
       require 'stringio'
