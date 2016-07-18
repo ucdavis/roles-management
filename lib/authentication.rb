@@ -66,6 +66,14 @@ module Authentication
   # This is populated by a whitelisted IP request, a CAS redirect or a HTTP Auth request
   # Main entry point for authentication procedures.
   def authenticate
+    if params[:logoutRequest]
+      # CAS single sign-out request. We currently do not handle these due to the inability to
+      # invalidate sessions by ticket ID.
+      render :text => "CAS single sign out acknowledged.", :status => 200
+
+      return
+    end
+
     if authenticated?
       case session[:auth_via]
       when :whitelisted_ip
