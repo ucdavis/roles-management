@@ -25,13 +25,13 @@ module Api
       private
 
         def load_group
-            begin
+          begin
             @group_id = params[:id].to_i
             @group = Group.find_by_id(@group_id)
-            rescue ActiveRecord::RecordNotFound
+          rescue ActiveRecord::RecordNotFound
             # This exception is acceptable. We catch it to avoid triggering the
             # uncaught exceptions handler in ApplicationController.
-            end
+          end
         end
 
     end

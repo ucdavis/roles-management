@@ -12,11 +12,11 @@ class ClassificationsController < ApplicationController
   private
 
     def load_classifications
-        if params[:q]
+      if params[:q]
         classifications_table = Classification.arel_table
         @classifications = Classification.where(classifications_table[:name].matches("%#{params[:q]}%"))
-        else
+      else
         @classifications = Classification.all
-        end
+      end
     end
 end

@@ -12,13 +12,13 @@ class AffiliationsController < ApplicationController
   private
 
     def load_affiliations
-        if params[:q]
+      if params[:q]
         affiliations_table = Affiliation.arel_table
         @as = Affiliation.where(affiliations_table[:name].matches("%#{params[:q]}%"))
-        else
+      else
         @as = Affiliation.all
-        end
+      end
 
-        @affiliations = @as.map{ |x| { id: x.id, name: x.name } }
+      @affiliations = @as.map{ |x| { id: x.id, name: x.name } }
     end
 end
