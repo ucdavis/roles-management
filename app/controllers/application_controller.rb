@@ -3,10 +3,11 @@ class ApplicationController < ActionController::Base
   include Pundit
   include SafeFilename
   helper :all
-  protect_from_forgery with: :exception
-  after_action :verify_authorized
-
   before_filter :authenticate
+  # Avoid the CSRF check if CAS is doing a single sign-out. In Rails 5, the order of the filter should be respected.
+  # See http://blog.bigbinary.com/2016/04/06/rails-5-default-protect-from-forgery-prepend-false.html
+  protect_from_forgery with: :exception, :unless => Proc.new {|c| c.request.params.include?('logoutRequest') }
+  after_action :verify_authorized
   
   rescue_from Pundit::NotAuthorizedError do |exception|
     permission_denied
