@@ -1,6 +1,6 @@
 module Api
   module V1
-    class PeopleController < ApplicationController
+    class PeopleController < Api::V1::BaseController
       before_filter :load_person, :only => :show
 
       def show

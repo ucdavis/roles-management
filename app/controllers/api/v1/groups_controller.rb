@@ -1,6 +1,6 @@
 module Api
   module V1
-    class GroupsController < ApplicationController
+    class GroupsController < Api::V1::BaseController
       before_filter :load_group, :only => :show
 
       def show

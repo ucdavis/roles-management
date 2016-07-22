@@ -1,6 +1,6 @@
 module Api
   module V1
-    class EntitiesController < ApplicationController
+    class EntitiesController < Api::V1::BaseController
       before_filter :load_entity, :only => :show
       before_filter :load_entities, :only => :index
 
