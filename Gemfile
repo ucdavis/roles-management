@@ -74,4 +74,4 @@ gem 'daemons'
 
 # Sync script dependencies
 gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'
-gem 'roles-management-api', :git => 'https://github.com/dssit/roles-management-api.git'
+gem 'roles-management-api', '>= 0.1.2', :git => 'https://github.com/dssit/roles-management-api.git'
