@@ -40,7 +40,6 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
   entityUrl: ->
     unless @model.get('entity_id')
       @model.set 'entity_id', @model.get('group_id') || @model.get('id')
-      debugger unless @model.get('entity_id')
     "#" + "/entities/" + @model.get('entity_id')
 
   toggleEntityFavorite: (e) ->

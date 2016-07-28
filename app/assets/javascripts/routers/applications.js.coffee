@@ -32,18 +32,10 @@ DssRm.Routers.Applications = Backbone.Router.extend(
         toastr["error"]("An error occurred while loading the application.")
 
   showEntity: (uid) ->
-    uid = parseInt(uid)
-
     toastr["info"]("Loading person or group ...")
 
-    # Search DssRm.current_user objects first
-    # We'd prefer not to create new objects and would like events like name
-    # changes to propagate
-    entity = DssRm.view_state.bookmarks.get(uid)
-    entity = DssRm.view_state.bookmarks.findWhere({ group_id: uid }) if entity is undefined
-
-    # Fetch it as a last resort - we won't get event updates
-    entity = new DssRm.Models.Entity(id: uid) if entity is undefined
+    # Fetch the entity
+    entity = new DssRm.Models.Entity(id: parseInt(uid))
 
     entity.fetch
       success: =>

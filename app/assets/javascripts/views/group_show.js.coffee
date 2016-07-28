@@ -222,6 +222,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       description: @$('textarea[name=description]').val()
     ,
       success: ->
+        DssRm.current_user.fetch() # refresh the current user to update their favorites in case we renamed a favorite group
         @$('#apply').removeAttr('disabled').html('Apply Changes')
       error: ->
         @$('#apply').addClass('btn-danger').html('Error')
