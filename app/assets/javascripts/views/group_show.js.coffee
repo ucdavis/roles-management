@@ -10,7 +10,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     "click button#group_rule_add"    : "addRule"
     "click button#remove_group_rule" : "removeRule"
     "hidden"                         : "cleanUpModal"
-    "click #delete"                  : "deleteEntity"
+    "click #delete"                  : "deleteGroup"
     "change table#rules input"       : "persistRuleChanges"
     "change table#rules select"      : "persistRuleChanges"
 
@@ -226,7 +226,7 @@ class DssRm.Views.GroupShow extends Backbone.View
       error: ->
         @$('#apply').addClass('btn-danger').html('Error')
 
-  deleteEntity: ->
+  deleteGroup: ->
     @$el.fadeOut()
 
     bootbox.confirm 'Are you sure you want to delete ' + @model.escape('name') + '?', (result) =>
@@ -236,6 +236,10 @@ class DssRm.Views.GroupShow extends Backbone.View
         # Delete the group
         @model.destroy
           success: () ->
+            DssRm.current_user.fetch() # a GroupOwnership may have been destroyed if they deleted
+                                       # their own group. This will be properly reflected after a .fetch().
+                                       # Without this, the frontend is inconsistent and may submit invalid
+                                       # GroupOwnership IDs to the backend.
             toastr.remove()
             toastr["success"]("Group deleted.")
             # Dismiss the dialog
