@@ -13,13 +13,11 @@ class ApplicationController < ActionController::Base
     permission_denied
   end
 
-  rescue_from ActiveRecord::RecordNotFound, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved, ActionController::InvalidAuthenticityToken, ActionController::RoutingError, ActiveRecord::RecordNotDestroyed do |exception|
-    unless exception.class == ActiveRecord::RecordNotFound
-      log_message = "An exception occurred:\n\n#{exception}\n\n" + exception.backtrace.join('\n')
-      logger.error log_message
-      
-      AdminMailer.application_error_occurred("dssit-devs-exceptions@ucdavis.edu", log_message).deliver!
-    end
+  rescue_from ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved, ActionController::InvalidAuthenticityToken, ActionController::RoutingError, ActiveRecord::RecordNotDestroyed do |exception|
+    log_message = "An exception occurred:\n\n#{exception}\n\n" + exception.backtrace.join('\n')
+    logger.error log_message
+    
+    AdminMailer.application_error_occurred("dssit-devs-exceptions@ucdavis.edu", log_message).deliver!
 
     raise exception
   end
