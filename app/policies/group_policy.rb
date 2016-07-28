@@ -13,6 +13,9 @@ class GroupPolicy < BasePolicy
     
     # if they operate the group
     return true if record.operators.include?(user)
+
+    # if they just have access (to enable cross-org group re-use)
+    return true if user.has_access?
     
     false
   end
