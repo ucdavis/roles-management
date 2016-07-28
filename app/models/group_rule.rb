@@ -6,7 +6,6 @@ class GroupRule < ActiveRecord::Base
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, :in => %w( is is\ not  )
   validates_inclusion_of :column, :in => VALID_COLUMNS
-  validate :column_cannot_change
 
   belongs_to :group, :touch => true
   has_many :results, :class_name => "GroupRuleResult", :dependent => :destroy
@@ -378,14 +377,5 @@ class GroupRule < ActiveRecord::Base
   # In after_destroy it's important the group recalculate members as this rule is gone
   def group_must_recalculate
     self.group.recalculate_members!
-  end
-
-  # GroupRules are usually created and destroyed, not edited.
-  # It's alright to edit the value but anything else should really
-  # be done by destroying and then creating a new GroupRule.
-  def column_cannot_change
-    if column_changed? and not new_record?
-      errors.add(:column, "column cannot be changed")
-    end
   end
 end
