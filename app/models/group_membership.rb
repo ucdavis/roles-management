@@ -68,7 +68,7 @@ class GroupMembership < ActiveRecord::Base
         if created_at_changed?
           # Only log group membership creation if this is the first time they've gained membership with this group
           if entity.group_memberships.map{|gm| gm.group.id}.count {|group_id| group_id == group.id } == 1
-            logger.info "Created membership between #{entity.log_identifier} and #{group.log_identifier}."
+            logger.info "Created redundant-type membership between #{entity.log_identifier} and #{group.log_identifier}."
             ActivityLog.info!("Added #{entity.name} to group #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
           end
         else
@@ -79,7 +79,7 @@ class GroupMembership < ActiveRecord::Base
         if entity
           unless entity.group_memberships.map{|gm| gm.group.id}.include? group.id
             # Only log group membership destruction if they're losing the last association to this group
-            logger.info "Removed membership between #{entity.log_identifier} and #{group.log_identifier}."
+            logger.info "Removed redundant-type membership between #{entity.log_identifier} and #{group.log_identifier}."
             ActivityLog.info!("Removed #{entity.name} from group #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
           end
         else
