@@ -29,7 +29,7 @@ class RoleAssignment < ActiveRecord::Base
   #       will catch any needed syncing.
   after_create { |assignment|
     # Only trigger person_added_to_role if this is the first time they gained the role
-    if assignment.entity.role_assignments.map{|ra| ra.role.id}.count {|role_id| role_id == assignment.role.id } == 1
+    if RoleAssignment.where(role_id: assignment.role_id, entity_id: assignment.entity_id).count == 1
       ActivityLog.info!("Added #{assignment.entity.name} to role (#{assignment.role.name_with_application}).", ["#{assignment.entity.type.downcase}_#{assignment.entity.id}", "application_#{assignment.role.application_id}"])
       unless assignment.entity.type == "Group"
         Sync.person_added_to_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
@@ -37,8 +37,9 @@ class RoleAssignment < ActiveRecord::Base
     end
   }
   after_destroy { |assignment|
-    # Only trigger person_removed_from_role if they lost this role entirely (they may still have it through a group assignment)
-    unless assignment.entity.role_assignments.map{|ra| ra.role.id}.include? assignment.role.id
+    # Only trigger person_removed_from_role if they lost this role entirely (they may the role through
+    # multiple means such as a group assignment)
+    unless RoleAssignment.find_by(role_id: assignment.role_id, entity_id: assignment.entity_id)
       ActivityLog.info!("Removed #{assignment.entity.name} from role (#{assignment.role.name_with_application}).", ["#{assignment.entity.type.downcase}_#{assignment.entity.id}", "application_#{assignment.role.application_id}"])
       unless assignment.entity.type == "Group"
         Sync.person_removed_from_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
@@ -59,13 +60,13 @@ class RoleAssignment < ActiveRecord::Base
       case action
       when :save
         if created_at_changed?
-          logger.info "Created assignment between #{entity.log_identifier} and #{role.log_identifier}."
+          logger.info "Created redundant-type assignment between #{entity.log_identifier} and #{role.log_identifier}."
         else
           # RoleAssignments should really only be created or destroyed, not updated.
           logger.error "log_changes called for existing RoleAssignment. This shouldn't happen. Assignment is between #{entity.log_identifier} and #{role.log_identifier}."
         end
       when :destroy
-        logger.info "Removed assignment between #{entity.log_identifier} and #{role.log_identifier}."
+        logger.info "Removed redundant-type assignment between #{entity.log_identifier} and #{role.log_identifier}."
       else
         logger.warn "Unknown action in log_changes #{action}."
       end
