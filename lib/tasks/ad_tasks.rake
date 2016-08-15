@@ -96,7 +96,7 @@ namespace :ad do
   end
 
   desc 'Re-sync role(s) to AD groups (destructive; optionally takes a single role ID)'
-  task :resync_roles, [:role_id] => :environment do |t, args| do
+  task :resync_roles, [:role_id] => :environment do |t, args|
     @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
 
     ActiveDirectory.configure(@config)
