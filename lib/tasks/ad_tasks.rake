@@ -64,7 +64,7 @@ namespace :ad do
       ad_members = ActiveDirectory.list_group_members(ad_group)
       role_members = role.members.select{|m| m.active == true}.map{ |m| m.loginid }
 
-      if(ad_members - role_members) == []
+      if ad_members.sort == role_members.sort
         print "fully synced.\n"
       else
         num_out_of_sync_roles = num_out_of_sync_roles + 1
