@@ -33,20 +33,27 @@ namespace :ad do
     end
   end
 
-  desc 'Audit AD for membership differences in AD-enabled roles'
-  task :audit_roles => :environment do
+  desc 'Audit AD for membership differences in AD-enabled roles (or role)'
+  task :audit_roles, [:role_id] => :environment do |t, args|
     @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
 
     ActiveDirectory.configure(@config)
 
-    # Audit each role
-    ad_enabled_roles = Role.where('ad_path is not null')
+    unless args[:role_id].nil?
+      # Audit the specific role provided
+      ad_enabled_roles = []
+      ad_enabled_roles << Role.find(args[:role_id])
+    else
+      # Audit every AD-enabled role
+      ad_enabled_roles = Role.where('ad_path is not null')
+    end
+
     puts "Auditing #{ad_enabled_roles.count} AD-enabled roles ..."
 
     num_out_of_sync_roles = 0
 
     ad_enabled_roles.each do |role|
-      print "#{role.application.name} / #{role.name} -> #{role.ad_path} ... "
+      print "#{role.application.name} / ##{role.id} #{role.name} -> #{role.ad_path} ... "
       ad_group = ActiveDirectory.get_group(role.ad_path)
 
       unless ad_group.is_a? Net::LDAP::Entry
