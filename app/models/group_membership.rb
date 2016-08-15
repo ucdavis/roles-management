@@ -69,7 +69,7 @@ class GroupMembership < ActiveRecord::Base
           # Only log group membership creation if this is the first time they've gained membership with this group
           if entity.group_memberships.map{|gm| gm.group.id}.count {|group_id| group_id == group.id } == 1
             logger.info "Created membership between #{entity.log_identifier} and #{group.log_identifier}."
-            ActivityLog.info!("Added #{entity.name} to #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
+            ActivityLog.info!("Added #{entity.name} to group #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
           end
         else
           # RoleAssignments should really only be created or destroyed, not updated.
@@ -80,7 +80,7 @@ class GroupMembership < ActiveRecord::Base
           unless entity.group_memberships.map{|gm| gm.group.id}.include? group.id
             # Only log group membership destruction if they're losing the last association to this group
             logger.info "Removed membership between #{entity.log_identifier} and #{group.log_identifier}."
-            ActivityLog.info!("Removed #{entity.name} from #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
+            ActivityLog.info!("Removed #{entity.name} from group #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
           end
         else
           logger.error "Asked to remove membership involving an entity that was null. GroupMembership is #{id}. Entity ID should be #{entity_id}"
