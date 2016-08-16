@@ -140,4 +140,34 @@ namespace :group do
       end
     end
   end
+
+  desc 'Audit inherited roles for data correctness.'
+  task :audit_inherited_roles, [:loginid] => :environment do |t, args|
+    people = []
+    bad_people_count = 0
+
+    if args[:loginid]
+      people << Person.find_by_loginid(args[:loginid])
+    else
+      people = Person.all
+    end
+
+    people.each do |p|
+      calculated_ras = []
+      bad_ras = []
+      p.role_assignments.each do |ra|
+        if ra.parent_id != nil
+          calculated_ras << ra
+          if RoleAssignment.find_by_id(ra.parent_id) == nil
+            bad_ras << ra
+            bad_people_count = bad_people_count + 1
+          end
+        end
+      end
+
+      #puts "#{p.loginid} has #{bad_ras.length} / #{calculated_ras.length} % invalid inherited roles."
+    end
+
+    puts "#{bad_people_count} / #{people.length} (#{bad_people_count / people.length}%) people have invalid inherited roles."
+  end
 end
