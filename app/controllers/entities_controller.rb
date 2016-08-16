@@ -5,7 +5,9 @@ class EntitiesController < ApplicationController
 
   def index
     authorize Entity
-    
+
+    @cache_key = "entities/index/#{@entities.maximum(:updated_at).try(:utc).try(:to_s, :number)}/#{params[:q]}"
+
     respond_to do |format|
       format.json { render json: @entities }
     end
@@ -39,7 +41,7 @@ class EntitiesController < ApplicationController
 
   def create
     authorize @entity
-    
+
     @entity.save
 
     if params[:entity][:type] == "Group"
@@ -58,7 +60,7 @@ class EntitiesController < ApplicationController
 
   def update
     authorize @entity
-    
+
     respond_to do |format|
       if @entity.update_attributes(entity_params)
         # The update may have only touched associations and not @entity directly,
@@ -69,7 +71,7 @@ class EntitiesController < ApplicationController
         logger.debug "Entity#update successful."
 
         @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
-        
+
         format.json { render "entities/show", status: :ok }
       else
         logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(", ")}"
@@ -80,7 +82,7 @@ class EntitiesController < ApplicationController
 
   def destroy
     @entity = Entity.find(params[:id])
-    
+
     authorize @entity
 
     if @entity.type == "Group"
@@ -93,12 +95,12 @@ class EntitiesController < ApplicationController
       format.json { render json: nil }
     end
   end
-  
+
   def activity
     @entity = Entity.find(params[:id])
-    
+
     authorize @entity
-    
+
     @activity = @entity.activity
     if @activity
       if @activity.length > 0
@@ -130,7 +132,7 @@ class EntitiesController < ApplicationController
     end
 
   private
-  
+
     def load_entity
       @entity = Entity.find_by_id!(params[:id])
     end
@@ -141,8 +143,6 @@ class EntitiesController < ApplicationController
 
         # Search login IDs in case of an entity-search but looking for person by login ID
         @entities = Entity.where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
-
-        logger.debug "Entities#index searching for '#{params[:q]}'. Found #{@entities.length} results."
       else
         @entities = Entity.all
       end
