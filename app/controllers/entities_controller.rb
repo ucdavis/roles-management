@@ -9,7 +9,7 @@ class EntitiesController < ApplicationController
     @cache_key = "entities/index/#{@entities.maximum(:updated_at).try(:utc).try(:to_s, :number)}/#{params[:q]}"
 
     respond_to do |format|
-      format.json { render json: @entities }
+      format.json { render "entities/index", status: :ok }
     end
   end
 
