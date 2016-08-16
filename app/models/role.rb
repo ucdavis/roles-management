@@ -32,14 +32,6 @@ class Role < ActiveRecord::Base
   # This is noted in the Rails documentation. Remove entities via roles_attributes.
   accepts_nested_attributes_for :role_assignments, :allow_destroy => true
 
-  def as_json(options={})
-    logger.warn "Role.as_json called. Should be using jbuilder."
-    { :id => self.id, :token => self.token, :name => self.name, :application_id => self.application_id,
-      :description => self.description,
-      :assignments => self.role_assignments.map{ |a| { id: a.id, calculated: a.parent_id?, entity_id: a.entity_id, name: a.entity.name, type: a.entity.type } }
-     }
-  end
-
   def name_with_application
     "#{self.application.name} / #{self.name}"
   end

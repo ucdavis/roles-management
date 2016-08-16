@@ -5,7 +5,7 @@ class RolesController < ApplicationController
   # Optionally takes application_id parameter to filter index to only roles from that application
   def index
     authorize Role
-    
+
     respond_to do |format|
       format.json { render json: @roles }
     end
@@ -13,18 +13,18 @@ class RolesController < ApplicationController
 
   def show
     authorize @role
-    
+
     @cache_key = "role/" + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
     respond_to do |format|
-      format.json { render json: @role }
+      format.json { render "roles/show", status: :ok }
       format.text
     end
   end
 
   def update
     authorize @role
-    
+
     if params[:id] and params[:role]
       if @role.update_attributes(role_params)
         @role.touch
@@ -36,7 +36,7 @@ class RolesController < ApplicationController
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated role #{@role.id} (#{@role.token})."
 
         respond_to do |format|
-          format.json { render "roles/show", status: :ok }
+          format.json { render "roles/update", status: :ok }
         end
       else
         log_message = "#{current_user.log_identifier}@#{request.remote_ip}: Failed to update role #{@role.id}. Reason(s): #{@role.errors.full_messages.join(", ")}"
