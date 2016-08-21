@@ -637,5 +637,34 @@ class GroupRuleTest < ActiveSupport::TestCase
     group.reload
 
     assert group.members.length == 0, "group should have no members"
-end
+  end
+
+  test "Rule 'login ID is not' works" do
+    # Ensure a group has a rule
+    group = entities(:groupWithNothing)
+
+    assert group.roles.length == 0, "looks like groupWithNothing has a role"
+    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+
+    @person.organizations << organizations(:office_of_toplevel)
+
+    # Test login ID rules
+    assert group.members.length == 0, "group should have no members"
+
+    group_rule = GroupRule.new({ column: 'organization', condition: 'is', value: organizations(:office_of_toplevel).name, group_id: group.id })
+    group.rules << group_rule
+
+    group.reload
+
+    assert group.members.length == 1, "group should have a member"
+
+    group_rule = GroupRule.new({ column: 'loginid', condition: 'is not', value: @person.loginid, group_id: group.id })
+    group.rules << group_rule
+
+    group.reload
+
+    assert group.members.length == 0, "group should have no members"
+  end
 end
