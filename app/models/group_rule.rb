@@ -218,15 +218,18 @@ class GroupRule < ActiveRecord::Base
 
     case column
     when "title"
-      ps = Person.where(:title_id => Title.find_by_name(value))
-      case condition
-      when "is"
-        p = p + ps
-      when "is not"
-        logger.info " -- 'title is not' will not be resolved within GroupRule"
-      else
-        # unsupported
-        logger.warn "Unsupported condition for title in group rule."
+      title = Title.find_by_name(value)
+      unless title.nil?
+        ps = title.people
+        case condition
+        when "is"
+          p = p + ps
+        when "is not"
+          logger.info " -- 'title is not' will not be resolved within GroupRule"
+        else
+          # unsupported
+          logger.warn "Unsupported condition for title in group rule."
+        end
       end
     when "major"
       major = Major.find_by_name(value)
