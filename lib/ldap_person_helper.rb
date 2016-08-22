@@ -161,19 +161,13 @@ module LdapPersonHelper
   def LdapPersonHelper.determine_title_details(p, entry, log = nil)
     # Set title: take the original unless there is a translation from UcdLookups
     title_code = entry[:ucdAppointmentTitleCode][0]
-
     title_code = title_code.rjust(4, '0') unless title_code.blank?
-
-    title_name_from_ucdlookups = UcdLookups::TITLE_CODES[title_code]['title'] if UcdLookups::TITLE_CODES[title_code]
 
     # Only update the person if a title code was found in LDAP
     unless title_code.blank?
       title = Title.find_or_create_by( code: title_code )
-
-      # Update the title name if necessary
-      if title.name.blank? and not title_name_from_ucdlookups.blank?
-        title.name = title_name_from_ucdlookups
-        title.save!
+      if title.name.blank?
+        log.warn "Title code #{title_code} has no name (title ID ##{title.id}). Ensure title database is up-to-date."
       end
 
       p.title = title
