@@ -160,7 +160,6 @@ module LdapPersonHelper
   # should not be considered reliable.
   def LdapPersonHelper.determine_title_details(p, entry, log = nil)
     # Set title: take the original unless there is a translation from UcdLookups
-    title_name_from_ldap = entry[:title][0]
     title_code = entry[:ucdAppointmentTitleCode][0]
 
     title_code = title_code.rjust(4, '0') unless title_code.blank?
@@ -172,8 +171,8 @@ module LdapPersonHelper
       title = Title.find_or_create_by( code: title_code )
 
       # Update the title name if necessary
-      if title.name.blank?
-        title.name = title_name_from_ucdlookups ? title_name_from_ucdlookups : title_name_from_ldap
+      if title.name.blank? and not title_name_from_ucdlookups.blank?
+        title.name = title_name_from_ucdlookups
         title.save!
       end
 
