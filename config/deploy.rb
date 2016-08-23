@@ -42,11 +42,11 @@ set :delayed_job_prefix, :roles
 
 namespace :deploy do
 
-  before 'deploy:starting' do
+  before :starting, :stop_delayed_job do
     invoke 'delayed_job:stop'
   end
 
-  after 'deploy:finished' do
+  after :finished, :start_delayed_job do
     invoke 'delayed_job:start'
   end
 
