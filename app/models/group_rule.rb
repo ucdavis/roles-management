@@ -220,12 +220,12 @@ class GroupRule < ActiveRecord::Base
     when "title"
       title = Title.find_by_name(value)
       unless title.nil?
-        ps = title.people
+        ps = title.people.select(:id)
         case condition
         when "is"
           p = p + ps
         when "is not"
-          logger.info " -- 'title is not' will not be resolved within GroupRule"
+          logger.warn " -- 'title is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for title in group rule."
@@ -234,12 +234,12 @@ class GroupRule < ActiveRecord::Base
     when "major"
       major = Major.find_by_name(value)
       unless major.nil?
-        ps = major.people
+        ps = major.people.select(:id)
         case condition
         when "is"
           p = p + ps
         when "is not"
-          logger.info " -- 'major is not' will not be resolved within GroupRule"
+          logger.warn " -- 'major is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for major in group rule."
@@ -248,12 +248,12 @@ class GroupRule < ActiveRecord::Base
     when "affiliation"
       affiliation = Affiliation.find_by_name(value)
       unless affiliation.nil?
-        ps = affiliation.people
+        ps = affiliation.people.select(:id)
         case condition
         when "is"
           p = p + ps
         when "is not"
-          logger.info " -- 'affiliation is not' will not be resolved within GroupRule"
+          logger.warn " -- 'affiliation is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for affiliation in group rule."
@@ -262,13 +262,13 @@ class GroupRule < ActiveRecord::Base
     when "department"
       department = Organization.find_by_name(value)
       unless department == nil
-        ps = department.entities
+        ps = department.entities.select(:id)
         case condition
         when "is"
           logger.debug "Adding #{ps.length} entities to a 'Department is...' GroupRule"
           p = p + ps
         when "is not"
-          logger.info " -- 'Department is not' will not be resolved within GroupRule"
+          logger.warn " -- 'Department is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for Department in group rule."
@@ -285,7 +285,7 @@ class GroupRule < ActiveRecord::Base
         when "is"
           p = p + ps
         when "is not"
-          logger.info " -- 'Organization is not' will not be resolved within GroupRule"
+          logger.warn " -- 'Organization is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for Organization in group rule."
@@ -302,7 +302,7 @@ class GroupRule < ActiveRecord::Base
         when "is"
           p = p + ps
         when "is not"
-          logger.info " -- 'classification is not' will not be resolved within GroupRule"
+          logger.warn " -- 'classification is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn "Unsupported condition for classification in group rule."
@@ -311,12 +311,12 @@ class GroupRule < ActiveRecord::Base
         logger.warn "Classification not found"
       end
     when "loginid"
-      ps = Person.where(:loginid => value)
+      ps = Person.where(:loginid => value).select(:id)
       case condition
       when "is"
         p = p + ps
       when "is not"
-        logger.info " -- 'loginid is not' will not be resolved within GroupRule"
+        logger.warn " -- 'loginid is not' will not be resolved within GroupRule"
       else
         # unsupported
         logger.warn "Unsupported condition for loginid in group rule."
