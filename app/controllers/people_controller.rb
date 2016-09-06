@@ -77,7 +77,11 @@ class PeopleController < ApplicationController
       require 'ldap_person_helper'
 
       logger.tagged "people#import(#{params[:loginid]})" do
-        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing user with loginid #{params[:loginid]}."
+        if Person.find_by_loginid(params[:loginid]).present?
+          logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing existing user with loginid #{params[:loginid]}."
+        else
+          logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing absent user with loginid #{params[:loginid]}."
+        end
 
         import_start = Time.now
 
