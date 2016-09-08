@@ -1,6 +1,10 @@
 require 'net-ldap'
 
 class ActiveDirectory
+  class LdapError < StandardError; end
+  class InvalidParameter < StandardError; end
+  class OperationFailed < StandardError; end
+
   LDAP_ALREADY_EXISTS = 68
   LDAP_UNWILLING_TO_PERFORM = 53
 
@@ -52,14 +56,12 @@ class ActiveDirectory
   def ActiveDirectory.get_user(loginid)
     @ldap[:people].each do |conn|
       result = conn.search(:filter => Net::LDAP::Filter.eq("sAMAccountName", loginid))
-      raise "LDAP error while fetching user #{loginid}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise LdapError, "Error while fetching user #{loginid}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
 
       if result.length > 0
         return result[0]
       end
     end
-
-    STDERR.puts "Unable to find AD user '#{loginid}'"
 
     return nil
   end
@@ -67,26 +69,30 @@ class ActiveDirectory
   def ActiveDirectory.get_group(group_name)
     @ldap[:groups].each do |conn|
       result = conn.search(:filter => Net::LDAP::Filter.eq("cn", group_name))
-      raise "LDAP error while fetching group #{group_name}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise LdapError, "Error while fetching group #{group_name}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
 
       if result.length > 0
         return result[0]
       end
     end
 
-    STDERR.puts "Unable to find AD group '#{group_name}'"
-
     return nil
   end
 
+  # Adds +user+ to +group+
+  #
+  # @return true if +user+ is added to +group+ or +user+ is already in +group+, else false.
+  # @raise [InvalidParameter] if +user+ or +group+ are not of type Net::LDAP::Entry
+  # @raise [LdapError] if LDAP operation result code is non-zero
   def ActiveDirectory.add_user_to_group(user, group)
     unless user.is_a? Net::LDAP::Entry
-      raise "Must pass valid user."
+      raise InvalidParameter, "Must pass valid user", caller
     end
     unless group.is_a? Net::LDAP::Entry
-      raise "Must pass valid group."
+      raise InvalidParameter, "Must pass valid group", caller
     end
 
+    # TODO: This will only process against the first entry in @ldap[:groups]
     @ldap[:groups].each do |conn|
       result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
   				[ :add, :member, user[:distinguishedname][0] ]
@@ -96,25 +102,29 @@ class ActiveDirectory
         return true # user was already in this group
       end
 
-      raise "LDAP error while adding user (#{user[:distinguishedname][0]}) to group (#{group[:distinguishedname][0]}). Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise LdapError, "Error while adding user (#{user[:distinguishedname][0]}) to group (#{group[:distinguishedname][0]}). Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
 
       # result will be 'true' if user was successfully added
       return result
     end
 
-    STDERR.puts "Unable to add user (#{user[:distinguishedname][0]}) to group (#{group[:distinguishedname][0]})"
-
     return false
   end
 
+  # Removes +user+ from +group+.
+  #
+  # @return true if +user+ was removed from +group+ or +user+ was already not in +group+
+  # @raise [InvalidParameter] if +user+ or +group+ are not of type Net::LDAP::Entry
+  # @raise [LdapError] if an LDAP error occurs
   def ActiveDirectory.remove_user_from_group(user, group)
     unless user.is_a? Net::LDAP::Entry
-      raise "Must pass valid user."
+      raise InvalidParameter, "Must pass valid user", caller
     end
     unless group.is_a? Net::LDAP::Entry
-      raise "Must pass valid group."
+      raise InvalidParameter, "Must pass valid group", caller
     end
 
+    # TODO: This will only process against the first entry in @ldap[:groups]
     @ldap[:groups].each do |conn|
       result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
 				[ :delete, :member, user[:distinguishedname][0] ]
@@ -124,20 +134,21 @@ class ActiveDirectory
         return true # user was already not in the group
       end
 
-      raise "LDAP error while removing user (#{user[:distinguishedname][0]}) from group (#{group[:distinguishedname][0]}). Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise LdapError, "Error while removing user (#{user[:distinguishedname][0]}) from group (#{group[:distinguishedname][0]}). Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
 
       # result will be 'true' if user was successfully removed
       return result
     end
 
-    STDERR.puts "Unable to remove user (#{user[:distinguishedname][0]}) from group (#{group[:distinguishedname][0]})"
-
     return false
   end
 
+  # @return true if group described was updated
+  # @raise [InvalidParameter] if +group+ is not of type Net::LDAP::Entry
+  # @raise [LdapError] if an LDAP error occurred
   def ActiveDirectory.update_group_description(group, description)
     unless group.is_a? Net::LDAP::Entry
-      raise "Must pass valid group."
+      raise InvalidParameter, "Must pass valid group", caller
     end
 
     @ldap[:groups].each do |conn|
@@ -152,26 +163,26 @@ class ActiveDirectory
   			])
       end
 
-      raise "LDAP error while updating description for #{group[:distinguishedname][0]}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}" unless conn.get_operation_result.code == 0
+      raise LdapError, "Error while updating description for #{group[:distinguishedname][0]}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
 
-      # result will be 'true' if user was successfully removed
+      # result will be 'true' if description was successfully updated
       return result
     end
-
-    STDERR.puts "Unable to update group description (#{group[:distinguishedname][0]})"
 
     return false
   end
 
-  # Returns an array of login IDs for the group's members, if any, if possible
+  # Returns an array of login IDs for members of +group+, if any, if possible
   # This function purposefully ignores UCD's OU-based members, e.g. DC=ou
+  # @param group String or Net::LDAP::Entry representing the desired group
+  # @return [Array] the login IDs of the members in +group+
   def ActiveDirectory.list_group_members(group)
     unless group.is_a? Net::LDAP::Entry
       group = get_group(group)
     end
 
     if group.nil?
-      STDERR.puts "Unable to list group members; group is nil."
+      raise OperationFailed, "Group not found", caller
       return nil
     end
 

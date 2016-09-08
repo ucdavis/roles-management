@@ -7,6 +7,7 @@ class ActiveDirectoryHelper
   # +group+ is a Net::LDAP::Entry object or a string
   # +application_name+ is an optional string of the application's name, if applicable
   # +role_name+ is an optional string of the role's name, if applicable
+  # @return true if description was present or added successfully to +group+
   def ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(group, application_name = nil, role_name = nil)
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
@@ -33,14 +34,17 @@ class ActiveDirectoryHelper
     unless g_desc.index sentinel_txt
       STDOUT.puts "Adding '#{sentinel_txt}' to AD group description."
       g_desc = "#{sentinel_txt} #{g_desc}"
-      ActiveDirectory.update_group_description(group, g_desc)
+      return ActiveDirectory.update_group_description(group, g_desc)
     end
+
+    return false
   end
 
   # Removes the SENTINEL_DESCRIPTOR text from an AD group's description field if
   # it is present.
   #
   # +group+ is a Net::LDAP::Entry object or a string
+  # @return true if description was not present or removed successfully to +group+
   def ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(group)
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
@@ -49,7 +53,7 @@ class ActiveDirectoryHelper
     return false if group.nil?
 
     g_desc = group[:description][0]
-    return unless g_desc
+    return false unless g_desc
 
     matches = /\(RM Sync[\s\S]*\)/.match(g_desc)
 
@@ -57,14 +61,16 @@ class ActiveDirectoryHelper
       STDOUT.puts "Removing '#{matches.to_s}' from AD group description."
       g_desc.sub! /\(RM Sync[\s\S]*\)/, ''
       g_desc.lstrip!
-      ActiveDirectory.update_group_description(group, g_desc)
+      return ActiveDirectory.update_group_description(group, g_desc)
     end
+
+    return false
   end
 
-  # User may be a loginid (string) or Net::LDAP::Entry object
-  # Group may be an AD path (string) or Net::LDAP::Entry object
-  # ad_guid may be provided (optional) and will be prefered over AD Path if
-  # 'group' is a string (AD Path)
+  # +user+ may be a loginid (string) or Net::LDAP::Entry object
+  # +group+ may be an AD path (string) or Net::LDAP::Entry object
+  # +ad_guid+ may be provided (optional) and will be preferred over AD Path if
+  # +group+ is a string (AD Path)
   def ActiveDirectoryHelper.ensure_user_in_group(user, group, ad_guid = nil)
     unless user.is_a? Net::LDAP::Entry
       user = ActiveDirectory.get_user(user)
@@ -72,8 +78,10 @@ class ActiveDirectoryHelper
     end
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
+      return false if group.nil?
     end
 
+    # returns true or false
     ActiveDirectory.add_user_to_group(user, group)
   end
 
@@ -88,8 +96,10 @@ class ActiveDirectoryHelper
     end
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
+      return false if group.nil?
     end
 
+    # returns true or false
     ActiveDirectory.remove_user_from_group(user, group)
   end
 
