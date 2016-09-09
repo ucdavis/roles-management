@@ -11,9 +11,8 @@ class ActiveDirectoryHelper
   def ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(group, application_name = nil, role_name = nil)
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
+      return false if group.nil?
     end
-
-    return false if group.nil?
 
     g_desc = group[:description][0]
     g_desc = "" if g_desc.nil?
@@ -30,14 +29,15 @@ class ActiveDirectoryHelper
       g_desc.lstrip!
     end
 
-    # Ensure the sentinel exists
+    # Update sentinel only if it doesn't already exist
     unless g_desc.index sentinel_txt
       STDOUT.puts "Adding '#{sentinel_txt}' to AD group description."
       g_desc = "#{sentinel_txt} #{g_desc}"
       return ActiveDirectory.update_group_description(group, g_desc)
     end
 
-    return false
+    # Sentinel already existed
+    return true
   end
 
   # Removes the SENTINEL_DESCRIPTOR text from an AD group's description field if
