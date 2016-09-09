@@ -55,12 +55,12 @@ case @sync_data["mode"]
     application_name = @sync_data["role"]["application_name"]
     role_name = @sync_data["role"]["role_name"]
 
-    STDOUT.puts "Adding #{loginid} to role represented in #{ad_path} ..."
-
     # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
     unless ad_path
-      STDERR.puts "add_to_role was not given an ad_path. Failing ..."
-      exit(1)
+      STDOUT.puts "add_to_role has nothing to do: no ad_path given. This is normal for any role without an AD path."
+      exit(0)
+    else
+      STDOUT.puts "Adding #{loginid} to role represented in #{ad_path} ..."
     end
     STDOUT.puts "Ensuring #{loginid} is in AD group #{ad_path} ..."
     if ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_path) == false
@@ -82,12 +82,12 @@ case @sync_data["mode"]
     application_name = @sync_data["role"]["application_name"]
     role_name = @sync_data["role"]["role_name"]
 
-    STDOUT.puts "Removing #{loginid} from role represented in #{ad_path} ..."
-
     # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
     unless ad_path
-      STDERR.puts "remove_from_role was not given an ad_path. Failing ..."
-      exit(1)
+      STDOUT.puts "remove_from_role has nothing to do: no ad_path given. This is normal for any role without an AD path."
+      exit(0)
+    else
+      STDOUT.puts "Removing #{loginid} from role represented in #{ad_path} ..."
     end
     STDOUT.puts "Ensuring #{loginid} is not in AD group #{ad_path} ..."
     if ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_path) == false
