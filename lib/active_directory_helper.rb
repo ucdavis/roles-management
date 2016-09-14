@@ -269,7 +269,8 @@ class ActiveDirectoryHelper
     when "student:undergraduate", "student:law", "visitor:consultant", "student:medicine",
       "visitor:student:concurrent", "visitor:lecturer", "visitor:faculty:research", "visitor:staff:temporary",
       "visitor:postdoc:research", "visitor:faculty:teaching", "visitor:student", "student:vetmed", "student",
-      "visitor"
+      "visitor", "visitor:student:extension", "external", "visitor:contractor", "visitor:vendor", "visitor:public-service-partner",
+      "visitor:volunteer"
       return nil
     else
       STDERR.puts "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
