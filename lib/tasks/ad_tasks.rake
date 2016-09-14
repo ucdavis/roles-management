@@ -155,27 +155,15 @@ namespace :ad do
 
     ActiveDirectory.configure(@config)
 
+    organizations = []
+
     unless args[:org_id].nil?
       # Audit the specific org provided
-      org = Organization.find_by_id(args[:org_id])
+      organizations << Organization.find_by_id(args[:org_id])
     else
       # Audit every org
-      exit(1) # unsupported
+      organizations = Organization.all
     end
-
-    # Since RM is authoritative on AD membership for these groups, we will merely
-    # calculate what the group memberships should be and force AD to comply.
-
-    # Create a list of all possible org + affiliation combinations
-    # Check them for membership - add those who should be there, remove those who
-    # shouldn't.
-    # If an AD group doesn't exist, ignore it and move on.
-
-    # Determine every possible AD group for this org
-    short_ou = ActiveDirectoryHelper.ou_to_short(org.name)
-
-    # Get all affiliations with mappings according to ActiveDirectoryHelper
-    # Produces an array where each item is an array of ["flattened_afiliation_name", affiliation_id]
 
     # Reduce all affiliations to their "AD-flattened names" and compose a list of all IDs which share
     # the same flattened name
@@ -188,74 +176,87 @@ namespace :ad do
       end
     end
 
-    # Handle the affiliation-based groups
-    affiliations.each do |flat_name, affiliation_ids|
-      # Determine all RM people who should be in this group
-      ad_group = ActiveDirectory.get_group("dss-us-#{short_ou}-#{flat_name}".downcase)
+    organizations.each do |org|
+      # Since RM is authoritative on AD membership for these groups, we will merely
+      # calculate what the group memberships should be and force AD to comply.
 
-      unless ad_group.is_a? Net::LDAP::Entry
-        next
+      # Create a list of all possible org + affiliation combinations
+      # Check them for membership - add those who should be there, remove those who
+      # shouldn't.
+      # If an AD group doesn't exist, ignore it and move on.
+
+      # Determine every possible AD group for this org
+      short_ou = ActiveDirectoryHelper.ou_to_short(org.name)
+
+      # Get all affiliations with mappings according to ActiveDirectoryHelper
+      # Produces an array where each item is an array of ["flattened_afiliation_name", affiliation_id]
+
+      # Handle the affiliation-based groups
+      affiliations.each do |flat_name, affiliation_ids|
+        # Determine all RM people who should be in this group
+        ad_group = ActiveDirectory.get_group("dss-us-#{short_ou}-#{flat_name}".downcase)
+
+        unless ad_group.is_a? Net::LDAP::Entry
+          next
+        end
+
+        rm_people = Person.joins(:organizations).joins(:affiliations).where(:organizations => { id: org.id }).where(:affiliations => { id: affiliation_ids } ).where(:active => true).map{|p| p.loginid}.uniq
+        ad_people = ActiveDirectory.list_group_members(ad_group).uniq
+
+        puts "RM:"
+        puts "\tAffiliation IDs      : #{affiliation_ids}"
+        puts "\tAffiliation Flat Name: #{flat_name}"
+        puts "\tPeople Count         : #{rm_people.length}"
+        puts "\tPeople               : #{rm_people}"
+        to_add = rm_people - ad_people
+        puts "\tNeed adding          : #{to_add}"
+
+        to_add.each do |loginid|
+          ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_group)
+        end
+
+        puts "\nAD (#{"dss-us-#{short_ou}-#{flat_name}".downcase}):"
+        puts "\tPeople Count         : #{ad_people.length}"
+        puts "\tPeople               : #{ad_people}"
+        to_remove = ad_people - rm_people
+        puts "\tNeed removing        : #{to_remove}"
+
+        to_remove.each do |loginid|
+          ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_group)
+        end
+
+        puts "---"
       end
 
-      rm_people = Person.joins(:organizations).joins(:affiliations).where(:organizations => { id: org.id }).where(:affiliations => { id: affiliation_ids } ).where(:active => true).map{|p| p.loginid}.uniq
-      ad_people = ActiveDirectory.list_group_members(ad_group).uniq
+      # Handle the 'all' group
+      ad_group = ActiveDirectory.get_group("dss-us-#{short_ou}-all".downcase)
 
-      puts "RM:"
-      puts "\tAffiliation IDs      : #{affiliation_ids}"
-      puts "\tAffiliation Flat Name: #{flat_name}"
-      puts "\tPeople Count         : #{rm_people.length}"
-      puts "\tPeople               : #{rm_people}"
-      to_add = rm_people - ad_people
-      puts "\tNeed adding          : #{to_add}"
+      if ad_group.is_a? Net::LDAP::Entry
+        rm_people = Person.joins(:organizations).joins(:affiliations).where(:organizations => { id: org.id }).where(:active => true).map{|p| p.loginid}.uniq
+        ad_people = ActiveDirectory.list_group_members(ad_group).uniq
 
-      to_add.each do |loginid|
-        ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_group)
+        puts "RM:"
+        puts "\tPeople Count         : #{rm_people.length}"
+        puts "\tPeople               : #{rm_people}"
+        to_add = rm_people - ad_people
+        puts "\tNeed adding          : #{to_add}"
+
+        to_add.each do |loginid|
+          ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_group)
+        end
+
+        puts "\nAD (#{"dss-us-#{short_ou}-all".downcase}):"
+        puts "\tPeople Count         : #{ad_people.length}"
+        puts "\tPeople               : #{ad_people}"
+        to_remove = ad_people - rm_people
+        puts "\tNeed removing        : #{to_remove}"
+
+        to_remove.each do |loginid|
+          ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_group)
+        end
+
+        puts "---"
       end
-
-      puts "\nAD (#{"dss-us-#{short_ou}-#{flat_name}".downcase}):"
-      puts "\tPeople Count         : #{ad_people.length}"
-      puts "\tPeople               : #{ad_people}"
-      to_remove = ad_people - rm_people
-      puts "\tNeed removing        : #{to_remove}"
-
-      to_remove.each do |loginid|
-        ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_group)
-      end
-
-      puts "---"
     end
-
-    # Handle the 'all' group
-    ad_group = ActiveDirectory.get_group("dss-us-#{short_ou}-all".downcase)
-
-    if ad_group.is_a? Net::LDAP::Entry
-      rm_people = Person.joins(:organizations).joins(:affiliations).where(:organizations => { id: org.id }).where(:active => true).map{|p| p.loginid}.uniq
-      ad_people = ActiveDirectory.list_group_members(ad_group).uniq
-
-      puts "RM:"
-      puts "\tPeople Count         : #{rm_people.length}"
-      puts "\tPeople               : #{rm_people}"
-      to_add = rm_people - ad_people
-      puts "\tNeed adding          : #{to_add}"
-
-      to_add.each do |loginid|
-        ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_group)
-      end
-
-      puts "\nAD (#{"dss-us-#{short_ou}-all".downcase}):"
-      puts "\tPeople Count         : #{ad_people.length}"
-      puts "\tPeople               : #{ad_people}"
-      to_remove = ad_people - rm_people
-      puts "\tNeed removing        : #{to_remove}"
-
-      to_remove.each do |loginid|
-        ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_group)
-      end
-
-      puts "---"
-    end
-
-
-
   end
 end
