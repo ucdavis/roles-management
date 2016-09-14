@@ -31,7 +31,7 @@ class Person < Entity
 
   before_save  :set_name_if_blank
   after_save   :recalculate_group_rule_membership
-  after_save   :touch_caches_as_needed
+  after_save   :trigger_sync_as_needed
 
   before_destroy :allow_group_membership_destruction, prepend: true
 
@@ -169,10 +169,9 @@ class Person < Entity
 
   private
 
-  # has_many does not have a :touch attribute.
   # If a person goes from inactive to active, we need to ensure
   # any role_assignment or group views are touched correctly.
-  def touch_caches_as_needed
+  def trigger_sync_as_needed
     if changed.include? "active"
       role_assignments.each { |ra| ra.touch }
       group_memberships.each { |gm| gm.touch }
