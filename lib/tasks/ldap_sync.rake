@@ -108,16 +108,18 @@ namespace :ldap do
             end
           end
         else
-          # Single import mode. If no results were found but the individual exists in RM, de-activate them
-          p = Person.find_by_loginid(args[:loginid])
-          if p and p.active
-            log.info "Person with login ID '#{p.loginid}' not found in LDAP, disabling ..."
-            p.active = false
-            unless p.save
-              log.error "Could not save person (#{p.loginid}), reason(s):"
-              log.error "\t#{p.errors.full_messages.join(', ')}"
-            else
-              ActivityLog.info!("De-activated #{p.name} as they are not in LDAP.", ["person_#{p.id}", 'ldap'])
+          if num_results == 0
+            # Single import mode. If no results were found but the individual exists in RM, de-activate them
+            p = Person.find_by_loginid(args[:loginid])
+            if p and p.active
+              log.info "Person with login ID '#{p.loginid}' not found in LDAP, disabling ..."
+              p.active = false
+              unless p.save
+                log.error "Could not save person (#{p.loginid}), reason(s):"
+                log.error "\t#{p.errors.full_messages.join(', ')}"
+              else
+                ActivityLog.info!("De-activated #{p.name} as they are not in LDAP.", ["person_#{p.id}", 'ldap'])
+              end
             end
           end
         end
