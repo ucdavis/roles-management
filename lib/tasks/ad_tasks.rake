@@ -209,7 +209,7 @@ namespace :ad do
       puts "\tNeed adding          : #{to_add}"
 
       to_add.each do |loginid|
-        #ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_group)
+        ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_group)
       end
 
       puts "\nAD (#{"dss-us-#{short_ou}-#{flat_name}".downcase}):"
@@ -219,7 +219,7 @@ namespace :ad do
       puts "\tNeed removing        : #{to_remove}"
 
       to_remove.each do |loginid|
-        #ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_group)
+        ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_group)
       end
 
       puts "---"
@@ -239,7 +239,7 @@ namespace :ad do
       puts "\tNeed adding          : #{to_add}"
 
       to_add.each do |loginid|
-        #ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_group)
+        ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_group)
       end
 
       puts "\nAD (#{"dss-us-#{short_ou}-all".downcase}):"
@@ -249,7 +249,7 @@ namespace :ad do
       puts "\tNeed removing        : #{to_remove}"
 
       to_remove.each do |loginid|
-        #ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_group)
+        ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_group)
       end
 
       puts "---"
