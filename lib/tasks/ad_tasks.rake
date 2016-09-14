@@ -177,6 +177,8 @@ namespace :ad do
     end
 
     organizations.each do |org|
+      puts "Org: #{org.name}"
+      puts "================"
       # Since RM is authoritative on AD membership for these groups, we will merely
       # calculate what the group memberships should be and force AD to comply.
 
