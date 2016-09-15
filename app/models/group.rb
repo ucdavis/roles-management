@@ -149,7 +149,7 @@ class Group < Entity
       end
 
       # Look for memberships to add
-      # Whatever's left in results are memberships which don't already exist
+      # Whatever's left in 'results' are memberships which don't already exist
       # and need to be created.
       results.each do |r|
         GroupMembership.recalculating_membership do
