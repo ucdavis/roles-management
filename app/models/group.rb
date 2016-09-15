@@ -75,21 +75,29 @@ class Group < Entity
       logger.debug "Re-assembling group members using rule result cache ..."
 
       # Step One: Build groups out of each 'is' rule,
-      #           groupping rules of similar type together via OR
+      #           grouping rules of similar type together via OR
       #           Note: we ignore the 'loginid' column as it is calculated separately
       Rails.logger.tagged "Step One" do
-        rules.select{ |r| r.condition == "is" and GroupRule.valid_columns.reject{|x| x == "loginid"}.include? r.column }.group_by(&:column).each do |ruleset|
-          ruleset_results = []
+        # Produce an array of arrays: outer array items represent each column type used, inner arrays are all group rule IDs for that specific column type
+        # e.g. id: 1 "organization is", id: 2 "organization is", id: 3 "department is" produces: [ [1,2] , [3] ]
+        step_one_rule_id_sets = GroupRule.select(:id, :column).where(group_id: self.id).where(condition: "is").where.not(column: "loginid").group_by(&:column).map{|set| set[1].map{|gr| gr.id}}
 
-          ruleset[1].each do |rule|
-            logger.debug "Rule (#{rule.id}, #{rule.column} #{rule.condition} #{rule.value}) has #{rule.results.length} result(s)"
-            ruleset_results << rule.results.map{ |r| r.entity_id }
-          end
-
-          reduced_results = ruleset_results.reduce(:+)
-          logger.debug "Adding #{reduced_results.length} results to the total"
-          results << reduced_results
+        step_one_rule_id_sets.each do |rule_id_set|
+          results << GroupRuleResult.select(:entity_id).joins(:group_rule).where(:group_rule_id => rule_id_set).map{|gr| gr.entity_id}
         end
+
+        # rules.select{ |r| r.condition == "is" and GroupRule.valid_columns.reject{|x| x == "loginid"}.include? r.column }.group_by(&:column).each do |ruleset|
+        #   ruleset_results = []
+        #
+        #   ruleset[1].each do |rule|
+        #     logger.debug "Rule (#{rule.id}, #{rule.column} #{rule.condition} #{rule.value}) has #{rule.results.length} result(s)"
+        #     ruleset_results << rule.results.map{ |r| r.entity_id }
+        #   end
+        #
+        #   reduced_results = ruleset_results.reduce(:+)
+        #   logger.debug "Adding #{reduced_results.length} results to the total"
+        #   results << reduced_results
+        # end
 
         logger.debug "Ending step one with #{results.length} results"
       end
@@ -103,6 +111,7 @@ class Group < Entity
 
       # Step Three: Pass over the result from step two and
       # remove anybody who violates an 'is not' rule
+      # TODO: Optimize this step!
       Rails.logger.tagged "Step Three" do
         results = results.find_all{ |member|
           keep = true
