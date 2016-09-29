@@ -8,7 +8,8 @@ class RoleAssignment < ActiveRecord::Base
   belongs_to :entity, :touch => true
 
   validates :role, :entity, :presence => true
-  validates_uniqueness_of :role_id, :scope => [:entity_id, :parent_id]
+  #BUGME: validates_uniqueness_of causes update_attributes to return nil but no errors!
+  #validates_uniqueness_of :role_id, :scope => [:entity_id, :parent_id]
   validate :assignment_cannot_be_cyclical # must come before the possibly cyclical operations of granting role assignments in after_create
   validate :parent_must_exist_if_set
 
