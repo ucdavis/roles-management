@@ -73,5 +73,5 @@ gem 'delayed_job_active_record'
 gem 'daemons'
 
 # Sync script dependencies
-gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'
+#gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'
 gem 'roles-management-api', '>= 0.1.2', :git => 'https://github.com/dssit/roles-management-api.git'
