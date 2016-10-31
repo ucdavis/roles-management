@@ -76,7 +76,7 @@ GEM
     capistrano-harrow (0.5.3)
     capistrano-passenger (0.2.0)
       capistrano (~> 3.0)
-    capistrano-rails (1.1.8)
+    capistrano-rails (1.2.0)
       capistrano (~> 3.1)
       capistrano-bundler (~> 1.1)
     capybara (2.10.1)
@@ -257,7 +257,7 @@ DEPENDENCIES
   pg
   poltergeist
   pundit
-  rails (~> 4.2.6)
+  rails (~> 4.2.7)
   roles-management-api (>= 0.1.2)!
   rubycas-client!
   sass-rails (~> 5.0)
