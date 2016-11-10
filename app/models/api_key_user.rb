@@ -15,6 +15,11 @@ class ApiKeyUser < ActiveRecord::Base
     [:api_key]
   end
 
+  # Returns true if this API key user has access to the RM application in some form
+  def has_access?
+    return true
+  end
+
   def ensure_secret_exists
     if secret.nil?
       self.secret = generate_secret
