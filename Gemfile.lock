@@ -7,9 +7,9 @@ GIT
 
 GIT
   remote: https://github.com/dssit/roles-management-api.git
-  revision: 1d052b6c98ebbbcde4f578733ff92413713be61d
+  revision: 050b9def5494dc9627023f31a038405b19b5d015
   specs:
-    roles-management-api (0.1.2)
+    roles-management-api (0.1.3)
 
 GIT
   remote: https://github.com/rubycas/rubycas-client.git
