@@ -11,7 +11,10 @@ class ActiveDirectoryHelper
   def ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(group, application_name = nil, role_name = nil)
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
-      return false if group.nil?
+      if group.nil?
+        STDERR.puts "ensure_sentinel_descriptor_presence failed: Cannot get_group()."
+        return false
+      end
     end
 
     g_desc = group[:description][0]
@@ -50,10 +53,16 @@ class ActiveDirectoryHelper
       group = ActiveDirectory.get_group(group)
     end
 
-    return false if group.nil?
+    if group.nil?
+      STDERR.puts "ensure_sentinel_descriptor_absence failed: Cannot get_group()."
+      return false
+    end
 
     g_desc = group[:description][0]
-    return false unless g_desc
+    unless g_desc
+      STDERR.puts "ensure_sentinel_descriptor_absence failed: g_desc is nil."
+      return false
+    end
 
     matches = /\(RM Sync[\s\S]*\)/.match(g_desc)
 
@@ -74,11 +83,17 @@ class ActiveDirectoryHelper
   def ActiveDirectoryHelper.ensure_user_in_group(user, group, ad_guid = nil)
     unless user.is_a? Net::LDAP::Entry
       user = ActiveDirectory.get_user(user)
-      return false if user.nil?
+      if user.nil?
+        STDERR.puts "ensure_user_in_group failed: user is nil."
+        return false
+      end
     end
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
-      return false if group.nil?
+      if group.nil?
+        STDERR.puts "ensure_user_in_group failed: group is nil."
+        return false
+      end
     end
 
     # returns true or false
@@ -92,11 +107,17 @@ class ActiveDirectoryHelper
   def ActiveDirectoryHelper.ensure_user_not_in_group(user, group, ad_guid = nil)
     unless user.is_a? Net::LDAP::Entry
       user = ActiveDirectory.get_user(user)
-      return false if user.nil?
+      if user.nil?
+        STDERR.puts "ensure_user_not_in_group failed: user is nil."
+        return false
+      end
     end
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
-      return false if group.nil?
+      if group.nil?
+        STDERR.puts "ensure_user_not_in_group failed: group is nil."
+        return false
+      end
     end
 
     # returns true or false
@@ -112,7 +133,6 @@ class ActiveDirectoryHelper
     unless ad_group.is_a? Net::LDAP::Entry
       abort("Could not retrieve #{group_name}")
     end
-
 
     role = rm_client.find_role_by_id(role_id)
 
