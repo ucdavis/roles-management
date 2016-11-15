@@ -103,14 +103,20 @@ namespace :group do
       exit
     end
 
+    puts "Pre-existing inherited role assignments:"
+
+    preexisting_role_ids = []
+
     calculated_ras = []
     p.role_assignments.each do |ra|
       if ra.parent_id != nil
+        puts "\tID: #{ra.id}, Role: #{ra.role.application.name} / #{ra.role.token}, via Group #{RoleAssignment.find_by_id(ra.parent_id).entity.name}"
+        preexisting_role_ids << ra.role_id
         calculated_ras << ra
       end
     end
 
-    puts "#{p.loginid} has #{calculated_ras.length} inherited roles out of #{p.role_assignments.length} total roles."
+    puts "\n#{p.loginid} has #{calculated_ras.length} inherited roles out of #{p.role_assignments.length} total roles."
 
     # First remove the calculated role assignments
     Thread.current[:role_assignment_destroying_calculated_flag] = true
@@ -119,7 +125,9 @@ namespace :group do
     end
     Thread.current[:role_assignment_destroying_calculated_flag] = nil
 
-    puts "All calculated role assignments destroyed."
+    puts "All calculated role assignments destroyed.\n\n"
+
+    recalculated_role_ids = []
 
     # Now re-create them based on each group's role assignment
     p.group_memberships.each do |gm|
@@ -134,10 +142,26 @@ namespace :group do
           puts "\tGranting role (ID: #{group_ra.role_id} / #{group_ra.role.application.name}, #{group_ra.role.token}) with parent assignment #{group_ra.id} ..."
 
           ra.save!
+
+          recalculated_role_ids << ra.role_id
         else
           puts "\tSkipping role grant as it already exists: role (ID: #{group_ra.role_id} / #{group_ra.role.application.name}, #{group_ra.role.token}) with parent assignment #{group_ra.id}. "
         end
       end
+    end
+
+    puts "\nPre-existing roles no longer assigned:"
+    [preexisting_role_ids - recalculated_role_ids].flatten.each do |role_id|
+      puts "\tRole ID: #{role_id}, #{Role.find_by_id(role_id).application.name} / #{Role.find_by_id(role_id).token}"
+    end.empty? and begin
+      puts "\tNone"
+    end
+
+    puts "\nRecalculated roles not previously assigned:"
+    [recalculated_role_ids - preexisting_role_ids].flatten.each do |role_id|
+      puts "\tRole ID: #{role_id}, #{Role.find_by_id(role_id).application.name} / #{Role.find_by_id(role_id).token}"
+    end.empty? and begin
+      puts "\tNone"
     end
   end
 
