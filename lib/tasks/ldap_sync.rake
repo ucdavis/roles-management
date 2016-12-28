@@ -58,22 +58,26 @@ namespace :ldap do
           unless filter.length == 0
             results = ldap.search(filter, log)
 
-            log.debug "LDAP filter(s) search returned #{results.length} results."
+            if results
+              log.debug "LDAP filter(s) search returned #{results.length} results."
 
-            results.each_with_index do |result, i|
-              p = LdapPersonHelper.create_or_update_person_from_ldap(result, log)
-              loginids_touched << p.loginid unless p.nil?
+              results.each_with_index do |result, i|
+                p = LdapPersonHelper.create_or_update_person_from_ldap(result, log)
+                loginids_touched << p.loginid unless p.nil?
 
-              num_results += 1
+                num_results += 1
 
-              log.debug "Processed #{i + 1} of #{results.length} results" if (i % 10) == 0
+                log.debug "Processed #{i + 1} of #{results.length} results" if (i % 10) == 0
+              end
+            else
+              log.error "LDAP returned nil for filter: '#{filter}'. Check server configuration."
             end
           end
         end
 
-        log.debug "Finished processing #{num_results} of #{results.length} results"
+        log.debug "Finished processing #{num_results} records"
 
-        log.debug "No LDAP result(s) were found." unless num_results > 0
+        log.debug "No LDAP result(s) were returned or error(s) occurred." unless num_results > 0
 
         # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
         # Only do this if we weren't in 'single' import mode
@@ -81,7 +85,7 @@ namespace :ldap do
           log.debug "Processing additional login IDs existing locally but not found in the standard LDAP queries."
 
           if loginids_touched.count > 0
-            Person.where("active = true AND loginid NOT IN (?)", loginids_touched).each do |person|
+            Person.where(active: true).where.not(loginid: loginids_touched).each do |person|
               p = nil
 
               results = ldap.search('(uid=' + person.loginid + ')', log)
