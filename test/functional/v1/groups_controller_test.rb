@@ -26,6 +26,20 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     end
   end
 
+  test 'JSON update request should work' do
+    revoke_access
+    grant_api_user_access
+
+    @group = entities(:groupA)
+
+    patch :update, id: @group, group_attributes: { name: 'New Name' }
+    assert_response :success
+
+    @group.reload
+
+    assert @group.name == 'New Name'
+  end
+
   test "unauthenticated requests should not be honored" do
     revoke_access
 
