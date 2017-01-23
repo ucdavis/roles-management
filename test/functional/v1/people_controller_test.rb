@@ -65,6 +65,27 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
     end
   end
 
+  test 'JSON show request should work via login ID' do
+    grant_api_user_access
+
+    get :show, :format => :json, :id => 'casuser'
+
+    assert_response :success
+  end
+
+  test 'JSON show request should work via numeric ID' do
+    grant_api_user_access
+
+    get :show, :format => :json, :id => 1
+
+    assert_response :success
+
+    body = JSON.parse(response.body)
+
+    assert body['id'] == 1, 'JSON response should have requested ID'
+    assert body['loginid'] == 'casuser', 'JSON response should have correct login ID'
+  end
+
   test "JSON show request should not include inactive entities" do
     grant_api_user_access
 
