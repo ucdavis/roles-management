@@ -17,7 +17,7 @@ class ApplicationController < ActionController::Base
     log_message = "An exception occurred:\n\n#{exception}\n\n" + exception.backtrace.join('\n')
     logger.error log_message
     
-    AdminMailer.application_error_occurred("dssit-devs-exceptions@ucdavis.edu", log_message).deliver!
+    AdminMailer.application_error_occurred("dssit-devs-exceptions@ucdavis.edu", log_message).deliver_now!
 
     raise exception
   end
