@@ -62,7 +62,7 @@ namespace :ldap do
               log.debug "LDAP filter(s) search returned #{results.length} results."
 
               results.each_with_index do |result, i|
-                p = LdapPersonHelper.create_or_update_person_from_ldap(result, log)
+                p = LdapPersonHelper.create_or_update_person_from_ldap_record(result, log)
                 loginids_touched << p.loginid unless p.nil?
 
                 num_results += 1
@@ -92,7 +92,7 @@ namespace :ldap do
 
               unless results == false
                 if results.length > 0
-                  p = LdapPersonHelper.create_or_update_person_from_ldap(results[0], log)
+                  p = LdapPersonHelper.create_or_update_person_from_ldap_record(results[0], log)
                 end
 
                 unless p

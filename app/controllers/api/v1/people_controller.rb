@@ -21,6 +21,32 @@ module Api
         end
       end
 
+      def import
+        authorize :api_v1, :use?
+
+        if params[:loginid]
+          person = LdapPersonHelper.create_or_update_person_by_loginid(params[:loginid], Rails.logger)
+
+          if person
+            respond_to do |format|
+              format.json { render json: person }
+            end
+          else
+            logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
+
+            respond_to do |format|
+              format.json { render json: "Could not import person #{params[:loginid]}, no results from LDAP.", status: 404 }
+            end
+          end
+        else
+          logger.error "Invalid request for LDAP person import. Did not specify loginid."
+
+          respond_to do |format|
+            format.json { render json: nil, status: 400 }
+          end
+        end
+      end
+
       private
 
         def load_person
@@ -32,6 +58,12 @@ module Api
             # This exception is acceptable. We catch it to avoid triggering the
             # uncaught exceptions handler in ApplicationController.
           end
+        end
+
+        def new_person_from_params
+          #params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
+          #params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id
+          #@application = Application.new(application_params)
         end
 
     end

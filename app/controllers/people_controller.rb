@@ -94,7 +94,7 @@ class PeopleController < ApplicationController
           results = ldap.search("(uid=" + params[:loginid] + ")")
 
           if results.length > 0
-            @p = LdapPersonHelper.create_or_update_person_from_ldap(results[0], Rails.logger)
+            @p = LdapPersonHelper.create_or_update_person_from_ldap_record(results[0], Rails.logger)
           end
 
           ldap_import_finish = Time.now

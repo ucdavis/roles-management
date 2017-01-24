@@ -1,11 +1,54 @@
 module LdapPersonHelper
+  def LdapPersonHelper.create_or_update_person_by_loginid(loginid, log = nil)
+    return nil unless loginid
+
+    person = nil
+
+    # Simple mock for testing api/v1/people_controller
+    if Rails.env.test?
+      person = Person.new
+      person.loginid = loginid
+      person.save!
+      return person
+    end
+
+    require 'ldap_helper'
+
+    import_start = Time.now
+
+    ldap_import_start = Time.now
+
+    ldap = LdapHelper.new
+    ldap.connect
+
+    results = ldap.search("(uid=" + loginid + ")")
+
+    if results.length > 0
+      person = LdapPersonHelper.create_or_update_person_from_ldap_record(results[0], log)
+    else
+      log.error "Could not import person #{loginid}, no results from LDAP or error while saving."
+
+      return false
+    end
+
+    ldap_import_finish = Time.now
+
+    person.save!
+
+    import_finish = Time.now
+
+    log.info "Finished LDAP import request. LDAP operation took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
+
+    return person
+  end
+
   # Processes ldap_record and returns an un-saved person object,
   # whether loaded from the database or new.
   # May create titles, OUs, along the way (and save them).
   # Optionally pass log.
   #   We provide this as the LDAP import task generates a special log for e-mailing, else
   #   Rails.logger would suffice.
-  def LdapPersonHelper.create_or_update_person_from_ldap(entry, log = nil)
+  def LdapPersonHelper.create_or_update_person_from_ldap_record(entry, log = nil)
     # Include the large lot of UCD info (dept codes, title codes, etc.)
     require 'ucd_lookups'
 

@@ -103,4 +103,16 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
 
     assert_response 401
   end
+
+  test 'JSON import request should work' do
+    grant_api_user_access
+
+    get :import, :format => :json, :loginid => 'ldapuser'
+
+    assert_response :success
+
+    body = JSON.parse(response.body)
+
+    assert body['loginid'] == 'ldapuser', 'JSON response should have correct login ID'
+  end
 end

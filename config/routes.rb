@@ -7,6 +7,8 @@ DSSRM::Application.routes.draw do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
       get "/validate" => "base#validate"
 
+      post "people/import/:loginid" => "people#import"
+      
       resources :people
       resources :groups
       resources :entities
