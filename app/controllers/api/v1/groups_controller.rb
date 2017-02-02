@@ -11,17 +11,16 @@ module Api
 
           @cache_key = "api/groups/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
 
-          respond_to do |format|
-            format.json { render "api/v1/groups/show" }
-          end
+          render "api/v1/groups/show"
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load group view (show) for invalid ID #{@group_id}." }
-          repsond_to do |format|
-            format.json { render :text => "Invalid group ID '#{@group_id}'.", :status => 404 }
-          end
+
+          render :text => "Invalid group ID '#{@group_id}'.", :status => 404
         end
       end
 
+      # IPA will need to ensure all IPA users exist in RM, get their entity_ids, then edit group membership
+      # {"entity"=>{"name"=>"My First Group", "memberships_attributes"=>[{"calculated"=>false, "entity_id"=>35}]}, "id"=>"2"}
       def update
         authorize :api_v1, :use?
 
@@ -49,6 +48,7 @@ module Api
           begin
             @group_id = params[:id].to_i
             @group = Group.find_by_id(@group_id)
+            @group = Group.find_by_name(params[:id].to_s) unless @group
           rescue ActiveRecord::RecordNotFound
             # This exception is acceptable. We catch it to avoid triggering the
             # uncaught exceptions handler in ApplicationController.
@@ -58,7 +58,6 @@ module Api
         def group_params
           params.require(:group_attributes).permit(:name)
         end
-
     end
   end
 end

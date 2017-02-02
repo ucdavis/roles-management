@@ -6,6 +6,9 @@ json.cache! ['api_v1_groups_show', @cache_key] do
 
     if member.type == 'Person'
       json.email member.email
+      json.first member.first
+      json.last member.last
+      json.loginid member.loginid
     end
   end
 end
