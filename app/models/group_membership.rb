@@ -94,7 +94,7 @@ class GroupMembership < ActiveRecord::Base
   private
 
   def members_cannot_be_other_groups
-    if entity.type == 'Group'
+    if entity && entity.type == 'Group'
       errors.add(:base, "groups cannot be members of other groups")
     end
   end
