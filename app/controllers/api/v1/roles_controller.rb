@@ -4,8 +4,6 @@ module Api
       before_filter :load_role, :only => [:show, :update]
 
       def show
-        authorize :api_v1, :use?
-        
         if @role
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded role view (show) for #{@role.id}." }
 
@@ -19,8 +17,6 @@ module Api
       end
 
       def update
-        authorize :api_v1, :use?
-        
         if @role
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updating role for #{@role.id}." }
 
@@ -49,7 +45,7 @@ module Api
         def role_params
           params.require(:role).permit(role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy])
         end
-
+        
     end
   end
 end

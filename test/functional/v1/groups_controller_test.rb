@@ -24,6 +24,12 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
         assert m['email'], "JSON response's 'members' section should include an email"
       end
     end
+
+    assert body.include?('memberships'), 'JSON response should include memberships'
+    body['memberships'].each do |m|
+      assert m['id'], "JSON response's 'memberships' section should include an ID"
+      assert m['entity_id'], "JSON response's 'memberships' section should include an entity ID"
+    end
   end
 
   test 'JSON update request should work' do

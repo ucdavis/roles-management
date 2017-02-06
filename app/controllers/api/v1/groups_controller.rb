@@ -4,8 +4,6 @@ module Api
       before_filter :load_group, :only => [:show, :update]
 
       def show
-        authorize :api_v1, :use?
-        
         if @group
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded group view (show) for #{@group.id}." }
 
@@ -19,11 +17,7 @@ module Api
         end
       end
 
-      # IPA will need to ensure all IPA users exist in RM, get their entity_ids, then edit group membership
-      # {"entity"=>{"name"=>"My First Group", "memberships_attributes"=>[{"calculated"=>false, "entity_id"=>35}]}, "id"=>"2"}
       def update
-        authorize :api_v1, :use?
-
         if @group
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updating group for #{@group.id}." }
 

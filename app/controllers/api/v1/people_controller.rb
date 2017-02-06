@@ -4,8 +4,6 @@ module Api
       before_filter :load_person, :only => :show
 
       def show
-        authorize :api_v1, :use?
-        
         if @person and @person.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid}." }
 
@@ -22,8 +20,6 @@ module Api
       end
 
       def import
-        authorize :api_v1, :use?
-
         if params[:loginid]
           person = LdapPersonHelper.create_or_update_person_by_loginid(params[:loginid], Rails.logger)
 

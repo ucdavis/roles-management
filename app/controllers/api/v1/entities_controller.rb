@@ -5,8 +5,6 @@ module Api
       before_filter :load_entities, :only => :index
 
       def index
-        authorize :api_v1, :use?
-        
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
 
         if @entities.length > 0
@@ -19,8 +17,6 @@ module Api
       end
 
       def show
-        authorize :api_v1, :use?
-        
         if @entity and @entity.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
 

@@ -1,24 +1,29 @@
 # A person belonging to a group ID 2
 group_assignment1:
+  id: 1
   entity_id: 3
   group_id: 2
 
 # A person belonging to a group ID 2
 group_assignment2:
+  id: 2
   entity_id: 4
   group_id: 2
 
 # A group belonging to a group ID 2
 group_assignment3:
+  id: 3
   entity_id: 5
   group_id: 2
 
 # casuser belonging to a group ID 2
 group_assignment4:
+  id: 4
   entity_id: 1
   group_id: 2
 
 # inactivePerson belonging to a group ID 2
 group_assignment5:
+  id: 5
   entity_id: 8
   group_id: 2

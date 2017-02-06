@@ -6,8 +6,6 @@ module Api
 
       # GET /applications
       def index
-        authorize :api_v1, :use?
-      
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched applications index." }
 
         # API users currently share access to all resources. If this changes, we will need to alter our
@@ -21,8 +19,6 @@ module Api
 
       # GET /applications/1
       def show
-        authorize :api_v1, :use?
-      
         if @application
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application view (show) for #{@application.id}." }
 

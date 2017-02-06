@@ -10,7 +10,9 @@ DSSRM::Application.routes.draw do
       post "people/import/:loginid" => "people#import"
       
       resources :people
-      resources :groups
+      resources :groups do
+        resources :group_memberships, path: :memberships, only: [:create, :destroy]
+      end
       resources :entities
       resources :applications
       resources :roles
