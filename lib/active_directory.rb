@@ -31,7 +31,7 @@ class ActiveDirectory
         conn = Net::LDAP.new(server)
         conn.bind
       rescue Net::LDAP::Error
-        raise LdapError, "Error while connecting to server #{server[:host]}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller
+        raise LdapError, "Error while connecting to server #{server[:host]}.", caller
       end
 
       @ldap[:people] << conn
@@ -54,7 +54,7 @@ class ActiveDirectory
         conn = Net::LDAP.new(server)
         conn.bind
       rescue Net::LDAP::Error
-        raise LdapError, "Error while connecting to server #{server[:host]}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller
+        raise LdapError, "Error while connecting to server #{server[:host]}.", caller
       end
 
       @ldap[:groups] << conn
