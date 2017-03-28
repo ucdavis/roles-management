@@ -216,7 +216,7 @@ GEM
     tilt (2.0.7)
     tzinfo (1.2.3)
       thread_safe (~> 0.1)
-    uglifier (3.1.10)
+    uglifier (3.1.11)
       execjs (>= 0.3.0, < 3)
     web-console (2.3.0)
       activemodel (>= 4.0)
@@ -257,7 +257,7 @@ DEPENDENCIES
   pg
   poltergeist
   pundit
-  rails (~> 4.2.7)
+  rails (~> 4.2)
   roles-management-api (>= 0.1.2)!
   rubycas-client!
   sass-rails (~> 5.0)
