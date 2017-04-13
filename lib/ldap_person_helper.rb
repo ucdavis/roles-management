@@ -65,6 +65,7 @@ module LdapPersonHelper
 
       log.tagged loginid do
         log.debug "Processing LDAP record for #{loginid}" unless log.nil?
+        log.debug "LDAP record data: #{entry.inspect}" unless log.nil?
 
         # Find or create the Person object
         p = Person.find_or_create_by( loginid: loginid )
