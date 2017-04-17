@@ -11,9 +11,9 @@ class LdapHelper
     end
     
     server = {
-      :host => 'ldap.ucdavis.edu',
-      :base => 'ou=People,dc=ucdavis,dc=edu',
-      :port => 636,
+      :host => ldap_settings['host'],
+      :base => ldap_settings['search_dn'],
+      :port => ldap_settings['port'],
       :encryption => { :method => :simple_tls },
       :auth => {
         :method => :simple,
