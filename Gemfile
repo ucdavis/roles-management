@@ -36,6 +36,8 @@ group :development do
   # We use our fork of capistrano3-delayed-job due to a bug in 'daemons' where delayed_job
   # will not stop correctly if not passed the number of workers in the 'stop' command
   gem 'capistrano3-delayed-job', git: 'https://github.com/cthielen/capistrano3-delayed-job.git'
+  
+  gem 'mysql2'
 end
 
 gem 'spring', group: :development
@@ -75,3 +77,4 @@ gem 'daemons'
 # Sync script dependencies
 #gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'
 gem 'roles-management-api', '>= 0.1.2', :git => 'https://github.com/dssit/roles-management-api.git'
+
