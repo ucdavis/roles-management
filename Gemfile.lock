@@ -197,6 +197,7 @@ GEM
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    slack-notifier (2.1.0)
     spring (2.0.1)
       activesupport (>= 4.2)
     sprockets (3.7.1)
@@ -252,6 +253,7 @@ DEPENDENCIES
   jasmine-rails
   jbuilder (~> 2.0)
   js-routes
+  json
   letter_opener
   mysql2
   net-ldap
@@ -264,6 +266,7 @@ DEPENDENCIES
   rubycas-client!
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
+  slack-notifier
   spring
   sqlite3
   test-unit (~> 3.0)
