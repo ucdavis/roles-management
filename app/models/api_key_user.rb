@@ -1,8 +1,8 @@
 class ApiKeyUser < ActiveRecord::Base
   include ActiveModel::ForbiddenAttributesProtection
 
-  validates :name, :uniqueness => true, :presence => true
-  validates :secret, :uniqueness => true, :presence => true
+  validates :name, uniqueness: true, presence: true
+  validates :secret, uniqueness: true, presence: true
 
   before_validation :ensure_secret_exists
   has_many :applications
@@ -17,6 +17,10 @@ class ApiKeyUser < ActiveRecord::Base
 
   # Returns true if this API key user has access to the RM application in some form
   def has_access?
+    return true
+  end
+
+  def is_operator?
     return true
   end
 
