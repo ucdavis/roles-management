@@ -30,7 +30,11 @@ class SiteController < ApplicationController
   end
 
   def logout
-    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded log out page."
+    if current_user
+      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded log out page."
+    else
+      logger.info "#{request.remote_ip}: Loaded log out page."
+    end
     CASClient::Frameworks::Rails::Filter.logout(self)
   end
 end
