@@ -90,7 +90,7 @@ namespace :ldap do
 
               results = ldap.search('(uid=' + person.loginid + ')', log)
 
-              unless results == false
+              if results
                 if results.length > 0
                   p = LdapPersonHelper.create_or_update_person_from_ldap_record(results[0], log)
                 end
