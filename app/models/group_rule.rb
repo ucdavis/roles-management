@@ -4,11 +4,11 @@ class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w( title major affiliation classification loginid department organization )
 
   validates_presence_of :condition, :column, :value, :group_id
-  validates_inclusion_of :condition, :in => %w( is is\ not  )
-  validates_inclusion_of :column, :in => VALID_COLUMNS
+  validates_inclusion_of :condition, in: %w( is is\ not  )
+  validates_inclusion_of :column, in: VALID_COLUMNS
 
-  belongs_to :group, :touch => true
-  has_many :results, :class_name => "GroupRuleResult", :dependent => :destroy
+  belongs_to :group, touch: true
+  has_many :results, class_name: 'GroupRuleResult', dependent: :destroy
 
   after_save :resolve_if_changed
   after_destroy :group_must_recalculate
@@ -23,7 +23,7 @@ class GroupRule < ApplicationRecord
   def GroupRule.resolve_target!(column, entity_id)
     touched_group_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
 
-    Rails.logger.tagged "GroupRule.resolve_target!" do
+    Rails.logger.tagged 'GroupRule.resolve_target!' do
       unless VALID_COLUMNS.include? column.to_s
         raise "Cannot resolve_target for unknown column '#{column}'"
       end

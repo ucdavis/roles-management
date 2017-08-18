@@ -8,7 +8,7 @@ class Admin::OpsControllerTest < ActionController::TestCase
     # assert (Authorization.current_user.role_symbols.include? :access) == false, "user should not have access role"
     # assert (Authorization.current_user.role_symbols.include? :admin) == false, "user should not have admin role"
 
-    get "impersonate", loginid: 'someone', format: :json
+    get "impersonate", params: { loginid: 'someone' }, as: :json
     assert_response 401
 
     # Ensure authorized non-admin user has no access
@@ -17,13 +17,13 @@ class Admin::OpsControllerTest < ActionController::TestCase
     grant_test_user_basic_access
     revoke_test_user_admin_access
 
-    get "impersonate", loginid: 'someone', format: :json
+    get "impersonate", params: { loginid: 'someone' }, as: :json
     assert_response 403
 
     # Ensure authorized admin users have access
     grant_test_user_admin_access
 
-    get "impersonate", loginid: 'someone'
+    get "impersonate", params: { loginid: 'someone' }
     assert_response :redirect
   end
 

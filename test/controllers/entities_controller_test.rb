@@ -3,7 +3,7 @@ require 'test_helper'
 # These tests are run using the fake CAS user 'casuser'
 class EntitiesControllerTest < ActionController::TestCase
   setup do
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    CASClient::Frameworks::Rails::Filter.fake('casuser')
 
     @person = entities(:casuser)
     @group = entities(:groupA)
@@ -14,7 +14,7 @@ class EntitiesControllerTest < ActionController::TestCase
     grant_test_user_admin_access
 
     # Last name 'Natinabled' is marked inactive in fixture
-    get :index, :format => :json, :q => 'Natinabled'
+    get :index, params: { q: 'Natinabled' }, as: :json
 
     body = JSON.parse(response.body)
 
@@ -37,7 +37,7 @@ class EntitiesControllerTest < ActionController::TestCase
   test 'JSON show request for a Group should include certain attributes' do
     grant_test_user_admin_access
 
-    get :show, :format => :json, :id => @group.id
+    get :show, params: { :id => @group.id }, as: :json
 
     body = JSON.parse(response.body)
 
@@ -47,11 +47,11 @@ class EntitiesControllerTest < ActionController::TestCase
     assert body.include?('type'), 'JSON response should include type field'
 
     assert body.include?('memberships'), 'JSON response should include memberships'
-    body["memberships"].each do |m|
-      assert m.has_key?("calculated"), "JSON response's 'memberships' section should include a calculated flag"
+    body['memberships'].each do |m|
+      assert m.key?("calculated"), "JSON response's 'memberships' section should include a calculated flag"
       assert m["entity_id"], "JSON response's 'memberships' section should include an entity_id"
       assert m["id"], "JSON response's 'memberships' section should include a id"
-      assert m.has_key?("loginid"), "JSON response's 'memberships' section should include a loginid"
+      assert m.key?("loginid"), "JSON response's 'memberships' section should include a loginid"
       assert m["name"], "JSON response's 'memberships' section should include a name"
     end
 
@@ -81,7 +81,7 @@ class EntitiesControllerTest < ActionController::TestCase
   test 'JSON show request for a Person should include certain attributes' do
     grant_test_user_admin_access
 
-    get :show, :format => :json, :id => @person.id
+    get :show, params: { :id => @person.id }, as: :json
 
     body = JSON.parse(response.body)
 
@@ -98,7 +98,7 @@ class EntitiesControllerTest < ActionController::TestCase
     assert body.include?('phone'), 'JSON response should include phone field'
 
     assert body.include?('favorites'), 'JSON response should include favorites'
-    body["favorites"].each do |f|
+    body['favorites'].each do |f|
       assert f["id"], "JSON response's 'favorites' section should include a id"
       assert f["type"], "JSON response's 'favorites' section should include a type"
       assert f["name"], "JSON response's 'favorites' section should include a name"
@@ -108,7 +108,7 @@ class EntitiesControllerTest < ActionController::TestCase
     body["group_memberships"].each do |m|
       assert m["id"], "JSON response's 'group_memberships' section should include id"
       assert m["group_id"], "JSON response's 'group_memberships' section should include group_id"
-      assert m.has_key?("calculated"), "JSON response's 'group_memberships' section should include calculated"
+      assert m.key?("calculated"), "JSON response's 'group_memberships' section should include calculated"
       assert m["name"], "JSON response's 'group_memberships' section should include name"
     end
 
@@ -136,7 +136,7 @@ class EntitiesControllerTest < ActionController::TestCase
     body["role_assignments"].each do |a|
       assert a["application_id"], "JSON response's 'role_assignments' section should include application_id"
       assert a["application_name"], "JSON response's 'role_assignments' section should include application_name"
-      assert a.has_key?("calculated"), "JSON response's 'role_assignments' section should include calculated"
+      assert a.key?("calculated"), "JSON response's 'role_assignments' section should include calculated"
       assert a["description"], "JSON response's 'role_assignments' section should include description"
       assert a["entity_id"], "JSON response's 'role_assignments' section should include entity_id"
       assert a["id"], "JSON response's 'role_assignments' section should include id"
@@ -146,7 +146,7 @@ class EntitiesControllerTest < ActionController::TestCase
     end
   end
 
-  test "entities (group) CSV request should not include inactive members" do
+  test 'entities (group) CSV request should not include inactive members' do
     grant_test_user_admin_access
 
     inactive_p = entities(:inactivePerson)
@@ -159,13 +159,13 @@ class EntitiesControllerTest < ActionController::TestCase
     assert g.members.include?(active_p), "group should include an active person"
     assert active_p.active == true, "active person should be marked active"
 
-    get :show, :format => :csv, :id => g.id
+    get :show, params: { id: g.id }, as: :csv
 
     assert response.body.include?(inactive_p.loginid) == false, "CSV should not include inactive individual"
     assert response.body.include?(active_p.loginid), "CSV should include an active individual"
   end
 
-  test "entites#update should allow operators to update group attributes" do
+  test 'entites#update should allow operators to update group attributes' do
     grant_test_user_basic_access
     revoke_test_user_admin_access
 
@@ -231,7 +231,7 @@ class EntitiesControllerTest < ActionController::TestCase
   # test "universal operators should be able to activate/deactivate individuals" do
   #   assert false, "test not implemented"
   # end
-  test "entities#update should work" do
+  test 'entities#update should work' do
     grant_test_user_admin_access
 
     # TODO: It should try to add a member to a group and have it return 200 and
@@ -241,7 +241,7 @@ class EntitiesControllerTest < ActionController::TestCase
 
     @entity = entities(:groupA)
 
-    patch :update, format: :json, id: @entity, entity: { name: @entity.name, type: @entity.type, description: @entity.description, owner_ids: @entity.owner_ids, operator_ids: @entity.operator_ids, memberships: @entity.memberships }
+    patch :update, params: { id: @entity, entity: { name: @entity.name, type: @entity.type, description: @entity.description, owner_ids: @entity.owner_ids, operator_ids: @entity.operator_ids, memberships: @entity.memberships } }, as: :json
 
     assert_response :success
   end

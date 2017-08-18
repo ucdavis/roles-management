@@ -1,10 +1,10 @@
 class OrganizationEntityAssociation < ApplicationRecord
-  belongs_to :organization, :touch => true
-  belongs_to :entity, :touch => true
-  belongs_to :title
+  belongs_to :organization, touch: true
+  belongs_to :entity, touch: true
+  belongs_to :title, optional: true
 
   validates_presence_of :organization_id, :entity_id
-  validates_uniqueness_of :entity_id, :scope => [:organization_id, :title_id]
+  validates_uniqueness_of :entity_id, scope: [:organization_id, :title_id]
 
   validate :only_people_hold_titles
   validate :groups_belong_to_only_one_organization

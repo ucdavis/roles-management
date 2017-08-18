@@ -19,10 +19,9 @@ class Api::V1::EntitiesControllerTest < ActionController::TestCase
   test "valid API whitelisted user should get index" do
     grant_whitelisted_access
 
-    get :index, :format => :json
+    get :index, as: :json
 
     assert_response :success
-    assert_not_nil assigns(:entities)
   end
 
 #   # loginid required for: impersonate dialog, group rule "loginid is"

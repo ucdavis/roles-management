@@ -2,14 +2,14 @@ require 'test_helper'
 
 # These tests are run using the fake CAS user 'casuser'
 class Api::V1::RolesControllerTest < ActionController::TestCase
-  test "JSON show request should include certain attributes" do
+  test 'JSON show request should include certain attributes' do
     grant_api_user_access
 
-    get :show, :format => :json, :id => '1'
+    get :show, params: { id: '1' }, as: :json
     assert_response :success
 
     body = JSON.parse(response.body)
-    
+
     assert body.include?('id'), 'JSON response does not include id field'
     assert body.include?('token'), 'JSON response does not include token field'
     assert body.include?('name'), 'JSON response does not include name field'

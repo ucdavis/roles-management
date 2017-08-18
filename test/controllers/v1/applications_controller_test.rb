@@ -97,8 +97,8 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
   #     assert o["name"], "JSON response's 'roles' section's 'members' should include a name"
   #   end
   # end
-  
-  test "JSON show request should not include inactive entities" do
+
+  test 'JSON show request should not include inactive entities' do
     inactiveEntity = entities(:inactivePerson)
 
     assert inactiveEntity.application_ownerships.length > 0, "inactive entity fixture needs at least one application ownership"
@@ -106,7 +106,7 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
 
     grant_test_user_admin_access
 
-    get :show, :format => :json, :id => inactiveEntity.application_ownerships[0].id
+    get :show, params: { :id => inactiveEntity.application_ownerships[0].id }, as: :json
 
     application = JSON.parse(response.body)
 
@@ -114,12 +114,12 @@ class Api::V1::ApplicationsControllerTest < ActionController::TestCase
       assert o["id"].to_i != inactiveEntity.id, "JSON response should not include inactive entity"
     end
 
-    get :show, :format => :json, :id => inactiveEntity.application_operatorships[0].id
+    get :show, params: { :id => inactiveEntity.application_operatorships[0].id }, as: :json
 
     application = JSON.parse(response.body)
 
-    application["operators"].each do |o|
-      assert o["id"].to_i != inactiveEntity.id, "JSON response should not include inactive entity"
+    application['operators'].each do |o|
+      assert o['id'].to_i != inactiveEntity.id, 'JSON response should not include inactive entity'
     end
   end
 end

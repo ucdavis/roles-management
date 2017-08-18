@@ -5,7 +5,7 @@ class Api::V1::BaseControllerTest < ActionController::TestCase
   test "validate should reutrn HTTP Success on valid key" do
     grant_api_user_access
 
-    get :validate, :format => :json
+    get :validate, as: :json
 
     assert_response :success
   end
@@ -13,7 +13,7 @@ class Api::V1::BaseControllerTest < ActionController::TestCase
   test "validate should return HTTP Unauthorized on invalid key" do
     revoke_access
 
-    get :validate, :format => :json
+    get :validate, as: :json
 
     assert_response :unauthorized
   end
