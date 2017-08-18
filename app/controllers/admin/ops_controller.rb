@@ -3,7 +3,7 @@ class Admin::OpsController < Admin::BaseController
   # GET /admin/ops/impersonate/[loginid]
   def impersonate
     authorize :ops, :impersonate?
-  
+
     @person = Person.find_by_loginid(params[:loginid])
 
     unless @person.nil?
@@ -17,7 +17,7 @@ class Admin::OpsController < Admin::BaseController
 
   def unimpersonate
     authorize :ops, :unimpersonate?
-  
+
     logger.info "#{Authentication.actual_user.log_identifier}@#{request.remote_ip}: Un-impersonating #{session[:impersonation_id]}."
 
     auth_unimpersonate

@@ -65,23 +65,4 @@ class RolesControllerTest < ActionController::TestCase
 
     assert_response :success
   end
-
-  test 'assigning an entity to a role touches the timestamp on the role' do
-    revoke_access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
-    grant_test_user_admin_access
-
-    r = Role.first
-    p = Person.find_by_loginid('bob')
-
-    assert r.members.include?(p) == false, 'role should not include person'
-    assert r.application != nil, 'role should have an application'
-    role_timestamp = r.updated_at
-
-    p.roles << r
-    r.reload
-    assert r.members.include?(p) == true, 'role should include person now'
-
-    assert r.updated_at > role_timestamp, 'role timestamp should have been udpated'
-  end
 end
