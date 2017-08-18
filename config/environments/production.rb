@@ -14,6 +14,15 @@ DSSRM::Application.configure do
   # Specifies the header that your server uses for sending files
   # config.action_dispatch.x_sendfile_header = "X-Sendfile"
 
+  # Attempt to read encrypted secrets from `config/secrets.yml.enc`.
+  # Requires an encryption key in `ENV["RAILS_MASTER_KEY"]` or
+  # `config/secrets.yml.key`.
+  config.read_encrypted_secrets = true
+
+  # Disable serving static files from the `/public` folder by default since
+  # Apache or NGINX already handles this.
+  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+
   # For nginx:
   config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
@@ -53,10 +62,13 @@ DSSRM::Application.configure do
   config.assets.js_compressor = :uglifier
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
-  config.assets.compile = true
+  config.assets.compile = false
 
   # Generate digests for assets URLs
   config.assets.digest = true
+
+  # Use default logging formatter so that PID and timestamp are not suppressed.
+  config.log_formatter = ::Logger::Formatter.new
 
   # Force SSL in production
   config.force_ssl = true
@@ -73,4 +85,7 @@ DSSRM::Application.configure do
       :sender_address => %{no-reply@roles.dss.ucdavis.edu},
       :exception_recipients => %w{dssit-devs-exceptions@ucdavis.edu}
     }
+
+  # Do not dump schema after migrations.
+  config.active_record.dump_schema_after_migration = false
 end

@@ -371,14 +371,14 @@ class GroupRule < ApplicationRecord
 
   # Recalculates group members if anything changed. Called after_save.
   def resolve_if_changed
-    Rails.logger.debug "GroupRule.resolve_if_changed called."
-    Rails.logger.debug "changed? is #{self.changed?}"
-    self.resolve! if self.changed? # recalculate this rule
-    self.group.recalculate_members! if self.changed? # tell the group to recombine the results list
+    if saved_changes?
+      resolve!
+      group.recalculate_members!
+    end
   end
 
   # In after_destroy it's important the group recalculate members as this rule is gone
   def group_must_recalculate
-    self.group.recalculate_members!
+    group.recalculate_members!
   end
 end

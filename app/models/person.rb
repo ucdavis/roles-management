@@ -155,14 +155,14 @@ class Person < Entity
   end
 
   def recalculate_group_rule_membership
-    if changed.include? "title_id"
+    if saved_change_to_attribute?(:title_id)
       GroupRule.resolve_target!(:title, id)
       GroupRule.resolve_target!(:classification, id)
     end
-    if changed.include? "major_id"
+    if saved_change_to_attribute?(:major_id)
       GroupRule.resolve_target!(:major, id)
     end
-    if changed.include? "loginid"
+    if saved_change_to_attribute?(:loginid)
       GroupRule.resolve_target!(:loginid, id)
     end
   end
@@ -172,15 +172,15 @@ class Person < Entity
   # If a person goes from inactive to active, we need to ensure
   # any role_assignment or group views are touched correctly.
   def trigger_sync_as_needed
-    if changed.include? "active"
+    if saved_change_to_attribute?(:active)
       role_assignments.each { |ra| ra.touch }
       group_memberships.each { |gm| gm.touch }
       organizations.each { |org| org.touch }
 
       # Activating/de-activating a person emulates them losing all their
       # roles and organizations
-      if self.active
-        ActivityLog.info!("Marking as active for #{self.name}.", ["person_#{self.id}"])
+      if active
+        ActivityLog.info!("Marking as active for #{name}.", ["person_#{id}"])
 
         self.roles.each do |role|
           Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
