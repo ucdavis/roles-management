@@ -1,10 +1,10 @@
 class Admin::ApiKeyUsersController < Admin::BaseController
-  before_filter :new_api_key_user_from_params, :only => :create
-  before_filter :load_api_keys, :only => :index
+  before_action :new_api_key_user_from_params, only: :create
+  before_action :load_api_keys, only: :index
 
   def index
     authorize ApiKeyUser
-    
+
     respond_to do |format|
       format.json { render json: @api_keys }
     end
@@ -12,7 +12,7 @@ class Admin::ApiKeyUsersController < Admin::BaseController
 
   def create
     authorize @api_key_user
-    
+
     respond_to do |format|
       if @api_key_user.save
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new API key, #{params[:api_key_user]}."
@@ -25,9 +25,9 @@ class Admin::ApiKeyUsersController < Admin::BaseController
 
   def destroy
     @api_key = ApiKeyUser.find_by_id(params[:id])
-    
+
     authorize @api_key
-    
+
     @api_key.destroy
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted API key '#{@api_key.name}' (#{params[:id]})."

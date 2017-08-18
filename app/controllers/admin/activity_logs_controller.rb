@@ -1,5 +1,5 @@
 class Admin::ActivityLogsController < Admin::BaseController
-  before_filter :load_activity_logs, :only => :index
+  before_action :load_activity_logs, only: :index
 
 #   def index
 #     respond_to do |format|

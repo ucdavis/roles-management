@@ -1,8 +1,8 @@
 module Api
   module V1
     class EntitiesController < Api::V1::BaseController
-      before_filter :load_entity, :only => :show
-      before_filter :load_entities, :only => :index
+      before_action :load_entity, only: :show
+      before_action :load_entities, only: :index
 
       def index
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }

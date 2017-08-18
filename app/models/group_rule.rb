@@ -1,6 +1,6 @@
 # GroupRule stores the results of its rule in a cache using GroupRuleResult.
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
-class GroupRule < ActiveRecord::Base
+class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w( title major affiliation classification loginid department organization )
 
   validates_presence_of :condition, :column, :value, :group_id

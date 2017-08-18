@@ -69,7 +69,7 @@ module Authentication
     if params[:logoutRequest]
       # CAS single sign-out request. We currently do not handle these due to the inability to
       # invalidate sessions by ticket ID.
-      render :text => "CAS single sign out acknowledged.", :status => 200
+      render text: "CAS single sign out acknowledged.", status: 200
 
       return
     end
@@ -85,7 +85,7 @@ module Authentication
       when :cas
         Authentication.actual_user = Person.includes(:role_assignments, :roles, :affiliations).find_by_id(session[:user_id])
         logger.info "Authentication passed with existing session (CAS): ID: #{session[:user_id]}, login ID: #{Authentication.actual_user.loginid}"
-        if self.impersonating?
+        if impersonating?
           Authentication.effective_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonate_id])
           logger.info "Authentication is impersonating: ID: #{session[:impersonate_id]}, login ID: #{Authentication.effective_user.loginid}"
         end
@@ -139,12 +139,12 @@ module Authentication
       session[:cas_user] = ENV["_RM_DEV_LOGINID"]
     else
       # It's important we do this before checking session[:cas_user] as it
-      # sets that variable. Note that the way before_filters work, this call
+      # sets that variable. Note that the way before_actions work, this call
       # will render or redirect but this function will still finish before
       # the redirect is actually made.
       CASClient::Frameworks::Rails::Filter.filter(self)
     end
-    
+
     if session[:cas_user]
       # CAS session exists. Valid user account?
       @user = Person.includes(:role_assignments, :roles).find_by_loginid(session[:cas_user])

@@ -6,9 +6,10 @@ require 'sync'
 class Person < Entity
   include RmBuiltinRoles
 
-  has_many :affiliation_assignments, :dependent => :destroy
-  has_many :affiliations, -> { uniq }, :through => :affiliation_assignments
-  has_many :group_memberships, :foreign_key => "entity_id", :dependent => :destroy
+  has_many :affiliation_assignments, dependent: :destroy
+  #has_many :affiliations, -> { uniq }, through: :affiliation_assignments
+  has_many :affiliations, through: :affiliation_assignments
+  has_many :group_memberships, :foreign_key => 'entity_id', dependent: :destroy
   has_many :groups, :through => :group_memberships, :source => :group
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments, :source => :role, :dependent => :destroy
@@ -22,10 +23,10 @@ class Person < Entity
   belongs_to :title
   belongs_to :major
 
-  accepts_nested_attributes_for :group_ownerships, :allow_destroy => true
-  accepts_nested_attributes_for :group_operatorships, :allow_destroy => true
-  accepts_nested_attributes_for :group_memberships, :allow_destroy => true
-  accepts_nested_attributes_for :role_assignments, :allow_destroy => true
+  accepts_nested_attributes_for :group_ownerships, allow_destroy: true
+  accepts_nested_attributes_for :group_operatorships, allow_destroy: true
+  accepts_nested_attributes_for :group_memberships, allow_destroy: true
+  accepts_nested_attributes_for :role_assignments, allow_destroy: true
 
   validates :loginid, :presence => true, :uniqueness => true
 
@@ -72,7 +73,7 @@ class Person < Entity
 
   # For CSV export
   def self.csv_header
-    "ID,Login ID,Email,First,Last".split(',')
+    'ID,Login ID,Email,First,Last'.split(',')
   end
 
   def to_csv

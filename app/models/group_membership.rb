@@ -1,7 +1,7 @@
 # GroupMembership may be calculated, in which case they need to be destroyed only by the proper method,
 # e.g. through a group and not a person. A group accomplishes this by using the destroying_calculated_group_membership do ... end
 # block method below.
-class GroupMembership < ActiveRecord::Base
+class GroupMembership < ApplicationRecord
   Thread.current[:destroy_calculated_membership_flag] = false
   Thread.current[:recalculating_membership_flag] = false
 

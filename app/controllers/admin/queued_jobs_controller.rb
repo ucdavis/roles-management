@@ -1,16 +1,16 @@
 class Admin::QueuedJobsController < Admin::BaseController
-  before_filter :load_queued_jobs, :only => :index
+  before_action :load_queued_jobs, only: :index
 
   def index
     authorize :queued_jobs, :index?
-  
+
     respond_to do |format|
       format.json { render json: @queued_jobs }
     end
   end
 
   private
-  
+
     def load_queued_jobs
         # Load all jobs enqueued by DelayedJob gem
         @queued_jobs = []

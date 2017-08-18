@@ -3,7 +3,7 @@
 # An entity is either a Person or Group.
 # 'Members' refers only to people and is calculated by flattening
 # groups down to people.
-class Role < ActiveRecord::Base
+class Role < ApplicationRecord
   # SYNC_ROLE_ATTRS is the list of role attribtues we care to notify
   # the sync subsystem about.
   SYNC_ROLE_ATTRS = ["ad_path", "token", "name", "description"]

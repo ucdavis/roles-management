@@ -1,13 +1,13 @@
 class OrganizationsController < ApplicationController
-  before_filter :load_organizations, :only => :index
-  before_filter :load_organization, :only => :show
+  before_action :load_organizations, only: :index
+  before_action :load_organization, only: :show
 
   # GET /organizations.json
   # It's assumed that organizations are never scoped per-user or per-permission. If this
   # changes, the @cache_key must change to reflect such scoped nature.
   def index
     authorize Organization
-    
+
     @cache_key = "organization/" + (params[:q] ? params[:q] : '') + '/' + Digest::MD5.hexdigest(@organizations.map(&:cache_key).to_s) + params[:tree].to_s + params[:q].to_s
 
     if params[:tree]

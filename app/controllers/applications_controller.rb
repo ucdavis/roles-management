@@ -1,11 +1,11 @@
 class ApplicationsController < ApplicationController
-  before_filter :load_application, :only => [:show, :activity]
-  before_filter :new_application_from_params, :only => :create
-  before_filter :load_applications, :only => :index
+  before_action :load_application, only: [:show, :activity]
+  before_action :new_application_from_params, only: :create
+  before_action :load_applications, only: :index
 
   def index
     authorize Application
-    
+
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
 
     respond_to do |format|
@@ -16,7 +16,7 @@ class ApplicationsController < ApplicationController
 
   def show
     authorize @application
-    
+
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application show view for #{params[:id]}."
 
     respond_to do |format|

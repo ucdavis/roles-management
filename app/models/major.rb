@@ -1,4 +1,4 @@
-class Major < ActiveRecord::Base
+class Major < ApplicationRecord
   has_many :people
 
   # Needed by custom controller#majors, used in details modal

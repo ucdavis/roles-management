@@ -1,4 +1,4 @@
-class Classification < ActiveRecord::Base
+class Classification < ApplicationRecord
   has_and_belongs_to_many :titles
 
   validates :name, :presence => true, :uniqueness => true

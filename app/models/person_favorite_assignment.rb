@@ -2,7 +2,7 @@
 # application.
 # The LDAP import code automatically assigns as a favorite for an OU manager any individuals in that
 # OU.
-class PersonFavoriteAssignment < ActiveRecord::Base
+class PersonFavoriteAssignment < ApplicationRecord
   validates_uniqueness_of :owner_id, :scope => [:entity_id, :owner_id]
   validates_presence_of :owner
   validates_presence_of :entity

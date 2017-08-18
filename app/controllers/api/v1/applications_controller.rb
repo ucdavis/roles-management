@@ -1,8 +1,8 @@
 module Api
   module V1
     class ApplicationsController < Api::V1::BaseController
-      before_filter :load_application, :only => :show
-      before_filter :load_applications, :only => :index
+      before_action :load_application, only: :show
+      before_action :load_applications, only: :index
 
       # GET /applications
       def index

@@ -1,4 +1,4 @@
-class ActivityLog < ActiveRecord::Base
+class ActivityLog < ApplicationRecord
   LOG_LEVELS = { :info => 0, :warn => 1, :err => 2 }
 
   validates_presence_of :message, :performed_at

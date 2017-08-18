@@ -1,7 +1,7 @@
 module Api
   module V1
     class GroupsController < Api::V1::BaseController
-      before_filter :load_group, :only => [:show, :update]
+      before_action :load_group, only: [:show, :update]
 
       def show
         if @group

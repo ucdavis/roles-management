@@ -1,4 +1,4 @@
-class OrganizationEntityAssociation < ActiveRecord::Base
+class OrganizationEntityAssociation < ApplicationRecord
   belongs_to :organization, :touch => true
   belongs_to :entity, :touch => true
   belongs_to :title

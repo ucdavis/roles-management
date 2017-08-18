@@ -1,0 +1,39 @@
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'db/schema.rb'
+    - 'db/migrate/*'
+    - 'config/puma.rb'
+    - 'config/spring.rb'
+    - 'config/environments/*'
+    - 'bin/spring'
+    - 'Gemfile'
+  TargetRubyVersion: 2.4
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Metrics/BlockLength:
+  Max: 50
+
+Metrics/MethodLength:
+  Max: 30
+
+Metrics/LineLength:
+  Max: 115
+
+Metrics/ClassLength:
+  Max: 130
+
+Metrics/AbcSize:
+  Max: 25

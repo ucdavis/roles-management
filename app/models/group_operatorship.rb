@@ -1,4 +1,4 @@
-class GroupOperatorship < ActiveRecord::Base
+class GroupOperatorship < ApplicationRecord
   validates_presence_of :group, :entity
   validate :group_cannot_operate_itself
 

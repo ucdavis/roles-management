@@ -1,4 +1,4 @@
-class ApplicationOwnership < ActiveRecord::Base
+class ApplicationOwnership < ApplicationRecord
   belongs_to :application, :touch => true
   belongs_to :entity, :touch => true
   

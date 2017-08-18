@@ -1,4 +1,4 @@
-class GroupOwnership < ActiveRecord::Base
+class GroupOwnership < ApplicationRecord
   validates_presence_of :group, :entity
   validates_uniqueness_of :entity_id, :scope => :group_id
   validate :group_cannot_own_itself

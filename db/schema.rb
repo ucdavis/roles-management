@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -13,303 +12,283 @@
 
 ActiveRecord::Schema.define(version: 20150721190626) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
-  create_table "activity_log_tag_associations", force: :cascade do |t|
+  create_table "activity_log_tag_associations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "activity_log_id"
     t.integer "activity_log_tag_id"
   end
 
-  create_table "activity_log_tags", force: :cascade do |t|
-    t.string   "tag",        limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+  create_table "activity_log_tags", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "tag"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "activity_logs", force: :cascade do |t|
-    t.string   "message",      limit: 255
+  create_table "activity_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "message"
     t.datetime "performed_at"
-    t.integer  "level"
+    t.integer "level"
   end
 
-  create_table "affiliation_assignments", force: :cascade do |t|
-    t.integer  "affiliation_id"
-    t.integer  "person_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+  create_table "affiliation_assignments", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "affiliation_id"
+    t.integer "person_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "affiliations", force: :cascade do |t|
-    t.string "name", limit: 255
+  create_table "affiliations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.index ["name"], name: "index_affiliations_on_name"
   end
 
-  add_index "affiliations", ["name"], name: "index_affiliations_on_name", using: :btree
-
-  create_table "api_key_users", force: :cascade do |t|
-    t.string   "secret",       limit: 255
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.string   "name",         limit: 255
+  create_table "api_key_users", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "secret"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "name"
     t.datetime "logged_in_at"
+    t.index ["name", "secret"], name: "index_api_key_users_on_name_and_secret"
   end
 
-  add_index "api_key_users", ["name", "secret"], name: "index_api_key_users_on_name_and_secret", using: :btree
-
-  create_table "api_whitelisted_ip_users", force: :cascade do |t|
-    t.string   "address",      limit: 255
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-    t.text     "reason"
+  create_table "api_whitelisted_ip_users", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "reason"
     t.datetime "logged_in_at"
+    t.index ["address"], name: "index_api_whitelisted_ip_users_on_address"
   end
 
-  add_index "api_whitelisted_ip_users", ["address"], name: "index_api_whitelisted_ip_users_on_address", using: :btree
-
-  create_table "application_operatorships", force: :cascade do |t|
-    t.integer  "application_id"
-    t.integer  "entity_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-    t.integer  "parent_id"
+  create_table "application_operatorships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "application_id"
+    t.integer "entity_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "parent_id"
+    t.index ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
   end
 
-  add_index "application_operatorships", ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id", using: :btree
-
-  create_table "application_ownerships", force: :cascade do |t|
-    t.integer  "entity_id"
-    t.integer  "application_id"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
-    t.integer  "parent_id"
+  create_table "application_ownerships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "entity_id"
+    t.integer "application_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "parent_id"
   end
 
-  create_table "applications", force: :cascade do |t|
-    t.string   "name",        limit: 255
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-    t.text     "description"
-    t.string   "url",         limit: 255
+  create_table "applications", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "description"
+    t.string "url"
+    t.index ["name"], name: "index_applications_on_name"
   end
 
-  add_index "applications", ["name"], name: "index_applications_on_name", using: :btree
-
-  create_table "classifications", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+  create_table "classifications", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_classifications_on_name"
   end
 
-  add_index "classifications", ["name"], name: "index_classifications_on_name", using: :btree
-
-  create_table "classifications_titles", force: :cascade do |t|
+  create_table "classifications_titles", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "classification_id"
     t.integer "title_id"
   end
 
-  create_table "delayed_jobs", force: :cascade do |t|
-    t.integer  "priority",               default: 0
-    t.integer  "attempts",               default: 0
-    t.text     "handler"
-    t.text     "last_error"
+  create_table "delayed_jobs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "priority", default: 0
+    t.integer "attempts", default: 0
+    t.text "handler"
+    t.text "last_error"
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
-    t.string   "locked_by",  limit: 255
-    t.string   "queue",      limit: 255
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
-
-  create_table "entities", force: :cascade do |t|
-    t.string   "type",         limit: 255
-    t.string   "name",         limit: 255
-    t.string   "first",        limit: 255
-    t.string   "last",         limit: 255
-    t.string   "email",        limit: 255
-    t.string   "loginid",      limit: 255
-    t.boolean  "active",                   default: true
-    t.string   "phone",        limit: 255
-    t.string   "address",      limit: 255
-    t.integer  "title_id"
-    t.integer  "major_id"
-    t.text     "description"
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
+  create_table "entities", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "type"
+    t.string "name"
+    t.string "first"
+    t.string "last"
+    t.string "email"
+    t.string "loginid"
+    t.boolean "active", default: true
+    t.string "phone"
+    t.string "address"
+    t.integer "title_id"
+    t.integer "major_id"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.datetime "logged_in_at"
+    t.index ["id"], name: "index_entities_on_id"
+    t.index ["loginid"], name: "index_entities_on_loginid"
+    t.index ["name"], name: "index_entities_on_name"
+    t.index ["type"], name: "index_entities_on_type"
   end
 
-  add_index "entities", ["id"], name: "index_entities_on_id", using: :btree
-  add_index "entities", ["loginid"], name: "index_entities_on_loginid", using: :btree
-  add_index "entities", ["name"], name: "index_entities_on_name", using: :btree
-  add_index "entities", ["type"], name: "index_entities_on_type", using: :btree
-
-  create_table "group_memberships", force: :cascade do |t|
-    t.integer  "group_id"
-    t.integer  "entity_id"
-    t.boolean  "calculated", default: false
+  create_table "group_memberships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "group_id"
+    t.integer "entity_id"
+    t.boolean "calculated", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "group_operatorships", force: :cascade do |t|
-    t.integer  "group_id"
+  create_table "group_operatorships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer  "entity_id"
+    t.integer "entity_id"
   end
 
-  create_table "group_ownerships", force: :cascade do |t|
-    t.integer  "group_id"
+  create_table "group_ownerships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer  "entity_id"
+    t.integer "entity_id"
   end
 
-  create_table "group_rule_results", force: :cascade do |t|
-    t.integer  "group_rule_id"
-    t.integer  "entity_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-  end
-
-  create_table "group_rules", force: :cascade do |t|
-    t.string   "column",     limit: 255
-    t.string   "condition",  limit: 255
-    t.string   "value",      limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.integer  "group_id"
-  end
-
-  create_table "majors", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  add_index "majors", ["name"], name: "index_majors_on_name", using: :btree
-
-  create_table "organization_entity_associations", force: :cascade do |t|
-    t.integer  "organization_id"
-    t.integer  "entity_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-    t.integer  "title_id"
-  end
-
-  create_table "organization_managers", force: :cascade do |t|
-    t.integer  "organization_id"
-    t.integer  "manager_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
-  end
-
-  add_index "organization_managers", ["manager_id"], name: "index_organization_managers_on_manager_id", using: :btree
-  add_index "organization_managers", ["organization_id"], name: "index_organization_managers_on_organization_id", using: :btree
-
-  create_table "organization_org_ids", force: :cascade do |t|
-    t.integer  "organization_id"
-    t.string   "org_id",          limit: 255
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-  end
-
-  add_index "organization_org_ids", ["org_id"], name: "index_organization_org_ids_on_org_id", using: :btree
-  add_index "organization_org_ids", ["organization_id"], name: "index_organization_org_ids_on_organization_id", using: :btree
-
-  create_table "organization_parent_ids", force: :cascade do |t|
-    t.integer  "organization_id"
-    t.integer  "parent_org_id",   default: 1
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
-  end
-
-  add_index "organization_parent_ids", ["organization_id"], name: "index_organization_parent_ids_on_organization_id", using: :btree
-  add_index "organization_parent_ids", ["parent_org_id"], name: "index_organization_parent_ids_on_parent_org_id", using: :btree
-
-  create_table "organizations", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.string   "dept_code",  limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  add_index "organizations", ["dept_code"], name: "index_organizations_on_dept_code", using: :btree
-
-  create_table "person_favorite_assignments", force: :cascade do |t|
-    t.integer  "entity_id"
-    t.integer  "owner_id"
+  create_table "group_rule_results", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "group_rule_id"
+    t.integer "entity_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "role_assignments", force: :cascade do |t|
+  create_table "group_rules", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "column"
+    t.string "condition"
+    t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer  "role_id"
-    t.integer  "entity_id"
-    t.integer  "parent_id"
+    t.integer "group_id"
   end
 
-  add_index "role_assignments", ["role_id", "entity_id", "parent_id"], name: "index_role_assignments_on_role_id_and_entity_id_and_parent_id", using: :btree
-  add_index "role_assignments", ["role_id", "entity_id"], name: "index_role_assignments_on_role_id_and_entity_id", using: :btree
+  create_table "majors", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_majors_on_name"
+  end
 
-  create_table "roles", force: :cascade do |t|
-    t.string   "token",          limit: 255
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
-    t.integer  "application_id"
-    t.string   "name",           limit: 255
-    t.string   "description",    limit: 255
-    t.string   "ad_path",        limit: 255
+  create_table "organization_entity_associations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "organization_id"
+    t.integer "entity_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "title_id"
+  end
+
+  create_table "organization_managers", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "organization_id"
+    t.integer "manager_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["manager_id"], name: "index_organization_managers_on_manager_id"
+    t.index ["organization_id"], name: "index_organization_managers_on_organization_id"
+  end
+
+  create_table "organization_org_ids", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "organization_id"
+    t.string "org_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["org_id"], name: "index_organization_org_ids_on_org_id"
+    t.index ["organization_id"], name: "index_organization_org_ids_on_organization_id"
+  end
+
+  create_table "organization_parent_ids", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "organization_id"
+    t.integer "parent_org_id", default: 1
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_organization_parent_ids_on_organization_id"
+    t.index ["parent_org_id"], name: "index_organization_parent_ids_on_parent_org_id"
+  end
+
+  create_table "organizations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "dept_code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dept_code"], name: "index_organizations_on_dept_code"
+  end
+
+  create_table "person_favorite_assignments", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "entity_id"
+    t.integer "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "role_assignments", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "role_id"
+    t.integer "entity_id"
+    t.integer "parent_id"
+    t.index ["role_id", "entity_id", "parent_id"], name: "index_role_assignments_on_role_id_and_entity_id_and_parent_id"
+    t.index ["role_id", "entity_id"], name: "index_role_assignments_on_role_id_and_entity_id"
+  end
+
+  create_table "roles", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "application_id"
+    t.string "name"
+    t.string "description"
+    t.string "ad_path"
     t.datetime "last_ad_sync"
-    t.string   "ad_guid",        limit: 255
+    t.string "ad_guid"
+    t.index ["id"], name: "index_roles_on_id"
   end
 
-  add_index "roles", ["id"], name: "index_roles_on_id", using: :btree
-
-  create_table "student_levels", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-  end
-
-  create_table "students", force: :cascade do |t|
-    t.integer  "level_id"
-    t.integer  "person_id"
+  create_table "student_levels", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "titles", force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "code", limit: 255
+  create_table "students", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "level_id"
+    t.integer "person_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "titles", ["code"], name: "index_titles_on_code", using: :btree
-
-  create_table "versions", force: :cascade do |t|
-    t.integer  "versioned_id"
-    t.string   "versioned_type", limit: 255
-    t.integer  "user_id"
-    t.string   "user_type",      limit: 255
-    t.string   "user_name",      limit: 255
-    t.text     "modifications"
-    t.integer  "number"
-    t.integer  "reverted_from"
-    t.string   "tag",            limit: 255
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+  create_table "titles", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "code"
+    t.index ["code"], name: "index_titles_on_code"
   end
 
-  add_index "versions", ["created_at"], name: "index_versions_on_created_at", using: :btree
-  add_index "versions", ["number"], name: "index_versions_on_number", using: :btree
-  add_index "versions", ["tag"], name: "index_versions_on_tag", using: :btree
-  add_index "versions", ["user_id", "user_type"], name: "index_versions_on_user_id_and_user_type", using: :btree
-  add_index "versions", ["user_name"], name: "index_versions_on_user_name", using: :btree
-  add_index "versions", ["versioned_id", "versioned_type"], name: "index_versions_on_versioned_id_and_versioned_type", using: :btree
+  create_table "versions", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "versioned_id"
+    t.string "versioned_type"
+    t.integer "user_id"
+    t.string "user_type"
+    t.string "user_name"
+    t.text "modifications"
+    t.integer "number"
+    t.integer "reverted_from"
+    t.string "tag"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_versions_on_created_at"
+    t.index ["number"], name: "index_versions_on_number"
+    t.index ["tag"], name: "index_versions_on_tag"
+    t.index ["user_id", "user_type"], name: "index_versions_on_user_id_and_user_type"
+    t.index ["user_name"], name: "index_versions_on_user_name"
+    t.index ["versioned_id", "versioned_type"], name: "index_versions_on_versioned_id_and_versioned_type"
+  end
 
 end

@@ -3,7 +3,7 @@ require 'sync'
 # RoleAssignment may be calculated, in which case they need to be destroyed only by the proper method,
 # e.g. through a group. A group accomplishes this by using the destroying_calculated_role_assignment do ... end
 # block method below.
-class RoleAssignment < ActiveRecord::Base
+class RoleAssignment < ApplicationRecord
   belongs_to :role, :touch => true
   belongs_to :entity, :touch => true
 

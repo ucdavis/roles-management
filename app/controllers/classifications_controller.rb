@@ -1,9 +1,9 @@
 class ClassificationsController < ApplicationController
-  before_filter :load_classifications, :only => :index
+  before_action :load_classifications, only: :index
 
   def index
     authorize Classification
-    
+
     respond_to do |format|
       format.json { render json: @classifications }
     end
