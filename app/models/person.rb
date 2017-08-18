@@ -7,7 +7,6 @@ class Person < Entity
   include RmBuiltinRoles
 
   has_many :affiliation_assignments, dependent: :destroy
-  #has_many :affiliations, -> { uniq }, through: :affiliation_assignments
   has_many :affiliations, through: :affiliation_assignments
   has_many :group_memberships, :foreign_key => 'entity_id', dependent: :destroy
   has_many :groups, :through => :group_memberships, :source => :group
@@ -36,7 +35,7 @@ class Person < Entity
 
   before_destroy :allow_group_membership_destruction, prepend: true
 
-  after_create  { |person|
+  after_create { |person|
     ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
     Sync.person_added_to_system(Sync.encode(person))
   }
@@ -108,12 +107,12 @@ class Person < Entity
   def role_symbols
     roles.select{ |r| rm_roles_ids.include? r.id }.map{ |r| r.token.underscore.to_sym }.uniq
   end
-  
+
   # Returns true if this person has access to the RM application in any form
   def has_access?
     return role_symbols.include?(:admin) || role_symbols.include?(:access)
   end
-  
+
   def is_admin?
     return role_symbols.include?(:admin)
   end
@@ -133,7 +132,7 @@ class Person < Entity
       applications << ao.application
     end
 
-    self.groups.each do |g|
+    groups.each do |g|
       ApplicationOwnership.eager_load(:application).where(:entity_id => g.id).each do |ao|
         applications << ao.application
       end

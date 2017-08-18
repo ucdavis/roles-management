@@ -60,10 +60,10 @@ class Role < ApplicationRecord
     all = []
 
     # Add all people
-    all += entities.where(:type => "Person").to_a #.all
+    all += entities.where(type: "Person").to_a #.all
 
     # Add all (flattened) groups
-    entities.where(:type => "Group").to_a.each do |group| #.all.each do |group|
+    entities.where(type: "Group").to_a.each do |group|
       all += group.flattened_members
     end
 

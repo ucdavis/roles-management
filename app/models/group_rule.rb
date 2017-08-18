@@ -48,7 +48,7 @@ class GroupRule < ApplicationRecord
       case column
       when :title
         if entity.title
-          GroupRule.where(:column => "title").each do |rule|
+          GroupRule.where(column: "title").each do |rule|
             if rule.condition == "is"
               if rule.value == entity.title.name
                 logger.info "Matched 'title is' rule. Recording result."
@@ -62,7 +62,7 @@ class GroupRule < ApplicationRecord
         end
       when :major
         if entity.major
-          GroupRule.where(:column => "major").each do |rule|
+          GroupRule.where(column: "major").each do |rule|
             if rule.condition == "is"
               if rule.value == entity.major.name
                 logger.info "Matched 'major is' rule. Recording result."
@@ -76,7 +76,7 @@ class GroupRule < ApplicationRecord
         end
       when :affiliation
         entity.affiliations.each do |entity_affiliation|
-          GroupRule.where(:column => "affiliation").each do |rule|
+          GroupRule.where(column: "affiliation").each do |rule|
             if rule.condition == "is"
               if rule.value == entity_affiliation.name
                 logger.info "Matched 'affiliation is' rule. Recording result."
@@ -93,7 +93,7 @@ class GroupRule < ApplicationRecord
           logger.warn "Targetted entity for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
         else
           entity.organizations.each do |organization|
-            GroupRule.where(:column => "department").each do |rule|
+            GroupRule.where(column: "department").each do |rule|
               if rule.condition == "is"
                 if rule.value == organization.name
                   logger.info "Matched 'department is' rule. Recording result."
@@ -111,7 +111,7 @@ class GroupRule < ApplicationRecord
         # This is incorrect because if the entity is only a member of a child organization with no rules
         # but the child organization's parent has a rule, this will never do anything (right?)
         entity.organizations.each do |organization|
-          GroupRule.where(:column => "organization").each do |rule|
+          GroupRule.where(column: "organization").each do |rule|
             if rule.condition == "is"
               if rule.value == organization.name
                 logger.info "Matched 'Organization is' rule. Recording result."
@@ -128,7 +128,7 @@ class GroupRule < ApplicationRecord
       when :classification
         if entity.title
           entity.title.classifications.each do |classification|
-            GroupRule.where(:column => "classification").each do |rule|
+            GroupRule.where(column: "classification").each do |rule|
               if rule.condition == "is"
                 if rule.value == classification.name
                   logger.info "Matched 'classification is' rule. Recording result."
@@ -142,7 +142,7 @@ class GroupRule < ApplicationRecord
           end
         end
       when :loginid
-        GroupRule.where(:column => "loginid").each do |rule|
+        GroupRule.where(column: "loginid").each do |rule|
           if rule.condition == "is"
             if rule.value == entity.loginid
               logger.info "Matched 'loginid is' rule. Recording result."
