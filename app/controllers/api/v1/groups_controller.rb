@@ -13,7 +13,7 @@ module Api
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load group view (show) for invalid ID #{@group_id}." }
 
-          render :text => "Invalid group ID '#{@group_id}'.", :status => 404
+          render text: "Invalid group ID '#{@group_id}'.", status: 404
         end
       end
 
@@ -28,7 +28,7 @@ module Api
           else
             logger.debug "Bad api/group UPDATE request. Errors:"
             logger.debug @group.errors.full_messages
-            render :text => "Found group but could not update for ID '#{@group_id}'.", :status => 500
+            render text: "Found group but could not update for ID '#{@group_id}'.", status: 500
           end
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to update group for invalid ID #{@group_id}." }

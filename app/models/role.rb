@@ -8,14 +8,14 @@ class Role < ApplicationRecord
   # the sync subsystem about.
   SYNC_ROLE_ATTRS = ["ad_path", "token", "name", "description"]
 
-  validates :application_id, :presence => true
-  validates :token, :uniqueness => { :scope => :application_id, :message => "token must be unique per application" }
+  validates :application_id, presence: true
+  validates :token, uniqueness: { scope: :application_id, message: 'token must be unique per application' }
   validate :ad_path_cannot_be_blank_if_present
 
-  has_many :role_assignments, :dependent => :destroy
-  has_many :entities, :through => :role_assignments
+  has_many :role_assignments, dependent: :destroy
+  has_many :entities, through: :role_assignments
 
-  belongs_to :application, :touch => true
+  belongs_to :application, touch: true
 
   after_save :trigger_sync_if_changed
 
@@ -30,10 +30,10 @@ class Role < ApplicationRecord
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
   # This is noted in the Rails documentation. Remove entities via roles_attributes.
-  accepts_nested_attributes_for :role_assignments, :allow_destroy => true
+  accepts_nested_attributes_for :role_assignments, allow_destroy: true
 
   def name_with_application
-    "#{self.application.name} / #{self.name}"
+    "#{application.name} / #{name}"
   end
 
   # Returns identifying string for logging purposes. Other classes implement this too.
@@ -60,10 +60,10 @@ class Role < ApplicationRecord
     all = []
 
     # Add all people
-    all += entities.where(type: "Person").to_a
+    all += entities.where(type: 'Person').to_a
 
     # Add all (flattened) groups
-    entities.where(type: "Group").to_a.each do |group|
+    entities.where(type: 'Group').to_a.each do |group|
       all += group.flattened_members
     end
 

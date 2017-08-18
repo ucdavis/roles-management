@@ -19,8 +19,9 @@ class Person < Entity
   has_many :group_operatorships, :foreign_key => "entity_id", :dependent => :destroy
   has_many :group_ownerships, :foreign_key => "entity_id", :dependent => :destroy
   has_one :student
-  belongs_to :title
-  belongs_to :major
+
+  belongs_to :title, optional: true
+  belongs_to :major, optional: true
 
   accepts_nested_attributes_for :group_ownerships, allow_destroy: true
   accepts_nested_attributes_for :group_operatorships, allow_destroy: true
