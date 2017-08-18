@@ -60,7 +60,7 @@ class Role < ApplicationRecord
     all = []
 
     # Add all people
-    all += entities.where(type: "Person").to_a #.all
+    all += entities.where(type: "Person").to_a
 
     # Add all (flattened) groups
     entities.where(type: "Group").to_a.each do |group|
@@ -68,20 +68,20 @@ class Role < ApplicationRecord
     end
 
     # Return a unique list
-    all.uniq{ |x| x.id }
+    all.uniq(&:id)
   end
 
   private
 
   def ad_path_cannot_be_blank_if_present
-    if self.ad_path and self.ad_path.blank?
-      self.ad_path = nil
+    if ad_path and ad_path.blank?
+      ad_path = nil
     end
   end
 
   def trigger_sync_if_changed
-    if (self.changed & SYNC_ROLE_ATTRS).length > 0
-      Sync.role_changed(Sync.encode(self, true).merge({ :changes => self.changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } }))
+    if (saved_changes.keys & SYNC_ROLE_ATTRS).length > 0
+      Sync.role_changed(Sync.encode(self, true).merge({ changes: saved_changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } }))
     end
   end
 end

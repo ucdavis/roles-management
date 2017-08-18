@@ -1,26 +1,26 @@
 class ApplicationOperatorship < ApplicationRecord
   validates_presence_of :application, :entity
-  validates_uniqueness_of :application_id, :scope => [:entity_id, :parent_id]
+  validates_uniqueness_of :application_id, scope: [:entity_id, :parent_id]
 
   before_destroy :require_destroy_flag
 
-  belongs_to :application, :touch => true
-  belongs_to :entity, :touch => true
-  
+  belongs_to :application, touch: true
+  belongs_to :entity, touch: true
+
   after_create :grant_operatorship_to_group_members
   before_destroy :remove_operatorship_from_group_members
-  
+
   after_save { |operatorship| operatorship.log_changes(:save) }
   after_destroy { |operatorship| operatorship.log_changes(:destroy) }
-  
+
   protected
-  
+
   # Explicitly log that this application operatorship was created or destroyed
   def log_changes(action)
     Rails.logger.tagged "ApplicationOperatorship #{id}" do
       case action
       when :save
-        if created_at_changed?
+        if saved_change_to_attribute?(:created_at)
           logger.info "Created application operatorship between #{entity.log_identifier} and #{application.log_identifier}."
         else
           # ApplicationOperatorships should really only be created or destroyed, not updated.
@@ -33,9 +33,9 @@ class ApplicationOperatorship < ApplicationRecord
       end
     end
   end
-  
+
   private
-  
+
   # Grant this application operatorship to all members of the group
   # (iff group operatorship is with a group)
   def grant_operatorship_to_group_members

@@ -60,7 +60,7 @@ class RoleAssignment < ApplicationRecord
     Rails.logger.tagged "RoleAssignment #{id}" do
       case action
       when :save
-        if created_at_changed?
+        if saved_change_to_attribute?(:created_at)
           logger.info "Created redundant-type assignment between #{entity.log_identifier} and #{role.log_identifier}."
         else
           # RoleAssignments should really only be created or destroyed, not updated.

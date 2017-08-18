@@ -65,7 +65,7 @@ class GroupMembership < ApplicationRecord
     Rails.logger.tagged "GroupMembership #{id}" do
       case action
       when :save
-        if created_at_changed?
+        if saved_change_to_attribute?(:created_at)
           # Only log group membership creation if this is the first time they've gained membership with this group
           if entity.group_memberships.map{|gm| gm.group.id}.count {|group_id| group_id == group.id } == 1
             logger.info "Created redundant-type membership between #{entity.log_identifier} and #{group.log_identifier}."

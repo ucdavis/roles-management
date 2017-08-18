@@ -17,7 +17,7 @@ class GroupOperatorship < ApplicationRecord
     Rails.logger.tagged "GroupOperatorship #{id}" do
       case action
       when :save
-        if created_at_changed?
+        if saved_change_to_attribute?(:created_at)
           logger.info "Created group operatorship between #{entity.log_identifier} and #{group.log_identifier}."
         else
           # GroupOperatorships should really only be created or destroyed, not updated.
