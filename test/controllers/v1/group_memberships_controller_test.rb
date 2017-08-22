@@ -9,7 +9,7 @@ class Api::V1::GroupMembershipsControllerTest < ActionController::TestCase
     grant_test_user_admin_access
 
     assert_difference('GroupMembership.count') do
-      post :create, { entity_id: 14, group_id: 2, format: :json }
+      post :create, params: { entity_id: 14, group_id: 2}, as: :json
     end
 
     body = JSON.parse(response.body)
@@ -22,14 +22,14 @@ class Api::V1::GroupMembershipsControllerTest < ActionController::TestCase
     grant_api_user_access
 
     assert_difference('GroupMembership.count', -1) do
-      delete :destroy, { group_id: 2, id: 5, format: :json }
+      delete :destroy, params: { group_id: 2, id: 5 }, as: :json
     end
   end
 
-  test "unauthenticated requests should not be honored" do
+  test 'unauthenticated requests should not be honored' do
     revoke_access
 
-    delete :destroy, { group_id: 2, id: 5, format: :json }
+    delete :destroy, params: { group_id: 2, id: 5 }, as: :json
 
     assert_response 401
   end

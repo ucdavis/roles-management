@@ -1,7 +1,7 @@
 class EntitiesController < ApplicationController
-  before_filter :new_entity_from_params, :only => :create
-  before_filter :load_entities, :only => :index
-  before_filter :load_entity, :only => [:show, :update]
+  before_action :new_entity_from_params, only: :create
+  before_action :load_entities, only: :index
+  before_action :load_entity, only: [:show, :update]
 
   def index
     authorize Entity

@@ -1,4 +1,4 @@
-class GroupOwnership < ActiveRecord::Base
+class GroupOwnership < ApplicationRecord
   validates_presence_of :group, :entity
   validates_uniqueness_of :entity_id, :scope => :group_id
   validate :group_cannot_own_itself
@@ -16,7 +16,7 @@ class GroupOwnership < ActiveRecord::Base
     Rails.logger.tagged "GroupOwnership #{id}" do
       case action
       when :save
-        if created_at_changed?
+        if saved_change_to_attribute?(:created_at)
           logger.info "Created group ownership between #{entity.log_identifier} and #{group.log_identifier}."
         else
           # GroupOwnerships should really only be created or destroyed, not updated.

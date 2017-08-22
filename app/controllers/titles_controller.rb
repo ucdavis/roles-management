@@ -1,9 +1,9 @@
 class TitlesController < ApplicationController
-  before_filter :load_titles, :only => :index
+  before_action :load_titles, only: :index
 
   def index
     authorize Title
-    
+
     respond_to do |format|
       format.json { render json: @titles }
     end

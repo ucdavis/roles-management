@@ -3,7 +3,7 @@ require 'sync'
 # RoleAssignment may be calculated, in which case they need to be destroyed only by the proper method,
 # e.g. through a group. A group accomplishes this by using the destroying_calculated_role_assignment do ... end
 # block method below.
-class RoleAssignment < ActiveRecord::Base
+class RoleAssignment < ApplicationRecord
   belongs_to :role, :touch => true
   belongs_to :entity, :touch => true
 
@@ -60,7 +60,7 @@ class RoleAssignment < ActiveRecord::Base
     Rails.logger.tagged "RoleAssignment #{id}" do
       case action
       when :save
-        if created_at_changed?
+        if saved_change_to_attribute?(:created_at)
           logger.info "Created redundant-type assignment between #{entity.log_identifier} and #{role.log_identifier}."
         else
           # RoleAssignments should really only be created or destroyed, not updated.

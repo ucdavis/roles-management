@@ -3,13 +3,13 @@ require 'test_helper'
 # These tests are run using the fake CAS user 'casuser'
 class GroupsControllerTest < ActionController::TestCase
   setup do
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    CASClient::Frameworks::Rails::Filter.fake('casuser')
   end
 
-  test "JSON request should include certain attributes" do
+  test 'JSON request should include certain attributes' do
     grant_test_user_admin_access
 
-    get :show, :format => :json, :id => 2
+    get :show, params: { id: 2 }, as: :json
 
     body = JSON.parse(response.body)
 
@@ -40,12 +40,12 @@ class GroupsControllerTest < ActionController::TestCase
     end
   end
 
-  test "Activating/de-activating a person should invalid group view caches (touch appropriate group and group membership objects)" do
+  test 'Activating/de-activating a person should invalid group view caches (touch appropriate group and group membership objects)' do
     inactiveEntity = entities(:inactivePerson)
 
-    assert inactiveEntity.active == false, "inactive entity should be inactive at the start of the test. Check the fixture."
+    assert inactiveEntity.active == false, 'inactive entity should be inactive at the start of the test. Check the fixture.'
 
-    assert inactiveEntity.group_memberships.length > 0, "inactive entity fixture needs at least one group membership"
+    assert inactiveEntity.group_memberships.length > 0, 'inactive entity fixture needs at least one group membership'
 
     # Save the last modified time for an inactive entity's group
     groupMembership = inactiveEntity.group_memberships.first
@@ -58,7 +58,7 @@ class GroupsControllerTest < ActionController::TestCase
     inactiveEntity.active = true
     inactiveEntity.save!
 
-    assert inactiveEntity.group_memberships.first.updated_at > groupMembership_mtime, "group membership should have been touched due to active/inactive change"
-    assert inactiveEntity.group_memberships.first.group.updated_at > group_mtime, "group should have been touched due to active/inactive change"
+    assert inactiveEntity.group_memberships.first.updated_at > groupMembership_mtime, 'group membership should have been touched due to active/inactive change'
+    assert inactiveEntity.group_memberships.first.group.updated_at > group_mtime, 'group should have been touched due to active/inactive change'
   end
 end

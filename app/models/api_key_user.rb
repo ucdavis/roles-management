@@ -1,4 +1,4 @@
-class ApiKeyUser < ActiveRecord::Base
+class ApiKeyUser < ApplicationRecord
   include ActiveModel::ForbiddenAttributesProtection
 
   validates :name, uniqueness: true, presence: true

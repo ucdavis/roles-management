@@ -1,4 +1,4 @@
-class Application < ActiveRecord::Base
+class Application < ApplicationRecord
   validates :name, :presence => true, :uniqueness => true
 
   has_many :roles, :dependent => :destroy

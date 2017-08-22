@@ -2,12 +2,12 @@ require 'test_helper'
 
 class GroupRuleTest < ActiveSupport::TestCase
   setup do
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    CASClient::Frameworks::Rails::Filter.fake('casuser')
 
     @person = entities(:casuser)
   end
 
-  test "adding a person to a child organization of an organization should add a GroupRuleResult for that parent" do
+  test 'adding a person to a child organization of an organization should add a GroupRuleResult for that parent' do
     # Use fixture cthielen, not casuser, as casuser has an association with the toplevel organization by default
     @cthielen = entities(:cthielen)
 
@@ -28,7 +28,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     assert group.operators.length == 0, "looks like groupWithNothing has an operator"
 
     # Test the group rule logic
-    assert group.members.length == 0, "group should have no members"
+    assert group.members.empty?, 'group should have no members'
 
     # Ensure @cthielen is in the GroupRuleResult for "Organization is toplevel", which is the parent organization of the one we just added @cthielen to (which is what this test is all about)
     group_rule = GroupRule.new({ column: 'organization', condition: 'is', value: o.name, group_id: group.id })
@@ -36,8 +36,8 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     group.reload
 
-    assert group.members.length == 1, "group should have 1 member"
-    assert group.members.include?(@cthielen) == false, "group should not include @cthielen yet"
+    assert group.members.length == 1, 'group should have 1 member'
+    assert group.members.include?(@cthielen) == false, 'group should not include @cthielen yet'
 
     # Add @cthielen to the child organization
     o_child.entities << @cthielen
@@ -54,7 +54,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     assert group.members.include?(@cthielen), "group should include @cthielen"
   end
 
-  test "removing a person from a child organization of an organization should remove the GroupRuleResult for that parent" do
+  test 'removing a person from a child organization of an organization should remove the GroupRuleResult for that parent' do
     # Use fixture cthielen, not casuser, as casuser has an association with the toplevel organization by default
     @cthielen = entities(:cthielen)
 
@@ -152,35 +152,35 @@ class GroupRuleTest < ActiveSupport::TestCase
     assert group.members.include?(@cthielen), "group should include @cthielen"
   end
 
-  test "removing a person from an organization should remove the relevant GroupRuleResult" do
+  test 'removing a person from an organization should remove the relevant GroupRuleResult' do
     # Use fixture cthielen, not casuser, as casuser has an association with the toplevel organization by default
     @cthielen = entities(:cthielen)
 
     o = organizations(:toplevel)
 
     # Sanity check the fixtures first ...
-    assert o.entities.include?(@cthielen) == false, "toplevel should not include cthielen yet"
-    assert o.flattened_entities.include?(@cthielen) == false, "toplevel should not include cthielen yet nor should any of its children via flattened_entities"
+    assert o.entities.include?(@cthielen) == false, 'toplevel should not include cthielen yet'
+    assert o.flattened_entities.include?(@cthielen) == false, 'toplevel should not include cthielen yet nor should any of its children via flattened_entities'
 
     # Ensure a group has a rule
     group = entities(:groupWithNothing)
 
-    assert group.roles.length == 0, "looks like groupWithNothing has a role"
-    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
-    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
-    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+    assert group.roles.empty?, 'looks like groupWithNothing has a role'
+    assert group.rules.empty?, 'looks like groupWithNothing has a rule'
+    assert group.owners.empty?, 'looks like groupWithNothing has an owner'
+    assert group.operators.empty?, 'looks like groupWithNothing has an operator'
 
     # Test the group rule logic
-    assert group.members.length == 0, "group should have no members"
+    assert group.members.empty?, 'group should have no members'
 
     # Ensure @cthielen is in the GroupRuleResult for "Organization is toplevel", which is the parent organization of the one we just added @cthielen to (which is what this test is all about)
-    group_rule = GroupRule.new({ column: 'organization', condition: 'is', value: o.name, group_id: group.id })
+    group_rule = GroupRule.new( column: 'organization', condition: 'is', value: o.name, group_id: group.id )
     group.rules << group_rule
 
     group.reload
 
-    assert group.members.length == 1, "group should have 1 member"
-    assert group.members.include?(@cthielen) == false, "group should not include @cthielen yet"
+    assert group.members.length == 1, 'group should have 1 member'
+    assert group.members.include?(@cthielen) == false, 'group should not include @cthielen yet'
 
     # Add @cthielen to the organization
     o.entities << @cthielen
@@ -324,7 +324,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     assert group.members.length == 2, "group should have 2 members but has #{group.members.length}"
   end
 
-  test "removing a child organization entirely should affect any GroupRuleResults for parent organizations" do
+  test 'removing a child organization entirely should affect any GroupRuleResults for parent organizations' do
     # Use fixture cthielen, not casuser, as casuser has an association with the toplevel organization by default
     @cthielen = entities(:cthielen)
 
@@ -362,9 +362,9 @@ class GroupRuleTest < ActiveSupport::TestCase
     o_orphan.reload
 
     # @cthielen should not be in the soon-to-be parent's flattened_entities first ...
-    assert o.flattened_entities.include?(@cthielen) == false, "toplevel should not include cthielen"
+    assert o.flattened_entities.include?(@cthielen) == false, 'toplevel should not include cthielen'
     # but he should be in the orphaned_org
-    assert o_orphan.flattened_entities.include?(@cthielen), "orphaned_org should include cthielen"
+    assert o_orphan.flattened_entities.include?(@cthielen), 'orphaned_org should include cthielen'
 
     # Finally, the action we're testing, add the orphaned org to be a child of the top-level org
     o.child_organizations << o_orphan

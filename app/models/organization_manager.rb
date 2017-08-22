@@ -1,4 +1,4 @@
-class OrganizationManager < ActiveRecord::Base
+class OrganizationManager < ApplicationRecord
   belongs_to :organization, :touch => true
   belongs_to :manager, :class_name => 'Entity', :touch => true
 

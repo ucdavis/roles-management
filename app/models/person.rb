@@ -6,9 +6,9 @@ require 'sync'
 class Person < Entity
   include RmBuiltinRoles
 
-  has_many :affiliation_assignments, :dependent => :destroy
-  has_many :affiliations, -> { uniq }, :through => :affiliation_assignments
-  has_many :group_memberships, :foreign_key => "entity_id", :dependent => :destroy
+  has_many :affiliation_assignments, dependent: :destroy
+  has_many :affiliations, through: :affiliation_assignments
+  has_many :group_memberships, :foreign_key => 'entity_id', dependent: :destroy
   has_many :groups, :through => :group_memberships, :source => :group
   has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
   has_many :roles, :through => :role_assignments, :source => :role, :dependent => :destroy
@@ -19,13 +19,14 @@ class Person < Entity
   has_many :group_operatorships, :foreign_key => "entity_id", :dependent => :destroy
   has_many :group_ownerships, :foreign_key => "entity_id", :dependent => :destroy
   has_one :student
-  belongs_to :title
-  belongs_to :major
 
-  accepts_nested_attributes_for :group_ownerships, :allow_destroy => true
-  accepts_nested_attributes_for :group_operatorships, :allow_destroy => true
-  accepts_nested_attributes_for :group_memberships, :allow_destroy => true
-  accepts_nested_attributes_for :role_assignments, :allow_destroy => true
+  belongs_to :title, optional: true
+  belongs_to :major, optional: true
+
+  accepts_nested_attributes_for :group_ownerships, allow_destroy: true
+  accepts_nested_attributes_for :group_operatorships, allow_destroy: true
+  accepts_nested_attributes_for :group_memberships, allow_destroy: true
+  accepts_nested_attributes_for :role_assignments, allow_destroy: true
 
   validates :loginid, :presence => true, :uniqueness => true
 
@@ -35,7 +36,7 @@ class Person < Entity
 
   before_destroy :allow_group_membership_destruction, prepend: true
 
-  after_create  { |person|
+  after_create { |person|
     ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
     Sync.person_added_to_system(Sync.encode(person))
   }
@@ -72,7 +73,7 @@ class Person < Entity
 
   # For CSV export
   def self.csv_header
-    "ID,Login ID,Email,First,Last".split(',')
+    'ID,Login ID,Email,First,Last'.split(',')
   end
 
   def to_csv
@@ -107,12 +108,12 @@ class Person < Entity
   def role_symbols
     roles.select{ |r| rm_roles_ids.include? r.id }.map{ |r| r.token.underscore.to_sym }.uniq
   end
-  
+
   # Returns true if this person has access to the RM application in any form
   def has_access?
     return role_symbols.include?(:admin) || role_symbols.include?(:access)
   end
-  
+
   def is_admin?
     return role_symbols.include?(:admin)
   end
@@ -132,7 +133,7 @@ class Person < Entity
       applications << ao.application
     end
 
-    self.groups.each do |g|
+    groups.each do |g|
       ApplicationOwnership.eager_load(:application).where(:entity_id => g.id).each do |ao|
         applications << ao.application
       end
@@ -155,14 +156,14 @@ class Person < Entity
   end
 
   def recalculate_group_rule_membership
-    if changed.include? "title_id"
+    if saved_change_to_attribute?(:title_id)
       GroupRule.resolve_target!(:title, id)
       GroupRule.resolve_target!(:classification, id)
     end
-    if changed.include? "major_id"
+    if saved_change_to_attribute?(:major_id)
       GroupRule.resolve_target!(:major, id)
     end
-    if changed.include? "loginid"
+    if saved_change_to_attribute?(:loginid)
       GroupRule.resolve_target!(:loginid, id)
     end
   end
@@ -172,15 +173,15 @@ class Person < Entity
   # If a person goes from inactive to active, we need to ensure
   # any role_assignment or group views are touched correctly.
   def trigger_sync_as_needed
-    if changed.include? "active"
+    if saved_change_to_attribute?(:active)
       role_assignments.each { |ra| ra.touch }
       group_memberships.each { |gm| gm.touch }
       organizations.each { |org| org.touch }
 
       # Activating/de-activating a person emulates them losing all their
       # roles and organizations
-      if self.active
-        ActivityLog.info!("Marking as active for #{self.name}.", ["person_#{self.id}"])
+      if active
+        ActivityLog.info!("Marking as active for #{name}.", ["person_#{id}"])
 
         self.roles.each do |role|
           Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))

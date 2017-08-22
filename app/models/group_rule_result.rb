@@ -1,7 +1,7 @@
 # Represents the results of calculating GroupRule with ID group_rule_id
 # Used as a cache for quickly recalculating groups when not every rule
 # has changed.
-class GroupRuleResult < ActiveRecord::Base
+class GroupRuleResult < ApplicationRecord
   belongs_to :group_rule
   belongs_to :entity
 

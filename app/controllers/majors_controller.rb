@@ -1,9 +1,9 @@
 class MajorsController < ApplicationController
-  before_filter :load_majors, :only => :index
+  before_action :load_majors, only: :index
 
   def index
     authorize Major
-  
+
     respond_to do |format|
       format.json { render json: @majors }
     end

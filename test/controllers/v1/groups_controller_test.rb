@@ -8,7 +8,7 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
   test 'JSON show request should include certain attributes' do
     grant_test_user_admin_access
 
-    get :show, :format => :json, :id => 2
+    get :show, params: { id: 2 }, as: :json
 
     body = JSON.parse(response.body)
 
@@ -38,7 +38,7 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
 
     @group = entities(:groupA)
 
-    patch :update, id: @group, group_attributes: { name: 'New Name' }
+    patch :update, params: { id: @group, group_attributes: { name: 'New Name' } }
     assert_response :success
 
     @group.reload
@@ -46,10 +46,10 @@ class Api::V1::GroupsControllerTest < ActionController::TestCase
     assert @group.name == 'New Name'
   end
 
-  test "unauthenticated requests should not be honored" do
+  test 'unauthenticated requests should not be honored' do
     revoke_access
 
-    get :show, :format => :json, :id => 'casuser'
+    get :show, params: { id: 'casuser' }, as: :json
 
     assert_response 401
   end

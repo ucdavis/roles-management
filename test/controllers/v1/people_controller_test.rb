@@ -11,7 +11,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
   test 'JSON show request should include certain attributes' do
     grant_test_user_admin_access
 
-    get :show, :format => :json, :id => 'casuser'
+    get :show, params: { id: 'casuser' }, as: :json
 
     body = JSON.parse(response.body)
 
@@ -68,7 +68,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
   test 'JSON show request should work via login ID' do
     grant_api_user_access
 
-    get :show, :format => :json, :id => 'casuser'
+    get :show, params: { id: 'casuser' }, as: :json
 
     assert_response :success
   end
@@ -76,7 +76,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
   test 'JSON show request should work via numeric ID' do
     grant_api_user_access
 
-    get :show, :format => :json, :id => 1
+    get :show, params: { id: 1 }, as: :json
 
     assert_response :success
 
@@ -86,20 +86,20 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
     assert body['loginid'] == 'casuser', 'JSON response should have correct login ID'
   end
 
-  test "JSON show request should not include inactive entities" do
+  test 'JSON show request should not include inactive entities' do
     grant_api_user_access
 
     inactiveEntity = entities(:inactivePerson)
 
-    get :show, :format => :json, :id => inactiveEntity.id
+    get :show, params: { id: inactiveEntity.id }, as: :json
 
     assert_response :missing
   end
 
-  test "unauthenticated requests should not be honored" do
+  test 'unauthenticated requests should not be honored' do
     revoke_access
 
-    get :show, :format => :json, :id => 'casuser'
+    get :show, params: { id: 'casuser' }, as: :json
 
     assert_response 401
   end
@@ -107,7 +107,7 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
   test 'JSON import request should work' do
     grant_api_user_access
 
-    get :import, :format => :json, :loginid => 'ldapuser'
+    get :import, params: { loginid: 'ldapuser' }, as: :json
 
     assert_response :success
 

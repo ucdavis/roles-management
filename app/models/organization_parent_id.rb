@@ -1,7 +1,7 @@
 # This class exists to model the relationship between organizations. An organization can have many children
 # and should usually have a single parent. As of this writing, organizations can have multiple parents but
 # this may change if we obtain cleaner data sources.
-class OrganizationParentId < ActiveRecord::Base
+class OrganizationParentId < ApplicationRecord
   belongs_to :organization
   belongs_to :parent_organization, :class_name => 'Organization', :foreign_key => :parent_org_id
 

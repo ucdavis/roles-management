@@ -1,9 +1,9 @@
 class AffiliationsController < ApplicationController
-  before_filter :load_affiliations, :only => :index
+  before_action :load_affiliations, only: :index
 
   def index
     authorize Affiliation
-    
+
     respond_to do |format|
       format.json { render json: @affiliations }
     end

@@ -1,4 +1,4 @@
-class ApiWhitelistedIpUser < ActiveRecord::Base
+class ApiWhitelistedIpUser < ApplicationRecord
   def log_identifier
     "Whitelisted(#{address})"
   end

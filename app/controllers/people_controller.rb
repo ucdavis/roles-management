@@ -1,6 +1,6 @@
 class PeopleController < ApplicationController
-  before_filter :load_person, :only => :show
-  before_filter :load_people, :only => :index
+  before_action :load_person, only: :show
+  before_action :load_people, only: :index
 
   ## RESTful ACTIONS
 
@@ -8,7 +8,7 @@ class PeopleController < ApplicationController
   # Takes optional 'q' parameter to filter index
   def index
     authorize Person
-    
+
     respond_to do |format|
       format.json { render json: @people }
     end
@@ -16,7 +16,7 @@ class PeopleController < ApplicationController
 
   def show
     authorize @person
-  
+
     respond_to do |format|
       format.json { render json: @person }
     end
@@ -28,7 +28,7 @@ class PeopleController < ApplicationController
   # If you wish to search the internal databases, use index with GET parameter q=..., e.g. /people?q=somebody
   def search
     authorize Person
-  
+
     require 'ldap_helper'
     require 'ostruct'
 

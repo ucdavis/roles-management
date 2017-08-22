@@ -1,14 +1,14 @@
 # GroupRule stores the results of its rule in a cache using GroupRuleResult.
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
-class GroupRule < ActiveRecord::Base
+class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w( title major affiliation classification loginid department organization )
 
   validates_presence_of :condition, :column, :value, :group_id
-  validates_inclusion_of :condition, :in => %w( is is\ not  )
-  validates_inclusion_of :column, :in => VALID_COLUMNS
+  validates_inclusion_of :condition, in: %w( is is\ not  )
+  validates_inclusion_of :column, in: VALID_COLUMNS
 
-  belongs_to :group, :touch => true
-  has_many :results, :class_name => "GroupRuleResult", :dependent => :destroy
+  belongs_to :group, touch: true
+  has_many :results, class_name: 'GroupRuleResult', dependent: :destroy
 
   after_save :resolve_if_changed
   after_destroy :group_must_recalculate
@@ -23,7 +23,7 @@ class GroupRule < ActiveRecord::Base
   def GroupRule.resolve_target!(column, entity_id)
     touched_group_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
 
-    Rails.logger.tagged "GroupRule.resolve_target!" do
+    Rails.logger.tagged 'GroupRule.resolve_target!' do
       unless VALID_COLUMNS.include? column.to_s
         raise "Cannot resolve_target for unknown column '#{column}'"
       end
@@ -48,7 +48,7 @@ class GroupRule < ActiveRecord::Base
       case column
       when :title
         if entity.title
-          GroupRule.where(:column => "title").each do |rule|
+          GroupRule.where(column: "title").each do |rule|
             if rule.condition == "is"
               if rule.value == entity.title.name
                 logger.info "Matched 'title is' rule. Recording result."
@@ -62,7 +62,7 @@ class GroupRule < ActiveRecord::Base
         end
       when :major
         if entity.major
-          GroupRule.where(:column => "major").each do |rule|
+          GroupRule.where(column: "major").each do |rule|
             if rule.condition == "is"
               if rule.value == entity.major.name
                 logger.info "Matched 'major is' rule. Recording result."
@@ -76,7 +76,7 @@ class GroupRule < ActiveRecord::Base
         end
       when :affiliation
         entity.affiliations.each do |entity_affiliation|
-          GroupRule.where(:column => "affiliation").each do |rule|
+          GroupRule.where(column: "affiliation").each do |rule|
             if rule.condition == "is"
               if rule.value == entity_affiliation.name
                 logger.info "Matched 'affiliation is' rule. Recording result."
@@ -93,7 +93,7 @@ class GroupRule < ActiveRecord::Base
           logger.warn "Targetted entity for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
         else
           entity.organizations.each do |organization|
-            GroupRule.where(:column => "department").each do |rule|
+            GroupRule.where(column: "department").each do |rule|
               if rule.condition == "is"
                 if rule.value == organization.name
                   logger.info "Matched 'department is' rule. Recording result."
@@ -111,7 +111,7 @@ class GroupRule < ActiveRecord::Base
         # This is incorrect because if the entity is only a member of a child organization with no rules
         # but the child organization's parent has a rule, this will never do anything (right?)
         entity.organizations.each do |organization|
-          GroupRule.where(:column => "organization").each do |rule|
+          GroupRule.where(column: "organization").each do |rule|
             if rule.condition == "is"
               if rule.value == organization.name
                 logger.info "Matched 'Organization is' rule. Recording result."
@@ -128,7 +128,7 @@ class GroupRule < ActiveRecord::Base
       when :classification
         if entity.title
           entity.title.classifications.each do |classification|
-            GroupRule.where(:column => "classification").each do |rule|
+            GroupRule.where(column: "classification").each do |rule|
               if rule.condition == "is"
                 if rule.value == classification.name
                   logger.info "Matched 'classification is' rule. Recording result."
@@ -142,7 +142,7 @@ class GroupRule < ActiveRecord::Base
           end
         end
       when :loginid
-        GroupRule.where(:column => "loginid").each do |rule|
+        GroupRule.where(column: "loginid").each do |rule|
           if rule.condition == "is"
             if rule.value == entity.loginid
               logger.info "Matched 'loginid is' rule. Recording result."
@@ -371,14 +371,14 @@ class GroupRule < ActiveRecord::Base
 
   # Recalculates group members if anything changed. Called after_save.
   def resolve_if_changed
-    Rails.logger.debug "GroupRule.resolve_if_changed called."
-    Rails.logger.debug "changed? is #{self.changed?}"
-    self.resolve! if self.changed? # recalculate this rule
-    self.group.recalculate_members! if self.changed? # tell the group to recombine the results list
+    if saved_changes?
+      resolve!
+      group.recalculate_members!
+    end
   end
 
   # In after_destroy it's important the group recalculate members as this rule is gone
   def group_must_recalculate
-    self.group.recalculate_members!
+    group.recalculate_members!
   end
 end

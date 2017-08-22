@@ -1,4 +1,4 @@
-class ApplicationOwnership < ActiveRecord::Base
+class ApplicationOwnership < ApplicationRecord
   belongs_to :application, :touch => true
   belongs_to :entity, :touch => true
   
@@ -20,7 +20,7 @@ class ApplicationOwnership < ActiveRecord::Base
     Rails.logger.tagged "ApplicationOwnership #{id}" do
       case action
       when :save
-        if created_at_changed?
+        if saved_change_to_attribute?(:created_at)
           logger.info "Created application ownership between #{entity.log_identifier} and #{application.log_identifier}."
         else
           # ApplicationOwnerships should really only be created or destroyed, not updated.

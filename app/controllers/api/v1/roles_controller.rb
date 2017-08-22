@@ -1,7 +1,7 @@
 module Api
   module V1
     class RolesController < Api::V1::BaseController
-      before_filter :load_role, :only => [:show, :update]
+      before_action :load_role, only: [:show, :update]
 
       def show
         if @role

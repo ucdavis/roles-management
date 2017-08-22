@@ -1,13 +1,13 @@
 class GroupsController < ApplicationController
-  before_filter :new_group_from_params, :only => :create
-  before_filter :load_groups, :only => :index
-  before_filter :load_group, :only => :show
+  before_action :new_group_from_params, only: :create
+  before_action :load_groups, only: :index
+  before_action :load_group, only: :show
 
   # Used by the API and various Group-only token inputs
   # Takes optional 'q' parameter to filter index
   def index
     authorize Group
-    
+
     if @groups.count > 0
       @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') + '/' + @groups.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
     end
@@ -19,7 +19,7 @@ class GroupsController < ApplicationController
 
   def show
     authorize @group
-    
+
     @cache_key = "group/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
 
     respond_to do |format|
@@ -29,7 +29,7 @@ class GroupsController < ApplicationController
 
   def destroy
     authorize @group
-    
+
     @group.destroy
 
     respond_to do |format|

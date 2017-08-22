@@ -1,7 +1,7 @@
 # GroupMembership may be calculated, in which case they need to be destroyed only by the proper method,
 # e.g. through a group and not a person. A group accomplishes this by using the destroying_calculated_group_membership do ... end
 # block method below.
-class GroupMembership < ActiveRecord::Base
+class GroupMembership < ApplicationRecord
   Thread.current[:destroy_calculated_membership_flag] = false
   Thread.current[:recalculating_membership_flag] = false
 
@@ -65,7 +65,7 @@ class GroupMembership < ActiveRecord::Base
     Rails.logger.tagged "GroupMembership #{id}" do
       case action
       when :save
-        if created_at_changed?
+        if saved_change_to_attribute?(:created_at)
           # Only log group membership creation if this is the first time they've gained membership with this group
           if entity.group_memberships.map{|gm| gm.group.id}.count {|group_id| group_id == group.id } == 1
             logger.info "Created redundant-type membership between #{entity.log_identifier} and #{group.log_identifier}."

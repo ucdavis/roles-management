@@ -1,6 +1,6 @@
 class Admin::ApiWhitelistedIpUsersController < Admin::BaseController
-  before_filter :new_api_whitelisted_ip_user_from_params, :only => :create
-  before_filter :load_whitelisted_users, :only => :index
+  before_action :new_api_whitelisted_ip_user_from_params, only: :create
+  before_action :load_whitelisted_users, only: :index
 
   def index
     authorize ApiWhitelistedIpUser

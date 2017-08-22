@@ -1,6 +1,14 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 4.2'
+git_source(:github) do |repo_name|
+  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
+  "https://github.com/#{repo_name}.git"
+end
+
+gem 'rails', '~> 5.0'
+
+# Use Puma as the app server
+gem 'puma', '~> 3.0'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -9,16 +17,13 @@ gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 
 # Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails', '~> 4.1.0'
-
-# Use jquery as the JavaScript library
-#gem 'jquery-rails'
+gem 'coffee-rails', '~> 4.2'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.0'
+gem 'jbuilder', '~> 2.5'
 
 # bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'sdoc', '~> 0.4.2', group: :doc
 
 group :production do
   gem 'pg', '0.20.0'
@@ -41,21 +46,25 @@ group :development do
 end
 
 gem 'spring', group: :development
-gem 'web-console', '~> 2.0', group: :development
+gem 'spring-watcher-listen', '~> 2.0.0', group: :development
+gem 'web-console', '>= 3.3.0', group: :development
 
 group :development, :test do
   gem 'jasmine-rails' # for JS unit testing
   gem 'capybara'      # for JS integration testing
   gem 'poltergeist'   # for PhantomJS-based testing with capybara
   gem 'sqlite3'
-  gem 'byebug'        # for Ruby 2.x debugging
-  gem 'test-unit', '~> 3.0'
+  gem 'byebug', platform: :mri
+  gem 'test-unit', '~> 3.2'
 end
+
+# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
+gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'exception_notification'
 
 # For CAS authentication
-gem 'rubycas-client', :git => 'https://github.com/rubycas/rubycas-client.git'
+gem 'rubycas-client', git: 'https://github.com/rubycas/rubycas-client.git'
 
 gem 'ejs'
 
@@ -63,20 +72,19 @@ gem 'ejs'
 gem 'pundit'
 
 # For LDAP & Active Directory support
-gem 'net-ldap', :require => false
+gem 'net-ldap', require: false
 
-gem 'js-routes', :require => false
+gem 'js-routes', require: false
 
 # For scheduled tasks
-gem 'whenever', :require => false
+gem 'whenever', require: false
 
 # For background processing
 gem 'delayed_job_active_record'
 gem 'daemons'
 
 # Sync script dependencies
-#gem 'sysaid', :git => 'https://github.com/dssit/ruby-sysaid.git'
-gem 'roles-management-api', '>= 0.1.2', :git => 'https://github.com/dssit/roles-management-api.git'
+gem 'roles-management-api', '>= 0.1.2', git: 'https://github.com/dssit/roles-management-api.git'
 
 # For Slack notifications
 gem 'slack-notifier'

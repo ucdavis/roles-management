@@ -3,19 +3,19 @@
 # An entity is either a Person or Group.
 # 'Members' refers only to people and is calculated by flattening
 # groups down to people.
-class Role < ActiveRecord::Base
+class Role < ApplicationRecord
   # SYNC_ROLE_ATTRS is the list of role attribtues we care to notify
   # the sync subsystem about.
   SYNC_ROLE_ATTRS = ["ad_path", "token", "name", "description"]
 
-  validates :application_id, :presence => true
-  validates :token, :uniqueness => { :scope => :application_id, :message => "token must be unique per application" }
+  validates :application_id, presence: true
+  validates :token, uniqueness: { scope: :application_id, message: 'token must be unique per application' }
   validate :ad_path_cannot_be_blank_if_present
 
-  has_many :role_assignments, :dependent => :destroy
-  has_many :entities, :through => :role_assignments
+  has_many :role_assignments, dependent: :destroy
+  has_many :entities, through: :role_assignments
 
-  belongs_to :application, :touch => true
+  belongs_to :application, touch: true
 
   after_save :trigger_sync_if_changed
 
@@ -30,10 +30,10 @@ class Role < ActiveRecord::Base
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
   # This is noted in the Rails documentation. Remove entities via roles_attributes.
-  accepts_nested_attributes_for :role_assignments, :allow_destroy => true
+  accepts_nested_attributes_for :role_assignments, allow_destroy: true
 
   def name_with_application
-    "#{self.application.name} / #{self.name}"
+    "#{application.name} / #{name}"
   end
 
   # Returns identifying string for logging purposes. Other classes implement this too.
@@ -60,28 +60,28 @@ class Role < ActiveRecord::Base
     all = []
 
     # Add all people
-    all += entities.where(:type => "Person").to_a #.all
+    all += entities.where(type: 'Person').to_a
 
     # Add all (flattened) groups
-    entities.where(:type => "Group").to_a.each do |group| #.all.each do |group|
+    entities.where(type: 'Group').to_a.each do |group|
       all += group.flattened_members
     end
 
     # Return a unique list
-    all.uniq{ |x| x.id }
+    all.uniq(&:id)
   end
 
   private
 
   def ad_path_cannot_be_blank_if_present
-    if self.ad_path and self.ad_path.blank?
-      self.ad_path = nil
+    if ad_path and ad_path.blank?
+      ad_path = nil
     end
   end
 
   def trigger_sync_if_changed
-    if (self.changed & SYNC_ROLE_ATTRS).length > 0
-      Sync.role_changed(Sync.encode(self, true).merge({ :changes => self.changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } }))
+    if (saved_changes.keys & SYNC_ROLE_ATTRS).length > 0
+      Sync.role_changed(Sync.encode(self, true).merge({ changes: saved_changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } }))
     end
   end
 end

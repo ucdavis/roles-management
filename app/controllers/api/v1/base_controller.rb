@@ -10,7 +10,7 @@ module Api
       def validate
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Validated key." }
 
-        render :text => "Ok.", :status => 200
+        render plain: 'Ok.', status: 200
       end
     end
   end
