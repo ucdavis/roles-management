@@ -65,7 +65,7 @@ GEM
     arel (8.0.0)
     bindex (0.5.0)
     builder (3.2.3)
-    byebug (9.0.6)
+    byebug (9.1.0)
     capistrano (3.7.2)
       airbrussh (>= 1.0.0)
       capistrano-harrow
@@ -163,7 +163,7 @@ GEM
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       websocket-driver (>= 0.2.0)
-    power_assert (1.0.2)
+    power_assert (1.1.0)
     public_suffix (2.0.5)
     puma (3.10.0)
     pundit (1.1.0)
