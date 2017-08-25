@@ -160,7 +160,6 @@ module LdapPersonHelper
 
     # If they have any student data, ensure they own a corresponding 'student' model
     if ucd_student_major || ucd_student_level
-      byebug
       p.student = Student.new if p.student.nil?
     end
 
