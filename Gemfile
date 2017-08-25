@@ -26,8 +26,8 @@ gem 'jbuilder', '~> 2.5'
 gem 'sdoc', '~> 0.4.2', group: :doc
 
 group :production do
-  gem 'pg', '0.20.0'
   gem 'dalli'
+  gem 'pg', '0.20.0'
   # For New Relic monitoring integration
   gem 'newrelic_rpm'
 end

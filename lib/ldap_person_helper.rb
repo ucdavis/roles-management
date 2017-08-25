@@ -1,5 +1,5 @@
 module LdapPersonHelper
-  def LdapPersonHelper.create_or_update_person_by_loginid(loginid, log = nil)
+  def self.create_or_update_person_by_loginid(loginid, log = nil)
     return nil unless loginid
 
     person = nil
@@ -21,9 +21,9 @@ module LdapPersonHelper
     ldap = LdapHelper.new
     ldap.connect
 
-    results = ldap.search("(uid=" + loginid + ")")
+    results = ldap.search('(uid=' + loginid + ')')
 
-    if results.length > 0
+    if !results.empty?
       person = LdapPersonHelper.create_or_update_person_from_ldap_record(results[0], log)
     else
       log.error "Could not import person #{loginid}, no results from LDAP or error while saving."
@@ -48,7 +48,7 @@ module LdapPersonHelper
   # Optionally pass log.
   #   We provide this as the LDAP import task generates a special log for e-mailing, else
   #   Rails.logger would suffice.
-  def LdapPersonHelper.create_or_update_person_from_ldap_record(entry, log = nil)
+  def self.create_or_update_person_from_ldap_record(entry, log = nil)
     # Include the large lot of UCD info (dept codes, title codes, etc.)
     require 'ucd_lookups'
 
@@ -59,7 +59,7 @@ module LdapPersonHelper
       loginid = determine_loginid(entry, log)
 
       unless loginid
-        log.debug "Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: " + entry[:ucdPersonUUID][0].to_s unless log.nil?
+        log.debug 'Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: ' + entry[:ucdPersonUUID][0].to_s unless log.nil?
         return nil
       end
 
@@ -102,7 +102,7 @@ module LdapPersonHelper
   end
 
   # Resolves loginid based on eduPersonPrincipalName (preferred) or uid
-  def LdapPersonHelper.determine_loginid(entry, log = nil)
+  def self.determine_loginid(entry, log = nil)
     # First, determine their login ID from the principal name
     eduPersonPrincipalName = entry[:eduPersonPrincipalName][0]
     if eduPersonPrincipalName.nil?
@@ -121,7 +121,7 @@ module LdapPersonHelper
   end
 
   # Resolve basic details like first and last name, email, i.e. simple values which do not require relations.
-  def LdapPersonHelper.determine_basic_details(p, entry, log = nil)
+  def self.determine_basic_details(p, entry, log = nil)
     p.first = entry[:givenName][0]
     p.last = entry[:sn][0]
     p.email = entry[:mail][0]
@@ -153,25 +153,26 @@ module LdapPersonHelper
   end
 
   # Resolve student data e.g. ucdStudentMajor, ucdStudentLevel (if applicable)
-  def LdapPersonHelper.determine_student_data(p, entry, log = nil)
+  def self.determine_student_data(p, entry, log = nil)
     # Handle student-specific data
-    ucdStudentMajor = entry[:ucdStudentMajor][0]
-    ucdStudentLevel = entry[:ucdStudentLevel][0]
+    ucd_student_major = entry[:ucdStudentMajor][0]
+    ucd_student_level = entry[:ucdStudentLevel][0]
 
     # If they have any student data, ensure they own a corresponding 'student' model
-    if ucdStudentMajor or ucdStudentLevel
-      p.student = Student.new if p.student == nil
+    if ucd_student_major || ucd_student_level
+      byebug
+      p.student = Student.new if p.student.nil?
     end
 
     # Update the list of majors if needed and record the major if needed
-    unless ucdStudentMajor.nil?
-      major = Major.find_or_create_by( name: ucdStudentMajor )
+    unless ucd_student_major.nil?
+      major = Major.find_or_create_by(name: ucd_student_major)
       p.major = major
     end
 
     # Update the list of student levels if needed and record the student level if needed
-    unless ucdStudentLevel.nil?
-      level = StudentLevel.find_or_create_by( name: ucdStudentLevel )
+    unless ucd_student_level.nil?
+      level = StudentLevel.find_or_create_by(name: ucd_student_level)
       p.student.level = level
     end
 
@@ -179,7 +180,7 @@ module LdapPersonHelper
   end
 
   # Resolve affiliation detail from ucdPersonAffiliation
-  def LdapPersonHelper.determine_affiliation_details(p, entry, log = nil)
+  def self.determine_affiliation_details(p, entry, log = nil)
     seen_affiliations = []
 
     # A person may have multiple affiliations
@@ -202,7 +203,7 @@ module LdapPersonHelper
   # Resolve title details from ucdAppointmentTitleCode.
   # Note that the 'title' attribute in LDAP can be user-edited and
   # should not be considered reliable.
-  def LdapPersonHelper.determine_title_details(p, entry, log = nil)
+  def self.determine_title_details(p, entry, log = nil)
     # Set title: take the original unless there is a translation from UcdLookups
     title_code = entry[:ucdAppointmentTitleCode][0]
     title_code = title_code.rjust(4, '0') unless title_code.blank?
@@ -221,7 +222,7 @@ module LdapPersonHelper
   end
 
   # Creates and assigns OUs as needed based on
-  def LdapPersonHelper.determine_ou_memberships(p, entry, log = nil)
+  def self.determine_ou_memberships(p, entry, log = nil)
     ucdStudentMajor = entry[:ucdStudentMajor][0]
     ucdStudentLevel = entry[:ucdStudentLevel][0]
 
@@ -305,7 +306,7 @@ module LdapPersonHelper
 
   # Simple function to determine _how_ a person is related to UCD (staff, faculty, student) and return
   # the relevant OU details. This is separate from determine_affiliation_details.
-  def LdapPersonHelper.resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
+  def self.resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
     if ucdAppointmentDepartmentCode
       if UcdLookups::DEPT_CODES.keys().include? ucdAppointmentDepartmentCode
         # This OU should be in the org tree
@@ -341,7 +342,7 @@ module LdapPersonHelper
     return majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name
   end
 
-  def LdapPersonHelper.save_or_touch(p, log)
+  def self.save_or_touch(p, log)
     if p.valid? == false
       log.warn "Unable to create or update persion with loginid #{p.loginid}. Reason(s): "
       p.errors.messages.each do |field,reason|

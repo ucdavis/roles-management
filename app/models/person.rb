@@ -8,16 +8,16 @@ class Person < Entity
 
   has_many :affiliation_assignments, dependent: :destroy
   has_many :affiliations, through: :affiliation_assignments
-  has_many :group_memberships, :foreign_key => 'entity_id', dependent: :destroy
-  has_many :groups, :through => :group_memberships, :source => :group
-  has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :roles, :through => :role_assignments, :source => :role, :dependent => :destroy
-  has_many :favorite_relationships, :class_name => "PersonFavoriteAssignment", :foreign_key => "owner_id", :dependent => :destroy
-  has_many :favorites, :through => :favorite_relationships, :source => :entity
-  has_many :application_ownerships, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :application_operatorships, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :group_operatorships, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :group_ownerships, :foreign_key => "entity_id", :dependent => :destroy
+  has_many :group_memberships, foreign_key: 'entity_id', dependent: :destroy
+  has_many :groups, through: :group_memberships, source: :group
+  has_many :role_assignments, foreign_key: 'entity_id', dependent: :destroy
+  has_many :roles, through: :role_assignments, source: :role, dependent: :destroy
+  has_many :favorite_relationships, class_name: 'PersonFavoriteAssignment', foreign_key: 'owner_id', dependent: :destroy
+  has_many :favorites, through: :favorite_relationships, source: :entity
+  has_many :application_ownerships, foreign_key: 'entity_id', dependent: :destroy
+  has_many :application_operatorships, foreign_key: 'entity_id', dependent: :destroy
+  has_many :group_operatorships, foreign_key: 'entity_id', dependent: :destroy
+  has_many :group_ownerships, foreign_key: 'entity_id', dependent: :destroy
   has_one :student
 
   belongs_to :title, optional: true
@@ -28,7 +28,7 @@ class Person < Entity
   accepts_nested_attributes_for :group_memberships, allow_destroy: true
   accepts_nested_attributes_for :role_assignments, allow_destroy: true
 
-  validates :loginid, :presence => true, :uniqueness => true
+  validates :loginid, presence: true, uniqueness: true
 
   before_save  :set_name_if_blank
   after_save   :recalculate_group_rule_membership
@@ -88,12 +88,12 @@ class Person < Entity
 
   # Calculates 'byline' for a Person, e.g. "PROGRAMMER V (staff:career)"
   def byline
-    if title and title.name
+    if title && title.name
       byline = title.name
     else
-      byline = ""
+      byline = ''
     end
-    byline += " (" + affiliations.map{ |x| x.name }.join(", ") + ")" if affiliations.count > 0
+    byline += ' (' + affiliations.map{ |x| x.name }.join(", ") + ')' if affiliations.count > 0
     byline
   end
 
@@ -106,7 +106,7 @@ class Person < Entity
   # Currently only have :access and :admin. Note that an :admin user will have both due to :admin
   # being merely an extension on top of permissions already granted via :access.
   def role_symbols
-    roles.select{ |r| rm_roles_ids.include? r.id }.map{ |r| r.token.underscore.to_sym }.uniq
+    roles.select { |r| rm_roles_ids.include? r.id }.map { |r| r.token.underscore.to_sym }.uniq
   end
 
   # Returns true if this person has access to the RM application in any form
@@ -150,8 +150,8 @@ class Person < Entity
     if role_symbols.include?(:admin) || role_symbols.include?(:operate)
       Application.includes(:roles, :application_ownerships, :operatorships).all
     else
-      application_ids = (application_ownerships.map{ |o| o.application_id } + application_operatorships.map{ |o| o.application_id }).uniq
-      Application.includes(:roles, :application_ownerships, :operatorships).where(:id => application_ids)
+      application_ids = (application_ownerships.map(&:application_id) + application_operatorships.map(&:application_id)).uniq
+      Application.includes(:roles, :application_ownerships, :operatorships).where(id: application_ids)
     end
   end
 
@@ -183,10 +183,10 @@ class Person < Entity
       if active
         ActivityLog.info!("Marking as active for #{name}.", ["person_#{id}"])
 
-        self.roles.each do |role|
+        roles.each do |role|
           Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
         end
-        self.organizations.each do |organization|
+        organizations.each do |organization|
           Sync.person_added_to_organization(Sync.encode(self), Sync.encode(organization))
         end
 
@@ -194,10 +194,10 @@ class Person < Entity
       else
         ActivityLog.info!("Marking as inactive for #{self.name}.", ["person_#{self.id}"])
 
-        self.roles.each do |role|
+        roles.each do |role|
           Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
         end
-        self.organizations.each do |organization|
+        organizations.each do |organization|
           Sync.person_removed_from_organization(Sync.encode(self), Sync.encode(organization))
         end
 
