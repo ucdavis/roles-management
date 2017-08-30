@@ -26,3 +26,4 @@ vendor/cache/
 .vscode
 .byebug_history
 .idea
+node_modules/
