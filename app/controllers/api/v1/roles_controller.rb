@@ -12,7 +12,7 @@ module Api
           render "api/v1/roles/show"
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load role view (show) for invalid ID #{@role_id}." }
-          render :text => "Invalid role ID '#{@role_id}'.", :status => 404
+          render plain: "Invalid role ID '#{@role_id}'.", status: 404
         end
       end
 
@@ -27,11 +27,11 @@ module Api
           else
             logger.debug "Bad api/roles UPDATE request. Errors:"
             logger.debug @role.errors.full_messages
-            render :text => "Found role but could not update for ID '#{@role_id}'.", :status => 500
+            render plain: "Found role but could not update for ID '#{@role_id}'.", status: 500
           end
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to update role for invalid ID #{@role_id}." }
-          render :text => "Invalid role ID '#{@role_id}'.", :status => 404
+          render plain: "Invalid role ID '#{@role_id}'.", status: 404
         end
       end
 

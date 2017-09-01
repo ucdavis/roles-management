@@ -69,7 +69,7 @@ module Authentication
     if params[:logoutRequest]
       # CAS single sign-out request. We currently do not handle these due to the inability to
       # invalidate sessions by ticket ID.
-      render text: "CAS single sign out acknowledged.", status: 200
+      render plain: 'CAS single sign out acknowledged.', status: 200
 
       return
     end

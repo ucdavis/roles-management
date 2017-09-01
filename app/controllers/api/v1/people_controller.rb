@@ -4,7 +4,7 @@ module Api
       before_action :load_person, only: :show
 
       def show
-        if @person and @person.active
+        if @person && @person.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid}." }
 
           @cache_key = "api/person/" + @person.loginid + '/' + @person.updated_at.try(:utc).try(:to_s, :number)
@@ -12,10 +12,10 @@ module Api
           render "api/v1/people/show"
         elsif @person and @person.active == false
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid} but person is disabled. Returning 404." }
-          render :json => "", :status => 404
+          render json: '', status: 404
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load person view (show) for invalid ID #{@params_id}." }
-          render :text => "Invalid person ID '#{@params_id}'.", :status => 404
+          render plain: "Invalid person ID '#{@params_id}'.", status: 404
         end
       end
 
