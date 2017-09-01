@@ -37,15 +37,14 @@ module Api
 
       private
 
-        def load_role
-          @role_id = params[:id].to_i # sanitize
-          @role = Role.find_by_id(@role_id)
-        end
-        
-        def role_params
-          params.require(:role).permit(role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy])
-        end
-        
+      def load_role
+        @role_id = params[:id].to_i # sanitize
+        @role = Role.find_by_id(@role_id)
+      end
+
+      def role_params
+        params.require(:role).permit(role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy])
+      end
     end
   end
 end

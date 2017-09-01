@@ -38,20 +38,20 @@ module Api
 
       private
 
-        def load_group
-          begin
-            @group_id = params[:id].to_i
-            @group = Group.find_by_id(@group_id)
-            @group = Group.find_by_name(params[:id].to_s) unless @group
-          rescue ActiveRecord::RecordNotFound
-            # This exception is acceptable. We catch it to avoid triggering the
-            # uncaught exceptions handler in ApplicationController.
-          end
+      def load_group
+        begin
+          @group_id = params[:id].to_i
+          @group = Group.find_by_id(@group_id)
+          @group = Group.find_by_name(params[:id].to_s) unless @group
+        rescue ActiveRecord::RecordNotFound
+          # This exception is acceptable. We catch it to avoid triggering the
+          # uncaught exceptions handler in ApplicationController.
         end
+      end
 
-        def group_params
-          params.require(:group_attributes).permit(:name)
-        end
+      def group_params
+        params.require(:group_attributes).permit(:name)
+      end
     end
   end
 end

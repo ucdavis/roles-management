@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   # Avoid the CSRF check if CAS is doing a single sign-out. In Rails 5, the order of the filter should be respected.
   # See http://blog.bigbinary.com/2016/04/06/rails-5-default-protect-from-forgery-prepend-false.html
-  protect_from_forgery with: :exception, :unless => Proc.new {|c| c.request.params.include?('logoutRequest') }
+  protect_from_forgery with: :exception, unless: Proc.new {|c| c.request.params.include?('logoutRequest') }
   after_action :verify_authorized
 
   rescue_from Pundit::NotAuthorizedError do |exception|
@@ -25,13 +25,13 @@ class ApplicationController < ActionController::Base
 
   protected
 
-    def permission_denied
-      flash[:error] = "You do not have permission to access that page."
-      # Machine-facing error
-      respond_to do |format|
-        format.html { redirect_to access_denied_path }
-        format.text { render "Permission denied.", status: 403 }
-        format.json { render json: {}, status: :forbidden }
-      end
+  def permission_denied
+    flash[:error] = "You do not have permission to access that page."
+    # Machine-facing error
+    respond_to do |format|
+      format.html { redirect_to access_denied_path }
+      format.text { render "Permission denied.", status: 403 }
+      format.json { render json: {}, status: :forbidden }
     end
+  end
 end
