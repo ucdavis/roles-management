@@ -68,7 +68,7 @@ module LdapPersonHelper
         log.debug "LDAP record data: #{entry.inspect}" unless log.nil?
 
         # Find or create the Person object
-        p = Person.find_or_create_by( loginid: loginid )
+        p = Person.find_or_create_by(loginid: loginid)
 
         if p.new_record?
           log.debug "Creating new person record (#{loginid} is not already in our database)." if log
