@@ -224,7 +224,7 @@ module LdapPersonHelper
     # Prefer UcdLookups for OU, company, and manager information if available
     ucdAppointmentDepartmentCode = entry[:ucdAppointmentDepartmentCode][0]
 
-    majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name = resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
+    _majorDept, ou_name, ou_manager_name, _company_code, _company_name, _company_manager_name = resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
 
     # Log if this individual has neither piece of needed information to assign them to an Organization
     if ucdAppointmentDepartmentCode.nil? && ucdStudentMajor.nil?
@@ -251,7 +251,7 @@ module LdapPersonHelper
 
       if ou
         # Set OU manager to be an owner of their OU
-        ou_manager = Person.find_or_create_by( loginid: ou_manager_name ) unless ou_manager_name.blank?
+        ou_manager = Person.find_or_create_by(loginid: ou_manager_name) unless ou_manager_name.blank?
 
         if ou_manager
           # Ensure this manager is recorded for the Organization
@@ -262,7 +262,7 @@ module LdapPersonHelper
           end
 
           # Ensure they have this person as their favorite
-          unless (ou_manager.id == p.id) or (ou_manager.favorites.include? p)
+          unless (ou_manager.id == p.id) || (ou_manager.favorites.include? p)
             # Ensure a manager has all their employees automatically set as favorites
             # keep adding them as favorites
             log&.debug "Adding favorite of '#{p.loginid}' to Organization manager '#{ou_manager_name}' (manager of Organization '#{ou.name}')"
@@ -303,9 +303,9 @@ module LdapPersonHelper
   # the relevant OU details. This is separate from determine_affiliation_details.
   def self.resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
     if ucdAppointmentDepartmentCode
-      if UcdLookups::DEPT_CODES.keys().include? ucdAppointmentDepartmentCode
+      if UcdLookups::DEPT_CODES.keys.include? ucdAppointmentDepartmentCode
         # This OU should be in the org tree
-        majorDept = nil
+        major_dept = nil
         ou_name = UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]['name']
         ou_manager_name = UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]['manager']
         company_code = UcdLookups::DEPT_CODES[ucdAppointmentDepartmentCode]['company']
@@ -313,28 +313,28 @@ module LdapPersonHelper
         company_manager_name = UcdLookups::DEPT_CODES[company_code]['manager']
       elsif ucdStudentMajor
         # Use major to determine OU (should still be in the org tree)
-        if UcdLookups::MAJORS.keys().include? ucdStudentMajor
-          majorDept = UcdLookups::MAJORS[ucdStudentMajor]
-          ou_name = UcdLookups::DEPT_CODES[majorDept]['name']
-          ou_manager_name = UcdLookups::DEPT_CODES[majorDept]['manager']
-          company_code = UcdLookups::DEPT_CODES[majorDept]['company']
+        if UcdLookups::MAJORS.keys.include? ucdStudentMajor
+          major_dept = UcdLookups::MAJORS[ucdStudentMajor]
+          ou_name = UcdLookups::DEPT_CODES[major_dept]['name']
+          ou_manager_name = UcdLookups::DEPT_CODES[major_dept]['manager']
+          company_code = UcdLookups::DEPT_CODES[major_dept]['company']
           company_name = UcdLookups::DEPT_CODES[company_code]['name']
           company_manager_name = UcdLookups::DEPT_CODES[company_code]['manager']
         end
       end
     elsif ucdStudentMajor
       # Log if the major is not in the lookup table and add them
-      if UcdLookups::MAJORS.keys().include? ucdStudentMajor
-        majorDept = UcdLookups::MAJORS[ucdStudentMajor]
-        ou_name = UcdLookups::DEPT_CODES[majorDept]['name']
-        ou_manager_name = UcdLookups::DEPT_CODES[majorDept]['manager']
-        company_code = UcdLookups::DEPT_CODES[majorDept]['company']
+      if UcdLookups::MAJORS.keys.include? ucdStudentMajor
+        major_dept = UcdLookups::MAJORS[ucdStudentMajor]
+        ou_name = UcdLookups::DEPT_CODES[major_dept]['name']
+        ou_manager_name = UcdLookups::DEPT_CODES[major_dept]['manager']
+        company_code = UcdLookups::DEPT_CODES[major_dept]['company']
         company_name = UcdLookups::DEPT_CODES[company_code]['name']
         company_manager_name = UcdLookups::DEPT_CODES[company_code]['manager']
       end
     end
 
-    return majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name # rubocop:disable Style/RedundantReturn
+    return major_dept, ou_name, ou_manager_name, company_code, company_name, company_manager_name # rubocop:disable Style/RedundantReturn
   end
 
   def self.save_or_touch(p, log)
