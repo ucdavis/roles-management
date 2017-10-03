@@ -37,9 +37,9 @@ module LdapPersonHelper
 
     import_finish = Time.now
 
-    log.info "Finished LDAP import request. LDAP operation took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
+    log.info "Finished LDAP import request. LDAP took #{ldap_import_finish - ldap_import_start}s, entire method took #{import_finish - import_start}s."
 
-    return person
+    return person # rubocop:disable Style/RedundantReturn
   end
 
   # Processes ldap_record and returns an un-saved person object,
@@ -59,21 +59,21 @@ module LdapPersonHelper
       loginid = determine_loginid(entry, log)
 
       unless loginid
-        log.debug 'Ignoring LDAP entry with no eduPersonPrincipalName and no uid. ucdPersonUUID: ' + entry[:ucdPersonUUID][0].to_s unless log.nil?
+        log&.debug 'Ignoring LDAP entry with no eduPersonPrincipalName nor uid. ucdPersonUUID: ' + entry[:ucdPersonUUID][0].to_s
         return nil
       end
 
       log.tagged loginid do
-        log.debug "Processing LDAP record for #{loginid}" unless log.nil?
-        log.debug "LDAP record data: #{entry.inspect}" unless log.nil?
+        log&.debug "Processing LDAP record for #{loginid}"
+        log&.debug "LDAP record data: #{entry.inspect}"
 
         # Find or create the Person object
         p = Person.find_or_create_by(loginid: loginid)
 
         if p.new_record?
-          log.debug "Creating new person record (#{loginid} is not already in our database)." if log
+          log&.debug "Creating new person record (#{loginid} is not already in our database)."
         else
-          log.debug "Updating existing person record (#{loginid} is in our database)." if log
+          log&.debug "Updating existing person record (#{loginid} is in our database)."
 
           unless p.active
             # We're re-activating a person, and certain LDAP actions such as adding a user to a group may trigger operations (AD sync) which rely on an up-to-date p.active flag.
@@ -94,18 +94,14 @@ module LdapPersonHelper
       end
     end
 
-    ou = nil
-    company = nil
-    ou_manager = nil
-
-    return p
+    return p # rubocop:disable Style/RedundantReturn
   end
 
   # Resolves loginid based on eduPersonPrincipalName (preferred) or uid
-  def self.determine_loginid(entry, log = nil)
+  def self.determine_loginid(entry, _log = nil)
     # First, determine their login ID from the principal name
-    eduPersonPrincipalName = entry[:eduPersonPrincipalName][0]
-    if eduPersonPrincipalName.nil?
+    edu_person_principal_name = entry[:eduPersonPrincipalName][0]
+    if edu_person_principal_name.nil?
       # If they don't have an eduPersonPrincipalName, we'll take the uid, else we'll just log this entry and skip it
       unless entry[:uid][0].nil?
         loginid = entry[:uid][0]
@@ -114,23 +110,23 @@ module LdapPersonHelper
         return nil
       end
     else
-      loginid = eduPersonPrincipalName.slice(0, eduPersonPrincipalName.index("@"))
+      loginid = edu_person_principal_name.slice(0, edu_person_principal_name.index('@'))
     end
 
-    return loginid
+    return loginid # rubocop:disable Style/RedundantReturn
   end
 
   # Resolve basic details like first and last name, email, i.e. simple values which do not require relations.
-  def self.determine_basic_details(p, entry, log = nil)
+  def self.determine_basic_details(p, entry, _log = nil)
     p.first = entry[:givenName][0]
     p.last = entry[:sn][0]
     p.email = entry[:mail][0]
 
-    if p.email and p.email.include? "ucdmc.ucdavis.edu"
+    if p.email && p.email.include?('ucdmc.ucdavis.edu')
       # Override ucdmc.ucdavis.edu e-mails.
       # p.loginid + "@ucdavis.edu" is not always their e-mail address
       # but it will be routed correctly by UCD's SMTP server
-      p.email = p.loginid + "@ucdavis.edu"
+      p.email = p.loginid + '@ucdavis.edu'
     end
 
     p.phone = entry[:telephoneNumber][0]
@@ -142,18 +138,18 @@ module LdapPersonHelper
     p.name = entry[:displayName][0]
 
     # If no displayName exists, construct one from p.first and p.last
-    if p.name.nil? and p.first and p.last
+    if p.name.nil? && p.first && p.last
       p.name = p.first + ' ' + p.last
     elsif p.name.nil?
       # No first or last either? Use loginid
       p.name = p.loginid
     end
 
-    return p
+    return p # rubocop:disable Style/RedundantReturn
   end
 
   # Resolve student data e.g. ucdStudentMajor, ucdStudentLevel (if applicable)
-  def self.determine_student_data(p, entry, log = nil)
+  def self.determine_student_data(p, entry, _log = nil)
     # Handle student-specific data
     ucd_student_major = entry[:ucdStudentMajor][0]
     ucd_student_level = entry[:ucdStudentLevel][0]
@@ -175,11 +171,11 @@ module LdapPersonHelper
       p.student.level = level
     end
 
-    return p
+    return p # rubocop:disable Style/RedundantReturn
   end
 
   # Resolve affiliation detail from ucdPersonAffiliation
-  def self.determine_affiliation_details(p, entry, log = nil)
+  def self.determine_affiliation_details(p, entry, _log = nil)
     seen_affiliations = []
 
     # A person may have multiple affiliations
@@ -196,7 +192,7 @@ module LdapPersonHelper
       p.affiliations.destroy(affiliation) unless seen_affiliations.include?(affiliation.name)
     end
 
-    return p
+    return p # rubocop:disable Style/RedundantReturn
   end
 
   # Resolve title details from ucdAppointmentTitleCode.
@@ -217,7 +213,7 @@ module LdapPersonHelper
       p.title = title
     end
 
-    return p
+    return p # rubocop:disable Style/RedundantReturn
   end
 
   # Creates and assigns OUs as needed based on
@@ -231,18 +227,18 @@ module LdapPersonHelper
     majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name = resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
 
     # Log if this individual has neither piece of needed information to assign them to an Organization
-    if (ucdAppointmentDepartmentCode == nil) && (ucdStudentMajor == nil)
-      log.warn "Individual (#{p.loginid}) has neither a ucdAppointmentDepartmentCode nor a ucdStudentMajor. FIXME" unless log.nil?
+    if ucdAppointmentDepartmentCode.nil? && ucdStudentMajor.nil?
+      log&.warn "Individual (#{p.loginid}) has neither a ucdAppointmentDepartmentCode nor a ucdStudentMajor. FIXME"
       return p
     end
 
     # OU treatment varies for graduate students vs everybody else
-    if p.affiliations.collect{ |x| x.name }.include?("student:graduate") and ucdStudentMajor
+    if p.affiliations.collect(&:name).include?("student:graduate") and ucdStudentMajor
       # Graduate student
       # make sure they're in the ucdAppointmentDepartmentCode, ucdStudentMajor
       ou = Organization.where('lower(name) = ?', ucdStudentMajor.downcase).first
       # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
-    elsif p.affiliations.collect{ |x| x.name }.include?("student:undergraduate") and ucdStudentMajor and not ucdAppointmentDepartmentCode
+    elsif p.affiliations.collect(&:name).include?("student:undergraduate") and ucdStudentMajor and not ucdAppointmentDepartmentCode
       # Undergraduate with no employment
       ou = Organization.where('lower(name) = ?', ucdStudentMajor.downcase).first
       # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
@@ -251,7 +247,7 @@ module LdapPersonHelper
       # Likely staff or faculty
 
       ou = Organization.find_by_dept_code(ucdAppointmentDepartmentCode)
-      ou = Organization.where('lower(name) = ?', ou_name.downcase).first if ou.nil? and ou_name
+      ou = Organization.where('lower(name) = ?', ou_name.downcase).first if ou.nil? && ou_name
 
       if ou
         # Set OU manager to be an owner of their OU
@@ -260,7 +256,7 @@ module LdapPersonHelper
         if ou_manager
           # Ensure this manager is recorded for the Organization
           unless ou.managers.include? ou_manager
-            log.debug "Assigning Person with login ID '#{ou_manager_name}' as a manager of Organization '#{ou.name}'" unless log.nil?
+            log&.debug "Assigning Person with login ID '#{ou_manager_name}' as a manager of Organization '#{ou.name}'"
             ActivityLog.info!("Assigning Person with login ID '#{ou_manager_name}' as a manager of Organization '#{ou.name}'.", ["person_#{ou_manager.id}", "organization_#{ou.id}", 'ldap'])
             ou.managers << ou_manager
           end
@@ -269,18 +265,18 @@ module LdapPersonHelper
           unless (ou_manager.id == p.id) or (ou_manager.favorites.include? p)
             # Ensure a manager has all their employees automatically set as favorites
             # keep adding them as favorites
-            log.debug "Adding favorite of '#{p.loginid}' to Organization manager '#{ou_manager_name}' (manager of Organization '#{ou.name}')" unless log.nil?
+            log&.debug "Adding favorite of '#{p.loginid}' to Organization manager '#{ou_manager_name}' (manager of Organization '#{ou.name}')"
             ActivityLog.info!("Adding favorite of '#{p.loginid}' to Organization manager '#{ou_manager_name}' (manager of Organization '#{ou.name}').", ["person_#{ou_manager.id}", 'ldap'])
             ou_manager.favorites << p
           end
         end
       else
-        log.warn "Unable to assign an Organization for person #{p.loginid}. ucdAppointmentDepartmentCode: '#{ucdAppointmentDepartmentCode}', ucdStudentMajor is '#{ucdStudentMajor}', ou_name resolved to '#{ou_name}'. FIXME" unless log.nil?
+        log&.warn "Unable to assign an Organization for person #{p.loginid}. ucdAppointmentDepartmentCode: '#{ucdAppointmentDepartmentCode}', ucdStudentMajor is '#{ucdStudentMajor}', ou_name resolved to '#{ou_name}'. FIXME"
       end
     end
 
-    unless p.organizations.include?(ou) or ou.nil?
-      log.debug "Adding person '#{p.loginid}' to Organization '#{ou.name}'." unless log.nil?
+    unless p.organizations.include?(ou) || ou.nil?
+      log&.debug "Adding person '#{p.loginid}' to Organization '#{ou.name}'."
       ActivityLog.info!("Adding person '#{p.loginid}' to Organization '#{ou.name}'.", ["person_#{p.id}", "organization_#{ou.id}", 'ldap'])
       p.organizations << ou
     end
@@ -295,12 +291,12 @@ module LdapPersonHelper
     p.organizations.each do |o|
       if (o != ou)
         p.organizations.destroy(o)
-        log.debug "Removing person '#{p.loginid}' from Organization '#{o.name}'" unless log.nil?
+        log&.debug "Removing person '#{p.loginid}' from Organization '#{o.name}'"
         ActivityLog.info!("Removing person '#{p.loginid}' from Organization '#{o.name}'.", ["person_#{p.id}", "organization_#{o.id}", 'ldap'])
       end
     end
 
-    return p
+    return p # rubocop:disable Style/RedundantReturn
   end
 
   # Simple function to determine _how_ a person is related to UCD (staff, faculty, student) and return
@@ -338,7 +334,7 @@ module LdapPersonHelper
       end
     end
 
-    return majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name
+    return majorDept, ou_name, ou_manager_name, company_code, company_name, company_manager_name # rubocop:disable Style/RedundantReturn
   end
 
   def self.save_or_touch(p, log)
