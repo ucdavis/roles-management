@@ -46,7 +46,7 @@ class Person < Entity
     Sync.person_removed_from_system(Sync.encode(person))
   end
 
-  def as_json(options={})
+  def as_json(_options)
     { id: id, name: name, type: 'Person', email: email,
       loginid: loginid, first: first, last: last,
       phone: phone, address: address,
@@ -61,10 +61,10 @@ class Person < Entity
       group_memberships: group_memberships.includes(:group).map{ |m| {
         id: m.id, group_id: m.group.id, name: m.group.name, calculated: m.calculated }
       },
-      group_ownerships: group_ownerships.includes(:group).map{ |o| {
+      group_ownerships: group_ownerships.includes(:group).map { |o| {
         id: o.id, group_id: o.group.id, name: o.group.name }
       },
-      group_operatorships: group_operatorships.includes(:group).map{ |o| {
+      group_operatorships: group_operatorships.includes(:group).map { |o| {
         id: o.id, group_id: o.group.id, name: o.group.name }
       },
       organizations: organizations.map{ |o| { id: o.id, name: o.name } }
@@ -88,11 +88,7 @@ class Person < Entity
 
   # Calculates 'byline' for a Person, e.g. "PROGRAMMER V (staff:career)"
   def byline
-    if title && title.name
-      byline = title.name
-    else
-      byline = ''
-    end
+    byline = title&.name.to_s
     byline += ' (' + affiliations.map(&:name).join(', ') + ')' if affiliations.count.positive?
     byline
   end

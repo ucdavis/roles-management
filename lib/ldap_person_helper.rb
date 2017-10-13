@@ -59,7 +59,7 @@ module LdapPersonHelper
       loginid = determine_loginid(entry, log)
 
       unless loginid
-        log&.debug 'Ignoring LDAP entry with no eduPersonPrincipalName nor uid. ucdPersonUUID: ' + entry[:ucdPersonUUID][0].to_s
+        log&.debug "Ignoring LDAP entry with no eduPersonPrincipalName nor uid. ucdPersonUUID: #{entry[:ucdPersonUUID][0]}"
         return nil
       end
 
@@ -76,7 +76,8 @@ module LdapPersonHelper
           log&.debug "Updating existing person record (#{loginid} is in our database)."
 
           unless p.active
-            # We're re-activating a person, and certain LDAP actions such as adding a user to a group may trigger operations (AD sync) which rely on an up-to-date p.active flag.
+            # We're re-activating a person, and certain LDAP actions such as adding a user to a group may
+            # trigger operations (AD sync) which rely on an up-to-date p.active flag.
             log.info "Existent LDAP result '#{p.loginid}' is inactive in our system. Re-activating ..."
             ActivityLog.info!("Activating #{p.name} as they are in LDAP.", ["person_#{p.id}", 'ldap'])
             p.active = true
@@ -132,7 +133,7 @@ module LdapPersonHelper
     p.phone = entry[:telephoneNumber][0]
     unless p.phone.nil?
       # Clean up number
-      p.phone = p.phone.sub("+1 ", "").gsub(" ", "")
+      p.phone = p.phone.sub('+1 ', '').gsub(' ', '')
     end
     p.address = entry[:street][0]
     p.name = entry[:displayName][0]
@@ -181,10 +182,8 @@ module LdapPersonHelper
     # A person may have multiple affiliations
     entry[:ucdPersonAffiliation].each do |affiliation_name|
       seen_affiliations << affiliation_name
-      affiliation = Affiliation.find_or_create_by( name: affiliation_name )
-      unless p.affiliations.include?(affiliation)
-        p.affiliations << affiliation
-      end
+      affiliation = Affiliation.find_or_create_by(name: affiliation_name)
+      p.affiliations << affiliation unless p.affiliations.include?(affiliation)
     end
 
     # Remove any affiliations from the person not mentioned by LDAP
@@ -205,9 +204,9 @@ module LdapPersonHelper
 
     # Only update the person if a title code was found in LDAP
     unless title_code.blank?
-      title = Title.find_or_create_by( code: title_code )
+      title = Title.find_or_create_by(code: title_code)
       if title.name.blank?
-        log.warn "Title code #{title_code} has no name (title ID ##{title.id}). Ensure title database is up-to-date."
+        log.warn "Title code #{title_code} has no name (ID ##{title.id}). Ensure title database is up-to-date."
       end
 
       p.title = title
@@ -224,7 +223,7 @@ module LdapPersonHelper
     # Prefer UcdLookups for OU, company, and manager information if available
     ucdAppointmentDepartmentCode = entry[:ucdAppointmentDepartmentCode][0]
 
-    _majorDept, ou_name, ou_manager_name, _company_code, _company_name, _company_manager_name = resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
+    _major_dept, ou_name, ou_manager_name, _company_code, _company_name, _company_manager_name = resolve_ou_relationship(ucdAppointmentDepartmentCode, ucdStudentMajor)
 
     # Log if this individual has neither piece of needed information to assign them to an Organization
     if ucdAppointmentDepartmentCode.nil? && ucdStudentMajor.nil?
@@ -233,12 +232,12 @@ module LdapPersonHelper
     end
 
     # OU treatment varies for graduate students vs everybody else
-    if p.affiliations.collect(&:name).include?("student:graduate") and ucdStudentMajor
+    if p.affiliations.collect(&:name).include?('student:graduate') && ucdStudentMajor
       # Graduate student
       # make sure they're in the ucdAppointmentDepartmentCode, ucdStudentMajor
       ou = Organization.where('lower(name) = ?', ucdStudentMajor.downcase).first
       # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
-    elsif p.affiliations.collect(&:name).include?("student:undergraduate") and ucdStudentMajor and not ucdAppointmentDepartmentCode
+    elsif p.affiliations.collect(&:name).include?('student:undergraduate') && ucdStudentMajor && !ucdAppointmentDepartmentCode
       # Undergraduate with no employment
       ou = Organization.where('lower(name) = ?', ucdStudentMajor.downcase).first
       # The dept code & manager won't be set here but should get updated once a faculty/staff comes along for that dept
