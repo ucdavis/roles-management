@@ -43,6 +43,7 @@ group :development do
   gem 'capistrano3-delayed-job', git: 'https://github.com/cthielen/capistrano3-delayed-job.git'
 
   gem 'mysql2'
+  gem 'pg', '0.20.0'
 end
 
 gem 'spring', group: :development
