@@ -26,7 +26,7 @@ module LdapPersonHelper
     if !results.empty?
       person = LdapPersonHelper.create_or_update_person_from_ldap_record(results[0], log)
     else
-      log.error "Could not import person #{loginid}, no results from LDAP or error while saving."
+      log&.error "Could not import person #{loginid}, no results from LDAP or error while saving."
 
       return false
     end
@@ -37,7 +37,7 @@ module LdapPersonHelper
 
     import_finish = Time.now
 
-    log.info "Finished LDAP import request. LDAP took #{ldap_import_finish - ldap_import_start}s, entire method took #{import_finish - import_start}s."
+    log&.info "Finished LDAP import request. LDAP took #{ldap_import_finish - ldap_import_start}s, entire method took #{import_finish - import_start}s."
 
     return person # rubocop:disable Style/RedundantReturn
   end
@@ -63,7 +63,7 @@ module LdapPersonHelper
         return nil
       end
 
-      log.tagged loginid do
+      log&.tagged loginid do
         log&.debug "Processing LDAP record for #{loginid}"
         log&.debug "LDAP record data: #{entry.inspect}"
 
@@ -78,7 +78,7 @@ module LdapPersonHelper
           unless p.active
             # We're re-activating a person, and certain LDAP actions such as adding a user to a group may
             # trigger operations (AD sync) which rely on an up-to-date p.active flag.
-            log.info "Existent LDAP result '#{p.loginid}' is inactive in our system. Re-activating ..."
+            log&.info "Existent LDAP result '#{p.loginid}' is inactive in our system. Re-activating ..."
             ActivityLog.info!("Activating #{p.name} as they are in LDAP.", ["person_#{p.id}", 'ldap'])
             p.active = true
             p.save
@@ -206,7 +206,7 @@ module LdapPersonHelper
     unless title_code.blank?
       title = Title.find_or_create_by(code: title_code)
       if title.name.blank?
-        log.warn "Title code #{title_code} has no name (ID ##{title.id}). Ensure title database is up-to-date."
+        log&.warn "Title code #{title_code} has no name (ID ##{title.id}). Ensure title database is up-to-date."
       end
 
       p.title = title
@@ -336,20 +336,20 @@ module LdapPersonHelper
     return major_dept, ou_name, ou_manager_name, company_code, company_name, company_manager_name # rubocop:disable Style/RedundantReturn
   end
 
-  def self.save_or_touch(p, log)
+  def self.save_or_touch(p, log = nil)
     if p.valid? == false
-      log.warn "Unable to create or update persion with loginid #{p.loginid}. Reason(s): "
+      log&.warn "Unable to create or update persion with loginid #{p.loginid}. Reason(s): "
       p.errors.messages.each do |field,reason|
-        log.warn "\tField #{field} #{reason}"
+        log&.warn "\tField #{field} #{reason}"
       end
     else
       # Person is valid.
       if p.changed? == false
-        log.debug "No standard record changes for #{p.loginid}"
+        log&.debug "No standard record changes for #{p.loginid}"
       else
-        log.debug "Updating the following for #{p.loginid}:"
+        log&.debug "Updating the following for #{p.loginid}:"
         p.changes.each do |field,changes|
-          log.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
+          log&.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
           ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{p.id}", 'ldap'])
         end
 
@@ -358,11 +358,11 @@ module LdapPersonHelper
 
       if p.student
         if p.student.changed? == false
-          log.debug "Student record exists but there are no changes for #{p.loginid}"
+          log&.debug "Student record exists but there are no changes for #{p.loginid}"
         else
-          log.debug "Updating the following student records for #{p.loginid}:"
+          log&.debug "Updating the following student records for #{p.loginid}:"
           p.student.changes.each do |field,changes|
-            log.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
+            log&.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
             ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{p.id}", 'ldap'])
           end
 
