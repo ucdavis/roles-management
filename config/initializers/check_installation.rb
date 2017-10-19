@@ -16,3 +16,10 @@ rescue ActiveRecord::StatementInvalid => e
 rescue Mysql2::Error => e
   # Oh well
 end
+
+if ENV['DW_URL'].blank?
+  STDERR.puts 'Environment variable dw_url not found. DW operations will likely fail.'
+end
+if ENV['DW_TOKEN'].blank?
+  STDERR.puts 'Environment variable dw_token not found. DW operations will likely fail.'
+end
