@@ -88,7 +88,7 @@ module LdapPersonHelper
         p = determine_basic_details(p, entry, log)
         p = determine_affiliation_details(p, entry, log)
         p = determine_title_details(p, entry, log)
-        p = determine_student_data(p, entry, log)
+        p = determine_major(p, entry, log)
         p = determine_ou_memberships(p, entry, log)
 
         save_or_touch(p, log) if p
@@ -150,14 +150,14 @@ module LdapPersonHelper
   end
 
   # Resolve student data e.g. ucdStudentMajor
-  def self.determine_student_data(p, entry, _log = nil)
+  def self.determine_major(p, entry, _log = nil)
     # Handle student-specific data
     ucd_student_major = entry[:ucdStudentMajor][0]
 
     # Update the list of majors if needed and record the major if needed
     unless ucd_student_major.nil?
       major = Major.find_or_create_by(name: ucd_student_major)
-      p.major = major
+      p.majors << major unless p.majors.include?(major)
     end
 
     return p # rubocop:disable Style/RedundantReturn

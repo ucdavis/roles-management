@@ -13,12 +13,12 @@ class GroupMembership < ApplicationRecord
   end
 
   validates_presence_of :group, :entity
-  validates_uniqueness_of :group_id, :scope => [:entity_id, :calculated]
+  validates_uniqueness_of :group_id, scope: [:entity_id, :calculated]
   validate :members_cannot_be_other_groups
   before_destroy :destroying_calculated_membership_requires_flag
 
-  belongs_to :group, :touch => true
-  belongs_to :entity, :touch => true
+  belongs_to :group, touch: true
+  belongs_to :entity, touch: true
 
   # Though this seems like 'group' logic, it must be done in this 'join table' class
   # as group memberships can be created outside the Group class causing
@@ -95,7 +95,7 @@ class GroupMembership < ApplicationRecord
 
   def members_cannot_be_other_groups
     if entity && entity.type == 'Group'
-      errors.add(:base, "groups cannot be members of other groups")
+      errors.add(:base, 'groups cannot be members of other groups')
     end
   end
 
@@ -138,7 +138,7 @@ class GroupMembership < ApplicationRecord
   end
 
   def destroying_calculated_membership_requires_flag
-    if calculated and not Thread.current[:destroy_calculated_membership_flag]
+    if calculated && !Thread.current[:destroy_calculated_membership_flag]
       errors.add(:calculated, "can't destroy a calculated group membership without flag properly set")
       return false
     end

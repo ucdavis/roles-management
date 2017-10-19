@@ -137,7 +137,7 @@ class Group < Entity
       logger.debug "Results flattened, count now at #{results.length} results"
 
       # Look for memberships which need to be removed
-      GroupMembership.where(:group_id => self.id, :calculated => true).each do |membership|
+      GroupMembership.where(group_id: id, calculated: true).each do |membership|
         # Note: Array.delete returns nil iff result is not in array
         if results.delete(membership.entity_id) == nil
           GroupMembership.destroying_calculated_group_membership do

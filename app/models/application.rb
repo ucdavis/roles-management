@@ -1,16 +1,16 @@
 class Application < ApplicationRecord
-  validates :name, :presence => true, :uniqueness => true
+  validates :name, presence: true, uniqueness: true
 
-  has_many :roles, :dependent => :destroy
-  has_many :application_ownerships, :dependent => :destroy
-  has_many :owners, :through => :application_ownerships, :source => :entity
-  has_many :operatorships, :dependent => :destroy, :class_name => "ApplicationOperatorship"
-  has_many :operators, :through => :operatorships, :source => :entity
+  has_many :roles, dependent: :destroy
+  has_many :application_ownerships, dependent: :destroy
+  has_many :owners, through: :application_ownerships, source: :entity
+  has_many :operatorships, dependent: :destroy, class_name: 'ApplicationOperatorship'
+  has_many :operators, through: :operatorships, source: :entity
 
-  accepts_nested_attributes_for :roles, :allow_destroy => true
-  accepts_nested_attributes_for :operatorships, :allow_destroy => true
+  accepts_nested_attributes_for :roles, allow_destroy: true
+  accepts_nested_attributes_for :operatorships, allow_destroy: true
 
-  after_create  { |application|
+  after_create { |application|
     ActivityLog.info!("Created application #{application.name}.", ["application_#{application.id}"])
   }
   after_destroy { |application|
@@ -34,12 +34,12 @@ class Application < ApplicationRecord
   end
 
   def self.csv_header
-    "Role,ID,Login ID,Email,First,Last".split(',')
+    'Role,ID,Login ID,Email,First,Last'.split(',')
   end
 
   # Retrieve ActivityLog for this application order by most recent. nil if none
   def activity
-    tag = ActivityLogTag.find_by_tag("application_#{self.id}")
+    tag = ActivityLogTag.find_by_tag("application_#{id}")
     return [] unless tag
     return tag.activity_logs.order('performed_at DESC')
   end

@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  major_id: 1
+  entity_id: 1
+
+two:
+  major_id: 1
+  entity_id: 1
