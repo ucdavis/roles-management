@@ -18,7 +18,6 @@ class Person < Entity
   has_many :application_operatorships, foreign_key: 'entity_id', dependent: :destroy
   has_many :group_operatorships, foreign_key: 'entity_id', dependent: :destroy
   has_many :group_ownerships, foreign_key: 'entity_id', dependent: :destroy
-  has_one :student
 
   belongs_to :title, optional: true
   belongs_to :major, optional: true

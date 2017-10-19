@@ -149,27 +149,15 @@ module LdapPersonHelper
     return p # rubocop:disable Style/RedundantReturn
   end
 
-  # Resolve student data e.g. ucdStudentMajor, ucdStudentLevel (if applicable)
+  # Resolve student data e.g. ucdStudentMajor
   def self.determine_student_data(p, entry, _log = nil)
     # Handle student-specific data
     ucd_student_major = entry[:ucdStudentMajor][0]
-    ucd_student_level = entry[:ucdStudentLevel][0]
-
-    # If they have any student data, ensure they own a corresponding 'student' model
-    if ucd_student_major || ucd_student_level
-      p.student = Student.new if p.student.nil?
-    end
 
     # Update the list of majors if needed and record the major if needed
     unless ucd_student_major.nil?
       major = Major.find_or_create_by(name: ucd_student_major)
       p.major = major
-    end
-
-    # Update the list of student levels if needed and record the student level if needed
-    unless ucd_student_level.nil?
-      level = StudentLevel.find_or_create_by(name: ucd_student_level)
-      p.student.level = level
     end
 
     return p # rubocop:disable Style/RedundantReturn
@@ -218,7 +206,6 @@ module LdapPersonHelper
   # Creates and assigns OUs as needed based on
   def self.determine_ou_memberships(p, entry, log = nil)
     ucdStudentMajor = entry[:ucdStudentMajor][0]
-    ucdStudentLevel = entry[:ucdStudentLevel][0]
 
     # Prefer UcdLookups for OU, company, and manager information if available
     ucdAppointmentDepartmentCode = entry[:ucdAppointmentDepartmentCode][0]
@@ -354,20 +341,6 @@ module LdapPersonHelper
         end
 
         p.save!
-      end
-
-      if p.student
-        if p.student.changed? == false
-          log&.debug "Student record exists but there are no changes for #{p.loginid}"
-        else
-          log&.debug "Updating the following student records for #{p.loginid}:"
-          p.student.changes.each do |field,changes|
-            log&.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
-            ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{p.id}", 'ldap'])
-          end
-
-          p.student.save!
-        end
       end
     end
   end

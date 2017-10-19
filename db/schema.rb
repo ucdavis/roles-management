@@ -10,51 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150721190626) do
+ActiveRecord::Schema.define(version: 20171019180618) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
-  create_table "activity_log_tag_associations", id: :serial, force: :cascade do |t|
+  create_table "activity_log_tag_associations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "activity_log_id"
     t.integer "activity_log_tag_id"
   end
 
-  create_table "activity_log_tags", id: :serial, force: :cascade do |t|
-    t.string "tag", limit: 255
+  create_table "activity_log_tags", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "tag"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "activity_logs", id: :serial, force: :cascade do |t|
-    t.string "message", limit: 255
+  create_table "activity_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "message"
     t.datetime "performed_at"
     t.integer "level"
   end
 
-  create_table "affiliation_assignments", id: :serial, force: :cascade do |t|
+  create_table "affiliation_assignments", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "affiliation_id"
     t.integer "person_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "affiliations", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
+  create_table "affiliations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
     t.index ["name"], name: "index_affiliations_on_name"
   end
 
-  create_table "api_key_users", id: :serial, force: :cascade do |t|
-    t.string "secret", limit: 255
+  create_table "api_key_users", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "secret"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "name", limit: 255
+    t.string "name"
     t.datetime "logged_in_at"
     t.index ["name", "secret"], name: "index_api_key_users_on_name_and_secret"
   end
 
-  create_table "api_whitelisted_ip_users", id: :serial, force: :cascade do |t|
-    t.string "address", limit: 255
+  create_table "api_whitelisted_ip_users", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "reason"
@@ -62,45 +59,43 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.index ["address"], name: "index_api_whitelisted_ip_users_on_address"
   end
 
-  create_table "application_operatorships", id: :serial, force: :cascade do |t|
+  create_table "application_operatorships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "application_id"
     t.integer "entity_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "parent_id"
-    t.index ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
+    t.index ["application_id", "entity_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
   end
 
-  create_table "application_ownerships", id: :integer, default: -> { "nextval('application_manager_assignments_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "application_ownerships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "entity_id"
     t.integer "application_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "parent_id"
   end
 
-  create_table "applications", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
+  create_table "applications", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "description"
-    t.string "url", limit: 255
+    t.string "url"
     t.index ["name"], name: "index_applications_on_name"
   end
 
-  create_table "classifications", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
+  create_table "classifications", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_classifications_on_name"
   end
 
-  create_table "classifications_titles", id: :serial, force: :cascade do |t|
+  create_table "classifications_titles", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "classification_id"
     t.integer "title_id"
   end
 
-  create_table "delayed_jobs", id: :serial, force: :cascade do |t|
+  create_table "delayed_jobs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "priority", default: 0
     t.integer "attempts", default: 0
     t.text "handler"
@@ -108,23 +103,23 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
-    t.string "locked_by", limit: 255
-    t.string "queue", limit: 255
+    t.string "locked_by"
+    t.string "queue"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
-  create_table "entities", id: :serial, force: :cascade do |t|
-    t.string "type", limit: 255
-    t.string "name", limit: 255
-    t.string "first", limit: 255
-    t.string "last", limit: 255
-    t.string "email", limit: 255
-    t.string "loginid", limit: 255
+  create_table "entities", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "type"
+    t.string "name"
+    t.string "first"
+    t.string "last"
+    t.string "email"
+    t.string "loginid"
     t.boolean "active", default: true
-    t.string "phone", limit: 255
-    t.string "address", limit: 255
+    t.string "phone"
+    t.string "address"
     t.integer "title_id"
     t.integer "major_id"
     t.text "description"
@@ -137,60 +132,51 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.index ["type"], name: "index_entities_on_type"
   end
 
-  create_table "group_memberships", id: :serial, force: :cascade do |t|
+  create_table "group_memberships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "group_id"
-    t.integer "entity_id"
-    t.boolean "calculated", default: false
+    t.integer "person_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "group_operatorships", id: :serial, force: :cascade do |t|
+  create_table "group_operatorships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "entity_id"
+    t.integer "person_id"
   end
 
-  create_table "group_ownerships", id: :integer, default: -> { "nextval('group_manager_assignments_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "group_ownerships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "entity_id"
+    t.integer "person_id"
   end
 
-  create_table "group_rule_results", id: :serial, force: :cascade do |t|
+  create_table "group_rule_results", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "group_rule_id"
     t.integer "entity_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "group_rules", id: :serial, force: :cascade do |t|
-    t.string "column", limit: 255
-    t.string "condition", limit: 255
-    t.string "value", limit: 255
+  create_table "group_rules", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "column"
+    t.string "condition"
+    t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "group_id"
   end
 
-  create_table "majors", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
+  create_table "majors", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_majors_on_name"
   end
 
-  create_table "organization_entity_associations", id: :serial, force: :cascade do |t|
-    t.integer "organization_id"
-    t.integer "entity_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "title_id"
-  end
-
-  create_table "organization_managers", id: :serial, force: :cascade do |t|
+  create_table "organization_managers", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "organization_id"
     t.integer "manager_id"
     t.datetime "created_at", null: false
@@ -199,16 +185,24 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.index ["organization_id"], name: "index_organization_managers_on_organization_id"
   end
 
-  create_table "organization_org_ids", id: :serial, force: :cascade do |t|
+  create_table "organization_memberships", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "organization_id"
-    t.string "org_id", limit: 255
+    t.integer "person_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "title_id"
+  end
+
+  create_table "organization_org_ids", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "organization_id"
+    t.string "org_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["org_id"], name: "index_organization_org_ids_on_org_id"
     t.index ["organization_id"], name: "index_organization_org_ids_on_organization_id"
   end
 
-  create_table "organization_parent_ids", id: :serial, force: :cascade do |t|
+  create_table "organization_parent_ids", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "organization_id"
     t.integer "parent_org_id", default: 1
     t.datetime "created_at", null: false
@@ -217,73 +211,59 @@ ActiveRecord::Schema.define(version: 20150721190626) do
     t.index ["parent_org_id"], name: "index_organization_parent_ids_on_parent_org_id"
   end
 
-  create_table "organizations", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "dept_code", limit: 255
+  create_table "organizations", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "dept_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["dept_code"], name: "index_organizations_on_dept_code"
   end
 
-  create_table "person_favorite_assignments", id: :serial, force: :cascade do |t|
+  create_table "person_favorite_assignments", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "entity_id"
     t.integer "owner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "role_assignments", id: :serial, force: :cascade do |t|
+  create_table "role_assignments", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "role_id"
     t.integer "entity_id"
-    t.integer "parent_id"
-    t.index ["role_id", "entity_id", "parent_id"], name: "index_role_assignments_on_role_id_and_entity_id_and_parent_id"
     t.index ["role_id", "entity_id"], name: "index_role_assignments_on_role_id_and_entity_id"
+    t.index ["role_id", "entity_id"], name: "index_role_assignments_on_role_id_and_entity_id_and_parent_id"
   end
 
-  create_table "roles", id: :serial, force: :cascade do |t|
-    t.string "token", limit: 255
+  create_table "roles", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "application_id"
-    t.string "name", limit: 255
-    t.string "description", limit: 255
-    t.string "ad_path", limit: 255
+    t.string "name"
+    t.string "description"
+    t.string "ad_path"
     t.datetime "last_ad_sync"
-    t.string "ad_guid", limit: 255
+    t.string "ad_guid"
     t.index ["id"], name: "index_roles_on_id"
   end
 
-  create_table "student_levels", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "students", id: :serial, force: :cascade do |t|
-    t.integer "level_id"
-    t.integer "person_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "titles", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "code", limit: 255
+  create_table "titles", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.string "code"
     t.index ["code"], name: "index_titles_on_code"
   end
 
-  create_table "versions", id: :serial, force: :cascade do |t|
+  create_table "versions", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer "versioned_id"
-    t.string "versioned_type", limit: 255
+    t.string "versioned_type"
     t.integer "user_id"
-    t.string "user_type", limit: 255
-    t.string "user_name", limit: 255
+    t.string "user_type"
+    t.string "user_name"
     t.text "modifications"
     t.integer "number"
     t.integer "reverted_from"
-    t.string "tag", limit: 255
+    t.string "tag"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_versions_on_created_at"
