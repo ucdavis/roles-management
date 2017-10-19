@@ -27,3 +27,4 @@ vendor/cache/
 .byebug_history
 .idea
 node_modules/
+.rbenv-vars
