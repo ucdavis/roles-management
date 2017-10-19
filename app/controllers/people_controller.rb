@@ -64,14 +64,14 @@ class PeopleController < ApplicationController
     end
 
     respond_to do |format|
-      format.json { render "people/search" }
+      format.json { render 'people/search' }
     end
   end
 
   # Imports a specific person from an external database. Use the above 'search' first to find possible imports
   def import
     authorize Person
-    
+
     if params[:loginid]
       require 'ldap_helper'
       require 'ldap_person_helper'
@@ -91,9 +91,9 @@ class PeopleController < ApplicationController
           ldap = LdapHelper.new
           ldap.connect
 
-          results = ldap.search("(uid=" + params[:loginid] + ")")
+          results = ldap.search("(uid=#{params[:loginid]})")
 
-          if results.length > 0
+          unless results.empty?
             @p = LdapPersonHelper.create_or_update_person_from_ldap_record(results[0], Rails.logger)
           end
 
@@ -117,7 +117,7 @@ class PeopleController < ApplicationController
         end
       end
     else
-      logger.error "Invalid request for LDAP person import. Did not specify loginid."
+      logger.error 'Invalid request for LDAP person import. Did not specify loginid.'
 
       respond_to do |format|
         format.json { render json: nil, status: 400 }
@@ -127,26 +127,30 @@ class PeopleController < ApplicationController
 
   private
 
-    def load_person
-        @person = Person.find_by_loginid(params[:id])
-        @person = Person.find_by_id!(params[:id]) unless @person
-    end
+  def load_person
+    @person = Person.find_by_loginid(params[:id])
+    @person = Person.find_by_id!(params[:id]) unless @person
+  end
 
-    def load_people
-        if params[:q]
-        people_table = Person.arel_table
-        # Only show active people in the search. The group membership token input, for example, uses this method
-        # to query people but it does not show deactivated people. This hides potential members and if they are
-        # added again, it'll throw an error that the membership already exists.
-        @people = Person.where(:active => true).where(people_table[:name].matches("%#{params[:q]}%").or(people_table[:loginid].matches("%#{params[:q]}%")).or(people_table[:first].matches("%#{params[:q]}%")).or(people_table[:last].matches("%#{params[:q]}%")))
+  def load_people
+    if params[:q]
+      people_table = Person.arel_table
+      # Only show active people in the search. The group membership token input, for example, uses this method
+      # to query people but it does not show deactivated people. This hides potential members and if they are
+      # added again, it'll throw an error that the membership already exists.
+      @people = Person.where(active: true)
+                      .where(people_table[:name].matches("%#{params[:q]}%")
+                                                .or(people_table[:loginid].matches("%#{params[:q]}%"))
+                                                .or(people_table[:first].matches("%#{params[:q]}%"))
+                                                .or(people_table[:last].matches("%#{params[:q]}%")))
 
-        @people.map()
-        else
-        @people = Person.all
-        end
+      @people.map
+    else
+      @people = Person.all
     end
-    
-    def person_params
-      params.require(:person).permit(:first, :last, :address, :email)
-    end
+  end
+
+  def person_params
+    params.require(:person).permit(:first, :last, :address, :email)
+  end
 end

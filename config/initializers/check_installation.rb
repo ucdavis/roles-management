@@ -12,4 +12,7 @@ begin
     Role.create({ token: 'admin', application_id: rm_application.id, name: 'Admin', description: 'Allow administrator access' })
   end
 rescue ActiveRecord::StatementInvalid => e
+  # Oh well
+rescue Mysql2::Error => e
+  # Oh well
 end

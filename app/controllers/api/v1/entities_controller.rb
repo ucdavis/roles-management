@@ -33,28 +33,28 @@ module Api
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load entity view (show) for invalid ID #{@entity_id}." }
           respond_to do |format|
-            format.text { render :text => "Invalid entity ID '#{@entity_id}'.", :status => 404 }
+            format.text { render plain: "Invalid entity ID '#{@entity_id}'.", status: 404 }
           end
         end
       end
 
       private
 
-        def load_entity
-          @entity_id = params[:id].to_i
-          @entity = Entity.find_by_id(@entity_id)
-        end
+      def load_entity
+        @entity_id = params[:id].to_i
+        @entity = Entity.find_by_id(@entity_id)
+      end
 
-        def load_entities
-          if params[:q]
-            entities_table = Entity.arel_table
+      def load_entities
+        if params[:q]
+          entities_table = Entity.arel_table
 
-            # Search login IDs in case of an entity-search but looking for person by login ID
-            @entities = Entity.where(:active => true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
-          else
-            @entities = Entity.where(:active => true)
-          end
+          # Search login IDs in case of an entity-search but looking for person by login ID
+          @entities = Entity.where(active: true).where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+        else
+          @entities = Entity.where(active: true)
         end
+      end
     end
   end
 end

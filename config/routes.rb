@@ -5,10 +5,10 @@ DSSRM::Application.routes.draw do
 
   namespace :api, defaults: {format: 'json'} do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
-      get "/validate" => "base#validate"
+      get '/validate' => 'base#validate'
 
-      post "people/import/:loginid" => "people#import"
-      
+      post 'people/import/:loginid' => 'people#import'
+
       resources :people
       resources :groups do
         resources :group_memberships, path: :memberships, only: [:create, :destroy]
@@ -19,8 +19,8 @@ DSSRM::Application.routes.draw do
     end
   end
 
-  get "/welcome" => 'site#welcome', :format => false, :defaults => { :format => 'html' }
-  get "/help" => 'site#help', :format => false, :defaults => { :format => 'html' }
+  get '/welcome' => 'site#welcome', format: false, :defaults => { format: 'html' }
+  get "/help" => 'site#help', format: false, :defaults => { format: 'html' }
   get "/logout" => 'site#logout'
   get "/access_denied" => 'site#access_denied'
   get "/status" => "site#status"
@@ -28,7 +28,7 @@ DSSRM::Application.routes.draw do
   # Note: 'search' queries external databases. For an internal search, use index action with GET parameter 'q=...'
   get "people/search/:term" => "people#search", :as => :people_search
   post "people/import/:loginid" => "people#import", :as => :person_import
-  
+
   get "entities/:id/activity" => "entities#activity"
   get "applications/:id/activity" => "applications#activity"
 
@@ -44,12 +44,11 @@ DSSRM::Application.routes.draw do
   resources :classifications
   resources :organizations
 
-  namespace "admin" do
-    get "dialogs/impersonate"
-    get "dialogs/ip_whitelist"
-    get "ops/impersonate/:loginid", :controller => "ops", :action => "impersonate"
-    get "ops/unimpersonate"
-    #get "ad_path_check", :controller => "ops", :action => "ad_path_check"
+  namespace 'admin' do
+    get 'dialogs/impersonate'
+    get 'dialogs/ip_whitelist'
+    get 'ops/impersonate/:loginid', controller: 'ops', action: 'impersonate'
+    get 'ops/unimpersonate'
 
     resources :api_whitelisted_ip_users
     resources :api_key_users
@@ -57,5 +56,5 @@ DSSRM::Application.routes.draw do
     resources :activity_logs
   end
 
-  root :to => redirect("/welcome")
+  root to: redirect('/welcome')
 end

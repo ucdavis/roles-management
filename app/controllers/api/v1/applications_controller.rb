@@ -27,7 +27,7 @@ module Api
           render "api/v1/applications/show"
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load application view (show) for invalid ID #{@application_id}." }
-          render :text => "Invalid application ID '#{@application_id}'.", :status => 404
+          render plain: "Invalid application ID '#{@application_id}'.", status: 404
         end
       end
 

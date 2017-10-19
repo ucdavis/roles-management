@@ -1,7 +1,7 @@
 module Api
   module V1
     class GroupMembershipsController < Api::V1::BaseController
-      before_action :set_group_membership, :only => [:destroy]
+      before_action :set_group_membership, only: [:destroy]
 
       def create
         @group_membership = GroupMembership.new(group_membership_params)
@@ -29,13 +29,13 @@ module Api
 
       private
 
-        def set_group_membership
-          @group_membership = GroupMembership.find(params[:id])
-        end
+      def set_group_membership
+        @group_membership = GroupMembership.find(params[:id])
+      end
 
-        def group_membership_params
-          params.permit(:id, :entity_id, :group_id)
-        end
+      def group_membership_params
+        params.permit(:id, :entity_id, :group_id)
+      end
     end
   end
 end

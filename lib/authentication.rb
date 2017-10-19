@@ -50,7 +50,7 @@ module Authentication
     when :api_key
       return Authentication.actual_user
     when :cas
-      if self.impersonating?
+      if impersonating?
         return Authentication.effective_user
       else
         return Authentication.actual_user
@@ -69,7 +69,7 @@ module Authentication
     if params[:logoutRequest]
       # CAS single sign-out request. We currently do not handle these due to the inability to
       # invalidate sessions by ticket ID.
-      render text: "CAS single sign out acknowledged.", status: 200
+      render plain: 'CAS single sign out acknowledged.', status: 200
 
       return
     end
@@ -115,20 +115,20 @@ module Authentication
       @api_user = ApiKeyUser.find_by_name_and_secret(name, secret)
 
       if @api_user
-        logger.info "API authenticated via application key"
+        logger.info 'API authenticated via application key'
         session[:user_id] = name
         session[:auth_via] = :api_key
-        @api_user.logged_in_at = DateTime.now()
+        @api_user.logged_in_at = DateTime.now
         @api_user.save
         Authentication.actual_user = @api_user
         return
       end
 
-      logger.info "API authentication failed. Application key is wrong."
+      logger.info 'API authentication failed. Application key is wrong.'
       # Note that they will only get 'access denied' if they supplied a name and
       # failed. If they supplied nothing for HTTP Auth, this block will get passed
       # over.
-      render :text => "Invalid API key (#{name}).", :status => 401
+      render plain: "Invalid API key (#{name}).", status: 401
 
       return
     }
@@ -148,7 +148,7 @@ module Authentication
     if session[:cas_user]
       # CAS session exists. Valid user account?
       @user = Person.includes(:role_assignments, :roles).find_by_loginid(session[:cas_user])
-      @user = nil if @user and @user.active == false # Don't allow disabled users to log in
+      @user = nil if @user && @user.active == false # Don't allow disabled users to log in
 
       if @user
         # Valid user found through CAS.
@@ -157,7 +157,7 @@ module Authentication
 
         Authentication.actual_user = @user
 
-        @user.logged_in_at = DateTime.now()
+        @user.logged_in_at = DateTime.now
         @user.save
 
         # They are a valid @user but have no roles, so redirect them to access_denied
@@ -170,9 +170,9 @@ module Authentication
         logger.info "Valid CAS user (#{@user.loginid}) is in our database and has proper roles. Passes authentication."
         ActivityLog.record!("Logged in.", ["person_#{@user.id}"])
 
-        if params[:ticket] and params[:ticket].include? "cas"
+        if params[:ticket] and params[:ticket].include? 'cas'
           # This is a session-initiating CAS login, so remove the damn GET parameter from the URL for UX
-          redirect_to :controller => params[:controller], :action => params[:action]
+          redirect_to controller: params[:controller], action: params[:action]
         end
 
         return
@@ -184,7 +184,7 @@ module Authentication
         logger.info "Valid CAS user (#{session[:cas_user]}) is not in our database. Fails authentication."
         flash[:error] = 'You have authenticated but are not allowed access.'
 
-        redirect_to :controller => "site", :action => "access_denied"
+        redirect_to controller: 'site', action: 'access_denied'
       end
     end
   end

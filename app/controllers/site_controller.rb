@@ -19,14 +19,14 @@ class SiteController < ApplicationController
   # Use this for future checks
   def status
     respond_to do |format|
-      format.json { render :json => { status: 'ok' } }
+      format.json { render json: { status: 'ok' } }
     end
   end
 
   def access_denied
     logger.info "#{request.remote_ip}: Loaded access denied page."
     @show_unimpersonate_link = impersonating?
-    render :status => :forbidden
+    render status: :forbidden
   end
 
   def logout

@@ -13,7 +13,7 @@ module Api
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load group view (show) for invalid ID #{@group_id}." }
 
-          render text: "Invalid group ID '#{@group_id}'.", status: 404
+          render plain: "Invalid group ID '#{@group_id}'.", status: 404
         end
       end
 
@@ -28,30 +28,30 @@ module Api
           else
             logger.debug "Bad api/group UPDATE request. Errors:"
             logger.debug @group.errors.full_messages
-            render text: "Found group but could not update for ID '#{@group_id}'.", status: 500
+            render plain: "Found group but could not update for ID '#{@group_id}'.", status: 500
           end
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to update group for invalid ID #{@group_id}." }
-          render :text => "Invalid group ID '#{@group_id}'.", :status => 404
+          render plain: "Invalid group ID '#{@group_id}'.", status: 404
         end
       end
 
       private
 
-        def load_group
-          begin
-            @group_id = params[:id].to_i
-            @group = Group.find_by_id(@group_id)
-            @group = Group.find_by_name(params[:id].to_s) unless @group
-          rescue ActiveRecord::RecordNotFound
-            # This exception is acceptable. We catch it to avoid triggering the
-            # uncaught exceptions handler in ApplicationController.
-          end
+      def load_group
+        begin
+          @group_id = params[:id].to_i
+          @group = Group.find_by_id(@group_id)
+          @group = Group.find_by_name(params[:id].to_s) unless @group
+        rescue ActiveRecord::RecordNotFound
+          # This exception is acceptable. We catch it to avoid triggering the
+          # uncaught exceptions handler in ApplicationController.
         end
+      end
 
-        def group_params
-          params.require(:group_attributes).permit(:name)
-        end
+      def group_params
+        params.require(:group_attributes).permit(:name)
+      end
     end
   end
 end

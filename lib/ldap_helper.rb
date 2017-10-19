@@ -4,21 +4,21 @@ class LdapHelper
   # Connects to the LDAP server. Settings are stored in Rails.root/config/ldap.yml
   def connect(log = nil)
     begin
-      ldap_settings = YAML.load_file("#{Rails.root.to_s}/config/ldap.yml")['ldap']
-    rescue Errno::ENOENT => e
+      ldap_settings = YAML.load_file("#{Rails.root}/config/ldap.yml")['ldap']
+    rescue Errno::ENOENT
       STDERR.puts "You need to configure #{Rails.root.join('config', 'ldap.yml')}."
       return false
     end
-    
+
     server = {
-      :host => ldap_settings['host'],
-      :base => ldap_settings['search_dn'],
-      :port => ldap_settings['port'],
-      :encryption => { :method => :simple_tls },
-      :auth => {
-        :method => :simple,
-        :username => ldap_settings['base_dn'],
-        :password => ldap_settings['base_pw']
+      host: ldap_settings['host'],
+      base: ldap_settings['search_dn'],
+      port: ldap_settings['port'],
+      encryption: { method: :simple_tls },
+      auth: {
+        method: :simple,
+        username: ldap_settings['base_dn'],
+        password: ldap_settings['base_pw']
       }
     }
 
@@ -27,58 +27,58 @@ class LdapHelper
     begin
       @conn.bind
     rescue Net::LDAP::Error => e
-      log.error "LdapHelper could not connect to LDAP. Exception: #{e}" if log
+      log&.error "LdapHelper could not connect to LDAP. Exception: #{e}"
       return false
     end
 
-    return true
+    return true # rubocop:disable Style/RedundantReturn
   end
 
   # Requires a block be passed:
   #   search("ldap_query").do |p| ... end
   # Returns false on no results or error, else return is undefined.
   def search(term, log = nil)
-    log.debug "LdapHelper searching for '#{term}'" if log
+    log&.debug "LdapHelper searching for '#{term}'"
 
     begin
-      results = @conn.search(:filter => Net::LDAP::Filter.construct(term))
+      results = @conn.search(filter: Net::LDAP::Filter.construct(term))
     rescue Net::LDAP::Error => e
-      log.error "LdapHelper hit an error while querying LDAP with term '#{term}'. Exception: #{e}" if log
+      log&.error "LdapHelper hit an error while querying LDAP with term '#{term}'. Exception: #{e}"
       return false
     end
 
-    return results
+    return results # rubocop:disable Style/RedundantReturn
   end
 
   def build_filters(log = nil)
     # Build needed LDAP filters
     # Staff filter
-    staffFilter = '(&(ucdPersonAffiliation=staff*)(|'
-    for d in UcdLookups::DEPT_CODES.keys()
-      staffFilter = staffFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
+    staff_filter = '(&(ucdPersonAffiliation=staff*)(|'
+    UcdLookups::DEPT_CODES.keys.each do |d|
+      staff_filter += '(ucdAppointmentDepartmentCode=' + d + ')'
     end
-    staffFilter = staffFilter + '))'
+    staff_filter += '))'
 
-    log.debug "Query: " + staffFilter if log
+    log&.debug "Query: #{staff_filter}"
 
     # Faculty filter
-    facultyFilter = '(&(ucdPersonAffiliation=faculty*)(|'
-    for d in UcdLookups::DEPT_CODES.keys()
-        facultyFilter = facultyFilter + '(ucdAppointmentDepartmentCode=' + d + ')'
+    faculty_filter = '(&(ucdPersonAffiliation=faculty*)(|'
+    UcdLookups::DEPT_CODES.keys.each do |d|
+      faculty_filter += '(ucdAppointmentDepartmentCode=' + d + ')'
     end
-    facultyFilter = facultyFilter + '))'
+    faculty_filter += '))'
 
-    log.debug "Query: " + facultyFilter if log
+    log&.debug "Query: #{faculty_filter}"
 
     # Student filter
-    studentFilter = '(&(ucdPersonAffiliation=student:graduate)(|'
-    for m in UcdLookups::MAJORS.keys()
-         studentFilter = studentFilter + '(ucdStudentMajor=' + m + ')'
+    student_filter = '(&(ucdPersonAffiliation=student:graduate)(|'
+    UcdLookups::MAJORS.keys.each do |m|
+      student_filter += '(ucdStudentMajor=' + m + ')'
     end
-    studentFilter = studentFilter + '))'
+    student_filter += '))'
 
-    log.debug "Query: " + studentFilter if log
+    log&.debug "Query: #{student_filter}"
 
-    [staffFilter,facultyFilter,studentFilter]
+    [staff_filter, faculty_filter, student_filter]
   end
 end
