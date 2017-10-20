@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171019182132) do
+ActiveRecord::Schema.define(version: 20171020180823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -130,6 +130,12 @@ ActiveRecord::Schema.define(version: 20171019182132) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "logged_in_at"
+    t.boolean "is_employee"
+    t.boolean "is_hs_employee"
+    t.boolean "is_faculty"
+    t.boolean "is_student"
+    t.boolean "is_staff"
+    t.boolean "is_external"
     t.index ["id"], name: "index_entities_on_id"
     t.index ["loginid"], name: "index_entities_on_loginid"
     t.index ["name"], name: "index_entities_on_name"
@@ -264,6 +270,7 @@ ActiveRecord::Schema.define(version: 20171019182132) do
   create_table "titles", id: :serial, force: :cascade do |t|
     t.string "name", limit: 255
     t.string "code", limit: 255
+    t.string "unit", limit: 3
     t.index ["code"], name: "index_titles_on_code"
   end
 
