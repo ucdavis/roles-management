@@ -20,12 +20,18 @@ namespace :dw do
 
       next unless dw_person
 
+      # Process the isStaff, isFaculty, etc. flags
       p.is_employee = dw_person['person']['isEmployee']
       p.is_hs_employee = dw_person['person']['isHSEmployee']
       p.is_faculty = dw_person['person']['isFaculty']
       p.is_student = dw_person['person']['isStudent']
       p.is_staff = dw_person['person']['isStaff']
       p.is_external = dw_person['person']['isExternal']
+
+      # Process any majors (SIS associations)
+      # TODO: Ensure this removes old majors, adds new majors, and does not cause unnecessary DB activity
+      p.majors = dw_person['sisAssociations'].map { |sis_assoc| Major.find_or_create_by(name: sis_assoc['majorName']) }
+
       p.save!
     end
   end

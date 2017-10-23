@@ -33,11 +33,6 @@ module DssDw
     # person.phone = json['contactInfo']['workPhone']
     # person.address = json['contactInfo']['addrStreet']
 
-    # # TODO: Expand to support multiple majors
-    # unless json['sisAssociations'].empty?
-    #   # TODO: Make this a find_or_create_by()
-    #   person.major = Major.find_by(name: json['sisAssociations'][0]['majorName'])
-    # end
     # # TODO: Expand to support multiple titles
     # unless json['ppsAssociations'].empty?
     #   # TODO: Make this a find_or_create_by()
