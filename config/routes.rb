@@ -20,17 +20,17 @@ DSSRM::Application.routes.draw do
   end
 
   get '/welcome' => 'site#welcome', format: false, :defaults => { format: 'html' }
-  get "/help" => 'site#help', format: false, :defaults => { format: 'html' }
-  get "/logout" => 'site#logout'
-  get "/access_denied" => 'site#access_denied'
-  get "/status" => "site#status"
+  get '/help' => 'site#help', format: false, :defaults => { format: 'html' }
+  get '/logout' => 'site#logout'
+  get '/access_denied' => 'site#access_denied'
+  get '/status' => 'site#status'
 
   # Note: 'search' queries external databases. For an internal search, use index action with GET parameter 'q=...'
-  get "people/search/:term" => "people#search", :as => :people_search
-  post "people/import/:loginid" => "people#import", :as => :person_import
+  get 'people/search/:term' => 'people#search', :as => :people_search
+  post 'people/import/:loginid' => 'people#import', :as => :person_import
 
-  get "entities/:id/activity" => "entities#activity"
-  get "applications/:id/activity" => "applications#activity"
+  get 'entities/:id/activity' => 'entities#activity'
+  get 'applications/:id/activity' => 'applications#activity'
 
   resources :applications
   resources :entities

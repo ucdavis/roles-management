@@ -24,7 +24,7 @@ class PersonTest < ActiveSupport::TestCase
     p.first = nil
     p.last = nil
     p.name = nil
-    p.loginid = "deleteme"
+    p.loginid = 'deleteme'
 
     Sync.reset_trigger_test_counts
 
@@ -39,7 +39,7 @@ class PersonTest < ActiveSupport::TestCase
     p.first = nil
     p.last = nil
     p.name = nil
-    p.loginid = "deleteme"
+    p.loginid = 'deleteme'
 
     p.save!
 

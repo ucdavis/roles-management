@@ -2,11 +2,11 @@ class PersonPolicy < BasePolicy
   def index?
     user.has_access?
   end
-  
+
   def show?
     user.has_access?
   end
-  
+
   def update?
     # A user can update a person ...
 
@@ -21,20 +21,20 @@ class PersonPolicy < BasePolicy
         end
       end
     end
-    
+
     super
   end
-  
+
   def search?
     return true if user.has_access?
     false
   end
-  
+
   def import?
     return true if user.has_access?
     false
   end
-  
+
   def activity?
     return true if user.is_admin?
     false

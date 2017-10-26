@@ -6,7 +6,7 @@
 class Role < ApplicationRecord
   # SYNC_ROLE_ATTRS is the list of role attribtues we care to notify
   # the sync subsystem about.
-  SYNC_ROLE_ATTRS = ["ad_path", "token", "name", "description"]
+  SYNC_ROLE_ATTRS = %w[ad_path token name description].freeze
 
   validates :application_id, presence: true
   validates :token, uniqueness: { scope: :application_id, message: 'token must be unique per application' }
@@ -81,7 +81,7 @@ class Role < ApplicationRecord
 
   def trigger_sync_if_changed
     if (saved_changes.keys & SYNC_ROLE_ATTRS).length > 0
-      Sync.role_changed(Sync.encode(self, true).merge({ changes: saved_changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } }))
+      Sync.role_changed(Sync.encode(self, true).merge( changes: saved_changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } ))
     end
   end
 end

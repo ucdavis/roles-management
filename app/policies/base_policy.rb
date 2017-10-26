@@ -14,7 +14,6 @@ class BasePolicy
   def show?
     return true if user.is_admin?
     false
-    #scope.where(:id => record.id).exists?
   end
 
   def create?

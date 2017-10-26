@@ -523,14 +523,14 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     group.reload
 
-    assert group.members.length == 1, "group should have a member"
+    assert group.members.length == 1, 'group should have a member'
 
     @person.organizations.destroy(organizations(:office_of_toplevel))
     @person.save!
 
     group.reload
 
-    assert group.members.length == 0, "group should have no members"
+    assert group.members.length == 0, 'group should have no members'
   end
 
   test "creating a person should associate them with the proper groups" do
