@@ -122,4 +122,8 @@ class PersonTest < ActiveSupport::TestCase
   test 'mass assigning majors will call add/remove callbacks appropriately' do
     assert false
   end
+
+  test 'mass assigning PPS associations will call add/remove callbacks appropriately' do
+    assert false
+  end
 end
