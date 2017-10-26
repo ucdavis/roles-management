@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171026174011) do
+ActiveRecord::Schema.define(version: 20171026212915) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,15 @@ ActiveRecord::Schema.define(version: 20171026174011) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "officialName", null: false
+    t.string "displayName", null: false
+    t.string "abbreviation", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "entities", id: :serial, force: :cascade do |t|
@@ -228,6 +237,16 @@ ActiveRecord::Schema.define(version: 20171026174011) do
   create_table "person_favorite_assignments", id: :serial, force: :cascade do |t|
     t.integer "entity_id"
     t.integer "owner_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "pps_associations", force: :cascade do |t|
+    t.integer "person_id", null: false
+    t.integer "title_id", null: false
+    t.integer "department_id", null: false
+    t.integer "association_rank", null: false
+    t.integer "position_type_code", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

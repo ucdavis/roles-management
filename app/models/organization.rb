@@ -1,9 +1,9 @@
 class Organization < ApplicationRecord
   has_many :org_ids, class_name: 'OrganizationOrgId', dependent: :destroy
   has_many :parent_org_ids, class_name: 'OrganizationParentId', dependent: :destroy
-  has_many :parent_organizations, :through => :parent_org_ids, :source => :parent_organization
-  has_many :child_org_ids, :class_name => 'OrganizationParentId', :foreign_key => :parent_org_id, :dependent => :destroy
-  has_many :child_organizations, :through => :child_org_ids, :source => :organization
+  has_many :parent_organizations, through: :parent_org_ids, source: :parent_organization
+  has_many :child_org_ids, class_name: 'OrganizationParentId', foreign_key: :parent_org_id, dependent: :destroy
+  has_many :child_organizations, through: :child_org_ids, source: :organization
   has_many :organization_entity_associations
   has_many :entities, through: :organization_entity_associations
   has_many :organization_managers
@@ -24,14 +24,14 @@ class Organization < ApplicationRecord
     end
 
     # Add all children organization's entities
-    child_organizations.to_a.each do |o| #all.each do |o|
+    child_organizations.to_a.each do |o|
       o.flattened_entities.each do |e|
         results << e
       end
     end
 
     # Only return a unique list
-    results.uniq{ |x| x.id }
+    results.uniq(&:id)
   end
 
   # Returns true if child_org_name is found anywhere in this

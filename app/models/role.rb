@@ -20,12 +20,12 @@ class Role < ApplicationRecord
   after_save :trigger_sync_if_changed
 
   # Role activity is tagged under the application the role belongs to.
-  after_create  { |role|
+  after_create do |role|
     ActivityLog.info!("Created role #{role.token}.", ["application_#{role.application_id}"])
-  }
-  after_destroy { |role|
+  end
+  after_destroy do |role|
     ActivityLog.info!("Deleted role #{role.token}.", ["application_#{role.application_id}"])
-  }
+  end
 
   # DO NOT add entity_ids to this list - removing entities that way goes through
   # a has_many :through and will _not_ trigger important before_destroy callbacks in RoleAssignment.
@@ -43,13 +43,7 @@ class Role < ApplicationRecord
   end
 
   def to_csv
-    data = []
-
-    members.each do |m|
-      data << [token, m.id, m.loginid, m.email, m.first, m.last] if m.active
-    end
-
-    return data
+    members.select(&:active).map{ |m| [token, m.id, m.loginid, m.email, m.first, m.last] }
   end
 
   # Different from entities, 'members' takes all people and all people from groups
@@ -74,14 +68,15 @@ class Role < ApplicationRecord
   private
 
   def ad_path_cannot_be_blank_if_present
-    if ad_path and ad_path.blank?
-      ad_path = nil
-    end
+    self.ad_path = nil if ad_path.blank?
   end
 
   def trigger_sync_if_changed
-    if (saved_changes.keys & SYNC_ROLE_ATTRS).length > 0
-      Sync.role_changed(Sync.encode(self, true).merge( changes: saved_changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } ))
-    end
+    return if (saved_changes.keys & SYNC_ROLE_ATTRS).empty?
+
+    Sync.role_changed(
+      Sync.encode(self, true)
+          .merge(changes: saved_changes.select { |c, _v| SYNC_ROLE_ATTRS.include?(c) })
+    )
   end
 end
