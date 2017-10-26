@@ -19,7 +19,7 @@ class Person < Entity
   has_many :group_operatorships, foreign_key: 'entity_id', dependent: :destroy
   has_many :group_ownerships, foreign_key: 'entity_id', dependent: :destroy
   has_many :major_assignments, foreign_key: 'entity_id', dependent: :destroy
-  has_many :majors, through: :major_assignments
+  has_many :majors, through: :major_assignments, dependent: :destroy
 
   belongs_to :title, optional: true
 
@@ -93,11 +93,6 @@ class Person < Entity
     byline
   end
 
-  # Compute their classifications based on their title
-  def classifications
-    title.classifications
-  end
-
   # Returns a list of symbols as required by the authorization layer.
   # Currently only have :access and :admin. Note that an :admin user will have both due to :admin
   # being merely an extension on top of permissions already granted via :access.
@@ -154,7 +149,6 @@ class Person < Entity
   def recalculate_group_rule_membership
     if saved_change_to_attribute?(:title_id)
       GroupRule.resolve_target!(:title, id)
-      GroupRule.resolve_target!(:classification, id)
     end
     if saved_change_to_attribute?(:loginid)
       GroupRule.resolve_target!(:loginid, id)

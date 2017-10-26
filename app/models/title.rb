@@ -1,5 +1,4 @@
 class Title < ApplicationRecord
-  has_and_belongs_to_many :classifications
   has_many :people
 
   validates :name, presence: true

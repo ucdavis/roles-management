@@ -13,8 +13,16 @@ namespace :dw do
   end
 
   desc 'Augment existing users with IAM data'
-  task augment: :environment do |t, args|
-    Person.all.each do |p|
+  task :augment, [:loginid] => :environment do |t, args|
+    people = []
+
+    if args[:loginid]
+      people << Person.find_by(loginid: args[:loginid])
+    else
+      people = Person.all
+    end
+
+    people.each do |p|
       puts "Processing #{p.loginid} ..."
       dw_person = DssDw.fetch_person_by_loginid(p.loginid, Rails.logger)
 
@@ -29,7 +37,6 @@ namespace :dw do
       p.is_external = dw_person['person']['isExternal']
 
       # Process any majors (SIS associations)
-      # TODO: Ensure this removes old majors, adds new majors, and does not cause unnecessary DB activity
       p.majors = dw_person['sisAssociations'].map { |sis_assoc| Major.find_or_create_by(name: sis_assoc['majorName']) }
 
       p.save!

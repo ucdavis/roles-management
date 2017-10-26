@@ -531,29 +531,6 @@ class GroupRuleTest < ActiveSupport::TestCase
     group.reload
 
     assert group.members.length == 0, "group should have no members"
-
-    # Test that setting a person's classification fills in a group
-    group.rules.destroy_all
-    group_rule = GroupRule.new({ column: 'classification', condition: 'is', value: 'Programmer', group_id: group.id })
-    group.rules << group_rule
-
-    group.reload
-
-    assert group.members.length == 0, "group should have no members"
-
-    @person.title = classifications(:programmer).titles.first
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
-
-    @person.title = nil
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 0, "group should have no members"
   end
 
   test "creating a person should associate them with the proper groups" do

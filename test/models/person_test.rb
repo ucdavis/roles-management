@@ -7,15 +7,15 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   # Ensure only loginid is allowed. This is sometimes necessary when importing from LDAP.
-  test "blank first, last, and name are allowed" do
+  test 'blank first, last, and name are allowed' do
     p = Person.new
 
     p.first = nil
     p.last = nil
     p.name = nil
-    p.loginid = "deleteme"
+    p.loginid = 'deleteme'
 
-    assert p.valid? == true, "should be valid with only loginid set"
+    assert p.valid? == true, 'should be valid with only loginid set'
   end
 
   test "creating a person fires off 'add_to_system' trigger" do
@@ -117,5 +117,9 @@ class PersonTest < ActiveSupport::TestCase
     assert p.organizations.count == 1, "casuser should have exactly one organization but has #{p.organizations.count}"
 
     assert Sync.trigger_test_count(:add_to_organization) == 1, "remove_from_organization should have been triggered once but was triggered #{Sync.trigger_test_count(:remove_from_organization)} times"
+  end
+
+  test 'mass assigning majors will call add/remove callbacks appropriately' do
+    assert false
   end
 end

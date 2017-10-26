@@ -1,7 +1,7 @@
 # GroupRule stores the results of its rule in a cache using GroupRuleResult.
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ApplicationRecord
-  VALID_COLUMNS = %w[title major affiliation classification loginid department organization].freeze
+  VALID_COLUMNS = %w[title major affiliation loginid department organization].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]
@@ -124,22 +124,6 @@ class GroupRule < ApplicationRecord
           end
 
           touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(organization, entity_id)
-        end
-      when :classification
-        if entity.title
-          entity.title.classifications.each do |classification|
-            GroupRule.where(column: 'classification').each do |rule|
-              if rule.condition == 'is'
-                if rule.value == classification.name
-                  logger.info "Matched 'classification is' rule. Recording result."
-                  rule.results << GroupRuleResult.new(entity_id: entity_id)
-                  touched_group_ids << rule.group.id
-                end
-              elsif rule.condition == 'is not'
-                logger.warn "Cannot GroupRule.resolve_target! for 'classification is not'. Unimplemented behavior."
-              end
-            end
-          end
         end
       when :loginid
         GroupRule.where(column: 'loginid').each do |rule|
@@ -293,23 +277,6 @@ class GroupRule < ApplicationRecord
       else
         logger.warn 'Organization not found'
       end
-    when 'classification'
-      classification = Classification.find_by_name(value)
-      unless classification == nil
-        title_ids = Title.where(id: classification.title_ids)
-        ps = Person.where(title_id: title_ids)
-        case condition
-        when 'is'
-          p += ps
-        when 'is not'
-          logger.warn " -- 'classification is not' will not be resolved within GroupRule"
-        else
-          # unsupported
-          logger.warn 'Unsupported condition for classification in group rule.'
-        end
-      else
-        logger.warn 'Classification not found'
-      end
     when 'loginid'
       ps = Person.where(loginid: value).select(:id)
       case condition
@@ -358,8 +325,6 @@ class GroupRule < ApplicationRecord
       matched = person.organizations.include? Organization.find_by_name(value)
     when 'organization'
       matched = person.organizations.include? Organization.find_by_name(value)
-    when 'classification'
-      matched = person.classification == Classification.find_by_name(value)
     when 'loginid'
       matched = person.loginid == value
     end

@@ -286,8 +286,6 @@ class DssRm.Views.GroupShow extends Backbone.View
         lookahead_url = Routes.titles_path()
       when "affiliation"
         lookahead_url = Routes.affiliations_path()
-      when "classification"
-        lookahead_url = Routes.classifications_path()
     $.ajax(
       url: lookahead_url
       data:

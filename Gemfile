@@ -75,7 +75,7 @@ gem 'pundit'
 # For LDAP & Active Directory support
 gem 'net-ldap', require: false
 
-gem 'js-routes', require: false
+gem 'js-routes'
 
 # For scheduled tasks
 gem 'whenever', require: false
