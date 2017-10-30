@@ -683,4 +683,121 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     assert group.members.length == 1, "group should have a member"
   end
+
+  test "Rule 'is_faculty' works" do
+    # Ensure a group has a rule
+    group = entities(:groupWithNothing)
+
+    assert group.roles.length == 0, "looks like groupWithNothing has a role"
+    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+
+    @person.is_faculty = true
+    @person.save!
+
+    # Test basic rule creation matches existing people
+    assert group.members.length == 0, "group should have no members"
+
+    group_rule = GroupRule.new({ column: 'is_faculty', condition: 'is', value: true, group_id: group.id })
+    group.rules << group_rule
+
+    group.reload
+
+    assert group.members.length == 1, "group should have a member"
+
+    # Test changing a person affects existing rule
+    @person.is_faculty = false
+    @person.save!
+
+    group.reload
+
+    assert group.members.length == 0, "group should have no members"
+
+    # Test changing a person affects existing rule
+    @person.is_faculty = true
+    @person.save!
+
+    group.reload
+
+    assert group.members.length == 1, "group should have a member"
+  end
+
+  test "Rule 'is_student' works" do
+    # Ensure a group has a rule
+    group = entities(:groupWithNothing)
+
+    assert group.roles.length == 0, "looks like groupWithNothing has a role"
+    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+
+    @person.is_student = true
+    @person.save!
+
+    # Test basic rule creation matches existing people
+    assert group.members.length == 0, "group should have no members"
+
+    group_rule = GroupRule.new({ column: 'is_student', condition: 'is', value: true, group_id: group.id })
+    group.rules << group_rule
+
+    group.reload
+
+    assert group.members.length == 1, "group should have a member"
+
+    # Test changing a person affects existing rule
+    @person.is_student = false
+    @person.save!
+
+    group.reload
+
+    assert group.members.length == 0, "group should have no members"
+
+    # Test changing a person affects existing rule
+    @person.is_student = true
+    @person.save!
+
+    group.reload
+
+    assert group.members.length == 1, "group should have a member"
+  end
+
+  test "Rule 'is_employee' works" do
+    # Ensure a group has a rule
+    group = entities(:groupWithNothing)
+
+    assert group.roles.length == 0, "looks like groupWithNothing has a role"
+    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
+    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
+    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+
+    @person.is_employee = true
+    @person.save!
+
+    # Test basic rule creation matches existing people
+    assert group.members.length == 0, "group should have no members"
+
+    group_rule = GroupRule.new({ column: 'is_employee', condition: 'is', value: true, group_id: group.id })
+    group.rules << group_rule
+
+    group.reload
+
+    assert group.members.length == 1, "group should have a member"
+
+    # Test changing a person affects existing rule
+    @person.is_employee = false
+    @person.save!
+
+    group.reload
+
+    assert group.members.length == 0, "group should have no members"
+
+    # Test changing a person affects existing rule
+    @person.is_employee = true
+    @person.save!
+
+    group.reload
+
+    assert group.members.length == 1, "group should have a member"
+  end
 end
