@@ -12,7 +12,13 @@ module DssDw
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Get.new(uri.request_uri)
-    response = http.request(request)
+
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED => e
+      STDERR.puts "Unable to connect to #{DW_URL}. Check that DW is running."
+      return nil # Unable to connect to DW
+    end
 
     return nil if response.code.to_i == 404
 

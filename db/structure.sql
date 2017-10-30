@@ -988,7 +988,9 @@ CREATE TABLE sis_associations (
     major_id integer,
     entity_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    level_code character varying(2),
+    association_rank integer
 );
 
 
@@ -1985,6 +1987,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171026174011'),
 ('20171026212019'),
 ('20171026212915'),
-('20171030210853');
+('20171030210853'),
+('20171030211820');
 
 

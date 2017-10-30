@@ -50,16 +50,32 @@ namespace :dw do
       p.is_external = dw_person['person']['isExternal']
 
       # Process any majors (SIS associations)
-      p.majors = dw_person['sisAssociations'].map { |sis_assoc| Major.find_or_create_by(name: sis_assoc['majorName']) }
+      # p.majors = dw_person['sisAssociations'].map { |sis_assoc| Major.find_or_create_by(name: sis_assoc['majorName']) }
+      begin
+        p.sis_associations = dw_person['sisAssociations'].map { |sis_assoc_json|
+          SisAssociation.find_or_create_by(entity_id: p.id,
+                                           major: Major.find_by(name: sis_assoc_json['majorName']),
+                                           association_rank: sis_assoc_json['assocRank'].to_i,
+                                           level_code: sis_assoc_json['levelCode'])
+        }
+      rescue ActiveRecord::RecordNotSaved => e
+        Rails.logger.error "Could not save SIS associations for #{p.loginid}. Exception trace:"
+        Rails.logger.error e
+      end
 
-      # Process any PPS affiliations
-      p.pps_associations = dw_person['ppsAssociations'].map { |pps_assoc_json|
-        PpsAssociation.find_or_create_by(person_id: p.id,
-                                         title: Title.find_by(code: pps_assoc_json['titleCode']),
-                                         department: Department.find_by(code: pps_assoc_json['deptCode']),
-                                         association_rank: pps_assoc_json['assocRank'].to_i,
-                                         position_type_code: pps_assoc_json['positionTypeCode'].to_i)
-      }
+      begin
+        # Process any PPS affiliations
+        p.pps_associations = dw_person['ppsAssociations'].map { |pps_assoc_json|
+          PpsAssociation.find_or_create_by(person_id: p.id,
+                                           title: Title.find_by(code: pps_assoc_json['titleCode']),
+                                           department: Department.find_by(code: pps_assoc_json['deptCode']),
+                                           association_rank: pps_assoc_json['assocRank'].to_i,
+                                           position_type_code: pps_assoc_json['positionTypeCode'].to_i)
+        }
+      rescue ActiveRecord::RecordNotSaved => e
+        Rails.logger.error "Could not save PPS associations for #{p.loginid}. Ensure PPS departments are imported. Exception trace:"
+        Rails.logger.error e
+      end
 
       p.save!
     end

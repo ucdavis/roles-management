@@ -119,7 +119,7 @@ class PersonTest < ActiveSupport::TestCase
     assert Sync.trigger_test_count(:add_to_organization) == 1, "remove_from_organization should have been triggered once but was triggered #{Sync.trigger_test_count(:remove_from_organization)} times"
   end
 
-  test 'mass assigning majors will call add/remove callbacks appropriately' do
+  test 'mass assigning SIS associations will call add/remove callbacks appropriately' do
     assert false
   end
 
