@@ -35,6 +35,8 @@ module DSSRM
     # Enable the asset pipeline
     config.assets.enabled = true
 
+    config.active_record.schema_format = :sql
+
     config.assets.paths << Rails.root.join("app", "assets", "javascripts", "controllers")
     config.assets.paths << Rails.root.join("app", "assets", "templates")
   end
