@@ -1,4 +1,4 @@
-class MajorAssignment < ApplicationRecord
+class SisAssociation < ApplicationRecord
   belongs_to :entity
   belongs_to :major
 

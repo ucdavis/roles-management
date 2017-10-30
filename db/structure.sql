@@ -642,38 +642,6 @@ ALTER SEQUENCE group_rules_id_seq OWNED BY group_rules.id;
 
 
 --
--- Name: major_assignments; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE major_assignments (
-    id bigint NOT NULL,
-    major_id integer,
-    entity_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: major_assignments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE major_assignments_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: major_assignments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE major_assignments_id_seq OWNED BY major_assignments.id;
-
-
---
 -- Name: majors; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1012,6 +980,38 @@ CREATE TABLE schema_migrations (
 
 
 --
+-- Name: sis_associations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE sis_associations (
+    id bigint NOT NULL,
+    major_id integer,
+    entity_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: sis_associations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE sis_associations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: sis_associations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE sis_associations_id_seq OWNED BY sis_associations.id;
+
+
+--
 -- Name: titles; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1208,13 +1208,6 @@ ALTER TABLE ONLY group_rules ALTER COLUMN id SET DEFAULT nextval('group_rules_id
 
 
 --
--- Name: major_assignments id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY major_assignments ALTER COLUMN id SET DEFAULT nextval('major_assignments_id_seq'::regclass);
-
-
---
 -- Name: majors id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1282,6 +1275,13 @@ ALTER TABLE ONLY role_assignments ALTER COLUMN id SET DEFAULT nextval('role_assi
 --
 
 ALTER TABLE ONLY roles ALTER COLUMN id SET DEFAULT nextval('roles_id_seq'::regclass);
+
+
+--
+-- Name: sis_associations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sis_associations ALTER COLUMN id SET DEFAULT nextval('sis_associations_id_seq'::regclass);
 
 
 --
@@ -1451,14 +1451,6 @@ ALTER TABLE ONLY group_rules
 
 
 --
--- Name: major_assignments major_assignments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY major_assignments
-    ADD CONSTRAINT major_assignments_pkey PRIMARY KEY (id);
-
-
---
 -- Name: majors majors_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1536,6 +1528,14 @@ ALTER TABLE ONLY role_assignments
 
 ALTER TABLE ONLY roles
     ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sis_associations sis_associations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sis_associations
+    ADD CONSTRAINT sis_associations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1984,6 +1984,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171020180823'),
 ('20171026174011'),
 ('20171026212019'),
-('20171026212915');
+('20171026212915'),
+('20171030210853');
 
 
