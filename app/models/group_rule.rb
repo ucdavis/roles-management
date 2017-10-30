@@ -302,8 +302,9 @@ class GroupRule < ApplicationRecord
       else
         case condition
         when 'is'
+          ps = department.entities.select(:id)
           logger.debug "Adding #{ps.length} entities to a 'Department is...' GroupRule"
-          p += department.entities.select(:id)
+          p += ps
         when 'is not'
           logger.warn " -- 'Department is not' will not be resolved within GroupRule"
         else
