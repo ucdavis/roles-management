@@ -1,11 +1,16 @@
 # GroupRule stores the results of its rule in a cache using GroupRuleResult.
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ApplicationRecord
-  VALID_COLUMNS = %w[title major affiliation loginid department organization].freeze
+  VALID_COLUMNS = %w[title major affiliation loginid department organization is_staff is_faculty is_student is_employee].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]
   validates_inclusion_of :column, in: VALID_COLUMNS
+  validate do |gr|
+    if (gr.column == 'is_staff' || gr.column == 'is_faculty' || gr.column == 'is_student' || gr.column == 'is_employee') && gr.value != 't'
+      gr.errors[gr.column] << "Must use true value ('t'). Use 'is not' for false values."
+    end
+  end
 
   belongs_to :group, touch: true
   has_many :results, class_name: 'GroupRuleResult', dependent: :destroy
@@ -31,10 +36,8 @@ class GroupRule < ApplicationRecord
       logger.info "Resolving target entity ID #{entity_id} for column #{column}"
 
       # Remove any existing rule results for this (person, column) duple
-      expired_rule_results = GroupRuleResult.includes(:group_rule).where(:entity_id => entity_id, :group_rules => { :column => column.to_s })
-      expired_rule_results.each do |result|
-        touched_group_ids << result.group_rule.group.id
-      end
+      expired_rule_results = GroupRuleResult.includes(:group_rule).where(entity_id: entity_id, group_rules: { column: column.to_s })
+      touched_group_ids = expired_rule_results.map { |result| result.group_rule.group.id }
       logger.info "Expiring #{expired_rule_results.length} rules"
       expired_rule_results.destroy_all
 
@@ -93,14 +96,14 @@ class GroupRule < ApplicationRecord
           logger.warn "Targetted entity for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
         else
           entity.organizations.each do |organization|
-            GroupRule.where(column: "department").each do |rule|
-              if rule.condition == "is"
+            GroupRule.where(column: 'department').each do |rule|
+              if rule.condition == 'is'
                 if rule.value == organization.name
                   logger.info "Matched 'department is' rule. Recording result."
-                  rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                  rule.results << GroupRuleResult.new(entity_id: entity_id)
                   touched_group_ids << rule.group.id
                 end
-              elsif rule.condition == "is not"
+              elsif rule.condition == 'is not'
                 logger.warn "Cannot GroupRule.resolve_target! for 'department is not'. Unimplemented behavior."
               end
             end
@@ -111,14 +114,14 @@ class GroupRule < ApplicationRecord
         # This is incorrect because if the entity is only a member of a child organization with no rules
         # but the child organization's parent has a rule, this will never do anything (right?)
         entity.organizations.each do |organization|
-          GroupRule.where(column: "organization").each do |rule|
-            if rule.condition == "is"
+          GroupRule.where(column: 'organization').each do |rule|
+            if rule.condition == 'is'
               if rule.value == organization.name
                 logger.info "Matched 'Organization is' rule. Recording result."
-                rule.results << GroupRuleResult.new(:entity_id => entity_id)
+                rule.results << GroupRuleResult.new(entity_id: entity_id)
                 touched_group_ids << rule.group.id
               end
-            elsif rule.condition == "is not"
+            elsif rule.condition == 'is not'
               logger.warn "Cannot GroupRule.resolve_target! for 'Organization is not'. Unimplemented behavior."
             end
           end
@@ -135,6 +138,58 @@ class GroupRule < ApplicationRecord
             end
           elsif rule.condition == 'is not'
             logger.warn "Cannot GroupRule.resolve_target! for 'loginid is not'. Unimplemented behavior."
+          end
+        end
+      when :is_staff
+        GroupRule.where(column: 'is_staff').each do |rule|
+          if rule.condition == 'is'
+            # rule.value does not matter for the 'is_staff/employee/etc' column types
+            if entity.is_staff
+              logger.info "Matched 'is_staff' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
+            end
+          elsif rule.condition == 'is not'
+            logger.warn "Cannot GroupRule.resolve_target! for 'is not staff'. Unimplemented behavior."
+          end
+        end
+      when :is_faculty
+        GroupRule.where(column: 'is_faculty').each do |rule|
+          if rule.condition == 'is'
+            # rule.value does not matter for the 'is_staff/employee/etc' column types
+            if entity.is_faculty
+              logger.info "Matched 'is_faculty' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
+            end
+          elsif rule.condition == 'is not'
+            logger.warn "Cannot GroupRule.resolve_target! for 'is not faculty'. Unimplemented behavior."
+          end
+        end
+      when :is_student
+        GroupRule.where(column: 'is_student').each do |rule|
+          if rule.condition == 'is'
+            # rule.value does not matter for the 'is_staff/employee/etc' column types
+            if entity.is_student
+              logger.info "Matched 'is_student' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
+            end
+          elsif rule.condition == 'is not'
+            logger.warn "Cannot GroupRule.resolve_target! for 'is not student'. Unimplemented behavior."
+          end
+        end
+      when :is_employee
+        GroupRule.where(column: 'is_employee').each do |rule|
+          if rule.condition == 'is'
+            # rule.value does not matter for the 'is_staff/employee/etc' column types
+            if entity.is_employee
+              logger.info "Matched 'is_employee' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
+            end
+          elsif rule.condition == 'is not'
+            logger.warn "Cannot GroupRule.resolve_target! for 'is not employee'. Unimplemented behavior."
           end
         end
       end
@@ -182,7 +237,7 @@ class GroupRule < ApplicationRecord
 
         rules.each do |rule|
           # Add the entity to the rule's results
-          rule.results << GroupRuleResult.new(:entity_id => entity_id)
+          rule.results << GroupRuleResult.new(entity_id: entity_id)
           touched_group_ids << rule.group.id
         end
 
@@ -191,7 +246,7 @@ class GroupRule < ApplicationRecord
       end
     end
 
-    return touched_group_ids.flatten.uniq
+    return touched_group_ids.flatten.uniq # rubocop:disable Style/RedundantReturn
   end
 
   # Calculate the results of the rule and cache in GroupRuleResult instances
@@ -204,10 +259,9 @@ class GroupRule < ApplicationRecord
     when 'title'
       title = Title.find_by_name(value)
       unless title.nil?
-        ps = title.people.select(:id)
         case condition
         when 'is'
-          p += ps
+          p += title.people.select(:id)
         when 'is not'
           logger.warn " -- 'title is not' will not be resolved within GroupRule"
         else
@@ -218,10 +272,9 @@ class GroupRule < ApplicationRecord
     when 'major'
       major = Major.find_by_name(value)
       unless major.nil?
-        ps = major.people.select(:id)
         case condition
         when 'is'
-          p += ps
+          p += major.people.select(:id)
         when 'is not'
           logger.warn " -- 'major is not' will not be resolved within GroupRule"
         else
@@ -232,10 +285,9 @@ class GroupRule < ApplicationRecord
     when 'affiliation'
       affiliation = Affiliation.find_by_name(value)
       unless affiliation.nil?
-        ps = affiliation.people.select(:id)
         case condition
         when 'is'
-          p += ps
+          p += affiliation.people.select(:id)
         when 'is not'
           logger.warn " -- 'affiliation is not' will not be resolved within GroupRule"
         else
@@ -245,29 +297,27 @@ class GroupRule < ApplicationRecord
       end
     when 'department'
       department = Organization.find_by_name(value)
-      unless department == nil
-        ps = department.entities.select(:id)
+      if department.nil?
+        logger.warn 'Department (Organization) not found'
+      else
         case condition
         when 'is'
           logger.debug "Adding #{ps.length} entities to a 'Department is...' GroupRule"
-          p += ps
+          p += department.entities.select(:id)
         when 'is not'
           logger.warn " -- 'Department is not' will not be resolved within GroupRule"
         else
           # unsupported
           logger.warn 'Unsupported condition for Department in group rule.'
         end
-      else
-        logger.warn 'Department (Organization) not found'
       end
     when 'organization'
       organization = Organization.includes(:entities).find_by_name(value)
       if organization
-        # We do not consider groups which belong to organizations in our calculations by design
-        ps = organization.flattened_entities
         case condition
         when 'is'
-          p += ps
+          # We do not consider groups which belong to organizations in our calculations by design
+          p += organization.flattened_entities
         when 'is not'
           logger.warn " -- 'Organization is not' will not be resolved within GroupRule"
         else
@@ -278,15 +328,54 @@ class GroupRule < ApplicationRecord
         logger.warn 'Organization not found'
       end
     when 'loginid'
-      ps = Person.where(loginid: value).select(:id)
       case condition
       when 'is'
-        p += ps
+        p += Person.where(loginid: value).select(:id)
       when 'is not'
         logger.warn " -- 'loginid is not' will not be resolved within GroupRule"
       else
         # unsupported
         logger.warn 'Unsupported condition for loginid in group rule.'
+      end
+    when 'is_staff'
+      case condition
+      when 'is'
+        p += Person.where(is_staff: true).select(:id)
+      when 'is not'
+        logger.warn " -- 'is not staff' will not be resolved within GroupRule"
+      else
+        # unsupported
+        logger.warn "Unsupported condition for 'is_staff' in group rule."
+      end
+    when 'is_faculty'
+      case condition
+      when 'is'
+        p += Person.where(is_faculty: true).select(:id)
+      when 'is not'
+        logger.warn " -- 'is not faculty' will not be resolved within GroupRule"
+      else
+        # unsupported
+        logger.warn "Unsupported condition for 'is_faculty' in group rule."
+      end
+    when 'is_student'
+      case condition
+      when 'is'
+        p += Person.where(is_student: true).select(:id)
+      when 'is not'
+        logger.warn " -- 'is not student' will not be resolved within GroupRule"
+      else
+        # unsupported
+        logger.warn "Unsupported condition for 'is_student' in group rule."
+      end
+    when 'is_employee'
+      case condition
+      when 'is'
+        p += Person.where(is_employee: true).select(:id)
+      when 'is not'
+        logger.warn " -- 'is not employee' will not be resolved within GroupRule"
+      else
+        # unsupported
+        logger.warn "Unsupported condition for 'is_employee' in group rule."
       end
     else
       # Undefined column
@@ -297,22 +386,19 @@ class GroupRule < ApplicationRecord
     results.destroy_all
 
     p.each do |e|
-      logger.debug "Generating GroupRuleResult ..."
-      results << GroupRuleResult.new(:entity_id => e.id)
+      results << GroupRuleResult.new(entity_id: e.id)
     end
 
     logger.info "Resolved group rule ##{id} to have #{results.length} results"
   end
 
   # Returns true if the given person satisfies the rule
-  def matches(person_id)
-    # 'cond' is a boolean representing this rule's 'is' or 'is not'
-    cond = (condition == 'is')
+  def matches(person_id) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     matched = nil
 
     person = Person.find_by_id(person_id)
 
-    return false unless person # 'person_id' not found
+    return false unless person
 
     case column
     when 'title'
@@ -327,19 +413,41 @@ class GroupRule < ApplicationRecord
       matched = person.organizations.include? Organization.find_by_name(value)
     when 'loginid'
       matched = person.loginid == value
+    when 'is_staff'
+      matched = person.is_staff == truthy(value)
+    when 'is_faculty'
+      matched = person.is_faculty == truthy(value)
+    when 'is_student'
+      matched = person.is_student == truthy(value)
+    when 'is_employee'
+      matched = person.is_employee == truthy(value)
     end
 
-    return cond == matched
+    # 'cond' is a boolean representing this rule's 'is' or 'is not'
+    return (condition == 'is') == matched # rubocop:disable Style/RedundantReturn
   end
 
   private
 
+  # Attempts to return true or false based on a wide variety of values
+  def truthy(value) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    return true if value == 't'
+    return false if value == 'f'
+    return true if value == 'true'
+    return false if value == 'false'
+    return true if value == '1'
+    return false if value == '0'
+    return true if value == 1
+    return false if value == 0 # rubocop:disable Style/NumericPredicate
+    return value == true # rubocop:disable Style/RedundantReturn
+  end
+
   # Recalculates group members if anything changed. Called after_save.
   def resolve_if_changed
-    if saved_changes?
-      resolve!
-      group.recalculate_members!
-    end
+    return unless saved_changes?
+
+    resolve!
+    group.recalculate_members!
   end
 
   # In after_destroy it's important the group recalculate members as this rule is gone
