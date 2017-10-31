@@ -35,8 +35,8 @@ namespace :dw do
       people = Person.all
     end
 
-    people.each do |p|
-      puts "Processing #{p.loginid} ..."
+    people.each_with_index do |p, i|
+      puts "Processing #{p.loginid} (#{i+1} / #{people.length}) ..."
       dw_person = DssDw.fetch_person_by_loginid(p.loginid)
 
       next unless dw_person
