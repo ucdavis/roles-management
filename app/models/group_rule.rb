@@ -2,7 +2,7 @@
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w[title major affiliation loginid department organization is_staff is_faculty
-                     is_student is_employee].freeze
+                     is_student is_employee sis_level_code].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]
@@ -193,6 +193,19 @@ class GroupRule < ApplicationRecord
             logger.warn "Cannot GroupRule.resolve_target! for 'is not employee'. Unimplemented behavior."
           end
         end
+      when :sis_level_code
+        GroupRule.where(column: 'sis_level_code').each do |rule|
+          if rule.condition == 'is'
+            if entity.sis_associations.where(level_code: rule.value).count.positive?
+              logger.info "Matched 'sis_level_code' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
+            end
+          elsif rule.condition == 'is not'
+            logger.warn "Cannot GroupRule.resolve_target! for 'sis_level_code is not'. Unimplemented behavior."
+          end
+        end
+
       end
 
       touched_group_ids.flatten.uniq.each do |touched_group_id|
@@ -256,132 +269,56 @@ class GroupRule < ApplicationRecord
 
     logger.info "Resolving (calculating) group rule ##{id}"
 
-    case column
-    when 'title'
-      title = Title.find_by_name(value)
-      unless title.nil?
-        case condition
-        when 'is'
+    if condition == 'is not'
+      logger.warn " -- 'is not' condition will not be resolved within GroupRule"
+    else
+      case column
+      when 'title'
+        title = Title.find_by_name(value)
+        unless title.nil?
           p += title.people.select(:id)
-        when 'is not'
-          logger.warn " -- 'title is not' will not be resolved within GroupRule"
-        else
-          # unsupported
-          logger.warn 'Unsupported condition for title in group rule.'
         end
-      end
-    when 'major'
-      major = Major.find_by_name(value)
-      unless major.nil?
-        case condition
-        when 'is'
+      when 'major'
+        major = Major.find_by_name(value)
+        unless major.nil?
           p += major.people.select(:id)
-        when 'is not'
-          logger.warn " -- 'major is not' will not be resolved within GroupRule"
-        else
-          # unsupported
-          logger.warn 'Unsupported condition for major in group rule.'
         end
-      end
-    when 'affiliation'
-      affiliation = Affiliation.find_by_name(value)
-      unless affiliation.nil?
-        case condition
-        when 'is'
+      when 'affiliation'
+        affiliation = Affiliation.find_by_name(value)
+        unless affiliation.nil?
           p += affiliation.people.select(:id)
-        when 'is not'
-          logger.warn " -- 'affiliation is not' will not be resolved within GroupRule"
-        else
-          # unsupported
-          logger.warn 'Unsupported condition for affiliation in group rule.'
         end
-      end
-    when 'department'
-      department = Organization.find_by_name(value)
-      if department.nil?
-        logger.warn 'Department (Organization) not found'
-      else
-        case condition
-        when 'is'
+      when 'department'
+        department = Organization.find_by_name(value)
+        if department.nil?
+          logger.warn 'Department (Organization) not found'
+        else
           ps = department.entities.select(:id)
           logger.debug "Adding #{ps.length} entities to a 'Department is...' GroupRule"
           p += ps
-        when 'is not'
-          logger.warn " -- 'Department is not' will not be resolved within GroupRule"
-        else
-          # unsupported
-          logger.warn 'Unsupported condition for Department in group rule.'
         end
-      end
-    when 'organization'
-      organization = Organization.includes(:entities).find_by_name(value)
-      if organization
-        case condition
-        when 'is'
+      when 'organization'
+        organization = Organization.includes(:entities).find_by_name(value)
+        if organization
           # We do not consider groups which belong to organizations in our calculations by design
           p += organization.flattened_entities
-        when 'is not'
-          logger.warn " -- 'Organization is not' will not be resolved within GroupRule"
         else
-          # unsupported
-          logger.warn 'Unsupported condition for Organization in group rule.'
+          logger.warn 'Organization not found'
         end
-      else
-        logger.warn 'Organization not found'
-      end
-    when 'loginid'
-      case condition
-      when 'is'
+      when 'loginid'
         p += Person.where(loginid: value).select(:id)
-      when 'is not'
-        logger.warn " -- 'loginid is not' will not be resolved within GroupRule"
-      else
-        # unsupported
-        logger.warn 'Unsupported condition for loginid in group rule.'
-      end
-    when 'is_staff'
-      case condition
-      when 'is'
+      when 'is_staff'
         p += Person.where(is_staff: true).select(:id)
-      when 'is not'
-        logger.warn " -- 'is not staff' will not be resolved within GroupRule"
-      else
-        # unsupported
-        logger.warn "Unsupported condition for 'is_staff' in group rule."
-      end
-    when 'is_faculty'
-      case condition
-      when 'is'
+      when 'is_faculty'
         p += Person.where(is_faculty: true).select(:id)
-      when 'is not'
-        logger.warn " -- 'is not faculty' will not be resolved within GroupRule"
-      else
-        # unsupported
-        logger.warn "Unsupported condition for 'is_faculty' in group rule."
-      end
-    when 'is_student'
-      case condition
-      when 'is'
+      when 'is_student'
         p += Person.where(is_student: true).select(:id)
-      when 'is not'
-        logger.warn " -- 'is not student' will not be resolved within GroupRule"
-      else
-        # unsupported
-        logger.warn "Unsupported condition for 'is_student' in group rule."
-      end
-    when 'is_employee'
-      case condition
-      when 'is'
+      when 'is_employee'
         p += Person.where(is_employee: true).select(:id)
-      when 'is not'
-        logger.warn " -- 'is not employee' will not be resolved within GroupRule"
-      else
-        # unsupported
-        logger.warn "Unsupported condition for 'is_employee' in group rule."
+      when 'sis_level_code'
+        p += SisAssociation.where(level_code: value).pluck(:entity_id).map { |e_id| OpenStruct.new(id: e_id) }
+
       end
-    else
-      # Undefined column
-      logger.warn " -- unhandled column (#{column})"
     end
 
     # Save the result in GroupRuleResults
@@ -423,6 +360,8 @@ class GroupRule < ApplicationRecord
       matched = person.is_student == truthy(value)
     when 'is_employee'
       matched = person.is_employee == truthy(value)
+    when 'sis_level_code'
+      matched = person.sis_associations.where(level_code: value).count.positive?
     end
 
     # 'cond' is a boolean representing this rule's 'is' or 'is not'

@@ -1,22 +1,22 @@
 # Group shares many attributes with entity.
 class Group < Entity
-  has_many :memberships, :class_name => "GroupMembership", :dependent => :destroy
-  has_many :members, :through => :memberships, :source => :entity
-  has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :roles, :through => :role_assignments, :dependent => :destroy
-  has_many :group_ownerships, :dependent => :destroy
-  has_many :owners, :through => :group_ownerships, :source => "entity", :dependent => :destroy
-  has_many :application_ownerships, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :application_operatorships, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :group_operatorships, :dependent => :destroy
-  has_many :operators, :through => :group_operatorships, :source => "entity", :dependent => :destroy
-  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
+  has_many :memberships, class_name: 'GroupMembership', dependent: :destroy
+  has_many :members, through: :memberships, source: :entity
+  has_many :role_assignments, foreign_key: 'entity_id', dependent: :destroy
+  has_many :roles, through: :role_assignments, dependent: :destroy
+  has_many :group_ownerships, dependent: :destroy
+  has_many :owners, through: :group_ownerships, source: 'entity', dependent: :destroy
+  has_many :application_ownerships, foreign_key: 'entity_id', dependent: :destroy
+  has_many :application_operatorships, foreign_key: 'entity_id', dependent: :destroy
+  has_many :group_operatorships, dependent: :destroy
+  has_many :operators, through: :group_operatorships, source: 'entity', dependent: :destroy
+  has_many :rules, foreign_key: 'group_id', class_name: 'GroupRule', dependent: :destroy
 
   validates_presence_of :name
 
-  accepts_nested_attributes_for :rules, :allow_destroy => true
-  accepts_nested_attributes_for :memberships, :allow_destroy => true
-  
+  accepts_nested_attributes_for :rules, allow_destroy: true
+  accepts_nested_attributes_for :memberships, allow_destroy: true
+
   after_create { |group|
     ActivityLog.info!("Created group #{group.name}.", ["group_#{group.id}", 'system'])
   }
@@ -27,12 +27,12 @@ class Group < Entity
     ActivityLog.info!("Deleted group #{group.name}.", ['system'])
   }
 
-  def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
-      :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :memberships => self.memberships.includes(:entity).map{ |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid, calculated: m.calculated } },
-      :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
+  def as_json(_options = {})
+    { id: id, name: name, type: 'Group', description: description,
+      owners: owners.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
+      operators: operators.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
+      memberships: memberships.includes(:entity).map { |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid, calculated: m.calculated } },
+      rules: rules.map { |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
 
   # Returns identifying string for logging purposes. Other classes implement this too.
@@ -44,20 +44,7 @@ class Group < Entity
   # Returns all members, both explicitly assigned and calculated via rules.
   # Recurses groups all the way down to return a list of _only_people_.
   def flattened_members
-    results = []
-
-    members.to_a.each do |e| #all.each do |e|
-      if e.type == "Group"
-        e.flattened_members.each do |m|
-          results << m
-        end
-      else
-        results << e
-      end
-    end
-
-    # Only return a unique list
-    results.uniq{ |x| x.id }
+    members.to_a.map { |e| e.type == 'Group' ? e.flattened_members.flatten : e }.uniq(&:id)
   end
 
   # Calculates (and resets) all group_members based on rules.
@@ -159,16 +146,16 @@ class Group < Entity
 
     memberships.each do |membership|
       if membership.group.no_loops_in_group_membership_graph(seen_ids.dup) == false
-        errors[:base] << "Group membership cannot be cyclical"
+        errors[:base] << 'Group membership cannot be cyclical'
         return false
       end
     end
 
     return true
   end
-  
+
   private
-  
+
   def allow_group_membership_destruction
     # Destroying a person may involve the valid case of destroying
     # calculated group memberships.

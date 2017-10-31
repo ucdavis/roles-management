@@ -67,7 +67,7 @@ class GroupMembership < ApplicationRecord
       when :save
         if saved_change_to_attribute?(:created_at)
           # Only log group membership creation if this is the first time they've gained membership with this group
-          if entity.group_memberships.map{|gm| gm.group.id}.count {|group_id| group_id == group.id } == 1
+          if entity.group_memberships.map { |gm| gm.group.id }.count { |group_id| group_id == group.id } == 1
             logger.info "Created redundant-type membership between #{entity.log_identifier} and #{group.log_identifier}."
             ActivityLog.info!("Added #{entity.name} to group #{group.name}.", ["#{entity.type.downcase}_#{entity.id}", "group_#{group.id}"])
           end
@@ -94,9 +94,7 @@ class GroupMembership < ApplicationRecord
   private
 
   def members_cannot_be_other_groups
-    if entity && entity.type == 'Group'
-      errors.add(:base, 'groups cannot be members of other groups')
-    end
+    errors.add(:base, 'groups cannot be members of other groups') if entity&.type == 'Group'
   end
 
   # Grant group's roles to new member (marking as calculated)
