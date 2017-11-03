@@ -1,6 +1,6 @@
 class Major < ApplicationRecord
-  has_many :major_assignments
-  has_many :people, through: :major_assignments, source: :entity
+  has_many :sis_associations
+  has_many :people, through: :sis_associations, source: :entity
 
   # Needed by custom controller#majors, used in details modal
   def as_json(_)

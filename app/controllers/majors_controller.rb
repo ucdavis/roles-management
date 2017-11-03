@@ -11,12 +11,12 @@ class MajorsController < ApplicationController
 
   private
 
-    def load_majors
-      if params[:q]
-        majors_table = Major.arel_table
-        @majors = Major.where(majors_table[:name].matches("%#{params[:q]}%"))
-      else
-        @majors = Major.all
-      end
+  def load_majors
+    if params[:q]
+      majors_table = Major.arel_table
+      @majors = Major.where(majors_table[:name].matches("%#{params[:q]}%"))
+    else
+      @majors = Major.all
     end
+  end
 end

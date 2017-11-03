@@ -775,7 +775,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     @person.save!
 
     # Test basic rule creation matches existing people
-    assert group.members.length == 0, "group should have no members"
+    assert group.members.empty?, "group should have no members"
 
     group_rule = GroupRule.new({ column: 'is_employee', condition: 'is', value: true, group_id: group.id })
     group.rules << group_rule
@@ -799,5 +799,53 @@ class GroupRuleTest < ActiveSupport::TestCase
     group.reload
 
     assert group.members.length == 1, "group should have a member"
+  end
+
+  test "Rule 'sis_level_code' works" do
+    # Ensure a group has a rule
+    group = entities(:groupWithNothing)
+
+    assert group.roles.empty?, 'looks like groupWithNothing has a role'
+    assert group.rules.empty?, 'looks like groupWithNothing has a rule'
+    assert group.owners.empty?, 'looks like groupWithNothing has an owner'
+    assert group.operators.empty?, 'looks like groupWithNothing has an operator'
+
+    # Give a person a SIS association with level code 'GR'
+    sis_association = SisAssociation.new
+    sis_association.entity_id = @person.id
+    sis_association.major = Major.first
+    sis_association.level_code = 'GR'
+    sis_association.association_rank = 1
+    @person.sis_associations << sis_association
+
+    # Test basic rule creation matches existing people
+    assert group.members.empty?, 'group should have no members'
+
+    group_rule = GroupRule.new({ column: 'sis_level_code', condition: 'is', value: 'GR', group_id: group.id })
+    group.rules << group_rule
+
+    group.reload
+
+    assert group.members.length == 1, 'group should have a member'
+
+    # Test changing a person affects existing rule
+    @person.sis_associations.destroy(@person.sis_associations[0])
+    @person.save!
+
+    group.reload
+
+    assert group.members.empty?, 'group should have no members'
+
+    # Test changing a person affects existing rule
+    sis_association = SisAssociation.new
+    sis_association.entity_id = @person.id
+    sis_association.major = Major.first
+    sis_association.level_code = 'GR'
+    sis_association.association_rank = 1
+    @person.sis_associations << sis_association
+
+    group.reload
+
+    assert group.members.length == 1, 'group should have a member'
   end
 end
