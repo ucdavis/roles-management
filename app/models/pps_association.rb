@@ -3,14 +3,17 @@ class PpsAssociation < ApplicationRecord
   belongs_to :title
   belongs_to :department
 
-  after_save {
+  validates_presence_of :association_rank
+  validates_presence_of :position_type_code
+
+  after_save do
     GroupRule.resolve_target!(:pps_unit, person_id)
     GroupRule.resolve_target!(:pps_position_type, person_id)
-  }
-  after_destroy {
+  end
+  after_destroy do
     GroupRule.resolve_target!(:pps_unit, person_id)
     GroupRule.resolve_target!(:pps_position_type, person_id)
-  }
+  end
 
   # '1', 'Contract'
   # '2', 'Regular/Career'

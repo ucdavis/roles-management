@@ -20,7 +20,7 @@ class Person < Entity
   has_many :group_ownerships, foreign_key: 'entity_id', dependent: :destroy
   has_many :sis_associations, foreign_key: 'entity_id', dependent: :destroy
   has_many :majors, through: :sis_associations, dependent: :destroy
-  has_many :pps_associations
+  has_many :pps_associations, dependent: :destroy
 
   belongs_to :title, optional: true
 
