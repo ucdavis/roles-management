@@ -3,6 +3,9 @@ class PpsAssociation < ApplicationRecord
   belongs_to :title
   belongs_to :department
 
+  after_save { GroupRule.resolve_target!(:pps_unit, person_id) }
+  after_destroy { GroupRule.resolve_target!(:pps_unit, person_id) }
+
   # '1', 'Contract'
   # '2', 'Regular/Career'
   # '3', 'Limited, Formerly Casual'

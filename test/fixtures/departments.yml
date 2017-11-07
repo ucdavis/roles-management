@@ -1,13 +1,5 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  code: MyString
-  officialName: MyString
-  displayName: MyString
-  abbreviation: MyString
-
-two:
-  code: MyString
-  officialName: MyString
-  displayName: MyString
-  abbreviation: MyString
+dssit:
+  code: 040014
+  officialName: DSS IT SHARED SERVICE CENTER
+  displayName: DSS IT SHARED SERVICE CENTER
+  abbreviation: DSS IT SSC

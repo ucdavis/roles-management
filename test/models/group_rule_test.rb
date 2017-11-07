@@ -285,11 +285,11 @@ class GroupRuleTest < ActiveSupport::TestCase
     # Set up a group with a rule for the top-level org
     group = entities(:groupWithNothing)
 
-    assert group.roles.length == 0, "looks like groupWithNothing has a role"
-    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
-    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
-    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
-    assert group.members.length == 0, "group should have no members"
+    assert group.roles.empty?, "looks like groupWithNothing has a role"
+    assert group.rules.empty?, "looks like groupWithNothing has a rule"
+    assert group.owners.empty?, "looks like groupWithNothing has an owner"
+    assert group.operators.empty?, "looks like groupWithNothing has an operator"
+    assert group.members.empty?, "group should have no members"
 
     group_rule = GroupRule.new({ column: 'organization', condition: 'is', value: o.name, group_id: group.id })
     group.rules << group_rule
@@ -729,7 +729,37 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     test_group_rule(group_rule, setup_match, remove_match)
   end
-  
+
+  test "Rule 'pps_unit' works" do
+    group_rule = GroupRule.new(column: 'pps_unit', condition: 'is', value: '99')
+
+    setup_match = lambda {
+      # Give a person an affiliation involving a title with a 99-unit
+      title = titles(:programmer)
+      department = departments(:dssit)
+
+      @person.pps_associations.destroy_all
+      assert @person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = @person.id
+      pps_association.title = title
+      pps_association.department = department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      @person.pps_associations << pps_association
+    }
+
+    remove_match = lambda {
+      assert @person.pps_associations.length == 1
+      @person.pps_associations.destroy(@person.pps_associations[0])
+      @person.save!
+      assert @person.pps_associations.count.zero?
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+
   # Generic function for testing a group rule. Tests:
   #  1. A new rule matches existing data
   #  2. Alters data to remove match against existing rule
@@ -764,7 +794,7 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     group.reload
 
-    assert group.members.empty?, 'group should have no members'
+    assert group.members.empty?, "group should have no members but has #{group.members.count}"
 
     setup_match.call()
 

@@ -2,7 +2,7 @@
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w[title major affiliation loginid department organization is_staff is_faculty
-                     is_student is_employee sis_level_code].freeze
+                     is_student is_employee sis_level_code pps_unit].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]
@@ -26,6 +26,7 @@ class GroupRule < ApplicationRecord
 
   # Class method to recalculate all rules related to column and entity_id.
   # Similar to resolve! but only involves removing/adding results for a specific person
+  # Note: Function assumes GroupRule is an 'is' rule as 'is not' are generally unsupported.
   def self.resolve_target!(column, entity_id)
     touched_group_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
 
@@ -53,59 +54,43 @@ class GroupRule < ApplicationRecord
       when :title
         if entity.title
           GroupRule.where(column: 'title').each do |rule|
-            if rule.condition == 'is'
-              if rule.value == entity.title.name
-                logger.info "Matched 'title is' rule. Recording result."
-                rule.results << GroupRuleResult.new(entity_id: entity_id)
-                touched_group_ids << rule.group.id
-              end
-            elsif rule.condition == 'is not'
-              logger.warn "Cannot GroupRule.resolve_target! for 'title is not'. Unimplemented behavior."
+            if rule.value == entity.title.name
+              logger.info "Matched 'title is' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
             end
           end
         end
       when :major
         entity.majors.each do |major|
           GroupRule.where(column: 'major').each do |rule|
-            if rule.condition == 'is'
-              if rule.value == major.name
-                logger.info "Matched 'major is' rule. Recording result."
-                rule.results << GroupRuleResult.new(entity_id: entity_id)
-                touched_group_ids << rule.group.id
-              end
-            elsif rule.condition == 'is not'
-              logger.warn "Cannot GroupRule.resolve_target! for 'major is not'. Unimplemented behavior."
+            if rule.value == major.name
+              logger.info "Matched 'major is' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
             end
           end
         end
       when :affiliation
         entity.affiliations.each do |entity_affiliation|
           GroupRule.where(column: 'affiliation').each do |rule|
-            if rule.condition == 'is'
-              if rule.value == entity_affiliation.name
-                logger.info "Matched 'affiliation is' rule. Recording result."
-                rule.results << GroupRuleResult.new(entity_id: entity_id)
-                touched_group_ids << rule.group.id
-              end
-            elsif rule.condition == 'is not'
-              logger.warn "Cannot GroupRule.resolve_target! for 'affiliation is not'. Unimplemented behavior."
+            if rule.value == entity_affiliation.name
+              logger.info "Matched 'affiliation is' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
             end
           end
         end
       when :department
         if entity.type == 'Group'
-          logger.warn "Targetted entity for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
+          logger.warn "Targeted entity for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
         else
           entity.organizations.each do |organization|
             GroupRule.where(column: 'department').each do |rule|
-              if rule.condition == 'is'
-                if rule.value == organization.name
-                  logger.info "Matched 'department is' rule. Recording result."
-                  rule.results << GroupRuleResult.new(entity_id: entity_id)
-                  touched_group_ids << rule.group.id
-                end
-              elsif rule.condition == 'is not'
-                logger.warn "Cannot GroupRule.resolve_target! for 'department is not'. Unimplemented behavior."
+              if rule.value == organization.name
+                logger.info "Matched 'department is' rule. Recording result."
+                rule.results << GroupRuleResult.new(entity_id: entity_id)
+                touched_group_ids << rule.group.id
               end
             end
           end
@@ -116,14 +101,10 @@ class GroupRule < ApplicationRecord
         # but the child organization's parent has a rule, this will never do anything (right?)
         entity.organizations.each do |organization|
           GroupRule.where(column: 'organization').each do |rule|
-            if rule.condition == 'is'
-              if rule.value == organization.name
-                logger.info "Matched 'Organization is' rule. Recording result."
-                rule.results << GroupRuleResult.new(entity_id: entity_id)
-                touched_group_ids << rule.group.id
-              end
-            elsif rule.condition == 'is not'
-              logger.warn "Cannot GroupRule.resolve_target! for 'Organization is not'. Unimplemented behavior."
+            if rule.value == organization.name
+              logger.info "Matched 'Organization is' rule. Recording result."
+              rule.results << GroupRuleResult.new(entity_id: entity_id)
+              touched_group_ids << rule.group.id
             end
           end
 
@@ -131,78 +112,64 @@ class GroupRule < ApplicationRecord
         end
       when :loginid
         GroupRule.where(column: 'loginid').each do |rule|
-          if rule.condition == 'is'
-            if rule.value == entity.loginid
-              logger.info "Matched 'loginid is' rule. Recording result."
-              rule.results << GroupRuleResult.new(entity_id: entity_id)
-              touched_group_ids << rule.group.id
-            end
-          elsif rule.condition == 'is not'
-            logger.warn "Cannot GroupRule.resolve_target! for 'loginid is not'. Unimplemented behavior."
+          if rule.value == entity.loginid
+            logger.info "Matched 'loginid is' rule. Recording result."
+            rule.results << GroupRuleResult.new(entity_id: entity_id)
+            touched_group_ids << rule.group.id
           end
         end
       when :is_staff
         GroupRule.where(column: 'is_staff').each do |rule|
-          if rule.condition == 'is'
-            # rule.value does not matter for the 'is_staff/employee/etc' column types
-            if entity.is_staff
-              logger.info "Matched 'is_staff' rule. Recording result."
-              rule.results << GroupRuleResult.new(entity_id: entity_id)
-              touched_group_ids << rule.group.id
-            end
-          elsif rule.condition == 'is not'
-            logger.warn "Cannot GroupRule.resolve_target! for 'is not staff'. Unimplemented behavior."
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          if entity.is_staff
+            logger.info "Matched 'is_staff' rule. Recording result."
+            rule.results << GroupRuleResult.new(entity_id: entity_id)
+            touched_group_ids << rule.group.id
           end
         end
       when :is_faculty
         GroupRule.where(column: 'is_faculty').each do |rule|
-          if rule.condition == 'is'
-            # rule.value does not matter for the 'is_staff/employee/etc' column types
-            if entity.is_faculty
-              logger.info "Matched 'is_faculty' rule. Recording result."
-              rule.results << GroupRuleResult.new(entity_id: entity_id)
-              touched_group_ids << rule.group.id
-            end
-          elsif rule.condition == 'is not'
-            logger.warn "Cannot GroupRule.resolve_target! for 'is not faculty'. Unimplemented behavior."
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          if entity.is_faculty
+            logger.info "Matched 'is_faculty' rule. Recording result."
+            rule.results << GroupRuleResult.new(entity_id: entity_id)
+            touched_group_ids << rule.group.id
           end
         end
       when :is_student
         GroupRule.where(column: 'is_student').each do |rule|
-          if rule.condition == 'is'
-            # rule.value does not matter for the 'is_staff/employee/etc' column types
-            if entity.is_student
-              logger.info "Matched 'is_student' rule. Recording result."
-              rule.results << GroupRuleResult.new(entity_id: entity_id)
-              touched_group_ids << rule.group.id
-            end
-          elsif rule.condition == 'is not'
-            logger.warn "Cannot GroupRule.resolve_target! for 'is not student'. Unimplemented behavior."
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          if entity.is_student
+            logger.info "Matched 'is_student' rule. Recording result."
+            rule.results << GroupRuleResult.new(entity_id: entity_id)
+            touched_group_ids << rule.group.id
           end
         end
       when :is_employee
         GroupRule.where(column: 'is_employee').each do |rule|
-          if rule.condition == 'is'
-            # rule.value does not matter for the 'is_staff/employee/etc' column types
-            if entity.is_employee
-              logger.info "Matched 'is_employee' rule. Recording result."
-              rule.results << GroupRuleResult.new(entity_id: entity_id)
-              touched_group_ids << rule.group.id
-            end
-          elsif rule.condition == 'is not'
-            logger.warn "Cannot GroupRule.resolve_target! for 'is not employee'. Unimplemented behavior."
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          if entity.is_employee
+            logger.info "Matched 'is_employee' rule. Recording result."
+            rule.results << GroupRuleResult.new(entity_id: entity_id)
+            touched_group_ids << rule.group.id
           end
         end
       when :sis_level_code
         GroupRule.where(column: 'sis_level_code').each do |rule|
-          if rule.condition == 'is'
-            if entity.sis_associations.where(level_code: rule.value).count.positive?
-              logger.info "Matched 'sis_level_code' rule. Recording result."
-              rule.results << GroupRuleResult.new(entity_id: entity_id)
-              touched_group_ids << rule.group.id
-            end
-          elsif rule.condition == 'is not'
-            logger.warn "Cannot GroupRule.resolve_target! for 'sis_level_code is not'. Unimplemented behavior."
+          if entity.sis_associations.where(level_code: rule.value).count.positive?
+            logger.info "Matched 'sis_level_code' rule. Recording result."
+            rule.results << GroupRuleResult.new(entity_id: entity_id)
+            touched_group_ids << rule.group.id
+          end
+        end
+      when :pps_unit
+        GroupRule.where(column: 'pps_unit').each do |rule|
+          relevent_title_ids = Title.where(unit: rule.value).pluck(:id)
+
+          if entity.pps_associations.where(title_id: relevent_title_ids).count.positive?
+            logger.info "Matched 'pps_unit' rule. Recording result."
+            rule.results << GroupRuleResult.new(entity_id: entity_id)
+            touched_group_ids << rule.group.id
           end
         end
 
@@ -317,6 +284,9 @@ class GroupRule < ApplicationRecord
         p += Person.where(is_employee: true).select(:id)
       when 'sis_level_code'
         p += SisAssociation.where(level_code: value).pluck(:entity_id).map { |e_id| OpenStruct.new(id: e_id) }
+      when 'pps_unit'
+        title_ids = Title.where(unit: value).pluck(:id)
+        p += PpsAssociation.where(title_id: title_ids).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
 
       end
     end
@@ -362,6 +332,9 @@ class GroupRule < ApplicationRecord
       matched = person.is_employee == truthy(value)
     when 'sis_level_code'
       matched = person.sis_associations.where(level_code: value).count.positive?
+    when 'pps_unit'
+      title_ids = Title.where(unit: value).pluck(:id)
+      matched = person.pps_associations.where(title_id: title_ids).count.positive?
     end
 
     # 'cond' is a boolean representing this rule's 'is' or 'is not'

@@ -2,8 +2,10 @@ researcher:
   id: 1
   name: Researcher
   code: 100
+  unit: A3
 
 programmer:
   id: 2
   name: Programmer I
   code: 101
+  unit: 99
