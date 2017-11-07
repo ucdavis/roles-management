@@ -760,6 +760,36 @@ class GroupRuleTest < ActiveSupport::TestCase
     test_group_rule(group_rule, setup_match, remove_match)
   end
 
+  test "Rule 'pps_position_type' works" do
+    group_rule = GroupRule.new(column: 'pps_position_type', condition: 'is', value: 2)
+
+    setup_match = lambda {
+      # Give a person an affiliation involving a title with a 99-unit
+      title = titles(:programmer)
+      department = departments(:dssit)
+
+      @person.pps_associations.destroy_all
+      assert @person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = @person.id
+      pps_association.title = title
+      pps_association.department = department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      @person.pps_associations << pps_association
+    }
+
+    remove_match = lambda {
+      assert @person.pps_associations.length == 1
+      @person.pps_associations.destroy(@person.pps_associations[0])
+      @person.save!
+      assert @person.pps_associations.count.zero?
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+
   # Generic function for testing a group rule. Tests:
   #  1. A new rule matches existing data
   #  2. Alters data to remove match against existing rule

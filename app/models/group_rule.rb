@@ -2,7 +2,7 @@
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w[title major affiliation loginid department organization is_staff is_faculty
-                     is_student is_employee sis_level_code pps_unit].freeze
+                     is_student is_employee sis_level_code pps_unit pps_position_type].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]
@@ -172,6 +172,14 @@ class GroupRule < ApplicationRecord
             touched_group_ids << rule.group.id
           end
         end
+      when :pps_position_type
+        GroupRule.where(column: 'pps_position_type').each do |rule|
+          if entity.pps_associations.where(position_type_code: rule.value).count.positive?
+            logger.info "Matched 'pps_position_type' rule. Recording result."
+            rule.results << GroupRuleResult.new(entity_id: entity_id)
+            touched_group_ids << rule.group.id
+          end
+        end
 
       end
 
@@ -287,6 +295,8 @@ class GroupRule < ApplicationRecord
       when 'pps_unit'
         title_ids = Title.where(unit: value).pluck(:id)
         p += PpsAssociation.where(title_id: title_ids).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+      when 'pps_position_type'
+        p += PpsAssociation.where(position_type_code: value).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
 
       end
     end
@@ -335,6 +345,8 @@ class GroupRule < ApplicationRecord
     when 'pps_unit'
       title_ids = Title.where(unit: value).pluck(:id)
       matched = person.pps_associations.where(title_id: title_ids).count.positive?
+    when 'pps_position_type'
+      matched = person.pps_associations.where(position_type_code: value).count.positive?
     end
 
     # 'cond' is a boolean representing this rule's 'is' or 'is not'
