@@ -646,172 +646,101 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'is_staff' works" do
-    # Ensure a group has a rule
-    group = entities(:groupWithNothing)
+    group_rule = GroupRule.new( column: 'is_staff', condition: 'is', value: true )
 
-    assert group.roles.length == 0, "looks like groupWithNothing has a role"
-    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
-    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
-    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+    setup_match = lambda {
+      @person.is_staff = true
+      @person.save!
+    }
 
-    @person.is_staff = true
-    @person.save!
+    remove_match = lambda {
+      @person.is_staff = false
+      @person.save!
+    }
 
-    # Test basic rule creation matches existing people
-    assert group.members.length == 0, "group should have no members"
-
-    group_rule = GroupRule.new({ column: 'is_staff', condition: 'is', value: true, group_id: group.id })
-    group.rules << group_rule
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
-
-    # Test changing a person affects existing rule
-    @person.is_staff = false
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 0, "group should have no members"
-
-    # Test changing a person affects existing rule
-    @person.is_staff = true
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
+    test_group_rule(group_rule, setup_match, remove_match)
   end
 
   test "Rule 'is_faculty' works" do
-    # Ensure a group has a rule
-    group = entities(:groupWithNothing)
+    group_rule = GroupRule.new( column: 'is_faculty', condition: 'is', value: true )
 
-    assert group.roles.length == 0, "looks like groupWithNothing has a role"
-    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
-    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
-    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+    setup_match = lambda {
+      @person.is_faculty = true
+      @person.save!
+    }
 
-    @person.is_faculty = true
-    @person.save!
+    remove_match = lambda {
+      @person.is_faculty = false
+      @person.save!
+    }
 
-    # Test basic rule creation matches existing people
-    assert group.members.length == 0, "group should have no members"
-
-    group_rule = GroupRule.new({ column: 'is_faculty', condition: 'is', value: true, group_id: group.id })
-    group.rules << group_rule
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
-
-    # Test changing a person affects existing rule
-    @person.is_faculty = false
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 0, "group should have no members"
-
-    # Test changing a person affects existing rule
-    @person.is_faculty = true
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
+    test_group_rule(group_rule, setup_match, remove_match)
   end
 
   test "Rule 'is_student' works" do
-    # Ensure a group has a rule
-    group = entities(:groupWithNothing)
+    group_rule = GroupRule.new( column: 'is_student', condition: 'is', value: true )
 
-    assert group.roles.length == 0, "looks like groupWithNothing has a role"
-    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
-    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
-    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+    setup_match = lambda {
+      @person.is_student = true
+      @person.save!
+    }
 
-    @person.is_student = true
-    @person.save!
+    remove_match = lambda {
+      @person.is_student = false
+      @person.save!
+    }
 
-    # Test basic rule creation matches existing people
-    assert group.members.length == 0, "group should have no members"
-
-    group_rule = GroupRule.new({ column: 'is_student', condition: 'is', value: true, group_id: group.id })
-    group.rules << group_rule
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
-
-    # Test changing a person affects existing rule
-    @person.is_student = false
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 0, "group should have no members"
-
-    # Test changing a person affects existing rule
-    @person.is_student = true
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
+    test_group_rule(group_rule, setup_match, remove_match)
   end
 
   test "Rule 'is_employee' works" do
-    # Ensure a group has a rule
-    group = entities(:groupWithNothing)
+    group_rule = GroupRule.new( column: 'is_employee', condition: 'is', value: true )
 
-    assert group.roles.length == 0, "looks like groupWithNothing has a role"
-    assert group.rules.length == 0, "looks like groupWithNothing has a rule"
-    assert group.owners.length == 0, "looks like groupWithNothing has an owner"
-    assert group.operators.length == 0, "looks like groupWithNothing has an operator"
+    setup_match = lambda {
+      @person.is_employee = true
+      @person.save!
+    }
 
-    @person.is_employee = true
-    @person.save!
+    remove_match = lambda {
+      @person.is_employee = false
+      @person.save!
+    }
 
-    # Test basic rule creation matches existing people
-    assert group.members.empty?, "group should have no members"
-
-    group_rule = GroupRule.new({ column: 'is_employee', condition: 'is', value: true, group_id: group.id })
-    group.rules << group_rule
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
-
-    # Test changing a person affects existing rule
-    @person.is_employee = false
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 0, "group should have no members"
-
-    # Test changing a person affects existing rule
-    @person.is_employee = true
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 1, "group should have a member"
+    test_group_rule(group_rule, setup_match, remove_match)
   end
 
+  test "Rule 'sis_level_code' works" do
+    group_rule = GroupRule.new( column: 'sis_level_code', condition: 'is', value: 'GR' )
+
+    setup_match = lambda {
+      # Give a person a SIS association with level code 'GR'
+      sis_association = SisAssociation.new
+      sis_association.entity_id = @person.id
+      sis_association.major = Major.first
+      sis_association.level_code = 'GR'
+      sis_association.association_rank = 1
+      @person.sis_associations << sis_association
+    }
+
+    remove_match = lambda {
+      @person.sis_associations.destroy(@person.sis_associations[0])
+      @person.save!
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+  
   # Generic function for testing a group rule. Tests:
   #  1. A new rule matches existing data
   #  2. Alters data to remove match against existing rule
   #  3. Alters data to add match against existing rule
   #
-  # setup_match  - should alter data to ensure group_rule will have a match
   # group_rule   - an unsaved GroupRule object to be tested
+  # setup_match  - should alter data to ensure group_rule will have a match
   # remove_match - should alter data to ensure group_rule will not have a match
   #
   # Test assumes only one match will happen whenever a match is expected.
-  def test_group_rule(setup_match, group_rule, remove_match)
+  def test_group_rule(group_rule, setup_match, remove_match)
     # Ensure a group has a rule
     group = entities(:groupWithNothing)
 
@@ -842,27 +771,5 @@ class GroupRuleTest < ActiveSupport::TestCase
     group.reload
 
     assert group.members.length == 1, 'group should have a member'
-  end
-
-  test "Rule 'sis_level_code' works" do
-    group_rule = GroupRule.new( column: 'sis_level_code', condition: 'is', value: 'GR' )
-
-    setup_match = lambda {
-      # Give a person a SIS association with level code 'GR'
-      sis_association = SisAssociation.new
-      sis_association.entity_id = @person.id
-      sis_association.major = Major.first
-      sis_association.level_code = 'GR'
-      sis_association.association_rank = 1
-      @person.sis_associations << sis_association
-    }
-
-    remove_match = lambda {
-      # Test changing a person affects existing rule
-      @person.sis_associations.destroy(@person.sis_associations[0])
-      @person.save!
-    }
-
-    test_group_rule(setup_match, group_rule, remove_match)
   end
 end
