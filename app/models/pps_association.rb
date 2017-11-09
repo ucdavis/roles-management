@@ -15,12 +15,26 @@ class PpsAssociation < ApplicationRecord
     GroupRule.resolve_target!(:pps_position_type, person_id)
   end
 
-  # '1', 'Contract'
-  # '2', 'Regular/Career'
-  # '3', 'Limited, Formerly Casual'
-  # '4', 'Casual/RESTRICTED-Students'
-  # '5', 'Academic'
-  # '6', 'Per Diem'
-  # '7', 'Regular/Career Partial YEAR'
-  # '8', 'Floater'
+  def position_type_label
+    case position_type_code
+    when 1
+      'Contract'
+    when 2
+      'Regular/Career'
+    when 3
+      'Limited, Formerly Casual'
+    when 4
+      'Casual/RESTRICTED-Students'
+    when 5
+      'Academic'
+    when 6
+      'Per Diem'
+    when 7
+      'Regular/Career Partial YEAR'
+    when 8
+      'Floater'
+    else
+      'Unknown'
+    end
+  end
 end
