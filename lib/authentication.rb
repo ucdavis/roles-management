@@ -168,7 +168,7 @@ module Authentication
         end
 
         logger.info "Valid CAS user (#{@user.loginid}) is in our database and has proper roles. Passes authentication."
-        ActivityLog.record!("Logged in.", ["person_#{@user.id}"])
+        # ActivityLog.record!("Logged in.", ["person_#{@user.id}"])
 
         if params[:ticket] and params[:ticket].include? 'cas'
           # This is a session-initiating CAS login, so remove the damn GET parameter from the URL for UX
