@@ -455,7 +455,8 @@ CREATE TABLE entities (
     is_faculty boolean,
     is_student boolean,
     is_staff boolean,
-    is_external boolean
+    is_external boolean,
+    iam_id integer
 );
 
 
@@ -1988,6 +1989,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171026212019'),
 ('20171026212915'),
 ('20171030210853'),
-('20171030211820');
+('20171030211820'),
+('20171109234921');
 
 

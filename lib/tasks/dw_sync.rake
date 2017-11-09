@@ -48,6 +48,7 @@ namespace :dw do
       p.is_student = dw_person['person']['isStudent']
       p.is_staff = dw_person['person']['isStaff']
       p.is_external = dw_person['person']['isExternal']
+      p.iam_id = dw_person['person']['iamId'].to_i
 
       # Process any majors (SIS associations)
       # p.majors = dw_person['sisAssociations'].map { |sis_assoc| Major.find_or_create_by(name: sis_assoc['majorName']) }
