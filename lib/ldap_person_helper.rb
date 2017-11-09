@@ -335,7 +335,7 @@ module LdapPersonHelper
         log&.debug "No standard record changes for #{p.loginid}"
       else
         log&.debug "Updating the following for #{p.loginid}:"
-        p.changes.each do |field,changes|
+        p.changes.each do |field, changes|
           log&.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
           ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{p.id}", 'ldap'])
         end
