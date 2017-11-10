@@ -37,14 +37,14 @@ namespace :group do
   desc 'Recalculate the rule-based members of a specific group.'
   task :recalculate, [:group_id] => :environment do |t, args|
     unless args[:group_id]
-      puts "You must specify a group ID to recalculate."
-      exit
+      puts 'You must specify a group ID to recalculate.'
+      exit(-1)
     end
 
     g = Group.find_by_id(args[:group_id])
     unless g
       puts "Could not find a group with ID #{args[:group_id]}."
-      exit
+      exit(-1)
     end
 
     puts "Group (#{g.id}, #{g.name}) has #{g.rules.length} rules."
@@ -103,7 +103,7 @@ namespace :group do
       exit
     end
 
-    puts "Pre-existing inherited role assignments:"
+    puts 'Pre-existing inherited role assignments:'
 
     preexisting_role_ids = []
 
@@ -120,9 +120,7 @@ namespace :group do
 
     # First remove the calculated role assignments
     Thread.current[:role_assignment_destroying_calculated_flag] = true
-    calculated_ras.each do |ra|
-      ra.destroy
-    end
+    calculated_ras.each(&:destroy)
     Thread.current[:role_assignment_destroying_calculated_flag] = nil
 
     puts "All calculated role assignments destroyed.\n\n"
@@ -182,16 +180,32 @@ namespace :group do
       p.role_assignments.each do |ra|
         if ra.parent_id != nil
           calculated_ras << ra
-          if RoleAssignment.find_by_id(ra.parent_id) == nil
+          if RoleAssignment.find_by_id(ra.parent_id).nil?
             bad_ras << ra
-            bad_people_count = bad_people_count + 1
+            bad_people_count += 1
           end
         end
       end
-
-      #puts "#{p.loginid} has #{bad_ras.length} / #{calculated_ras.length} % invalid inherited roles."
     end
 
     puts "#{bad_people_count} / #{people.length} (#{bad_people_count / people.length}%) people have invalid inherited roles."
+  end
+
+  desc 'Convert applicable "Org Is" rules to "Dept Is"'
+  task :convert_org_rules => :environment do |t, args|
+    GroupRule.where(column: 'organization').each do |gr|
+      o = Organization.find_by(name: gr.value)
+      next unless o
+
+      # We only care about organizations with no children
+      next unless o.child_org_ids.empty?
+
+      # Organization has no children and can be treated as a department
+      puts "Converting organization-based GroupRule (ID: #{gr.id}, value: #{gr.value})"
+      puts "\tResults before conversion: #{gr.results.length}"
+      gr.column = 'department'
+      gr.save!
+      puts "\tResults after conversion: #{gr.results.length}"
+    end
   end
 end
