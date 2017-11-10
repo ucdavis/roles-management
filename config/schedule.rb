@@ -12,4 +12,5 @@ end
 # Run LDAP import updater every 6 hours
 every 6.hours do
   rake 'ldap:import'
+  rake 'dw:augment'
 end
