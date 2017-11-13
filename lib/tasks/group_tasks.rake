@@ -192,13 +192,19 @@ namespace :group do
   end
 
   desc 'Convert applicable "Org Is" rules to "Dept Is"'
-  task :convert_org_rules => :environment do |t, args|
+  task convert_org_rules: :environment do |t, args|
     GroupRule.where(column: 'organization').each do |gr|
       o = Organization.find_by(name: gr.value)
       next unless o
 
       # We only care about organizations with no children
       next unless o.child_org_ids.empty?
+
+      d = Department.find_by(name: gr.value)
+      if d.nil?
+        STDERR.puts "Cannot convert GroupRule for organization '#{o.name}', no matching department found. Skipping ..."
+        next
+      end
 
       # Organization has no children and can be treated as a department
       puts "Converting organization-based GroupRule (ID: #{gr.id}, value: #{gr.value})"

@@ -1,7 +1,7 @@
-class CreateMajorAssignments < ActiveRecord::Migration[5.1]
+class CreateSisAssociations < ActiveRecord::Migration[5.1]
   def up
-    # Create major_assignments table
-    create_table :major_assignments do |t|
+    # Create sis_associations table
+    create_table :sis_associations do |t|
       t.integer :major_id
       t.integer :entity_id
 
