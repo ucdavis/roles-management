@@ -200,7 +200,9 @@ namespace :group do
       # We only care about organizations with no children
       next unless o.child_org_ids.empty?
 
-      d = Department.find_by(name: gr.value)
+      d = Department.find_by(officialName: gr.value)
+      d = Department.find_by(displayName: gr.value) if d.nil?
+      d = Department.find_by(abbreviation: gr.value) if d.nil?
       if d.nil?
         STDERR.puts "Cannot convert GroupRule for organization '#{o.name}', no matching department found. Skipping ..."
         next
