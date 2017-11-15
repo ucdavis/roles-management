@@ -412,10 +412,10 @@ namespace :organization do
   task remove_unused: :environment do
     Organization.all.each do |org|
       if org.child_org_ids.empty? && org.entities.empty? && org.managers.empty?
-        puts "Removing unused orgazation (no children, no entities, no managers): #{org.name} ... "
+        puts "Removing unused organization (no children, no entities, no managers): #{org.name} ... "
         org.destroy
       elsif GroupRule.where(column: 'organization', value: org.name).empty? && org.child_org_ids.empty?
-        puts "Removing unused orgazation (no children, no rules): #{org.name} ... "
+        puts "Removing unused organization (no children, no rules): #{org.name} ... "
         org.destroy
       end
     end
