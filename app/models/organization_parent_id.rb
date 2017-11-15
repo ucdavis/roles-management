@@ -19,7 +19,7 @@ class OrganizationParentId < ApplicationRecord
   private
 
   def recalculate_organization_group_rules_if_necessary
-    #GroupRule.resolve_organization_parents!(organization)
+    GroupRule.resolve_organization_parents!(organization)
   end
 
   # There's a similar check in Organization but it never hurts ...

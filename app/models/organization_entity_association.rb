@@ -9,26 +9,21 @@ class OrganizationEntityAssociation < ApplicationRecord
   validate :only_people_hold_titles
   validate :groups_belong_to_only_one_organization
 
-  after_create  { |oea|
+  after_create do |oea|
     Sync.person_added_to_organization(Sync.encode(oea.entity), Sync.encode(oea.organization)) if oea.entity.person?
 
     # Though this seems like 'group rule' logic, it must be done in this 'join table' class
     # as organizations can be created outside the Organization class causing
     # any Organization callbacks to go unused.
-    recalculate_organization_group_rules_if_necessary
-  }
-  after_destroy { |oea|
+    GroupRule.resolve_target!(:organization, entity_id)
+  end
+  after_destroy do |oea|
     Sync.person_removed_from_organization(Sync.encode(oea.entity), Sync.encode(oea.organization)) if oea.entity.person?
 
-    recalculate_organization_group_rules_if_necessary
-  }
+    GroupRule.resolve_target!(:organization, entity_id)
+  end
 
   private
-
-  def recalculate_organization_group_rules_if_necessary
-    GroupRule.resolve_target!(:organization, entity_id)
-    GroupRule.resolve_target!(:department, entity_id)
-  end
 
   # Validate that any title assignment is associated with a 'Person'-type
   # entity, not a 'Group'-type entity as only people hold titles.
