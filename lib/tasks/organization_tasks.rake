@@ -57,7 +57,7 @@ namespace :organization do
     end
 
     puts "Finished importing from CSV. Read #{row_count} rows to create #{Organization.count} organizations."
-    puts "Parsing organizations to determine parental relationships ..."
+    puts 'Parsing organizations to determine parental relationships ...'
 
     count = 0
     with_multiple = 0
@@ -88,7 +88,7 @@ namespace :organization do
           puts "\tWe need to construct a parent ..."
           # Sadly if this is the case, we know very little about the organization ...
           parent_organization = Organization.create!
-          OrganizationOrgId.create!({ org_id: parent_org_id, organization_id: parent_organization.id })
+          OrganizationOrgId.create!( org_id: parent_org_id, organization_id: parent_organization.id )
         end
 
         if parent_organization.id != organization.id
@@ -99,12 +99,12 @@ namespace :organization do
       # Display some debug about whether we found multiple, valid parents
       if parental_orgs.length > 1
         puts "\tHas multiple parental orgs:"
-        with_multiple = with_multiple + 1
+        with_multiple += 1
         parental_orgs.each do |org|
           if org
             puts "\t\t#{org.dept_code} #{org.name} (matched on: #{ org.org_ids.select{ |org_id| parent_org_ids.include?(org_id.org_id) }.map{ |org_id| org_id.org_id } })"
           else
-            puts " -- Org is empty?"
+            puts ' -- Org is empty?'
             exit
           end
         end
@@ -130,7 +130,7 @@ namespace :organization do
   # This task (temporarily needed) looks for Groups which have no Organization
   # equivalent. Run organization:import_csv first.
   desc 'Check for missing organizations'
-  task :check_groups => :environment do
+  task check_groups: :environment do
     Group.where('code is not null').each do |ou_group|
       organization = Organization.find_by_dept_code(ou_group.code)
 
@@ -145,7 +145,7 @@ namespace :organization do
   # Converts OU-Groups into Organizations.
   # This task is only temporarily needed. Run organization:import_csv first.
   desc 'Check for missing organizations'
-  task :migrate_groups => :environment do
+  task migrate_groups: :environment do
     Group.where('code is not null').each do |ou_group|
       organization = Organization.find_by_dept_code(ou_group.code)
 
@@ -184,7 +184,7 @@ namespace :organization do
         # Create a new rule within that group for "Department is..." to restore those members
         # via calculation
         puts "\t\t"
-        gr = GroupRule.create!({ column: "organization", condition: "is", value: organization.name, group_id: ou_group.id })
+        gr = GroupRule.create!( column: "organization", condition: "is", value: organization.name, group_id: ou_group.id )
 
         puts "\tConverting group rules using this group ..."
         # Convert any "OU is..." groups which use this group into an "Organization is..." rule
@@ -223,7 +223,7 @@ namespace :organization do
   # The UCD data is bad and contains some parent/child loops. Fortunately, they represent
   # invalid relationships so we'll simply remove them if found.
   desc 'Remove any two-way parent/child relationships'
-  task :remove_parental_loops => :environment do
+  task remove_parental_loops: :environment do
     loop_count = 0
     Organization.all.each do |organization|
       organization.parent_organizations.each do |parent|
@@ -310,9 +310,9 @@ namespace :organization do
     # Find the remaining orphaned orgs and assign them to the new top-level; they should all have names
     Organization.all.each do |organization|
       unless organization.id == top_level.id # don't want to add the new top-level!
-        if organization.parent_organizations.length == 0
+        if organization.parent_organizations.empty?
           if organization.name.blank?
-            puts "Found a blank organization after having combined them all. This should not happen. Continuing ..."
+            puts 'Found a blank organization after having combined them all. This should not happen. Continuing ...'
           end
           puts "Adding #{organization.name} (#{organization.id}) to the top-level ..."
           top_level.child_organizations << organization
@@ -333,11 +333,11 @@ namespace :organization do
   end
 
   desc 'Removes a top-level node if one exists'
-  task :remove_top_level_node => :environment do
+  task remove_top_level_node: :environment do
     orphaned_organizations = []
 
     Organization.all.each do |organization|
-      orphaned_organizations << organization if organization.parent_organizations.length == 0
+      orphaned_organizations << organization if organization.parent_organizations.empty?
     end
 
     if orphaned_organizations.length != 1
@@ -363,18 +363,18 @@ namespace :organization do
 
     Organization.all.each do |organization|
       if organization.parent_organizations.length > 1
-        parent_ids = organization.parent_organizations.map{ |org| org.id }
+        parent_ids = organization.parent_organizations.map(&:id)
         organization.parent_organizations.each do |parent|
-          grandparent_ids = parent.parent_organizations.map{ |org| org.id }
+          grandparent_ids = parent.parent_organizations.map(&:id)
           intersections = parent_ids & grandparent_ids
 
           intersections.each do |i|
             puts "#{organization.name} (#{organization.id}) has #{Organization.find_by_id(i).name} (#{Organization.find_by_id(i).id}) as a parent but this is also a grandparent."
             if remove
-              puts "Removing ..."
+              puts 'Removing ...'
               organization.parent_organizations.destroy(Organization.find_by_id(i))
             end
-            puts "Other parents:"
+            puts 'Other parents:'
             parent_ids.each do |p|
               puts "\t#{Organization.find_by_id(p).name} (#{Organization.find_by_id(p).id})" unless intersections.include? p
             end
@@ -385,7 +385,7 @@ namespace :organization do
   end
 
   desc 'Drop all organizations'
-  task :drop => :environment do
+  task drop: :environment do
     org_count = Organization.count
 
     Organization.destroy_all
@@ -394,8 +394,8 @@ namespace :organization do
   end
 
   desc 'Generate a GraphViz-compatible output to STDOUT'
-  task :graphviz => :environment do
-    puts "digraph unix {"
+  task graphviz: :environment do
+    puts 'digraph unix {'
     puts "\tsize=\"6,6\";"
     puts "\tnode [color=lightblue2, style=filled];"
 
@@ -405,6 +405,19 @@ namespace :organization do
       end
     end
 
-    puts "}"
+    puts '}'
+  end
+
+  desc 'Remove unused organizations'
+  task remove_unused: :environment do
+    Organization.all.each do |org|
+      if org.child_org_ids.empty? && org.entities.empty? && org.managers.empty?
+        puts "Removing unused orgazation (no children, no entities, no managers): #{org.name} ... "
+        org.destroy
+      elsif GroupRule.where(column: 'organization', value: org.name).empty? && org.child_org_ids.empty?
+        puts "Removing unused orgazation (no children, no rules): #{org.name} ... "
+        org.destroy
+      end
+    end
   end
 end

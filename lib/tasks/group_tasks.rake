@@ -164,7 +164,7 @@ namespace :group do
   end
 
   desc 'Audit inherited roles for data correctness.'
-  task :audit_inherited_roles, [:loginid] => :environment do |t, args|
+  task :audit_inherited_roles, [:loginid] => :environment do |_t, args|
     people = []
     bad_people_count = 0
 
@@ -192,7 +192,7 @@ namespace :group do
   end
 
   desc 'Convert applicable "Org Is" rules to "Dept Is"'
-  task convert_org_rules: :environment do |t, args|
+  task convert_org_rules: :environment do
     GroupRule.where(column: 'organization').each do |gr|
       o = Organization.find_by(name: gr.value)
       next unless o

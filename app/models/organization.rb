@@ -55,7 +55,7 @@ class Organization < ApplicationRecord
 
     parent_organizations.each do |parent|
       if parent.no_loops_in_organization_relationship_graph(seen_ids.dup) == false
-        errors[:base] << "Organization parent/child relationships may not form loops in the organization tree graph"
+        errors[:base] << 'Organization parent/child relationships may not form loops in the organization tree graph'
         return false
       end
     end
@@ -68,6 +68,6 @@ class Organization < ApplicationRecord
   # UCD department codes are left-padded to ensure a six-digit "number"
   # (stored as a string though)
   def ensure_dept_code_is_left_padded
-    self.dept_code = "%06d" % self.dept_code.to_i if attribute_present?("dept_code")
+    self.dept_code = '%06d' % dept_code.to_i if attribute_present?('dept_code')
   end
 end
