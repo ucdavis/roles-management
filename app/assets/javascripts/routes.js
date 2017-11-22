@@ -551,6 +551,12 @@ Based on Rails routes of DSSRM::Application
 // applications => /applications(.:format)
   // function(options)
   applications_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"applications",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
+// department => /departments/:id(.:format)
+  // function(id, options)
+  department_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"departments",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
+// departments => /departments(.:format)
+  // function(options)
+  departments_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"departments",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
 // edit_admin_activity_log => /admin/activity_logs/:id/edit(.:format)
   // function(id, options)
   edit_admin_activity_log_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"activity_logs",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
@@ -584,6 +590,9 @@ Based on Rails routes of DSSRM::Application
 // edit_application => /applications/:id/edit(.:format)
   // function(id, options)
   edit_application_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"applications",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
+// edit_department => /departments/:id/edit(.:format)
+  // function(id, options)
+  edit_department_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"departments",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
 // edit_entity => /entities/:id/edit(.:format)
   // function(id, options)
   edit_entity_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"entities",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
@@ -677,6 +686,9 @@ Based on Rails routes of DSSRM::Application
 // new_application => /applications/new(.:format)
   // function(options)
   new_application_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"applications",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
+// new_department => /departments/new(.:format)
+  // function(options)
+  new_department_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"departments",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
 // new_entity => /entities/new(.:format)
   // function(options)
   new_entity_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"entities",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),

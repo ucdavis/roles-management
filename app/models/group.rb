@@ -78,7 +78,7 @@ class Group < Entity
 
       # Step Two: AND all groups from step one together
       Rails.logger.tagged 'Step Two' do
-        results = results.inject(results.first) { |sum,n| sum &= n }
+        results = results.inject(results.first) { |sum, n| sum &= n }
         results = [] unless results # reduce/inject may return nil
         logger.debug "ANDing all results together yields #{results.length} results"
       end
@@ -87,13 +87,16 @@ class Group < Entity
       # remove anybody who violates an 'is not' rule
       # TODO: Optimize this step!
       Rails.logger.tagged 'Step Three' do
-        results = results.find_all do |member|
-          keep = true
-          rules.select { |r| r.condition == 'is not' }.each do |rule|
-            keep &= rule.matches(member)
-          end
-          keep
+        step_three_rule_id_sets = GroupRule.select(:id, :column).where(group_id: id).where(condition: 'is not').group_by(&:column).map{|set| set[1].map{|gr| gr.id}}
+
+        negative_results = []
+
+        step_three_rule_id_sets.each do |rule_id_set|
+          negative_results << GroupRuleResult.select(:entity_id).joins(:group_rule).where(group_rule_id: rule_id_set).map(&:entity_id)
         end
+
+        results = results - negative_results.flatten.uniq
+
         logger.debug "Removing any 'is not' violates yielded #{results.length} results"
       end
 

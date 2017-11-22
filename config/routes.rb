@@ -42,6 +42,7 @@ DSSRM::Application.routes.draw do
   resources :titles
   resources :affiliations
   resources :organizations
+  resources :departments
 
   namespace 'admin' do
     get 'dialogs/impersonate'
