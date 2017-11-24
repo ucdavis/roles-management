@@ -44,7 +44,7 @@ class Group < Entity
   # Returns all members, both explicitly assigned and calculated via rules.
   # Recurses groups all the way down to return a list of _only_people_.
   def flattened_members
-    members.to_a.map { |e| e.type == 'Group' ? e.flattened_members.flatten : e }.uniq(&:id)
+    members.to_a.map { |e| e.type == 'Group' ? e.flattened_members.flatten : e }.reject { |m| m == [] }.uniq(&:id)
   end
 
   # Calculates (and resets) all group_members based on rules.
