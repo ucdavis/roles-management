@@ -51,14 +51,28 @@ namespace :dw do
       p.iam_id = dw_person['person']['iamId'].to_i
 
       # Process any majors (SIS associations)
-      # p.majors = dw_person['sisAssociations'].map { |sis_assoc| Major.find_or_create_by(name: sis_assoc['majorName']) }
       begin
-        p.sis_associations = dw_person['sisAssociations'].map { |sis_assoc_json|
-          SisAssociation.find_or_create_by(entity_id: p.id,
-                                           major: Major.find_by(name: sis_assoc_json['majorName']),
-                                           association_rank: sis_assoc_json['assocRank'].to_i,
-                                           level_code: sis_assoc_json['levelCode'])
+        existing_sis_assocs = p.sis_associations.map{ |assoc| { id: assoc.id, major: assoc.major.name, association_rank: assoc.association_rank, level_code: assoc.level_code } }
+        dw_person['sisAssociations'].each { |sis_assoc_json|
+          if existing_sis_assocs.reject! do |assoc|
+            assoc[:major] == sis_assoc_json['majorName'] &&
+            assoc[:association_rank] == sis_assoc_json['assocRank'].to_i &&
+            assoc[:level_code] == sis_assoc_json['levelCode']
+          end == nil
+            puts "#{p.loginid} does not have SIS association, creating ..."
+            SisAssociation.create!(entity_id: p.id,
+                                   major: Major.find_by(name: sis_assoc_json['majorName']),
+                                   association_rank: sis_assoc_json['assocRank'].to_i,
+                                   level_code: sis_assoc_json['levelCode'])
+          else
+            puts "#{p.loginid} already has SIS association, ignoring ..."
+          end
         }
+
+        existing_sis_assocs.each do |assoc|
+          puts "#{p.loginid} no longer appears to have SIS association, destroying ..."
+          p.sis_associations.destroy(SisAssociation.find_by(id: assoc[:id] ))
+        end
       rescue ActiveRecord::RecordNotSaved => e
         Rails.logger.error "Could not save SIS associations for #{p.loginid}. Exception trace:"
         Rails.logger.error e
@@ -66,13 +80,29 @@ namespace :dw do
 
       begin
         # Process any PPS affiliations
-        p.pps_associations = dw_person['ppsAssociations'].map { |pps_assoc_json|
-          PpsAssociation.find_or_create_by(person_id: p.id,
-                                           title: Title.find_by(code: pps_assoc_json['titleCode']),
-                                           department: Department.find_by(code: pps_assoc_json['deptCode']),
-                                           association_rank: pps_assoc_json['assocRank'].to_i,
-                                           position_type_code: pps_assoc_json['positionTypeCode'].to_i)
+        existing_pps_assocs = p.pps_associations.map{ |assoc| { id: assoc.id, title: assoc.title.code, department: assoc.department.code, association_rank: assoc.association_rank, position_type_code: assoc.position_type_code } }
+        dw_person['ppsAssociations'].each { |pps_assoc_json|
+          if existing_pps_assocs.reject! do |assoc|
+            assoc[:title] == pps_assoc_json['titleCode'] &&
+            assoc[:department] == pps_assoc_json['deptCode'] &&
+            assoc[:association_rank] == pps_assoc_json['assocRank'].to_i &&
+            assoc[:position_type_code] == pps_assoc_json['positionTypeCode'].to_i
+          end == nil
+            puts "#{p.loginid} does not have PPS association, creating ..."
+            PpsAssociation.create!(person_id: p.id,
+                                   title: Title.find_by(code: pps_assoc_json['titleCode']),
+                                   department: Department.find_by(code: pps_assoc_json['deptCode']),
+                                   association_rank: pps_assoc_json['assocRank'].to_i,
+                                   position_type_code: pps_assoc_json['positionTypeCode'].to_i)
+          else
+            puts "#{p.loginid} already has PPS association, ignoring ..."
+          end
         }
+
+        existing_pps_assocs.each do |assoc|
+          puts "#{p.loginid} no longer appears to have PPS association, destroying ..."
+          p.pps_associations.destroy(PpsAssociation.find_by(id: assoc[:id] ))
+        end
       rescue ActiveRecord::RecordNotSaved => e
         Rails.logger.error "Could not save PPS associations for #{p.loginid}. Ensure PPS departments are imported. Exception trace:"
         Rails.logger.error e
