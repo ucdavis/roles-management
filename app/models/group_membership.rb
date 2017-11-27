@@ -8,6 +8,7 @@ class GroupMembership < ApplicationRecord
   def self.destroy_calculated_membership_flag=(val)
     Thread.current[:destroy_calculated_membership_flag] = val
   end
+
   def self.recalculating_membership_flag=(val)
     Thread.current[:recalculating_membership_flag] = val
   end
