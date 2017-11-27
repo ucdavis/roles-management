@@ -7,6 +7,12 @@ class SisAssociation < ApplicationRecord
   # validates_presence_of :association_rank
   # validates_presence_of :level_code
 
-  after_save { GroupRule.resolve_target!(:sis_level_code, entity_id) }
-  after_destroy { GroupRule.resolve_target!(:sis_level_code, entity_id) }
+  after_save do
+    GroupRule.resolve_target!(:sis_level_code, entity_id)
+    GroupRule.resolve_target!(:major, entity_id)
+  end
+  after_destroy do
+    GroupRule.resolve_target!(:sis_level_code, entity_id)
+    GroupRule.resolve_target!(:major, entity_id)
+  end
 end

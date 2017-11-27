@@ -614,7 +614,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'is_employee' works" do
-    group_rule = GroupRule.new( column: 'is_employee', condition: 'is', value: true )
+    group_rule = GroupRule.new(column: 'is_employee', condition: 'is', value: true)
 
     setup_match = lambda {
       @person.is_employee = true
@@ -630,7 +630,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'sis_level_code' works" do
-    group_rule = GroupRule.new( column: 'sis_level_code', condition: 'is', value: 'GR' )
+    group_rule = GroupRule.new(column: 'sis_level_code', condition: 'is', value: 'GR')
 
     setup_match = lambda {
       # Give a person a SIS association with level code 'GR'
@@ -640,6 +640,27 @@ class GroupRuleTest < ActiveSupport::TestCase
       sis_association.level_code = 'GR'
       sis_association.association_rank = 1
       @person.sis_associations << sis_association
+    }
+
+    remove_match = lambda {
+      @person.sis_associations.destroy(@person.sis_associations[0])
+      @person.save!
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+
+  test "Rule 'major' works" do
+    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
+
+    setup_match = lambda {
+      # Give a person a SIS association with level code 'GR'
+      sis_association = SisAssociation.new
+      sis_association.entity_id = @person.id
+      sis_association.major = Major.find_by(name: 'History')
+      sis_association.level_code = 'GR'
+      sis_association.association_rank = 1
+      @person.sis_associations = [sis_association]
     }
 
     remove_match = lambda {
