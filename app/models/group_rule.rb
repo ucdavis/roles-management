@@ -17,6 +17,7 @@ class GroupRule < ApplicationRecord
   belongs_to :result_set, class_name: 'GroupRuleSet', foreign_key: 'group_rule_set_id'
 
   before_validation :link_result_set
+  after_save        :group_might_recalculate
   after_create      :group_must_recalculate
   after_destroy     :group_must_recalculate, :alert_ruleset
 
@@ -86,6 +87,12 @@ class GroupRule < ApplicationRecord
 
   # In after_destroy it's important the group recalculate members as this rule is gone
   def group_must_recalculate
+    group.update_members
+  end
+
+  def group_might_recalculate
+    return unless group_rule_set_id_changed?
+
     group.update_members
   end
 
