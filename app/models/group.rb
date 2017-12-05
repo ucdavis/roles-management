@@ -59,7 +59,7 @@ class Group < Entity
 
       recalculate_start = Time.now
 
-      logger.debug 'Re-assembling group members using rule result cache ...'
+      logger.debug 'Re-assembling group members using rule result set cache ...'
 
       # Step One: Build groups out of each 'is' rule,
       #           grouping rules of similar type together via OR
@@ -67,10 +67,18 @@ class Group < Entity
       Rails.logger.tagged 'Step One' do
         # Produce an array of arrays: outer array items represent each column type used, inner arrays are all group rule IDs for that specific column type
         # e.g. id: 1 "organization is", id: 2 "organization is", id: 3 "department is" produces: [ [1,2] , [3] ]
-        step_one_rule_id_sets = GroupRule.select(:id, :column).where(group_id: id).where(condition: 'is').where.not(column: 'loginid').group_by(&:column).map{|set| set[1].map{|gr| gr.id}}
+        step_one_rule_set_ids = GroupRule.select(:group_rule_set_id, :column)
+                                         .where(group_id: id)
+                                         .where(condition: 'is')
+                                         .where.not(column: 'loginid')
+                                         .group_by(&:column)
+                                         .map { |set| set[1].map(&:group_rule_set_id) }
 
-        step_one_rule_id_sets.each do |rule_id_set|
-          results << GroupRuleResult.select(:entity_id).joins(:group_rule).where(group_rule_id: rule_id_set).map(&:entity_id)
+        step_one_rule_set_ids.each do |rule_set_id|
+          results << GroupRuleResult.select(:entity_id)
+                                    .joins(:group_rule_set)
+                                    .where(group_rule_set_id: rule_set_id)
+                                    .map(&:entity_id)
         end
 
         logger.debug "Ending step one with #{results.length} results"
@@ -87,12 +95,19 @@ class Group < Entity
       # remove anybody who violates an 'is not' rule
       # TODO: Optimize this step!
       Rails.logger.tagged 'Step Three' do
-        step_three_rule_id_sets = GroupRule.select(:id, :column).where(group_id: id).where(condition: 'is not').group_by(&:column).map{|set| set[1].map{|gr| gr.id}}
+        step_three_rule_set_ids = GroupRule.select(:group_rule_set_id, :column)
+                                           .where(group_id: id)
+                                           .where(condition: 'is not')
+                                           .group_by(&:column)
+                                           .map { |set| set[1].map(&:group_rule_set_id) }
 
         negative_results = []
 
-        step_three_rule_id_sets.each do |rule_id_set|
-          negative_results << GroupRuleResult.select(:entity_id).joins(:group_rule).where(group_rule_id: rule_id_set).map(&:entity_id)
+        step_three_rule_set_ids.each do |rule_set_id|
+          negative_results << GroupRuleResult.select(:entity_id)
+                                             .joins(:group_rule_set)
+                                             .where(group_rule_set_id: rule_set_id)
+                                             .map(&:entity_id)
         end
 
         results -= negative_results.flatten.uniq

@@ -1,3 +1,4 @@
+# Holds GroupRuleResults so they may be shared to multiple GroupRules with identical values
 class GroupRuleSet < ApplicationRecord
   validates_presence_of :condition, :column, :value
   validates_inclusion_of :column, in: GroupRule::VALID_COLUMNS
