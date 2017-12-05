@@ -7,12 +7,12 @@ class PpsAssociation < ApplicationRecord
   validates_presence_of :position_type_code
 
   after_save do
-    GroupRule.resolve_target!(:pps_unit, person_id)
-    GroupRule.resolve_target!(:pps_position_type, person_id)
+    GroupRuleSet.update_results_for(:pps_unit, person_id)
+    GroupRuleSet.update_results_for(:pps_position_type, person_id)
   end
   after_destroy do
-    GroupRule.resolve_target!(:pps_unit, person_id)
-    GroupRule.resolve_target!(:pps_position_type, person_id)
+    GroupRuleSet.update_results_for(:pps_unit, person_id)
+    GroupRuleSet.update_results_for(:pps_position_type, person_id)
   end
 
   def position_type_label

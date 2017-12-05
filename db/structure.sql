@@ -582,7 +582,7 @@ ALTER SEQUENCE group_operatorships_id_seq OWNED BY group_operatorships.id;
 
 CREATE TABLE group_rule_results (
     id integer NOT NULL,
-    group_rule_id integer,
+    group_rule_set_id integer,
     entity_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -609,6 +609,39 @@ ALTER SEQUENCE group_rule_results_id_seq OWNED BY group_rule_results.id;
 
 
 --
+-- Name: group_rule_sets; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE group_rule_sets (
+    id bigint NOT NULL,
+    "column" character varying,
+    condition boolean,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: group_rule_sets_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE group_rule_sets_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: group_rule_sets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE group_rule_sets_id_seq OWNED BY group_rule_sets.id;
+
+
+--
 -- Name: group_rules; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -619,7 +652,8 @@ CREATE TABLE group_rules (
     value character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    group_id integer
+    group_id integer,
+    group_rule_set_id integer
 );
 
 
@@ -1204,6 +1238,13 @@ ALTER TABLE ONLY group_rule_results ALTER COLUMN id SET DEFAULT nextval('group_r
 
 
 --
+-- Name: group_rule_sets id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rule_sets ALTER COLUMN id SET DEFAULT nextval('group_rule_sets_id_seq'::regclass);
+
+
+--
 -- Name: group_rules id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1443,6 +1484,14 @@ ALTER TABLE ONLY group_operatorships
 
 ALTER TABLE ONLY group_rule_results
     ADD CONSTRAINT group_rule_results_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: group_rule_sets group_rule_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rule_sets
+    ADD CONSTRAINT group_rule_sets_pkey PRIMARY KEY (id);
 
 
 --
@@ -1989,6 +2038,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171026212019'),
 ('20171026212915'),
 ('20171030211820'),
-('20171109234921');
+('20171109234921'),
+('20171127233800');
 
 

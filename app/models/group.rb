@@ -17,15 +17,15 @@ class Group < Entity
   accepts_nested_attributes_for :rules, allow_destroy: true
   accepts_nested_attributes_for :memberships, allow_destroy: true
 
-  after_create { |group|
+  after_create do |group|
     ActivityLog.info!("Created group #{group.name}.", ["group_#{group.id}", 'system'])
-  }
+  end
 
   before_destroy :allow_group_membership_destruction, prepend: true
-  after_destroy { |group|
+  after_destroy do |group|
     GroupMembership.can_destroy_calculated_group_membership(false)
     ActivityLog.info!("Deleted group #{group.name}.", ['system'])
-  }
+  end
 
   def as_json(_options = {})
     { id: id, name: name, type: 'Group', description: description,
@@ -53,7 +53,7 @@ class Group < Entity
   # This algorithm starts with an empty set, then runs all 'is'
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
-  def recalculate_members!
+  def update_members
     Rails.logger.tagged "Group #{id}" do
       results = []
 
@@ -95,7 +95,7 @@ class Group < Entity
           negative_results << GroupRuleResult.select(:entity_id).joins(:group_rule).where(group_rule_id: rule_id_set).map(&:entity_id)
         end
 
-        results = results - negative_results.flatten.uniq
+        results -= negative_results.flatten.uniq
 
         logger.debug "Removing any 'is not' violates yielded #{results.length} results"
       end
@@ -116,11 +116,11 @@ class Group < Entity
       # Look for memberships which need to be removed
       GroupMembership.where(group_id: id, calculated: true).each do |membership|
         # Note: Array.delete returns nil iff result is not in array
-        if results.delete(membership.entity_id) == nil
-          GroupMembership.destroying_calculated_group_membership do
-            GroupMembership.recalculating_membership do
-              membership.destroy
-            end
+        next unless results.delete(membership.entity_id).nil?
+
+        GroupMembership.destroying_calculated_group_membership do
+          GroupMembership.recalculating_membership do
+            membership.destroy
           end
         end
       end
@@ -135,7 +135,7 @@ class Group < Entity
       end
 
       logger.debug "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
-      logger.debug "Completed recalculate_members!. Total elapsed time was #{Time.now - recalculate_start}s."
+      logger.debug "Completed update_members(). Total elapsed time was #{Time.now - recalculate_start}s."
     end
   end
 
@@ -154,7 +154,7 @@ class Group < Entity
       end
     end
 
-    return true
+    return true # rubocop:disable Style/RedundantReturn
   end
 
   private

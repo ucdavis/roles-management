@@ -15,12 +15,12 @@ class OrganizationEntityAssociation < ApplicationRecord
     # Though this seems like 'group rule' logic, it must be done in this 'join table' class
     # as organizations can be created outside the Organization class causing
     # any Organization callbacks to go unused.
-    GroupRule.resolve_target!(:organization, entity_id)
+    GroupRuleSet.update_results_for(:organization, entity_id)
   end
   after_destroy do |oea|
     Sync.person_removed_from_organization(Sync.encode(oea.entity), Sync.encode(oea.organization)) if oea.entity.person?
 
-    GroupRule.resolve_target!(:organization, entity_id)
+    GroupRuleSet.update_results_for(:organization, entity_id)
   end
 
   private
@@ -30,7 +30,7 @@ class OrganizationEntityAssociation < ApplicationRecord
   def only_people_hold_titles
     if title_id
       if entity_id && !entity.person?
-        errors.add(:title_id, "can only be set if associated entity is a Person")
+        errors.add(:title_id, 'can only be set if associated entity is a Person')
       end
     end
   end
@@ -40,7 +40,7 @@ class OrganizationEntityAssociation < ApplicationRecord
     if entity && entity.group?
       association = OrganizationEntityAssociation.find_by_entity_id_and_organization_id(self.entity_id, self.organization_id)
       if association && association.id != id
-        errors.add(:base, "groups may only belong to one organization")
+        errors.add(:base, 'groups may only belong to one organization')
       end
     end
   end
