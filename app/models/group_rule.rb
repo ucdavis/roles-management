@@ -48,24 +48,22 @@ class GroupRule < ApplicationRecord
   def self.resolve_target_assign_organization_parents!(organization, entity_id)
     touched_group_ids = []
 
-    Rails.logger.tagged 'GroupRule.resolve_target_assign_organization_parents!' do
-      Rails.logger.debug "Called for organzation \"#{organization.name}\"'s parents on #{entity_id}. There are #{organization.parent_organizations.length} parent(s)."
+    Rails.logger.debug "Called for organzation \"#{organization.name}\"'s parents on #{entity_id}. There are #{organization.parent_organizations.length} parent(s)."
 
-      organization.parent_organizations.each do |parent|
-        # Find all rules affecting this parent
-        rules = GroupRule.where(column: 'organization', condition: 'is', value: parent.name)
+    organization.parent_organizations.each do |parent|
+      # Find all rules affecting this parent
+      rule_sets = GroupRuleSet.where(column: 'organization', condition: true, value: parent.name)
 
-        Rails.logger.debug "Found #{rules.length} rules for parent \"#{parent.name}\""
+      Rails.logger.debug "Found #{rule_sets.length} rule sets for parent \"#{parent.name}\""
 
-        rules.each do |rule|
-          # Add the entity to the rule's results
-          rule.results << GroupRuleResult.new(entity_id: entity_id)
-          touched_group_ids << rule.group.id
-        end
-
-        # Do the same for this parent's parents
-        touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(parent, entity_id)
+      rule_sets.each do |rule_set|
+        # Add the entity to the rule's results
+        rule_set.results << GroupRuleResult.new(entity_id: entity_id)
+        touched_group_ids << GroupRule.where(group_rule_set_id: rule_set.id).pluck(:group_id)
       end
+
+      # Do the same for this parent's parents
+      touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(parent, entity_id)
     end
 
     return touched_group_ids.flatten.uniq # rubocop:disable Style/RedundantReturn
@@ -91,7 +89,7 @@ class GroupRule < ApplicationRecord
   end
 
   def group_might_recalculate
-    return unless group_rule_set_id_changed?
+    return unless saved_change_to_attribute?(:group_rule_set_id)
 
     group.update_members
   end

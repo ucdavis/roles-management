@@ -119,7 +119,7 @@ class Group < Entity
       Rails.logger.tagged 'Step Four' do
         rules.select { |r| r.condition == 'is' && r.column == 'loginid' }.each do |rule|
           logger.debug "Processing loginid is rule #{rule.value}..."
-          results << rule.results.map(&:entity_id)
+          results << rule.result_set.results.map(&:entity_id)
         end
 
         logger.debug "'Login ID is' additions yields #{results.length} results"
