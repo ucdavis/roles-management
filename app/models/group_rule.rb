@@ -17,13 +17,16 @@ class GroupRule < ApplicationRecord
   belongs_to :result_set, class_name: 'GroupRuleSet', foreign_key: 'group_rule_set_id'
 
   before_validation :link_result_set
-  after_save        :group_might_recalculate
-  after_create      :group_must_recalculate
-  after_destroy     :group_must_recalculate, :alert_ruleset
+  after_destroy     :alert_ruleset
 
   # Needed by 'Group' when calculating rules
   def self.valid_columns
     VALID_COLUMNS
+  end
+
+  # Returns an array of all People matched by this GroupRule
+  def results
+    Person.where(id: result_set.results.pluck(:entity_id))
   end
 
   # This function is used by OrganizationParentId to touch parent(s) GroupRuleResults when relationships are formed
@@ -76,22 +79,13 @@ class GroupRule < ApplicationRecord
     return unless column_changed? || condition_changed? || value_changed?
     return unless column.present? && condition.present? && value.present?
 
-    self.result_set = GroupRuleSet.find_or_create_by(
+    grs = GroupRuleSet.find_or_create_by(
       column: column,
       condition: condition == 'is',
       value: value
     )
-  end
 
-  # In after_destroy it's important the group recalculate members as this rule is gone
-  def group_must_recalculate
-    group.update_members
-  end
-
-  def group_might_recalculate
-    return unless saved_change_to_attribute?(:group_rule_set_id)
-
-    group.update_members
+    self.result_set = grs
   end
 
   # Alert the GroupRuleSet in case it needs to destroy itself

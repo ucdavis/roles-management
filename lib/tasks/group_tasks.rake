@@ -31,7 +31,7 @@ namespace :group do
     touched_group_ids.uniq.each do |group_id|
       group = Group.find_by_id(group_id)
       old_count = group.members.length
-      group.update_members
+      #group.update_members
       group.reload
       puts "\tGroup ##{group.id} (#{group.name}) went from #{old_count} to #{group.members.length} members"
     end
@@ -64,7 +64,7 @@ namespace :group do
     end
 
     old_count = g.members.length
-    g.update_members
+    #g.update_members
     g.reload
     puts "\tGroup ##{g.id} (#{g.name}) went from #{old_count} to #{g.members.length} members"
   end

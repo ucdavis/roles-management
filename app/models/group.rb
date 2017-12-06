@@ -1,7 +1,6 @@
 # Group shares many attributes with entity.
 class Group < Entity
   has_many :memberships, class_name: 'GroupMembership', dependent: :destroy
-  has_many :members, through: :memberships, source: :entity
   has_many :role_assignments, foreign_key: 'entity_id', dependent: :destroy
   has_many :roles, through: :role_assignments, dependent: :destroy
   has_many :group_ownerships, dependent: :destroy
@@ -41,10 +40,8 @@ class Group < Entity
     "(Group:#{id},#{name})"
   end
 
-  # Returns all members, both explicitly assigned and calculated via rules.
-  # Recurses groups all the way down to return a list of _only_people_.
-  def flattened_members
-    members.to_a.map { |e| e.type == 'Group' ? e.flattened_members.flatten : e }.reject { |m| m == [] }.uniq(&:id)
+  def members
+    Person.where(id: (memberships.where(calculated: false).pluck(:entity_id) + rule_member_ids).uniq)
   end
 
   # Calculates (and resets) all group_members based on rules.
@@ -53,105 +50,64 @@ class Group < Entity
   # This algorithm starts with an empty set, then runs all 'is'
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
-  def update_members
-    Rails.logger.tagged "Group #{id}" do
-      results = []
+  def rule_member_ids
+    results = []
 
-      recalculate_start = Time.now
-
-      logger.debug 'Re-assembling group members using rule result set cache ...'
-
-      # Step One: Build groups out of each 'is' rule,
-      #           grouping rules of similar type together via OR
-      #           Note: we ignore the 'loginid' column as it is calculated separately
-      Rails.logger.tagged 'Step One' do
-        # Produce an array of arrays: outer array items represent each column type used, inner arrays are all group rule IDs for that specific column type
-        # e.g. id: 1 "organization is", id: 2 "organization is", id: 3 "department is" produces: [ [1,2] , [3] ]
-        step_one_rule_set_ids = GroupRule.select(:group_rule_set_id, :column)
-                                         .where(group_id: id)
-                                         .where(condition: 'is')
-                                         .where.not(column: 'loginid')
-                                         .group_by(&:column)
-                                         .map { |set| set[1].map(&:group_rule_set_id) }
-
-        step_one_rule_set_ids.each do |rule_set_id|
-          results << GroupRuleResult.select(:entity_id)
-                                    .joins(:group_rule_set)
-                                    .where(group_rule_set_id: rule_set_id)
-                                    .map(&:entity_id)
-        end
-
-        logger.debug "Ending step one with #{results.length} results"
-      end
-
-      # Step Two: AND all groups from step one together
-      Rails.logger.tagged 'Step Two' do
-        results = results.inject(results.first) { |sum, n| sum &= n }
-        results = [] unless results # reduce/inject may return nil
-        logger.debug "ANDing all results together yields #{results.length} results"
-      end
-
-      # Step Three: Pass over the result from step two and
-      # remove anybody who violates an 'is not' rule
-      # TODO: Optimize this step!
-      Rails.logger.tagged 'Step Three' do
-        step_three_rule_set_ids = GroupRule.select(:group_rule_set_id, :column)
-                                           .where(group_id: id)
-                                           .where(condition: 'is not')
-                                           .group_by(&:column)
-                                           .map { |set| set[1].map(&:group_rule_set_id) }
-
-        negative_results = []
-
-        step_three_rule_set_ids.each do |rule_set_id|
-          negative_results << GroupRuleResult.select(:entity_id)
-                                             .joins(:group_rule_set)
-                                             .where(group_rule_set_id: rule_set_id)
-                                             .map(&:entity_id)
-        end
-
-        results -= negative_results.flatten.uniq
-
-        logger.debug "Removing any 'is not' violates yielded #{results.length} results"
-      end
-
-      # Step Four: Process any 'loginid is' rules
-      Rails.logger.tagged 'Step Four' do
-        rules.select { |r| r.condition == 'is' && r.column == 'loginid' }.each do |rule|
-          logger.debug "Processing loginid is rule #{rule.value}..."
-          results << rule.result_set.results.map(&:entity_id)
-        end
-
-        logger.debug "'Login ID is' additions yields #{results.length} results"
-      end
-
-      results.flatten!
-      logger.debug "Results flattened, count now at #{results.length} results"
-
-      # Look for memberships which need to be removed
-      GroupMembership.where(group_id: id, calculated: true).each do |membership|
-        # Note: Array.delete returns nil iff result is not in array
-        next unless results.delete(membership.entity_id).nil?
-
-        GroupMembership.destroying_calculated_group_membership do
-          GroupMembership.recalculating_membership do
-            membership.destroy
-          end
-        end
-      end
-
-      # Look for memberships to add
-      # Whatever's left in 'results' are memberships which don't already exist
-      # and need to be created.
-      results.each do |r|
-        GroupMembership.recalculating_membership do
-          memberships << GroupMembership.new(entity_id: r, calculated: true)
-        end
-      end
-
-      logger.debug "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
-      logger.debug "Completed update_members(). Total elapsed time was #{Time.now - recalculate_start}s."
+    # Step One: Build groups out of each 'is' rule,
+    #           grouping rules of similar type together via OR
+    #           Note: we ignore the 'loginid' column as it is calculated separately
+    # Produce an array of arrays: outer array items represent each column type used, inner arrays are all group rule IDs for that specific column type
+    # e.g. id: 1 "organization is", id: 2 "organization is", id: 3 "department is" produces: [ [1,2] , [3] ]
+    GroupRule.select(:group_rule_set_id, :column)
+             .where(group_id: id)
+             .where(condition: 'is')
+             .where.not(column: 'loginid')
+             .group_by(&:column)
+             .map { |set| set[1].map(&:group_rule_set_id) }.each do |rule_set_id|
+      results << GroupRuleResult.select(:entity_id)
+                                .joins(:group_rule_set)
+                                .where(group_rule_set_id: rule_set_id)
+                                .map(&:entity_id)
     end
+
+    logger.debug "Ending step one with #{results.length} results"
+
+    # Step Two: AND all groups from step one together
+    results = results.inject(results.first) { |sum, n| sum &= n }
+    results = [] unless results # reduce/inject may return nil
+    logger.debug "ANDing all results together yields #{results.length} results"
+
+    # Step Three: Pass over the result from step two and
+    # remove anybody who violates an 'is not' rule
+    negative_results = []
+    GroupRule.select(:group_rule_set_id, :column)
+             .where(group_id: id)
+             .where(condition: 'is not')
+             .group_by(&:column)
+             .map { |set| set[1].map(&:group_rule_set_id) }.each do |rule_set_id|
+      negative_results << GroupRuleResult.select(:entity_id)
+                                         .joins(:group_rule_set)
+                                         .where(group_rule_set_id: rule_set_id)
+                                         .map(&:entity_id)
+    end
+
+    results -= negative_results.flatten.uniq
+
+    logger.debug "Removing any 'is not' violates yielded #{results.length} results"
+
+    # Step Four: Process any 'loginid is' rules
+    rules.select { |r| r.condition == 'is' && r.column == 'loginid' }.each do |rule|
+      logger.debug "Processing loginid is rule #{rule.value}..."
+      results << rule.result_set.results.map(&:entity_id)
+    end
+
+    logger.debug "'Login ID is' additions yields #{results.length} results"
+
+    results.flatten!
+
+    logger.debug "Calculated #{results.length} results"
+
+    return results
   end
 
   # Records all IDs found while traversing up the parent graph.

@@ -28,7 +28,7 @@ class EntitiesController < ApplicationController
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
         csv_data = CSV.generate do |csv|
           csv << Person.csv_header
-          @entity.flattened_members.each do |m|
+          @entity.members.each do |m|
             csv << m.to_csv if m.active
           end
         end

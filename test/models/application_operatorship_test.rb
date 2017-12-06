@@ -78,12 +78,12 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
     assert group.members.length == 0, "group should have no members"
 
     @person.application_operatorships.destroy_all
-    assert @person.application_operatorships.length == 0, "test user 'casuser' should not have any application operatorships yet"
+    assert @person.application_operatorships.empty?, "test user 'casuser' should not have any application operatorships yet"
     @person.group_memberships.destroy_all
-    assert @person.group_memberships.length == 0, "'casuser' should not have group memberships yet"
+    assert @person.group_memberships.empty?, "'casuser' should not have group memberships yet"
 
     # Add the user to the group and ensure they gain the group's application operatorship
-    group.members << @person
+    GroupMembership.create!(group: group, entity: @person)
 
     assert group.members.length == 1, "group should now have one member"
 
@@ -93,11 +93,11 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
 
     # Now remove the user from the group and ensure the inherited application operatorship goes away
     @person.group_memberships.destroy_all
-    assert @person.group_memberships.length == 0, "'casuser' should not have group memberships now"
+    assert @person.group_memberships.empty?, "'casuser' should not have group memberships now"
 
     @person.reload
 
-    assert @person.application_operatorships.length == 0, "test user should no longer have an application operatorship but instead has #{@person.application_operatorships.length}"
+    assert @person.application_operatorships.empty?, "test user should no longer have an application operatorship but instead has #{@person.application_operatorships.length}"
   end
 
   test "universal operators are able to assign a person to a role in applications they otherwise do not own or operate" do

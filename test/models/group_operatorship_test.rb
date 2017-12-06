@@ -28,12 +28,12 @@ class GroupOperatorshipTest < ActiveSupport::TestCase
     assert group.owners.include?(@person) == false, "casuser should not be an owner of groupWithARole"
     assert group.operators.include?(@person), "casuser should be an operator of groupWithARole"
 
-    assert group.owners.length == 0, "group should not have any owners"
+    assert group.owners.empty?, "group should not have any owners"
     assert group.operators.length == 1, "group should only have one operator"
 
-    assert group.members.length == 0, "group should not have any members"
+    assert group.members.empty?, "group should not have any members"
 
-    group.members << @person
+    GroupMembership.create!(group: group, entity: @person)
 
     assert group.members.length == 1, "group should have one member"
   end
@@ -54,6 +54,6 @@ class GroupOperatorshipTest < ActiveSupport::TestCase
 
     random_person = entities(:personWithNothing)
 
-    a_group.members << random_person
+    GroupMembership.create!(group: a_group, entity: random_person)
   end
 end

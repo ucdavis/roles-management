@@ -1,8 +1,9 @@
 # Holds GroupRuleResults so they may be shared to multiple GroupRules with identical values
 class GroupRuleSet < ApplicationRecord
-  validates_presence_of :condition, :column, :value
+  validates_presence_of :column, :value
   validates_inclusion_of :column, in: GroupRule::VALID_COLUMNS
   validates_uniqueness_of :column, scope: [:condition, :value]
+  validates_inclusion_of :condition, in: [true, false]
 
   validate do |grs|
     if (grs.column == 'is_staff' || grs.column == 'is_faculty' || grs.column == 'is_student' || grs.column == 'is_employee') && grs.value != 't'
@@ -169,16 +170,13 @@ class GroupRuleSet < ApplicationRecord
           touched_rule_set_ids << rule_set.id
         end
       end
-
     end
 
     touched_rule_set_ids = touched_rule_set_ids.flatten.uniq
     affected_group_ids = GroupRule.where(group_rule_set_id: touched_rule_set_ids).pluck(:group_id)
 
-    affected_group_ids.each do |group_id|
-      logger.debug "Alerting group ##{group_id} to update members ..."
-      Group.find_by_id(group_id).update_members
-    end
+    # Group membership may have changed. Touch to invalidate any caches.
+    Group.where(id: affected_group_ids).each(&:touch)
   end
 
   # Calculate the results of the rule and cache in GroupRuleResult instances

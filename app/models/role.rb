@@ -56,9 +56,9 @@ class Role < ApplicationRecord
     # Add all people
     all += entities.where(type: 'Person').to_a
 
-    # Add all (flattened) groups
+    # Add all group members
     entities.where(type: 'Group').to_a.each do |group|
-      all += group.flattened_members
+      all += group.members
     end
 
     # Return a unique list
