@@ -33,10 +33,10 @@ class GroupRuleSet < ApplicationRecord
   # Class method to recalculate all rules related to column and person_id.
   # Similar to update_results() but only involves removing/adding results for a specific person
   # Note: Function assumes GroupRule is an 'is' rule as 'is not' are generally unsupported.
-  def update_results_for(column, person_id)
+  def self.update_results_for(column, person_id)
     touched_group_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
 
-    unless VALID_COLUMNS.include? column.to_s
+    unless GroupRule.valid_columns.include? column.to_s
       raise "Cannot update_results_for() for unknown column '#{column}'"
     end
 
@@ -46,142 +46,140 @@ class GroupRuleSet < ApplicationRecord
       return
     end
 
-    Rails.logger.tagged 'GroupRuleSet.update_results_for' do
-      logger.debug "Updating results for person with ID #{person_id} for column #{column}"
+    logger.debug "Updating results for person with ID #{person_id} for column #{column}"
 
-      # Remove any existing rule results for this (person, column) duple
-      expired_rule_results = GroupRuleResult.includes(:group_rule).where(entity_id: person_id, group_rules: { column: column.to_s })
-      touched_group_ids = expired_rule_results.map { |result| result.group_rule.group.id }
-      logger.info "Expiring #{expired_rule_results.length} rules"
-      expired_rule_results.destroy_all
+    # Remove any existing rule results for this (person, column) duple
+    outdated_results = GroupRuleResult.includes(:group_rule_set).where(entity_id: person_id, group_rule_sets: { column: column.to_s })
+    touched_group_ids = outdated_results.map { |result| result.group_rule_set.rules.map{ |r| r.group.id } }.flatten
+    logger.debug "Expiring #{outdated_results.length} outdated results"
+    outdated_results.destroy_all
 
-      # Figure out which rules the entity matches specifically and add them
-      case column
-      when :title
-        if entity.title
-          GroupRule.where(column: 'title', value: entity.title.name).each do |rule|
-            logger.debug "Matched 'title is' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-        end
-      when :major
-        entity.majors.each do |major|
-          GroupRule.where(column: 'major', value: major.name).each do |rule|
-            logger.debug "Matched 'major is' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-        end
-      when :affiliation
-        entity.affiliations.map(&:name).uniq.each do |aff_name|
-          GroupRule.where(column: 'affiliation', value: aff_name).each do |rule|
-            logger.debug "Matched 'affiliation is' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-        end
-      when :department
-        if entity.type == 'Group'
-          logger.warn "Targeted person for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
-        else
-          byebug
-          entity.pps_associations.map { |assoc| assoc.department.officialName }.uniq.each do |dept_name|
-            GroupRule.where(column: 'department', value: dept_name).each do |rule|
-              logger.debug "Matched 'department is' rule. Recording result."
-              rule.results << GroupRuleResult.new(entity_id: person_id)
-              touched_group_ids << rule.group.id
-            end
-          end
-        end
-      when :organization
-        # FIXME
-        # This is incorrect because if the entity is only a member of a child organization with no rules
-        # but the child organization's parent has a rule, this will never do anything (right?)
-        entity.organizations.map(&:name).uniq.each do |org_name|
-          GroupRule.where(column: 'organization', value: org_name).each do |rule|
-            logger.debug "Matched 'Organization is' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-
-          touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(Organization.find_by(name: org_name), person_id)
-        end
-      when :loginid
-        GroupRule.where(column: 'loginid', value: entity.loginid).each do |rule|
-          logger.debug "Matched 'loginid is' rule. Recording result."
+    # Figure out which rules the entity matches specifically and add them
+    case column
+    when :title
+      if entity.title
+        GroupRule.where(column: 'title', value: entity.title.name).each do |rule|
+          logger.debug "Matched 'title is' rule. Recording result."
           rule.results << GroupRuleResult.new(entity_id: person_id)
           touched_group_ids << rule.group.id
         end
-      when :is_staff
-        if entity.is_staff
-          GroupRule.where(column: 'is_staff').each do |rule|
-            # rule.value does not matter for the 'is_staff/employee/etc' column types
-            logger.debug "Matched 'is_staff' rule. Recording result."
+      end
+    when :major
+      entity.majors.each do |major|
+        GroupRule.where(column: 'major', value: major.name).each do |rule|
+          logger.debug "Matched 'major is' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
+      end
+    when :affiliation
+      entity.affiliations.map(&:name).uniq.each do |aff_name|
+        GroupRule.where(column: 'affiliation', value: aff_name).each do |rule|
+          logger.debug "Matched 'affiliation is' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
+      end
+    when :department
+      if entity.type == 'Group'
+        logger.warn "Targeted person for 'Department is' rule is a group #{entity.log_identifier}. Skipping ..."
+      else
+        byebug
+        entity.pps_associations.map { |assoc| assoc.department.officialName }.uniq.each do |dept_name|
+          GroupRule.where(column: 'department', value: dept_name).each do |rule|
+            logger.debug "Matched 'department is' rule. Recording result."
             rule.results << GroupRuleResult.new(entity_id: person_id)
             touched_group_ids << rule.group.id
           end
         end
-      when :is_faculty
-        if entity.is_faculty
-          GroupRule.where(column: 'is_faculty').each do |rule|
-            # rule.value does not matter for the 'is_staff/employee/etc' column types
-            logger.debug "Matched 'is_faculty' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-        end
-      when :is_student
-        if entity.is_student
-          GroupRule.where(column: 'is_student').each do |rule|
-            # rule.value does not matter for the 'is_staff/employee/etc' column types
-            logger.debug "Matched 'is_student' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-        end
-      when :is_employee
-        if entity.is_employee
-          GroupRule.where(column: 'is_employee').each do |rule|
-            # rule.value does not matter for the 'is_staff/employee/etc' column types
-            logger.debug "Matched 'is_employee' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-        end
-      when :sis_level_code
-        GroupRule.where(column: 'sis_level_code').each do |rule|
-          if entity.sis_associations.where(level_code: rule.value).count.positive?
-            logger.debug "Matched 'sis_level_code' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-        end
-      when :pps_unit
-        GroupRule.where(column: 'pps_unit').each do |rule|
-          relevent_title_ids = Title.where(unit: rule.value).pluck(:id)
-
-          if entity.pps_associations.where(title_id: relevent_title_ids).count.positive?
-            logger.debug "Matched 'pps_unit' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
-        end
-      when :pps_position_type
-        GroupRule.where(column: 'pps_position_type').each do |rule|
-          if entity.pps_associations.where(position_type_code: rule.value).count.positive?
-            logger.debug "Matched 'pps_position_type' rule. Recording result."
-            rule.results << GroupRuleResult.new(entity_id: person_id)
-            touched_group_ids << rule.group.id
-          end
+      end
+    when :organization
+      # FIXME
+      # This is incorrect because if the entity is only a member of a child organization with no rules
+      # but the child organization's parent has a rule, this will never do anything (right?)
+      entity.organizations.map(&:name).uniq.each do |org_name|
+        GroupRule.where(column: 'organization', value: org_name).each do |rule|
+          logger.debug "Matched 'Organization is' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
         end
 
+        touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(Organization.find_by(name: org_name), person_id)
+      end
+    when :loginid
+      GroupRule.where(column: 'loginid', value: entity.loginid).each do |rule|
+        logger.debug "Matched 'loginid is' rule. Recording result."
+        rule.results << GroupRuleResult.new(entity_id: person_id)
+        touched_group_ids << rule.group.id
+      end
+    when :is_staff
+      if entity.is_staff
+        GroupRule.where(column: 'is_staff').each do |rule|
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          logger.debug "Matched 'is_staff' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
+      end
+    when :is_faculty
+      if entity.is_faculty
+        GroupRule.where(column: 'is_faculty').each do |rule|
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          logger.debug "Matched 'is_faculty' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
+      end
+    when :is_student
+      if entity.is_student
+        GroupRule.where(column: 'is_student').each do |rule|
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          logger.debug "Matched 'is_student' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
+      end
+    when :is_employee
+      if entity.is_employee
+        GroupRule.where(column: 'is_employee').each do |rule|
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          logger.debug "Matched 'is_employee' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
+      end
+    when :sis_level_code
+      GroupRule.where(column: 'sis_level_code').each do |rule|
+        if entity.sis_associations.where(level_code: rule.value).count.positive?
+          logger.debug "Matched 'sis_level_code' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
+      end
+    when :pps_unit
+      GroupRule.where(column: 'pps_unit').each do |rule|
+        relevent_title_ids = Title.where(unit: rule.value).pluck(:id)
+
+        if entity.pps_associations.where(title_id: relevent_title_ids).count.positive?
+          logger.debug "Matched 'pps_unit' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
+      end
+    when :pps_position_type
+      GroupRule.where(column: 'pps_position_type').each do |rule|
+        if entity.pps_associations.where(position_type_code: rule.value).count.positive?
+          logger.debug "Matched 'pps_position_type' rule. Recording result."
+          rule.results << GroupRuleResult.new(entity_id: person_id)
+          touched_group_ids << rule.group.id
+        end
       end
 
-      touched_group_ids.flatten.uniq.each do |touched_group_id|
-        logger.debug "Alerting group ##{touched_group_id} to recalculate as at least one of its rules were touched."
-        Group.find_by_id(touched_group_id).update_members
-      end
+    end
+
+    touched_group_ids.flatten.uniq.each do |touched_group_id|
+      logger.debug "Alerting group ##{touched_group_id} to recalculate as at least one of its rules were touched."
+      Group.find_by_id(touched_group_id).update_members
     end
   end
 
