@@ -4,9 +4,8 @@ json.cache! ['entity_show', @cache_key] do
   if @entity.type == 'Person'
     json.extract! @entity, :email, :active, :address, :byline, :first, :last, :loginid, :phone
 
-    json.favorites @entity.favorite_relationships.select{ |f| f.entity.active == true } do |favorite|
+    json.favorites(@entity.favorite_relationships.select { |f| f.entity.active == true }) do |favorite|
       json.id favorite.entity.id # FIXME: Update JS code to use entity_id and let favorite.id be the person_favorite_assignment_id. JS code currently expects 'id' to refer to entity.id but this is confusing.
-      #json.entity_id favorite.entity.id
       json.name favorite.entity.name
       json.type favorite.entity.type
     end
@@ -59,10 +58,10 @@ json.cache! ['entity_show', @cache_key] do
       json.entity_id membership.entity_id
       json.active membership.entity.active
     end
-    json.operators @entity.operators.select{ |m| m.active == true } do |operator|
+    json.operators(@entity.operators.select { |m| m.active == true }) do |operator|
       json.extract! operator, :id, :name, :loginid
     end
-    json.owners @entity.owners.select{ |m| m.active == true } do |owner|
+    json.owners(@entity.owners.select { |m| m.active == true }) do |owner|
       json.extract! owner, :id, :name, :loginid
     end
     json.rules @entity.rules do |rule|

@@ -9,19 +9,19 @@ class EntitiesController < ApplicationController
     @cache_key = "entities/index/#{@entities.maximum(:updated_at).try(:utc).try(:to_s, :number)}/#{params[:q]}"
 
     respond_to do |format|
-      format.json { render "entities/index", status: :ok }
+      format.json { render 'entities/index', status: :ok }
     end
   end
 
   def show
     authorize @entity
 
-    @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity show view for #{params[:id]}."
 
     respond_to do |format|
-      format.json { render "entities/show", status: :ok }
+      format.json { render 'entities/show', status: :ok }
       format.csv {
         require 'csv'
 
@@ -33,8 +33,8 @@ class EntitiesController < ApplicationController
           end
         end
         send_data csv_data,
-          :type => 'text/csv; charset=iso-8859-1; header=present',
-          :disposition => "attachment; filename=" + unix_filename("#{@entity.name}")
+                  type: 'text/csv; charset=iso-8859-1; header=present',
+                  disposition: 'attachment; filename=' + unix_filename(@entity.name.to_s)
       }
     end
   end
@@ -44,13 +44,13 @@ class EntitiesController < ApplicationController
 
     @entity.save
 
-    if params[:entity][:type] == "Group"
+    if params[:entity][:type] == 'Group'
       @entity.owners << current_user
     end
 
     if @entity.group?
       @group = @entity
-      render "groups/create"
+      render 'groups/create'
     else
       respond_to do |format|
         format.json { render json: @entity }
@@ -68,11 +68,11 @@ class EntitiesController < ApplicationController
         # invlidated correctly.
         @entity.touch
 
-        logger.debug "Entity#update successful."
+        logger.debug 'Entity#update successful.'
 
-        @cache_key = "entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+        @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
-        format.json { render "entities/show", status: :ok }
+        format.json { render 'entities/show', status: :ok }
       else
         logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(", ")}"
         format.json { render json: @entity.errors, status: :unprocessable_entity }
@@ -85,7 +85,7 @@ class EntitiesController < ApplicationController
 
     authorize @entity
 
-    if @entity.type == "Group"
+    if @entity.type == 'Group'
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted entity, #{@entity}."
 
       @entity.destroy
@@ -103,8 +103,8 @@ class EntitiesController < ApplicationController
 
     @activity = @entity.activity
     if @activity
-      if @activity.length > 0
-        @cache_key = "entity/" + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
+      if !@activity.empty?
+        @cache_key = 'entity/' + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
       else
         @cache_key = nil
       end
@@ -114,7 +114,7 @@ class EntitiesController < ApplicationController
     end
 
     respond_to do |format|
-      format.json { render "shared/activity" }
+      format.json { render 'shared/activity' }
     end
   end
 
@@ -122,9 +122,9 @@ class EntitiesController < ApplicationController
 
     def new_entity_from_params
       # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
-      if params[:entity][:type] == "Group"
+      if params[:entity][:type] == 'Group'
         @entity = Group.new(entity_params)
-      elsif params[:entity][:type] == "Person"
+      elsif params[:entity][:type] == 'Person'
         @entity = Person.new(entity_params)
       else
         @entity = nil
@@ -133,35 +133,35 @@ class EntitiesController < ApplicationController
 
   private
 
-    def load_entity
-      @entity = Entity.find_by_id!(params[:id])
-    end
+  def load_entity
+    @entity = Entity.find_by_id!(params[:id])
+  end
 
-    def load_entities
-      if params[:q]
-        entities_table = Entity.arel_table
+  def load_entities
+    if params[:q]
+      entities_table = Entity.arel_table
 
-        # Search login IDs in case of an entity-search but looking for person by login ID
-        @entities = Entity.where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
-      else
-        @entities = Entity.all
-      end
+      # Search login IDs in case of an entity-search but looking for person by login ID
+      @entities = Entity.where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+    else
+      @entities = Entity.all
     end
+  end
 
-    def entity_params
-      if params[:entity]
-        # Workaround for deep_munge issues (http://stackoverflow.com/questions/20164354/rails-strong-parameters-with-empty-arrays)
-        params[:entity][:favorite_ids] ||= [] if params[:entity].has_key?(:favorite_ids)
-        params[:entity][:owner_ids] ||= [] if params[:entity].has_key?(:owner_ids)
-        params[:entity][:operator_ids] ||= [] if params[:entity].has_key?(:operator_ids)
-      end
-      params.require(:entity).permit(:name, :type, :description, :first, :last, :address, :email, :loginid,
-                                    :phone, :active, {owner_ids: []}, {favorite_ids: []}, {operator_ids: []},
-                                    {rules_attributes: [:id, :column, :condition, :value, :_destroy]},
-                                    {memberships_attributes: [:id, :calculated, :entity_id, :_destroy]},
-                                    {group_memberships_attributes: [:id, :calculated, :group_id, :_destroy]},
-                                    {group_ownerships_attributes: [:id, :entity_id, :group_id, :_destroy]},
-                                    {role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy]},
-                                    {group_operatorships_attributes: [:id, :group_id, :entity_id, :_destroy]})
+  def entity_params
+    if params[:entity]
+      # Workaround for deep_munge issues (http://stackoverflow.com/questions/20164354/rails-strong-parameters-with-empty-arrays)
+      params[:entity][:favorite_ids] ||= [] if params[:entity].key?(:favorite_ids)
+      params[:entity][:owner_ids] ||= [] if params[:entity].key?(:owner_ids)
+      params[:entity][:operator_ids] ||= [] if params[:entity].key?(:operator_ids)
     end
+    params.require(:entity).permit(:name, :type, :description, :first, :last, :address, :email, :loginid,
+                                   :phone, :active, { owner_ids: [] }, { favorite_ids: [] }, { operator_ids: [] },
+                                   { rules_attributes: [:id, :column, :condition, :value, :_destroy] },
+                                   { memberships_attributes: [:id, :calculated, :entity_id, :_destroy] },
+                                   { group_memberships_attributes: [:id, :calculated, :group_id, :_destroy] },
+                                   { group_ownerships_attributes: [:id, :entity_id, :group_id, :_destroy] },
+                                   { role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy] },
+                                   { group_operatorships_attributes: [:id, :group_id, :entity_id, :_destroy]} )
+  end
 end
