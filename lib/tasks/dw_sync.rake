@@ -31,15 +31,6 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
     end
   end
 
-  desc 'Import SIS majors using DW'
-  task import_sis_majors: :environment do
-    majors = DssDw.fetch_sis_majors
-
-    majors.each do |major|
-      Major.find_or_create_by(name: major['majorName'])
-    end
-  end
-
   desc 'Import/augment user(s) with IAM data'
   task :import, [:loginid] => :environment do |t, args|
     people = []
