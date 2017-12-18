@@ -1,6 +1,7 @@
 module DssDw
   require 'net/https'
   require 'json'
+  require 'uri'
 
   DW_URL = ENV['DW_URL']
   DW_TOKEN = ENV['DW_TOKEN']
@@ -41,6 +42,34 @@ module DssDw
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
+
+    return nil if response.code.to_i == 404
+
+    begin
+      json = JSON.parse(response.body)
+    rescue JSON::ParserError
+      return nil # not a 404 but JSON response did not make sense
+    end
+
+    return json # rubocop:disable Style/RedundantReturn
+  end
+
+  def self.search_people(query)
+    return nil unless query
+
+    url = "#{DW_URL}/people/search?q=#{URI.escape(query)}&token=#{DW_TOKEN}"
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    request = Net::HTTP::Get.new(uri.request_uri)
+
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      STDERR.puts "Unable to connect to #{DW_URL}. Check that DW is running."
+      return nil # Unable to connect to DW
+    end
 
     return nil if response.code.to_i == 404
 
