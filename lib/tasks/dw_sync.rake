@@ -70,6 +70,12 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
       p.is_staff = dw_person['person']['isStaff']
       p.is_external = dw_person['person']['isExternal']
       p.iam_id = dw_person['person']['iamId'].to_i
+      p.name = dw_person['person']['dFullName']
+      p.first = dw_person['person']['dFirstName']
+      p.last = dw_person['person']['dLastName']
+      p.email = dw_person['contactInfo']['email']
+      p.phone = dw_person['contactInfo']['workPhone']
+      p.address = dw_person['contactInfo']['postalAddress']
 
       # Process any majors (SIS associations)
       begin

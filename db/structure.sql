@@ -445,7 +445,6 @@ CREATE TABLE entities (
     active boolean DEFAULT true,
     phone character varying(255),
     address character varying(255),
-    title_id integer,
     description text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -2039,6 +2038,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171030211820'),
 ('20171109234921'),
 ('20171127233800'),
-('20171211204201');
+('20171211204201'),
+('20171218234845');
 
 

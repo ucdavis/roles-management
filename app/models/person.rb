@@ -23,8 +23,6 @@ class Person < Entity
   has_many :pps_associations, dependent: :destroy
   has_many :group_rule_results, foreign_key: 'entity_id'
 
-  belongs_to :title, optional: true
-
   accepts_nested_attributes_for :group_ownerships, allow_destroy: true
   accepts_nested_attributes_for :group_operatorships, allow_destroy: true
   accepts_nested_attributes_for :group_memberships, allow_destroy: true
@@ -85,11 +83,12 @@ class Person < Entity
     "(Person:#{id},#{loginid},#{name})"
   end
 
-  # Calculates 'byline' for a Person, e.g. "PROGRAMMER V (staff:career)"
+  # Calculates 'byline' for a Person, e.g. "PROGRAMMER V (DSS IT)"
   def byline
-    byline = title&.name.to_s
-    byline += ' (' + affiliations.map(&:name).join(', ') + ')' if affiliations.count.positive?
-    byline
+    [
+      pps_associations.map { |assoc| "#{assoc.title.name} (#{assoc.department.displayName})" },
+      sis_associations.map { |assoc| "#{assoc.major.name} (#{assoc.level_code})" }
+    ]&.join(', ')
   end
 
   # Returns a list of symbols as required by the authorization layer.
@@ -146,7 +145,6 @@ class Person < Entity
   end
 
   def recalculate_group_rule_membership
-    GroupRuleSet.update_results_for(:title, id) if saved_change_to_attribute?(:title_id)
     GroupRuleSet.update_results_for(:loginid, id) if saved_change_to_attribute?(:loginid)
     GroupRuleSet.update_results_for(:is_staff, id) if saved_change_to_attribute?(:is_staff)
     GroupRuleSet.update_results_for(:is_student, id) if saved_change_to_attribute?(:is_student)
