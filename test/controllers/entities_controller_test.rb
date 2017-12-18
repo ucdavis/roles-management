@@ -37,7 +37,7 @@ class EntitiesControllerTest < ActionController::TestCase
   test 'JSON show request for a Group should include certain attributes' do
     grant_test_user_admin_access
 
-    get :show, params: { :id => @group.id }, as: :json
+    get :show, params: { id: @group.id }, as: :json
 
     body = JSON.parse(response.body)
 
@@ -48,8 +48,7 @@ class EntitiesControllerTest < ActionController::TestCase
 
     assert body.include?('memberships'), 'JSON response should include memberships'
     body['memberships'].each do |m|
-      assert m.key?("calculated"), "JSON response's 'memberships' section should include a calculated flag"
-      assert m["entity_id"], "JSON response's 'memberships' section should include an entity_id"
+      assert m["person_id"], "JSON response's 'memberships' section should include a person_id"
       assert m["id"], "JSON response's 'memberships' section should include a id"
       assert m.key?("loginid"), "JSON response's 'memberships' section should include a loginid"
       assert m["name"], "JSON response's 'memberships' section should include a name"
@@ -108,7 +107,6 @@ class EntitiesControllerTest < ActionController::TestCase
     body["group_memberships"].each do |m|
       assert m["id"], "JSON response's 'group_memberships' section should include id"
       assert m["group_id"], "JSON response's 'group_memberships' section should include group_id"
-      assert m.key?("calculated"), "JSON response's 'group_memberships' section should include calculated"
       assert m["name"], "JSON response's 'group_memberships' section should include name"
     end
 
@@ -165,68 +163,65 @@ class EntitiesControllerTest < ActionController::TestCase
     assert response.body.include?(active_p.loginid), "CSV should include an active individual"
   end
 
-  test 'entites#update should allow operators to update group attributes' do
-    grant_test_user_basic_access
-    revoke_test_user_admin_access
+  # test 'entites#update should allow operators to update group attributes' do
+  #   grant_test_user_basic_access
+  #   revoke_test_user_admin_access
+  #   #assert false, "test not implemented"
+  # end
 
+  # test "entites#update should allow operators to add members" do
+  #   #assert false, "test not implemented"
+  # end
 
+  # test "entites#update should allow operators to remove members" do
+  #   #assert false, "test not implemented"
+  # end
 
-    #assert false, "test not implemented"
-  end
+  # test "entites#update should allow owners to update a group" do
+  #   #assert false, "test not implemented"
+  # end
 
-  test "entites#update should allow operators to add members" do
-    #assert false, "test not implemented"
-  end
+  # test "entites#update should allow owners to add members" do
+  #   #assert false, "test not implemented"
+  # end
 
-  test "entites#update should allow operators to remove members" do
-    #assert false, "test not implemented"
-  end
+  # test "entites#update should allow owners to remove members" do
+  #   #assert false, "test not implemented"
+  # end
 
-  test "entites#update should allow owners to update a group" do
-    #assert false, "test not implemented"
-  end
+  # test "entites#update should not allow non-owners/non-operators to update attributes" do
+  #   #assert false, "test not implemented"
+  # end
 
-  test "entites#update should allow owners to add members" do
-    #assert false, "test not implemented"
-  end
+  # test "universal operators should not be able to give themselves RM administrator rights" do
+  #   # TODO: This test needs to be rewritten to check this via controllers as the 'pundit'
+  #   #       gem is not focused on non-controller level authorizations.
+  #   # revoke_test_user_basic_access
+  #   # revoke_test_user_admin_access
+  #   # grant_test_user_operate_access
 
-  test "entites#update should allow owners to remove members" do
-    #assert false, "test not implemented"
-  end
+  #   # rm_app = applications(:dssrm)
+  #   # rm_admin_role = roles(:dssrm_admin)
 
-  test "entites#update should not allow non-owners/non-operators to update attributes" do
-    #assert false, "test not implemented"
-  end
+  #   # # Ensure 'casuser' is not an RM owner or operator
+  #   # rm_app.owners.destroy @person if rm_app.owners.include? @person
+  #   # rm_app.operators.destroy @person if rm_app.operators.include? @person
 
-  test "universal operators should not be able to give themselves RM administrator rights" do
-    # TODO: This test needs to be rewritten to check this via controllers as the 'pundit'
-    #       gem is not focused on non-controller level authorizations.
-    # revoke_test_user_basic_access
-    # revoke_test_user_admin_access
-    # grant_test_user_operate_access
+  #   # assert @person.role_symbols.include? :operate
+  #   # assert @person.role_symbols.length == 1
 
-    # rm_app = applications(:dssrm)
-    # rm_admin_role = roles(:dssrm_admin)
+  #   # exception_thrown = false
 
-    # # Ensure 'casuser' is not an RM owner or operator
-    # rm_app.owners.destroy @person if rm_app.owners.include? @person
-    # rm_app.operators.destroy @person if rm_app.operators.include? @person
+  #   # begin
+  #   #   @person.roles << rm_admin_role
+  #   # rescue Authorization::AttributeAuthorizationError => e
+  #   #   # We're expecting this ...
+  #   #   exception_thrown = true
+  #   # end
 
-    # assert @person.role_symbols.include? :operate
-    # assert @person.role_symbols.length == 1
-
-    # exception_thrown = false
-
-    # begin
-    #   @person.roles << rm_admin_role
-    # rescue Authorization::AttributeAuthorizationError => e
-    #   # We're expecting this ...
-    #   exception_thrown = true
-    # end
-
-    # assert exception_thrown == true, "NotAuthorizated exception should have been thrown."
-    # assert @person.roles.include?(rm_admin_role) == false
-  end
+  #   # assert exception_thrown == true, "NotAuthorizated exception should have been thrown."
+  #   # assert @person.roles.include?(rm_admin_role) == false
+  # end
 
   # test "universal operators should be able to activate/deactivate individuals" do
   #   assert false, "test not implemented"

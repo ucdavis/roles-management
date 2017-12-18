@@ -18,11 +18,9 @@ class EntitiesController < ApplicationController
 
     @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
-    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity show view for #{params[:id]}."
-
     respond_to do |format|
       format.json { render 'entities/show', status: :ok }
-      format.csv {
+      format.csv do
         require 'csv'
 
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
@@ -35,7 +33,7 @@ class EntitiesController < ApplicationController
         send_data csv_data,
                   type: 'text/csv; charset=iso-8859-1; header=present',
                   disposition: 'attachment; filename=' + unix_filename(@entity.name.to_s)
-      }
+      end
     end
   end
 
@@ -44,9 +42,8 @@ class EntitiesController < ApplicationController
 
     @entity.save
 
-    if params[:entity][:type] == 'Group'
-      @entity.owners << current_user
-    end
+    # Add current user as owner if creating a group
+    @entity.owners << current_user if params[:entity][:type] == 'Group'
 
     if @entity.group?
       @group = @entity
@@ -68,13 +65,11 @@ class EntitiesController < ApplicationController
         # invlidated correctly.
         @entity.touch
 
-        logger.debug 'Entity#update successful.'
-
         @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
         format.json { render 'entities/show', status: :ok }
       else
-        logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(", ")}"
+        logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(', ')}"
         format.json { render json: @entity.errors, status: :unprocessable_entity }
       end
     end

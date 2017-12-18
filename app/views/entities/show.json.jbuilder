@@ -11,7 +11,6 @@ json.cache! ['entity_show', @cache_key] do
     end
 
     json.group_memberships @entity.group_memberships do |membership|
-      json.calculated membership.calculated
       json.group_id membership.group_id
       json.group_name membership.group.name
       json.id membership.id
@@ -52,11 +51,16 @@ json.cache! ['entity_show', @cache_key] do
 
     json.memberships @entity.memberships do |membership|
       json.id membership.id
-      json.calculated membership.calculated
       json.loginid membership.entity.loginid
       json.name membership.entity.name
-      json.entity_id membership.entity_id
+      json.person_id membership.entity_id
       json.active membership.entity.active
+    end
+    json.rule_members @entity.rule_members do |rule_member|
+      json.loginid rule_member.loginid
+      json.name rule_member.name
+      json.person_id rule_member.id
+      json.active rule_member.active
     end
     json.operators(@entity.operators.select { |m| m.active == true }) do |operator|
       json.extract! operator, :id, :name, :loginid

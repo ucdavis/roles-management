@@ -519,7 +519,6 @@ CREATE TABLE group_memberships (
     group_id integer,
     entity_id integer,
     id integer NOT NULL,
-    calculated boolean DEFAULT false,
     created_at timestamp without time zone,
     updated_at timestamp without time zone
 );
@@ -2039,6 +2038,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171026212915'),
 ('20171030211820'),
 ('20171109234921'),
-('20171127233800');
+('20171127233800'),
+('20171211204201');
 
 

@@ -1,22 +1,13 @@
-# GroupMembership may be calculated, in which case they need to be destroyed only by the proper method,
-# e.g. through a group and not a person. A group accomplishes this by using the destroying_calculated_group_membership do ... end
-# block method below.
 class GroupMembership < ApplicationRecord
-  Thread.current[:destroy_calculated_membership_flag] = false
   Thread.current[:recalculating_membership_flag] = false
-
-  def self.destroy_calculated_membership_flag=(val)
-    Thread.current[:destroy_calculated_membership_flag] = val
-  end
 
   def self.recalculating_membership_flag=(val)
     Thread.current[:recalculating_membership_flag] = val
   end
 
   validates_presence_of :group, :entity
-  validates_uniqueness_of :group_id, scope: [:entity_id, :calculated]
+  validates_uniqueness_of :group_id, scope: :entity_id
   validate :members_cannot_be_other_groups
-  before_destroy :destroying_calculated_membership_requires_flag
 
   belongs_to :group, touch: true
   belongs_to :entity, touch: true
@@ -33,30 +24,11 @@ class GroupMembership < ApplicationRecord
   after_save { |membership| membership.log_changes(:save) }
   after_destroy { |membership| membership.log_changes(:destroy) }
 
-  # Used by the valid case of Person.destroy being called. It is not correct
-  # to destroy a group membership outside of a group (i.e. a person cannot just
-  # destroy a single calculated group membership because they don't want it)
-  # unless it is the case that a person is being destroyed, in which case
-  # their group membership is useless anyway.
-  def self.can_destroy_calculated_group_membership(flag)
-    Thread.current[:destroy_calculated_membership_flag] = flag
-  end
-
-  def self.destroying_calculated_group_membership
-    begin
-      Thread.current[:destroy_calculated_membership_flag] = true
-      yield
-    ensure
-      Thread.current[:destroy_calculated_membership_flag] = false
-    end
-  end
   def self.recalculating_membership
-    begin
-      Thread.current[:recalculating_membership_flag] = true
-      yield
-    ensure
-      Thread.current[:recalculating_membership_flag] = false
-    end
+    Thread.current[:recalculating_membership_flag] = true
+    yield
+  ensure
+    Thread.current[:recalculating_membership_flag] = false
   end
 
   protected
@@ -134,13 +106,6 @@ class GroupMembership < ApplicationRecord
     end
 
     return true
-  end
-
-  def destroying_calculated_membership_requires_flag
-    if calculated && !Thread.current[:destroy_calculated_membership_flag]
-      errors.add(:calculated, "can't destroy a calculated group membership without flag properly set")
-      return false
-    end
   end
 
   # Grant group's application operatorships to new member (marking as calculated)

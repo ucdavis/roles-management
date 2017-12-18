@@ -20,9 +20,7 @@ class Group < Entity
     ActivityLog.info!("Created group #{group.name}.", ["group_#{group.id}", 'system'])
   end
 
-  before_destroy :allow_group_membership_destruction, prepend: true
   after_destroy do |group|
-    GroupMembership.can_destroy_calculated_group_membership(false)
     ActivityLog.info!("Deleted group #{group.name}.", ['system'])
   end
 
@@ -30,7 +28,7 @@ class Group < Entity
     { id: id, name: name, type: 'Group', description: description,
       owners: owners.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
       operators: operators.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      memberships: memberships.includes(:entity).map { |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid, calculated: m.calculated } },
+      memberships: memberships.includes(:entity).map { |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid } },
       rules: rules.map { |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
 
@@ -41,7 +39,11 @@ class Group < Entity
   end
 
   def members
-    Person.where(id: (memberships.where(calculated: false).pluck(:entity_id) + rule_member_ids).uniq)
+    Person.where(id: (memberships.pluck(:entity_id) + rule_member_ids).uniq)
+  end
+
+  def rule_members
+    Person.where(id: (rule_member_ids).uniq)
   end
 
   # Calculates (and resets) all group_members based on rules.
@@ -107,7 +109,7 @@ class Group < Entity
 
     logger.debug "Calculated #{results.length} results"
 
-    return results
+    return results # rubocop:disable Style/RedundantReturn
   end
 
   # Records all IDs found while traversing up the parent graph.
@@ -126,13 +128,5 @@ class Group < Entity
     end
 
     return true # rubocop:disable Style/RedundantReturn
-  end
-
-  private
-
-  def allow_group_membership_destruction
-    # Destroying a person may involve the valid case of destroying
-    # calculated group memberships.
-    GroupMembership.can_destroy_calculated_group_membership(true)
   end
 end

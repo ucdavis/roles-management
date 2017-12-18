@@ -21,6 +21,7 @@ class Person < Entity
   has_many :sis_associations, foreign_key: 'entity_id', dependent: :destroy
   has_many :majors, through: :sis_associations, dependent: :destroy
   has_many :pps_associations, dependent: :destroy
+  has_many :group_rule_results, foreign_key: 'entity_id'
 
   belongs_to :title, optional: true
 
@@ -35,14 +36,11 @@ class Person < Entity
   after_save   :recalculate_group_rule_membership
   after_save   :trigger_sync_as_needed
 
-  before_destroy :allow_group_membership_destruction, prepend: true
-
   after_create do |person|
     ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
     Sync.person_added_to_system(Sync.encode(person))
   end
   after_destroy do |person|
-    GroupMembership.can_destroy_calculated_group_membership(false)
     ActivityLog.info!("Deleted person #{person.name}.", ["person_#{person.id}", 'system'])
     Sync.person_removed_from_system(Sync.encode(person))
   end
@@ -58,9 +56,9 @@ class Person < Entity
         application_name: a.role.application.name, application_id: a.role.application_id,
         name: a.role.name, description: a.role.description }
       },
-      favorites: favorites.select{ |f| f.active == true }.map{ |f| { id: f.id, name: f.name, type: f.type } },
+      favorites: favorites.select { |f| f.active == true }.map{ |f| { id: f.id, name: f.name, type: f.type } },
       group_memberships: group_memberships.includes(:group).map{ |m| {
-        id: m.id, group_id: m.group.id, name: m.group.name, calculated: m.calculated }
+        id: m.id, group_id: m.group.id, name: m.group.name }
       },
       group_ownerships: group_ownerships.includes(:group).map { |o| {
         id: o.id, group_id: o.group.id, name: o.group.name }
@@ -204,11 +202,5 @@ class Person < Entity
     else
       self.name = "#{first} #{last}".strip
     end
-  end
-
-  def allow_group_membership_destruction
-    # Destroying a person may involve the valid case of destroying
-    # calculated group memberships.
-    GroupMembership.can_destroy_calculated_group_membership(true)
   end
 end
