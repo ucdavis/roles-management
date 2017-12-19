@@ -53,7 +53,7 @@ json.cache! ['entity_show', @cache_key] do
       json.id membership.id
       json.loginid membership.entity.loginid
       json.name membership.entity.name
-      json.person_id membership.entity_id
+      json.entity_id membership.entity_id
       json.active membership.entity.active
     end
     json.rule_members @entity.rule_members do |rule_member|
