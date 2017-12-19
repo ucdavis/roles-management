@@ -27,7 +27,9 @@ class GroupRuleSet < ApplicationRecord
     end
   end
 
-  after_create(&:update_results)
+  after_create do |grs|
+    grs.update_results
+  end
 
   after_touch do |grs|
     rules.each(&:touch)
