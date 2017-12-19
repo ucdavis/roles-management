@@ -110,9 +110,11 @@ module DssDw
     p.name = dw_person['person']['dFullName']
     p.first = dw_person['person']['dFirstName']
     p.last = dw_person['person']['dLastName']
-    p.email = dw_person['contactInfo']['email']
-    p.phone = dw_person['contactInfo']['workPhone']
-    p.address = dw_person['contactInfo']['postalAddress']
+    if dw_person['contactInfo']
+      p.email = dw_person['contactInfo']['email']
+      p.phone = dw_person['contactInfo']['workPhone']
+      p.address = dw_person['contactInfo']['postalAddress']
+    end
 
     # Process any majors (SIS associations)
     begin
