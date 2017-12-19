@@ -9,19 +9,7 @@ module DssDw
   def self.fetch_person_by_loginid(loginid)
     return nil unless loginid
 
-    url = "#{DW_URL}/people/#{loginid}.json?token=#{DW_TOKEN}"
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Get.new(uri.request_uri)
-
-    begin
-      response = http.request(request)
-    rescue Errno::ECONNREFUSED
-      STDERR.puts "Unable to connect to #{DW_URL}. Check that DW is running."
-      return nil # Unable to connect to DW
-    end
+    response = perform_dw_request("/people/#{loginid}.json")
 
     return nil if response.code.to_i == 404
 
@@ -35,13 +23,7 @@ module DssDw
   end
 
   def self.fetch_pps_departments
-    url = "#{DW_URL}/departments/pps.json?token=#{DW_TOKEN}"
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Get.new(uri.request_uri)
-    response = http.request(request)
+    response = perform_dw_request('/departments/pps.json')
 
     return nil if response.code.to_i == 404
 
@@ -57,19 +39,7 @@ module DssDw
   def self.search_people(query)
     return nil unless query
 
-    url = "#{DW_URL}/people/search?q=#{URI.escape(query)}&token=#{DW_TOKEN}"
-    uri = URI.parse(url)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Get.new(uri.request_uri)
-
-    begin
-      response = http.request(request)
-    rescue Errno::ECONNREFUSED
-      STDERR.puts "Unable to connect to #{DW_URL}. Check that DW is running."
-      return nil # Unable to connect to DW
-    end
+    response = perform_dw_request("/people/search?q=#{URI.escape(query)}")
 
     return nil if response.code.to_i == 404
 
@@ -80,5 +50,142 @@ module DssDw
     end
 
     return json # rubocop:disable Style/RedundantReturn
+  end
+
+  # path, e.g. /people/search?q=something
+  # Token will be added automatically.
+  def self.perform_dw_request(path)
+    # Determine if SSL is needed
+    https_mode = DW_URL.start_with? 'https'
+
+    url = "#{DW_URL}#{path}"
+
+    # Determine if 'url' contains parameters
+    url += if url.include?('?')
+      "&token=#{DW_TOKEN}"
+    else
+      "?token=#{DW_TOKEN}"
+    end
+
+    uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+
+    if https_mode
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
+
+    request = Net::HTTP::Get.new(uri.request_uri)
+
+    begin
+      response = http.request(request)
+    rescue Errno::ECONNREFUSED
+      STDERR.puts "Unable to connect to #{DW_URL}. Check that DW is running."
+      return nil # Unable to connect to DW
+    end
+
+    return response # rubocop:disable Style/RedundantReturn
+  end
+
+  def self.create_or_update_using_dw(loginid)
+    if loginid.is_a? Person
+      p = loginid
+      loginid = p.loginid
+    end
+
+    dw_person = DssDw.fetch_person_by_loginid(loginid)
+
+    return nil unless dw_person
+
+    p ||= Person.find_or_create_by(loginid: loginid)
+
+    # Process the isStaff, isFaculty, etc. flags
+    p.is_employee = dw_person['person']['isEmployee']
+    p.is_hs_employee = dw_person['person']['isHSEmployee']
+    p.is_faculty = dw_person['person']['isFaculty']
+    p.is_student = dw_person['person']['isStudent']
+    p.is_staff = dw_person['person']['isStaff']
+    p.is_external = dw_person['person']['isExternal']
+    p.iam_id = dw_person['person']['iamId'].to_i
+    p.name = dw_person['person']['dFullName']
+    p.first = dw_person['person']['dFirstName']
+    p.last = dw_person['person']['dLastName']
+    p.email = dw_person['contactInfo']['email']
+    p.phone = dw_person['contactInfo']['workPhone']
+    p.address = dw_person['contactInfo']['postalAddress']
+
+    # Process any majors (SIS associations)
+    begin
+      existing_sis_assocs = p.sis_associations.map do |assoc|
+        {
+          id: assoc.id,
+          major: assoc.major.name,
+          association_rank: assoc.association_rank,
+          level_code: assoc.level_code
+        }
+      end
+      dw_person['sisAssociations'].each do |sis_assoc_json|
+        next unless existing_sis_assocs.reject! do |assoc|
+          assoc[:major] == sis_assoc_json['majorName'] &&
+          assoc[:association_rank] == sis_assoc_json['assocRank'].to_i &&
+          assoc[:level_code] == sis_assoc_json['levelCode']
+        end.nil?
+
+        # Create new SIS association
+        SisAssociation.create!(entity_id: p.id,
+                               major: Major.find_by(name: sis_assoc_json['majorName']),
+                               association_rank: sis_assoc_json['assocRank'].to_i,
+                               level_code: sis_assoc_json['levelCode'])
+      end
+
+      existing_sis_assocs.each do |assoc|
+        # Destroy old SIS associations
+        p.sis_associations.destroy(SisAssociation.find_by(id: assoc[:id]))
+      end
+    rescue ActiveRecord::RecordNotSaved => e
+      Rails.logger.error "Could not save SIS associations for #{p.loginid}. Exception trace:"
+      Rails.logger.error e
+    end
+
+    begin
+      # Process any PPS affiliations
+      existing_pps_assocs = p.pps_associations.map do |assoc|
+        {
+          id: assoc.id,
+          title: assoc.title.code,
+          department: assoc.department.code,
+          association_rank: assoc.association_rank,
+          position_type_code: assoc.position_type_code
+        }
+      end
+      dw_person['ppsAssociations'].each do |pps_assoc_json|
+        next unless existing_pps_assocs.reject! do |assoc|
+          assoc[:title] == pps_assoc_json['titleCode'] &&
+          assoc[:department] == pps_assoc_json['deptCode'] &&
+          assoc[:association_rank] == pps_assoc_json['assocRank'].to_i &&
+          assoc[:position_type_code] == pps_assoc_json['positionTypeCode'].to_i
+        end.nil?
+
+        # New PPS association found
+        PpsAssociation.create!(person_id: p.id,
+                               title: Title.find_by(code: pps_assoc_json['titleCode']),
+                               department: Department.find_by(code: pps_assoc_json['deptCode']),
+                               association_rank: pps_assoc_json['assocRank'].to_i,
+                               position_type_code: pps_assoc_json['positionTypeCode'].to_i)
+      end
+
+      existing_pps_assocs.each do |assoc|
+        # Destroy old PPS associations
+        p.pps_associations.destroy(PpsAssociation.find_by(id: assoc[:id]))
+      end
+    rescue ActiveRecord::RecordNotSaved => e
+      Rails.logger.error "Could not save PPS associations for #{p.loginid}. Ensure PPS departments are imported."
+      Rails.logger.error 'Exception trace:'
+      Rails.logger.error e
+    end
+
+    p.save!
+
+    return p # rubocop:disable Style/RedundantReturn
   end
 end
