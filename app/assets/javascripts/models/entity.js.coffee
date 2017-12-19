@@ -25,12 +25,14 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @owners = new DssRm.Collections.Entities if @owners is `undefined`
       @operators = new DssRm.Collections.Entities if @operators is `undefined`
       @memberships = new DssRm.Collections.Entities if @memberships is `undefined`
+      @rule_members = new DssRm.Collections.Entities if @rule_members is `undefined`
       @rules = new DssRm.Collections.GroupRules if @rules is `undefined`
 
       # Reset nested collection data
       @owners.reset @get("owners")
       @operators.reset @get("operators")
       @memberships.reset @get("memberships")
+      @rule_members.reset @get("rule_members")
       @rules.reset @get("rules")
 
     else if @type() is EntityTypes.person

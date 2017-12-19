@@ -50,7 +50,6 @@ class DssRm.Views.GroupShow extends Backbone.View
       disabled: readonly
       onAdd: (item) =>
         @model.memberships.add
-          calculated: false
           loginid: item.loginid
           entity_id: item.id
           group_id: @model.get('id')
@@ -135,8 +134,16 @@ class DssRm.Views.GroupShow extends Backbone.View
           entity_id: membership.get('entity_id')
           name: membership.get('name')
           loginid: membership.get('loginid')
-          calculated: membership.get('calculated')
-          class: (if membership.get('calculated') then "calculated" else "")
+          calculated: false
+          class: ""
+    @model.rule_members.each (rule_member) ->
+      unless (rule_member.get('active') == false)
+        members_tokeninput.tokenInput "add",
+          entity_id: rule_member.get('person_id')
+          name: rule_member.get('name')
+          loginid: rule_member.get('loginid')
+          calculated: true
+          class: "calculated"
 
     @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
 
