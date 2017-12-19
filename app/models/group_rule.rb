@@ -14,9 +14,11 @@ class GroupRule < ApplicationRecord
   end
 
   belongs_to :group, touch: true
-  belongs_to :result_set, class_name: 'GroupRuleSet', foreign_key: 'group_rule_set_id'
+  # result_set isn't optional but we don't want to create result_sets during validation in case
+  # validation fails and we end up creating a dangling result set.
+  belongs_to :result_set, class_name: 'GroupRuleSet', foreign_key: 'group_rule_set_id', optional: true
 
-  after_save    :link_result_set
+  before_save   :link_result_set
   after_destroy :alert_ruleset
 
   # Needed by 'Group' when calculating rules
@@ -94,6 +96,6 @@ class GroupRule < ApplicationRecord
 
   # Alert the GroupRuleSet in case it needs to destroy itself
   def alert_ruleset
-    result_set.destroy_if_unused
+    result_set&.destroy_if_unused
   end
 end
