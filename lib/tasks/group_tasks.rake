@@ -8,33 +8,7 @@ namespace :group do
   task :recalculate_all do
     Rake::Task['environment'].invoke
 
-    # Record groups which will need to recalculate their membership
-    touched_group_ids = []
-
-    puts "Recalculating #{GroupRule.count} group rules."
-
-    puts 'REWRITE THIS TASK FOR RULE SETS'
-    exit(-1)
-
-    # Recalculate all group rule caches
-    GroupRule.all.each do |rule|
-      old_count = rule.results.length
-      touched_group_ids << rule.group.id
-      rule.resolve! # should be GroupRuleSet.update_results
-      rule.reload
-      puts "\tGroupRule ##{rule.id} (#{rule.column} #{rule.condition} #{rule.value}) went from #{old_count} to #{rule.results.length} results"
-    end
-
-    puts "Updating the #{touched_group_ids.uniq.length} affected groups."
-
-    # Alert all groups
-    touched_group_ids.uniq.each do |group_id|
-      group = Group.find_by_id(group_id)
-      old_count = group.members.length
-      #group.update_members
-      group.reload
-      puts "\tGroup ##{group.id} (#{group.name}) went from #{old_count} to #{group.members.length} members"
-    end
+    GroupRuleSet.all.each(&:update_results)
   end
 
   desc 'Recalculate the rule-based members of a specific group.'

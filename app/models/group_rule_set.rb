@@ -1,5 +1,8 @@
 # Holds GroupRuleResults so they may be shared to multiple GroupRules with identical values
 class GroupRuleSet < ApplicationRecord
+  has_many :rules, class_name: 'GroupRule'
+  has_many :results, class_name: 'GroupRuleResult', dependent: :destroy
+
   validates_presence_of :column, :value
   validates_inclusion_of :column, in: GroupRule::VALID_COLUMNS
   validates_uniqueness_of :column, scope: [:condition, :value]
@@ -24,12 +27,11 @@ class GroupRuleSet < ApplicationRecord
     end
   end
 
-  after_create do |grs|
-    grs.update_results
-  end
+  after_create(&:update_results)
 
-  has_many :rules, class_name: 'GroupRule'
-  has_many :results, class_name: 'GroupRuleResult', dependent: :destroy
+  after_touch do |grs|
+    rules.each(&:touch)
+  end
 
   # Class method to recalculate all rules related to column and person_id.
   # Similar to update_results() but only involves removing/adding results for a specific person
@@ -246,6 +248,8 @@ class GroupRuleSet < ApplicationRecord
     end
 
     logger.debug "Updated group rule set ##{id} to have #{results.length} results"
+
+    self.touch
   end
 
   def destroy_if_unused
