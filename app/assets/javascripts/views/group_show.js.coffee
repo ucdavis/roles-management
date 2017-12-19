@@ -107,7 +107,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
     @$("textarea[name=description]").val @model.get("description")
-    @$("span#group_member_count").html @model.memberships.filter( (m) -> m.get('active') ).length
+    @$("span#group_member_count").html (@model.memberships.filter( (m) -> m.get('active') ).length + @model.rule_members.filter( (m) -> m.get('active') ).length)
 
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
