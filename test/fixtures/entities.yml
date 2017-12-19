@@ -7,7 +7,6 @@ casuser:
   email: casuser@domain.com
   loginid: casuser
   active: true
-  title: Worker
   phone: 8005551212
   address: 123 Test Dr
 

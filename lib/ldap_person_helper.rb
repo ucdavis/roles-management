@@ -87,7 +87,7 @@ module LdapPersonHelper
 
         p = determine_basic_details(p, entry, log)
         p = determine_affiliation_details(p, entry, log)
-        p = determine_title_details(p, entry, log)
+        #p = determine_title_details(p, entry, log)
         p = determine_major(p, entry, log)
         p = determine_ou_memberships(p, entry, log)
 
@@ -182,26 +182,26 @@ module LdapPersonHelper
     return p # rubocop:disable Style/RedundantReturn
   end
 
-  # Resolve title details from ucdAppointmentTitleCode.
-  # Note that the 'title' attribute in LDAP can be user-edited and
-  # should not be considered reliable.
-  def self.determine_title_details(p, entry, log = nil)
-    # Set title: take the original unless there is a translation from UcdLookups
-    title_code = entry[:ucdAppointmentTitleCode][0]
-    title_code = title_code.rjust(4, '0') unless title_code.blank?
+  # # Resolve title details from ucdAppointmentTitleCode.
+  # # Note that the 'title' attribute in LDAP can be user-edited and
+  # # should not be considered reliable.
+  # def self.determine_title_details(p, entry, log = nil)
+  #   # Set title: take the original unless there is a translation from UcdLookups
+  #   title_code = entry[:ucdAppointmentTitleCode][0]
+  #   title_code = title_code.rjust(4, '0') unless title_code.blank?
 
-    # Only update the person if a title code was found in LDAP
-    unless title_code.blank?
-      title = Title.find_or_create_by(code: title_code)
-      if title.name.blank?
-        log&.warn "Title code #{title_code} has no name (ID ##{title.id}). Ensure title database is up-to-date."
-      end
+  #   # Only update the person if a title code was found in LDAP
+  #   unless title_code.blank?
+  #     title = Title.find_or_create_by(code: title_code)
+  #     if title.name.blank?
+  #       log&.warn "Title code #{title_code} has no name (ID ##{title.id}). Ensure title database is up-to-date."
+  #     end
 
-      p.title = title
-    end
+  #     p.title = title
+  #   end
 
-    return p # rubocop:disable Style/RedundantReturn
-  end
+  #   return p # rubocop:disable Style/RedundantReturn
+  # end
 
   # Creates and assigns OUs as needed based on
   def self.determine_ou_memberships(p, entry, log = nil)

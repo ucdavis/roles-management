@@ -58,8 +58,8 @@ class GroupRuleSet < ApplicationRecord
     # Figure out which rules the entity matches specifically and add them
     case column
     when :title
-      if entity.title
-        GroupRuleSet.where(column: 'title', value: entity.title.name).each do |rule_set|
+      Title.where(id: entity.pps_associations.map(&:title_id)).each do |title|
+        GroupRuleSet.where(column: 'title', value: title.name).each do |rule_set|
           logger.debug "Matched 'title is' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
@@ -187,9 +187,9 @@ class GroupRuleSet < ApplicationRecord
 
     case column
     when 'title'
-      title = Title.find_by_name(value)
-      unless title.nil?
-        p += title.people.select(:id)
+      title_id = Title.where(name: value).pluck('id').first
+      unless title_id.nil?
+        p += PpsAssociation.where(title_id: title_id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
       end
     when 'major'
       major = Major.find_by_name(value)
