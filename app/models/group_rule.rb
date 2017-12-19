@@ -16,8 +16,8 @@ class GroupRule < ApplicationRecord
   belongs_to :group, touch: true
   belongs_to :result_set, class_name: 'GroupRuleSet', foreign_key: 'group_rule_set_id'
 
-  before_validation :link_result_set
-  after_destroy     :alert_ruleset
+  after_save    :link_result_set
+  after_destroy :alert_ruleset
 
   # Needed by 'Group' when calculating rules
   def self.valid_columns
@@ -84,6 +84,10 @@ class GroupRule < ApplicationRecord
       condition: condition == 'is',
       value: value
     )
+
+    # We may be switching to a new ruleset. In that case, ensure the old one is
+    # cleaned up as needed.
+    alert_ruleset
 
     self.result_set = grs
   end
