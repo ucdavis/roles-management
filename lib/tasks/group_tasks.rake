@@ -131,14 +131,14 @@ namespace :group do
     puts "\nPre-existing roles no longer assigned:"
     [preexisting_role_ids - recalculated_role_ids].flatten.each do |role_id|
       puts "\tRole ID: #{role_id}, #{Role.find_by_id(role_id).application.name} / #{Role.find_by_id(role_id).token}"
-    end.empty? and begin
+    end.empty? && begin
       puts "\tNone"
     end
 
     puts "\nRecalculated roles not previously assigned:"
     [recalculated_role_ids - preexisting_role_ids].flatten.each do |role_id|
       puts "\tRole ID: #{role_id}, #{Role.find_by_id(role_id).application.name} / #{Role.find_by_id(role_id).token}"
-    end.empty? and begin
+    end.empty? && begin
       puts "\tNone"
     end
   end

@@ -43,7 +43,7 @@ class Group < Entity
   end
 
   def rule_members
-    Person.where(id: (rule_member_ids).uniq)
+    Person.where(id: rule_member_ids.uniq)
   end
 
   # Calculates (and resets) all group_members based on rules.
