@@ -6,8 +6,6 @@ class ApplicationsController < ApplicationController
   def index
     authorize Application
 
-    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application index (main page)."
-
     respond_to do |format|
       format.html
       format.json { render json: @applications }
@@ -16,8 +14,6 @@ class ApplicationsController < ApplicationController
 
   def show
     authorize @application
-
-    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application show view for #{params[:id]}."
 
     respond_to do |format|
       format.json { render json: @application }
@@ -38,19 +34,19 @@ class ApplicationsController < ApplicationController
           end
           # Add the owners
           @application.owners.each do |owner|
-            csv << ["owner", owner.to_csv].flatten
+            csv << ['owner', owner.to_csv].flatten
           end
         end
         send_data csv_data,
-          :type => 'text/csv; charset=iso-8859-1; header=present',
-          :disposition => "attachment; filename=" + unix_filename("#{@application.name}")
+                  type: 'text/csv; charset=iso-8859-1; header=present',
+                  disposition: 'attachment; filename=' + unix_filename(@application.name.to_s)
       }
     end
   end
 
   def new
     authorize Application
-    
+
     @application = Application.new
 
     respond_to do |format|
@@ -60,7 +56,7 @@ class ApplicationsController < ApplicationController
 
   def create
     authorize @application
-    
+
     if @application.save
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new application, #{params[:application]}."
     else
@@ -74,14 +70,14 @@ class ApplicationsController < ApplicationController
 
   def update
     @application = Application.find(params[:id])
-    
+
     authorize @application
 
     respond_to do |format|
       if @application.update_attributes(application_params)
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
-        format.json { render :json => @application }
+        format.json { render json: @application }
       else
         logger.error "Applications#update failed. Reason(s): #{@application.errors.full_messages.join(", ")}"
         format.json { render json: @application.errors, status: :unprocessable_entity }
@@ -91,9 +87,9 @@ class ApplicationsController < ApplicationController
 
   def destroy
     @application = Application.find(params[:id])
-    
+
     authorize @application
-    
+
     @application.destroy
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted application, #{params[:application]}."
@@ -105,11 +101,11 @@ class ApplicationsController < ApplicationController
 
   def activity
     authorize @application
-    
+
     @activity = @application.activity
     if @activity
-      if @activity.length > 0
-        @cache_key = "application/" + @application.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
+      if @activity.empty? == false
+        @cache_key = "application/#{@application.id}/activity/#{@activity[0].performed_at.try(:utc).try(:to_s, :number)}"
       else
         @cache_key = nil
       end
@@ -119,42 +115,42 @@ class ApplicationsController < ApplicationController
     end
 
     respond_to do |format|
-      format.json { render "shared/activity" }
+      format.json { render 'shared/activity' }
     end
   end
 
   protected
 
-    def load_application
-      @application = Application.find_by_id!(params[:id])
+  def load_application
+    @application = Application.find_by_id!(params[:id])
+  end
+
+  def load_applications
+    manageable_applications = current_user.manageable_applications
+
+    if params[:q]
+      apps = Application.arel_table
+      @applications = manageable_applications.where(apps[:name].matches("%#{params[:q]}%"))
+    else
+      @applications = manageable_applications
     end
 
-    def load_applications
-      manageable_applications = current_user.manageable_applications
+    @applications = @applications.sort_by(&:created_at)
+  end
 
-      if params[:q]
-        apps = Application.arel_table
-        @applications = manageable_applications.where(apps[:name].matches("%#{params[:q]}%"))
-      else
-        @applications = manageable_applications
-      end
+  def new_application_from_params
+    params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
+    params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id
+    @application = Application.new(application_params)
+  end
 
-      @applications = @applications.sort_by(&:created_at)
+  def application_params
+    if params[:application]
+      # Workaround for deep_munge issues (http://stackoverflow.com/questions/20164354/rails-strong-parameters-with-empty-arrays)
+      params[:application][:owner_ids] ||= [] if params[:application].has_key?(:owner_ids)
     end
-
-    def new_application_from_params
-      params[:application][:owner_ids] = [] unless params[:application][:owner_ids]
-      params[:application][:owner_ids] << current_user.id unless params[:application][:owner_ids].include? current_user.id
-      @application = Application.new(application_params)
-    end
-
-    def application_params
-      if params[:application]
-        # Workaround for deep_munge issues (http://stackoverflow.com/questions/20164354/rails-strong-parameters-with-empty-arrays)
-        params[:application][:owner_ids] ||= [] if params[:application].has_key?(:owner_ids)
-      end
-      params.require(:application).permit(:name, :description, :url,
-                                      {roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []},
-                                      {operatorships_attributes: [:id, :entity_id, :application_id, :_destroy]} )
-    end
+    params.require(:application).permit(:name, :description, :url,
+                                    {roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []},
+                                    {operatorships_attributes: [:id, :entity_id, :application_id, :_destroy]} )
+  end
 end
