@@ -1,0 +1,7 @@
+ls_soc_sci:
+  org_oids: 'F80B657C9EE823A0E0340003BA8A560D'
+  dept_code: '19'
+  dept_official_name: 'LETTERS AND SCIENCE: SOCIAL SCIENCES'
+  dept_display_name: 'LS: SOC SCI'
+  dept_abbrev: 'LS:SOC SCI'
+  is_ucdhs: false

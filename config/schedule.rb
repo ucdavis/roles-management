@@ -8,6 +8,7 @@ end
 every 24.hours do
   rake 'dw:import_pps_departments'
   rake 'iam:import_sis_majors'
+  rake 'iam:import_bous'
 end
 
 # Run LDAP import updater every 6 hours

@@ -3,6 +3,7 @@
 1. bin/rake db:migrate
 2. bin/rake dw:import_pps_departments --trace
 3. bin/rake iam:import_sis_majors --trace
+3. bin/rake iam:import_bous --trace
 4. bin/rake title:replace_titles_with_csv[../rm_titles-201710.csv] --trace
 5. bin/rake dw:import --trace
 6. bin/rake group:recalculate_all --trace
@@ -10,6 +11,20 @@
 8. bin/rake group:convert_org_rules --trace
 9. bin/rake organization:remove_unused --trace
 (Run 8 and 9 repeatedly until they have no work left)
+10. Confirm ~11 organization-based GroupRules remain, delete them all.
+    This should allow organization:remove_unused to delete the rest
+
+
 
 Turn off sync?
 Re-arrange order above?
+
+
+
+Safe org-based GroupRules to delete:
+--
+COM, PHIL & LIN RED CLUSTER
+VP UNDERGRADUATE EDUCATION
+EXT RELATIONS: GOVT & COM REL
+STUDENT EMPLOYMENT CENTER
+SOCIAL SCIENCES PROGRAM

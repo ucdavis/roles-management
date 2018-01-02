@@ -358,6 +358,42 @@ CREATE TABLE ar_internal_metadata (
 
 
 --
+-- Name: business_office_units; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE business_office_units (
+    id bigint NOT NULL,
+    org_oid character varying,
+    dept_code character varying,
+    dept_official_name character varying,
+    dept_display_name character varying,
+    dept_abbrev character varying,
+    is_ucdhs boolean,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: business_office_units_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE business_office_units_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: business_office_units_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE business_office_units_id_seq OWNED BY business_office_units.id;
+
+
+--
 -- Name: delayed_jobs; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1187,6 +1223,13 @@ ALTER TABLE ONLY applications ALTER COLUMN id SET DEFAULT nextval('applications_
 
 
 --
+-- Name: business_office_units id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY business_office_units ALTER COLUMN id SET DEFAULT nextval('business_office_units_id_seq'::regclass);
+
+
+--
 -- Name: delayed_jobs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1426,6 +1469,14 @@ ALTER TABLE ONLY applications
 
 ALTER TABLE ONLY ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: business_office_units business_office_units_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY business_office_units
+    ADD CONSTRAINT business_office_units_pkey PRIMARY KEY (id);
 
 
 --
@@ -2039,6 +2090,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171030211820'),
 ('20171109234921'),
 ('20171211204201'),
-('20171218234845');
+('20171218234845'),
+('20180102212600');
 
 
