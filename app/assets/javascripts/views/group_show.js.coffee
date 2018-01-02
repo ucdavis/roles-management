@@ -1,6 +1,6 @@
 DssRm.Views.GroupShow ||= {}
 
-class DssRm.Views.GroupShow extends Backbone.View
+DssRm.Views.GroupShow = Backbone.View.extend(
   tagName: "div"
   className: "modal"
   id: "entityShowModal"
@@ -11,8 +11,6 @@ class DssRm.Views.GroupShow extends Backbone.View
     "click button#remove_group_rule" : "removeRule"
     "hidden"                         : "cleanUpModal"
     "click #delete"                  : "deleteGroup"
-    "change table#rules input"       : "persistRuleChanges"
-    "change table#rules select"      : "persistRuleChanges"
 
   initialize: ->
     @$el.html JST["templates/entities/show_group"](model: @model)
@@ -209,6 +207,10 @@ class DssRm.Views.GroupShow extends Backbone.View
         $rule.find("td:nth-child(1) select").val 'iam_affiliation'
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val 'Student'
+      when 'pps_position_type'
+        $rule.find("td:nth-child(1) select").val _column
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val DssRm.Views.GroupShow.pps_position_types[_value]
       else
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
@@ -236,7 +238,7 @@ class DssRm.Views.GroupShow extends Backbone.View
 
     @$('#apply').attr('disabled', 'disabled').html('Saving ...')
 
-    # Ensure @model.rules is up-to-date
+    # Update @model.rules with any changes made in the UI
     _.each $('table#rules>tbody>tr'), (el, i) =>
       cid = $(el).data('rule_cid')
       rule = @model.rules.get(cid)
@@ -244,34 +246,40 @@ class DssRm.Views.GroupShow extends Backbone.View
       _condition = $(el).find("#condition").val()
       _value = $(el).find("#value").val()
 
-      if _column == "iam_affiliation"
-        # do something
-        switch _value
-          when "Employee"
-            rule.set
-              column: 'is_employee'
-              condition: _condition
-              value: 't'
-          when "Faculty"
-            rule.set
-              column: 'is_faculty'
-              condition: _condition
-              value: 't'
-          when "Staff"
-            rule.set
-              column: 'is_staff'
-              condition: _condition
-              value: 't'
-          when "Student"
-            rule.set
-              column: 'is_student'
-              condition: _condition
-              value: 't'
-      else
-        rule.set
-          column: _column
-          condition: _condition
-          value: _value
+      switch _column
+        when "iam_affiliation"
+          # do something
+          switch _value
+            when "Employee"
+              rule.set
+                column: 'is_employee'
+                condition: _condition
+                value: 't'
+            when "Faculty"
+              rule.set
+                column: 'is_faculty'
+                condition: _condition
+                value: 't'
+            when "Staff"
+              rule.set
+                column: 'is_staff'
+                condition: _condition
+                value: 't'
+            when "Student"
+              rule.set
+                column: 'is_student'
+                condition: _condition
+                value: 't'
+        when "pps_position_type"
+          rule.set
+            column: _column
+            condition: _condition
+            value: _.findKey DssRm.Views.GroupShow.pps_position_types, (val) -> val == _value
+        else
+          rule.set
+            column: _column
+            condition: _condition
+            value: _value
 
     # Note: the _.filter() on rules is to avoid saving empty rules (rules with no value set)
     @model.save
@@ -347,6 +355,13 @@ class DssRm.Views.GroupShow extends Backbone.View
         entities = ['0####Employee', '1####Faculty', '2####Staff', '3####Student']
         process entities
         return
+      when "pps_position_type"
+        entities = []
+        _.each DssRm.Views.GroupShow.pps_position_types, (position_type, i) ->
+          entities.push "#{i}#####{position_type}"
+
+        process entities
+        return
 
     $.ajax(
       url: lookahead_url
@@ -369,16 +384,14 @@ class DssRm.Views.GroupShow extends Backbone.View
     id = parseInt(parts[0])
     label = parts[1]
     label
-
-  # Copies the attributes of rules out of the DOM and into our model
-  persistRuleChanges: (e) ->
-    rule_cid = $(e.target).parents("tr").data("rule_cid")
-    rule = @model.rules.get rule_cid
-
-    switch $(e.target).attr('id')
-      when 'column'
-        rule.set 'column', $(e.target).val(), { silent: true }
-      when 'condition'
-        rule.set 'condition', $(e.target).val(), { silent: true }
-      when 'value'
-        rule.set 'value', $(e.target).val(), { silent: true }
+,
+  pps_position_types:
+    1: 'Contract'
+    2: 'Regular/Career'
+    3: 'Limited, Formerly Casual'
+    4: 'Casual/RESTRICTED-Students'
+    5: 'Academic'
+    6: 'Per Diem'
+    7: 'Regular/Career Partial YEAR'
+    8: 'Floater'
+)
