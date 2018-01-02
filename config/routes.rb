@@ -40,6 +40,7 @@ DSSRM::Application.routes.draw do
   resources :roles
   resources :majors
   resources :titles
+  resources :business_office_units
   resources :affiliations
   resources :organizations
   resources :departments
