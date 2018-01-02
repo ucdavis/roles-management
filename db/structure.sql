@@ -443,7 +443,8 @@ CREATE TABLE departments (
     "displayName" character varying NOT NULL,
     abbreviation character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    bou_org_oid character varying
 );
 
 
@@ -2091,6 +2092,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171109234921'),
 ('20171211204201'),
 ('20171218234845'),
-('20180102212600');
+('20180102212600'),
+('20180102214418');
 
 

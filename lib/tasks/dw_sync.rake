@@ -27,6 +27,7 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
       d.officialName = department['deptOfficialName']
       d.displayName = department['deptDisplayName']
       d.abbreviation = department['deptAbbrev']
+      d.bou_org_oid = department['bouOrgOId']
       d.save!
     end
   end
