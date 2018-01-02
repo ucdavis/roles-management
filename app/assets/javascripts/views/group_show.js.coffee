@@ -185,12 +185,34 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   # Renders a single rule. Does not add to DOM.
   renderRule: (rule) ->
+    _column = rule.get('column')
+    _condition = rule.get('condition')
+    _value = rule.get('value')
+
     $rule = $(JST["templates/entities/group_rule"]())
 
     $rule.data "rule_cid", rule.cid
-    $rule.find("td:nth-child(1) select").val rule.get('column')
-    $rule.find("td:nth-child(2) select").val rule.get('condition')
-    $rule.find("td:nth-child(3) input").val rule.get('value')
+    switch _column
+      when 'is_employee'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'Employee'
+      when 'is_faculty'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'Faculty'
+      when 'is_staff'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'Staff'
+      when 'is_student'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'Student'
+      else
+        $rule.find("td:nth-child(1) select").val _column
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val _value
 
     $rule.find("td:nth-child(3) input").typeahead
       minLength: 2
@@ -218,10 +240,38 @@ class DssRm.Views.GroupShow extends Backbone.View
     _.each $('table#rules>tbody>tr'), (el, i) =>
       cid = $(el).data('rule_cid')
       rule = @model.rules.get(cid)
-      rule.set
-        column: $(el).find("#column").val()
-        condition: $(el).find("#condition").val()
-        value: $(el).find("#value").val()
+      _column = $(el).find("#column").val()
+      _condition = $(el).find("#condition").val()
+      _value = $(el).find("#value").val()
+
+      if _column == "iam_affiliation"
+        # do something
+        switch _value
+          when "Employee"
+            rule.set
+              column: 'is_employee'
+              condition: _condition
+              value: 't'
+          when "Faculty"
+            rule.set
+              column: 'is_faculty'
+              condition: _condition
+              value: 't'
+          when "Staff"
+            rule.set
+              column: 'is_staff'
+              condition: _condition
+              value: 't'
+          when "Student"
+            rule.set
+              column: 'is_student'
+              condition: _condition
+              value: 't'
+      else
+        rule.set
+          column: _column
+          condition: _condition
+          value: _value
 
     # Note: the _.filter() on rules is to avoid saving empty rules (rules with no value set)
     @model.save
@@ -293,6 +343,11 @@ class DssRm.Views.GroupShow extends Backbone.View
         lookahead_url = Routes.titles_path()
       when "affiliation"
         lookahead_url = Routes.affiliations_path()
+      when "iam_affiliation"
+        entities = ['0####Employee', '1####Faculty', '2####Staff', '3####Student']
+        process entities
+        return
+
     $.ajax(
       url: lookahead_url
       data:
