@@ -9,3 +9,9 @@ programmer:
   name: Programmer I
   code: 101
   unit: 99
+
+evil_programmer:
+  id: 3
+  name: Evil Programmer I
+  code: 102
+  unit: 999

@@ -123,3 +123,15 @@ personWithNothing:
   active: true
   phone: 8005550005
   address: 1 Empty Nest
+
+evil_casuser:
+  id: 15
+  type: Person
+  first: CAS
+  last: Evil User
+  name: CAS A Evil User
+  email: caseviluser@domain.com
+  loginid: caseviluser
+  active: true
+  phone: 8005551213
+  address: 123 Evil Test Ln

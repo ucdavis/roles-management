@@ -203,28 +203,6 @@ class GroupRuleTest < ActiveSupport::TestCase
     assert group.members.include?(@cthielen) == false, 'group should not include @cthielen'
   end
 
-  test "Test basic 'Department is...' rule logic" do
-    d = departments(:dssit)
-
-    group = entities(:groupWithNothing)
-
-    # Sanity-check the fixtures
-    assert group.roles.empty?, 'looks like groupWithNothing has a role'
-    assert group.rules.empty?, 'looks like groupWithNothing has a rule'
-    assert group.owners.empty?, 'looks like groupWithNothing has an owner'
-    assert group.operators.empty?, 'looks like groupWithNothing has an operator'
-
-    # Test the group rule logic (ensure 'Department is...' works)
-    assert group.members.empty?, 'group should have no members'
-
-    group_rule = GroupRule.new(column: 'department', condition: 'is', value: d.officialName, group_id: group.id)
-    group.rules << group_rule
-
-    group.reload
-
-    assert group.members.length == 1, 'group should have 1 member'
-  end
-
   test "adding a new child organization should affect any GroupRuleResults for parent organizations" do
     # Use fixture cthielen, not casuser, as casuser has an association with the toplevel organization by default
     @cthielen = entities(:cthielen)
@@ -514,7 +492,7 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     assert group.members.length == 1, 'group should have a member'
 
-    group_rule = GroupRule.new({ column: 'title', condition: 'is', value: 'something that does not exist', group_id: group.id })
+    group_rule = GroupRule.new( column: 'title', condition: 'is', value: 'something that does not exist', group_id: group.id )
     group.rules << group_rule
 
     group.reload
@@ -633,6 +611,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       pps_association.position_type_code = 2
       assert pps_association.valid?
       @person.pps_associations << pps_association
+      assert @person.pps_associations.length == 1
     }
 
     remove_match = lambda {
@@ -747,6 +726,87 @@ class GroupRuleTest < ActiveSupport::TestCase
     test_group_rule(group_rule, setup_match, remove_match)
   end
 
+  test "Rule 'business_office_unit' works" do
+    group_rule = GroupRule.new(column: 'business_office_unit', condition: 'is', value: 'LETTERS AND SCIENCE: SOCIAL SCIENCES')
+
+    evil_person = entities(:evil_casuser)
+
+    setup_match = lambda {
+      # Put two people in two different depamrtnets under the same BOU
+      title = titles(:programmer)
+      department = departments(:dssit)
+
+      @person.pps_associations.destroy_all
+      assert @person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = @person.id
+      pps_association.title = title
+      pps_association.department = department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      @person.pps_associations << pps_association
+
+      evil_title = titles(:evil_programmer)
+      evil_department = departments(:evil_dssit)
+
+      evil_person.pps_associations.destroy_all
+      assert evil_person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = evil_person.id
+      pps_association.title = evil_title
+      pps_association.department = evil_department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      evil_person.pps_associations << pps_association
+    }
+
+    remove_match = lambda {
+      assert @person.pps_associations.length == 1
+      @person.pps_associations.destroy(@person.pps_associations[0])
+      @person.save!
+      assert @person.pps_associations.count.zero?
+
+      assert evil_person.pps_associations.length == 1
+      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
+      evil_person.save!
+      assert evil_person.pps_associations.count.zero?
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match, 2)
+  end
+
+  test "Rule 'department' works" do
+    group_rule = GroupRule.new(column: 'department', condition: 'is', value: 'DSS IT SHARED SERVICE CENTER')
+
+    setup_match = lambda {
+      # Put two people in two different depamrtnets under the same BOU
+      title = titles(:programmer)
+      department = departments(:dssit)
+
+      @person.pps_associations.destroy_all
+      assert @person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = @person.id
+      pps_association.title = title
+      pps_association.department = department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      @person.pps_associations << pps_association
+    }
+
+    remove_match = lambda {
+      assert @person.pps_associations.length == 1
+      @person.pps_associations.destroy(@person.pps_associations[0])
+      @person.save!
+      assert @person.pps_associations.count.zero?
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+
   private
 
   # Generic function for testing a group rule. Tests:
@@ -759,7 +819,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   # remove_match - should alter data to ensure group_rule will not have a match
   #
   # Test assumes only one match will happen whenever a match is expected.
-  def test_group_rule(group_rule, setup_match, remove_match)
+  def test_group_rule(group_rule, setup_match, remove_match, expected_member_count = 1)
     # Ensure a group has a rule
     group = entities(:groupWithNothing)
 
@@ -781,7 +841,7 @@ class GroupRuleTest < ActiveSupport::TestCase
 
       group.reload
 
-      assert group.members.length == 1, 'group should have a member'
+      assert group.members.length == expected_member_count, "group should have #{expected_member_count} member(s)"
 
       Rails.logger.debug 'Calling remove ...'
       remove_match.call()
@@ -795,7 +855,7 @@ class GroupRuleTest < ActiveSupport::TestCase
 
       group.reload
 
-      assert group.members.length == 1, 'group should have a member'
+      assert group.members.length == expected_member_count, "group should have #{expected_member_count} member(s)"
     end
   end
 end

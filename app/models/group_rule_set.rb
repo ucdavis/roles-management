@@ -64,7 +64,7 @@ class GroupRuleSet < ApplicationRecord
     when :title
       Title.where(id: entity.pps_associations.map(&:title_id)).each do |title|
         GroupRuleSet.where(column: 'title', value: title.name).each do |rule_set|
-          logger.debug "Matched 'title is' rule. Recording result."
+          logger.debug "Matched 'title' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -72,7 +72,7 @@ class GroupRuleSet < ApplicationRecord
     when :major
       entity.majors.each do |major|
         GroupRuleSet.where(column: 'major', value: major.name).each do |rule_set|
-          logger.debug "Matched 'major is' rule. Recording result."
+          logger.debug "Matched 'major' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -80,7 +80,7 @@ class GroupRuleSet < ApplicationRecord
     when :affiliation
       entity.affiliations.map(&:name).uniq.each do |aff_name|
         GroupRuleSet.where(column: 'affiliation', value: aff_name).each do |rule_set|
-          logger.debug "Matched 'affiliation is' rule. Recording result."
+          logger.debug "Matched 'affiliation' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -88,7 +88,15 @@ class GroupRuleSet < ApplicationRecord
     when :department
       entity.pps_associations.map { |assoc| assoc.department.officialName }.uniq.each do |dept_name|
         GroupRuleSet.where(column: 'department', value: dept_name).each do |rule_set|
-          logger.debug "Matched 'department is' rule. Recording result."
+          logger.debug "Matched 'department' rule. Recording result."
+          rule_set.results << GroupRuleResult.new(entity_id: person_id)
+          touched_rule_set_ids << rule_set.id
+        end
+      end
+    when :business_office_unit
+      entity.pps_associations.map { |assoc| assoc.department.business_office_unit&.dept_official_name }.uniq.each do |bou_name|
+        GroupRuleSet.where(column: 'business_office_unit', value: bou_name).each do |rule_set|
+          logger.debug "Matched 'business_office_unit' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -99,7 +107,7 @@ class GroupRuleSet < ApplicationRecord
       # but the child organization's parent has a rule, this will never do anything (right?)
       entity.organizations.map(&:name).uniq.each do |org_name|
         GroupRuleSet.where(column: 'organization', value: org_name).each do |rule_set|
-          logger.debug "Matched 'Organization is' rule. Recording result."
+          logger.debug "Matched 'Organization' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -108,7 +116,7 @@ class GroupRuleSet < ApplicationRecord
       end
     when :loginid
       GroupRuleSet.where(column: 'loginid', value: entity.loginid).each do |rule_set|
-        logger.debug "Matched 'loginid is' rule. Recording result."
+        logger.debug "Matched 'loginid' rule. Recording result."
         rule_set.results << GroupRuleResult.new(entity_id: person_id)
         touched_rule_set_ids << rule_set.id
       end
@@ -211,7 +219,16 @@ class GroupRuleSet < ApplicationRecord
         logger.warn 'Department not found'
       else
         ps = department.people.select(:id)
-        logger.debug "Adding #{ps.length} people to a 'Department is...' GroupRule"
+        logger.debug "Adding #{ps.length} people to a 'Department' GroupRule"
+        p += ps
+      end
+    when 'business_office_unit'
+      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      if bou.nil?
+        logger.warn 'Business Office Unit not found'
+      else
+        ps = bou.departments.map{ |d| d.people.select(:id) }.flatten
+        logger.debug "Adding #{ps.length} people to a 'Business Office Unit' GroupRule"
         p += ps
       end
     when 'organization'

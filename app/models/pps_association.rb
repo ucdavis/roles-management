@@ -10,11 +10,15 @@ class PpsAssociation < ApplicationRecord
     GroupRuleSet.update_results_for(:pps_unit, person_id)
     GroupRuleSet.update_results_for(:pps_position_type, person_id)
     GroupRuleSet.update_results_for(:title, person_id)
+    GroupRuleSet.update_results_for(:business_office_unit, person_id)
+    GroupRuleSet.update_results_for(:department, person_id)
   end
   after_destroy do
     GroupRuleSet.update_results_for(:pps_unit, person_id)
     GroupRuleSet.update_results_for(:pps_position_type, person_id)
     GroupRuleSet.update_results_for(:title, person_id)
+    GroupRuleSet.update_results_for(:business_office_unit, person_id)
+    GroupRuleSet.update_results_for(:department, person_id)
   end
 
   def position_type_label
