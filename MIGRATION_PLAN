@@ -1,0 +1,11 @@
+-1. Ensure all jobs have finished running. Shut down RM.
+0. Set new DW and IAM environment variables
+1. bin/rake db:migrate
+2. bin/rake dw:import_pps_departments --trace
+3. bin/rake iam:import_sis_majors --trace
+4. bin/rake title:replace_titles_with_csv[../rm_titles-201710.csv] --trace
+5. bin/rake dw:import --trace
+6. bin/rake group:recalculate_all --trace
+7. bin/rake misc:convert_affiliation_rules --trace
+
+Turn off sync?
