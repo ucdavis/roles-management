@@ -359,7 +359,18 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         entities = []
         _.each DssRm.Views.GroupShow.pps_position_types, (position_type, i) ->
           entities.push "#{i}#####{position_type}"
-
+        process entities
+        return
+      when "pps_unit"
+        entities = []
+        _.each DssRm.Views.GroupShow.pps_units, (unit, i) ->
+          entities.push "#{i}#####{unit}"
+        process entities
+        return
+      when "sis_level_code"
+        entities = []
+        _.each DssRm.Views.GroupShow.sis_level_codes, (code, i) ->
+          entities.push "#{i}#####{code}"
         process entities
         return
 
@@ -394,4 +405,8 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     6: 'Per Diem'
     7: 'Regular/Career Partial YEAR'
     8: 'Floater'
+  
+  pps_units: ['PA','EX','HX','RX','NX','K3','F3','87','99','LX','M3','DX','PX','IX','CX','BX','A3','GS','PSS','FX','SX','TX']
+
+  sis_level_codes: ['GR','UG','LW','MD']
 )
