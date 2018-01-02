@@ -7,5 +7,9 @@
 5. bin/rake dw:import --trace
 6. bin/rake group:recalculate_all --trace
 7. bin/rake misc:convert_affiliation_rules --trace
+8. bin/rake group:convert_org_rules --trace
+9. bin/rake organization:remove_unused --trace
+(Run 8 and 9 repeatedly until they have no work left)
 
 Turn off sync?
+Re-arrange order above?
