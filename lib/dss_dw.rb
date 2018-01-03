@@ -36,6 +36,20 @@ module DssDw
     return json # rubocop:disable Style/RedundantReturn
   end
 
+  def self.fetch_people_by_pps_department(dept_code)
+    response = perform_dw_request("/departments/pps/#{dept_code}")
+
+    return nil if response.code.to_i == 404
+
+    begin
+      json = JSON.parse(response.body)
+    rescue JSON::ParserError
+      return nil # not a 404 but JSON response did not make sense
+    end
+
+    return json # rubocop:disable Style/RedundantReturn
+  end
+
   def self.search_people(query)
     return nil unless query
 

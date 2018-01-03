@@ -45,10 +45,12 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
       # Import/update known individuals and any tracked departments
       loginids = Person.all.pluck(:loginid)
 
-      # TODO: Use IAM/DW to scan all tracked departments and grab their login IDs
-      # Department.where(department_id: TrackedItem.where(kind: 'department').pluck(:item_id)).pluck(:person_id)
+      # Use DW to scan all tracked departments and grab associated login IDs
+      Department.where(id: TrackedItem.where(kind: 'department').pluck(:item_id)).pluck(:code).each do |dept_code|
+        loginids << DssDw.fetch_people_by_pps_department(dept_code).map{|p| p["userId"]}
+      end
     end
 
-    loginids.each { |loginid| DssDw.create_or_update_using_dw(loginid) }
+    loginids.uniq.each { |loginid| DssDw.create_or_update_using_dw(loginid) }
   end
 end

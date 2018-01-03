@@ -11,8 +11,8 @@ every 24.hours do
   rake 'iam:import_bous'
 end
 
-# Run LDAP import updater every 6 hours
-every 6.hours do
+# Sync with external systems
+every 12.hours do
   rake 'ldap:import'
   rake 'dw:import'
 end
