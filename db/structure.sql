@@ -492,7 +492,8 @@ CREATE TABLE entities (
     is_student boolean,
     is_staff boolean,
     is_external boolean,
-    iam_id integer
+    iam_id integer,
+    synced_at timestamp without time zone
 );
 
 
@@ -2141,6 +2142,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171218234845'),
 ('20180102212600'),
 ('20180102214418'),
-('20180103170509');
+('20180103170509'),
+('20180103205053');
 
 

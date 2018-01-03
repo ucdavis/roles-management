@@ -112,6 +112,7 @@ module DssDw
       p.phone = dw_person['contactInfo']['workPhone']
       p.address = dw_person['contactInfo']['postalAddress']
     end
+    p.synced_at = Time.now
 
     # Process any majors (SIS associations)
     begin

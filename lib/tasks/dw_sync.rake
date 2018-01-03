@@ -36,6 +36,8 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
   task :import, [:loginid] => :environment do |_t, args|
     loginids = []
 
+    # TODO: What about disabling individuals not seen in a while?
+
     if args[:loginid]
       # Only import/update specified individual
       loginids << args[:loginid]
