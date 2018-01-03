@@ -55,6 +55,7 @@ DSSRM::Application.routes.draw do
     resources :api_key_users
     resources :queued_jobs
     resources :activity_logs
+    resources :tracking
   end
 
   root to: redirect('/welcome')

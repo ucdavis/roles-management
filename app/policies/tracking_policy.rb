@@ -1,0 +1,2 @@
+class TrackingPolicy < BasePolicy
+end
