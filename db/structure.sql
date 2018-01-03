@@ -1115,6 +1115,38 @@ ALTER SEQUENCE titles_id_seq OWNED BY titles.id;
 
 
 --
+-- Name: tracked_items; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE tracked_items (
+    id bigint NOT NULL,
+    kind character varying,
+    item_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: tracked_items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE tracked_items_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tracked_items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE tracked_items_id_seq OWNED BY tracked_items.id;
+
+
+--
 -- Name: versions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1375,6 +1407,13 @@ ALTER TABLE ONLY sis_associations ALTER COLUMN id SET DEFAULT nextval('sis_assoc
 --
 
 ALTER TABLE ONLY titles ALTER COLUMN id SET DEFAULT nextval('titles_id_seq'::regclass);
+
+
+--
+-- Name: tracked_items id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY tracked_items ALTER COLUMN id SET DEFAULT nextval('tracked_items_id_seq'::regclass);
 
 
 --
@@ -1646,6 +1685,14 @@ ALTER TABLE ONLY sis_associations
 
 ALTER TABLE ONLY titles
     ADD CONSTRAINT titles_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tracked_items tracked_items_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY tracked_items
+    ADD CONSTRAINT tracked_items_pkey PRIMARY KEY (id);
 
 
 --
@@ -2093,6 +2140,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171211204201'),
 ('20171218234845'),
 ('20180102212600'),
-('20180102214418');
+('20180102214418'),
+('20180103170509');
 
 

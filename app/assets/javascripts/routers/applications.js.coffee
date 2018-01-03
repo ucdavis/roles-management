@@ -82,10 +82,10 @@ DssRm.Routers.Applications = Backbone.Router.extend(
   trackingDialog: ->
     toastr["info"]("Loading tracking ...")
 
-    $.get Routes.admin_tracking_index_path(), (items) =>
+    $.get Routes.admin_tracked_items_path(), (items) =>
       toastr.remove()
-      tracked_items = new DssRm.Collections.TrackedItems(items)
-      new DssRm.Views.TrackingDialog(tracked_items: tracked_items).render().$el.modal()
+      tracked_items = new DssRm.Collections.TrackedItems(items.tracked_items)
+      new DssRm.Views.TrackingDialog(tracked_items: tracked_items, departments: items.departments).render().$el.modal()
 
   aboutDialog: ->
     new DssRm.Views.AboutDialog().render().$el.modal()

@@ -13,7 +13,7 @@
 (Run 8 and 9 repeatedly until they have no work left)
 10. Confirm ~11 organization-based GroupRules remain, delete them all.
     This should allow organization:remove_unused to delete the rest
-
+11. bin/rake tracking:enable_used_departments
 
 
 Turn off sync?

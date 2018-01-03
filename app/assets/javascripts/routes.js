@@ -498,12 +498,12 @@ Based on Rails routes of DSSRM::Application
 // admin_queued_jobs => /admin/queued_jobs(.:format)
   // function(options)
   admin_queued_jobs_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"queued_jobs",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
-// admin_tracking => /admin/tracking/:id(.:format)
+// admin_tracked_item => /admin/tracked_items/:id(.:format)
   // function(id, options)
-  admin_tracking_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracking",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
-// admin_tracking_index => /admin/tracking(.:format)
+  admin_tracked_item_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracked_items",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
+// admin_tracked_items => /admin/tracked_items(.:format)
   // function(options)
-  admin_tracking_index_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracking",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
+  admin_tracked_items_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracked_items",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
 // affiliation => /affiliations/:id(.:format)
   // function(id, options)
   affiliation_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"affiliations",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
@@ -582,9 +582,9 @@ Based on Rails routes of DSSRM::Application
 // edit_admin_queued_job => /admin/queued_jobs/:id/edit(.:format)
   // function(id, options)
   edit_admin_queued_job_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"queued_jobs",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
-// edit_admin_tracking => /admin/tracking/:id/edit(.:format)
+// edit_admin_tracked_item => /admin/tracked_items/:id/edit(.:format)
   // function(id, options)
-  edit_admin_tracking_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracking",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
+  edit_admin_tracked_item_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracked_items",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
 // edit_affiliation => /affiliations/:id/edit(.:format)
   // function(id, options)
   edit_affiliation_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"affiliations",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
@@ -684,9 +684,9 @@ Based on Rails routes of DSSRM::Application
 // new_admin_queued_job => /admin/queued_jobs/new(.:format)
   // function(options)
   new_admin_queued_job_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"queued_jobs",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
-// new_admin_tracking => /admin/tracking/new(.:format)
+// new_admin_tracked_item => /admin/tracked_items/new(.:format)
   // function(options)
-  new_admin_tracking_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracking",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
+  new_admin_tracked_item_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracked_items",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
 // new_affiliation => /affiliations/new(.:format)
   // function(options)
   new_affiliation_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"affiliations",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
