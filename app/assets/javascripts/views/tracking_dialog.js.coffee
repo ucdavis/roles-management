@@ -9,6 +9,7 @@ DssRm.Views.TrackingDialog = Backbone.View.extend(
   initialize: (options) ->
     @$el.html JST["templates/application/tracking_dialog"]()
     @tracked_items = options.tracked_items
+    @listenTo @tracked_items, "update", @render
     @departments = _.sortBy options.departments, (item) -> item.name
 
   render: ->
@@ -56,23 +57,36 @@ DssRm.Views.TrackingDialog = Backbone.View.extend(
     item_id = $parent_tr.data('item-id')
     tracked_item_id = $parent_tr.data('tracked-item-id')
 
+    toastr["info"]("Toggling tracking ...")
+
     if currently_tracked
       # Turn off tracking
       $.ajax(
         url: Routes.admin_tracked_item_path(tracked_item_id)
         type: 'DELETE'
-        success: (callback) ->
-          debugger
+        success: (data) =>
+          toastr.remove()
+          toastr["success"]("Stopped tracking item.")
+          @tracked_items.remove data.tracked_item
+        error: () ->
+          toastr.remove()
+          toastr["error"]("Unable to stop tracking item. Try again later.")
       )
     else
       # Turn on tracking
       $.ajax(
         url: Routes.admin_tracked_items_path()
-        type: 'PUT'
+        type: 'POST'
         data:
-          item_kind: item_kind
-          item_id: item_id
-        success: (callback) ->
-          debugger
+          tracked_item:
+            kind: item_kind
+            item_id: item_id
+        success: (data) =>
+          toastr.remove()
+          toastr["success"]("Started tracking item.")
+          @tracked_items.add data.tracked_item
+        error: () ->
+          toastr.remove()
+          toastr["error"]("Unable to start tracking item. Try again later.")
       )
 )
