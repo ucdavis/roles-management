@@ -33,29 +33,20 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
   end
 
   desc 'Import/augment user(s) with IAM data'
-  task :import, [:loginid] => :environment do |t, args|
-    people = []
+  task :import, [:loginid] => :environment do |_t, args|
+    loginids = []
 
     if args[:loginid]
-      person = Person.find_by(loginid: args[:loginid])
-
-      if person.present?
-        people << person
-      else
-        # We will create the person requested if they do not exist
-        # so long as they exist in DW.
-        dw_person = DssDw.fetch_person_by_loginid(args[:loginid])
-        if dw_person.present?
-          people << Person.create(loginid: dw_person['prikerbacct']['userId'])
-        else
-          puts "No such login ID in RM nor DW: #{args[:loginid]}"
-          exit(-1)
-        end
-      end
+      # Only import/update specified individual
+      loginids << args[:loginid]
     else
-      people = Person.all
+      # Import/update known individuals and any tracked departments
+      loginids = Person.all.pluck(:loginid)
+
+      # TODO: Use IAM/DW to scan all tracked departments and grab their login IDs
+      # Department.where(department_id: TrackedItem.where(kind: 'department').pluck(:item_id)).pluck(:person_id)
     end
 
-    people.each { |p| DssDw.create_or_update_using_dw(p) }
+    loginids.each { |loginid| DssDw.create_or_update_using_dw(loginid) }
   end
 end

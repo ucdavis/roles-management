@@ -87,17 +87,14 @@ module DssDw
     return response # rubocop:disable Style/RedundantReturn
   end
 
+  # Creates or updates a person from DW using 'loginid'
+  # If missing from DW, will not create a blank person with 'loginid'
   def self.create_or_update_using_dw(loginid)
-    if loginid.is_a? Person
-      p = loginid
-      loginid = p.loginid
-    end
-
     dw_person = DssDw.fetch_person_by_loginid(loginid)
 
     return nil unless dw_person
 
-    p ||= Person.find_or_create_by(loginid: loginid)
+    p = Person.find_or_create_by(loginid: loginid)
 
     # Process the isStaff, isFaculty, etc. flags
     p.is_employee = dw_person['person']['isEmployee']
