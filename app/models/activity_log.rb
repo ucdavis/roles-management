@@ -10,14 +10,15 @@ class ActivityLog < ApplicationRecord
   before_validation :set_performed_at_field
 
   def self.record!(message = nil, tags = [], level = :info)
+    return if Rails.env.test?
     tags.each do |tag|
       activity_logger = Logger.new(Rails.root.join('log', 'activity').to_s + '/' + tag)
       activity_logger.formatter = proc do |_severity, _datetime, _progname, msg|
         "#{msg}\n"
       end
-      log_level_str = 'INFO' if log.level == 0 # rubocop:disable Style/NumericPredicate
-      log_level_str = 'WARN' if log.level == 1
-      log_level_str = 'ERROR' if log.level == 2
+      log_level_str = 'INFO' if level == :info # rubocop:disable Style/NumericPredicate
+      log_level_str = 'WARN' if level == :warn
+      log_level_str = 'ERROR' if level == :err
       activity_logger.info "#{Time.now} - #{log_level_str} - #{message}"
       activity_logger.close
     end
