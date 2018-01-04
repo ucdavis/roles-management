@@ -181,11 +181,17 @@ module DssDw
         end.nil?
 
         # New PPS association found
-        PpsAssociation.create!(person_id: p.id,
-                               title: Title.find_by(code: pps_assoc_json['titleCode']),
-                               department: Department.find_by(code: pps_assoc_json['deptCode']),
-                               association_rank: pps_assoc_json['assocRank'].to_i,
-                               position_type_code: pps_assoc_json['positionTypeCode'].to_i)
+        begin
+          PpsAssociation.create!(person_id: p.id,
+                                 title: Title.find_by(code: pps_assoc_json['titleCode']),
+                                 department: Department.find_by(code: pps_assoc_json['deptCode']),
+                                 association_rank: pps_assoc_json['assocRank'].to_i,
+                                 position_type_code: pps_assoc_json['positionTypeCode'].to_i)
+        rescue ActiveRecord::RecordInvalid => e
+          Rails.logger.error 'Could not create a PpsAssociation for person, skipping ...'
+          Rails.logger.error "\tPerson        : #{p.id}, #{p.loginid}"
+          Rails.logger.error "\tPPS Assocation: #{pps_assoc_json.inspect}"
+        end
       end
 
       existing_pps_assocs.each do |assoc|

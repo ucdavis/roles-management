@@ -49,8 +49,10 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
       Department.where(id: TrackedItem.where(kind: 'department').pluck(:item_id)).pluck(:code).each do |dept_code|
         loginids << DssDw.fetch_people_by_pps_department(dept_code).map{|p| p["userId"]}
       end
+
+      loginids = loginids.flatten.uniq
     end
 
-    loginids.uniq.each { |loginid| DssDw.create_or_update_using_dw(loginid) }
+    loginids.each { |loginid| DssDw.create_or_update_using_dw(loginid) }
   end
 end
