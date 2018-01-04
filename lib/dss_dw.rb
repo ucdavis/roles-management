@@ -94,8 +94,11 @@ module DssDw
     begin
       response = http.request(request)
     rescue Errno::ECONNREFUSED
-      STDERR.puts "Unable to connect to #{DW_URL}. Check that DW is running."
-      return nil # Unable to connect to DW
+      STDERR.puts "Unable to connect to #{DW_URL}"
+      return nil
+    rescue Net::OpenTimeout
+      STDERR.puts "Request timed out: #{DW_URL}"
+      return nil
     end
 
     return response # rubocop:disable Style/RedundantReturn
@@ -104,6 +107,8 @@ module DssDw
   # Creates or updates a person from DW using 'loginid'
   # If missing from DW, will not create a blank person with 'loginid'
   def self.create_or_update_using_dw(loginid)
+    Rails.logger.info "Create/update '#{loginid}' from DW ..."
+
     dw_person = DssDw.fetch_person_by_loginid(loginid)
 
     return nil unless dw_person
