@@ -28,3 +28,5 @@ vendor/cache/
 .idea
 node_modules/
 .rbenv-vars
+db/data.yml
+
