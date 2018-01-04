@@ -22,18 +22,19 @@ gem 'coffee-rails', '~> 4.2'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 
+gem 'mysql2', group: [:production, :development]
+gem 'pg', '0.20.0', group: [:production, :development]
+
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.2', group: :doc
 
 group :production do
   gem 'dalli'
-  gem 'pg', '0.20.0'
   # For New Relic monitoring integration
   gem 'newrelic_rpm'
 end
 
 group :development do
-  gem 'letter_opener'
   gem 'capistrano', '= 3.7.2', require: false
   gem 'capistrano-rails',   '~> 1.1', require: false
   gem 'capistrano-bundler', '~> 1.1', require: false
@@ -42,8 +43,7 @@ group :development do
   # will not stop correctly if not passed the number of workers in the 'stop' command
   gem 'capistrano3-delayed-job', git: 'https://github.com/cthielen/capistrano3-delayed-job.git'
 
-  gem 'mysql2'
-  gem 'pg', '0.20.0'
+  gem 'letter_opener'
 end
 
 gem 'spring', group: :development
@@ -51,11 +51,11 @@ gem 'spring-watcher-listen', '~> 2.0.0', group: :development
 gem 'web-console', '>= 3.3.0', group: :development
 
 group :development, :test do
-  gem 'jasmine-rails' # for JS unit testing
+  gem 'byebug', platform: :mri
   gem 'capybara'      # for JS integration testing
+  gem 'jasmine-rails' # for JS unit testing
   gem 'poltergeist'   # for PhantomJS-based testing with capybara
   gem 'sqlite3'
-  gem 'byebug', platform: :mri
   gem 'test-unit', '~> 3.2'
 end
 
@@ -81,12 +81,14 @@ gem 'js-routes'
 gem 'whenever', require: false
 
 # For background processing
-gem 'delayed_job_active_record'
 gem 'daemons'
+gem 'delayed_job_active_record'
 
 # Sync script dependencies
 gem 'roles-management-api', '>= 0.1.2', git: 'https://github.com/dssit/roles-management-api.git'
 
 # For Slack notifications
-gem 'slack-notifier'
 gem 'json'
+gem 'slack-notifier'
+
+gem 'yaml_db'
