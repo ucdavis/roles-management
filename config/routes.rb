@@ -54,7 +54,6 @@ DSSRM::Application.routes.draw do
     resources :api_whitelisted_ip_users
     resources :api_key_users
     resources :queued_jobs
-    resources :activity_logs
     resources :tracked_items
   end
 

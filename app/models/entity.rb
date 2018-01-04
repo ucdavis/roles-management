@@ -21,8 +21,9 @@ class Entity < ApplicationRecord
 
   # Retrieve ActivityLog for this entity order by most recent. nil if none
   def activity
-    tag = ActivityLogTag.find_by_tag("#{self.class.to_s.downcase}_#{self.id}")
-    return [] unless tag
-    return tag.activity_logs.order('performed_at DESC')
+    return []
+    # tag = ActivityLogTag.find_by_tag("#{self.class.to_s.downcase}_#{self.id}")
+    # return [] unless tag
+    # return tag.activity_logs.order('performed_at DESC')
   end
 end
