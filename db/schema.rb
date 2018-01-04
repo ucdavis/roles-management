@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171026212915) do
+ActiveRecord::Schema.define(version: 20180103205053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,6 +88,17 @@ ActiveRecord::Schema.define(version: 20171026212915) do
     t.index ["name"], name: "index_applications_on_name"
   end
 
+  create_table "business_office_units", force: :cascade do |t|
+    t.string "org_oid"
+    t.string "dept_code"
+    t.string "dept_official_name"
+    t.string "dept_display_name"
+    t.string "dept_abbrev"
+    t.boolean "is_ucdhs"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "delayed_jobs", id: :serial, force: :cascade do |t|
     t.integer "priority", default: 0
     t.integer "attempts", default: 0
@@ -110,6 +121,7 @@ ActiveRecord::Schema.define(version: 20171026212915) do
     t.string "abbreviation", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "bou_org_oid"
   end
 
   create_table "entities", id: :serial, force: :cascade do |t|
@@ -122,7 +134,6 @@ ActiveRecord::Schema.define(version: 20171026212915) do
     t.boolean "active", default: true
     t.string "phone", limit: 255
     t.string "address", limit: 255
-    t.integer "title_id"
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -133,6 +144,8 @@ ActiveRecord::Schema.define(version: 20171026212915) do
     t.boolean "is_student"
     t.boolean "is_staff"
     t.boolean "is_external"
+    t.integer "iam_id"
+    t.datetime "synced_at"
     t.index ["id"], name: "index_entities_on_id"
     t.index ["loginid"], name: "index_entities_on_loginid"
     t.index ["name"], name: "index_entities_on_name"
@@ -142,7 +155,6 @@ ActiveRecord::Schema.define(version: 20171026212915) do
   create_table "group_memberships", id: :serial, force: :cascade do |t|
     t.integer "group_id"
     t.integer "entity_id"
-    t.boolean "calculated", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -162,8 +174,16 @@ ActiveRecord::Schema.define(version: 20171026212915) do
   end
 
   create_table "group_rule_results", id: :serial, force: :cascade do |t|
-    t.integer "group_rule_id"
+    t.integer "group_rule_set_id"
     t.integer "entity_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "group_rule_sets", force: :cascade do |t|
+    t.string "column"
+    t.boolean "condition"
+    t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -175,13 +195,7 @@ ActiveRecord::Schema.define(version: 20171026212915) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "group_id"
-  end
-
-  create_table "major_assignments", force: :cascade do |t|
-    t.integer "major_id"
-    t.integer "entity_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer "group_rule_set_id"
   end
 
   create_table "majors", id: :serial, force: :cascade do |t|
@@ -274,11 +288,27 @@ ActiveRecord::Schema.define(version: 20171026212915) do
     t.index ["id"], name: "index_roles_on_id"
   end
 
+  create_table "sis_associations", force: :cascade do |t|
+    t.integer "major_id"
+    t.integer "entity_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "level_code", limit: 2
+    t.integer "association_rank"
+  end
+
   create_table "titles", id: :serial, force: :cascade do |t|
     t.string "name", limit: 255
     t.string "code", limit: 255
     t.string "unit", limit: 3
     t.index ["code"], name: "index_titles_on_code"
+  end
+
+  create_table "tracked_items", force: :cascade do |t|
+    t.string "kind"
+    t.integer "item_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|
