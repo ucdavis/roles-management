@@ -26,7 +26,7 @@ FROM ruby:2.4-alpine
 ENV PATH /root/.yarn/bin:$PATH
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh build-base nodejs tzdata postgresql-dev
+    apk add --no-cache bash git openssh build-base nodejs tzdata postgresql-dev mysql-dev
 
 RUN apk update \
   && apk add curl bash binutils tar gnupg \
@@ -60,9 +60,24 @@ ENV RACK_ENV production
 ENV RAILS_ROOT /usr/src/app
 # Use Rails for static files in public
 ENV RAILS_SERVE_STATIC_FILES 1
+
 # You must pass environment variable SECRET_KEY_BASE
 ARG SECRET_KEY_BASE
 ENV SECRET_KEY_BASE $SECRET_KEY_BASE
+
+ARG DW_URL
+ENV DW_URL $DW_URL
+ARG DW_TOKEN
+ENV DW_TOKEN $DW_TOKEN
+
+ARG DB_NAME
+ENV DB_NAME $DB_NAME
+ARG DB_USER
+ENV DB_USER $DB_USER
+ARG DB_PASSWORD
+ENV DB_PASSWORD $DB_PASSWORD
+ARG DB_HOST
+ENV DB_HOST $DB_HOST
 
 # Copy the main application.
 COPY . ./
