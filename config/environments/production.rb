@@ -71,7 +71,7 @@ DSSRM::Application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   # Force SSL in production
-  config.force_ssl = true
+  config.force_ssl = false
 
   # Use local sendmail
   config.action_mailer.delivery_method = :sendmail
