@@ -20,11 +20,12 @@ class Application < ApplicationRecord
   # Note the nested 'role' JSON includes "members" and "entities."
   # 'members' are people only - flattened entities.
   # 'entities' are what actually exists in the database but includes groups.
-  def as_json(options={})
-    { :id => self.id, :name => self.name, url: self.url,
-      :roles => self.roles.map{ |r| { id: r.id, description: r.description, token: r.token, name: r.name, ad_path: r.ad_path } },
-      :description => self.description, :owners => self.application_ownerships.map{ |o| { name: o.entity.name, id: o.entity.id, calculated: o.parent_id? } },
-      :operatorships => self.operatorships.includes(:entity).map{ |o| { name: o.entity.name, entity_id: o.entity.id, id: o.id, calculated: o.parent_id? } } }
+  def as_json(_)
+    {
+      id: id, name: name, description: description,
+      roles: roles.map { |r| { id: r.id, description: r.description, name: r.name } },
+      owners: application_ownerships.map { |o| { name: o.entity.name, id: o.entity_id, calculated: o.parent_id? } }
+    }
   end
 
   # Returns identifying string for logging purposes. Other classes implement this too.

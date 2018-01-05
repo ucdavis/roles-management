@@ -15,9 +15,11 @@ class ApplicationsController < ApplicationController
   def show
     authorize @application
 
+    @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
+
     respond_to do |format|
-      format.json { render json: @application }
-      format.csv {
+      format.json { render 'applications/show', status: :ok }
+      format.csv do
         require 'csv'
 
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Downloaded CSV of application, #{params[:application]}."
@@ -40,7 +42,7 @@ class ApplicationsController < ApplicationController
         send_data csv_data,
                   type: 'text/csv; charset=iso-8859-1; header=present',
                   disposition: 'attachment; filename=' + unix_filename(@application.name.to_s)
-      }
+      end
     end
   end
 
