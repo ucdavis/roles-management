@@ -29,11 +29,7 @@ DSSRM::Application.configure do
   # See everything in the log (default is :info)
   config.log_level = :info
 
-  # Use a syslog-based logger for distributed log collection
-  # config.logger = Syslogger.new("roles-management", Syslog::LOG_PID, Syslog::LOG_LOCAL0)
-  # config.logger.level = Logger::INFO
-
-  config.cache_store = :dalli_store #:mem_cache_store, "localhost"
+  config.cache_store = :memory_store, { size: 64.megabytes } #:dalli_store #:mem_cache_store, "localhost"
 
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
@@ -70,6 +66,9 @@ DSSRM::Application.configure do
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
+  # Log to STDOUT
+  config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+
   # Force SSL in production
   config.force_ssl = false
 
@@ -80,10 +79,10 @@ DSSRM::Application.configure do
 
   # Send e-mail on exceptions
   config.middleware.use ExceptionNotification::Rack,
-    :email => {
-      :email_prefix => "[Roles Management] ",
-      :sender_address => %{no-reply@roles.dss.ucdavis.edu},
-      :exception_recipients => %w{dssit-devs-exceptions@ucdavis.edu}
+    email: {
+      email_prefix: "[Roles Management] ",
+      sender_address: %{no-reply@roles.dss.ucdavis.edu},
+      exception_recipients: %w{dssit-devs-exceptions@ucdavis.edu}
     }
 
   # Do not dump schema after migrations.
