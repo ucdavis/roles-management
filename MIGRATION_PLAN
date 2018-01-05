@@ -15,6 +15,7 @@
     This should allow organization:remove_unused to delete the rest
 11. bin/rake tracking:enable_used_departments
 12. bin/rake activity_logs:convert --trace
+13. rake db:data:dump on local, switch to MySQL, rake db:data:load
 
 Turn off sync?
 Re-arrange order above?
