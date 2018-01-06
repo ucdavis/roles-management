@@ -54,8 +54,8 @@ class Person < Entity
         application_name: a.role.application.name, application_id: a.role.application_id,
         name: a.role.name, description: a.role.description }
       },
-      favorites: favorites.select { |f| f.active == true }.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      group_memberships: group_memberships.includes(:group).map{ |m| {
+      favorites: favorites.select { |f| f.active == true }.map { |f| { id: f.id, name: f.name, type: f.type } },
+      group_memberships: group_memberships.includes(:group).map { |m| {
         id: m.id, group_id: m.group.id, name: m.group.name }
       },
       group_ownerships: group_ownerships.includes(:group).map { |o| {
@@ -64,7 +64,7 @@ class Person < Entity
       group_operatorships: group_operatorships.includes(:group).map { |o| {
         id: o.id, group_id: o.group.id, name: o.group.name }
       },
-      organizations: organizations.map{ |o| { id: o.id, name: o.name } }
+      organizations: organizations.map { |o| { id: o.id, name: o.name } }
     }
   end
 
@@ -137,10 +137,10 @@ class Person < Entity
   # Returns all applications the user has an ownership or operatorship on
   def manageable_applications
     if role_symbols.include?(:admin) || role_symbols.include?(:operate)
-      Application.includes(:roles, :application_ownerships, :operatorships).all
+      Application.includes(:roles, application_ownerships: [:entity]).all
     else
       application_ids = (application_ownerships.map(&:application_id) + application_operatorships.map(&:application_id)).uniq
-      Application.includes(:roles, :application_ownerships, :operatorships).where(id: application_ids)
+      Application.includes(:roles, application_ownerships: [:entity]).where(id: application_ids)
     end
   end
 

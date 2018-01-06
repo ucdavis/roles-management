@@ -136,8 +136,6 @@ class ApplicationsController < ApplicationController
     else
       @applications = manageable_applications
     end
-
-    @applications = @applications.sort_by(&:created_at)
   end
 
   def new_application_from_params
@@ -149,10 +147,10 @@ class ApplicationsController < ApplicationController
   def application_params
     if params[:application]
       # Workaround for deep_munge issues (http://stackoverflow.com/questions/20164354/rails-strong-parameters-with-empty-arrays)
-      params[:application][:owner_ids] ||= [] if params[:application].has_key?(:owner_ids)
+      params[:application][:owner_ids] ||= [] if params[:application].key?(:owner_ids)
     end
     params.require(:application).permit(:name, :description, :url,
-                                    {roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []},
-                                    {operatorships_attributes: [:id, :entity_id, :application_id, :_destroy]} )
+                                      { roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []},
+                                      { operatorships_attributes: [:id, :entity_id, :application_id, :_destroy]} )
   end
 end
