@@ -58,6 +58,7 @@ RUN npm rebuild node-sass --force
 ENV RAILS_ENV production 
 ENV RACK_ENV production
 ENV RAILS_ROOT /usr/src/app
+
 # Use Rails for static files in public
 ENV RAILS_SERVE_STATIC_FILES 1
 
