@@ -80,6 +80,9 @@ ENV DB_PASSWORD $DB_PASSWORD
 ARG DB_HOST
 ENV DB_HOST $DB_HOST
 
+# Ensure activity directory exists
+RUN mkdir -p ./log/activity
+
 # Copy the main application.
 COPY . ./
 
