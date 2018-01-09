@@ -88,7 +88,7 @@ class Person < Entity
     [
       pps_associations.map { |assoc| "#{assoc.title.name} (#{assoc.department.displayName})" },
       sis_associations.map { |assoc| "#{assoc.major.name} (#{assoc.level_code})" }
-    ]&.join(', ')
+    ]&.flatten&.join(', ')
   end
 
   # Returns a list of symbols as required by the authorization layer.
