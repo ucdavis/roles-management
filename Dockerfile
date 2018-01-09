@@ -80,6 +80,9 @@ ENV DB_PASSWORD $DB_PASSWORD
 ARG DB_HOST
 ENV DB_HOST $DB_HOST
 
+ARG RAILS_MAX_THREADS=8
+ENV RAILS_MAX_THREADS $RAILS_MAX_THREADS
+
 # Ensure activity directory exists
 RUN mkdir -p ./log/activity
 
