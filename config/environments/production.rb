@@ -72,18 +72,26 @@ DSSRM::Application.configure do
   # Force SSL in production
   config.force_ssl = false
 
-  # Use local sendmail
-  config.action_mailer.delivery_method = :sendmail
+  # Configure SMTP
+  config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.smtp_settings = {
+    address: ENV['SES_SMTP_HOST'],
+    port: 587,
+    user_name: ENV['SES_SMTP_USERNAME'],
+    password: ENV['SES_SMTP_PASSWORD'],
+    authentication: :login,
+    enable_starttls_auto: true
+  }
 
   # Send e-mail on exceptions
   config.middleware.use ExceptionNotification::Rack,
-    email: {
-      email_prefix: "[Roles Management] ",
-      sender_address: %{no-reply@roles.dss.ucdavis.edu},
-      exception_recipients: %w{dssit-devs-exceptions@ucdavis.edu}
-    }
+                        email: {
+                          email_prefix: '[Roles Management] ',
+                          sender_address: ENV['SES_SMTP_FROM_ADDRESS'],
+                          exception_recipients: %w[dssit-devs-exceptions@ucdavis.edu]
+                        }
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false

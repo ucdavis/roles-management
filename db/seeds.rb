@@ -6,8 +6,18 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Mayor.create(:name => 'Daley', :city => cities.first)
 #
-rm_application = Application.create({ name: 'DSS Roles Management', description: 'Manage and organize people and groups with roles.' })
+rm_application = Application.create(name: 'DSS Roles Management',
+                                    description: 'Manage and organize people and groups with roles.')
 
-Role.create({ token: 'access', application_id: rm_application.id, name: 'Access', description: 'Allow basic program access' })
-Role.create({ token: 'admin', application_id: rm_application.id, name: 'Admin', description: 'Allow full administrator access' })
-Role.create({ token: 'operate', application_id: rm_application.id, name: 'Operate', description: 'Allows trusted, administrator-like access with notable restrictions' })
+Role.create(token: 'access',
+            application_id: rm_application.id,
+            name: 'Access',
+            description: 'Allow basic program access')
+Role.create(token: 'admin',
+            application_id: rm_application.id,
+            name: 'Admin',
+            description: 'Allow full administrator access')
+Role.create(token: 'operate',
+            application_id: rm_application.id,
+            name: 'Operate',
+            description: 'Allows trusted, administrator-like access with notable restrictions')

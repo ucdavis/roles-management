@@ -3,6 +3,10 @@ module DssDw
   require 'json'
   require 'uri'
 
+  # Custom exception used in module
+  class DssDwError < StandardError
+  end
+
   DW_URL = ENV['DW_URL']
   DW_TOKEN = ENV['DW_TOKEN']
 
@@ -69,6 +73,8 @@ module DssDw
   # path, e.g. /people/search?q=something
   # Token will be added automatically.
   def self.perform_dw_request(path)
+    raise DssDwError, 'DW_URL or DW_TOKEN environment variable missing' if ENV['DW_URL'].blank? || ENV['DW_TOKEN'].blank?
+
     # Determine if SSL is needed
     https_mode = DW_URL.start_with? 'https'
 
