@@ -12,23 +12,23 @@ class ActiveDirectoryHelper
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
       if group.nil?
-        STDERR.puts "ensure_sentinel_descriptor_presence failed: Cannot get_group()."
+        STDERR.puts 'ensure_sentinel_descriptor_presence failed: Cannot get_group().'
         return false
       end
     end
 
     g_desc = group[:description][0]
-    g_desc = "" if g_desc.nil?
+    g_desc = '' if g_desc.nil?
 
-    if(application_name and role_name)
+    if(application_name && role_name)
       sentinel_txt = "(RM Sync: #{application_name} / #{role_name})"
     else
-      sentinel_txt = "(RM Sync: Universal)"
+      sentinel_txt = '(RM Sync: Universal)'
     end
 
     # Remove the old-style sentinel if it exists
-    if g_desc.index "(RM Sync)"
-      g_desc.slice! "(RM Sync)"
+    if g_desc.index '(RM Sync)'
+      g_desc.slice! '(RM Sync)'
       g_desc.lstrip!
     end
 
@@ -54,13 +54,13 @@ class ActiveDirectoryHelper
     end
 
     if group.nil?
-      STDERR.puts "ensure_sentinel_descriptor_absence failed: Cannot get_group()."
+      STDERR.puts 'ensure_sentinel_descriptor_absence failed: Cannot get_group().'
       return false
     end
 
     g_desc = group[:description][0]
     unless g_desc
-      STDERR.puts "ensure_sentinel_descriptor_absence failed: g_desc is nil."
+      STDERR.puts 'ensure_sentinel_descriptor_absence failed: g_desc is nil.'
       return false
     end
 
@@ -131,7 +131,7 @@ class ActiveDirectoryHelper
     ad_group = ActiveDirectory.get_group(group_name)
 
     unless ad_group.is_a? Net::LDAP::Entry
-      abort("Could not retrieve #{group_name}")
+      abort("Could not retrieve AD group '#{group_name}'")
     end
 
     role = rm_client.find_role_by_id(role_id)
@@ -150,7 +150,7 @@ class ActiveDirectoryHelper
       p = rm_client.find_person_by_loginid(ad_member)
       if p
         STDOUT.puts "Ensuring #{p.loginid} is in RM role #{role} ..."
-        unless role.members.map{ |m| m.loginid }.include? p.loginid
+        unless role.members.map(&:loginid).include? p.loginid
           role.assignments << p
           role_changed = true
         end
