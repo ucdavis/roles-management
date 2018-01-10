@@ -63,7 +63,7 @@ class ActiveDirectory
 
   def ActiveDirectory.get_user(loginid)
     @ldap[:people].each do |conn|
-      result = conn.search(:filter => Net::LDAP::Filter.eq("sAMAccountName", loginid))
+      result = conn.search(filter: Net::LDAP::Filter.eq('sAMAccountName', loginid))
       raise LdapError, "Error while fetching user #{loginid}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
 
       if result.length > 0
@@ -76,7 +76,7 @@ class ActiveDirectory
 
   def ActiveDirectory.get_group(group_name)
     @ldap[:groups].each do |conn|
-      result = conn.search(:filter => Net::LDAP::Filter.eq("cn", group_name))
+      result = conn.search(filter: Net::LDAP::Filter.eq('cn', group_name))
       raise LdapError, "Error while fetching group #{group_name}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
 
       if result.length > 0
@@ -94,17 +94,17 @@ class ActiveDirectory
   # @raise [LdapError] if LDAP operation result code is non-zero
   def ActiveDirectory.add_user_to_group(user, group)
     unless user.is_a? Net::LDAP::Entry
-      raise InvalidParameter, "Must pass valid user", caller
+      raise InvalidParameter, 'Must pass valid user', caller
     end
     unless group.is_a? Net::LDAP::Entry
-      raise InvalidParameter, "Must pass valid group", caller
+      raise InvalidParameter, 'Must pass valid group', caller
     end
 
     # TODO: This will only process against the first entry in @ldap[:groups]
     @ldap[:groups].each do |conn|
-      result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
-  				[ :add, :member, user[:distinguishedname][0] ]
-  			])
+      result = conn.modify(dn: group[:distinguishedname][0], operations: [
+        [ :add, :member, user[:distinguishedname][0] ]
+      ])
 
       if conn.get_operation_result.code == LDAP_ALREADY_EXISTS
         return true # user was already in this group
@@ -126,17 +126,17 @@ class ActiveDirectory
   # @raise [LdapError] if an LDAP error occurs
   def ActiveDirectory.remove_user_from_group(user, group)
     unless user.is_a? Net::LDAP::Entry
-      raise InvalidParameter, "Must pass valid user", caller
+      raise InvalidParameter, 'Must pass valid user', caller
     end
     unless group.is_a? Net::LDAP::Entry
-      raise InvalidParameter, "Must pass valid group", caller
+      raise InvalidParameter, 'Must pass valid group', caller
     end
 
     # TODO: This will only process against the first entry in @ldap[:groups]
     @ldap[:groups].each do |conn|
-      result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
-				[ :delete, :member, user[:distinguishedname][0] ]
-			])
+      result = conn.modify(dn: group[:distinguishedname][0], operations: [
+        [ :delete, :member, user[:distinguishedname][0] ]
+      ])
 
       if conn.get_operation_result.code == LDAP_UNWILLING_TO_PERFORM
         return true # user was already not in the group
@@ -156,19 +156,19 @@ class ActiveDirectory
   # @raise [LdapError] if an LDAP error occurred
   def ActiveDirectory.update_group_description(group, description)
     unless group.is_a? Net::LDAP::Entry
-      raise InvalidParameter, "Must pass valid group", caller
+      raise InvalidParameter, 'Must pass valid group', caller
     end
 
     @ldap[:groups].each do |conn|
       if description and description.length > 0
-        result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
-  				[ :replace, 'description', description ]
-  			])
+        result = conn.modify(dn: group[:distinguishedname][0], operations: [
+          [ :replace, 'description', description ]
+        ])
       else
         # Setting description to blank means we delete the description attribute
-        result = conn.modify(:dn => group[:distinguishedname][0], :operations => [
-  				[ :delete, 'description' ]
-  			])
+        result = conn.modify(dn: group[:distinguishedname][0], operations: [
+          [ :delete, 'description' ]
+        ])
       end
 
       raise LdapError, "Error while updating description for #{group[:distinguishedname][0]}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
@@ -190,7 +190,7 @@ class ActiveDirectory
     end
 
     if group.nil?
-      raise OperationFailed, "Group not found", caller
+      raise OperationFailed, 'Group not found', caller
       return nil
     end
 

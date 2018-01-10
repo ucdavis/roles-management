@@ -1,6 +1,9 @@
 require 'roles-management-api'
 
 class ActiveDirectoryHelper
+  class UserNotFound < StandardError; end
+  class GroupNotFound < StandardError; end
+
   # Adds the SENTINEL_DESCRIPTOR text to an AD group's description field if
   # it is not present.
   #
@@ -80,18 +83,18 @@ class ActiveDirectoryHelper
   # +group+ may be an AD path (string) or Net::LDAP::Entry object
   # +ad_guid+ may be provided (optional) and will be preferred over AD Path if
   # +group+ is a string (AD Path)
-  def ActiveDirectoryHelper.ensure_user_in_group(user, group, ad_guid = nil)
+  def ActiveDirectoryHelper.ensure_user_in_group(user, group, _ad_guid = nil)
     unless user.is_a? Net::LDAP::Entry
       user = ActiveDirectory.get_user(user)
       if user.nil?
-        STDERR.puts "ensure_user_in_group failed: user is nil."
+        STDERR.puts 'ensure_user_in_group failed: user is nil.'
         return false
       end
     end
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
       if group.nil?
-        STDERR.puts "ensure_user_in_group failed: group is nil."
+        STDERR.puts 'ensure_user_in_group failed: group is nil.'
         return false
       end
     end
@@ -104,20 +107,14 @@ class ActiveDirectoryHelper
   # Group may be an AD path (string) or Net::LDAP::Entry object
   # ad_guid may be provided (optional) and will be prefered over AD Path if
   # 'group' is a string (AD Path)
-  def ActiveDirectoryHelper.ensure_user_not_in_group(user, group, ad_guid = nil)
+  def ActiveDirectoryHelper.ensure_user_not_in_group(user, group, _ad_guid = nil)
     unless user.is_a? Net::LDAP::Entry
       user = ActiveDirectory.get_user(user)
-      if user.nil?
-        STDERR.puts "ensure_user_not_in_group failed: user is nil."
-        return false
-      end
+      raise UserNotFound, 'No such user found', caller if user.nil?
     end
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
-      if group.nil?
-        STDERR.puts "ensure_user_not_in_group failed: group is nil."
-        return false
-      end
+      raise GroupNotFound, 'No such group found', caller if group.nil?
     end
 
     # returns true or false
