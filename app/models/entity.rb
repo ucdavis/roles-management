@@ -29,7 +29,11 @@ class Entity < ApplicationRecord
       raise SecurityError, 'Unknown entity type. Refusing to open file for activity.', caller
     end
 
-    lines = File.readlines(Rails.root.join('log', 'activity', filename))
+    begin
+      lines = File.readlines(Rails.root.join('log', 'activity', filename))
+    rescue Errno::ENOENT
+      return []
+    end
 
     activity = []
 
