@@ -163,7 +163,8 @@ module Sync
 
     sync_json = {
       config_path: Rails.root.join('sync', 'config').to_s,
-      mode: sync_mode
+      mode: sync_mode,
+      requested_at: DateTime.now
     }.merge(opts)
 
     if sync_mode == :role_change
