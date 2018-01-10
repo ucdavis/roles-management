@@ -17,6 +17,8 @@
 12. bin/rake activity_logs:convert --trace
 13. rake db:data:dump on local, switch to MySQL, rake db:data:load
 
+TODO: Activity logs need to be in data volume (and copied over!)
+
 Turn off sync?
 Re-arrange order above?
 
