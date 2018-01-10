@@ -18,7 +18,6 @@ class SiteController < ApplicationController
   # Check for HTTP 200 at /status.json for application issues
   # Use this for future checks
   def status
-    AdminMailer.application_error_occurred('cmthielen@ucdavis.edu', 'This has been a test of the emergency broadcast system.').deliver!
     respond_to do |format|
       format.json { render json: { status: 'ok' } }
     end
