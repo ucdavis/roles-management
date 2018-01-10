@@ -17,169 +17,214 @@ require 'yaml'
 begin
   @sync_data = JSON.parse(STDIN.read)
 rescue JSON::ParserError
-  abort "JSON::ParserError: Input does not appear to be valid JSON."
+  abort 'JSON::ParserError: Input does not appear to be valid JSON.'
 end
 
-load "#{@sync_data["config_path"]}/../../lib/active_directory.rb"
-load "#{@sync_data["config_path"]}/../../lib/active_directory_helper.rb"
+load "#{@sync_data['config_path']}/../../lib/active_directory.rb"
+load "#{@sync_data['config_path']}/../../lib/active_directory_helper.rb"
 
-@config = YAML.load_file(@sync_data["config_path"] + "/active_directory.yml")
+@config = YAML.load_file(@sync_data['config_path'] + '/active_directory.yml')
 
 ActiveDirectory.configure(@config)
 
-case @sync_data["mode"]
+case @sync_data['mode']
 
-  when "add_to_system"
-    STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is in AD group dss-us-auto-all ..."
-    if ActiveDirectoryHelper.ensure_user_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil) == false
-      STDERR.puts "Error occurred while ensuring user '#{@sync_data["person"]["loginid"]}' was in group 'dss-us-auto-all'"
+when 'add_to_system'
+  STDOUT.puts "Ensuring #{@sync_data['person']['loginid']} is in AD group dss-us-auto-all ..."
+  if ActiveDirectoryHelper.ensure_user_in_group(@sync_data['person']['loginid'], 'dss-us-auto-all', nil) == false
+    STDERR.puts "Error occurred while ensuring user '#{@sync_data['person']['loginid']}' was in group 'dss-us-auto-all'"
+    exit(1)
+  end
+  STDOUT.puts 'Success!'
+  # Note: the dss-us-auto-all group does not have a sentinel descriptor
+  exit(0)
+
+when 'remove_from_system'
+  STDOUT.puts "Ensuring #{@sync_data['person']['loginid']} is not in AD group dss-us-auto-all ..."
+  begin
+    if ActiveDirectoryHelper.ensure_user_not_in_group(@sync_data['person']['loginid'], 'dss-us-auto-all', nil) == false
+      STDERR.puts "Error occurred while ensuring user '#{@sync_data['person']['loginid']}' was not in group 'dss-us-auto-all'"
       exit(1)
     end
-    STDOUT.puts "Success!"
-    # Note: the dss-us-auto-all group does not have a sentinel descriptor
+  rescue ActiveDirectoryHelper::UserNotFound
+    STDOUT.puts "User '#{@sync_data['person']['loginid']}' not found in AD while answering a 'remove_from_system'. Ignoring."
+  rescue ActiveDirectoryHelper::GroupNotFound
+    STDERR.puts "Group 'dss-us-auto-all' not found in AD while answering a 'remove_from_system'. Please ensure group exists."
+    exit(1)
+  end
+  STDOUT.puts 'Success!'
+  # Note: the dss-us-auto-all group does not have a sentinel descriptor
+  exit(0)
+
+when 'add_to_role'
+  loginid = @sync_data['person']['loginid']
+  ad_path = @sync_data['role']['ad_path']
+  application_name = @sync_data['role']['application_name']
+  role_name = @sync_data['role']['role_name']
+
+  if ad_path.nil? || ad_path.empty?
+    STDOUT.puts 'Ignoring remove_from_role: no ad_path given. (This is normal for any role without an AD path.)'
     exit(0)
+  end
 
-  when "remove_from_system"
-    STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is not in AD group dss-us-auto-all ..."
-    if ActiveDirectoryHelper.ensure_user_not_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil) == false
-      STDERR.puts "Error occurred while ensuring user '#{@sync_data["person"]["loginid"]}' was not in group 'dss-us-auto-all'"
-      exit(1)
-    end
-    STDOUT.puts "Success!"
-    # Note: the dss-us-auto-all group does not have a sentinel descriptor
+  # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
+  STDOUT.puts "Adding #{loginid} to role represented in #{ad_path} ..."
+  STDOUT.puts "Ensuring #{loginid} is in AD group #{ad_path} ..."
+  if ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_path) == false
+    STDERR.puts "Error occurred while ensuring user '#{loginid}' was in group '#{ad_path}'"
+    exit(1)
+  end
+  if ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_path, application_name, role_name) == false
+    STDERR.puts "Error occurred while updating AD group description for '#{ad_path}'"
+    exit(1)
+  end
+
+  STDOUT.puts 'Success!'
+
+  exit(0)
+
+when 'remove_from_role'
+  ad_path = @sync_data['role']['ad_path']
+  loginid = @sync_data['person']['loginid']
+  application_name = @sync_data['role']['application_name']
+  role_name = @sync_data['role']['role_name']
+
+  if ad_path.nil? || ad_path.empty?
+    STDOUT.puts 'Ignoring remove_from_role: no ad_path given. (This is normal for any role without an AD path.)'
     exit(0)
+  end
 
-  when "add_to_role"
-    loginid = @sync_data["person"]["loginid"]
-    ad_path = @sync_data["role"]["ad_path"]
-    application_name = @sync_data["role"]["application_name"]
-    role_name = @sync_data["role"]["role_name"]
+  # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
+  STDOUT.puts "Removing #{loginid} from role represented in #{ad_path} ..."
+  STDOUT.puts "Ensuring #{loginid} is not in AD group #{ad_path} ..."
 
-    # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
-    unless ad_path
-      STDOUT.puts "add_to_role has nothing to do: no ad_path given. This is normal for any role without an AD path."
-      exit(0)
-    else
-      STDOUT.puts "Adding #{loginid} to role represented in #{ad_path} ..."
-    end
-    STDOUT.puts "Ensuring #{loginid} is in AD group #{ad_path} ..."
-    if ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_path) == false
-      STDERR.puts "Error occurred while ensuring user '#{loginid}' was in group '#{ad_path}'"
-      exit(1)
-    end
-    if ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_path, application_name, role_name) == false
-      STDERR.puts "Error occurred while updating AD group description for '#{ad_path}'"
-      exit(1)
-    end
-
-    STDOUT.puts "Success!"
-
-    exit(0)
-
-  when "remove_from_role"
-    ad_path = @sync_data["role"]["ad_path"]
-    loginid = @sync_data["person"]["loginid"]
-    application_name = @sync_data["role"]["application_name"]
-    role_name = @sync_data["role"]["role_name"]
-
-    # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
-    unless ad_path
-      STDOUT.puts "remove_from_role has nothing to do: no ad_path given. This is normal for any role without an AD path."
-      exit(0)
-    else
-      STDOUT.puts "Removing #{loginid} from role represented in #{ad_path} ..."
-    end
-    STDOUT.puts "Ensuring #{loginid} is not in AD group #{ad_path} ..."
+  begin
     if ActiveDirectoryHelper.ensure_user_not_in_group(loginid, ad_path) == false
       STDERR.puts "Error occurred while ensuring user '#{loginid}' was not in group '#{ad_path}'"
       exit(1)
     end
-    if ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_path, application_name, role_name) == false
-      STDERR.puts "Error occurred while updating AD group description for '#{ad_path}'"
+  rescue ActiveDirectoryHelper::UserNotFound
+    STDOUT.puts "User '#{loginid}' not found in AD while answering a 'remove_from_role'. Ignoring."
+  rescue ActiveDirectoryHelper::GroupNotFound
+    STDERR.puts "Group '#{ad_path}' not found in AD while answering a 'remove_from_role'. Please ensure group exists."
+    exit(1)
+  end
+
+  if ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_path, application_name, role_name) == false
+    STDERR.puts "Error occurred while updating AD group description for '#{ad_path}'"
+    exit(1)
+  end
+
+  STDOUT.puts 'Success!'
+
+  exit(0)
+
+when 'add_to_organization'
+  @sync_data['person']['affiliations'].each do |affiliation|
+    # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
+    short_ou = ActiveDirectoryHelper.ou_to_short(@sync_data['organization']['name'])
+    flattened_affiliation = ActiveDirectoryHelper.flatten_affiliation(affiliation)
+
+    # Skip unknown or ignored translations
+    next if (short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil)
+
+    # Write them to cluster-affiliation-all
+    cluster_affiliation_all_group_name = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
+    STDOUT.puts "Ensuring #{@sync_data['person']['loginid']} is in AD group #{cluster_affiliation_all_group_name} ..."
+    ActiveDirectoryHelper.ensure_user_in_group(@sync_data['person']['loginid'], cluster_affiliation_all_group_name)
+    ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
+
+    # Write them to cluster-all (dss-us-#{ou_to_short}-all)
+    cluster_all_group_name = "dss-us-#{short_ou}-all".downcase
+    STDOUT.puts "Ensuring #{@sync_data['person']['loginid']} is in AD group #{cluster_all_group_name} ..."
+    ActiveDirectoryHelper.ensure_user_in_group(@sync_data['person']['loginid'], cluster_all_group_name)
+    ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_all_group_name)
+  end
+
+  exit(0)
+
+when 'remove_from_organization'
+  @sync_data['person']['affiliations'].each do |affiliation|
+    # Remove them from cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
+    short_ou = ActiveDirectoryHelper.ou_to_short(@sync_data['organization']['name'])
+    flattened_affiliation = ActiveDirectoryHelper.flatten_affiliation(affiliation)
+
+    # Skip unknown or ignored translations
+    next if (short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil)
+
+    loginid = @sync_data['person']['loginid']
+
+    # Remove them from cluster-affiliation-all
+    cluster_affiliation_all_group_name = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
+    STDOUT.puts "Ensuring #{loginid} is not in AD group #{cluster_affiliation_all_group_name} ..."
+
+    begin
+      ActiveDirectoryHelper.ensure_user_not_in_group(loginid, cluster_affiliation_all_group_name)
+    rescue ActiveDirectoryHelper::UserNotFound
+      STDOUT.puts "User '#{loginid}' not found in AD while answering a 'remove_from_organization'. Ignoring."
+    rescue ActiveDirectoryHelper::GroupNotFound
+      STDERR.puts "Group '#{cluster_affiliation_all_group_name}' not found in AD while answering a 'remove_from_organization'. Please ensure group exists."
       exit(1)
     end
 
-    STDOUT.puts "Success!"
+    ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
 
-    exit(0)
+    # Remove them from cluster-all (dss-us-#{ou_to_short}-all)
+    cluster_all_group_name = "dss-us-#{short_ou}-all".downcase
+    STDOUT.puts "Ensuring #{loginid} is not in AD group #{cluster_all_group_name} ..."
 
-  when "add_to_organization"
-    @sync_data["person"]["affiliations"].each do |affiliation|
-      # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
-      short_ou = ActiveDirectoryHelper.ou_to_short(@sync_data["organization"]["name"])
-      flattened_affiliation = ActiveDirectoryHelper.flatten_affiliation(affiliation)
-
-      # Skip unknown or ignored translations
-      next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
-
-      # Write them to cluster-affiliation-all
-      cluster_affiliation_all_group_name = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
-      STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is in AD group #{cluster_affiliation_all_group_name} ..."
-      ActiveDirectoryHelper.ensure_user_in_group(@sync_data["person"]["loginid"], cluster_affiliation_all_group_name)
-      ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
-
-      # Write them to cluster-all (dss-us-#{ou_to_short}-all)
-      cluster_all_group_name = "dss-us-#{short_ou}-all".downcase
-      STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is in AD group #{cluster_all_group_name} ..."
-      ActiveDirectoryHelper.ensure_user_in_group(@sync_data["person"]["loginid"], cluster_all_group_name)
-      ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_all_group_name)
+    begin
+      ActiveDirectoryHelper.ensure_user_not_in_group(loginid, cluster_all_group_name)
+    rescue ActiveDirectoryHelper::UserNotFound
+      STDOUT.puts "User '#{loginid}' not found in AD while answering a 'remove_from_organization'. Ignoring."
+    rescue ActiveDirectoryHelper::GroupNotFound
+      STDERR.puts "Group '#{cluster_all_group_name}' not found in AD while answering a 'remove_from_organization'. Please ensure group exists."
+      exit(1)
     end
 
-    exit(0)
+    ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_all_group_name)
+  end
 
-  when "remove_from_organization"
-    @sync_data["person"]["affiliations"].each do |affiliation|
-      # Remove them from cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
-      short_ou = ActiveDirectoryHelper.ou_to_short(@sync_data["organization"]["name"])
-      flattened_affiliation = ActiveDirectoryHelper.flatten_affiliation(affiliation)
+  exit(0)
 
-      # Skip unknown or ignored translations
-      next if ((short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil))
+when 'role_change'
+  @sync_data['role']['changes'].each do |field, values|
+    next unless field == 'ad_path'
 
-      # Remove them from cluster-affiliation-all
-      cluster_affiliation_all_group_name = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
-      STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is not in AD group #{cluster_affiliation_all_group_name} ..."
-      ActiveDirectoryHelper.ensure_user_not_in_group(@sync_data["person"]["loginid"], cluster_affiliation_all_group_name)
-      ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
+    rm_client = RolesManagementAPI.login(@config['rm_endpoint']['host'], @config['rm_endpoint']['user'], @config['rm_endpoint']['pass'])
+    abort('Could not connect to RM to merge role and AD group') unless rm_client.connected?
 
-      # Remove them from cluster-all (dss-us-#{ou_to_short}-all)
-      cluster_all_group_name = "dss-us-#{short_ou}-all".downcase
-      STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is not in AD group #{cluster_all_group_name} ..."
-      ActiveDirectoryHelper.ensure_user_not_in_group(@sync_data["person"]["loginid"], cluster_all_group_name)
-      ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_all_group_name)
+    old_value = values[0]
+    new_value = values[1]
+
+    # Clean up for a previous RM bug which erroneously created sync_jobs for
+    # ad_path values changing from nil to "".
+    old_value = nil if old_value && old_value.empty?
+    new_value = nil if new_value && new_value.empty?
+    exit(0) if old_value.nil? && new_value.nil?
+
+    if (old_value == nil) && (new_value != nil)
+      # AD path set for the first time. Merge role and AD group.
+      ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data['role']['id'], new_value, rm_client)
+      ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(new_value, @sync_data['role']['application_name'], @sync_data['role']['role_name'])
+    elsif (old_value != nil) && (new_value == nil)
+      # AD path was set but is now unset. Leave all members but remove sentinel
+      ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(old_value)
+    else
+      # AD path went from one non-empty value to another non-empty value.
+      # Leave the users in the first group (removing the sentinel) but
+      # merge the second AD path with the role.
+      ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(old_value)
+
+      ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data['role']['id'], new_value, rm_client)
+      ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(new_value, @sync_data['role']['application_name'], @sync_data['role']['role_name'])
     end
+  end
 
-    exit(0)
+  exit(0)
 
-  when "role_change"
-    @sync_data["role"]["changes"].each do |field, values|
-      if field == "ad_path"
-        rm_client = RolesManagementAPI.login(@config['rm_endpoint']['host'], @config['rm_endpoint']['user'], @config['rm_endpoint']['pass'])
-        abort("Could not connect to RM to merge role and AD group") unless rm_client.connected?
-
-        if (values[0] == nil) and (values[1] != nil)
-          # AD path set for the first time. Merge role and AD group.
-          ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data["role"]["id"], values[1], rm_client)
-          ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(values[1], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
-        elsif (values[0] != nil) and (values[1] == nil)
-          # AD path was set but is now unset. Leave all members but remove sentinel
-          ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(values[0])
-        else
-          # AD path went from one non-empty value to another non-empty value.
-          # Leave the users in the first group (removing the sentinel) but
-          # merge the second AD path with the role.
-          ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(values[0])
-
-          ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data["role"]["id"], values[1], rm_client)
-          ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(values[1], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
-        end
-      end
-    end
-
-    exit(0)
-
-  else
-    abort "This script does not understand sync mode: #{@sync_data["mode"]}"
+else
+  abort "This script does not understand sync mode: #{@sync_data['mode']}"
 end
 
 # We will only get here on error.

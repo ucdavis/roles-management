@@ -27,6 +27,7 @@ vendor/cache/
 .byebug_history
 .idea
 node_modules/
+.env
+log/activity
 .rbenv-vars
 db/data.yml
-.env

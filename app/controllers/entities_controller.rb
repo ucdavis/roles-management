@@ -42,7 +42,6 @@ class EntitiesController < ApplicationController
 
     @entity.save
 
-    # Add current user as owner if creating a group
     @entity.owners << current_user if params[:entity][:type] == 'Group'
 
     if @entity.group?
@@ -98,10 +97,10 @@ class EntitiesController < ApplicationController
 
     @activity = @entity.activity
     if @activity
-      if !@activity.empty?
-        @cache_key = 'entity/' + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
-      else
+      if @activity.empty?
         @cache_key = nil
+      else
+        @cache_key = 'entity/' + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
       end
     else
       @activity = nil
@@ -115,16 +114,16 @@ class EntitiesController < ApplicationController
 
   protected
 
-    def new_entity_from_params
-      # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
-      if params[:entity][:type] == 'Group'
-        @entity = Group.new(entity_params)
-      elsif params[:entity][:type] == 'Person'
-        @entity = Person.new(entity_params)
-      else
-        @entity = nil
-      end
+  def new_entity_from_params
+    # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
+    if params[:entity][:type] == 'Group'
+      @entity = Group.new(entity_params)
+    elsif params[:entity][:type] == 'Person'
+      @entity = Person.new(entity_params)
+    else
+      @entity = nil
     end
+  end
 
   private
 
@@ -151,12 +150,12 @@ class EntitiesController < ApplicationController
       params[:entity][:operator_ids] ||= [] if params[:entity].key?(:operator_ids)
     end
     params.require(:entity).permit(:name, :type, :description, :first, :last, :address, :email, :loginid,
-                                   :phone, :active, { owner_ids: [] }, { favorite_ids: [] }, { operator_ids: [] },
-                                   { rules_attributes: [:id, :column, :condition, :value, :_destroy] },
-                                   { memberships_attributes: [:id, :calculated, :entity_id, :_destroy] },
-                                   { group_memberships_attributes: [:id, :calculated, :group_id, :_destroy] },
-                                   { group_ownerships_attributes: [:id, :entity_id, :group_id, :_destroy] },
-                                   { role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy] },
-                                   { group_operatorships_attributes: [:id, :group_id, :entity_id, :_destroy]} )
+                                  :phone, :active, {owner_ids: []}, {favorite_ids: []}, {operator_ids: []},
+                                  {rules_attributes: [:id, :column, :condition, :value, :_destroy]},
+                                  {memberships_attributes: [:id, :calculated, :entity_id, :_destroy]},
+                                  {group_memberships_attributes: [:id, :calculated, :group_id, :_destroy]},
+                                  {group_ownerships_attributes: [:id, :entity_id, :group_id, :_destroy]},
+                                  {role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy]},
+                                  {group_operatorships_attributes: [:id, :group_id, :entity_id, :_destroy]})
   end
 end
