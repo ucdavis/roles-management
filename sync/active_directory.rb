@@ -17,7 +17,7 @@ require 'yaml'
 begin
   @sync_data = JSON.parse(STDIN.read)
 rescue JSON::ParserError
-  abort "JSON::ParserError: Input does not appear to be valid JSON."
+  abort 'JSON::ParserError: Input does not appear to be valid JSON.'
 end
 
 load "#{@sync_data["config_path"]}/../../lib/active_directory.rb"
@@ -27,29 +27,29 @@ load "#{@sync_data["config_path"]}/../../lib/active_directory_helper.rb"
 
 ActiveDirectory.configure(@config)
 
-case @sync_data["mode"]
+case @sync_data['mode']
 
-  when "add_to_system"
+  when 'add_to_system'
     STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is in AD group dss-us-auto-all ..."
     if ActiveDirectoryHelper.ensure_user_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil) == false
       STDERR.puts "Error occurred while ensuring user '#{@sync_data["person"]["loginid"]}' was in group 'dss-us-auto-all'"
       exit(1)
     end
-    STDOUT.puts "Success!"
+    STDOUT.puts 'Success!'
     # Note: the dss-us-auto-all group does not have a sentinel descriptor
     exit(0)
 
-  when "remove_from_system"
+  when 'remove_from_system'
     STDOUT.puts "Ensuring #{@sync_data["person"]["loginid"]} is not in AD group dss-us-auto-all ..."
     if ActiveDirectoryHelper.ensure_user_not_in_group(@sync_data["person"]["loginid"], 'dss-us-auto-all', nil) == false
       STDERR.puts "Error occurred while ensuring user '#{@sync_data["person"]["loginid"]}' was not in group 'dss-us-auto-all'"
       exit(1)
     end
-    STDOUT.puts "Success!"
+    STDOUT.puts 'Success!'
     # Note: the dss-us-auto-all group does not have a sentinel descriptor
     exit(0)
 
-  when "add_to_role"
+  when 'add_to_role'
     loginid = @sync_data["person"]["loginid"]
     ad_path = @sync_data["role"]["ad_path"]
     application_name = @sync_data["role"]["application_name"]
@@ -57,7 +57,7 @@ case @sync_data["mode"]
 
     # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
     unless ad_path
-      STDOUT.puts "add_to_role has nothing to do: no ad_path given. This is normal for any role without an AD path."
+      STDOUT.puts 'add_to_role has nothing to do: no ad_path given. This is normal for any role without an AD path.'
       exit(0)
     else
       STDOUT.puts "Adding #{loginid} to role represented in #{ad_path} ..."
@@ -72,11 +72,11 @@ case @sync_data["mode"]
       exit(1)
     end
 
-    STDOUT.puts "Success!"
+    STDOUT.puts 'Success!'
 
     exit(0)
 
-  when "remove_from_role"
+  when 'remove_from_role'
     ad_path = @sync_data["role"]["ad_path"]
     loginid = @sync_data["person"]["loginid"]
     application_name = @sync_data["role"]["application_name"]
@@ -99,12 +99,12 @@ case @sync_data["mode"]
       exit(1)
     end
 
-    STDOUT.puts "Success!"
+    STDOUT.puts 'Success!'
 
     exit(0)
 
-  when "add_to_organization"
-    @sync_data["person"]["affiliations"].each do |affiliation|
+  when 'add_to_organization'
+    @sync_data['person']['affiliations'].each do |affiliation|
       # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
       short_ou = ActiveDirectoryHelper.ou_to_short(@sync_data["organization"]["name"])
       flattened_affiliation = ActiveDirectoryHelper.flatten_affiliation(affiliation)
@@ -127,8 +127,8 @@ case @sync_data["mode"]
 
     exit(0)
 
-  when "remove_from_organization"
-    @sync_data["person"]["affiliations"].each do |affiliation|
+  when 'remove_from_organization'
+    @sync_data['person']['affiliations'].each do |affiliation|
       # Remove them from cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
       short_ou = ActiveDirectoryHelper.ou_to_short(@sync_data["organization"]["name"])
       flattened_affiliation = ActiveDirectoryHelper.flatten_affiliation(affiliation)
@@ -151,17 +151,17 @@ case @sync_data["mode"]
 
     exit(0)
 
-  when "role_change"
-    @sync_data["role"]["changes"].each do |field, values|
-      if field == "ad_path"
+  when 'role_change'
+    @sync_data['role']['changes'].each do |field, values|
+      if field == 'ad_path'
         rm_client = RolesManagementAPI.login(@config['rm_endpoint']['host'], @config['rm_endpoint']['user'], @config['rm_endpoint']['pass'])
-        abort("Could not connect to RM to merge role and AD group") unless rm_client.connected?
+        abort('Could not connect to RM to merge role and AD group') unless rm_client.connected?
 
-        if (values[0] == nil) and (values[1] != nil)
+        if (values[0] == nil) && (values[1] != nil)
           # AD path set for the first time. Merge role and AD group.
-          ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data["role"]["id"], values[1], rm_client)
-          ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(values[1], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
-        elsif (values[0] != nil) and (values[1] == nil)
+          ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data['role']['id'], values[1], rm_client)
+          ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(values[1], @sync_data['role']['application_name'], @sync_data['role']['role_name'])
+        elsif (values[0] != nil) && (values[1] == nil)
           # AD path was set but is now unset. Leave all members but remove sentinel
           ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(values[0])
         else
@@ -170,8 +170,8 @@ case @sync_data["mode"]
           # merge the second AD path with the role.
           ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(values[0])
 
-          ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data["role"]["id"], values[1], rm_client)
-          ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(values[1], @sync_data["role"]["application_name"], @sync_data["role"]["role_name"])
+          ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data['role']['id'], values[1], rm_client)
+          ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(values[1], @sync_data['role']['application_name'], @sync_data['role']['role_name'])
         end
       end
     end
@@ -179,7 +179,7 @@ case @sync_data["mode"]
     exit(0)
 
   else
-    abort "This script does not understand sync mode: #{@sync_data["mode"]}"
+    abort "This script does not understand sync mode: #{@sync_data['mode']}"
 end
 
 # We will only get here on error.
