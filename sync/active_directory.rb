@@ -46,9 +46,9 @@ when 'remove_from_system'
       STDERR.puts "Error occurred while ensuring user '#{@sync_data['person']['loginid']}' was not in group 'dss-us-auto-all'"
       exit(1)
     end
-  rescue UserNotFound
+  rescue ActiveDirectoryHelper::UserNotFound
     STDOUT.puts "User '#{@sync_data['person']['loginid']}' not found in AD while answering a 'remove_from_system'. Ignoring."
-  rescue GroupNotFound
+  rescue ActiveDirectoryHelper::GroupNotFound
     STDERR.puts "Group 'dss-us-auto-all' not found in AD while answering a 'remove_from_system'. Please ensure group exists."
     exit(1)
   end
@@ -103,9 +103,9 @@ when 'remove_from_role'
       STDERR.puts "Error occurred while ensuring user '#{loginid}' was not in group '#{ad_path}'"
       exit(1)
     end
-  rescue UserNotFound
+  rescue ActiveDirectoryHelper::UserNotFound
     STDOUT.puts "User '#{loginid}' not found in AD while answering a 'remove_from_role'. Ignoring."
-  rescue GroupNotFound
+  rescue ActiveDirectoryHelper::GroupNotFound
     STDERR.puts "Group '#{ad_path}' not found in AD while answering a 'remove_from_role'. Please ensure group exists."
     exit(1)
   end
@@ -160,9 +160,9 @@ when 'remove_from_organization'
 
     begin
       ActiveDirectoryHelper.ensure_user_not_in_group(loginid, cluster_affiliation_all_group_name)
-    rescue UserNotFound
+    rescue ActiveDirectoryHelper::UserNotFound
       STDOUT.puts "User '#{loginid}' not found in AD while answering a 'remove_from_organization'. Ignoring."
-    rescue GroupNotFound
+    rescue ActiveDirectoryHelper::GroupNotFound
       STDERR.puts "Group '#{cluster_affiliation_all_group_name}' not found in AD while answering a 'remove_from_organization'. Please ensure group exists."
       exit(1)
     end
@@ -175,9 +175,9 @@ when 'remove_from_organization'
 
     begin
       ActiveDirectoryHelper.ensure_user_not_in_group(loginid, cluster_all_group_name)
-    rescue UserNotFound
+    rescue ActiveDirectoryHelper::UserNotFound
       STDOUT.puts "User '#{loginid}' not found in AD while answering a 'remove_from_organization'. Ignoring."
-    rescue GroupNotFound
+    rescue ActiveDirectoryHelper::GroupNotFound
       STDERR.puts "Group '#{cluster_all_group_name}' not found in AD while answering a 'remove_from_organization'. Please ensure group exists."
       exit(1)
     end
