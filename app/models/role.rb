@@ -43,13 +43,7 @@ class Role < ApplicationRecord
   end
 
   def to_csv
-    data = []
-
-    members.each do |m|
-      data << [token, m.id, m.loginid, m.email, m.first, m.last] if m.active
-    end
-
-    return data
+    members.select(&:active).map { |m| [token, m.id, m.loginid, m.email, m.first, m.last] }
   end
 
   # Different from entities, 'members' takes all people and all people from groups
@@ -74,14 +68,15 @@ class Role < ApplicationRecord
   private
 
   def ad_path_cannot_be_blank_if_present
-    if ad_path and ad_path.blank?
+    if ad_path && ad_path.blank?
       ad_path = nil
     end
   end
 
   def trigger_sync_if_changed
     if (saved_changes.keys & SYNC_ROLE_ATTRS).length > 0
-      Sync.role_changed(Sync.encode(self, true).merge({ changes: saved_changes.select{ |c, v| SYNC_ROLE_ATTRS.include?(c) } }))
+      Sync.role_changed(Sync.encode(self, true)
+          .merge(changes: saved_changes.select { |c, _v| SYNC_ROLE_ATTRS.include?(c) }))
     end
   end
 end
