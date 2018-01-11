@@ -29,21 +29,23 @@ class Entity < ApplicationRecord
       raise SecurityError, 'Unknown entity type. Refusing to open file for activity.', caller
     end
 
-    lines = File.readlines(Rails.root.join('log', 'activity', filename))
-
-    activity = []
-    
-    lines.each do |line|
-      parts = line.split(" - ")
-      performed_at = Date.parse(parts[0])
-      message = parts[2]
-      activity.push performed_at: performed_at, message: message
+    begin
+      lines = File.readlines(Rails.root.join('log', 'activity', filename))
+    rescue Errno::ENOENT
+      return []
     end
 
-    return activity
+    activity = []
 
-    # tag = ActivityLogTag.find_by_tag("#{self.class.to_s.downcase}_#{self.id}")
-    # return [] unless tag
-    # return tag.activity_logs.order('performed_at DESC')
+    lines.each do |line|
+      next if line.start_with? '#'
+      parts = line.split(" - ")
+      performed_at = DateTime.parse(parts[0])
+      message = parts[2]
+      next if message.strip == 'Logged in.'
+      activity.push OpenStruct.new(performed_at: performed_at, message: message)
+    end
+
+    return activity.reverse
   end
 end
