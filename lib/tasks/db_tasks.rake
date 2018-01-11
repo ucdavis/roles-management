@@ -1,6 +1,6 @@
 namespace :db do
   desc 'Ensure all models are valid'
-  task :validate_models => :environment do
+  task validate_models: :environment do
     # People
     puts "Validating people (#{Person.count}) ..."
     Person.all.each do |p|
@@ -77,7 +77,7 @@ namespace :db do
     puts "Validating group operatorships (#{GroupOperatorship.count}) ..."
     GroupOperatorship.all.each do |go|
       if go.valid? == false
-        puts "\t##{go.id} invalid: #{go.errors.full_messages.join(",")}"
+        puts "\t##{go.id} invalid: #{go.errors.full_messages.join(',')}"
       end
     end
 
@@ -85,7 +85,101 @@ namespace :db do
     puts "Validating group rule (#{GroupRule.count}) ..."
     GroupRule.all.each do |gr|
       if gr.valid? == false
-        puts "\t##{gr.id} invalid: #{gr.errors.full_messages.join(",")}"
+        puts "\t##{gr.id} invalid: #{gr.errors.full_messages.join(',')}"
+      end
+    end
+  end
+
+  desc 'Dump certain models to CSV'
+  task dump_csv: :environment do
+    require 'csv'
+
+    # Dump people list
+    filename = Rails.root.join('people.csv')
+
+    attributes = %w[id loginid name]
+
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      Person.order(:loginid).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Dump application list
+    filename = Rails.root.join('applications.csv')
+
+    attributes = %w[id name]
+
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      Application.order(:name).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Dump group list
+    filename = Rails.root.join('groups.csv')
+
+    attributes = %w[id name]
+
+    CSV.open(filename, 'w') do |csv|
+      csv << [attributes, 'member_count'].flatten
+
+      Group.order(:name).all.each do |p|
+        csv << [attributes.map { |attr| p.send(attr) }, p.members.count].flatten
+      end
+    end
+
+    # Dump roles list
+    filename = Rails.root.join('roles.csv')
+
+    CSV.open(filename, 'w') do |csv|
+      csv << ['id', 'application_name', 'token', 'entity_count']
+
+      Role.order(:application_id).all.each do |p|
+        csv << [p.id, p.application.name, p.token, p.entities.count]
+      end
+    end
+
+    # Dump individual role membership lists
+    Role.all.each do |r|
+      filename = Rails.root.join("role_#{r.id}.csv")
+
+      CSV.open(filename, 'w') do |csv|
+        csv << ['entity_id', 'name']
+
+        r.entities.each do |e|
+          csv << [e.id, e.name]
+        end
+      end
+    end
+
+    # Dump individual group membership lists
+    Group.all.each do |g|
+      filename = Rails.root.join("group_#{g.id}.csv")
+
+      CSV.open(filename, 'w') do |csv|
+        csv << ['entity_id', 'name']
+
+        g.members.each do |m|
+          csv << [m.id, m.name]
+        end
+      end
+    end
+
+    # Dump individual people's roles
+    Person.all.each do |p|
+      filename = Rails.root.join("person_#{p.id}.csv")
+
+      CSV.open(filename, 'w') do |csv|
+        csv << ['role_id', 'role_token', 'application_name']
+
+        p.roles.each do |r|
+          csv << [r.id, r.token, r.application.name]
+        end
       end
     end
   end
