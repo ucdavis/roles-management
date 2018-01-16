@@ -149,10 +149,10 @@ namespace :db do
       filename = Rails.root.join("role_#{r.id}.csv")
 
       CSV.open(filename, 'w') do |csv|
-        csv << ['entity_id', 'name']
+        csv << ['entity_id', 'loginid']
 
         r.entities.each do |e|
-          csv << [e.id, e.name]
+          csv << [e.id, e.loginid]
         end
       end
     end
@@ -164,7 +164,7 @@ namespace :db do
       CSV.open(filename, 'w') do |csv|
         csv << ['entity_id', 'name']
 
-        g.members.each do |m|
+        g.members.order(:loginid).each do |m|
           csv << [m.id, m.name]
         end
       end
