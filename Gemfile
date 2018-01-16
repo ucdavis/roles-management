@@ -90,3 +90,6 @@ gem 'roles-management-api', '>= 0.1.2', git: 'https://github.com/dssit/roles-man
 # For Slack notifications
 gem 'slack-notifier'
 gem 'json'
+
+gem 'yaml_db'
+
