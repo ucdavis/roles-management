@@ -1,0 +1,16 @@
+# A person belonging to a group ID 2
+pps_association1:
+  id: 1
+  person_id: 1
+  title_id: 2
+  department_id: 1
+  association_rank: 1
+  position_type_code: A
+
+pps_association2:
+  id: 2
+  person_id: 15
+  title_id: 3
+  department_id: 2
+  association_rank: 1
+  position_type_code: A

@@ -20,20 +20,20 @@ class EntitiesController < ApplicationController
 
     respond_to do |format|
       format.json { render 'entities/show', status: :ok }
-      format.csv {
+      format.csv do
         require 'csv'
 
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
         csv_data = CSV.generate do |csv|
           csv << Person.csv_header
-          @entity.flattened_members.each do |m|
+          @entity.members.each do |m|
             csv << m.to_csv if m.active
           end
         end
         send_data csv_data,
                   type: 'text/csv; charset=iso-8859-1; header=present',
                   disposition: 'attachment; filename=' + unix_filename(@entity.name.to_s)
-      }
+      end
     end
   end
 

@@ -4,7 +4,15 @@
 <script type="text/json" id="bootstrap">
   {
     <% cache(cache_key_for_current_user) do %>
-    "current_user"      : <%= current_user.to_json %>,
+    "current_user"      : <%=
+      {
+        id: current_user.id,
+        type: 'Person',
+        name: current_user.name,
+        favorites: current_user.favorites.map { |f| { id: f.id, name: f.name, type: f.type } },
+        group_ownerships: current_user.group_ownerships.map { |o| { group_id: o.group_id, name: o.group.name } },
+        group_operatorships: current_user.group_operatorships.map { |o| { group_id: o.group_id, name: o.group.name } }
+      }.to_json %>,
     <% end %>
     <% cache(cache_key_for_applications) do %>
     "applications"      : <%= @applications.to_json %>,

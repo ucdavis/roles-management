@@ -1,6 +1,6 @@
 .bundle
 db/*.sqlite3
-log/*.log
+log/
 tmp/
 .DS_Store
 public/.DS_Store
@@ -31,4 +31,3 @@ node_modules/
 log/activity
 .rbenv-vars
 db/data.yml
-

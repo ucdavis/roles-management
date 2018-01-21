@@ -1,0 +1,15 @@
+dssit:
+  id: 1
+  code: 040014
+  officialName: DSS IT SHARED SERVICE CENTER
+  displayName: DSS IT SHARED SERVICE CENTER
+  abbreviation: DSS IT SSC
+  bou_org_oid: F80B657C9EE823A0E0340003BA8A560D
+
+evil_dssit:
+  id: 2
+  code: 410040
+  officialName: DSS IT UNSHARED SERVICE CENTER
+  displayName: DSS IT UNSHARED SERVICE CENTER
+  abbreviation: DSS IT USSC
+  bou_org_oid: F80B657C9EE823A0E0340003BA8A560D

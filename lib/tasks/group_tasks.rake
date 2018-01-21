@@ -8,57 +8,37 @@ namespace :group do
   task :recalculate_all do
     Rake::Task['environment'].invoke
 
-    # Record groups which will need to recalculate their membership
-    touched_group_ids = []
-
-    puts "Recalculating #{GroupRule.count} group rules."
-
-    # Recalculate all group rule caches
-    GroupRule.all.each do |rule|
-      old_count = rule.results.length
-      touched_group_ids << rule.group.id
-      rule.resolve!
-      rule.reload
-      puts "\tGroupRule ##{rule.id} (#{rule.column} #{rule.condition} #{rule.value}) went from #{old_count} to #{rule.results.length} results"
-    end
-
-    puts "Updating the #{touched_group_ids.uniq.length} affected groups."
-
-    # Alert all groups
-    touched_group_ids.uniq.each do |group_id|
-      group = Group.find_by_id(group_id)
-      old_count = group.members.length
-      group.recalculate_members!
-      group.reload
-      puts "\tGroup ##{group.id} (#{group.name}) went from #{old_count} to #{group.members.length} members"
-    end
+    GroupRuleSet.all.each(&:update_results)
   end
 
   desc 'Recalculate the rule-based members of a specific group.'
   task :recalculate, [:group_id] => :environment do |t, args|
     unless args[:group_id]
-      puts "You must specify a group ID to recalculate."
-      exit
+      puts 'You must specify a group ID to recalculate.'
+      exit(-1)
     end
 
     g = Group.find_by_id(args[:group_id])
     unless g
       puts "Could not find a group with ID #{args[:group_id]}."
-      exit
+      exit(-1)
     end
 
     puts "Group (#{g.id}, #{g.name}) has #{g.rules.length} rules."
 
+    puts 'REWRITE THIS TASK FOR RULE SETS'
+    exit(-1)
+
     # Recalculate the group's rule caches
     g.rules.each do |rule|
       old_count = rule.results.length
-      rule.resolve!
+      rule.resolve! # should be GroupRuleSet.update_results
       rule.reload
       puts "\tGroupRule ##{rule.id} (#{rule.column} #{rule.condition} #{rule.value}) went from #{old_count} to #{rule.results.length} results"
     end
 
     old_count = g.members.length
-    g.recalculate_members!
+    #g.update_members
     g.reload
     puts "\tGroup ##{g.id} (#{g.name}) went from #{old_count} to #{g.members.length} members"
   end
@@ -93,7 +73,7 @@ namespace :group do
   desc 'Recalculate inherited roles from groups for a given person.'
   task :recalculate_inherited_roles, [:loginid] => :environment do |t, args|
     unless args[:loginid]
-      puts "You must specify a login ID to recalculate."
+      puts 'You must specify a login ID to recalculate.'
       exit
     end
 
@@ -103,26 +83,24 @@ namespace :group do
       exit
     end
 
-    puts "Pre-existing inherited role assignments:"
+    puts 'Pre-existing inherited role assignments:'
 
     preexisting_role_ids = []
 
     calculated_ras = []
     p.role_assignments.each do |ra|
-      if ra.parent_id != nil
-        puts "\tID: #{ra.id}, Role: #{ra.role.application.name} / #{ra.role.token}, via Group #{RoleAssignment.find_by_id(ra.parent_id).entity.name}"
-        preexisting_role_ids << ra.role_id
-        calculated_ras << ra
-      end
+      next if ra.parent_id.nil?
+
+      puts "\tID: #{ra.id}, Role: #{ra.role.application.name} / #{ra.role.token}, via Group #{RoleAssignment.find_by_id(ra.parent_id).entity.name}"
+      preexisting_role_ids << ra.role_id
+      calculated_ras << ra
     end
 
     puts "\n#{p.loginid} has #{calculated_ras.length} inherited roles out of #{p.role_assignments.length} total roles."
 
     # First remove the calculated role assignments
     Thread.current[:role_assignment_destroying_calculated_flag] = true
-    calculated_ras.each do |ra|
-      ra.destroy
-    end
+    calculated_ras.each(&:destroy)
     Thread.current[:role_assignment_destroying_calculated_flag] = nil
 
     puts "All calculated role assignments destroyed.\n\n"
@@ -133,7 +111,7 @@ namespace :group do
     p.group_memberships.each do |gm|
       puts "Group (ID: #{gm.group_id} / #{gm.group.name}) has #{gm.group.roles.length} roles ..."
       gm.group.role_assignments.each do |group_ra|
-        if(RoleAssignment.find_by(entity_id: p.id, role_id: group_ra.role_id, parent_id: group_ra.id) == nil)
+        if RoleAssignment.find_by(entity_id: p.id, role_id: group_ra.role_id, parent_id: group_ra.id).nil?
           ra = RoleAssignment.new
           ra.entity_id = p.id
           ra.role_id = group_ra.role_id
@@ -153,20 +131,20 @@ namespace :group do
     puts "\nPre-existing roles no longer assigned:"
     [preexisting_role_ids - recalculated_role_ids].flatten.each do |role_id|
       puts "\tRole ID: #{role_id}, #{Role.find_by_id(role_id).application.name} / #{Role.find_by_id(role_id).token}"
-    end.empty? and begin
+    end.empty? && begin
       puts "\tNone"
     end
 
     puts "\nRecalculated roles not previously assigned:"
     [recalculated_role_ids - preexisting_role_ids].flatten.each do |role_id|
       puts "\tRole ID: #{role_id}, #{Role.find_by_id(role_id).application.name} / #{Role.find_by_id(role_id).token}"
-    end.empty? and begin
+    end.empty? && begin
       puts "\tNone"
     end
   end
 
   desc 'Audit inherited roles for data correctness.'
-  task :audit_inherited_roles, [:loginid] => :environment do |t, args|
+  task :audit_inherited_roles, [:loginid] => :environment do |_t, args|
     people = []
     bad_people_count = 0
 
@@ -182,16 +160,40 @@ namespace :group do
       p.role_assignments.each do |ra|
         if ra.parent_id != nil
           calculated_ras << ra
-          if RoleAssignment.find_by_id(ra.parent_id) == nil
+          if RoleAssignment.find_by_id(ra.parent_id).nil?
             bad_ras << ra
-            bad_people_count = bad_people_count + 1
+            bad_people_count += 1
           end
         end
       end
-
-      #puts "#{p.loginid} has #{bad_ras.length} / #{calculated_ras.length} % invalid inherited roles."
     end
 
     puts "#{bad_people_count} / #{people.length} (#{bad_people_count / people.length}%) people have invalid inherited roles."
+  end
+
+  desc 'Convert applicable "Org Is" rules to "Dept Is"'
+  task convert_org_rules: :environment do
+    GroupRule.where(column: 'organization').each do |gr|
+      o = Organization.find_by(name: gr.value)
+      next unless o
+
+      # We only care about organizations with no children
+      next unless o.child_org_ids.empty?
+
+      d = Department.find_by(officialName: gr.value)
+      d = Department.find_by(displayName: gr.value) if d.nil?
+      d = Department.find_by(abbreviation: gr.value) if d.nil?
+      if d.nil?
+        STDERR.puts "Cannot convert GroupRule for organization '#{o.name}', no matching department found. Skipping ..."
+        next
+      end
+
+      # Organization has no children and can be treated as a department
+      puts "Converting organization-based GroupRule (ID: #{gr.id}, value: #{gr.value})"
+      puts "\tResults before conversion: #{gr.results.length}"
+      gr.column = 'department'
+      gr.save!
+      puts "\tResults after conversion: #{gr.results.length}"
+    end
   end
 end

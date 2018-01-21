@@ -5,7 +5,15 @@ every :reboot do
   envcommand 'bin/delayed_job -n 10 -p roles restart'
 end
 
-# Run LDAP import updater every 6 hours
-every 6.hours do
-  rake "ldap:import"
+every 24.hours do
+  rake 'dw:import_pps_departments'
+  rake 'iam:import_sis_majors'
+  rake 'iam:import_bous'
+end
+
+# Sync with external systems
+every 12.hours do
+  rake 'ldap:import'
+  rake 'dw:import'
+  rake 'person:mark_inactive'
 end

@@ -1,0 +1,2 @@
+class TrackedItemPolicy < BasePolicy
+end

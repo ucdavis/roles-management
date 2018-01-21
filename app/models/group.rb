@@ -1,38 +1,35 @@
 # Group shares many attributes with entity.
 class Group < Entity
-  has_many :memberships, :class_name => "GroupMembership", :dependent => :destroy
-  has_many :members, :through => :memberships, :source => :entity
-  has_many :role_assignments, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :roles, :through => :role_assignments, :dependent => :destroy
-  has_many :group_ownerships, :dependent => :destroy
-  has_many :owners, :through => :group_ownerships, :source => "entity", :dependent => :destroy
-  has_many :application_ownerships, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :application_operatorships, :foreign_key => "entity_id", :dependent => :destroy
-  has_many :group_operatorships, :dependent => :destroy
-  has_many :operators, :through => :group_operatorships, :source => "entity", :dependent => :destroy
-  has_many :rules, :foreign_key => 'group_id', :class_name => "GroupRule", :dependent => :destroy
+  has_many :memberships, class_name: 'GroupMembership', dependent: :destroy
+  has_many :role_assignments, foreign_key: 'entity_id', dependent: :destroy
+  has_many :roles, through: :role_assignments, dependent: :destroy
+  has_many :group_ownerships, dependent: :destroy
+  has_many :owners, through: :group_ownerships, source: 'entity', dependent: :destroy
+  has_many :application_ownerships, foreign_key: 'entity_id', dependent: :destroy
+  has_many :application_operatorships, foreign_key: 'entity_id', dependent: :destroy
+  has_many :group_operatorships, dependent: :destroy
+  has_many :operators, through: :group_operatorships, source: 'entity', dependent: :destroy
+  has_many :rules, foreign_key: 'group_id', class_name: 'GroupRule', dependent: :destroy
 
   validates_presence_of :name
 
-  accepts_nested_attributes_for :rules, :allow_destroy => true
-  accepts_nested_attributes_for :memberships, :allow_destroy => true
-  
-  after_create { |group|
+  accepts_nested_attributes_for :rules, allow_destroy: true
+  accepts_nested_attributes_for :memberships, allow_destroy: true
+
+  after_create do |group|
     ActivityLog.info!("Created group #{group.name}.", ["group_#{group.id}", 'system'])
-  }
+  end
 
-  before_destroy :allow_group_membership_destruction, prepend: true
-  after_destroy { |group|
-    GroupMembership.can_destroy_calculated_group_membership(false)
+  after_destroy do |group|
     ActivityLog.info!("Deleted group #{group.name}.", ['system'])
-  }
+  end
 
-  def as_json(options={})
-    { :id => self.id, :name => self.name, :type => 'Group', :description => self.description,
-      :owners => self.owners.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :operators => self.operators.map{ |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      :memberships => self.memberships.includes(:entity).map{ |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid, calculated: m.calculated } },
-      :rules => self.rules.map{ |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
+  def as_json(_options = {})
+    { id: id, name: name, type: 'Group', description: description,
+      owners: owners.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
+      operators: operators.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
+      memberships: memberships.includes(:entity).map { |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid } },
+      rules: rules.map { |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
   end
 
   # Returns identifying string for logging purposes. Other classes implement this too.
@@ -41,23 +38,12 @@ class Group < Entity
     "(Group:#{id},#{name})"
   end
 
-  # Returns all members, both explicitly assigned and calculated via rules.
-  # Recurses groups all the way down to return a list of _only_people_.
-  def flattened_members
-    results = []
+  def members
+    Person.where(id: (memberships.pluck(:entity_id) + rule_member_ids).uniq)
+  end
 
-    members.to_a.each do |e| #all.each do |e|
-      if e.type == "Group"
-        e.flattened_members.each do |m|
-          results << m
-        end
-      else
-        results << e
-      end
-    end
-
-    # Only return a unique list
-    results.uniq{ |x| x.id }
+  def rule_members
+    Person.where(id: rule_member_ids.uniq)
   end
 
   # Calculates (and resets) all group_members based on rules.
@@ -66,100 +52,64 @@ class Group < Entity
   # This algorithm starts with an empty set, then runs all 'is'
   # rules, intersecting those sets, then makes a second pass and
   # removes anyone who fails a 'is not' rule.
-  def recalculate_members!
-    Rails.logger.tagged "Group #{id}" do
-      results = []
+  def rule_member_ids
+    results = []
 
-      recalculate_start = Time.now
-
-      logger.debug "Re-assembling group members using rule result cache ..."
-
-      # Step One: Build groups out of each 'is' rule,
-      #           grouping rules of similar type together via OR
-      #           Note: we ignore the 'loginid' column as it is calculated separately
-      Rails.logger.tagged "Step One" do
-        # Produce an array of arrays: outer array items represent each column type used, inner arrays are all group rule IDs for that specific column type
-        # e.g. id: 1 "organization is", id: 2 "organization is", id: 3 "department is" produces: [ [1,2] , [3] ]
-        step_one_rule_id_sets = GroupRule.select(:id, :column).where(group_id: self.id).where(condition: "is").where.not(column: "loginid").group_by(&:column).map{|set| set[1].map{|gr| gr.id}}
-
-        step_one_rule_id_sets.each do |rule_id_set|
-          results << GroupRuleResult.select(:entity_id).joins(:group_rule).where(:group_rule_id => rule_id_set).map{|gr| gr.entity_id}
-        end
-
-        # rules.select{ |r| r.condition == "is" and GroupRule.valid_columns.reject{|x| x == "loginid"}.include? r.column }.group_by(&:column).each do |ruleset|
-        #   ruleset_results = []
-        #
-        #   ruleset[1].each do |rule|
-        #     logger.debug "Rule (#{rule.id}, #{rule.column} #{rule.condition} #{rule.value}) has #{rule.results.length} result(s)"
-        #     ruleset_results << rule.results.map{ |r| r.entity_id }
-        #   end
-        #
-        #   reduced_results = ruleset_results.reduce(:+)
-        #   logger.debug "Adding #{reduced_results.length} results to the total"
-        #   results << reduced_results
-        # end
-
-        logger.debug "Ending step one with #{results.length} results"
-      end
-
-      # Step Two: AND all groups from step one together
-      Rails.logger.tagged "Step Two" do
-        results = results.inject(results.first) { |sum,n| sum &= n }
-        results = [] unless results # reduce/inject may return nil
-        logger.debug "ANDing all results together yields #{results.length} results"
-      end
-
-      # Step Three: Pass over the result from step two and
-      # remove anybody who violates an 'is not' rule
-      # TODO: Optimize this step!
-      Rails.logger.tagged "Step Three" do
-        results = results.find_all{ |member|
-          keep = true
-          rules.select{ |r| r.condition == "is not" }.each do |rule|
-            keep &= rule.matches(member)
-          end
-          keep
-        }
-        logger.debug "Removing any 'is not' violates yielded #{results.length} results"
-      end
-
-      # Step Four: Process any 'loginid is' rules
-      Rails.logger.tagged "Step Four" do
-        rules.select{ |r| r.condition == "is" and r.column == "loginid" }.each do |rule|
-          logger.debug "Processing loginid is rule #{rule.value}..."
-          results << rule.results.map{ |r| r.entity_id }
-        end
-
-        logger.debug "'Login ID is' additions yields #{results.length} results"
-      end
-
-      results.flatten!
-      logger.debug "Results flattened, count now at #{results.length} results"
-
-      # Look for memberships which need to be removed
-      GroupMembership.where(:group_id => self.id, :calculated => true).each do |membership|
-        # Note: Array.delete returns nil iff result is not in array
-        if results.delete(membership.entity_id) == nil
-          GroupMembership.destroying_calculated_group_membership do
-            GroupMembership.recalculating_membership do
-              membership.destroy
-            end
-          end
-        end
-      end
-
-      # Look for memberships to add
-      # Whatever's left in 'results' are memberships which don't already exist
-      # and need to be created.
-      results.each do |r|
-        GroupMembership.recalculating_membership do
-          memberships << GroupMembership.new(:entity_id => r, :calculated => true)
-        end
-      end
-
-      logger.debug "Calculated #{results.length} results. Membership now at #{memberships.length} members. Took #{Time.now - recalculate_start}s."
-      logger.debug "Completed recalculate_members!. Total elapsed time was #{Time.now - recalculate_start}s."
+    # Step One: Build groups out of each 'is' rule,
+    #           grouping rules of similar type together via OR
+    #           Note: we ignore the 'loginid' column as it is calculated separately
+    # Produce an array of arrays: outer array items represent each column type used, inner arrays are all group rule IDs for that specific column type
+    # e.g. id: 1 "organization is", id: 2 "organization is", id: 3 "department is" produces: [ [1,2] , [3] ]
+    GroupRule.select(:group_rule_set_id, :column)
+             .where(group_id: id)
+             .where(condition: 'is')
+             .where.not(column: 'loginid')
+             .group_by(&:column)
+             .map { |set| set[1].map(&:group_rule_set_id) }.each do |rule_set_id|
+      results << GroupRuleResult.select(:entity_id)
+                                .joins(:group_rule_set)
+                                .where(group_rule_set_id: rule_set_id)
+                                .map(&:entity_id)
     end
+
+    logger.debug "Ending step one with #{results.length} results"
+
+    # Step Two: AND all groups from step one together
+    results = results.inject(results.first) { |sum, n| sum &= n }
+    results = [] unless results # reduce/inject may return nil
+    logger.debug "ANDing all results together yields #{results.length} results"
+
+    # Step Three: Pass over the result from step two and
+    # remove anybody who violates an 'is not' rule
+    negative_results = []
+    GroupRule.select(:group_rule_set_id, :column)
+             .where(group_id: id)
+             .where(condition: 'is not')
+             .group_by(&:column)
+             .map { |set| set[1].map(&:group_rule_set_id) }.each do |rule_set_id|
+      negative_results << GroupRuleResult.select(:entity_id)
+                                         .joins(:group_rule_set)
+                                         .where(group_rule_set_id: rule_set_id)
+                                         .map(&:entity_id)
+    end
+
+    results -= negative_results.flatten.uniq
+
+    logger.debug "Removing any 'is not' violates yielded #{results.length} results"
+
+    # Step Four: Process any 'loginid is' rules
+    rules.select { |r| r.condition == 'is' && r.column == 'loginid' }.each do |rule|
+      logger.debug "Processing loginid is rule #{rule.value}..."
+      results << rule.result_set.results.map(&:entity_id)
+    end
+
+    logger.debug "'Login ID is' additions yields #{results.length} results"
+
+    results.flatten!
+
+    logger.debug "Calculated #{results.length} results"
+
+    return results # rubocop:disable Style/RedundantReturn
   end
 
   # Records all IDs found while traversing up the parent graph.
@@ -172,19 +122,11 @@ class Group < Entity
 
     memberships.each do |membership|
       if membership.group.no_loops_in_group_membership_graph(seen_ids.dup) == false
-        errors[:base] << "Group membership cannot be cyclical"
+        errors[:base] << 'Group membership cannot be cyclical'
         return false
       end
     end
 
-    return true
-  end
-  
-  private
-  
-  def allow_group_membership_destruction
-    # Destroying a person may involve the valid case of destroying
-    # calculated group memberships.
-    GroupMembership.can_destroy_calculated_group_membership(true)
+    return true # rubocop:disable Style/RedundantReturn
   end
 end

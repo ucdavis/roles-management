@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
     log_message = "An exception occurred:\n\n#{exception}\n\n" + exception.backtrace.join('\n')
     logger.error log_message
 
-    AdminMailer.application_error_occurred("dssit-devs-exceptions@ucdavis.edu", log_message).deliver_now!
+    AdminMailer.application_error_occurred('dssit-devs-exceptions@ucdavis.edu', log_message).deliver_now!
 
     raise exception
   end
@@ -26,11 +26,11 @@ class ApplicationController < ActionController::Base
   protected
 
   def permission_denied
-    flash[:error] = "You do not have permission to access that page."
+    flash[:error] = 'You do not have permission to access that page.'
     # Machine-facing error
     respond_to do |format|
       format.html { redirect_to access_denied_path }
-      format.text { render "Permission denied.", status: 403 }
+      format.text { render 'Permission denied.', status: 403 }
       format.json { render json: {}, status: :forbidden }
     end
   end

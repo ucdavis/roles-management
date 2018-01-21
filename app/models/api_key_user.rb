@@ -24,6 +24,10 @@ class ApiKeyUser < ApplicationRecord
     return true
   end
 
+  def is_admin?
+    true
+  end
+
   def ensure_secret_exists
     if secret.nil?
       self.secret = generate_secret

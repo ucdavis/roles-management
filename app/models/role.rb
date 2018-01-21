@@ -6,7 +6,7 @@
 class Role < ApplicationRecord
   # SYNC_ROLE_ATTRS is the list of role attribtues we care to notify
   # the sync subsystem about.
-  SYNC_ROLE_ATTRS = ["ad_path", "token", "name", "description"]
+  SYNC_ROLE_ATTRS = %w[ad_path token name description].freeze
 
   validates :application_id, presence: true
   validates :token, uniqueness: { scope: :application_id, message: 'token must be unique per application' }
@@ -56,9 +56,9 @@ class Role < ApplicationRecord
     # Add all people
     all += entities.where(type: 'Person').to_a
 
-    # Add all (flattened) groups
+    # Add all group members
     entities.where(type: 'Group').to_a.each do |group|
-      all += group.flattened_members
+      all += group.members
     end
 
     # Return a unique list

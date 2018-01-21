@@ -18,10 +18,10 @@ class Person < Entity
   has_many :application_operatorships, foreign_key: 'entity_id', dependent: :destroy
   has_many :group_operatorships, foreign_key: 'entity_id', dependent: :destroy
   has_many :group_ownerships, foreign_key: 'entity_id', dependent: :destroy
-  has_one :student
-
-  belongs_to :title, optional: true
-  belongs_to :major, optional: true
+  has_many :sis_associations, foreign_key: 'entity_id', dependent: :destroy
+  has_many :majors, through: :sis_associations, dependent: :destroy
+  has_many :pps_associations, dependent: :destroy
+  has_many :group_rule_results, foreign_key: 'entity_id'
 
   accepts_nested_attributes_for :group_ownerships, allow_destroy: true
   accepts_nested_attributes_for :group_operatorships, allow_destroy: true
@@ -34,14 +34,11 @@ class Person < Entity
   after_save   :recalculate_group_rule_membership
   after_save   :trigger_sync_as_needed
 
-  before_destroy :allow_group_membership_destruction, prepend: true
-
   after_create do |person|
     ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
     Sync.person_added_to_system(Sync.encode(person))
   end
   after_destroy do |person|
-    GroupMembership.can_destroy_calculated_group_membership(false)
     ActivityLog.info!("Deleted person #{person.name}.", ["person_#{person.id}", 'system'])
     Sync.person_removed_from_system(Sync.encode(person))
   end
@@ -57,9 +54,9 @@ class Person < Entity
         application_name: a.role.application.name, application_id: a.role.application_id,
         name: a.role.name, description: a.role.description }
       },
-      favorites: favorites.select{ |f| f.active == true }.map{ |f| { id: f.id, name: f.name, type: f.type } },
-      group_memberships: group_memberships.includes(:group).map{ |m| {
-        id: m.id, group_id: m.group.id, name: m.group.name, calculated: m.calculated }
+      favorites: favorites.select { |f| f.active == true }.map { |f| { id: f.id, name: f.name, type: f.type } },
+      group_memberships: group_memberships.includes(:group).map { |m| {
+        id: m.id, group_id: m.group.id, name: m.group.name }
       },
       group_ownerships: group_ownerships.includes(:group).map { |o| {
         id: o.id, group_id: o.group.id, name: o.group.name }
@@ -67,7 +64,7 @@ class Person < Entity
       group_operatorships: group_operatorships.includes(:group).map { |o| {
         id: o.id, group_id: o.group.id, name: o.group.name }
       },
-      organizations: organizations.map{ |o| { id: o.id, name: o.name } }
+      organizations: organizations.map { |o| { id: o.id, name: o.name } }
     }
   end
 
@@ -86,16 +83,12 @@ class Person < Entity
     "(Person:#{id},#{loginid},#{name})"
   end
 
-  # Calculates 'byline' for a Person, e.g. "PROGRAMMER V (staff:career)"
+  # Calculates 'byline' for a Person, e.g. "PROGRAMMER V (DSS IT)"
   def byline
-    byline = title&.name.to_s
-    byline += ' (' + affiliations.map(&:name).join(', ') + ')' if affiliations.count.positive?
-    byline
-  end
-
-  # Compute their classifications based on their title
-  def classifications
-    title.classifications
+    [
+      pps_associations.map { |assoc| "#{assoc.title.name} (#{assoc.department.displayName})" },
+      sis_associations.map { |assoc| "#{assoc.major.name} (#{assoc.level_code})" }
+    ]&.flatten&.join(', ')
   end
 
   # Returns a list of symbols as required by the authorization layer.
@@ -144,24 +137,19 @@ class Person < Entity
   # Returns all applications the user has an ownership or operatorship on
   def manageable_applications
     if role_symbols.include?(:admin) || role_symbols.include?(:operate)
-      Application.includes(:roles, :application_ownerships, :operatorships).all
+      Application.includes(:roles, application_ownerships: [:entity]).all
     else
       application_ids = (application_ownerships.map(&:application_id) + application_operatorships.map(&:application_id)).uniq
-      Application.includes(:roles, :application_ownerships, :operatorships).where(id: application_ids)
+      Application.includes(:roles, application_ownerships: [:entity]).where(id: application_ids)
     end
   end
 
   def recalculate_group_rule_membership
-    if saved_change_to_attribute?(:title_id)
-      GroupRule.resolve_target!(:title, id)
-      GroupRule.resolve_target!(:classification, id)
-    end
-    if saved_change_to_attribute?(:major_id)
-      GroupRule.resolve_target!(:major, id)
-    end
-    if saved_change_to_attribute?(:loginid)
-      GroupRule.resolve_target!(:loginid, id)
-    end
+    GroupRuleSet.update_results_for(:loginid, id) if saved_change_to_attribute?(:loginid)
+    GroupRuleSet.update_results_for(:is_staff, id) if saved_change_to_attribute?(:is_staff)
+    GroupRuleSet.update_results_for(:is_student, id) if saved_change_to_attribute?(:is_student)
+    GroupRuleSet.update_results_for(:is_employee, id) if saved_change_to_attribute?(:is_employee)
+    GroupRuleSet.update_results_for(:is_faculty, id) if saved_change_to_attribute?(:is_faculty)
   end
 
   private
@@ -212,11 +200,5 @@ class Person < Entity
     else
       self.name = "#{first} #{last}".strip
     end
-  end
-
-  def allow_group_membership_destruction
-    # Destroying a person may involve the valid case of destroying
-    # calculated group memberships.
-    GroupMembership.can_destroy_calculated_group_membership(true)
   end
 end

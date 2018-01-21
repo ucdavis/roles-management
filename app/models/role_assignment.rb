@@ -83,7 +83,7 @@ class RoleAssignment < ApplicationRecord
   # This method throws an error if an update is occurring.
   def ensure_not_updating
     unless created_at.blank?
-      errors.add(:base, "RoleAssignments cannot be updated, only created or destroyed")
+      errors.add(:base, 'RoleAssignments cannot be updated, only created or destroyed')
     end
   end
 
@@ -97,7 +97,7 @@ class RoleAssignment < ApplicationRecord
           ra = RoleAssignment.new
           ra.role_id = role.id
           ra.entity_id = m.id
-          ra.parent_id = self.id
+          ra.parent_id = id
           ra.save!
         end
       end
@@ -129,15 +129,15 @@ class RoleAssignment < ApplicationRecord
   end
 
   def cannot_destroy_calculated_assignment_without_flag
-    if parent_id and not Thread.current[:role_assignment_destroying_calculated_flag]
+    if parent_id && !Thread.current[:role_assignment_destroying_calculated_flag]
       errors.add(:parent_id, "can't destroy a calculated role assignment without flag properly set")
       return false
     end
   end
 
   def parent_must_exist_if_set
-    if parent_id && (RoleAssignment.find_by_id(parent_id) == nil)
-      errors.add(:parent_id, "parent_id must be a valid RoleAssignment")
+    if parent_id && (RoleAssignment.find_by_id(parent_id).nil?)
+      errors.add(:parent_id, 'parent_id must be a valid RoleAssignment')
       return false
     end
   end

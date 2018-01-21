@@ -13,7 +13,7 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     "api-keys"         : "apiKeysDialog"
     "whitelist"        : "whitelistDialog"
     "queued-jobs"      : "queuedJobsDialog"
-    "event-log"        : "eventLogDialog"
+    "tracking"         : "trackingDialog"
     "about"            : "aboutDialog"
 
   index: ->
@@ -79,13 +79,13 @@ DssRm.Routers.Applications = Backbone.Router.extend(
       queued_jobs = new DssRm.Collections.QueuedJobs(jobs)
       new DssRm.Views.QueuedJobsDialog(queued_jobs: queued_jobs).render().$el.modal()
 
-  eventLogDialog: ->
-    # toastr["info"]("Loading events ...")
-    #
-    # $.get Routes.diary_entries_path(), (data) =>
-    #   toastr.remove()
-    #   entries = new DssRm.Collections.EventLogEntries(data)
-    #   new DssRm.Views.EventLogDialog(entries: entries).render().$el.modal()
+  trackingDialog: ->
+    toastr["info"]("Loading tracking ...")
+
+    $.get Routes.admin_tracked_items_path(), (items) =>
+      toastr.remove()
+      tracked_items = new DssRm.Collections.TrackedItems(items.tracked_items)
+      new DssRm.Views.TrackingDialog(tracked_items: tracked_items, departments: items.departments).render().$el.modal()
 
   aboutDialog: ->
     new DssRm.Views.AboutDialog().render().$el.modal()

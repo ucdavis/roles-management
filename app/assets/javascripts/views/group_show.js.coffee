@@ -1,6 +1,6 @@
 DssRm.Views.GroupShow ||= {}
 
-class DssRm.Views.GroupShow extends Backbone.View
+DssRm.Views.GroupShow = Backbone.View.extend(
   tagName: "div"
   className: "modal"
   id: "entityShowModal"
@@ -11,8 +11,6 @@ class DssRm.Views.GroupShow extends Backbone.View
     "click button#remove_group_rule" : "removeRule"
     "hidden"                         : "cleanUpModal"
     "click #delete"                  : "deleteGroup"
-    "change table#rules input"       : "persistRuleChanges"
-    "change table#rules select"      : "persistRuleChanges"
 
   initialize: ->
     @$el.html JST["templates/entities/show_group"](model: @model)
@@ -50,7 +48,6 @@ class DssRm.Views.GroupShow extends Backbone.View
       disabled: readonly
       onAdd: (item) =>
         @model.memberships.add
-          calculated: false
           loginid: item.loginid
           entity_id: item.id
           group_id: @model.get('id')
@@ -108,7 +105,7 @@ class DssRm.Views.GroupShow extends Backbone.View
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
     @$("textarea[name=description]").val @model.get("description")
-    @$("span#group_member_count").html @model.memberships.filter( (m) -> m.get('active') ).length
+    @$("span#group_member_count").html (@model.memberships.filter( (m) -> m.get('active') ).length + @model.rule_members.filter( (m) -> m.get('active') ).length)
 
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
@@ -135,8 +132,16 @@ class DssRm.Views.GroupShow extends Backbone.View
           entity_id: membership.get('entity_id')
           name: membership.get('name')
           loginid: membership.get('loginid')
-          calculated: membership.get('calculated')
-          class: (if membership.get('calculated') then "calculated" else "")
+          calculated: false
+          class: ""
+    @model.rule_members.each (rule_member) ->
+      unless (rule_member.get('active') == false)
+        members_tokeninput.tokenInput "add",
+          entity_id: rule_member.get('person_id')
+          name: rule_member.get('name')
+          loginid: rule_member.get('loginid')
+          calculated: true
+          class: "calculated"
 
     @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
 
@@ -178,12 +183,38 @@ class DssRm.Views.GroupShow extends Backbone.View
 
   # Renders a single rule. Does not add to DOM.
   renderRule: (rule) ->
+    _column = rule.get('column')
+    _condition = rule.get('condition')
+    _value = rule.get('value')
+
     $rule = $(JST["templates/entities/group_rule"]())
 
     $rule.data "rule_cid", rule.cid
-    $rule.find("td:nth-child(1) select").val rule.get('column')
-    $rule.find("td:nth-child(2) select").val rule.get('condition')
-    $rule.find("td:nth-child(3) input").val rule.get('value')
+    switch _column
+      when 'is_employee'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'Employee'
+      when 'is_faculty'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'Faculty'
+      when 'is_staff'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'Staff'
+      when 'is_student'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'Student'
+      when 'pps_position_type'
+        $rule.find("td:nth-child(1) select").val _column
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val DssRm.Views.GroupShow.pps_position_types[_value]
+      else
+        $rule.find("td:nth-child(1) select").val _column
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val _value
 
     $rule.find("td:nth-child(3) input").typeahead
       minLength: 2
@@ -207,14 +238,48 @@ class DssRm.Views.GroupShow extends Backbone.View
 
     @$('#apply').attr('disabled', 'disabled').html('Saving ...')
 
-    # Ensure @model.rules is up-to-date
+    # Update @model.rules with any changes made in the UI
     _.each $('table#rules>tbody>tr'), (el, i) =>
       cid = $(el).data('rule_cid')
       rule = @model.rules.get(cid)
-      rule.set
-        column: $(el).find("#column").val()
-        condition: $(el).find("#condition").val()
-        value: $(el).find("#value").val()
+      _column = $(el).find("#column").val()
+      _condition = $(el).find("#condition").val()
+      _value = $(el).find("#value").val()
+
+      switch _column
+        when "iam_affiliation"
+          # do something
+          switch _value
+            when "Employee"
+              rule.set
+                column: 'is_employee'
+                condition: _condition
+                value: 't'
+            when "Faculty"
+              rule.set
+                column: 'is_faculty'
+                condition: _condition
+                value: 't'
+            when "Staff"
+              rule.set
+                column: 'is_staff'
+                condition: _condition
+                value: 't'
+            when "Student"
+              rule.set
+                column: 'is_student'
+                condition: _condition
+                value: 't'
+        when "pps_position_type"
+          rule.set
+            column: _column
+            condition: _condition
+            value: _.findKey DssRm.Views.GroupShow.pps_position_types, (val) -> val == _value
+        else
+          rule.set
+            column: _column
+            condition: _condition
+            value: _value
 
     # Note: the _.filter() on rules is to avoid saving empty rules (rules with no value set)
     @model.save
@@ -277,17 +342,40 @@ class DssRm.Views.GroupShow extends Backbone.View
       when "major"
         lookahead_url = Routes.majors_path()
       when "department"
-        lookahead_url = Routes.organizations_path()
+        lookahead_url = Routes.departments_path()
       when "organization"
         lookahead_url = Routes.organizations_path()
       when "loginid"
         lookahead_url = Routes.people_path()
       when "title"
         lookahead_url = Routes.titles_path()
+      when "business_office_unit"
+        lookahead_url = Routes.business_office_units_path()
       when "affiliation"
         lookahead_url = Routes.affiliations_path()
-      when "classification"
-        lookahead_url = Routes.classifications_path()
+      when "iam_affiliation"
+        entities = ['0####Employee', '1####Faculty', '2####Staff', '3####Student']
+        process entities
+        return
+      when "pps_position_type"
+        entities = []
+        _.each DssRm.Views.GroupShow.pps_position_types, (position_type, i) ->
+          entities.push "#{i}#####{position_type}"
+        process entities
+        return
+      when "pps_unit"
+        entities = []
+        _.each DssRm.Views.GroupShow.pps_units, (unit, i) ->
+          entities.push "#{i}#####{unit}"
+        process entities
+        return
+      when "sis_level_code"
+        entities = []
+        _.each DssRm.Views.GroupShow.sis_level_codes, (code, i) ->
+          entities.push "#{i}#####{code}"
+        process entities
+        return
+
     $.ajax(
       url: lookahead_url
       data:
@@ -309,16 +397,18 @@ class DssRm.Views.GroupShow extends Backbone.View
     id = parseInt(parts[0])
     label = parts[1]
     label
+,
+  pps_position_types:
+    1: 'Contract'
+    2: 'Regular/Career'
+    3: 'Limited, Formerly Casual'
+    4: 'Casual/RESTRICTED-Students'
+    5: 'Academic'
+    6: 'Per Diem'
+    7: 'Regular/Career Partial YEAR'
+    8: 'Floater'
+  
+  pps_units: ['PA','EX','HX','RX','NX','K3','F3','87','99','LX','M3','DX','PX','IX','CX','BX','A3','GS','PSS','FX','SX','TX']
 
-  # Copies the attributes of rules out of the DOM and into our model
-  persistRuleChanges: (e) ->
-    rule_cid = $(e.target).parents("tr").data("rule_cid")
-    rule = @model.rules.get rule_cid
-
-    switch $(e.target).attr('id')
-      when 'column'
-        rule.set 'column', $(e.target).val(), { silent: true }
-      when 'condition'
-        rule.set 'condition', $(e.target).val(), { silent: true }
-      when 'value'
-        rule.set 'value', $(e.target).val(), { silent: true }
+  sis_level_codes: ['GR','UG','LW','MD']
+)

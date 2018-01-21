@@ -7,15 +7,15 @@ class PersonTest < ActiveSupport::TestCase
   end
 
   # Ensure only loginid is allowed. This is sometimes necessary when importing from LDAP.
-  test "blank first, last, and name are allowed" do
+  test 'blank first, last, and name are allowed' do
     p = Person.new
 
     p.first = nil
     p.last = nil
     p.name = nil
-    p.loginid = "deleteme"
+    p.loginid = 'deleteme'
 
-    assert p.valid? == true, "should be valid with only loginid set"
+    assert p.valid? == true, 'should be valid with only loginid set'
   end
 
   test "creating a person fires off 'add_to_system' trigger" do
@@ -24,7 +24,7 @@ class PersonTest < ActiveSupport::TestCase
     p.first = nil
     p.last = nil
     p.name = nil
-    p.loginid = "deleteme"
+    p.loginid = 'deleteme'
 
     Sync.reset_trigger_test_counts
 
@@ -39,7 +39,7 @@ class PersonTest < ActiveSupport::TestCase
     p.first = nil
     p.last = nil
     p.name = nil
-    p.loginid = "deleteme"
+    p.loginid = 'deleteme'
 
     p.save!
 
@@ -66,9 +66,9 @@ class PersonTest < ActiveSupport::TestCase
 
     p.save!
 
-    assert Sync.trigger_test_count(:add_to_role) == 2, "add_to_role should have been triggered twice"
-    assert Sync.trigger_test_count(:add_to_organization) == 1, "add_to_organization should have been triggered"
-    assert Sync.trigger_test_count(:add_to_system) == 1, "add_to_system should have been triggered"
+    assert Sync.trigger_test_count(:add_to_role) == 2, 'add_to_role should have been triggered twice'
+    assert Sync.trigger_test_count(:add_to_organization) == 1, 'add_to_organization should have been triggered'
+    assert Sync.trigger_test_count(:add_to_system) == 1, 'add_to_system should have been triggered'
   end
 
   test "deactivating a person fires off the 'person_removed_from_role', 'person_removed_from_organization', and 'person_removed_from_system' sync signals for each of their roles" do
@@ -87,9 +87,9 @@ class PersonTest < ActiveSupport::TestCase
 
     p.save!
 
-    assert Sync.trigger_test_count(:remove_from_role) == 2, "remove_from_role should have been triggered twice"
-    assert Sync.trigger_test_count(:remove_from_organization) == 1, "remove_from_organization should have been triggered"
-    assert Sync.trigger_test_count(:remove_from_system) == 1, "remove_from_system should have been triggered"
+    assert Sync.trigger_test_count(:remove_from_role) == 2, 'remove_from_role should have been triggered twice'
+    assert Sync.trigger_test_count(:remove_from_organization) == 1, 'remove_from_organization should have been triggered'
+    assert Sync.trigger_test_count(:remove_from_system) == 1, 'remove_from_system should have been triggered'
   end
 
   test "setting or changing a person's organization fires off 'add_to_organization' or 'remove_from_organization' sync signals" do
@@ -105,7 +105,7 @@ class PersonTest < ActiveSupport::TestCase
     p.save!
     p.reload
 
-    assert p.organizations.count == 0, "casuser should have no organizations but has #{p.organizations.count}"
+    assert p.organizations.count.zero?, "casuser should have no organizations but has #{p.organizations.count}"
 
     assert Sync.trigger_test_count(:remove_from_organization) == 1, "remove_from_organization should have been triggered once but was triggered #{Sync.trigger_test_count(:remove_from_organization)} times"
 

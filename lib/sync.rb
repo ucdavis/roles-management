@@ -24,7 +24,7 @@ module Sync
 
     Sync.logger.info "#{job_uuid}: Sync will add Person ##{person_obj[:id]} (#{person_obj[:name]}) to Role ##{role_obj[:id]} (#{role_obj[:application_name]}, #{role_obj[:token]})"
 
-    if Rails.env == "test"
+    if Rails.env.test?
       @@trigger_test_counts[:add_to_role] += 1
     else
       perform_sync(:add_to_role, job_uuid, person_obj, { role: role_obj })
@@ -39,7 +39,7 @@ module Sync
 
     Sync.logger.info "#{job_uuid}: Sync will remove Person ##{person_obj[:id]} (#{person_obj[:name]}) from Role ##{role_obj[:id]} (#{role_obj[:application_name]}, #{role_obj[:token]})"
 
-    if Rails.env == "test"
+    if Rails.env.test?
       @@trigger_test_counts[:remove_from_role] += 1
     else
       perform_sync(:remove_from_role, job_uuid, person_obj, { role: role_obj })
@@ -53,7 +53,7 @@ module Sync
 
     Sync.logger.info "#{job_uuid}: Sync will add Person ##{person_obj[:id]} (#{person_obj[:name]}) to system"
 
-    if Rails.env == "test"
+    if Rails.env.test?
       @@trigger_test_counts[:add_to_system] += 1
     else
       perform_sync(:add_to_system, job_uuid, person_obj)
@@ -67,7 +67,7 @@ module Sync
 
     Sync.logger.info "#{job_uuid}: Sync will remove Person ##{person_obj[:id]} (#{person_obj[:name]}) from system"
 
-    if Rails.env == "test"
+    if Rails.env.test?
       @@trigger_test_counts[:remove_from_system] += 1
     else
       perform_sync(:remove_from_system, job_uuid, person_obj)
@@ -80,7 +80,7 @@ module Sync
 
     Sync.logger.info "#{job_uuid}: Sync will add Person ##{person_obj[:id]} (#{person_obj[:name]}) to Organization ##{organization_obj[:id]} (#{organization_obj[:name]})"
 
-    if Rails.env == "test"
+    if Rails.env.test?
       @@trigger_test_counts[:add_to_organization] += 1
     else
       perform_sync(:add_to_organization, job_uuid, person_obj, { organization: organization_obj })
@@ -93,7 +93,7 @@ module Sync
 
     Sync.logger.info "#{job_uuid}: Sync will remove Person ##{person_obj[:id]} (#{person_obj[:name]}) from Organization ##{organization_obj[:id]} (#{organization_obj[:name]})"
 
-    if Rails.env == "test"
+    if Rails.env.test?
       @@trigger_test_counts[:remove_from_organization] += 1
     else
       perform_sync(:remove_from_organization, job_uuid, person_obj, { organization: organization_obj })
@@ -107,7 +107,7 @@ module Sync
 
     Sync.logger.info "#{job_uuid}: Sync will respond to role attribute change(s) for Role ##{role_obj[:id]} (#{role_obj[:application_name]}, #{role_obj[:token]})"
 
-    if Rails.env == "test"
+    if Rails.env.test?
       @@trigger_test_counts[:role_change] += 1
     else
       perform_sync(:role_change, job_uuid, role_obj )
@@ -127,15 +127,15 @@ module Sync
       if detailed
         return { id: obj.id, token: obj.token, role_name: obj.name, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
                  application_id: obj.application.id, application_name: obj.application.name,
-                 members: obj.members.select { |m| m.active == true }.map{ |m| m.loginid } }
+                 members: obj.members.select { |m| m.active == true }.map(&:loginid) }
       else
         return { id: obj.id, token: obj.token, role_name: obj.name, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
                  application_id: obj.application.id, application_name: obj.application.name }
       end
     when Person
       return { id: obj.id, name: obj.name, first: obj.first, last: obj.last, loginid: obj.loginid,
-               email: obj.email, address: obj.address, title: obj.title ? obj.title.name : nil, phone: obj.phone,
-               affiliations: obj.affiliations.map { |a| a.name }, organizations: obj.organizations.map { |o| o.name } }
+               email: obj.email, address: obj.address, phone: obj.phone,
+               affiliations: obj.affiliations.map(&:name), organizations: obj.organizations.map(&:name) }
     when Organization
       return { id: obj.id, name: obj.name }
     end
@@ -145,9 +145,9 @@ module Sync
 
   def Sync.logger
     unless defined?(@@sync_logger)
-      logger = Logger.new("#{Rails.root.join('log', 'sync.log')}")
+      logger = Logger.new(Rails.root.join('log', 'sync.log').to_s)
       logger.level = Logger::DEBUG
-      logger.datetime_format = "%Y-%m-%d %H:%M:%S"
+      logger.datetime_format = '%Y-%m-%d %H:%M:%S'
       logger = ActiveSupport::TaggedLogging.new(logger)
       logger.formatter = Logger::Formatter.new
     end
@@ -163,7 +163,8 @@ module Sync
 
     sync_json = {
       config_path: Rails.root.join('sync', 'config').to_s,
-      mode: sync_mode
+      mode: sync_mode,
+      requested_at: DateTime.now
     }.merge(opts)
 
     if sync_mode == :role_change
@@ -177,11 +178,9 @@ module Sync
     Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
 
     sync_scripts.each do |sync_script|
-      Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), :queue => 'sync'
+      Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), queue: 'sync'
     end
   end
-  # FIXME: 'handle_asynchronously' doesn't seem to work
-  #handle_asynchronously :perform_sync, :queue => 'sync'
 
   def sync_scripts
     if Rails.env.development?

@@ -1,18 +1,18 @@
 class AdminMailer < ActionMailer::Base
-  default from: "no-reply@roles.dss.ucdavis.edu"
+  default from: ENV['SES_SMTP_FROM_ADDRESS']
 
   def sync_script_failed(email, job)
     @job = job
     logger.info "Sending sync_script_failed e-mail to #{email}..."
 
-    @details = YAML::load(job[:handler])
+    @details = YAML::safe_load(job[:handler])
     failed_script_file = @details[:sync_script].match(/\/([^\/]+)$/).captures[0]
 
-    mail(:to => email, :subject => "Sync failure (#{failed_script_file})")
+    mail(to: email, subject: "Sync failure (#{failed_script_file})")
   end
 
-  def application_error_occurred(email, message)
+  def application_error_occurred(recipient, message)
     @message = message
-    mail(:to => email, :subject => "Application error occurred")
+    mail(to: recipient, subject: 'Application error occurred')
   end
 end

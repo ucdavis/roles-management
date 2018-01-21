@@ -29,38 +29,15 @@ class PeopleController < ApplicationController
   def search
     authorize Person
 
-    require 'ldap_helper'
-    require 'ostruct'
+    require 'dss_dw'
 
-    @results = []
-
-    if params[:term]
-      ldap = LdapHelper.new
-      ldap.connect
-
-      entries = ldap.search("(|(uid=#{params[:term]}*)(cn=#{params[:term]}*)(sn=#{params[:term]}*))")
-
-      if entries
-        entries.each do |entry|
-          p = OpenStruct.new
-
-          p.loginid = entry[:uid][0]
-          p.first = entry[:givenName][0]
-          p.last = entry[:sn][0]
-          p.email = entry[:mail][0]
-          p.phone = entry[:telephoneNumber][0]
-          unless p.phone.nil?
-            p.phone = p.phone.sub("+1 ", "").gsub(" ", "") # clean up number
-          end
-          p.address = entry[:street][0]
-          p.name = entry[:displayName][0]
-          p.imported = Person.exists?(:loginid => p.loginid)
-
-          @results << p
-        end
-      else
-        Rails.logger.warn "LDAP search attempted but ldap.search() is returning null. Is LDAP properly configured?"
-      end
+    @results = DssDw.search_people(params[:term])&.map do |entry|
+      OpenStruct.new(
+        loginid: entry['userId'],
+        email: entry['email'],
+        name: entry['dFullName'],
+        imported: Person.exists?(loginid: entry['userId'])
+      )
     end
 
     respond_to do |format|
@@ -73,51 +50,21 @@ class PeopleController < ApplicationController
     authorize Person
 
     if params[:loginid]
-      require 'ldap_helper'
-      require 'ldap_person_helper'
+      require 'dss_dw'
 
-      logger.tagged "people#import(#{params[:loginid]})" do
-        if Person.find_by_loginid(params[:loginid]).present?
-          logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing existing user with loginid #{params[:loginid]}."
-        else
-          logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Importing absent user with loginid #{params[:loginid]}."
+      @p = DssDw.create_or_update_using_dw(params[:loginid])
+
+      if @p
+        respond_to do |format|
+          format.json { render json: @p }
         end
+      else
+        logger.error "Could not import person #{params[:loginid]}, no results from DW or error while saving."
 
-        import_start = Time.now
-
-        if params[:loginid]
-          ldap_import_start = Time.now
-
-          ldap = LdapHelper.new
-          ldap.connect
-
-          results = ldap.search("(uid=#{params[:loginid]})")
-
-          unless results.empty?
-            @p = LdapPersonHelper.create_or_update_person_from_ldap_record(results[0], Rails.logger)
-          end
-
-          ldap_import_finish = Time.now
-        end
-
-        if @p
-          @p.save
-
-          import_finish = Time.now
-
-          logger.info "Finished LDAP import request. LDAP operations took #{ldap_import_finish - ldap_import_start}s while the entire operation took #{import_finish - import_start}s."
-
-          respond_to do |format|
-            format.json { render json: @p }
-          end
-        else
-          logger.error "Could not import person #{params[:loginid]}, no results from LDAP or error while saving."
-
-          raise ActionController::RoutingError.new('Not Found')
-        end
+        raise ActionController::RoutingError.new('Not Found')
       end
     else
-      logger.error 'Invalid request for LDAP person import. Did not specify loginid.'
+      logger.error 'Invalid request for DW person import. Did not specify loginid.'
 
       respond_to do |format|
         format.json { render json: nil, status: 400 }

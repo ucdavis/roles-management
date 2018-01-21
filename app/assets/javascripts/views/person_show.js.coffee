@@ -354,6 +354,8 @@ class DssRm.Views.PersonShow extends Backbone.View
         return "(#{phone.substr(0, 3)}) #{phone.substr(3, 3)}-#{phone.substr(6, 4)}"
       if phone.length == 7
         return "#{phone.substr(0, 3)}-#{phone.substr(3, 4)}"
+      else
+        return phone
     else
       return ""
 

@@ -80,7 +80,7 @@ namespace :ldap do
         # Process the list of untouched_loginids (local users who weren't noticed by our original LDAP query).
         # Only do this if we weren't in 'single' import mode
         unless single_import_mode
-          log.debug "Processing additional login IDs existing locally but not found in the standard LDAP queries."
+          log.debug 'Processing additional login IDs existing locally but not found in the standard LDAP queries.'
 
           if loginids_touched.count.positive?
             Person.where(active: true).where.not(loginid: loginids_touched).each do |person|
@@ -113,15 +113,15 @@ namespace :ldap do
           if num_results.zero?
             # Single import mode. If no results were found but the individual exists in RM, de-activate them
             p = Person.find_by_loginid(args[:loginid])
-            if p and p.active
+            if p && p.active
               log.info "Person with login ID '#{p.loginid}' not found in LDAP, disabling ..."
               p.active = false
 
-              unless p.save
+              if p.save
+                ActivityLog.info!("De-activated #{p.name} as they are not in LDAP.", ["person_#{p.id}", 'ldap'])
+              else
                 log.error "Could not save person (#{p.loginid}), reason(s):"
                 log.error "\t#{p.errors.full_messages.join(', ')}"
-              else
-                ActivityLog.info!("De-activated #{p.name} as they are not in LDAP.", ["person_#{p.id}", 'ldap'])
               end
             end
           end

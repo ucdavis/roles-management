@@ -60,6 +60,13 @@ i.sidebar-search-details {
       border-radius: 3px;
       margin: 3px;
 
+      span {
+        width: 100%;
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
       i {
         float: right;
         /* relative so z-index applies. z-index so the icons are clickable atop very long entity labels */

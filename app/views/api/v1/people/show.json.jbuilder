@@ -1,12 +1,6 @@
 json.cache! ['api_v1_people_show', @cache_key] do
   json.extract! @person, :address, :byline, :email, :first, :id, :last, :loginid, :name, :phone, :type
 
-  if @person.title
-    json.title @person.title.name
-  else
-    json.title ''
-  end
-
   json.affiliations @person.affiliations do |affiliation|
     json.extract! affiliation, :name
   end
