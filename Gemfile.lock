@@ -148,7 +148,6 @@ GEM
     mini_portile2 (2.3.0)
     minitest (5.11.1)
     multi_json (1.13.1)
-    mysql2 (0.4.10)
     net-ldap (0.16.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -278,7 +277,6 @@ DEPENDENCIES
   js-routes
   json
   letter_opener
-  mysql2
   net-ldap
   newrelic_rpm
   pg (= 0.20.0)
