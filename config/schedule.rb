@@ -15,4 +15,5 @@ end
 every 12.hours do
   rake 'ldap:import'
   rake 'dw:import'
+  rake 'person:mark_inactive'
 end

@@ -1,23 +1,19 @@
 require 'rake'
 
 namespace :person do
-  require 'authentication'
-  include Authentication
+  DAYS_INDICATING_INACTIVE = 45
 
-  desc 'Searches for any invalid favorites (from code ran before 2014-08-21) and removes them.'
-  task :remove_bad_favorites do
-    Rake::Task['environment'].invoke
+  desc 'Mark inactive any account not updated recently'
+  task mark_inactive: :environment do
+    # Find people who are active but have not been synced in 'DAYS_INDICATING_INACTIVE' days
+    people = Person.where('(synced_at < ?) or (synced_at is null)', (Time.now - DAYS_INDICATING_INACTIVE.days))
+                   .where(active: true)
 
-    count = 0
-
-    PersonFavoriteAssignment.all.each do |pfa|
-      if pfa.entity == nil
-        puts "Found a bad favorite assignment: ID #{pfa.id} referencing entity ID #{pfa.entity_id} favorited by #{pfa.owner.name}. Removing ..."
-        pfa.destroy
-        count = count + 1
-      end
+    people.each do |p|
+      p.active = false
+      p.save!
     end
 
-    puts "Found and removed #{count} bad favorites."
+    puts "Found and marked inactive #{people.length} people."
   end
 end
