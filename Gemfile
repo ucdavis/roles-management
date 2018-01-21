@@ -22,7 +22,7 @@ gem 'coffee-rails', '~> 4.2'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 
-gem 'mysql2', group: [:production, :development]
+# gem 'mysql2', group: [:production, :development]
 gem 'pg', '0.20.0', group: [:production, :development]
 
 # bundle exec rake doc:rails generates the API under doc/api.
