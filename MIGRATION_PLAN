@@ -17,25 +17,11 @@
 12. bin/rake activity_logs:convert --trace
 13. rake db:data:dump on local, switch to MySQL, rake db:data:load
 
-TODO: Activity logs need to be in data volume (and copied over!)
-
-Turn off sync?
-Re-arrange order above?
-
-
 Post-migration work:
-Remove ActivityLogTag, ActivityLogTagAssociation
-Remove organization-based GroupRules
+--------------------
+Ensure GroupRuleSet.destroy_if_unused is working
 
 AWS migration:
 --------------
 ActivityLog / File-system persistence
 Scheduled tasks
-
-Safe org-based GroupRules to delete:
---
-COM, PHIL & LIN RED CLUSTER
-VP UNDERGRADUATE EDUCATION
-EXT RELATIONS: GOVT & COM REL
-STUDENT EMPLOYMENT CENTER
-SOCIAL SCIENCES PROGRAM

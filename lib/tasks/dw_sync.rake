@@ -47,7 +47,7 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
 
       # Use DW to scan all tracked departments and grab associated login IDs
       Department.where(id: TrackedItem.where(kind: 'department').pluck(:item_id)).pluck(:code).each do |dept_code|
-        loginids << DssDw.fetch_people_by_pps_department(dept_code).map{|p| p["userId"]}
+        loginids << DssDw.fetch_people_by_pps_department(dept_code).map { |p| p['userId'] }
       end
 
       loginids = loginids.flatten.uniq

@@ -113,7 +113,7 @@ module DssDw
   # Creates or updates a person from DW using 'loginid'
   # If missing from DW, will not create a blank person with 'loginid'
   def self.create_or_update_using_dw(loginid)
-    Rails.logger.info "Create/update '#{loginid}' from DW ..."
+    Rails.logger.debug "Create/update '#{loginid}' from DW ..."
 
     dw_person = DssDw.fetch_person_by_loginid(loginid)
 

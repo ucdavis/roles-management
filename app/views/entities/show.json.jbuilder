@@ -30,11 +30,6 @@ json.cache! ['entity_show', @cache_key] do
       json.name ownership.group.name
     end
 
-    json.organizations @entity.organizations do |organization|
-      json.id organization.id
-      json.name organization.name
-    end
-
     json.role_assignments @entity.role_assignments do |role_assignment|
       json.application_id role_assignment.role.application_id
       json.application_name role_assignment.role.application.name

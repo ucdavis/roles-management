@@ -101,19 +101,6 @@ class GroupRuleSet < ApplicationRecord
           touched_rule_set_ids << rule_set.id
         end
       end
-    when :organization
-      # FIXME
-      # This is incorrect because if the entity is only a member of a child organization with no rules
-      # but the child organization's parent has a rule, this will never do anything (right?)
-      entity.organizations.map(&:name).uniq.each do |org_name|
-        GroupRuleSet.where(column: 'organization', value: org_name).each do |rule_set|
-          logger.debug "Matched 'Organization' rule. Recording result."
-          rule_set.results << GroupRuleResult.new(entity_id: person_id)
-          touched_rule_set_ids << rule_set.id
-        end
-
-        touched_group_ids << GroupRule.resolve_target_assign_organization_parents!(Organization.find_by(name: org_name), person_id)
-      end
     when :loginid
       GroupRuleSet.where(column: 'loginid', value: entity.loginid).each do |rule_set|
         logger.debug "Matched 'loginid' rule. Recording result."
@@ -230,14 +217,6 @@ class GroupRuleSet < ApplicationRecord
         ps = bou.departments.map{ |d| d.people.select(:id) }.flatten
         logger.debug "Adding #{ps.length} people to a 'Business Office Unit' GroupRule"
         p += ps
-      end
-    when 'organization'
-      organization = Organization.includes(:entities).find_by_name(value)
-      if organization
-        # We do not consider groups which belong to organizations in our calculations by design
-        p += organization.flattened_entities
-      else
-        logger.warn 'Organization not found'
       end
     when 'loginid'
       p += Person.where(loginid: value).select(:id)

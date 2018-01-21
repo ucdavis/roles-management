@@ -38,16 +38,16 @@ class GroupTest < ActiveSupport::TestCase
   end
 
   # Test runs as non-admin
-  test "group owners can delete the group" do
+  test 'group owners can delete the group' do
     p = entities(:personWithNothing)
 
     grant_user_basic_access(p)
     revoke_user_admin_access(p)
 
     g = entities(:groupWithNothing)
-    assert g.owners.empty?, "group should not have any owners"
+    assert g.owners.empty?, 'group should not have any owners'
 
-    assert p.group_ownerships.empty?, "person should not own any groups"
+    assert p.group_ownerships.empty?, 'person should not own any groups'
 
     go = GroupOwnership.new
     go.entity = p
@@ -55,16 +55,12 @@ class GroupTest < ActiveSupport::TestCase
     go.save!
 
     g.reload
-    assert g.owners.length == 1, "group should have one owner"
+    assert g.owners.length == 1, 'group should have one owner'
 
     p.reload
-    assert p.group_ownerships.length == 1, "person should own one group"
+    assert p.group_ownerships.length == 1, 'person should own one group'
 
-    begin
-      g.destroy
-    rescue Authorization::NotAuthorized
-      assert false, "authorization should not have failed"
-    end
+    g.destroy
   end
 
   # Test runs as non-admin

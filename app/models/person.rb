@@ -63,8 +63,7 @@ class Person < Entity
       },
       group_operatorships: group_operatorships.includes(:group).map { |o| {
         id: o.id, group_id: o.group.id, name: o.group.name }
-      },
-      organizations: organizations.map { |o| { id: o.id, name: o.name } }
+      }
     }
   end
 
@@ -160,18 +159,13 @@ class Person < Entity
     if saved_change_to_attribute?(:active)
       role_assignments.each(&:touch)
       group_memberships.each(&:touch)
-      organizations.each(&:touch)
 
-      # Activating/de-activating a person emulates them losing all their
-      # roles and organizations
+      # Activating/de-activating a person emulates them losing all their roles
       if active
         ActivityLog.info!("Marking as active for #{name}.", ["person_#{id}"])
 
         roles.each do |role|
           Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
-        end
-        organizations.each do |organization|
-          Sync.person_added_to_organization(Sync.encode(self), Sync.encode(organization))
         end
 
         Sync.person_added_to_system(Sync.encode(self))
@@ -180,9 +174,6 @@ class Person < Entity
 
         roles.each do |role|
           Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
-        end
-        organizations.each do |organization|
-          Sync.person_removed_from_organization(Sync.encode(self), Sync.encode(organization))
         end
 
         Sync.person_removed_from_system(Sync.encode(self))

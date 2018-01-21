@@ -124,12 +124,6 @@ class EntitiesControllerTest < ActionController::TestCase
       assert m["name"], "JSON response's 'group_ownerships' section should include name"
     end
 
-    assert body.include?('organizations'), 'JSON response should include organizations'
-    body["organizations"].each do |o|
-      assert o["id"], "JSON response's 'organizations' section should include id"
-      assert o["name"], "JSON response's 'organizations' section should include name"
-    end
-
     assert body.include?('role_assignments'), 'JSON response should include role_assignments'
     body["role_assignments"].each do |a|
       assert a["application_id"], "JSON response's 'role_assignments' section should include application_id"

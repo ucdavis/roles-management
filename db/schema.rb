@@ -10,27 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180103205053) do
+ActiveRecord::Schema.define(version: 20180121233245) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "activity_log_tag_associations", id: :serial, force: :cascade do |t|
-    t.integer "activity_log_id"
-    t.integer "activity_log_tag_id"
-  end
-
-  create_table "activity_log_tags", id: :serial, force: :cascade do |t|
-    t.string "tag", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "activity_logs", id: :serial, force: :cascade do |t|
-    t.string "message", limit: 255
-    t.datetime "performed_at"
-    t.integer "level"
-  end
 
   create_table "affiliation_assignments", id: :serial, force: :cascade do |t|
     t.integer "affiliation_id"
@@ -71,7 +54,7 @@ ActiveRecord::Schema.define(version: 20180103205053) do
     t.index ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
   end
 
-  create_table "application_ownerships", id: :integer, force: :cascade do |t|
+  create_table "application_ownerships", id: :serial, force: :cascade do |t|
     t.integer "entity_id"
     t.integer "application_id"
     t.datetime "created_at", null: false
@@ -166,7 +149,7 @@ ActiveRecord::Schema.define(version: 20180103205053) do
     t.integer "entity_id"
   end
 
-  create_table "group_ownerships", id: :integer, force: :cascade do |t|
+  create_table "group_ownerships", id: :serial, force: :cascade do |t|
     t.integer "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -198,54 +181,18 @@ ActiveRecord::Schema.define(version: 20180103205053) do
     t.integer "group_rule_set_id"
   end
 
+  create_table "major_assignments", force: :cascade do |t|
+    t.integer "major_id"
+    t.integer "entity_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "majors", id: :serial, force: :cascade do |t|
     t.string "name", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_majors_on_name"
-  end
-
-  create_table "organization_entity_associations", id: :serial, force: :cascade do |t|
-    t.integer "organization_id"
-    t.integer "entity_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "title_id"
-  end
-
-  create_table "organization_managers", id: :serial, force: :cascade do |t|
-    t.integer "organization_id"
-    t.integer "manager_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["manager_id"], name: "index_organization_managers_on_manager_id"
-    t.index ["organization_id"], name: "index_organization_managers_on_organization_id"
-  end
-
-  create_table "organization_org_ids", id: :serial, force: :cascade do |t|
-    t.integer "organization_id"
-    t.string "org_id", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["org_id"], name: "index_organization_org_ids_on_org_id"
-    t.index ["organization_id"], name: "index_organization_org_ids_on_organization_id"
-  end
-
-  create_table "organization_parent_ids", id: :serial, force: :cascade do |t|
-    t.integer "organization_id"
-    t.integer "parent_org_id", default: 1
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["organization_id"], name: "index_organization_parent_ids_on_organization_id"
-    t.index ["parent_org_id"], name: "index_organization_parent_ids_on_parent_org_id"
-  end
-
-  create_table "organizations", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "dept_code", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["dept_code"], name: "index_organizations_on_dept_code"
   end
 
   create_table "person_favorite_assignments", id: :serial, force: :cascade do |t|
@@ -309,26 +256,6 @@ ActiveRecord::Schema.define(version: 20180103205053) do
     t.integer "item_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "versions", id: :serial, force: :cascade do |t|
-    t.integer "versioned_id"
-    t.string "versioned_type", limit: 255
-    t.integer "user_id"
-    t.string "user_type", limit: 255
-    t.string "user_name", limit: 255
-    t.text "modifications"
-    t.integer "number"
-    t.integer "reverted_from"
-    t.string "tag", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_versions_on_created_at"
-    t.index ["number"], name: "index_versions_on_number"
-    t.index ["tag"], name: "index_versions_on_tag"
-    t.index ["user_id", "user_type"], name: "index_versions_on_user_id_and_user_type"
-    t.index ["user_name"], name: "index_versions_on_user_name"
-    t.index ["versioned_id", "versioned_type"], name: "index_versions_on_versioned_id_and_versioned_type"
   end
 
 end

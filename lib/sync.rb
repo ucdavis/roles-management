@@ -135,7 +135,7 @@ module Sync
     when Person
       return { id: obj.id, name: obj.name, first: obj.first, last: obj.last, loginid: obj.loginid,
                email: obj.email, address: obj.address, phone: obj.phone,
-               affiliations: obj.affiliations.map(&:name), organizations: obj.organizations.map(&:name) }
+               affiliations: obj.affiliations.map(&:name) }
     when Organization
       return { id: obj.id, name: obj.name }
     end

@@ -35,7 +35,7 @@ class GroupMembershipTest < ActiveSupport::TestCase
     assert @person.roles.empty?, "removing person from group should have removed the person that group's role"
   end
 
-  test "group membership may not be include other groups" do
+  test 'group membership may not be include other groups' do
     group = entities(:groupWithNothing)
     another_group = entities(:anotherGroupWithNothing)
 

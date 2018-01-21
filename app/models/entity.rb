@@ -1,6 +1,4 @@
 class Entity < ApplicationRecord
-  has_many :organization_entity_associations, dependent: :destroy
-  has_many :organizations, through: :organization_entity_associations
   # 'favored_by_relationships' exists solely so favorite assignments are removed when an entity is deleted.
   has_many :favored_by_relationships, class_name: 'PersonFavoriteAssignment', foreign_key: 'entity_id', dependent: :destroy
   has_many :group_rule_results, dependent: :destroy
