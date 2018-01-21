@@ -138,6 +138,7 @@ module DssDw
       p.address = dw_person['contactInfo']['postalAddress']
     end
     p.synced_at = Time.now
+    p.active = true
 
     # Process any majors (SIS associations)
     begin
