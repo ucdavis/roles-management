@@ -2,7 +2,7 @@ job_type :envcommand, 'cd :path && RAILS_ENV=:environment :task'
 
 # Ensure our background processor starts up on reboot (10 processes)
 every :reboot do
-  envcommand 'bin/delayed_job -n 10 -p roles restart'
+  envcommand 'bin/delayed_job -n 1 -p roles restart'
 end
 
 every 24.hours do
