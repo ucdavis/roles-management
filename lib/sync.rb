@@ -159,8 +159,6 @@ module Sync
   def perform_sync(sync_mode, job_uuid, sync_obj, opts = {})
     require 'json'
 
-    Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
-
     sync_json = {
       config_path: Rails.root.join('sync', 'config').to_s,
       mode: sync_mode,
