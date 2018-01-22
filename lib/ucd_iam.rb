@@ -5,7 +5,13 @@ module UcdIam
   IAM_URL = ENV['IAM_URL']
   IAM_API_KEY = ENV['IAM_API_KEY']
 
+  # Custom exception used in module
+  class UcdIamError < StandardError
+  end
+
   def self.fetch_sis_majors
+    raise UcdIamError, 'IAM_URL and/or IAM_API_KEY environment variable(s) missing' if ENV['IAM_URL'].blank? || ENV['IAM_API_KEY'].blank?
+
     url = "#{IAM_URL}/api/iam/orginfo/sis/majors?key=#{IAM_API_KEY}&v=1.0"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
@@ -26,6 +32,8 @@ module UcdIam
   end
 
   def self.fetch_bous
+    raise UcdIamError, 'IAM_URL and/or IAM_API_KEY environment variable(s) missing' if ENV['IAM_URL'].blank? || ENV['IAM_API_KEY'].blank?
+    
     url = "#{IAM_URL}/api/iam/orginfo/pps/divisions?key=#{IAM_API_KEY}&v=1.0"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
