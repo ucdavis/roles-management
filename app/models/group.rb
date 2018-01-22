@@ -111,22 +111,4 @@ class Group < Entity
 
     return results # rubocop:disable Style/RedundantReturn
   end
-
-  # Records all IDs found while traversing up the parent graph.
-  # Algorithm ends either when a duplicate ID is found (indicates a loop)
-  # or no more parents exist (indicates no loops).
-  def no_loops_in_group_membership_graph(seen_ids = [])
-    return false if seen_ids.include?(id)
-
-    seen_ids << id
-
-    memberships.each do |membership|
-      if membership.group.no_loops_in_group_membership_graph(seen_ids.dup) == false
-        errors[:base] << 'Group membership cannot be cyclical'
-        return false
-      end
-    end
-
-    return true # rubocop:disable Style/RedundantReturn
-  end
 end
