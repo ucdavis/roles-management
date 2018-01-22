@@ -87,14 +87,14 @@ class ActiveDirectoryHelper
     unless user.is_a? Net::LDAP::Entry
       user = ActiveDirectory.get_user(user)
       if user.nil?
-        STDERR.puts 'ensure_user_in_group failed: user is nil.'
+        STDERR.puts 'ensure_user_in_group failed: could not find user in AD'
         return false
       end
     end
     unless group.is_a? Net::LDAP::Entry
       group = ActiveDirectory.get_group(group)
       if group.nil?
-        STDERR.puts 'ensure_user_in_group failed: group is nil.'
+        STDERR.puts 'ensure_user_in_group failed: could not find group in AD'
         return false
       end
     end
