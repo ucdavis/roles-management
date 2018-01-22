@@ -13,7 +13,7 @@ end
 
 # Sync with external systems
 every 12.hours do
-  rake 'ldap:import'
+  # rake 'ldap:import'
   rake 'dw:import'
   rake 'person:mark_inactive'
   rake 'person:remove_inactive'
