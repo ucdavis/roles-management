@@ -2,6 +2,7 @@ require 'rake'
 
 namespace :person do
   DAYS_INDICATING_INACTIVE = 45
+  DAYS_INDICATING_REMOVAL = 180
 
   desc 'Mark inactive any account not updated recently'
   task mark_inactive: :environment do
@@ -15,5 +16,16 @@ namespace :person do
     end
 
     puts "Found and marked inactive #{people.length} people."
+  end
+
+  desc 'Remove long-inactive people'
+  task remove_inactive: :environment do
+    # Find people who are inactive for at least 'DAYS_INDICATING_REMOVAL' days
+    people = Person.where('(synced_at < ?) or (synced_at is null)', (Time.now - DAYS_INDICATING_REMOVAL.days))
+                   .where(active: false)
+
+    people.each(&:destroy)
+
+    puts "Found and removed inactive #{people.length} people."
   end
 end
