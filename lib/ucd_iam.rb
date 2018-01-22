@@ -2,17 +2,14 @@ module UcdIam
   require 'net/https'
   require 'json'
 
-  IAM_URL = ENV['IAM_URL']
-  IAM_API_KEY = ENV['IAM_API_KEY']
-
   # Custom exception used in module
   class UcdIamError < StandardError
   end
 
   def self.fetch_sis_majors
-    raise UcdIamError, 'IAM_URL and/or IAM_API_KEY environment variable(s) missing' if ENV['IAM_URL'].blank? || ENV['IAM_API_KEY'].blank?
+    raise UcdIamError, 'IAM_URL and/or IAM_API_KEY environment variable(s) missing' if iam_url.blank? || iam_api_key.blank?
 
-    url = "#{IAM_URL}/api/iam/orginfo/sis/majors?key=#{IAM_API_KEY}&v=1.0"
+    url = "#{iam_url}/api/iam/orginfo/sis/majors?key=#{iam_api_key}&v=1.0"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
@@ -32,9 +29,9 @@ module UcdIam
   end
 
   def self.fetch_bous
-    raise UcdIamError, 'IAM_URL and/or IAM_API_KEY environment variable(s) missing' if ENV['IAM_URL'].blank? || ENV['IAM_API_KEY'].blank?
-    
-    url = "#{IAM_URL}/api/iam/orginfo/pps/divisions?key=#{IAM_API_KEY}&v=1.0"
+    raise UcdIamError, 'IAM_URL and/or IAM_API_KEY environment variable(s) missing' if iam_url.blank? || iam_api_key.blank?
+
+    url = "#{iam_url}/api/iam/orginfo/pps/divisions?key=#{iam_api_key}&v=1.0"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
@@ -51,5 +48,15 @@ module UcdIam
     end
 
     return json['responseData']['results'] # rubocop:disable Style/RedundantReturn
+  end
+
+  def self.iam_url
+    @@IAM_URL ||= ENV['IAM_URL']
+    @@IAM_URL ||= Rails.application.secrets['iam_url']
+  end
+
+  def self.iam_api_key
+    @@IAM_API_KEY ||= ENV['IAM_API_KEY']
+    @@IAM_API_KEY ||= Rails.application.secrets['iam_api_key']
   end
 end

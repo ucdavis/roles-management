@@ -7,9 +7,6 @@ module DssDw
   class DssDwError < StandardError
   end
 
-  DW_URL = ENV['DW_URL']
-  DW_TOKEN = ENV['DW_TOKEN']
-
   def self.fetch_person_by_loginid(loginid)
     return nil unless loginid
 
@@ -73,18 +70,18 @@ module DssDw
   # path, e.g. /people/search?q=something
   # Token will be added automatically.
   def self.perform_dw_request(path)
-    raise DssDwError, 'DW_URL and/or DW_TOKEN environment variable(s) missing' if ENV['DW_URL'].blank? || ENV['DW_TOKEN'].blank?
+    raise DssDwError, 'DW_URL and/or DW_TOKEN environment variable(s) missing' if dw_url.blank? || dw_token.blank?
 
     # Determine if SSL is needed
-    https_mode = DW_URL.start_with? 'https'
+    https_mode = dw_url.start_with? 'https'
 
-    url = "#{DW_URL}#{path}"
+    url = "#{dw_url}#{path}"
 
     # Determine if 'url' contains parameters
     url += if url.include?('?')
-      "&token=#{DW_TOKEN}"
+      "&token=#{dw_token}"
     else
-      "?token=#{DW_TOKEN}"
+      "?token=#{dw_token}"
     end
 
     uri = URI.parse(url)
@@ -100,10 +97,10 @@ module DssDw
     begin
       response = http.request(request)
     rescue Errno::ECONNREFUSED
-      STDERR.puts "Unable to connect to #{DW_URL}"
+      STDERR.puts "Unable to connect to #{dw_url}"
       return nil
     rescue Net::OpenTimeout
-      STDERR.puts "Request timed out: #{DW_URL}"
+      STDERR.puts "Request timed out: #{dw_url}"
       return nil
     end
 
@@ -219,5 +216,15 @@ module DssDw
     p.save!
 
     return p # rubocop:disable Style/RedundantReturn
+  end
+
+  def self.dw_url
+    @@DW_URL ||= ENV['DW_URL']
+    @@DW_URL ||= Rails.application.secrets['dw_url']
+  end
+
+  def self.dw_token
+    @@DW_TOKEN ||= ENV['DW_TOKEN']
+    @@DW_TOKEN ||= Rails.application.secrets['dw_token']
   end
 end
