@@ -34,7 +34,7 @@ class GroupRule < ApplicationRecord
   private
 
   # Recalculates group members if anything changed. Called after_save.
-  def link_result_set
+  def link_result_set # rubocop:disable Metrics/CyclomaticComplexity
     return unless column_changed? || condition_changed? || value_changed?
     return unless column.present? && condition.present? && value.present?
 

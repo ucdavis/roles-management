@@ -3,7 +3,7 @@ require 'sync'
 # Person shares many attributes with entity.
 # Note that the 'name' field is simply self.first + " " + self.last
 # and is thus read-only. The same does not apply for groups.
-class Person < Entity
+class Person < Entity # rubocop:disable Metrics/ClassLength
   include RmBuiltinRoles
 
   has_many :affiliation_assignments, dependent: :destroy
@@ -12,7 +12,8 @@ class Person < Entity
   has_many :groups, through: :group_memberships, source: :group
   has_many :role_assignments, foreign_key: 'entity_id', dependent: :destroy
   has_many :roles, through: :role_assignments, source: :role, dependent: :destroy
-  has_many :favorite_relationships, class_name: 'PersonFavoriteAssignment', foreign_key: 'owner_id', dependent: :destroy
+  has_many :favorite_relationships, class_name: 'PersonFavoriteAssignment',
+                                    foreign_key: 'owner_id', dependent: :destroy
   has_many :favorites, through: :favorite_relationships, source: :entity
   has_many :application_ownerships, foreign_key: 'entity_id', dependent: :destroy
   has_many :application_operatorships, foreign_key: 'entity_id', dependent: :destroy
@@ -43,27 +44,34 @@ class Person < Entity
     Sync.person_removed_from_system(Sync.encode(person))
   end
 
-  def as_json(_options)
-    { id: id, name: name, type: 'Person', email: email,
+  def as_json(_options) # rubocop:disable Metrics/AbcSize
+    Rails.logger.info 'Person.as_json called:'
+    Rails.logger.info caller
+    {
+      id: id, name: name, type: 'Person', email: email,
       loginid: loginid, first: first, last: last,
       phone: phone, address: address,
       byline: byline, active: active,
-      role_assignments: role_assignments.includes(:role).map { |a| {
-        id: a.id, calculated: a.parent_id?, entity_id: a.entity_id,
-        role_id: a.role.id, token: a.role.token,
-        application_name: a.role.application.name, application_id: a.role.application_id,
-        name: a.role.name, description: a.role.description }
-      },
+      role_assignments: role_assignments.includes(:role).map do |a|
+        {
+          id: a.id, calculated: a.parent_id?, entity_id: a.entity_id,
+          role_id: a.role.id, token: a.role.token,
+          application_name: a.role.application.name, application_id: a.role.application_id,
+          name: a.role.name, description: a.role.description
+        }
+      end,
       favorites: favorites.select { |f| f.active == true }.map { |f| { id: f.id, name: f.name, type: f.type } },
-      group_memberships: group_memberships.includes(:group).map { |m| {
-        id: m.id, group_id: m.group.id, name: m.group.name }
-      },
+      group_memberships: group_memberships.includes(:group).map do |m|
+        {
+          id: m.id, group_id: m.group.id, name: m.group.name
+        }
+      end,
       group_ownerships: group_ownerships.includes(:group).map { |o| {
         id: o.id, group_id: o.group.id, name: o.group.name }
       },
-      group_operatorships: group_operatorships.includes(:group).map { |o| {
-        id: o.id, group_id: o.group.id, name: o.group.name }
-      }
+      group_operatorships: group_operatorships.includes(:group).map do |o|
+        { id: o.id, group_id: o.group.id, name: o.group.name }
+      end
     }
   end
 
@@ -111,7 +119,7 @@ class Person < Entity
   end
 
   # Returns all applications visible to a user
-  def accessible_applications
+  def accessible_applications # rubocop:disable Metrics/AbcSize
     applications = []
 
     ApplicationOwnership.eager_load(:application).where(entity_id: id).each do |ao|
@@ -138,7 +146,8 @@ class Person < Entity
     if role_symbols.include?(:admin) || role_symbols.include?(:operate)
       Application.includes(:roles, application_ownerships: [:entity]).all
     else
-      application_ids = (application_ownerships.map(&:application_id) + application_operatorships.map(&:application_id)).uniq
+      application_ids = (application_ownerships.map(&:application_id) +
+                         application_operatorships.map(&:application_id)).uniq
       Application.includes(:roles, application_ownerships: [:entity]).where(id: application_ids)
     end
   end
@@ -155,29 +164,29 @@ class Person < Entity
 
   # If a person goes from inactive to active, we need to ensure
   # any role_assignment or group views are touched correctly.
-  def trigger_sync_as_needed
-    if saved_change_to_attribute?(:active)
-      role_assignments.each(&:touch)
-      group_memberships.each(&:touch)
+  def trigger_sync_as_needed # rubocop:disable Metrics/AbcSize
+    return unless saved_change_to_attribute?(:active)
 
-      # Activating/de-activating a person emulates them losing all their roles
-      if active
-        ActivityLog.info!("Marking as active for #{name}.", ["person_#{id}"])
+    role_assignments.each(&:touch)
+    group_memberships.each(&:touch)
 
-        roles.each do |role|
-          Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
-        end
+    # Activating/de-activating a person emulates them losing all their roles
+    if active
+      ActivityLog.info!("Marking as active for #{name}.", ["person_#{id}"])
 
-        Sync.person_added_to_system(Sync.encode(self))
-      else
-        ActivityLog.info!("Marking as inactive for #{name}.", ["person_#{id}"])
-
-        roles.each do |role|
-          Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
-        end
-
-        Sync.person_removed_from_system(Sync.encode(self))
+      roles.each do |role|
+        Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
       end
+
+      Sync.person_added_to_system(Sync.encode(self))
+    else
+      ActivityLog.info!("Marking as inactive for #{name}.", ["person_#{id}"])
+
+      roles.each do |role|
+        Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
+      end
+
+      Sync.person_removed_from_system(Sync.encode(self))
     end
   end
 
@@ -185,11 +194,6 @@ class Person < Entity
   # If that fails, use loginid.
   def set_name_if_blank
     return unless name.blank?
-
-    if first.blank?
-      self.name = loginid
-    else
-      self.name = "#{first} #{last}".strip
-    end
+    self.name = first.blank? ? loginid : "#{first} #{last}".strip
   end
 end
