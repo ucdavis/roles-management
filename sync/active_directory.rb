@@ -30,30 +30,11 @@ ActiveDirectory.configure(@config)
 case @sync_data['mode']
 
 when 'add_to_system'
-  STDOUT.puts "Ensuring #{@sync_data['person']['loginid']} is in AD group dss-us-auto-all ..."
-  if ActiveDirectoryHelper.ensure_user_in_group(@sync_data['person']['loginid'], 'dss-us-auto-all', nil) == false
-    STDERR.puts "Error occurred while ensuring user '#{@sync_data['person']['loginid']}' was in group 'dss-us-auto-all'"
-    exit(1)
-  end
-  STDOUT.puts 'Success!'
-  # Note: the dss-us-auto-all group does not have a sentinel descriptor
+  # AD does not use this trigger
   exit(0)
 
 when 'remove_from_system'
-  STDOUT.puts "Ensuring #{@sync_data['person']['loginid']} is not in AD group dss-us-auto-all ..."
-  begin
-    if ActiveDirectoryHelper.ensure_user_not_in_group(@sync_data['person']['loginid'], 'dss-us-auto-all', nil) == false
-      STDERR.puts "Error occurred while ensuring user '#{@sync_data['person']['loginid']}' was not in group 'dss-us-auto-all'"
-      exit(1)
-    end
-  rescue ActiveDirectoryHelper::UserNotFound
-    STDOUT.puts "User '#{@sync_data['person']['loginid']}' not found in AD while answering a 'remove_from_system'. Ignoring."
-  rescue ActiveDirectoryHelper::GroupNotFound
-    STDERR.puts "Group 'dss-us-auto-all' not found in AD while answering a 'remove_from_system'. Please ensure group exists."
-    exit(1)
-  end
-  STDOUT.puts 'Success!'
-  # Note: the dss-us-auto-all group does not have a sentinel descriptor
+  # AD does not use this trigger
   exit(0)
 
 when 'add_to_role'

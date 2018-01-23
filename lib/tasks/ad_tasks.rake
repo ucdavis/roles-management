@@ -8,7 +8,7 @@ load "#{Rails.root.join('lib', 'active_directory_helper')}.rb"
 
 namespace :ad do
   desc 'Ensure the modern AD sentinel is in use'
-  task :update_sentinels => :environment do
+  task update_sentinels: :environment do
     @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
 
     ActiveDirectory.configure(@config)
