@@ -110,37 +110,38 @@ namespace :ad do
       ad_enabled_roles << Role.find(args[:role_id])
     end
 
-    puts "Checking #{ad_enabled_roles.count} AD-enabled roles for re-syncing ..."
+    # puts "Checking #{ad_enabled_roles.count} AD-enabled roles for re-syncing ..."
 
     num_out_of_sync_roles = 0
 
     ad_enabled_roles.each do |role|
-      print "#{role.application.name} / #{role.name} -> #{role.ad_path} ... "
+      # print "#{role.application.name} / #{role.name} -> #{role.ad_path} ... "
       ad_group = ActiveDirectory.get_group(role.ad_path)
 
       unless ad_group.is_a? Net::LDAP::Entry
-        print "unknown. Could not retrieve #{role.ad_path} from AD. Skipping ...\n"
+        print "Error syncing #{role.application.name} / #{role.name}. Could not retrieve '#{role.ad_path}' from AD. Skipping ...\n"
         next
       end
 
       ad_members = ActiveDirectory.list_group_members(ad_group)
-      role_members = role.members.select { |m| m.active == true}.map{ |m| m.loginid }
+      role_members = role.members.select { |m| m.active == true}.map(&:loginid)
 
       if ad_members.sort == role_members.sort
-        print "fully synced.\n"
+        # print "fully synced.\n"
       else
         num_out_of_sync_roles += 1
-        print "not fully synced:\n"
+        puts "Found out-of-sync, will re-sync: #{role.application.name} / #{role.name} -> #{role.ad_path}"
+        # print "not fully synced:\n"
 
-        puts "\tMembers in AD but not RM (will be removed from AD)"
+        # puts "\tMembers in AD but not RM (will be removed from AD)"
         (ad_members - role_members).each do |missing|
-          puts "\t\t#{missing} ..."
+          # puts "\t\t#{missing} ..."
           ActiveDirectoryHelper.ensure_user_not_in_group(missing, ad_group)
         end
 
-        puts "\tMembers in RM but not AD (will be added to AD)"
+        # puts "\tMembers in RM but not AD (will be added to AD)"
         (role_members - ad_members).each do |missing|
-          puts "\t\t#{missing} ..."
+          # puts "\t\t#{missing} ..."
           ActiveDirectoryHelper.ensure_user_in_group(missing, ad_group)
         end
       end
