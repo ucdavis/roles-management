@@ -200,6 +200,7 @@ module DssDw
           Rails.logger.error 'Could not create a PpsAssociation for person, skipping ...'
           Rails.logger.error "\tPerson        : #{p.id}, #{p.loginid}"
           Rails.logger.error "\tPPS Assocation: #{pps_assoc_json.inspect}"
+          Rails.logger.error "\tError         : #{e.inspect}"
         end
       end
 
