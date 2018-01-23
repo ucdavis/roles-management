@@ -39,8 +39,8 @@ class GroupMembershipTest < ActiveSupport::TestCase
     group = entities(:groupWithNothing)
     another_group = entities(:anotherGroupWithNothing)
 
-    assert group.members.empty?, "group should not have any members. Fixture has been modified."
-    assert another_group.members.empty?, "another_group should not have any members. Fixture has been modified."
+    assert group.members.empty?, 'group should not have any members. Fixture has been modified.'
+    assert another_group.members.empty?, 'another_group should not have any members. Fixture has been modified.'
 
     invalid_record_thrown = false
 

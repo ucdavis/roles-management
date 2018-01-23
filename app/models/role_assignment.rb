@@ -4,13 +4,12 @@ require 'sync'
 # e.g. through a group. A group accomplishes this by using the destroying_calculated_role_assignment do ... end
 # block method below.
 class RoleAssignment < ApplicationRecord
-  belongs_to :role, :touch => true
-  belongs_to :entity, :touch => true
+  belongs_to :role, touch: true
+  belongs_to :entity, touch: true
 
-  validates :role, :entity, :presence => true
+  validates :role, :entity, presence: true
   #BUGME: validates_uniqueness_of causes update_attributes to return nil but no errors!
   #validates_uniqueness_of :role_id, :scope => [:entity_id, :parent_id]
-  validate :assignment_cannot_be_cyclical # must come before the possibly cyclical operations of granting role assignments in after_create
   validate :parent_must_exist_if_set
 
   before_destroy :cannot_destroy_calculated_assignment_without_flag
@@ -28,25 +27,25 @@ class RoleAssignment < ApplicationRecord
   #       thereby triggering role sync.
   # Note: We skip over groups as their individual members hold their own role assignments which
   #       will catch any needed syncing.
-  after_create { |assignment|
+  after_create do |assignment|
     # Only trigger person_added_to_role if this is the first time they gained the role
     if RoleAssignment.where(role_id: assignment.role_id, entity_id: assignment.entity_id).count == 1
       ActivityLog.info!("Added #{assignment.entity.name} to role (#{assignment.role.name_with_application}).", ["#{assignment.entity.type.downcase}_#{assignment.entity.id}", "application_#{assignment.role.application_id}"])
-      unless assignment.entity.type == "Group"
+      unless assignment.entity.type == 'Group'
         Sync.person_added_to_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
       end
     end
-  }
-  after_destroy { |assignment|
+  end
+  after_destroy do |assignment|
     # Only trigger person_removed_from_role if they lost this role entirely (they may the role through
     # multiple means such as a group assignment)
     unless RoleAssignment.find_by(role_id: assignment.role_id, entity_id: assignment.entity_id)
       ActivityLog.info!("Removed #{assignment.entity.name} from role (#{assignment.role.name_with_application}).", ["#{assignment.entity.type.downcase}_#{assignment.entity.id}", "application_#{assignment.role.application_id}"])
-      unless assignment.entity.type == "Group"
+      unless assignment.entity.type == 'Group'
         Sync.person_removed_from_role(Sync.encode(assignment.entity), Sync.encode(assignment.role)) if assignment.entity.active
       end
     end
-  }
+  end
 
   after_save { |assignment| assignment.log_changes(:save) }
   after_destroy { |assignment| assignment.log_changes(:destroy) }
@@ -90,16 +89,16 @@ class RoleAssignment < ApplicationRecord
   # Grant this role assignment to all members of the group
   # (only if this role assignment really is with a group)
   def grant_role_assignments_to_group_members_if_needed
-    if entity.type == 'Group'
-      Rails.logger.tagged "RoleAssignment #{id}" do
-        entity.members.each do |m|
-          logger.info "Granting role (#{role.id}, #{role.token}, #{role.application.name}) just granted to group (#{entity.id}/#{entity.name}) to its member (#{m.id}/#{m.name})"
-          ra = RoleAssignment.new
-          ra.role_id = role.id
-          ra.entity_id = m.id
-          ra.parent_id = id
-          ra.save!
-        end
+    return unless entity.type == 'Group'
+
+    Rails.logger.tagged "RoleAssignment #{id}" do
+      entity.members.each do |m|
+        logger.info "Granting role (#{role.id}, #{role.token}, #{role.application.name}) just granted to group (#{entity.id}/#{entity.name}) to its member (#{m.id}/#{m.name})"
+        ra = RoleAssignment.new
+        ra.role_id = role.id
+        ra.entity_id = m.id
+        ra.parent_id = id
+        ra.save!
       end
     end
   end
@@ -107,25 +106,21 @@ class RoleAssignment < ApplicationRecord
   # Remove this role assignment from all members of the group
   # (only if this role assignment really was with a group)
   def remove_role_assignments_from_group_members_if_needed
-    if entity.type == 'Group'
-      Rails.logger.tagged "RoleAssignment #{id}" do
-        entity.members.each do |m|
-          logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
-          ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(role.id, m.id, self.id)
-          if ra
-            destroying_calculated_role_assignment do
-              ra.destroy!
-            end
-          else
-            logger.warn "Failed to remove role (#{role.id}, #{role.token}, #{role.application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that role."
+    return unless entity.type == 'Group'
+
+    Rails.logger.tagged "RoleAssignment #{id}" do
+      entity.members.each do |m|
+        logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
+        ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(role.id, m.id, self.id)
+        if ra
+          destroying_calculated_role_assignment do
+            ra.destroy!
           end
+        else
+          logger.warn "Failed to remove role (#{role.id}, #{role.token}, #{role.application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that role."
         end
       end
     end
-  end
-
-  def assignment_cannot_be_cyclical
-    # TODO: Implement me.
   end
 
   def cannot_destroy_calculated_assignment_without_flag
@@ -136,7 +131,7 @@ class RoleAssignment < ApplicationRecord
   end
 
   def parent_must_exist_if_set
-    if parent_id && (RoleAssignment.find_by_id(parent_id).nil?)
+    if parent_id && RoleAssignment.find_by_id(parent_id).nil?
       errors.add(:parent_id, 'parent_id must be a valid RoleAssignment')
       return false
     end
