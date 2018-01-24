@@ -85,16 +85,18 @@ class ActiveDirectoryHelper
   # +group+ is a string (AD Path)
   def ActiveDirectoryHelper.ensure_user_in_group(user, group, _ad_guid = nil)
     unless user.is_a? Net::LDAP::Entry
-      user = ActiveDirectory.get_user(user)
+      loginid = user
+      user = ActiveDirectory.get_user(loginid)
       if user.nil?
-        STDERR.puts 'ensure_user_in_group failed: could not find user in AD'
+        STDERR.puts "ensure_user_in_group failed: could not find user '#{loginid}' in AD"
         return false
       end
     end
     unless group.is_a? Net::LDAP::Entry
-      group = ActiveDirectory.get_group(group)
+      group_name = group
+      group = ActiveDirectory.get_group(group_name)
       if group.nil?
-        STDERR.puts 'ensure_user_in_group failed: could not find group in AD'
+        STDERR.puts "ensure_user_in_group failed: could not find group '#{group_name}' in AD"
         return false
       end
     end
