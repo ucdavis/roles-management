@@ -101,70 +101,12 @@ when 'remove_from_role'
   exit(0)
 
 when 'add_to_organization'
-  @sync_data['person']['affiliations'].each do |affiliation|
-    # Write them to cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
-    short_ou = ActiveDirectoryHelper.ou_to_short(@sync_data['organization']['name'])
-    flattened_affiliation = ActiveDirectoryHelper.flatten_affiliation(affiliation)
-
-    # Skip unknown or ignored translations
-    next if (short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil)
-
-    # Write them to cluster-affiliation-all
-    cluster_affiliation_all_group_name = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
-    STDOUT.puts "Ensuring #{@sync_data['person']['loginid']} is in AD group #{cluster_affiliation_all_group_name} ..."
-    ActiveDirectoryHelper.ensure_user_in_group(@sync_data['person']['loginid'], cluster_affiliation_all_group_name)
-    ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
-
-    # Write them to cluster-all (dss-us-#{ou_to_short}-all)
-    cluster_all_group_name = "dss-us-#{short_ou}-all".downcase
-    STDOUT.puts "Ensuring #{@sync_data['person']['loginid']} is in AD group #{cluster_all_group_name} ..."
-    ActiveDirectoryHelper.ensure_user_in_group(@sync_data['person']['loginid'], cluster_all_group_name)
-    ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_all_group_name)
-  end
+  # AD does not use this trigger
 
   exit(0)
 
 when 'remove_from_organization'
-  @sync_data['person']['affiliations'].each do |affiliation|
-    # Remove them from cluster-name-affiliation (dss-us-#{ou_to_short}-#{flatten_affiliation})
-    short_ou = ActiveDirectoryHelper.ou_to_short(@sync_data['organization']['name'])
-    flattened_affiliation = ActiveDirectoryHelper.flatten_affiliation(affiliation)
-
-    # Skip unknown or ignored translations
-    next if (short_ou == false) || (flattened_affiliation == false) || (short_ou == nil) || (flattened_affiliation == nil)
-
-    loginid = @sync_data['person']['loginid']
-
-    # Remove them from cluster-affiliation-all
-    cluster_affiliation_all_group_name = "dss-us-#{short_ou}-#{flattened_affiliation}".downcase
-    STDOUT.puts "Ensuring #{loginid} is not in AD group #{cluster_affiliation_all_group_name} ..."
-
-    begin
-      ActiveDirectoryHelper.ensure_user_not_in_group(loginid, cluster_affiliation_all_group_name)
-    rescue ActiveDirectoryHelper::UserNotFound
-      STDOUT.puts "User '#{loginid}' not found in AD while answering a 'remove_from_organization'. Ignoring."
-    rescue ActiveDirectoryHelper::GroupNotFound
-      STDERR.puts "Group '#{cluster_affiliation_all_group_name}' not found in AD while answering a 'remove_from_organization'. Please ensure group exists."
-      exit(1)
-    end
-
-    ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_affiliation_all_group_name)
-
-    # Remove them from cluster-all (dss-us-#{ou_to_short}-all)
-    cluster_all_group_name = "dss-us-#{short_ou}-all".downcase
-    STDOUT.puts "Ensuring #{loginid} is not in AD group #{cluster_all_group_name} ..."
-
-    begin
-      ActiveDirectoryHelper.ensure_user_not_in_group(loginid, cluster_all_group_name)
-    rescue ActiveDirectoryHelper::UserNotFound
-      STDOUT.puts "User '#{loginid}' not found in AD while answering a 'remove_from_organization'. Ignoring."
-    rescue ActiveDirectoryHelper::GroupNotFound
-      STDERR.puts "Group '#{cluster_all_group_name}' not found in AD while answering a 'remove_from_organization'. Please ensure group exists."
-      exit(1)
-    end
-
-    ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(cluster_all_group_name)
-  end
+  # AD does not use this trigger
 
   exit(0)
 

@@ -43,7 +43,7 @@ class ActiveDirectoryHelper
     end
 
     # Sentinel already existed
-    return true
+    return true # rubocop:disable Style/RedundantReturn
   end
 
   # Removes the SENTINEL_DESCRIPTOR text from an AD group's description field if
@@ -70,13 +70,13 @@ class ActiveDirectoryHelper
     matches = /\(RM Sync[\s\S]*\)/.match(g_desc)
 
     if matches != nil
-      STDOUT.puts "Removing '#{matches.to_s}' from AD group description."
+      STDOUT.puts "Removing '#{matches}' from AD group description."
       g_desc.sub! /\(RM Sync[\s\S]*\)/, ''
       g_desc.lstrip!
       return ActiveDirectory.update_group_description(group, g_desc)
     end
 
-    return false
+    return false # rubocop:disable Style/RedundantReturn
   end
 
   # +user+ may be a loginid (string) or Net::LDAP::Entry object
@@ -159,142 +159,5 @@ class ActiveDirectoryHelper
     end
 
     rm_client.save(role) if role_changed
-  end
-
-  # Converts common organization names to their AD-mapped equivalents
-  # Returns a match, nil (if we know the organization but do not wish to sync it), or
-  # false (if we do not know the organization and need to log this missing data).
-  def ActiveDirectoryHelper.ou_to_short(name)
-    name = name.upcase
-
-    case name
-    when "DSS IT SERVICE CENTER", "DSS IT SHARED SERVICE CENTER"
-      return "IT"
-    when "DSS HR/PAYROLL SERVICE CENTER"
-      return "HR"
-    when "CALIFORNIA HISTORY SS PROJECT"
-      return "CHP"
-    when "UC CENTER SACRAMENTO"
-      return "UCCS"
-    when "HEMISPHERIC INSTITUTE-AMERICAS"
-      return "PHE"
-    when "HISTORY PROJECT", "HISTORY PROJECT UCD"
-      return "HP"
-    when "SOCIAL SCIENCES PROGRAM"
-      return "SSP"
-    when "PHYSICAL EDUCATION PROGRAM"
-      return "PHE"
-    when "DSS RESEARCH SERVICE CENTER"
-      return "RSC"
-    when "GEOGRAPHY"
-      return "GEO"
-    when "ANTHROPOLOGY"
-      return "ANT"
-    when "COMMUNICATION"
-      return "CMN"
-    when "ECONOMICS"
-      return "ECN"
-    when "HISTORY"
-      return "HIS"
-    when "LINGUISTICS"
-      return "LIN"
-    when "MILITARY SCIENCE"
-      return "MSC"
-    when "PHILOSOPHY"
-      return "PHI"
-    when "POLITICAL SCIENCE"
-      return "POL"
-    when "PSYCHOLOGY"
-      return "PSC"
-    when "EASTERN ASIAN STUDIES"
-      return "EAS"
-    when "INTERNATIONAL RELATIONS"
-      return "IRE"
-    when "MIDDLE EAST/SOUTH ASIA STUDIES", "MIDDLE EAST/SOUTH ASIA PROGRAM"
-      return "MSA"
-    when "SCIENCE & TECHNOLOGY STUDIES"
-      return "STS"
-    when "CENTER FOR MIND AND BRAIN", "CENTER FOR MIND & BRAIN"
-      return "CMB"
-    when "SOCIOLOGY"
-      return "SOC"
-    when "COM, PHIL & LIN RED CLUSTER"
-      return "RED"
-    when "POLI SCI, IR ORANGE CLUSTER", "SOCIAL SCIENCE ORANGE CLUSTER"
-      return "ORANGE"
-    when "ECON, HIS, MS BLUE CLUSTER", "SOCIAL SCIENCES BLUE CLUSTER"
-      return "BLUE"
-    when "ANT, SOC GREEN CLUSTER", "SOCIAL SCIENCES GREEN CLUSTER"
-      return "GREEN"
-    when "L&S DEANS - SOCIAL SCIENCES"
-      return "DEANS"
-    when "PSYCH, CMB YELLOW CLUSTER", "SOCIAL SCIENCE YELLOW CLUSTER"
-      return "YELLOW"
-    when "EDUCATION - PH.D."
-      return "EDU"
-    when "COMMUNITY DEVELOPMENT"
-      return "ComDev"
-    when "NEUROSCIENCE", "CENTER FOR NEUROSCIENCE"
-      return "NueroSci"
-    when "CENTER FOR INNOVATION STUDIES"
-      return "CSIS"
-    when "ASUCD", "UC DAVIS", "ASIAN AMERICAN", "UNIVERSITY EXTENSION", "CHEDDAR", "STUDENT EMPLOYMENT CENTER",
-      "TEMPORARY EMPLOYMENT SERVICE", "CAMPUS RECREATION AND UNIONS", "CRESS DEPARTMENT", "LIBRARY", "POLICE",
-      "COMPARATIVE LITERATURE", "PRIMATE CENTER", "L&S DEANS - U/G ED & ADVISING", "STATISTICS",
-      "AGR & ENV SCI DEANS OFFICE", "OFFICE OF THE CHANCELLOR", "UNDERGRADUATE ADMISSIONS",
-      "UNIVERSITY WRITING PROGRAM", "TEXTILES & CLOTHING", "STUDENT HOUSING", "ENGLISH", "ANIMAL SCIENCE",
-      "IRB ADMINISTRATION", "SCHOOL OF LAW-DEANS OFFICE", "STUDENT ACADEMIC SUCCESS CTR", "GERMAN & RUSSIAN",
-      "INTERCOLLEGIATE ATHLETICS", "HUMAN ECOLOGY", "GRADUATE DIVISION", "MED: NEUROLOGY",
-      "ENVIRONMENTAL TOXICOLOGY", "SCHOOL OF MED - STAFF", "L&S DEANS - DEVELOPMENT",
-      "TEMPORARY EMPLOYMENT POOL ADMN", "SCHOOL OF MED - APS", "MED: GENERAL PEDIATRICS",
-      "MED:PSYCHIATRY & BEHAV SCI", "NATIVE AMERICAN STUDIES", "ART", "VP UNDERGRADUATE EDUCATION", "GEOLOGY",
-      "VM: CTR COMPARATIVE MEDICINE", "ENGR COMPUTER SCIENCE", "MED: DIV OF INTERNAL MED",
-      "FM: CUSTODIAL SERVICES", "VOORHIES ADMINISTRATIVE UNIT", "MED: OPHTHALMOLOGY", "MED: PUBLIC HEALTH SCIENCES",
-      "NEURO PHYSIO & BEHAVIOR", "INST OF TRANSPORTATION STUDIES", "ENVIRONMENTAL HEALTH & SAFETY",
-      "MEDIEVAL STUDIES", "EDUCATION", "ACADEMIC AFFAIRS", "ANR SUSTAINABLE AG PROG"
-      return nil
-    else
-      STDERR.puts "AD Sync: Missing OU for translation to container name: #{name}"
-    end
-
-    return false
-  end
-
-  # Converts common affiliations to their AD-mapped equivalents
-  # Returns a match, nil (if we know the affiliation but do not wish to sync it), or
-  # false (if we do not know the affiliation and need to log this missing data).
-  def ActiveDirectoryHelper.flatten_affiliation(affiliation)
-    case affiliation
-    when "faculty:senate"
-      return "faculty"
-    when "faculty:federation"
-      return "lecturer"
-    when "staff"
-      return "staff"
-    when "staff:career"
-      return "staff"
-    when "staff:casual"
-      return "staff"
-    when "staff:contract"
-      return "staff"
-    when "staff:student"
-      return "staff-student"
-    when "student:graduate"
-      return "student-graduate"
-    when "visitor:student:graduate"
-      return "student-graduate"
-    when "faculty"
-      return "faculty"
-    when "student:undergraduate", "student:law", "visitor:consultant", "student:medicine",
-      "visitor:student:concurrent", "visitor:lecturer", "visitor:faculty:research", "visitor:staff:temporary",
-      "visitor:postdoc:research", "visitor:faculty:teaching", "visitor:student", "student:vetmed", "student",
-      "visitor", "visitor:student:extension", "external", "visitor:contractor", "visitor:vendor", "visitor:public-service-partner",
-      "visitor:volunteer"
-      return nil
-    else
-      STDERR.puts "AD Sync: Missing affiliation for translation to container name: #{affiliation}"
-    end
-
-    return false
   end
 end
