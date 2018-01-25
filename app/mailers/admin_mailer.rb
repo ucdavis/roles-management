@@ -1,5 +1,5 @@
 class AdminMailer < ActionMailer::Base
-  default from: ENV['SES_SMTP_FROM_ADDRESS']
+  default from: ENV['SMTP_FROM_ADDRESS'] || Rails.application.secrets['smtp_from_address']
 
   def sync_script_failed(email, job)
     @job = job

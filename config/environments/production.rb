@@ -77,10 +77,10 @@ DSSRM::Application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.smtp_settings = {
-    address: ENV['SES_SMTP_HOST'],
+    address: ENV['SMTP_HOST'] || Rails.application.secrets['smtp_host'],
     port: 587,
-    user_name: ENV['SES_SMTP_USERNAME'],
-    password: ENV['SES_SMTP_PASSWORD'],
+    user_name: ENV['SMTP_USERNAME'] || Rails.application.secrets['smtp_username'],
+    password: ENV['SMTP_PASSWORD'] || Rails.application.secrets['smtp_password'],
     authentication: :login,
     enable_starttls_auto: true
   }
@@ -89,7 +89,7 @@ DSSRM::Application.configure do
   config.middleware.use ExceptionNotification::Rack,
                         email: {
                           email_prefix: '[Roles Management] ',
-                          sender_address: ENV['SES_SMTP_FROM_ADDRESS'],
+                          sender_address: ENV['SMTP_FROM_ADDRESS'] || Rails.application.secrets['smtp_from_address'],
                           exception_recipients: %w[dssit-devs-exceptions@ucdavis.edu]
                         }
 
