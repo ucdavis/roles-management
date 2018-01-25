@@ -23,7 +23,7 @@ module Api
         if params[:loginid]
           @person = LdapPersonHelper.create_or_update_person_by_loginid(params[:loginid], Rails.logger)
 
-          if person
+          if @person
             respond_to do |format|
               format.json { render 'api/v1/people/show' }
             end

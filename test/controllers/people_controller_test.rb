@@ -26,11 +26,11 @@ class PeopleControllerTest < ActionController::TestCase
 
     assert body.include?('role_assignments'), 'JSON response should include role_assignments'
     body['role_assignments'].each do |r|
-      assert r["role_id"], "JSON response's 'role_assignments' section should include a role_id field" # we cannot call it 'id' because Backbone won't add it twice then, which we _do_ want due to a person possibly having a role both explicitly and non-explicitly
-      assert r["token"], "JSON response's 'role_assignments' section should include a token"
-      assert r["name"], "JSON response's 'role_assignments' section should include a name"
-      assert r["application_id"], "JSON response's 'role_assignments' section should include an application_id"
-      assert r.key?("calculated"), "JSON response's 'role_assignments' section should include a calculated flag"
+      assert r['role_id'], "JSON response's 'role_assignments' section should include a role_id field" # we cannot call it 'id' because Backbone won't add it twice then, which we _do_ want due to a person possibly having a role both explicitly and non-explicitly
+      assert r['token'], "JSON response's 'role_assignments' section should include a token"
+      assert r['name'], "JSON response's 'role_assignments' section should include a name"
+      assert r['application_id'], "JSON response's 'role_assignments' section should include an application_id"
+      assert r.key?('calculated'), "JSON response's 'role_assignments' section should include a calculated flag"
     end
   end
 end
