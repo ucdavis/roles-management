@@ -25,6 +25,8 @@ class Group < Entity
   end
 
   def as_json(_options = {})
+    Rails.logger.info 'Group.as_json called'
+    Rails.logger.info caller
     { id: id, name: name, type: 'Group', description: description,
       owners: owners.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
       operators: operators.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
