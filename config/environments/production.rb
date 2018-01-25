@@ -67,7 +67,7 @@ DSSRM::Application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   # Log to STDOUT
-  config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+  # config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
 
   # Force SSL in production
   config.force_ssl = false
