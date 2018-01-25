@@ -9,16 +9,23 @@ class PeopleController < ApplicationController
   def index
     authorize Person
 
+    if @people.count.positive?
+      @cache_key = 'people/' + (params[:q] ? params[:q] : '') +
+                   '/' + @people.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+    end
+
     respond_to do |format|
-      format.json { render json: @people }
+      format.json { render 'people/index' }
     end
   end
 
   def show
     authorize @person
 
+    @cache_key = 'person/' + @person.id.to_s + '/' + @person.updated_at.try(:utc).try(:to_s, :number)
+
     respond_to do |format|
-      format.json { render json: @person }
+      format.json { render 'people/show' }
     end
   end
 
@@ -52,11 +59,11 @@ class PeopleController < ApplicationController
     if params[:loginid]
       require 'dss_dw'
 
-      @p = DssDw.create_or_update_using_dw(params[:loginid])
+      @person = DssDw.create_or_update_using_dw(params[:loginid])
 
-      if @p
+      if @person
         respond_to do |format|
-          format.json { render json: @p }
+          format.json { render 'people/show' }
         end
       else
         logger.error "Could not import person #{params[:loginid]}, no results from DW or error while saving."
@@ -76,7 +83,7 @@ class PeopleController < ApplicationController
 
   def load_person
     @person = Person.find_by_loginid(params[:id])
-    @person = Person.find_by_id!(params[:id]) unless @person
+    @person ||= Person.find_by_id!(params[:id])
   end
 
   def load_people

@@ -44,37 +44,6 @@ class Person < Entity # rubocop:disable Metrics/ClassLength
     Sync.person_removed_from_system(Sync.encode(person))
   end
 
-  def as_json(_options) # rubocop:disable Metrics/AbcSize
-    Rails.logger.info 'Person.as_json called:'
-    Rails.logger.info caller
-    {
-      id: id, name: name, type: 'Person', email: email,
-      loginid: loginid, first: first, last: last,
-      phone: phone, address: address,
-      byline: byline, active: active,
-      role_assignments: role_assignments.includes(:role).map do |a|
-        {
-          id: a.id, calculated: a.parent_id?, entity_id: a.entity_id,
-          role_id: a.role.id, token: a.role.token,
-          application_name: a.role.application.name, application_id: a.role.application_id,
-          name: a.role.name, description: a.role.description
-        }
-      end,
-      favorites: favorites.select { |f| f.active == true }.map { |f| { id: f.id, name: f.name, type: f.type } },
-      group_memberships: group_memberships.includes(:group).map do |m|
-        {
-          id: m.id, group_id: m.group.id, name: m.group.name
-        }
-      end,
-      group_ownerships: group_ownerships.includes(:group).map { |o| {
-        id: o.id, group_id: o.group.id, name: o.group.name }
-      },
-      group_operatorships: group_operatorships.includes(:group).map do |o|
-        { id: o.id, group_id: o.group.id, name: o.group.name }
-      end
-    }
-  end
-
   # For CSV export
   def self.csv_header
     'ID,Login ID,Email,First,Last'.split(',')

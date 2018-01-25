@@ -21,11 +21,11 @@ module Api
 
       def import
         if params[:loginid]
-          person = LdapPersonHelper.create_or_update_person_by_loginid(params[:loginid], Rails.logger)
+          @person = LdapPersonHelper.create_or_update_person_by_loginid(params[:loginid], Rails.logger)
 
           if person
             respond_to do |format|
-              format.json { render json: person }
+              format.json { render 'api/v1/people/show' }
             end
           else
             logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
@@ -48,7 +48,7 @@ module Api
       def load_person
         @params_id = CGI::escapeHTML(params[:id])
         @person = Person.find_by_loginid(@params_id)
-        @person = Person.find_by_id(@params_id) unless @person
+        @person ||= Person.find_by_id(@params_id)
       rescue ActiveRecord::RecordNotFound
         # This exception is acceptable. We catch it to avoid triggering the
         # uncaught exceptions handler in ApplicationController.

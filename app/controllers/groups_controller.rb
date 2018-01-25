@@ -34,7 +34,7 @@ class GroupsController < ApplicationController
     @group.destroy
 
     respond_to do |format|
-      format.json { render json: @group }
+      format.json { render 'groups/show' }
     end
   end
 

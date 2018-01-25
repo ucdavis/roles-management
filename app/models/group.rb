@@ -24,16 +24,6 @@ class Group < Entity
     ActivityLog.info!("Deleted group #{group.name}.", ['system'])
   end
 
-  def as_json(_options = {})
-    Rails.logger.info 'Group.as_json called'
-    Rails.logger.info caller
-    { id: id, name: name, type: 'Group', description: description,
-      owners: owners.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      operators: operators.map { |o| { id: o.id, loginid: o.loginid, name: o.name } },
-      memberships: memberships.includes(:entity).map { |m| { id: m.id, entity_id: m.entity.id, name: m.entity.name, loginid: m.entity.loginid } },
-      rules: rules.map { |r| { id: r.id, column: r.column, condition: r.condition, value: r.value } } }
-  end
-
   # Returns identifying string for logging purposes. Other classes implement this too.
   # Format: (Class name:id,identifying fields)
   def log_identifier
