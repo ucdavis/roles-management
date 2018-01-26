@@ -62,6 +62,8 @@ class PeopleController < ApplicationController
       @person = DssDw.create_or_update_using_dw(params[:loginid])
 
       if @person
+        @cache_key = 'person/' + @person.id.to_s + '/' + @person.updated_at.try(:utc).try(:to_s, :number)
+
         respond_to do |format|
           format.json { render 'people/show' }
         end
