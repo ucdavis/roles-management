@@ -197,6 +197,7 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
                     error: ->
                       toastr.remove()
                       toastr["error"]("Error while adding person or group to favorites.")
+                      DssRm.current_user.favorites.remove e
                     success: ->
                       toastr.remove()
                       toastr["success"]("Person or group successfully added to favorites.")

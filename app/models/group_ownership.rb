@@ -1,10 +1,10 @@
 class GroupOwnership < ApplicationRecord
   validates_presence_of :group, :entity
-  validates_uniqueness_of :entity_id, :scope => :group_id
+  validates_uniqueness_of :entity_id, scope: :group_id
   validate :group_cannot_own_itself
 
-  belongs_to :group, :touch => true
-  belongs_to :entity, :touch => true
+  belongs_to :group, touch: true
+  belongs_to :entity, touch: true
 
   after_save { |ownership| ownership.log_changes(:save) }
   after_destroy { |ownership| ownership.log_changes(:destroy) }
@@ -34,7 +34,7 @@ class GroupOwnership < ApplicationRecord
 
   # Ensure a group does not attempt to own itself
   def group_cannot_own_itself
-    if !group.blank? and group == entity
+    if !group.blank? && group == entity
       errors[:base] << "Group (#{group.id}, #{group.name}) cannot own itself (#{entity.id}, #{entity.name})"
     end
   end
