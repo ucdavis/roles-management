@@ -79,7 +79,8 @@ class ApplicationsController < ApplicationController
       if @application.update_attributes(application_params)
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
-        # format.json { render json: @application }
+        @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
+
         format.json { render 'applications/show', status: :ok }
       else
         logger.error "Applications#update failed. Reason(s): #{@application.errors.full_messages.join(', ')}"
