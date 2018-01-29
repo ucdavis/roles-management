@@ -15,7 +15,8 @@ namespace :person do
       p.save!
     end
 
-    puts "Found and marked inactive #{people.length} people."
+    # Only output if more than 5% of the user database is affected
+    puts "Found and marked inactive #{people.length} people." if people.to_f / Person.count.to_f >= 0.05
   end
 
   desc 'Remove long-inactive people'
@@ -26,6 +27,7 @@ namespace :person do
 
     people.each(&:destroy)
 
-    puts "Found and removed inactive #{people.length} people."
+    # Only output if more than 5% of the user database is affected
+    puts "Found and removed inactive #{people.length} people." if people.to_f / Person.count.to_f >= 0.05
   end
 end
