@@ -7,9 +7,9 @@ GIT
 
 GIT
   remote: https://github.com/dssit/roles-management-api.git
-  revision: 050b9def5494dc9627023f31a038405b19b5d015
+  revision: f3a526351a451164859caed3ef547d050a6d7cd9
   specs:
-    roles-management-api (0.1.3)
+    roles-management-api (0.1.4)
 
 GIT
   remote: https://github.com/rubycas/rubycas-client.git
@@ -65,7 +65,7 @@ GEM
     arel (8.0.0)
     bindex (0.5.0)
     builder (3.2.3)
-    byebug (9.1.0)
+    byebug (10.0.0)
     capistrano (3.7.2)
       airbrussh (>= 1.0.0)
       capistrano-harrow
@@ -146,7 +146,7 @@ GEM
     method_source (0.9.0)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
-    minitest (5.11.1)
+    minitest (5.11.3)
     multi_json (1.13.1)
     net-ldap (0.16.1)
     net-scp (1.2.1)
@@ -154,7 +154,7 @@ GEM
     net-ssh (4.2.0)
     newrelic_rpm (4.7.1.340)
     nio4r (2.2.0)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pg (0.20.0)
     phantomjs (2.1.1.0)
@@ -237,7 +237,7 @@ GEM
     tilt (2.0.8)
     tzinfo (1.2.4)
       thread_safe (~> 0.1)
-    uglifier (4.1.4)
+    uglifier (4.1.5)
       execjs (>= 0.3.0, < 3)
     web-console (3.5.1)
       actionview (>= 5.0)
