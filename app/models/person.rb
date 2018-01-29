@@ -75,15 +75,15 @@ class Person < Entity # rubocop:disable Metrics/ClassLength
   end
 
   # Returns true if this person has access to the RM application in any form
-  def has_access?
+  def has_access? # rubocop:disable Naming/PredicateName
     role_symbols.include?(:admin) || role_symbols.include?(:access)
   end
 
-  def is_admin?
+  def is_admin? # rubocop:disable Naming/PredicateName
     role_symbols.include?(:admin)
   end
 
-  def is_operator?
+  def is_operator? # rubocop:disable Naming/PredicateName
     role_symbols.include?(:operate)
   end
 
