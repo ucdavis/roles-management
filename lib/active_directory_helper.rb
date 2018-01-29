@@ -87,18 +87,12 @@ class ActiveDirectoryHelper
     unless user.is_a? Net::LDAP::Entry
       loginid = user
       user = ActiveDirectory.get_user(loginid)
-      if user.nil?
-        STDERR.puts "ensure_user_in_group failed: could not find user '#{loginid}' in AD"
-        return false
-      end
+      raise UserNotFound, 'Could not find user', caller if user.nil?
     end
     unless group.is_a? Net::LDAP::Entry
       group_name = group
       group = ActiveDirectory.get_group(group_name)
-      if group.nil?
-        STDERR.puts "ensure_user_in_group failed: could not find group '#{group_name}' in AD"
-        return false
-      end
+      raise GroupNotFound, 'Could not find group', caller if group.nil?
     end
 
     # returns true or false
@@ -138,7 +132,13 @@ class ActiveDirectoryHelper
     # Add any role members to the AD group
     role.members.each do |member|
       STDOUT.puts "Ensuring #{member.loginid} is in AD group #{group_name} ..."
-      ActiveDirectoryHelper.ensure_user_in_group(member.loginid, ad_group)
+      begin
+        ActiveDirectoryHelper.ensure_user_in_group(member.loginid, ad_group)
+      rescue ActiveDirectoryHelper::UserNotFound
+        STDERR.puts "User '#{member.loginid}' not found in AD while merging role and AD group"
+      rescue ActiveDirectoryHelper::GroupNotFound
+        STDERR.puts "Group '#{ad_path}' not found in AD while merging role and AD group"
+      end
     end
 
     # Simple flag to avoid unnecessary RM activity

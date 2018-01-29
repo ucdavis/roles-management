@@ -106,7 +106,7 @@ namespace :ad do
         # print "fully synced.\n"
       else
         num_out_of_sync_roles += 1
-        puts "Found out-of-sync, will re-sync: #{role.application.name} / #{role.name} -> #{role.ad_path}"
+        # puts "Found out-of-sync, will re-sync: #{role.application.name} / #{role.name} -> #{role.ad_path}"
         # print "not fully synced:\n"
 
         # puts "\tMembers in AD but not RM (will be removed from AD)"
@@ -118,11 +118,17 @@ namespace :ad do
         # puts "\tMembers in RM but not AD (will be added to AD)"
         (role_members - ad_members).each do |missing|
           # puts "\t\t#{missing} ..."
-          ActiveDirectoryHelper.ensure_user_in_group(missing, ad_group)
+          begin
+            ActiveDirectoryHelper.ensure_user_in_group(missing, ad_group)
+          rescue ActiveDirectoryHelper::UserNotFound
+            # STDERR.puts "User '#{missing}' not found in AD while merging role and AD group"
+          rescue ActiveDirectoryHelper::GroupNotFound
+            # STDERR.puts "Group '#{ad_path}' not found in AD while merging role and AD group"
+          end
         end
       end
     end
 
-    puts "Re-synced #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s)."
+    # puts "Re-synced #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s)."
   end
 end

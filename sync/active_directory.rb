@@ -51,10 +51,17 @@ when 'add_to_role'
   # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
   STDOUT.puts "Adding #{loginid} to role represented in #{ad_path} ..."
   STDOUT.puts "Ensuring #{loginid} is in AD group #{ad_path} ..."
-  if ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_path) == false
-    STDERR.puts "Error occurred while ensuring user '#{loginid}' was in group '#{ad_path}'"
+  
+  begin
+    if ActiveDirectoryHelper.ensure_user_in_group(loginid, ad_path) == false
+      STDERR.puts "Error occurred while ensuring user '#{loginid}' was in group '#{ad_path}'"
+      exit(1)
+    end
+  rescue ActiveDirectoryHelper::UserNotFound, ActiveDirectoryHelper::GroupNotFound
+    STDERR.puts "User or group not found while ensuring user '#{loginid}' was in group '#{ad_path}'"
     exit(1)
   end
+
   if ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_path, application_name, role_name) == false
     STDERR.puts "Error occurred while updating AD group description for '#{ad_path}'"
     exit(1)
