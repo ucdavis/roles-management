@@ -221,11 +221,11 @@ module DssDw
 
   def self.dw_url
     @@DW_URL ||= ENV['DW_URL']
-    @@DW_URL ||= Rails.application.secrets['dw_url']
+    @@DW_URL ||= Rails.application.secrets[:dw_url]
   end
 
   def self.dw_token
     @@DW_TOKEN ||= ENV['DW_TOKEN']
-    @@DW_TOKEN ||= Rails.application.secrets['dw_token']
+    @@DW_TOKEN ||= Rails.application.secrets[:dw_token]
   end
 end

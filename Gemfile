@@ -5,10 +5,10 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem 'rails', '~> 5.0'
+gem 'rails', '~> 5.1'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.7'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -26,7 +26,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'pg', '0.20.0', group: [:production, :development]
 
 # bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.2', group: :doc
+# gem 'sdoc', '~> 0.4.2', group: :doc
 
 group :production do
   gem 'dalli'
@@ -36,8 +36,8 @@ end
 
 group :development do
   gem 'capistrano', '= 3.7.2', require: false
-  gem 'capistrano-rails',   '~> 1.1', require: false
   gem 'capistrano-bundler', '~> 1.1', require: false
+  gem 'capistrano-rails',   '~> 1.1', require: false
   gem 'capistrano-passenger', require: false
   # We use our fork of capistrano3-delayed-job due to a bug in 'daemons' where delayed_job
   # will not stop correctly if not passed the number of workers in the 'stop' command
@@ -46,9 +46,12 @@ group :development do
   gem 'letter_opener'
 end
 
-gem 'spring', group: :development
-gem 'spring-watcher-listen', '~> 2.0.0', group: :development
-gem 'web-console', '>= 3.3.0', group: :development
+group :development do
+  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'spring'
+  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'web-console', '>= 3.3.0'
+end
 
 group :development, :test do
   gem 'byebug', platform: :mri
