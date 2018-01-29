@@ -9,7 +9,6 @@ class Person < Entity # rubocop:disable Metrics/ClassLength
   has_many :affiliation_assignments, dependent: :destroy
   has_many :affiliations, through: :affiliation_assignments
   has_many :group_memberships, foreign_key: 'entity_id', dependent: :destroy
-  has_many :groups, through: :group_memberships, source: :group
   has_many :role_assignments, foreign_key: 'entity_id', dependent: :destroy
   has_many :roles, through: :role_assignments, source: :role, dependent: :destroy
   has_many :favorite_relationships, class_name: 'PersonFavoriteAssignment',
@@ -85,6 +84,15 @@ class Person < Entity # rubocop:disable Metrics/ClassLength
 
   def is_operator? # rubocop:disable Naming/PredicateName
     role_symbols.include?(:operate)
+  end
+
+  # Return groups to which this person belongs, explicitly
+  # or via group rules. Use only_via_rules = true to exclude
+  # explicit memberships.
+  def groups(only_via_rules = false)
+    group_ids = Group.rule_memberships_for_person(id)
+    group_ids += group_memberships.select(:group_id).pluck(:group_id) unless only_via_rules
+    Group.where(id: group_ids.uniq)
   end
 
   # Returns all applications visible to a user

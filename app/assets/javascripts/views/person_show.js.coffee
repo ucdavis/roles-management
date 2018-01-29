@@ -217,7 +217,12 @@ class DssRm.Views.PersonShow extends Backbone.View
           id: membership.get('id')
           name: membership.get('group_name')
           readonly: @readonly || membership.get('calculated')
-          class: (if membership.get('calculated') then "calculated" else "")
+          class: ""
+    @model.groups_via_rules.each (group_via_rule) =>
+      group_membership_tokeninput.tokenInput "add",
+        name: group_via_rule.get('group_name')
+        readonly: true
+        class: "calculated"
 
     organization_association_tokeninput = @$("input[name=organization_associations]")
     organization_association_tokeninput.tokenInput "clear"

@@ -41,6 +41,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_ownerships = new DssRm.Collections.Entities if @group_ownerships is `undefined`
       @group_operatorships = new DssRm.Collections.Entities if @group_operatorships is `undefined`
       @group_memberships = new Backbone.Collection if @group_memberships is `undefined`
+      @groups_via_rules = new Backbone.Collection if @groups_via_rules is `undefined`
       @role_assignments = new DssRm.Collections.RoleAssignments if @role_assignments is `undefined`
       @organizations = new Backbone.Collection if @organizations is `undefined`
 
@@ -49,6 +50,7 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_ownerships.reset @get("group_ownerships")
       @group_operatorships.reset @get("group_operatorships")
       @group_memberships.reset @get("group_memberships")
+      @groups_via_rules.reset @get("groups_via_rules")
       @role_assignments.reset @get("role_assignments")
       @organizations.reset @get("organizations")
 
@@ -100,13 +102,13 @@ DssRm.Models.Entity = Backbone.Model.extend(
       if @group_operatorships.length
         json.group_operatorships_attributes = @group_operatorships.map (operatorship) =>
           id: operatorship.get('id')
-          entity_id: @get('id') #operatorship.get('entity_id')
+          entity_id: @get('id')
           group_id: operatorship.get('group_id')
           _destroy: operatorship.get('_destroy')
       if @group_ownerships.length
         json.group_ownerships_attributes = @group_ownerships.map (ownership) =>
           id: ownership.get('id')
-          entity_id: @get('id') #ownership.get('entity_id')
+          entity_id: @get('id')
           group_id: ownership.get('group_id')
           _destroy: ownership.get('_destroy')
       explicit_role_assignments = @role_assignments.filter (role_assignment) ->

@@ -10,6 +10,11 @@ json.cache! ['entity_show', @cache_key] do
       json.type favorite.entity.type
     end
 
+    json.groups_via_rules @entity.groups(only_via_rules = true) do |group|
+      json.group_id group.id
+      json.group_name group.name
+    end
+
     json.group_memberships @entity.group_memberships do |membership|
       json.group_id membership.group_id
       json.group_name membership.group.name

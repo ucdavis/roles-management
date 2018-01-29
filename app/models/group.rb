@@ -64,12 +64,9 @@ class Group < Entity
                                 .map(&:entity_id)
     end
 
-    logger.debug "Ending step one with #{results.length} results"
-
     # Step Two: AND all groups from step one together
     results = results.inject(results.first) { |sum, n| sum &= n }
     results = [] unless results # reduce/inject may return nil
-    logger.debug "ANDing all results together yields #{results.length} results"
 
     # Step Three: Pass over the result from step two and
     # remove anybody who violates an 'is not' rule
@@ -87,20 +84,50 @@ class Group < Entity
 
     results -= negative_results.flatten.uniq
 
-    logger.debug "Removing any 'is not' violates yielded #{results.length} results"
-
     # Step Four: Process any 'loginid is' rules
     rules.select { |r| r.condition == 'is' && r.column == 'loginid' }.each do |rule|
       logger.debug "Processing loginid is rule #{rule.value}..."
       results << rule.result_set.results.map(&:entity_id)
     end
 
-    logger.debug "'Login ID is' additions yields #{results.length} results"
-
     results.flatten!
 
-    logger.debug "Calculated #{results.length} results"
-
     return results # rubocop:disable Style/RedundantReturn
+  end
+
+  def Group.rule_memberships_for_person(person_id)
+    # Find all Groups excluding person_id via 'is not' rules
+    excluded_group_ids = GroupRule.where(group_rule_set_id: GroupRuleResult.where(entity_id: person_id)
+                                                      .select(:group_rule_set_id)
+                                                      .map(&:group_rule_set_id))
+                                  .where(condition: 'is not')
+                                  .select(:group_id).pluck(:group_id).uniq
+
+    # Find all GroupRules matching person_id via 'is' rules, groupped by group_id, excluding known
+    # 'is not' rules
+    matches = GroupRule.where(group_rule_set_id: GroupRuleResult.where(entity_id: person_id)
+                                                      .select(:group_rule_set_id)
+                                                      .map(&:group_rule_set_id))
+                       .where(condition: 'is')
+                       .where.not(group_id: excluded_group_ids)
+                       .select(:group_id, :column)
+                       .map { |gr| { group_id: gr.group_id, column: gr.column } }
+                       .group_by { |g| g[:group_id] }
+
+    group_ids = []
+
+    # Finally, ensure person_id meets all rules to be in 'matches'
+    matches.each do |group_id, rule_matches|
+      # Count the number of 'is' group rules for this group and for each unique column type
+      uniq_is_column_count = GroupRule.where(group_id: group_id).where(condition: 'is').select(:column).distinct.count
+
+      # Count the number of 'is' matches for this group, for this person, for each unique column type
+      person_uniq_is_column_count = rule_matches.map { |m| m[:column] }.uniq.length
+
+      # In order to match this group, we must match each distinct column type as well (as 'is' rules are ANDed together)
+      group_ids << group_id if uniq_is_column_count == person_uniq_is_column_count
+    end
+
+    return group_ids # rubocop:disable Style/RedundantReturn
   end
 end
