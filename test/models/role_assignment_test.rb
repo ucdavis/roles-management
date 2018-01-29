@@ -21,8 +21,9 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     assert @person.group_memberships.length == 0, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    @person.groups << group
-    assert @person.group_memberships.length == 1, "unable to add test user to group"
+    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    @person.reload
+    assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
     @person.reload # Need to reload the person for the role assignment created in the RoleAssignment after_save callback to take effect
 
@@ -90,8 +91,9 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     assert @person.group_memberships.length == 0, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    @person.groups << group
-    assert @person.group_memberships.length == 1, "unable to add test user to group"
+    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    @person.reload
+    assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
     group.reload
 
@@ -143,8 +145,9 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     assert @person.group_memberships.length == 0, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    @person.groups << group
-    assert @person.group_memberships.length == 1, "unable to add test user to group"
+    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    @person.reload
+    assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
     group.reload
 
