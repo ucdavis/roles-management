@@ -2,6 +2,8 @@
 # Used as a cache for quickly recalculating groups when not every rule
 # has changed.
 class GroupRuleResult < ApplicationRecord
+  include Immutable
+
   belongs_to :group_rule_set
   belongs_to :entity
 

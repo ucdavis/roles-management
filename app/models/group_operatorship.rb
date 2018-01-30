@@ -1,17 +1,19 @@
 class GroupOperatorship < ApplicationRecord
+  include Immutable
+
   validates_presence_of :group, :entity
   validate :group_cannot_operate_itself
 
-  belongs_to :group, :touch => true
-  belongs_to :entity, :touch => true
-  
+  belongs_to :group, touch: true
+  belongs_to :entity, touch: true
+
   before_destroy { |operatorship| operatorship.group.touch && operatorship.entity.touch } # workaround for Rails bug
-  
+
   after_save { |operatorship| operatorship.log_changes(:save) }
   after_destroy { |operatorship| operatorship.log_changes(:destroy) }
-  
+
   protected
-  
+
   # Explicitly log that this group operatorship was created or destroyed
   def log_changes(action)
     Rails.logger.tagged "GroupOperatorship #{id}" do
@@ -35,8 +37,8 @@ class GroupOperatorship < ApplicationRecord
 
   # Ensure a group does not attempt to operate itself
   def group_cannot_operate_itself
-    if !group.blank? and group == entity
-      errors[:base] << "Group cannot operate itself"
+    if !group.blank? && group == entity
+      errors[:base] << 'Group cannot operate itself'
     end
   end
 end

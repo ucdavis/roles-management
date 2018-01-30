@@ -1,4 +1,6 @@
 class PpsAssociation < ApplicationRecord
+  include Immutable
+
   belongs_to :person
   belongs_to :title
   belongs_to :department

@@ -1,4 +1,6 @@
 class ApplicationOwnership < ApplicationRecord
+  include Immutable
+
   belongs_to :application, touch: true
   belongs_to :entity, touch: true
 

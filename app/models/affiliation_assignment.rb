@@ -1,4 +1,6 @@
 class AffiliationAssignment < ApplicationRecord
+  include Immutable
+
   belongs_to :affiliation, touch: true
   belongs_to :person, touch: true
 

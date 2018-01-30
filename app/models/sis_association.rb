@@ -1,4 +1,6 @@
 class SisAssociation < ApplicationRecord
+  include Immutable
+
   belongs_to :entity
   belongs_to :major
 
