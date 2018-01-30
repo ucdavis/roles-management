@@ -140,7 +140,7 @@ module Sync
       return { id: obj.id, name: obj.name }
     end
 
-    return nil
+    return nil # rubocop:disable Style/RedundantReturn
   end
 
   def Sync.logger
@@ -162,7 +162,7 @@ module Sync
     sync_json = {
       config_path: Rails.root.join('sync', 'config').to_s,
       mode: sync_mode,
-      requested_at: DateTime.now
+      requested_at: DateTime.now # rubocop:disable Style/DateTime
     }.merge(opts)
 
     if sync_mode == :role_change
@@ -184,9 +184,9 @@ module Sync
     if Rails.env.development?
       # In development mode, only run the test script (simply prints job details to STDOUT).
       # This is to avoid accidentally modifying Active Directory, SysAid, etc.
-      Dir[Rails.root.join("sync", "test.rb")]
+      Dir[Rails.root.join('sync', 'test.rb')]
     else
-      Dir[Rails.root.join("sync", "*")].select{ |f| File.file?(f) }
+      Dir[Rails.root.join('sync', '*')].select { |f| File.file?(f) }
     end
   end
 end

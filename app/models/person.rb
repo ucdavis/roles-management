@@ -3,7 +3,7 @@ require 'sync'
 # Person shares many attributes with entity.
 # Note that the 'name' field is simply self.first + " " + self.last
 # and is thus read-only. The same does not apply for groups.
-class Person < Entity # rubocop:disable Metrics/ClassLength
+class Person < Entity
   include RmBuiltinRoles
 
   has_many :affiliation_assignments, dependent: :destroy
@@ -32,7 +32,7 @@ class Person < Entity # rubocop:disable Metrics/ClassLength
 
   before_save  :set_name_if_blank
   after_save   :recalculate_group_rule_membership
-  after_save   :trigger_sync_as_needed
+  after_save   :trigger_sync_if_active_toggled
 
   after_create do |person|
     ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
@@ -141,7 +141,7 @@ class Person < Entity # rubocop:disable Metrics/ClassLength
 
   # If a person goes from inactive to active, we need to ensure
   # any role_assignment or group views are touched correctly.
-  def trigger_sync_as_needed # rubocop:disable Metrics/AbcSize
+  def trigger_sync_if_active_toggled # rubocop:disable Metrics/AbcSize
     return unless saved_change_to_attribute?(:active)
 
     role_assignments.each(&:touch)

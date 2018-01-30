@@ -37,8 +37,8 @@ class Entity < ApplicationRecord
 
     lines.each do |line|
       next if line.start_with? '#'
-      parts = line.split(" - ")
-      performed_at = DateTime.parse(parts[0])
+      parts = line.split(' - ')
+      performed_at = DateTime.parse(parts[0]) # rubocop:disable Style/DateTime
       message = parts[2]
       next if message.strip == 'Logged in.'
       activity.push OpenStruct.new(performed_at: performed_at, message: message)

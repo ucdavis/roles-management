@@ -1,18 +1,11 @@
 require 'sync'
 
-# RoleAssignment may be calculated, in which case they need to be destroyed only by the proper method,
-# e.g. through a group. A group accomplishes this by using the destroying_calculated_role_assignment do ... end
-# block method below.
 class RoleAssignment < ApplicationRecord
   belongs_to :role, touch: true
   belongs_to :entity, touch: true
 
   validates :role, :entity, presence: true
-  #BUGME: validates_uniqueness_of causes update_attributes to return nil but no errors!
-  #validates_uniqueness_of :role_id, :scope => [:entity_id, :parent_id]
   validate :parent_must_exist_if_set
-
-  before_destroy :cannot_destroy_calculated_assignment_without_flag
 
   # Though this seems like 'group' logic, it must be done in this 'join table' class
   # as role assignments can be created by e.g. saving an application with roles_attributes
@@ -61,14 +54,9 @@ class RoleAssignment < ApplicationRecord
       when :save
         if saved_change_to_attribute?(:created_at)
           logger.info "Created redundant-type assignment between #{entity.log_identifier} and #{role.log_identifier}."
-        else
-          # RoleAssignments should really only be created or destroyed, not updated.
-          logger.error "log_changes called for existing RoleAssignment. This shouldn't happen. Assignment is between #{entity.log_identifier} and #{role.log_identifier}."
         end
       when :destroy
         logger.info "Removed redundant-type assignment between #{entity.log_identifier} and #{role.log_identifier}."
-      else
-        logger.warn "Unknown action in log_changes #{action}."
       end
     end
   end
@@ -113,9 +101,7 @@ class RoleAssignment < ApplicationRecord
         logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
         ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(role.id, m.id, self.id)
         if ra
-          destroying_calculated_role_assignment do
-            ra.destroy!
-          end
+          ra.destroy!
         else
           logger.warn "Failed to remove role (#{role.id}, #{role.token}, #{role.application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that role."
         end
@@ -123,26 +109,10 @@ class RoleAssignment < ApplicationRecord
     end
   end
 
-  def cannot_destroy_calculated_assignment_without_flag
-    if parent_id && !Thread.current[:role_assignment_destroying_calculated_flag]
-      errors.add(:parent_id, "can't destroy a calculated role assignment without flag properly set")
-      return false
-    end
-  end
-
   def parent_must_exist_if_set
     if parent_id && RoleAssignment.find_by_id(parent_id).nil?
       errors.add(:parent_id, 'parent_id must be a valid RoleAssignment')
-      return false
+      return false # rubocop:disable Style/RedundantReturn
     end
-  end
-end
-
-def destroying_calculated_role_assignment
-  begin
-    Thread.current[:role_assignment_destroying_calculated_flag] = true
-    yield
-  ensure
-    Thread.current[:role_assignment_destroying_calculated_flag] = nil
   end
 end

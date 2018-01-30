@@ -93,9 +93,7 @@ class GroupMembership < ApplicationRecord
           logger.info "Removing role (#{ra.role_id}, #{ra.role.token}, App ID #{ra.role.application_id}) from leaving group member (#{entity.id}/#{entity.name} leaving #{group.id}/#{group.name})"
           member_ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(ra.role_id, entity.id, ra.id)
           if member_ra
-            destroying_calculated_role_assignment do
-              member_ra.destroy!
-            end
+            member_ra.destroy!
           else
             logger.warn "Failed to remove role (#{ra.role_id}, #{ra.role.token}, App ID #{ra.role.application_id}) assigned to leaving group member (#{entity.id}/#{entity.name}. Could not find in database."
           end
