@@ -47,4 +47,15 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     @person.reload
     assert @person.roles.empty?, 'role removed from group should have been removed from group member'
   end
+
+  test 'role assignments are immutable' do
+    ra = RoleAssignment.new
+    ra.entity_id = @person.id
+    ra.role_id = roles(:boring_role).id
+    ra.save!
+
+    ra.role_id = 123
+    assert ra.valid? == false
+    assert ra.errors[:base][0].include? 'role_assignment.attributes.base.immutable'
+  end
 end
