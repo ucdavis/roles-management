@@ -365,14 +365,14 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   end
 
   test 'person attribute modification resulting in removal from automatic group triggers sync' do
-    assert true
+    assert false
   end
 
   test 'person attribute modification resulting in addition to automatic group triggers sync' do
-    assert true
+    assert false
   end
 
   test 'changing attributes of a group rule triggers sync' do
-    assert true
+    assert false
   end
 end
