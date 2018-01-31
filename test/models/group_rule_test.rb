@@ -545,6 +545,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       group.rules << group_rule
 
       group.reload
+      group_last_updated_at = group.updated_at
 
       assert group.members.length == expected_member_count, "group should have #{expected_member_count} member(s)"
 
@@ -553,12 +554,16 @@ class GroupRuleTest < ActiveSupport::TestCase
 
       Rails.logger.debug 'Checking that group has no members ...'
       group.reload
+      assert group.updated_at > group_last_updated_at, 'group should have been touched'
+      group_last_updated_at = group.updated_at
       assert group.members.empty?, "group should have no members but has #{group.members.count}"
 
       Rails.logger.debug 'Calling setup again ...'
       setup_match.call()
 
       group.reload
+      assert group.updated_at > group_last_updated_at, 'group should have been touched'
+      group_last_updated_at = group.updated_at
 
       assert group.members.length == expected_member_count, "group should have #{expected_member_count} member(s)"
     end

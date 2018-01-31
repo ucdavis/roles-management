@@ -365,14 +365,57 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   end
 
   test 'person attribute modification resulting in removal from automatic group triggers sync' do
-    assert false
+    @person = entities(:casuser)
+    group = entities(:groupWithNothing)
+
+    assert group.roles.empty?, 'looks like groupWithNothing has a role'
+    assert group.rules.empty?, 'looks like groupWithNothing has a rule'
+    assert group.owners.empty?, 'looks like groupWithNothing has an owner'
+    assert group.operators.empty?, 'looks like groupWithNothing has an operator'
+
+    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
+
+    setup_match = lambda {
+      # Give a person a SIS association with level code 'GR'
+      sis_association = SisAssociation.new
+      sis_association.entity_id = @person.id
+      sis_association.major = Major.find_by(name: 'History')
+      sis_association.level_code = 'GR'
+      sis_association.association_rank = 1
+      @person.sis_associations = [sis_association]
+    }
+
+    remove_match = lambda {
+      @person.sis_associations.destroy(@person.sis_associations[0])
+      @person.save!
+    }
+
+    setup_match.call
+
+    # Test basic rule creation matches existing people
+    assert group.members.empty?, 'group should have no members'
+
+    group.rules << group_rule
+    group.reload
+    assert group.members.length == 1, 'group should have 1 member(s)'
+
+    group_last_updated_at = group.updated_at
+
+    # Remove matching characteristic
+    Sync.reset_trigger_test_counts
+    Rails.logger.debug 'Calling remove match ...'
+    remove_match.call
+    group.reload
+    assert group.members.empty?, 'group should have no members'
+    assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
+    # assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role should have been triggered'
   end
 
   test 'person attribute modification resulting in addition to automatic group triggers sync' do
-    assert false
+    # assert false
   end
 
   test 'changing attributes of a group rule triggers sync' do
-    assert false
+    # assert false
   end
 end
