@@ -264,7 +264,6 @@ class GroupRuleResultSet < ApplicationRecord
     audit_role_ids.flatten.uniq.each do |role_id|
       logger.debug "Alerting role #{role_id} to audit ..."
       role = Role.find_by(id: role_id)
-      byebug if role.nil?
       Sync.role_audit(Sync.encode(role, true))
     end
   end
