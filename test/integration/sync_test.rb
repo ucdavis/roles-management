@@ -418,4 +418,12 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   test 'changing attributes of a group rule triggers sync' do
     # assert false
   end
+
+  test 'adding group rule via HTTP triggers role_audit' do
+    # assert false
+  end
+
+  test 'removing group rule via HTTP triggers role_audit' do
+    # assert false
+  end
 end

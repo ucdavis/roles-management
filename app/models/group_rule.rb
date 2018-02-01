@@ -16,7 +16,7 @@ class GroupRule < ApplicationRecord
   belongs_to :group, touch: true
   # result_set isn't optional but we don't want to create result_sets during validation in case
   # validation fails and we end up creating a dangling result set.
-  belongs_to :result_set, class_name: 'GroupRuleSet', foreign_key: 'group_rule_set_id', optional: true
+  belongs_to :result_set, class_name: 'GroupRuleResultSet', foreign_key: 'group_rule_result_set_id', optional: true
 
   before_save   :link_result_set
   after_destroy :alert_ruleset
@@ -38,7 +38,7 @@ class GroupRule < ApplicationRecord
     return unless column_changed? || condition_changed? || value_changed?
     return unless column.present? && condition.present? && value.present?
 
-    grs = GroupRuleSet.find_or_create_by(
+    grs = GroupRuleResultSet.find_or_create_by(
       column: column,
       condition: condition == 'is',
       value: value
@@ -51,8 +51,9 @@ class GroupRule < ApplicationRecord
     self.result_set = grs
   end
 
-  # Alert the GroupRuleSet in case it needs to destroy itself
+  # Alert the GroupRuleResultSet in case it needs to destroy itself
   def alert_ruleset
+    result_set&.update_results
     result_set&.destroy_if_unused
   end
 end

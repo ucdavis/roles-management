@@ -153,6 +153,50 @@ when 'role_change'
 
   exit(0)
 
+when 'role_audit'
+  ad_path = @sync_data['role']['ad_path']
+  role_members = @sync_data['role']['members']
+  application_name = @sync_data['role']['application_name']
+  role_name = @sync_data['role']['role_name']
+
+  ad_group = ActiveDirectory.get_group(ad_path)
+
+  unless ad_group.is_a? Net::LDAP::Entry
+    STDERR.puts "Error syncing role. Could not retrieve '#{ad_path}' from AD."
+    exit(1)
+  end
+
+  ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_group, application_name, role_name)
+
+  ad_members = ActiveDirectory.list_group_members(ad_group)
+  # role_members = role.members.select { |m| m.active == true }.map(&:loginid)
+
+  if ad_members.sort == role_members.sort
+    STDOUT.puts 'Role is already fully synced.'
+    exit(0)
+  else
+    STDOUT.puts 'Role is out-of-sync. Updating ...'
+
+    # Members in AD but not RM (will be removed from AD)
+    (ad_members - role_members).each do |missing|
+      STDOUT.puts "\tRemoving from AD: #{missing}"
+      ActiveDirectoryHelper.ensure_user_not_in_group(missing, ad_group)
+    end
+
+    # Members in RM but not AD (will be added to AD)
+    (role_members - ad_members).each do |missing|
+      STDOUT.puts "\tAdding to AD: #{missing}"
+      begin
+        ActiveDirectoryHelper.ensure_user_in_group(missing, ad_group)
+      rescue ActiveDirectoryHelper::UserNotFound
+        STDOUT.puts "User '#{missing}' not found in AD while merging role and AD group"
+      rescue ActiveDirectoryHelper::GroupNotFound
+        STDOUT.puts "Group '#{ad_path}' not found in AD while merging role and AD group"
+      end
+    end
+  end
+
+  exit(0)
 else
   abort "This script does not understand sync mode: #{@sync_data['mode']}"
 end

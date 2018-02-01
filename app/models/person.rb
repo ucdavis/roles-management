@@ -130,11 +130,11 @@ class Person < Entity
   end
 
   def recalculate_group_rule_membership
-    GroupRuleSet.update_results_for(:loginid, id) if saved_change_to_attribute?(:loginid)
-    GroupRuleSet.update_results_for(:is_staff, id) if saved_change_to_attribute?(:is_staff)
-    GroupRuleSet.update_results_for(:is_student, id) if saved_change_to_attribute?(:is_student)
-    GroupRuleSet.update_results_for(:is_employee, id) if saved_change_to_attribute?(:is_employee)
-    GroupRuleSet.update_results_for(:is_faculty, id) if saved_change_to_attribute?(:is_faculty)
+    GroupRuleResultSet.update_results_for(:loginid, id) if saved_change_to_attribute?(:loginid)
+    GroupRuleResultSet.update_results_for(:is_staff, id) if saved_change_to_attribute?(:is_staff)
+    GroupRuleResultSet.update_results_for(:is_student, id) if saved_change_to_attribute?(:is_student)
+    GroupRuleResultSet.update_results_for(:is_employee, id) if saved_change_to_attribute?(:is_employee)
+    GroupRuleResultSet.update_results_for(:is_faculty, id) if saved_change_to_attribute?(:is_faculty)
   end
 
   private

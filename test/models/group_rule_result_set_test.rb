@@ -1,7 +1,7 @@
 require 'test_helper'
 
-class GroupRuleSetTest < ActiveSupport::TestCase
-  test 'destroying the last GroupRule to use a GroupRuleSet destroys the GroupRuleSet' do
+class GroupRuleResultSetTest < ActiveSupport::TestCase
+  test 'destroying the last GroupRule to use a GroupRuleResultSet destroys the GroupRuleResultSet' do
     # Ensure a group has a rule
     group = entities(:groupWithNothing)
 
@@ -18,13 +18,13 @@ class GroupRuleSetTest < ActiveSupport::TestCase
 
     result_set_id = group_rule.result_set.id
 
-    assert GroupRuleSet.find_by_id(result_set_id).present?, 'rule set should exist'
+    assert GroupRuleResultSet.find_by_id(result_set_id).present?, 'rule set should exist'
 
     group.rules.destroy(group_rule)
     group.reload
 
     assert group.rules.empty?, 'group should have no rules'
 
-    assert GroupRuleSet.find_by_id(result_set_id).nil?, 'rule set should no longer exist'
+    assert GroupRuleResultSet.find_by_id(result_set_id).nil?, 'rule set should no longer exist'
   end
 end

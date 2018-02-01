@@ -110,7 +110,21 @@ module Sync
     if Rails.env.test?
       @@trigger_test_counts[:role_change] += 1
     else
-      perform_sync(:role_change, job_uuid, role_obj )
+      perform_sync(:role_change, job_uuid, role_obj)
+    end
+  end
+
+  # Triggered to audit a role.
+  # This is typically triggered by the 'sync_recently_touched_groups' task.
+  def Sync.role_audit(role_obj)
+    job_uuid = SecureRandom.uuid
+
+    Sync.logger.info "#{job_uuid}: Sync will respond to role audit request for Role ##{role_obj[:id]} (#{role_obj[:application_name]}, #{role_obj[:token]})"
+
+    if Rails.env.test?
+      @@trigger_test_counts[:role_audit] += 1
+    else
+      perform_sync(:role_audit, job_uuid, role_obj)
     end
   end
 
@@ -136,8 +150,6 @@ module Sync
       return { id: obj.id, name: obj.name, first: obj.first, last: obj.last, loginid: obj.loginid,
                email: obj.email, address: obj.address, phone: obj.phone,
                affiliations: obj.affiliations.map(&:name) }
-    when Organization
-      return { id: obj.id, name: obj.name }
     end
 
     return nil # rubocop:disable Style/RedundantReturn
@@ -165,7 +177,7 @@ module Sync
       requested_at: DateTime.now # rubocop:disable Style/DateTime
     }.merge(opts)
 
-    if sync_mode == :role_change
+    if (sync_mode == :role_change) || (sync_mode == :role_audit)
       sync_json[:role] = sync_obj
     else
       sync_json[:person] = sync_obj
@@ -181,7 +193,7 @@ module Sync
   end
 
   def sync_scripts
-    if Rails.env.development?
+    if Rails.env.development? && false
       # In development mode, only run the test script (simply prints job details to STDOUT).
       # This is to avoid accidentally modifying Active Directory, SysAid, etc.
       Dir[Rails.root.join('sync', 'test.rb')]

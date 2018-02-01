@@ -52,15 +52,15 @@ class Group < Entity
     #           Note: we ignore the 'loginid' column as it is calculated separately
     # Produce an array of arrays: outer array items represent each column type used, inner arrays are all group rule IDs for that specific column type
     # e.g. id: 1 "organization is", id: 2 "organization is", id: 3 "department is" produces: [ [1,2] , [3] ]
-    GroupRule.select(:group_rule_set_id, :column)
+    GroupRule.select(:group_rule_result_set_id, :column)
              .where(group_id: id)
              .where(condition: 'is')
              .where.not(column: 'loginid')
              .group_by(&:column)
-             .map { |set| set[1].map(&:group_rule_set_id) }.each do |rule_set_id|
+             .map { |set| set[1].map(&:group_rule_result_set_id) }.each do |rule_set_id|
       results << GroupRuleResult.select(:entity_id)
-                                .joins(:group_rule_set)
-                                .where(group_rule_set_id: rule_set_id)
+                                .joins(:group_rule_result_set)
+                                .where(group_rule_result_set_id: rule_set_id)
                                 .map(&:entity_id)
     end
 
@@ -71,14 +71,14 @@ class Group < Entity
     # Step Three: Pass over the result from step two and
     # remove anybody who violates an 'is not' rule
     negative_results = []
-    GroupRule.select(:group_rule_set_id, :column)
+    GroupRule.select(:group_rule_result_set_id, :column)
              .where(group_id: id)
              .where(condition: 'is not')
              .group_by(&:column)
-             .map { |set| set[1].map(&:group_rule_set_id) }.each do |rule_set_id|
+             .map { |set| set[1].map(&:group_rule_result_set_id) }.each do |rule_set_id|
       negative_results << GroupRuleResult.select(:entity_id)
-                                         .joins(:group_rule_set)
-                                         .where(group_rule_set_id: rule_set_id)
+                                         .joins(:group_rule_result_set)
+                                         .where(group_rule_result_set_id: rule_set_id)
                                          .map(&:entity_id)
     end
 
@@ -97,17 +97,17 @@ class Group < Entity
 
   def Group.rule_memberships_for_person(person_id)
     # Find all Groups excluding person_id via 'is not' rules
-    excluded_group_ids = GroupRule.where(group_rule_set_id: GroupRuleResult.where(entity_id: person_id)
-                                                      .select(:group_rule_set_id)
-                                                      .map(&:group_rule_set_id))
+    excluded_group_ids = GroupRule.where(group_rule_result_set_id: GroupRuleResult.where(entity_id: person_id)
+                                                      .select(:group_rule_result_set_id)
+                                                      .map(&:group_rule_result_set_id))
                                   .where(condition: 'is not')
                                   .select(:group_id).pluck(:group_id).uniq
 
     # Find all GroupRules matching person_id via 'is' rules, groupped by group_id, excluding known
     # 'is not' rules
-    matches = GroupRule.where(group_rule_set_id: GroupRuleResult.where(entity_id: person_id)
-                                                      .select(:group_rule_set_id)
-                                                      .map(&:group_rule_set_id))
+    matches = GroupRule.where(group_rule_result_set_id: GroupRuleResult.where(entity_id: person_id)
+                                                      .select(:group_rule_result_set_id)
+                                                      .map(&:group_rule_result_set_id))
                        .where(condition: 'is')
                        .where.not(group_id: excluded_group_ids)
                        .select(:group_id, :column)

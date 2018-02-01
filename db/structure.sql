@@ -28,98 +28,6 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: activity_log_tag_associations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE activity_log_tag_associations (
-    id integer NOT NULL,
-    activity_log_id integer,
-    activity_log_tag_id integer
-);
-
-
---
--- Name: activity_log_tag_associations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE activity_log_tag_associations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: activity_log_tag_associations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE activity_log_tag_associations_id_seq OWNED BY activity_log_tag_associations.id;
-
-
---
--- Name: activity_log_tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE activity_log_tags (
-    id integer NOT NULL,
-    tag character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: activity_log_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE activity_log_tags_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: activity_log_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE activity_log_tags_id_seq OWNED BY activity_log_tags.id;
-
-
---
--- Name: activity_logs; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE activity_logs (
-    id integer NOT NULL,
-    message character varying(255),
-    performed_at timestamp without time zone,
-    level integer
-);
-
-
---
--- Name: activity_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE activity_logs_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: activity_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE activity_logs_id_seq OWNED BY activity_logs.id;
-
-
---
 -- Name: affiliation_assignments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -613,12 +521,45 @@ ALTER SEQUENCE group_operatorships_id_seq OWNED BY group_operatorships.id;
 
 
 --
+-- Name: group_rule_result_sets; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE group_rule_result_sets (
+    id bigint NOT NULL,
+    "column" character varying,
+    condition boolean,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: group_rule_result_sets_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE group_rule_result_sets_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: group_rule_result_sets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE group_rule_result_sets_id_seq OWNED BY group_rule_result_sets.id;
+
+
+--
 -- Name: group_rule_results; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE group_rule_results (
     id integer NOT NULL,
-    group_rule_set_id integer,
+    group_rule_result_set_id integer,
     entity_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -645,39 +586,6 @@ ALTER SEQUENCE group_rule_results_id_seq OWNED BY group_rule_results.id;
 
 
 --
--- Name: group_rule_sets; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE group_rule_sets (
-    id bigint NOT NULL,
-    "column" character varying,
-    condition boolean,
-    value character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: group_rule_sets_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE group_rule_sets_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: group_rule_sets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE group_rule_sets_id_seq OWNED BY group_rule_sets.id;
-
-
---
 -- Name: group_rules; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -689,7 +597,7 @@ CREATE TABLE group_rules (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     group_id integer,
-    group_rule_set_id integer
+    group_rule_result_set_id integer
 );
 
 
@@ -741,167 +649,6 @@ CREATE SEQUENCE majors_id_seq
 --
 
 ALTER SEQUENCE majors_id_seq OWNED BY majors.id;
-
-
---
--- Name: organization_entity_associations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE organization_entity_associations (
-    id integer NOT NULL,
-    organization_id integer,
-    entity_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    title_id integer
-);
-
-
---
--- Name: organization_entity_associations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE organization_entity_associations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: organization_entity_associations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE organization_entity_associations_id_seq OWNED BY organization_entity_associations.id;
-
-
---
--- Name: organization_managers; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE organization_managers (
-    id integer NOT NULL,
-    organization_id integer,
-    manager_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: organization_managers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE organization_managers_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: organization_managers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE organization_managers_id_seq OWNED BY organization_managers.id;
-
-
---
--- Name: organization_org_ids; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE organization_org_ids (
-    id integer NOT NULL,
-    organization_id integer,
-    org_id character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: organization_org_ids_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE organization_org_ids_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: organization_org_ids_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE organization_org_ids_id_seq OWNED BY organization_org_ids.id;
-
-
---
--- Name: organization_parent_ids; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE organization_parent_ids (
-    id integer NOT NULL,
-    organization_id integer,
-    parent_org_id integer DEFAULT 1,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: organization_parent_ids_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE organization_parent_ids_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: organization_parent_ids_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE organization_parent_ids_id_seq OWNED BY organization_parent_ids.id;
-
-
---
--- Name: organizations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE organizations (
-    id integer NOT NULL,
-    name character varying(255),
-    dept_code character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: organizations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE organizations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: organizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE organizations_id_seq OWNED BY organizations.id;
 
 
 --
@@ -1148,66 +895,6 @@ ALTER SEQUENCE tracked_items_id_seq OWNED BY tracked_items.id;
 
 
 --
--- Name: versions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE versions (
-    id integer NOT NULL,
-    versioned_id integer,
-    versioned_type character varying(255),
-    user_id integer,
-    user_type character varying(255),
-    user_name character varying(255),
-    modifications text,
-    number integer,
-    reverted_from integer,
-    tag character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: versions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE versions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: versions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE versions_id_seq OWNED BY versions.id;
-
-
---
--- Name: activity_log_tag_associations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY activity_log_tag_associations ALTER COLUMN id SET DEFAULT nextval('activity_log_tag_associations_id_seq'::regclass);
-
-
---
--- Name: activity_log_tags id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY activity_log_tags ALTER COLUMN id SET DEFAULT nextval('activity_log_tags_id_seq'::regclass);
-
-
---
--- Name: activity_logs id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY activity_logs ALTER COLUMN id SET DEFAULT nextval('activity_logs_id_seq'::regclass);
-
-
---
 -- Name: affiliation_assignments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1306,17 +993,17 @@ ALTER TABLE ONLY group_ownerships ALTER COLUMN id SET DEFAULT nextval('group_man
 
 
 --
+-- Name: group_rule_result_sets id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rule_result_sets ALTER COLUMN id SET DEFAULT nextval('group_rule_result_sets_id_seq'::regclass);
+
+
+--
 -- Name: group_rule_results id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY group_rule_results ALTER COLUMN id SET DEFAULT nextval('group_rule_results_id_seq'::regclass);
-
-
---
--- Name: group_rule_sets id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY group_rule_sets ALTER COLUMN id SET DEFAULT nextval('group_rule_sets_id_seq'::regclass);
 
 
 --
@@ -1331,41 +1018,6 @@ ALTER TABLE ONLY group_rules ALTER COLUMN id SET DEFAULT nextval('group_rules_id
 --
 
 ALTER TABLE ONLY majors ALTER COLUMN id SET DEFAULT nextval('majors_id_seq'::regclass);
-
-
---
--- Name: organization_entity_associations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organization_entity_associations ALTER COLUMN id SET DEFAULT nextval('organization_entity_associations_id_seq'::regclass);
-
-
---
--- Name: organization_managers id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organization_managers ALTER COLUMN id SET DEFAULT nextval('organization_managers_id_seq'::regclass);
-
-
---
--- Name: organization_org_ids id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organization_org_ids ALTER COLUMN id SET DEFAULT nextval('organization_org_ids_id_seq'::regclass);
-
-
---
--- Name: organization_parent_ids id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organization_parent_ids ALTER COLUMN id SET DEFAULT nextval('organization_parent_ids_id_seq'::regclass);
-
-
---
--- Name: organizations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organizations ALTER COLUMN id SET DEFAULT nextval('organizations_id_seq'::regclass);
 
 
 --
@@ -1415,37 +1067,6 @@ ALTER TABLE ONLY titles ALTER COLUMN id SET DEFAULT nextval('titles_id_seq'::reg
 --
 
 ALTER TABLE ONLY tracked_items ALTER COLUMN id SET DEFAULT nextval('tracked_items_id_seq'::regclass);
-
-
---
--- Name: versions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY versions ALTER COLUMN id SET DEFAULT nextval('versions_id_seq'::regclass);
-
-
---
--- Name: activity_log_tag_associations activity_log_tag_associations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY activity_log_tag_associations
-    ADD CONSTRAINT activity_log_tag_associations_pkey PRIMARY KEY (id);
-
-
---
--- Name: activity_log_tags activity_log_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY activity_log_tags
-    ADD CONSTRAINT activity_log_tags_pkey PRIMARY KEY (id);
-
-
---
--- Name: activity_logs activity_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY activity_logs
-    ADD CONSTRAINT activity_logs_pkey PRIMARY KEY (id);
 
 
 --
@@ -1569,19 +1190,19 @@ ALTER TABLE ONLY group_operatorships
 
 
 --
+-- Name: group_rule_result_sets group_rule_result_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY group_rule_result_sets
+    ADD CONSTRAINT group_rule_result_sets_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: group_rule_results group_rule_results_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY group_rule_results
     ADD CONSTRAINT group_rule_results_pkey PRIMARY KEY (id);
-
-
---
--- Name: group_rule_sets group_rule_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY group_rule_sets
-    ADD CONSTRAINT group_rule_sets_pkey PRIMARY KEY (id);
 
 
 --
@@ -1598,46 +1219,6 @@ ALTER TABLE ONLY group_rules
 
 ALTER TABLE ONLY majors
     ADD CONSTRAINT majors_pkey PRIMARY KEY (id);
-
-
---
--- Name: organization_entity_associations organization_entity_associations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organization_entity_associations
-    ADD CONSTRAINT organization_entity_associations_pkey PRIMARY KEY (id);
-
-
---
--- Name: organization_managers organization_managers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organization_managers
-    ADD CONSTRAINT organization_managers_pkey PRIMARY KEY (id);
-
-
---
--- Name: organization_org_ids organization_org_ids_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organization_org_ids
-    ADD CONSTRAINT organization_org_ids_pkey PRIMARY KEY (id);
-
-
---
--- Name: organization_parent_ids organization_parent_ids_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organization_parent_ids
-    ADD CONSTRAINT organization_parent_ids_pkey PRIMARY KEY (id);
-
-
---
--- Name: organizations organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY organizations
-    ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1694,14 +1275,6 @@ ALTER TABLE ONLY titles
 
 ALTER TABLE ONLY tracked_items
     ADD CONSTRAINT tracked_items_pkey PRIMARY KEY (id);
-
-
---
--- Name: versions versions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY versions
-    ADD CONSTRAINT versions_pkey PRIMARY KEY (id);
 
 
 --
@@ -1782,55 +1355,6 @@ CREATE INDEX index_majors_on_name ON majors USING btree (name);
 
 
 --
--- Name: index_organization_managers_on_manager_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_organization_managers_on_manager_id ON organization_managers USING btree (manager_id);
-
-
---
--- Name: index_organization_managers_on_organization_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_organization_managers_on_organization_id ON organization_managers USING btree (organization_id);
-
-
---
--- Name: index_organization_org_ids_on_org_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_organization_org_ids_on_org_id ON organization_org_ids USING btree (org_id);
-
-
---
--- Name: index_organization_org_ids_on_organization_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_organization_org_ids_on_organization_id ON organization_org_ids USING btree (organization_id);
-
-
---
--- Name: index_organization_parent_ids_on_organization_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_organization_parent_ids_on_organization_id ON organization_parent_ids USING btree (organization_id);
-
-
---
--- Name: index_organization_parent_ids_on_parent_org_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_organization_parent_ids_on_parent_org_id ON organization_parent_ids USING btree (parent_org_id);
-
-
---
--- Name: index_organizations_on_dept_code; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_organizations_on_dept_code ON organizations USING btree (dept_code);
-
-
---
 -- Name: index_role_assignments_on_role_id_and_entity_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1856,48 +1380,6 @@ CREATE INDEX index_roles_on_id ON roles USING btree (id);
 --
 
 CREATE INDEX index_titles_on_code ON titles USING btree (code);
-
-
---
--- Name: index_versions_on_created_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_versions_on_created_at ON versions USING btree (created_at);
-
-
---
--- Name: index_versions_on_number; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_versions_on_number ON versions USING btree (number);
-
-
---
--- Name: index_versions_on_tag; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_versions_on_tag ON versions USING btree (tag);
-
-
---
--- Name: index_versions_on_user_id_and_user_type; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_versions_on_user_id_and_user_type ON versions USING btree (user_id, user_type);
-
-
---
--- Name: index_versions_on_user_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_versions_on_user_name ON versions USING btree (user_name);
-
-
---
--- Name: index_versions_on_versioned_id_and_versioned_type; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_versions_on_versioned_id_and_versioned_type ON versions USING btree (versioned_id, versioned_type);
 
 
 --
@@ -2143,6 +1625,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20180102212600'),
 ('20180102214418'),
 ('20180103170509'),
-('20180103205053');
+('20180103205053'),
+('20180121233043'),
+('20180121233148'),
+('20180121233245'),
+('20180201183614'),
+('20180201184611');
 
 

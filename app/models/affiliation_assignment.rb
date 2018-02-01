@@ -14,6 +14,6 @@ class AffiliationAssignment < ApplicationRecord
   # best place to catch affiliation assignments being created
   # and destroyed.
   def recalculate_affiliation_group_rules_if_necessary
-    GroupRuleSet.update_results_for(:affiliation, person_id)
+    GroupRuleResultSet.update_results_for(:affiliation, person_id)
   end
 end

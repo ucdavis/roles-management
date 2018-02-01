@@ -8,7 +8,7 @@ namespace :group do
   task :recalculate_all do
     Rake::Task['environment'].invoke
 
-    GroupRuleSet.all.each(&:update_results)
+    GroupRuleResultSet.all.each(&:update_results)
   end
 
   desc 'Recalculate the rule-based members of a specific group.'
@@ -32,7 +32,7 @@ namespace :group do
     # Recalculate the group's rule caches
     g.rules.each do |rule|
       old_count = rule.results.length
-      rule.resolve! # should be GroupRuleSet.update_results
+      rule.resolve! # should be GroupRuleResultSet.update_results
       rule.reload
       puts "\tGroupRule ##{rule.id} (#{rule.column} #{rule.condition} #{rule.value}) went from #{old_count} to #{rule.results.length} results"
     end

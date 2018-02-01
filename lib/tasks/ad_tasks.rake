@@ -100,7 +100,7 @@ namespace :ad do
       ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_group, role.application.name, role.name)
 
       ad_members = ActiveDirectory.list_group_members(ad_group)
-      role_members = role.members.select { |m| m.active == true}.map(&:loginid)
+      role_members = role.members.select { |m| m.active == true }.map(&:loginid)
 
       if ad_members.sort == role_members.sort
         # print "fully synced.\n"

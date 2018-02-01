@@ -10,11 +10,11 @@ class SisAssociation < ApplicationRecord
   # validates_presence_of :level_code
 
   after_save do
-    GroupRuleSet.update_results_for(:sis_level_code, entity_id)
-    GroupRuleSet.update_results_for(:major, entity_id)
+    GroupRuleResultSet.update_results_for(:sis_level_code, entity_id)
+    GroupRuleResultSet.update_results_for(:major, entity_id)
   end
   after_destroy do
-    GroupRuleSet.update_results_for(:sis_level_code, entity_id)
-    GroupRuleSet.update_results_for(:major, entity_id)
+    GroupRuleResultSet.update_results_for(:sis_level_code, entity_id)
+    GroupRuleResultSet.update_results_for(:major, entity_id)
   end
 end
