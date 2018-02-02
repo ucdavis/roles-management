@@ -235,7 +235,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'is_staff' works" do
-    group_rule = GroupRule.new( column: 'is_staff', condition: 'is', value: true )
+    group_rule = GroupRule.new( column: 'is_staff', condition: 'is', value: true)
 
     setup_match = lambda {
       @person.is_staff = true
@@ -251,7 +251,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'is_faculty' works" do
-    group_rule = GroupRule.new( column: 'is_faculty', condition: 'is', value: true )
+    group_rule = GroupRule.new( column: 'is_faculty', condition: 'is', value: true)
 
     setup_match = lambda {
       @person.is_faculty = true
@@ -267,7 +267,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'is_student' works" do
-    group_rule = GroupRule.new( column: 'is_student', condition: 'is', value: true )
+    group_rule = GroupRule.new( column: 'is_student', condition: 'is', value: true)
 
     setup_match = lambda {
       @person.is_student = true

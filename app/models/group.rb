@@ -66,7 +66,7 @@ class Group < Entity
 
     # Step Two: AND all groups from step one together
     results = results.inject(results.first) { |sum, n| sum &= n }
-    results = [] unless results # reduce/inject may return nil
+    results ||= [] # reduce/inject may return nil
 
     # Step Three: Pass over the result from step two and
     # remove anybody who violates an 'is not' rule
@@ -86,7 +86,7 @@ class Group < Entity
 
     # Step Four: Process any 'loginid is' rules
     rules.select { |r| r.condition == 'is' && r.column == 'loginid' }.each do |rule|
-      logger.debug "Processing loginid is rule #{rule.value}..."
+      # Rails.logger.debug "Processing loginid is rule #{rule.value}..."
       results << rule.result_set.results.map(&:entity_id)
     end
 
