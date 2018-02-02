@@ -27,11 +27,14 @@ class GroupRuleResultSet < ApplicationRecord
     end
   end
 
+  # Need to calculate results when a new GroupRuleResultSet is created, typically
+  # by being linked into existence when a GroupRule is created.
   after_create do |grs|
     grs.update_results
   end
 
-  after_touch do |grs|
+  after_touch do |_grs|
+    Rails.logger.debug "GroupRuleResultSet #{id}: after_touch will touch each rule, count #{rules.length}"
     rules.each(&:touch)
   end
 
@@ -40,6 +43,8 @@ class GroupRuleResultSet < ApplicationRecord
   # Note: Function assumes GroupRule is an 'is' rule as 'is not' are generally unsupported.
   def self.update_results_for(column, person_id)
     touched_rule_set_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
+
+    Rails.logger.debug "GroupRuleResultSet: update_results_for() called"
 
     unless GroupRule.valid_columns.include? column.to_s
       raise "Cannot update_results_for() for unknown column '#{column}'"
@@ -51,12 +56,12 @@ class GroupRuleResultSet < ApplicationRecord
       return
     end
 
-    logger.debug "Updating results for person (ID #{person_id}, #{entity.loginid}) for column #{column}"
+    Rails.logger.debug "GroupRuleResultSet: Updating results for person (ID #{person_id}, #{entity.loginid}) for column #{column}"
 
     # Remove any existing rule results for this (person, column) duple
     outdated_results = GroupRuleResult.includes(:group_rule_result_set).where(entity_id: person_id, group_rule_result_sets: { column: column.to_s })
     outdated_group_ids = outdated_results.map { |result| result.group_rule_result_set.rules.map{ |r| r.group.id } }.flatten
-    logger.debug "Expiring #{outdated_results.length} outdated results"
+    Rails.logger.debug "Expiring #{outdated_results.length} outdated results"
     outdated_results.destroy_all
 
     # Figure out which rules the entity matches specifically and add them
@@ -64,7 +69,7 @@ class GroupRuleResultSet < ApplicationRecord
     when :title
       Title.where(id: entity.pps_associations.map(&:title_id)).each do |title|
         GroupRuleResultSet.where(column: 'title', value: title.name).each do |rule_set|
-          logger.debug "Matched 'title' rule. Recording result."
+          Rails.logger.debug "Matched 'title' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -72,7 +77,7 @@ class GroupRuleResultSet < ApplicationRecord
     when :major
       entity.majors.each do |major|
         GroupRuleResultSet.where(column: 'major', value: major.name).each do |rule_set|
-          logger.debug "Matched 'major' rule. Recording result."
+          Rails.logger.debug "Matched 'major' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -80,7 +85,7 @@ class GroupRuleResultSet < ApplicationRecord
     when :affiliation
       entity.affiliations.map(&:name).uniq.each do |aff_name|
         GroupRuleResultSet.where(column: 'affiliation', value: aff_name).each do |rule_set|
-          logger.debug "Matched 'affiliation' rule. Recording result."
+          Rails.logger.debug "Matched 'affiliation' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -88,7 +93,7 @@ class GroupRuleResultSet < ApplicationRecord
     when :department
       entity.pps_associations.map { |assoc| assoc.department.officialName }.uniq.each do |dept_name|
         GroupRuleResultSet.where(column: 'department', value: dept_name).each do |rule_set|
-          logger.debug "Matched 'department' rule. Recording result."
+          Rails.logger.debug "Matched 'department' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -96,14 +101,14 @@ class GroupRuleResultSet < ApplicationRecord
     when :business_office_unit
       entity.pps_associations.map { |assoc| assoc.department.business_office_unit&.dept_official_name }.uniq.each do |bou_name|
         GroupRuleResultSet.where(column: 'business_office_unit', value: bou_name).each do |rule_set|
-          logger.debug "Matched 'business_office_unit' rule. Recording result."
+          Rails.logger.debug "Matched 'business_office_unit' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
       end
     when :loginid
       GroupRuleResultSet.where(column: 'loginid', value: entity.loginid).each do |rule_set|
-        logger.debug "Matched 'loginid' rule. Recording result."
+        Rails.logger.debug "Matched 'loginid' rule. Recording result."
         rule_set.results << GroupRuleResult.new(entity_id: person_id)
         touched_rule_set_ids << rule_set.id
       end
@@ -111,7 +116,7 @@ class GroupRuleResultSet < ApplicationRecord
       if entity.is_staff
         GroupRuleResultSet.where(column: 'is_staff').each do |rule_set|
           # rule.value does not matter for the 'is_staff/employee/etc' column types
-          logger.debug "Matched 'is_staff' rule. Recording result."
+          Rails.logger.debug "Matched 'is_staff' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -120,7 +125,7 @@ class GroupRuleResultSet < ApplicationRecord
       if entity.is_faculty
         GroupRuleResultSet.where(column: 'is_faculty').each do |rule_set|
           # rule.value does not matter for the 'is_staff/employee/etc' column types
-          logger.debug "Matched 'is_faculty' rule. Recording result."
+          Rails.logger.debug "Matched 'is_faculty' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -129,7 +134,7 @@ class GroupRuleResultSet < ApplicationRecord
       if entity.is_student
         GroupRuleResultSet.where(column: 'is_student').each do |rule_set|
           # rule.value does not matter for the 'is_staff/employee/etc' column types
-          logger.debug "Matched 'is_student' rule. Recording result."
+          Rails.logger.debug "Matched 'is_student' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -138,7 +143,7 @@ class GroupRuleResultSet < ApplicationRecord
       if entity.is_employee
         GroupRuleResultSet.where(column: 'is_employee').each do |rule_set|
           # rule.value does not matter for the 'is_staff/employee/etc' column types
-          logger.debug "Matched 'is_employee' rule. Recording result."
+          Rails.logger.debug "Matched 'is_employee' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
@@ -147,7 +152,7 @@ class GroupRuleResultSet < ApplicationRecord
       GroupRuleResultSet.where(column: 'sis_level_code').each do |rule_set|
         next unless entity.sis_associations.where(level_code: rule_set.value).count.positive?
 
-        logger.debug "Matched 'sis_level_code' rule. Recording result."
+        Rails.logger.debug "Matched 'sis_level_code' rule. Recording result."
         rule_set.results << GroupRuleResult.new(entity_id: person_id)
         touched_rule_set_ids << rule_set.id
       end
@@ -157,7 +162,7 @@ class GroupRuleResultSet < ApplicationRecord
 
         next unless entity.pps_associations.where(title_id: relevent_title_ids).count.positive?
 
-        logger.debug "Matched 'pps_unit' rule. Recording result."
+        Rails.logger.debug "Matched 'pps_unit' rule. Recording result."
         rule_set.results << GroupRuleResult.new(entity_id: person_id)
         touched_rule_set_ids << rule_set.id
       end
@@ -165,7 +170,7 @@ class GroupRuleResultSet < ApplicationRecord
       GroupRuleResultSet.where(column: 'pps_position_type').each do |rule_set|
         next unless entity.pps_associations.where(position_type_code: rule_set.value).count.positive?
 
-        logger.debug "Matched 'pps_position_type' rule. Recording result."
+        Rails.logger.debug "Matched 'pps_position_type' rule. Recording result."
         rule_set.results << GroupRuleResult.new(entity_id: person_id)
         touched_rule_set_ids << rule_set.id
       end
@@ -174,23 +179,15 @@ class GroupRuleResultSet < ApplicationRecord
     touched_rule_set_ids = touched_rule_set_ids.flatten.uniq
     affected_group_ids = GroupRule.where(group_rule_result_set_id: touched_rule_set_ids).pluck(:group_id) + outdated_group_ids
 
-    # Group membership may have changed.
-    Group.where(id: affected_group_ids).each do |g|
-      # Touch to invalidate any caches.
-      g.touch
-
-      # Calculated members are only caught via sync audits
-      g.roles.each do |role|
-        Sync.role_audit(Sync.encode(role, true))
-      end
-    end
+    # Group membership may have changed
+    Group.where(id: affected_group_ids).each(&:touch)
   end
 
   # Calculate the results of the rule and cache in GroupRuleResult instances
   def update_results
     p = []
 
-    logger.debug "Updating results for group rule set ##{id}"
+    Rails.logger.debug "GroupRuleResultSet #{id}: Updating results for group rule set ##{id}"
 
     case column
     when 'title'
@@ -214,16 +211,16 @@ class GroupRuleResultSet < ApplicationRecord
         logger.warn 'Department not found'
       else
         ps = department.people.select(:id)
-        logger.debug "Adding #{ps.length} people to a 'Department' GroupRule"
+        Rails.logger.debug "Adding #{ps.length} people to a 'Department' GroupRule"
         p += ps
       end
     when 'business_office_unit'
       bou = BusinessOfficeUnit.find_by(dept_official_name: value)
       if bou.nil?
-        logger.warn 'Business Office Unit not found'
+        Rails.logger.warn 'Business Office Unit not found'
       else
         ps = bou.departments.map{ |d| d.people.select(:id) }.flatten
-        logger.debug "Adding #{ps.length} people to a 'Business Office Unit' GroupRule"
+        Rails.logger.debug "Adding #{ps.length} people to a 'Business Office Unit' GroupRule"
         p += ps
       end
     when 'loginid'
@@ -252,20 +249,24 @@ class GroupRuleResultSet < ApplicationRecord
       results << GroupRuleResult.new(entity_id: e.id)
     end
 
-    logger.debug "Updated group rule set ##{id} to have #{results.length} results"
+    Rails.logger.debug "GroupRuleResultSet #{id}: Updated group rule set ##{id} to have #{results.length} result(s)"
 
-    self.touch
+    self.touch # rubocop:disable Style/RedundantSelf
 
-    # Calculated members are only caught via sync audits
-    audit_role_ids = Group.where(id: self.rules.map(&:group_id).uniq).map do |g|
-      g.roles.map(&:id)
-    end
+    # Rails.logger.debug "GroupRuleResultSet #{id}: need to work with #{self.rules.length} rule(s)"
 
-    audit_role_ids.flatten.uniq.each do |role_id|
-      logger.debug "Alerting role #{role_id} to audit ..."
-      role = Role.find_by(id: role_id)
-      Sync.role_audit(Sync.encode(role, true))
-    end
+    # # Calculated members are only caught via sync audits
+    # audit_role_ids = Group.where(id: self.rules.map(&:group_id).uniq).map do |g|
+    #   g.roles.map(&:id)
+    # end
+
+    # Rails.logger.debug "GroupRuleResultSet #{id}: this translate to #{audit_role_ids.length} role_ids to audit"
+
+    # audit_role_ids.flatten.uniq.each do |role_id|
+    #   Rails.logger.debug "Alerting role #{role_id} to audit ..."
+    #   role = Role.find_by(id: role_id)
+    #   Sync.role_audit(Sync.encode(role, true))
+    # end
   end
 
   def destroy_if_unused
