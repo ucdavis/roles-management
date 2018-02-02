@@ -19,7 +19,7 @@ class GroupRule < ApplicationRecord
   belongs_to :result_set, class_name: 'GroupRuleResultSet', foreign_key: 'group_rule_result_set_id', optional: true
 
   before_save   :link_result_set
-  after_destroy :alert_ruleset
+  after_destroy :destroy_ruleset_if_empty
 
   # Needed by 'Group' when calculating rules
   def self.valid_columns
@@ -46,14 +46,13 @@ class GroupRule < ApplicationRecord
 
     # We may be switching to a new ruleset. In that case, ensure the old one is
     # cleaned up as needed.
-    alert_ruleset
+    destroy_ruleset_if_empty
 
     self.result_set = grs
   end
 
   # Alert the GroupRuleResultSet in case it needs to destroy itself
-  def alert_ruleset
-    result_set&.update_results
+  def destroy_ruleset_if_empty
     result_set&.destroy_if_unused
   end
 end
