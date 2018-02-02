@@ -119,11 +119,15 @@ namespace :ad do
         (role_members - ad_members).each do |missing|
           # puts "\t\t#{missing} ..."
           begin
+            retries ||= 0
             ActiveDirectoryHelper.ensure_user_in_group(missing, ad_group)
           rescue ActiveDirectoryHelper::UserNotFound
             # STDERR.puts "User '#{missing}' not found in AD while merging role and AD group"
           rescue ActiveDirectoryHelper::GroupNotFound
             # STDERR.puts "Group '#{ad_path}' not found in AD while merging role and AD group"
+          rescue Net::LDAP::Error
+            STDERR.puts "LDAP connection timeout while ensuring user #{missing} is in group #{ad_group}"
+            retry if (retries += 1) < 3
           end
         end
       end
