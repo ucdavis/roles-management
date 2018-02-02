@@ -18,6 +18,6 @@ every 12.hours do
   rake 'person:remove_inactive'
 end
 
-every 30.minutes do
+every 6.hours do
   rake 'ad:resync_roles'
 end

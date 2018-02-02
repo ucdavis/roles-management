@@ -57,12 +57,22 @@ class EntitiesController < ApplicationController
   def update
     authorize @entity
 
+    affected_role_ids = @entity.roles.map(&:id) if @entity.group?
+
     respond_to do |format|
       if @entity.update_attributes(entity_params)
         # The update may have only touched associations and not @entity directly,
-        # so we'll touch the timestamp ourselves to match sure our caches are
+        # so we'll touch the timestamp ourselves to make sure our caches are
         # invlidated correctly.
         @entity.touch
+
+        if @entity.group?
+          affected_role_ids = (affected_role_ids + @entity.roles.map(&:id)).flatten.uniq
+          Role.where(id: affected_role_ids).each do |role|
+            Rails.logger.debug "Entities(Group)#update will cause role_audit for role #{role.id} / #{role.token}"
+            Sync.role_audit(Sync.encode(role, true))
+          end
+        end
 
         @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
@@ -79,7 +89,7 @@ class EntitiesController < ApplicationController
 
     authorize @entity
 
-    if @entity.type == 'Group'
+    if @entity.group?
       logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted entity, #{@entity}."
 
       @entity.destroy
