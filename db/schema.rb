@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20180201184611) do
     t.index ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
   end
 
-  create_table "application_ownerships", id: :integer, default: -> { "nextval('application_manager_assignments_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "application_ownerships", id: :serial, force: :cascade do |t|
     t.integer "entity_id"
     t.integer "application_id"
     t.datetime "created_at", null: false
@@ -149,7 +149,7 @@ ActiveRecord::Schema.define(version: 20180201184611) do
     t.integer "entity_id"
   end
 
-  create_table "group_ownerships", id: :integer, default: -> { "nextval('group_manager_assignments_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "group_ownerships", id: :serial, force: :cascade do |t|
     t.integer "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
