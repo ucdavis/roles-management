@@ -14,6 +14,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
 
   initialize: ->
     @$el.html JST["templates/entities/show_group"](model: @model)
+    @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
     readonly = @model.isReadOnly()
 
@@ -145,6 +146,27 @@ DssRm.Views.GroupShow = Backbone.View.extend(
 
     @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
 
+    # Roles tab
+    $rolesTab = @$("div#role_assignments")
+    if @model.role_assignments.length == 0
+      $rolesTab.append("<center><i>Group has no role assignments.</i></center>")
+    else
+      _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
+        app_name = role_assignment_set[0].get("application_name")
+        app_id = role_assignment_set[0].get("application_id")
+
+        role_tokeninput = @$("input[name=_token_input_" + app_id + "]")
+        role_tokeninput.tokenInput "clear"
+        _.each role_assignment_set, (role_assignment) ->
+          unless role_assignment.get('_destroy')
+            role_tokeninput.tokenInput "add",
+              id: role_assignment.get("id")
+              role_id: role_assignment.get("role_id")
+              entity_id: role_assignment.get("entity_id")
+              name: role_assignment.get("name")
+              readonly: @readonly || true
+              class: (if role_assignment.get('calculated') then "calculated" else "")
+
     if DssRm.admin_logged_in() || @model.relationship()
       @$("#delete").show()
 
@@ -232,6 +254,37 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         @ruleSearchResultSelected item, @
 
     return $rule
+
+  resetRolesTab: ->
+    $rolesTab = @$("div#role_assignments")
+    $rolesTab.empty()
+
+    _.each @model.role_assignments.groupBy("application_name"), (role_assignment_set) =>
+      application_name = role_assignment_set[0].get("application_name")
+      application_id = role_assignment_set[0].get("application_id")
+
+      $rolesTab.append @renderRoleAssignmentTokenInput(application_name, application_id)
+
+  # Renders and initializes a single tokenInput for the role (assignment) tab.
+  # Does not insert into DOM.
+  renderRoleAssignmentTokenInput: (name, id) ->
+    $input = $("<p><label for=\"_token_input_#{id}\">#{name}</label><input type=\"text\" name=\"_token_input_#{id}\" class=\"token_input\" /></p>")
+    $input.find("input").tokenInput Routes.roles_path() + "?application_id=#{id}",
+      crossDomain: false
+      defaultText: ""
+      theme: "facebook"
+      disabled: @readonly
+      # onAdd: (item) =>
+      #   @model.role_assignments.add
+      #     role_id: item.id
+      #     entity_id: @model.get('id')
+      #     name: item.name
+      #     calculated: false
+      # onDelete: (item) =>
+      #   assignment = @model.role_assignments.get(item.id)
+      #   assignment.set('_destroy', true)
+
+    return $input
 
   save: (e) ->
     e.preventDefault()

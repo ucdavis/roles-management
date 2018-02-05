@@ -56,20 +56,34 @@ json.cache! ['entity_show', @cache_key] do
       json.entity_id membership.entity_id
       json.active membership.entity.active
     end
+
     json.rule_members @entity.rule_members do |rule_member|
       json.loginid rule_member.loginid
       json.name rule_member.name
       json.person_id rule_member.id
       json.active rule_member.active
     end
+
     json.operators(@entity.operators.select { |m| m.active == true }) do |operator|
       json.extract! operator, :id, :name, :loginid
     end
+
     json.owners(@entity.owners.select { |m| m.active == true }) do |owner|
       json.extract! owner, :id, :name, :loginid
     end
+
     json.rules @entity.rules do |rule|
       json.extract! rule, :column, :condition, :value, :id
+    end
+
+    json.role_assignments @entity.role_assignments do |role_assignment|
+      json.id role_assignment.id
+      json.application_id role_assignment.role.application_id
+      json.application_name role_assignment.role.application.name
+      json.name role_assignment.role.name
+      json.entity_id role_assignment.entity_id
+      json.role_id role_assignment.role.id
+      json.token role_assignment.role.token
     end
   end
 end

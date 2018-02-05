@@ -27,12 +27,14 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @memberships = new DssRm.Collections.Entities if @memberships is `undefined`
       @rule_members = new DssRm.Collections.Entities if @rule_members is `undefined`
       @rules = new DssRm.Collections.GroupRules if @rules is `undefined`
+      @role_assignments = new DssRm.Collections.RoleAssignments if @role_assignments is `undefined`
 
       # Reset nested collection data
       @owners.reset @get("owners")
       @operators.reset @get("operators")
       @memberships.reset @get("memberships")
       @rule_members.reset @get("rule_members")
+      @role_assignments.reset @get("role_assignments")
       @rules.reset @get("rules")
 
     else if @type() is EntityTypes.person
@@ -69,6 +71,12 @@ DssRm.Models.Entity = Backbone.Model.extend(
         id: membership.get('id')
         entity_id: membership.get('entity_id')
         _destroy: membership.get('_destroy')
+      if @role_assignments.length
+        json.role_assignments_attributes = @role_assignments.map (assignment) ->
+          id: assignment.get('id')
+          role_id: assignment.get('role_id')
+          entity_id: assignment.get('entity_id')
+          _destroy: assignment.get('_destroy')
       if @rules.length
         json.rules_attributes = @rules.map (rule) ->
           id: parseInt(rule.get('id'))

@@ -15,6 +15,7 @@ class Group < Entity
 
   accepts_nested_attributes_for :rules, allow_destroy: true
   accepts_nested_attributes_for :memberships, allow_destroy: true
+  accepts_nested_attributes_for :role_assignments, allow_destroy: true
 
   after_create do |group|
     ActivityLog.info!("Created group #{group.name}.", ["group_#{group.id}", 'system'])
