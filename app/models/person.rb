@@ -175,7 +175,7 @@ class Person < Entity
     self.name = first.blank? ? loginid : "#{first} #{last}".strip
   end
 
-  def log_changes
+  def log_changes # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     saved_changes.each do |field, changes|
       next if field == 'updated_at'
       next if changes[0].blank? && changes[1].blank?
