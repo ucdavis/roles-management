@@ -178,6 +178,8 @@ class Person < Entity
   def log_changes # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     saved_changes.each do |field, changes|
       next if field == 'updated_at'
+      next if field == 'synced_at'
+      next if field == 'logged_in_at'
       next if changes[0].blank? && changes[1].blank?
       Rails.logger&.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
       case field

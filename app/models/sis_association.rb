@@ -12,9 +12,11 @@ class SisAssociation < ApplicationRecord
   after_save do
     GroupRuleResultSet.update_results_for(:sis_level_code, entity_id)
     GroupRuleResultSet.update_results_for(:major, entity_id)
+    ActivityLog.info!("Added major #{major.name}", ["person_#{entity.id}"])
   end
   after_destroy do
     GroupRuleResultSet.update_results_for(:sis_level_code, entity_id)
     GroupRuleResultSet.update_results_for(:major, entity_id)
+    ActivityLog.info!("Removed major #{major.name}", ["person_#{entity.id}"])
   end
 end
