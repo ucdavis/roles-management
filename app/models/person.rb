@@ -33,6 +33,7 @@ class Person < Entity
   before_save  :set_name_if_blank
   after_save   :recalculate_group_rule_membership
   after_save   :trigger_sync_if_active_toggled
+  after_save   :log_changes
 
   after_create do |person|
     ActivityLog.info!("Created person #{person.name}.", ["person_#{person.id}", 'system'])
@@ -172,5 +173,23 @@ class Person < Entity
   def set_name_if_blank
     return unless name.blank?
     self.name = first.blank? ? loginid : "#{first} #{last}".strip
+  end
+
+  def log_changes
+    saved_changes.each do |field, changes|
+      next if field == 'updated_at'
+      next if changes[0].blank? && changes[1].blank?
+      Rails.logger&.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
+      case field
+      when 'first'
+        ActivityLog.info!("First name changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      when 'last'
+        ActivityLog.info!("Last name changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      when 'phone'
+        ActivityLog.info!("Phone number changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      else
+        ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{id}"])
+      end
+    end
   end
 end
