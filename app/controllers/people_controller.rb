@@ -56,28 +56,28 @@ class PeopleController < ApplicationController
   def import
     authorize Person
 
-    if params[:loginid]
-      require 'dss_dw'
-
-      @person = DssDw.create_or_update_using_dw(params[:loginid])
-
-      if @person
-        @cache_key = 'person/' + @person.id.to_s + '/' + @person.updated_at.try(:utc).try(:to_s, :number)
-
-        respond_to do |format|
-          format.json { render 'people/show' }
-        end
-      else
-        logger.error "Could not import person #{params[:loginid]}, no results from DW or error while saving."
-
-        raise ActionController::RoutingError.new('Not Found')
-      end
-    else
+    unless params[:loginid]
       logger.error 'Invalid request for DW person import. Did not specify loginid.'
 
       respond_to do |format|
         format.json { render json: nil, status: 400 }
       end
+    end
+
+    require 'dss_dw'
+
+    @person = DssDw.create_or_update_using_dw(params[:loginid])
+
+    if @person
+      @cache_key = 'person/' + @person.id.to_s + '/' + @person.updated_at.try(:utc).try(:to_s, :number)
+
+      respond_to do |format|
+        format.json { render 'people/show' }
+      end
+    else
+      logger.error "Could not import person #{params[:loginid]}, no results from DW or error while saving."
+
+      raise ActionController::RoutingError.new('Not Found')
     end
   end
 
