@@ -144,9 +144,23 @@ class EntitiesController < ApplicationController
   def load_entities
     if params[:q]
       entities_table = Entity.arel_table
+      @entities = []
 
-      # Search login IDs in case of an entity-search but looking for person by login ID
-      @entities = Entity.where(entities_table[:name].matches("%#{params[:q]}%").or(entities_table[:loginid].matches("%#{params[:q]}%")).or(entities_table[:first].matches("%#{params[:q]}%")).or(entities_table[:last].matches("%#{params[:q]}%")))
+      q_parts = params[:q].split(' ')
+
+      if q_parts.length == 2
+        # Special case where we probably have first name and last name
+        @entities = Entity.where(entities_table[:first].matches("%#{q_parts[0]}%")
+                          .and(entities_table[:last].matches("%#{q_parts[1]}%")))
+      end
+
+      if @entities.empty?
+        # Search login IDs in case of an entity-search but looking for person by login ID
+        @entities = Entity.where(entities_table[:name].matches("%#{params[:q]}%")
+                                                      .or(entities_table[:loginid].matches("%#{params[:q]}%"))
+                                                      .or(entities_table[:first].matches("%#{params[:q]}%"))
+                                                      .or(entities_table[:last].matches("%#{params[:q]}%")))
+      end
     else
       @entities = Entity.all
     end

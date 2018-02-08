@@ -23,6 +23,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
       minLength: 3
       sorter: (items) -> # required to keep the order given to process() in 'source'
         items
+      matcher: (item) ->
+        item
       highlighter: (item) ->
         parts = item.split("####")
         enabled = parts[1]
@@ -105,8 +107,10 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         q: query
       type: 'GET'
     ).done( (data) ->
+      console.dir(data)
       entities = []
       exact_match_found = false
+
       _.each data, (entity) ->
         # We have to manually enforce a length on the sidebar search as we'll be adding terms toward the end
         # and don't want them cut off if the search results list is long
