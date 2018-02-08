@@ -150,7 +150,7 @@ class Person < Entity
 
     # Activating/de-activating a person emulates them losing all their roles
     if active
-      ActivityLog.info!("Marking as active for #{name}.", ["person_#{id}"])
+      ActivityLog.info!("Marking as active", ["person_#{id}"])
 
       roles.each do |role|
         Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
@@ -158,7 +158,7 @@ class Person < Entity
 
       Sync.person_added_to_system(Sync.encode(self))
     else
-      ActivityLog.info!("Marking as inactive for #{name}.", ["person_#{id}"])
+      ActivityLog.info!("Marking as inactive", ["person_#{id}"])
 
       roles.each do |role|
         Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))

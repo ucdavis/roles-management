@@ -60,7 +60,7 @@ class GroupRuleResultSet < ApplicationRecord
 
     # Remove any existing rule results for this (person, column) duple
     outdated_results = GroupRuleResult.includes(:group_rule_result_set).where(entity_id: person_id, group_rule_result_sets: { column: column.to_s })
-    outdated_group_ids = outdated_results.map { |result| result.group_rule_result_set.rules.map{ |r| r.group.id } }.flatten
+    outdated_group_ids = outdated_results.map { |result| result.group_rule_result_set.rules.map { |r| r.group.id } }.flatten
     Rails.logger.debug "Expiring #{outdated_results.length} outdated results"
     outdated_results.destroy_all
 
