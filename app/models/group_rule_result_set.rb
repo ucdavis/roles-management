@@ -252,21 +252,6 @@ class GroupRuleResultSet < ApplicationRecord
     Rails.logger.debug "GroupRuleResultSet #{id}: Updated group rule set ##{id} to have #{results.length} result(s)"
 
     self.touch # rubocop:disable Style/RedundantSelf
-
-    # Rails.logger.debug "GroupRuleResultSet #{id}: need to work with #{self.rules.length} rule(s)"
-
-    # # Calculated members are only caught via sync audits
-    # audit_role_ids = Group.where(id: self.rules.map(&:group_id).uniq).map do |g|
-    #   g.roles.map(&:id)
-    # end
-
-    # Rails.logger.debug "GroupRuleResultSet #{id}: this translate to #{audit_role_ids.length} role_ids to audit"
-
-    # audit_role_ids.flatten.uniq.each do |role_id|
-    #   Rails.logger.debug "Alerting role #{role_id} to audit ..."
-    #   role = Role.find_by(id: role_id)
-    #   Sync.role_audit(Sync.encode(role, true))
-    # end
   end
 
   def destroy_if_unused
