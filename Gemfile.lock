@@ -170,6 +170,7 @@ GEM
     rack (2.0.4)
     rack-test (0.8.2)
       rack (>= 1.0, < 3)
+    rack-timeout (0.4.2)
     rails (5.1.4)
       actioncable (= 5.1.4)
       actionmailer (= 5.1.4)
@@ -280,6 +281,7 @@ DEPENDENCIES
   poltergeist
   puma (~> 3.7)
   pundit
+  rack-timeout
   rails (~> 5.1)
   roles-management-api (>= 0.1.2)!
   rubycas-client!

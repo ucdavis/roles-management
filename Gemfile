@@ -95,3 +95,5 @@ gem 'json'
 gem 'slack-notifier'
 
 gem 'yaml_db'
+
+gem 'rack-timeout'
