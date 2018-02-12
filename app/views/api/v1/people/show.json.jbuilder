@@ -1,10 +1,6 @@
 json.cache! ['api_v1_people_show', @cache_key] do
   json.extract! @person, :address, :byline, :email, :first, :id, :last, :loginid, :name, :phone, :type
 
-  json.affiliations @person.affiliations do |affiliation|
-    json.extract! affiliation, :name
-  end
-
   json.group_memberships @person.group_memberships do |membership|
     json.extract! membership, :group_id, :id
     json.name membership.group.name

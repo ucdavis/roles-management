@@ -87,14 +87,6 @@ class GroupRuleResultSet < ApplicationRecord
           touched_rule_set_ids << rule_set.id
         end
       end
-    when :affiliation
-      entity.affiliations.map(&:name).uniq.each do |aff_name|
-        GroupRuleResultSet.where(column: 'affiliation', value: aff_name).each do |rule_set|
-          Rails.logger.debug "Matched 'affiliation' rule. Recording result."
-          rule_set.results << GroupRuleResult.new(entity_id: person_id)
-          touched_rule_set_ids << rule_set.id
-        end
-      end
     when :department
       entity.pps_associations.map { |assoc| assoc.department.officialName }.uniq.each do |dept_name|
         GroupRuleResultSet.where(column: 'department', value: dept_name).each do |rule_set|
@@ -222,11 +214,6 @@ class GroupRuleResultSet < ApplicationRecord
       major = Major.find_by_name(value)
       unless major.nil?
         p += major.people.select(:id)
-      end
-    when 'affiliation'
-      affiliation = Affiliation.find_by_name(value)
-      unless affiliation.nil?
-        p += affiliation.people.select(:id)
       end
     when 'department'
       department = Department.find_by(officialName: value)

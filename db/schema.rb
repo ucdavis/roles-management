@@ -10,22 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180201184611) do
+ActiveRecord::Schema.define(version: 20180212212921) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "affiliation_assignments", id: :serial, force: :cascade do |t|
-    t.integer "affiliation_id"
-    t.integer "person_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "affiliations", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.index ["name"], name: "index_affiliations_on_name"
-  end
 
   create_table "api_key_users", id: :serial, force: :cascade do |t|
     t.string "secret", limit: 255

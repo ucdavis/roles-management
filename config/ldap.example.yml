@@ -1,7 +1,0 @@
-ldap:
-  host: "the.host.com"
-  port: 389636
-  search_dn: "ou=seach,dc=host,dc=com"
-  base_dn: "uid=user,ou=users,dc=example,dc=com"
-  base_pw: "secret"
-  search_dn: "ou=people,dc=example,dc=com"

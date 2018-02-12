@@ -20,9 +20,6 @@ are a few matters of configuration that need to be attended to:
 config/database.example.yml
 	Move this file to config/database.yml and set the appropriate values.
 
-config/ldap.example.yml
-  Move this file to config/ldap.yml and set the appropriate values.
-
 config/active_directory.example.yml
   Move this file to config/active_directory.yml and set the appropriate values.
 
@@ -59,7 +56,6 @@ Run the follow commands in order and ensure they complete successfully:
 The follow steps obtain a user from a configured LDAP server and grant admin
 access:
 
- * bundle exec rake ldap:import[the_username]
  * bundle exec rake user:grant_admin[the_username]
 
 ### Step 4. (Done!)

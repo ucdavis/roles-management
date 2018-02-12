@@ -148,8 +148,7 @@ module Sync
       end
     when Person
       return { id: obj.id, name: obj.name, first: obj.first, last: obj.last, loginid: obj.loginid,
-               email: obj.email, address: obj.address, phone: obj.phone,
-               affiliations: obj.affiliations.map(&:name) }
+               email: obj.email, address: obj.address, phone: obj.phone }
     end
 
     return nil # rubocop:disable Style/RedundantReturn

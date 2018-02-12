@@ -6,7 +6,6 @@ tmp/
 public/.DS_Store
 config/database.yml
 config/api_keys.yml
-config/ldap.yml
 config/general.yml
 config/newrelic.yml
 config/secrets.yml

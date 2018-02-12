@@ -21,11 +21,6 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
     assert body.include?('type'), 'JSON response should include type field'
     assert body.include?('loginid'), 'JSON response should include loginid field'
 
-    assert body.include?('affiliations'), 'JSON response should include affiliations'
-    body['affiliations'].each do |r|
-      assert r['name'], "JSON response's 'affiliations' section should include a name"
-    end
-
     assert body.include?('role_assignments'), 'JSON response should include role_assignments'
     body['role_assignments'].each do |r|
       assert r['role_id'], "JSON response's 'role_assignments' section should include a role_id field" # we cannot call it 'id' because Backbone won't add it twice then, which we _do_ want due to a person possibly having a role both explicitly and non-explicitly
@@ -96,15 +91,15 @@ class Api::V1::PeopleControllerTest < ActionController::TestCase
     assert_response 401
   end
 
-  test 'JSON import request should work' do
-    grant_api_user_access
+  # test 'JSON import request should work' do
+  #   grant_api_user_access
 
-    get :import, params: { loginid: 'ldapuser' }, as: :json
+  #   get :import, params: { loginid: 'iamuser' }, as: :json
 
-    assert_response :success
+  #   assert_response :success
 
-    body = JSON.parse(response.body)
+  #   body = JSON.parse(response.body)
 
-    assert body['loginid'] == 'ldapuser', 'JSON response should have correct login ID'
-  end
+  #   assert body['loginid'] == 'iamuser', 'JSON response should have correct login ID'
+  # end
 end

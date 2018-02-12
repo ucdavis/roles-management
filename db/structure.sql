@@ -27,66 +27,6 @@ SET default_tablespace = '';
 
 SET default_with_oids = false;
 
---
--- Name: affiliation_assignments; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE affiliation_assignments (
-    id integer NOT NULL,
-    affiliation_id integer,
-    person_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: affiliation_assignments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE affiliation_assignments_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: affiliation_assignments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE affiliation_assignments_id_seq OWNED BY affiliation_assignments.id;
-
-
---
--- Name: affiliations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE affiliations (
-    id integer NOT NULL,
-    name character varying(255)
-);
-
-
---
--- Name: affiliations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE affiliations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: affiliations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE affiliations_id_seq OWNED BY affiliations.id;
-
 
 --
 -- Name: api_key_users; Type: TABLE; Schema: public; Owner: -
@@ -895,20 +835,6 @@ ALTER SEQUENCE tracked_items_id_seq OWNED BY tracked_items.id;
 
 
 --
--- Name: affiliation_assignments id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY affiliation_assignments ALTER COLUMN id SET DEFAULT nextval('affiliation_assignments_id_seq'::regclass);
-
-
---
--- Name: affiliations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY affiliations ALTER COLUMN id SET DEFAULT nextval('affiliations_id_seq'::regclass);
-
-
---
 -- Name: api_key_users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1067,22 +993,6 @@ ALTER TABLE ONLY titles ALTER COLUMN id SET DEFAULT nextval('titles_id_seq'::reg
 --
 
 ALTER TABLE ONLY tracked_items ALTER COLUMN id SET DEFAULT nextval('tracked_items_id_seq'::regclass);
-
-
---
--- Name: affiliation_assignments affiliation_assignments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY affiliation_assignments
-    ADD CONSTRAINT affiliation_assignments_pkey PRIMARY KEY (id);
-
-
---
--- Name: affiliations affiliations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY affiliations
-    ADD CONSTRAINT affiliations_pkey PRIMARY KEY (id);
 
 
 --
@@ -1289,13 +1199,6 @@ CREATE INDEX delayed_jobs_priority ON delayed_jobs USING btree (priority, run_at
 --
 
 CREATE INDEX idx_app_operatorships_on_app_id_and_entity_id_and_parent_id ON application_operatorships USING btree (application_id, entity_id, parent_id);
-
-
---
--- Name: index_affiliations_on_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_affiliations_on_name ON affiliations USING btree (name);
 
 
 --

@@ -83,7 +83,7 @@ module Authentication
         Authentication.actual_user = ApiKeyUser.find_by_name(session[:user_id])
         logger.info "Authentication passed with existing session (API key): #{session[:user_id]}"
       when :cas
-        Authentication.actual_user = Person.includes(:role_assignments, :roles, :affiliations).find_by_id(session[:user_id])
+        Authentication.actual_user = Person.includes(:role_assignments, :roles).find_by_id(session[:user_id])
         logger.info "Authentication passed with existing session (CAS): ID: #{session[:user_id]}, login ID: #{Authentication.actual_user.loginid}"
         if impersonating?
           Authentication.effective_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonate_id])

@@ -171,7 +171,7 @@ module DssDw
     end
 
     begin
-      # Process any PPS affiliations
+      # Process any PPS associations
       existing_pps_assocs = p.pps_associations.map do |assoc|
         {
           id: assoc.id,

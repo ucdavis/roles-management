@@ -21,21 +21,23 @@ module Api
 
       def import
         if params[:loginid]
-          @person = LdapPersonHelper.create_or_update_person_by_loginid(params[:loginid], Rails.logger)
+          require 'dss_dw'
+
+          @person = DssDw.create_or_update_using_dw(params[:loginid])
 
           if @person
             respond_to do |format|
               format.json { render 'api/v1/people/show' }
             end
           else
-            logger.error "Could not import person #{params[:loginid]}, no results from LDAP."
+            logger.error "Could not import person #{params[:loginid]}, no results from IAM."
 
             respond_to do |format|
-              format.json { render json: "Could not import person #{params[:loginid]}, no results from LDAP.", status: 404 }
+              format.json { render json: "Could not import person #{params[:loginid]}, no results from IAM.", status: 404 }
             end
           end
         else
-          logger.error 'Invalid request for LDAP person import. Did not specify loginid.'
+          logger.error 'Invalid request for person import. Did not specify loginid.'
 
           respond_to do |format|
             format.json { render json: nil, status: 400 }

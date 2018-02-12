@@ -71,29 +71,6 @@ class GroupRuleTest < ActiveSupport::TestCase
     group.reload
 
     assert group.members.empty?, 'group should have no members'
-
-    # Test that setting a person's affiliation fills in a group
-    group.rules.destroy_all
-    group_rule = GroupRule.new(column: 'affiliation', condition: 'is', value: 'staff', group_id: group.id)
-    group.rules << group_rule
-
-    group.reload
-
-    assert group.members.empty?, 'group should have no members'
-
-    @person.affiliations << affiliations(:staff)
-    @person.save!
-
-    group.reload
-
-    assert group.members.length == 1, 'group should have a member'
-
-    @person.affiliations.destroy_all
-    @person.save!
-
-    group.reload
-
-    assert group.members.empty?, 'group should have no members'
   end
 
   test 'creating a person should associate them with the proper groups' do
@@ -334,7 +311,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).name)
 
     setup_match = lambda {
-      # Give a person an affiliation involving a title with a 99-unit
+      # Give a person an association involving a title with a 99-unit
       title = titles(:programmer)
       department = departments(:dssit)
 
@@ -407,7 +384,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     group_rule = GroupRule.new(column: 'pps_unit', condition: 'is', value: '99')
 
     setup_match = lambda {
-      # Give a person an affiliation involving a title with a 99-unit
+      # Give a person an association involving a title with a 99-unit
       title = titles(:programmer)
       department = departments(:dssit)
 
@@ -437,7 +414,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     group_rule = GroupRule.new(column: 'pps_position_type', condition: 'is', value: 2)
 
     setup_match = lambda {
-      # Give a person an affiliation involving a title with a 99-unit
+      # Give a person an association involving a title with a 99-unit
       title = titles(:programmer)
       department = departments(:dssit)
 

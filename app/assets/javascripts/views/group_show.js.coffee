@@ -422,8 +422,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         lookahead_url = Routes.titles_path()
       when "business_office_unit"
         lookahead_url = Routes.business_office_units_path()
-      when "affiliation"
-        lookahead_url = Routes.affiliations_path()
       when "iam_affiliation"
         entities = ['0####Employee', '1####Faculty', '2####Staff', '3####Student', '4####HS Employee', '5####External']
         process entities

@@ -465,12 +465,6 @@ Based on Rails routes of DSSRM::Application
 // admin => /admin/ops/impersonate/:loginid(.:format)
   // function(loginid, options)
   admin_path: Utils.route([["loginid",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"ops",false],[2,[7,"/",false],[2,[6,"impersonate",false],[2,[7,"/",false],[2,[3,"loginid",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
-// admin_activity_log => /admin/activity_logs/:id(.:format)
-  // function(id, options)
-  admin_activity_log_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"activity_logs",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
-// admin_activity_logs => /admin/activity_logs(.:format)
-  // function(options)
-  admin_activity_logs_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"activity_logs",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
 // admin_api_key_user => /admin/api_key_users/:id(.:format)
   // function(id, options)
   admin_api_key_user_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"api_key_users",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
@@ -504,12 +498,6 @@ Based on Rails routes of DSSRM::Application
 // admin_tracked_items => /admin/tracked_items(.:format)
   // function(options)
   admin_tracked_items_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracked_items",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
-// affiliation => /affiliations/:id(.:format)
-  // function(id, options)
-  affiliation_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"affiliations",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
-// affiliations => /affiliations(.:format)
-  // function(options)
-  affiliations_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"affiliations",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
 // api => /api/people/import/:loginid(.:format)
   // function(loginid, options)
   api_path: Utils.route([["loginid",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"api",false],[2,[7,"/",false],[2,[6,"people",false],[2,[7,"/",false],[2,[6,"import",false],[2,[7,"/",false],[2,[3,"loginid",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
@@ -570,9 +558,6 @@ Based on Rails routes of DSSRM::Application
 // departments => /departments(.:format)
   // function(options)
   departments_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"departments",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
-// edit_admin_activity_log => /admin/activity_logs/:id/edit(.:format)
-  // function(id, options)
-  edit_admin_activity_log_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"activity_logs",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
 // edit_admin_api_key_user => /admin/api_key_users/:id/edit(.:format)
   // function(id, options)
   edit_admin_api_key_user_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"api_key_users",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
@@ -585,9 +570,6 @@ Based on Rails routes of DSSRM::Application
 // edit_admin_tracked_item => /admin/tracked_items/:id/edit(.:format)
   // function(id, options)
   edit_admin_tracked_item_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracked_items",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
-// edit_affiliation => /affiliations/:id/edit(.:format)
-  // function(id, options)
-  edit_affiliation_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"affiliations",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
 // edit_api_application => /api/applications/:id/edit(.:format)
   // function(id, options)
   edit_api_application_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"api",false],[2,[7,"/",false],[2,[6,"applications",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]]]),
@@ -624,9 +606,6 @@ Based on Rails routes of DSSRM::Application
 // edit_major => /majors/:id/edit(.:format)
   // function(id, options)
   edit_major_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"majors",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
-// edit_organization => /organizations/:id/edit(.:format)
-  // function(id, options)
-  edit_organization_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"organizations",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
 // edit_person => /people/:id/edit(.:format)
   // function(id, options)
   edit_person_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"people",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
@@ -672,9 +651,6 @@ Based on Rails routes of DSSRM::Application
 // majors => /majors(.:format)
   // function(options)
   majors_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"majors",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
-// new_admin_activity_log => /admin/activity_logs/new(.:format)
-  // function(options)
-  new_admin_activity_log_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"activity_logs",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
 // new_admin_api_key_user => /admin/api_key_users/new(.:format)
   // function(options)
   new_admin_api_key_user_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"api_key_users",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
@@ -687,9 +663,6 @@ Based on Rails routes of DSSRM::Application
 // new_admin_tracked_item => /admin/tracked_items/new(.:format)
   // function(options)
   new_admin_tracked_item_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"admin",false],[2,[7,"/",false],[2,[6,"tracked_items",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
-// new_affiliation => /affiliations/new(.:format)
-  // function(options)
-  new_affiliation_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"affiliations",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
 // new_api_application => /api/applications/new(.:format)
   // function(options)
   new_api_application_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"api",false],[2,[7,"/",false],[2,[6,"applications",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
@@ -726,9 +699,6 @@ Based on Rails routes of DSSRM::Application
 // new_major => /majors/new(.:format)
   // function(options)
   new_major_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"majors",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
-// new_organization => /organizations/new(.:format)
-  // function(options)
-  new_organization_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"organizations",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
 // new_person => /people/new(.:format)
   // function(options)
   new_person_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"people",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
@@ -738,12 +708,6 @@ Based on Rails routes of DSSRM::Application
 // new_title => /titles/new(.:format)
   // function(options)
   new_title_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"titles",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
-// organization => /organizations/:id(.:format)
-  // function(id, options)
-  organization_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"organizations",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
-// organizations => /organizations(.:format)
-  // function(options)
-  organizations_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"organizations",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
 // people => /people(.:format)
   // function(options)
   people_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"people",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),

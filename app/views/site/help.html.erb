@@ -37,13 +37,13 @@
 		<a name="2a"></a>
 		<h3>2a. LDAP One-Way Sync</h3>
 		<p>
-			RM is designed to get most of its information about people, their titles, affiliations, and organizations via LDAP. By default, it pulls from UCD's campus LDAP server, ldap.ucdavis.edu, every 8 hours. The particular start time of the 8 hour cycle is based simply on when the application was last started and is therefore not predictable.
+			RM is designed to get most of its information about people, their titles, associations, and organizations via LDAP. By default, it pulls from UCD's IAM service, every night. The particular start time of the 8 hour cycle is based simply on when the application was last started and is therefore not predictable.
 		</p>
 
 		<a name="2b"></a>
 		<h3>2b. Automatic activating/de-activating of an individual</h3>
 		<p>
-			Roles Management automatically syncs individuals from ldap.ucdavis.edu by querying for specific UCD department codes. LDAP is considered the primary source of information and has such:
+			Roles Management automatically syncs individuals from UCD's IAM service:
       <ul>
         <li>If an individual appears in LDAP, they are added to RM or re-activated</li>
         <li>If an individual disappears in LDAP, they are de-activated (effectively deleted but can be easily re-activated)</li>

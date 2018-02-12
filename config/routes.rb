@@ -41,7 +41,6 @@ DSSRM::Application.routes.draw do
   resources :majors
   resources :titles
   resources :business_office_units
-  resources :affiliations
   resources :departments
 
   namespace 'admin' do
