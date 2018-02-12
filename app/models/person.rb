@@ -136,6 +136,8 @@ class Person < Entity
     GroupRuleResultSet.update_results_for(:is_student, id) if saved_change_to_attribute?(:is_student)
     GroupRuleResultSet.update_results_for(:is_employee, id) if saved_change_to_attribute?(:is_employee)
     GroupRuleResultSet.update_results_for(:is_faculty, id) if saved_change_to_attribute?(:is_faculty)
+    GroupRuleResultSet.update_results_for(:is_hs_employee, id) if saved_change_to_attribute?(:is_hs_employee)
+    GroupRuleResultSet.update_results_for(:is_external, id) if saved_change_to_attribute?(:is_external)
   end
 
   private
@@ -150,7 +152,7 @@ class Person < Entity
 
     # Activating/de-activating a person emulates them losing all their roles
     if active
-      ActivityLog.info!("Marking as active", ["person_#{id}"])
+      ActivityLog.info!('Marking as active', ["person_#{id}"])
 
       roles.each do |role|
         Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
@@ -158,7 +160,7 @@ class Person < Entity
 
       Sync.person_added_to_system(Sync.encode(self))
     else
-      ActivityLog.info!("Marking as inactive", ["person_#{id}"])
+      ActivityLog.info!('Marking as inactive', ["person_#{id}"])
 
       roles.each do |role|
         Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))

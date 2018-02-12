@@ -9,7 +9,12 @@ class GroupRuleResultSet < ApplicationRecord
   validates_inclusion_of :condition, in: [true, false]
 
   validate do |grs|
-    if (grs.column == 'is_staff' || grs.column == 'is_faculty' || grs.column == 'is_student' || grs.column == 'is_employee') && grs.value != 't'
+    if (grs.column == 'is_staff' ||
+        grs.column == 'is_faculty' ||
+        grs.column == 'is_student' ||
+        grs.column == 'is_employee' ||
+        grs.column == 'is_hs_employee' ||
+        grs.column == 'is_external') && grs.value != 't'
       grs.errors[grs.column] << "Must use true value ('t'). Use 'is not' for false values."
     end
   end
@@ -44,7 +49,7 @@ class GroupRuleResultSet < ApplicationRecord
   def self.update_results_for(column, person_id)
     touched_rule_set_ids = [] # Record all groups touched by rule changes as they will need to recalculate their members
 
-    Rails.logger.debug "GroupRuleResultSet: update_results_for() called"
+    Rails.logger.debug 'GroupRuleResultSet: update_results_for() called'
 
     unless GroupRule.valid_columns.include? column.to_s
       raise "Cannot update_results_for() for unknown column '#{column}'"
@@ -148,6 +153,24 @@ class GroupRuleResultSet < ApplicationRecord
           touched_rule_set_ids << rule_set.id
         end
       end
+    when :is_hs_employee
+      if entity.is_hs_employee
+        GroupRuleResultSet.where(column: 'is_hs_employee').each do |rule_set|
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          Rails.logger.debug "Matched 'is_hs_employee' rule. Recording result."
+          rule_set.results << GroupRuleResult.new(entity_id: person_id)
+          touched_rule_set_ids << rule_set.id
+        end
+      end
+    when :is_external
+      if entity.is_external
+        GroupRuleResultSet.where(column: 'is_external').each do |rule_set|
+          # rule.value does not matter for the 'is_staff/employee/etc' column types
+          Rails.logger.debug "Matched 'is_external' rule. Recording result."
+          rule_set.results << GroupRuleResult.new(entity_id: person_id)
+          touched_rule_set_ids << rule_set.id
+        end
+      end
     when :sis_level_code
       GroupRuleResultSet.where(column: 'sis_level_code').each do |rule_set|
         next unless entity.sis_associations.where(level_code: rule_set.value).count.positive?
@@ -233,6 +256,10 @@ class GroupRuleResultSet < ApplicationRecord
       p += Person.where(is_student: true).select(:id)
     when 'is_employee'
       p += Person.where(is_employee: true).select(:id)
+    when 'is_hs_employee'
+      p += Person.where(is_hs_employee: true).select(:id)
+    when 'is_external'
+      p += Person.where(is_external: true).select(:id)
     when 'sis_level_code'
       p += SisAssociation.where(level_code: value).pluck(:entity_id).map { |e_id| OpenStruct.new(id: e_id) }
     when 'pps_unit'

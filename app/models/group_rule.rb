@@ -2,13 +2,19 @@
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w[title major affiliation loginid department is_staff is_faculty is_student
-                     is_employee sis_level_code pps_unit pps_position_type business_office_unit].freeze
+                     is_employee is_external is_hs_employee sis_level_code pps_unit pps_position_type
+                     business_office_unit].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]
   validates_inclusion_of :column, in: VALID_COLUMNS
   validate do |gr|
-    if (gr.column == 'is_staff' || gr.column == 'is_faculty' || gr.column == 'is_student' || gr.column == 'is_employee') && gr.value != 't'
+    if (gr.column == 'is_staff' ||
+        gr.column == 'is_faculty' ||
+        gr.column == 'is_student' ||
+        gr.column == 'is_employee' ||
+        gr.column == 'is_hs_employee' ||
+        gr.column == 'is_external') && gr.value != 't'
       gr.errors[gr.column] << "Must use true value ('t'). Use 'is not' for false values."
     end
   end

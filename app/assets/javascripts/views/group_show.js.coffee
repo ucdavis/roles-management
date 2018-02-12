@@ -229,6 +229,14 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         $rule.find("td:nth-child(1) select").val 'iam_affiliation'
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val 'Student'
+      when 'is_hs_employee'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'HS Employee'
+      when 'is_external'
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val 'External'
       when 'pps_position_type'
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
@@ -323,6 +331,16 @@ DssRm.Views.GroupShow = Backbone.View.extend(
                 column: 'is_student'
                 condition: _condition
                 value: 't'
+            when "HS Employee"
+              rule.set
+                column: 'is_hs_employee'
+                condition: _condition
+                value: 't'
+            when "External"
+              rule.set
+                column: 'is_external'
+                condition: _condition
+                value: 't'
         when "pps_position_type"
           rule.set
             column: _column
@@ -407,7 +425,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
       when "affiliation"
         lookahead_url = Routes.affiliations_path()
       when "iam_affiliation"
-        entities = ['0####Employee', '1####Faculty', '2####Staff', '3####Student']
+        entities = ['0####Employee', '1####Faculty', '2####Staff', '3####Student', '4####HS Employee', '5####External']
         process entities
         return
       when "pps_position_type"

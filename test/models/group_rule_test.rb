@@ -298,6 +298,38 @@ class GroupRuleTest < ActiveSupport::TestCase
     test_group_rule(group_rule, setup_match, remove_match)
   end
 
+  test "Rule 'is_hs_employee' works" do
+    group_rule = GroupRule.new(column: 'is_hs_employee', condition: 'is', value: true)
+
+    setup_match = lambda {
+      @person.is_hs_employee = true
+      @person.save!
+    }
+
+    remove_match = lambda {
+      @person.is_hs_employee = false
+      @person.save!
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+
+  test "Rule 'is_external' works" do
+    group_rule = GroupRule.new(column: 'is_external', condition: 'is', value: true)
+
+    setup_match = lambda {
+      @person.is_external = true
+      @person.save!
+    }
+
+    remove_match = lambda {
+      @person.is_external = false
+      @person.save!
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+
   test "Rule 'title is' works" do
     group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).name)
 
