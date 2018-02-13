@@ -45,7 +45,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_memberships = new Backbone.Collection if @group_memberships is `undefined`
       @groups_via_rules = new Backbone.Collection if @groups_via_rules is `undefined`
       @role_assignments = new DssRm.Collections.RoleAssignments if @role_assignments is `undefined`
-      @organizations = new Backbone.Collection if @organizations is `undefined`
 
       # Reset nested collection data
       @favorites.reset @get("favorites")
@@ -54,7 +53,6 @@ DssRm.Models.Entity = Backbone.Model.extend(
       @group_memberships.reset @get("group_memberships")
       @groups_via_rules.reset @get("groups_via_rules")
       @role_assignments.reset @get("role_assignments")
-      @organizations.reset @get("organizations")
 
   toJSON: ->
     if @type() is EntityTypes.group

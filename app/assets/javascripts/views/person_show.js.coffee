@@ -78,19 +78,6 @@ class DssRm.Views.PersonShow extends Backbone.View
         membership = @model.group_memberships.get(item.id)
         membership.set('_destroy', true)
 
-    @$("input[name=organization_associations]").tokenInput Routes.organizations_path(),
-      crossDomain: false
-      defaultText: ""
-      theme: "facebook"
-      disabled: true
-      onAdd: (item) =>
-        @model.organizations.add
-          id: item.id
-          name: item.name
-      onDelete: (item) =>
-        organization = @model.organizations.get(item.id)
-        organization.set('_destroy', true)
-
   initializeRolesTab: ->
     @$("#add_role_assignment_application_search").typeahead
       minLength: 3
@@ -223,16 +210,6 @@ class DssRm.Views.PersonShow extends Backbone.View
         name: group_via_rule.get('group_name')
         readonly: true
         class: "calculated"
-
-    organization_association_tokeninput = @$("input[name=organization_associations]")
-    organization_association_tokeninput.tokenInput "clear"
-    @model.organizations.each (organization) =>
-      unless organization.get('_destroy')
-        organization_association_tokeninput.tokenInput "add",
-          id: organization.get('id')
-          name: organization.get('name')
-          readonly: true
-          class: "calculated"
 
     # Roles tab
     $rolesTab = @$("div#role_assignments")

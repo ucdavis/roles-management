@@ -37,7 +37,7 @@
 		<a name="2a"></a>
 		<h3>2a. LDAP One-Way Sync</h3>
 		<p>
-			RM is designed to get most of its information about people, their titles, associations, and organizations via LDAP. By default, it pulls from UCD's IAM service, every night. The particular start time of the 8 hour cycle is based simply on when the application was last started and is therefore not predictable.
+			RM is designed to get most of its information about people, their titles, and associations via IAM. By default, it pulls from UCD's IAM service, every night. The particular start time of the 8 hour cycle is based simply on when the application was last started and is therefore not predictable.
 		</p>
 
 		<a name="2b"></a>
@@ -57,8 +57,6 @@
         <li>Person removed from role</li>
         <li>Person added to system</li>
         <li>Person removed from system</li>
-        <li>Person added to organization</li>
-        <li>Person removed from organization</li>
       </ul>
       Note that activating or de-activating a person effectively creates or deletes them and triggers the appropriate "added to role", "removed from system", etc. above.
     </p>

@@ -14,7 +14,7 @@ RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, Post
 
 ### Step 1. (Set configuration values)
 
-RM is designed to be re-deployable in any organization, though there
+RM is designed to be re-deployable in any workgroup, though there
 are a few matters of configuration that need to be attended to:
 
 config/database.example.yml

@@ -414,8 +414,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         lookahead_url = Routes.majors_path()
       when "department"
         lookahead_url = Routes.departments_path()
-      when "organization"
-        lookahead_url = Routes.organizations_path()
       when "loginid"
         lookahead_url = Routes.people_path()
       when "title"
