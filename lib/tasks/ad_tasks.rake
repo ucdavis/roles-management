@@ -135,4 +135,56 @@ namespace :ad do
 
     # puts "Re-synced #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s)."
   end
+
+  desc 'Audit AD for differences between a group and an AD path'
+  task :audit_group_with_path, [:group_id, :ad_path] => :environment do |t, args|
+    STDERR.puts 'Must supply a group ID' if args[:group_id].nil?
+    STDERR.puts 'Must supply an AD path' if args[:ad_path].nil?
+
+    @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
+
+    ActiveDirectory.configure(@config)
+
+    group = Group.find_by(id: args[:group_id])
+    if group.nil?
+      STDERR.puts "Could not find Group with ID #{args[:group_id]}"
+      exit(-1)
+    end
+
+    ad_group = ActiveDirectory.get_group(args[:ad_path])
+
+    unless ad_group.is_a? Net::LDAP::Entry
+      STDERR.puts "Could not find AD path #{args[:ad_path]}"
+      exit(-1)
+    end
+
+    ad_members = ActiveDirectory.list_group_members(ad_group)
+    group_members = group.members.select { |m| m.active == true }.map(&:loginid)
+
+    if ad_members.sort == group_members.sort
+      puts 'No differences found.'
+    else
+      puts 'Differences found:'
+      print "\tMembers in AD but not RM ("
+      if ad_members.length > 0
+        print (((ad_members - group_members).length.to_f / ad_members.length.to_f) * 100.0).round(2)
+      else
+        print '100'
+      end
+      print "% different, should be deleted from AD):\n"
+      (ad_members - group_members).each do |missing|
+        puts "\t\t#{missing}"
+      end
+      print "\tMembers in RM but not AD ("
+      if group_members.length > 0
+        print (((group_members - ad_members).length.to_f / group_members.length.to_f) * 100.0).round(2)
+      else
+        print '100'
+      end
+      print "% different, should be added to AD):\n"
+      (group_members - ad_members).each do |missing|
+        puts "\t\t#{missing}"
+      end
+    end
+  end
 end
