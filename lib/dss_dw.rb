@@ -100,7 +100,10 @@ module DssDw
       STDERR.puts "Unable to connect to #{dw_url}"
       return nil
     rescue Net::OpenTimeout
-      STDERR.puts "Request timed out: #{dw_url}"
+      STDERR.puts "Request timed out (Net::OpenTimeout): #{dw_url}"
+      return nil
+    rescue Net::ReadTimeout
+      STDERR.puts "Request timed out (Net::ReadTimeout): #{dw_url}"
       return nil
     end
 
