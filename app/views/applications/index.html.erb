@@ -32,10 +32,10 @@
       DssRm.initialize(data);
     });
 
-    // Refresh every 15 minutes (900000 ms) to lessen front-end/back-end
+    // Refresh every 30 minutes to lessen front-end/back-end
     // consistency errors that can occur when the user leaves the page open.
     setTimeout(function () {
       window.location.href = Routes.applications_path();
-    }, 900000);
+    }, 60000 * 30);
   </script>
 <% end %>
