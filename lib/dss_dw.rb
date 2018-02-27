@@ -12,6 +12,7 @@ module DssDw
 
     response = perform_dw_request("/people/#{loginid}.json")
 
+    return nil if response.nil?
     return nil if response.code.to_i == 404
 
     begin
@@ -26,6 +27,7 @@ module DssDw
   def self.fetch_pps_departments
     response = perform_dw_request('/departments/pps.json')
 
+    return nil if response.nil?
     return nil if response.code.to_i == 404
 
     begin
@@ -40,6 +42,7 @@ module DssDw
   def self.fetch_people_by_pps_department(dept_code)
     response = perform_dw_request("/departments/pps/#{dept_code}")
 
+    return nil if response.nil?
     return nil if response.code.to_i == 404
 
     begin
@@ -56,6 +59,7 @@ module DssDw
 
     response = perform_dw_request("/people/search?q=#{URI.escape(query)}")
 
+    return nil if response.nil?
     return nil if response.code.to_i == 404
 
     begin
