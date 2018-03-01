@@ -155,6 +155,7 @@ module DssDw
         }
       end
       dw_person['sisAssociations'].each do |sis_assoc_json|
+        next if sis_assoc_json.nil?
         next unless existing_sis_assocs.reject! do |assoc|
           assoc[:major] == sis_assoc_json['majorName'] &&
           assoc[:association_rank] == sis_assoc_json['assocRank'].to_i &&
@@ -189,6 +190,7 @@ module DssDw
         }
       end
       dw_person['ppsAssociations'].each do |pps_assoc_json|
+        next if pps_assoc_json.nil?
         next unless existing_pps_assocs.reject! do |assoc|
           assoc[:title] == pps_assoc_json['titleCode'] &&
           assoc[:department] == pps_assoc_json['deptCode'] &&
