@@ -148,7 +148,7 @@ namespace :group do
   task :audit_inherited_roles, [:loginid] => :environment do |_t, args|
     people = []
 
-    total_role_count = Role.count
+    total_ra_count = RoleAssignment.count
     total_incorrect = 0
     total_missing = 0
 
@@ -169,6 +169,11 @@ namespace :group do
 
         # Role is inherited
         parent_ra = RoleAssignment.find_by_id(ra.parent_id)
+
+        if parent_ra.nil?
+          puts "\tRole assignment #{ra.id} is inherited from #{ra.parent_id} but parent doesn't exist. Skipping ...".red
+          next
+        end
 
         # Role is inherited from a group ...
         group = parent_ra.entity
@@ -202,10 +207,10 @@ namespace :group do
     end
 
     puts "\n"
-    puts "Total roles (at start)  : #{total_role_count}"
-    puts "Total roles (at finish) : #{Role.count}"
-    puts "Total found incorrect   : #{total_incorrect}"
-    puts "Total found missing     : #{total_missing}"
+    puts "Total role assignments (at start)  : #{total_ra_count}"
+    puts "Total role assignments (at finish) : #{RoleAssignment.count}"
+    puts "Total found incorrect              : #{total_incorrect}"
+    puts "Total found missing                : #{total_missing}"
   end
 
   desc 'Convert applicable "Org Is" rules to "Dept Is"'
