@@ -58,4 +58,17 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     assert ra.valid? == false
     assert ra.errors[:base][0].include? 'role_assignment.attributes.base.immutable'
   end
+
+  test 'person attribute changes which causes group removal should also cause role assignment removal' do
+    # person matches a group based on pps affiliation (department)
+
+    # person should have the roles from that group
+
+    # person loses that pps affiliation
+
+    # person should fall out of that group
+
+    # person should also lose those roles
+    # assert false
+  end
 end
