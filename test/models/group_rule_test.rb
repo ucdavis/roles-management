@@ -100,7 +100,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     assert group.members.length == 1, 'group should have a member'
   end
 
-  test "deleting a person or disabling them should disassociate them with the proper groups" do
+  test 'deleting a person or disabling them should disassociate them with the proper groups' do
     # Ensure a group has a rule
     group = entities(:groupWithNothing)
 
