@@ -97,6 +97,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    colorize (0.8.1)
     concurrent-ruby (1.0.5)
     crass (1.0.3)
     daemons (1.2.6)
@@ -264,6 +265,7 @@ DEPENDENCIES
   capistrano3-delayed-job!
   capybara
   coffee-rails (~> 4.2)
+  colorize
   daemons
   dalli
   delayed_job_active_record

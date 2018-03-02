@@ -8,39 +8,12 @@ namespace :group do
   task :recalculate_all do
     Rake::Task['environment'].invoke
 
-    GroupRuleResultSet.all.each(&:update_results)
-  end
+    total_count = GroupRuleResultSet.count
 
-  desc 'Recalculate the rule-based members of a specific group.'
-  task :recalculate, [:group_id] => :environment do |t, args|
-    unless args[:group_id]
-      puts 'You must specify a group ID to recalculate.'
-      exit(-1)
+    GroupRuleResultSet.all.each_with_index do |grrs, i|
+      puts "Recalculating for #{i} of #{total_count} ..."
+      grrs.update_results
     end
-
-    g = Group.find_by_id(args[:group_id])
-    unless g
-      puts "Could not find a group with ID #{args[:group_id]}."
-      exit(-1)
-    end
-
-    puts "Group (#{g.id}, #{g.name}) has #{g.rules.length} rules."
-
-    puts 'REWRITE THIS TASK FOR RULE SETS'
-    exit(-1)
-
-    # Recalculate the group's rule caches
-    g.rules.each do |rule|
-      old_count = rule.results.length
-      rule.resolve! # should be GroupRuleResultSet.update_results
-      rule.reload
-      puts "\tGroupRule ##{rule.id} (#{rule.column} #{rule.condition} #{rule.value}) went from #{old_count} to #{rule.results.length} results"
-    end
-
-    old_count = g.members.length
-    #g.update_members
-    g.reload
-    puts "\tGroup ##{g.id} (#{g.name}) went from #{old_count} to #{g.members.length} members"
   end
 
   desc 'Recalculate inherited application operatorships from groups.'
@@ -143,8 +116,8 @@ namespace :group do
     end
   end
 
-  desc 'Audit inherited roles for data correctness.'
-  task :audit_inherited_roles, [:loginid] => :environment do |_t, args|
+  desc '(Old) Audit inherited roles for data correctness.'
+  task :old_audit_inherited_roles, [:loginid] => :environment do |_t, args|
     people = []
     bad_people_count = 0
 
@@ -169,6 +142,70 @@ namespace :group do
     end
 
     puts "#{bad_people_count} / #{people.length} (#{bad_people_count / people.length}%) people have invalid inherited roles."
+  end
+
+  desc 'Audit inherited roles for data correctness.'
+  task :audit_inherited_roles, [:loginid] => :environment do |_t, args|
+    people = []
+
+    total_role_count = Role.count
+    total_incorrect = 0
+    total_missing = 0
+
+    if args[:loginid]
+      people << Person.find_by_loginid(args[:loginid])
+    else
+      people = Person.all
+    end
+
+    total_people = people.count
+
+    people.each_with_index do |p, i|
+      puts "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
+
+      # Ensure a person doesn't have inherited roles they shouldn't have ...
+      p.role_assignments.each do |ra|
+        next if ra.parent_id.nil?
+
+        # Role is inherited
+        parent_ra = RoleAssignment.find_by_id(ra.parent_id)
+
+        # Role is inherited from a group ...
+        group = parent_ra.entity
+        unless group.members.map(&:loginid).include?(p.loginid)
+          puts "\tGroup #{group.id} #{group.name} (excluded) ...".red
+          puts "\t\tHas inherited role #{parent_ra.role_id} / #{parent_ra.role.application.name}, #{parent_ra.role.token} but should not ...".red
+          ra.destroy
+          total_incorrect += 1
+        end
+      end
+
+      person_role_ids = p.roles.map(&:id)
+
+      # Ensure a person has the inherited roles they shouuld have ...
+      p.groups.each do |group|
+        group.role_assignments.each do |ra|
+          unless person_role_ids.include?(ra.role_id)
+            puts "\tGroup #{group.id} #{group.name} (included) ...".green
+            puts "\t\tShould have inherited role #{ra.role_id} / #{ra.role.application.name}, #{ra.role.token} but has not yet ...".green
+
+            new_ra = RoleAssignment.new
+            new_ra.role_id = ra.role_id
+            new_ra.entity_id = p.id
+            new_ra.parent_id = ra.id
+            new_ra.save!
+
+            total_missing += 1
+          end
+        end
+      end
+    end
+
+    puts "\n"
+    puts "Total roles (at start)  : #{total_role_count}"
+    puts "Total roles (at finish) : #{Role.count}"
+    puts "Total found incorrect   : #{total_incorrect}"
+    puts "Total found missing     : #{total_missing}"
   end
 
   desc 'Convert applicable "Org Is" rules to "Dept Is"'
