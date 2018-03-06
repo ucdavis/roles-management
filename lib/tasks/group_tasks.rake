@@ -161,7 +161,7 @@ namespace :group do
     total_people = people.count
 
     people.each_with_index do |p, i|
-      puts "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
+      # puts "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
 
       # Ensure a person doesn't have inherited roles they shouldn't have ...
       p.role_assignments.each do |ra|
@@ -171,15 +171,15 @@ namespace :group do
         parent_ra = RoleAssignment.find_by_id(ra.parent_id)
 
         if parent_ra.nil?
-          puts "\tRole assignment #{ra.id} is inherited from #{ra.parent_id} but parent doesn't exist. Skipping ...".red
+          puts "#{p.loginid}: Role assignment #{ra.id} is inherited from #{ra.parent_id} but parent doesn't exist. Skipping ..."
           next
         end
 
         # Role is inherited from a group ...
         group = parent_ra.entity
         unless group.members.map(&:loginid).include?(p.loginid)
-          puts "\tGroup #{group.id} #{group.name} (excluded) ...".red
-          puts "\t\tHas inherited role #{parent_ra.role_id} / #{parent_ra.role.application.name}, #{parent_ra.role.token} but should not ...".red
+          puts "#{p.loginid}: Group #{group.id} #{group.name} (excluded) ..."
+          puts "#{p.loginid}: -- Has inherited role #{parent_ra.role_id} / #{parent_ra.role.application.name}, #{parent_ra.role.token} but should not ..."
           ra.destroy
           total_incorrect += 1
         end
@@ -191,8 +191,8 @@ namespace :group do
       p.groups.each do |group|
         group.role_assignments.each do |ra|
           unless person_role_ids.include?(ra.role_id)
-            puts "\tGroup #{group.id} #{group.name} (included) ...".green
-            puts "\t\tShould have inherited role #{ra.role_id} / #{ra.role.application.name}, #{ra.role.token} but has not yet ...".green
+            puts "#{p.loginid}: Group #{group.id} #{group.name} (included) ..."
+            puts "#{p.loginid}: -- Should have inherited role #{ra.role_id} / #{ra.role.application.name}, #{ra.role.token} but has not yet ..."
 
             new_ra = RoleAssignment.new
             new_ra.role_id = ra.role_id
@@ -206,36 +206,9 @@ namespace :group do
       end
     end
 
-    puts "\n"
     puts "Total role assignments (at start)  : #{total_ra_count}"
     puts "Total role assignments (at finish) : #{RoleAssignment.count}"
     puts "Total found incorrect              : #{total_incorrect}"
     puts "Total found missing                : #{total_missing}"
-  end
-
-  desc 'Convert applicable "Org Is" rules to "Dept Is"'
-  task convert_org_rules: :environment do
-    GroupRule.where(column: 'organization').each do |gr|
-      o = Organization.find_by(name: gr.value)
-      next unless o
-
-      # We only care about organizations with no children
-      next unless o.child_org_ids.empty?
-
-      d = Department.find_by(officialName: gr.value)
-      d = Department.find_by(displayName: gr.value) if d.nil?
-      d = Department.find_by(abbreviation: gr.value) if d.nil?
-      if d.nil?
-        STDERR.puts "Cannot convert GroupRule for organization '#{o.name}', no matching department found. Skipping ..."
-        next
-      end
-
-      # Organization has no children and can be treated as a department
-      puts "Converting organization-based GroupRule (ID: #{gr.id}, value: #{gr.value})"
-      puts "\tResults before conversion: #{gr.results.length}"
-      gr.column = 'department'
-      gr.save!
-      puts "\tResults after conversion: #{gr.results.length}"
-    end
   end
 end
