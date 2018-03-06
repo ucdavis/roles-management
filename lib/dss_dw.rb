@@ -141,7 +141,7 @@ module DssDw
       p.phone = dw_person['contactInfo']['workPhone']
       p.address = dw_person['contactInfo']['postalAddress']
     end
-    p.synced_at = Time.now
+    p.synced_at = dw_person['person']['lastSeen'] || p.synced_at
     p.active = true
 
     # Process any majors (SIS associations)
