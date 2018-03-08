@@ -1,5 +1,5 @@
 class PpsAssociation < ApplicationRecord
-  #include Immutable
+  include Immutable
 
   belongs_to :person
   belongs_to :title

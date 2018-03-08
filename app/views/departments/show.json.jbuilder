@@ -1,5 +1,5 @@
 json.cache! ['department_show', @cache_key] do
-  json.extract! @department, :id, :officialName, :displayName
+  json.extract! @department, :id, :officialName, :displayName, :code
 
   # Used by frontend client when searching for group rule completions
   json.name department.displayName

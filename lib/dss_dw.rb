@@ -185,6 +185,8 @@ module DssDw
           id: assoc.id,
           title: assoc.title.code,
           department: assoc.department.code,
+          admin_department: assoc.admin_department&.code,
+          appt_department: assoc.appt_department&.code,
           association_rank: assoc.association_rank,
           position_type_code: assoc.position_type_code
         }
@@ -194,6 +196,8 @@ module DssDw
         next unless existing_pps_assocs.reject! do |assoc|
           assoc[:title] == pps_assoc_json['titleCode'] &&
           assoc[:department] == pps_assoc_json['deptCode'] &&
+          assoc[:admin_department] == pps_assoc_json['adminDeptCode'] &&
+          assoc[:appt_department] == pps_assoc_json['apptDeptCode'] &&
           assoc[:association_rank] == pps_assoc_json['assocRank'].to_i &&
           assoc[:position_type_code] == pps_assoc_json['positionTypeCode'].to_i
         end.nil?
@@ -203,6 +207,8 @@ module DssDw
           PpsAssociation.create!(person_id: p.id,
                                  title: Title.find_by(code: pps_assoc_json['titleCode']),
                                  department: Department.find_by(code: pps_assoc_json['deptCode']),
+                                 admin_department: Department.find_by(code: pps_assoc_json['adminDeptCode']),
+                                 appt_department: Department.find_by(code: pps_assoc_json['apptDeptCode']),
                                  association_rank: pps_assoc_json['assocRank'].to_i,
                                  position_type_code: pps_assoc_json['positionTypeCode'].to_i)
         rescue ActiveRecord::RecordInvalid => e

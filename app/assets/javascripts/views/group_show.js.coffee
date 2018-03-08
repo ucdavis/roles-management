@@ -282,15 +282,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
       defaultText: ""
       theme: "facebook"
       disabled: @readonly
-      # onAdd: (item) =>
-      #   @model.role_assignments.add
-      #     role_id: item.id
-      #     entity_id: @model.get('id')
-      #     name: item.name
-      #     calculated: false
-      # onDelete: (item) =>
-      #   assignment = @model.role_assignments.get(item.id)
-      #   assignment.set('_destroy', true)
 
     return $input
 
@@ -413,6 +404,10 @@ DssRm.Views.GroupShow = Backbone.View.extend(
       when "major"
         lookahead_url = Routes.majors_path()
       when "department"
+        lookahead_url = Routes.departments_path()
+      when "admin_department"
+        lookahead_url = Routes.departments_path()
+      when "appt_department"
         lookahead_url = Routes.departments_path()
       when "loginid"
         lookahead_url = Routes.people_path()
