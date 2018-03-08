@@ -66,15 +66,8 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
       # Only import/update specified individual
       loginids << args[:loginid]
     else
-      # Import/update known individuals and any tracked departments
+      # Import/update known individuals
       loginids = Person.all.pluck(:loginid)
-
-      # Use DW to scan all tracked departments and grab associated login IDs
-      Department.where(id: TrackedItem.where(kind: 'department').pluck(:item_id)).pluck(:code).each do |dept_code|
-        loginids << DssDw.fetch_people_by_pps_department(dept_code).map { |p| p['userId'] }
-      end
-
-      loginids = loginids.flatten.uniq
     end
 
     total_people = loginids.length
@@ -91,6 +84,14 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
         dw_person['ppsAssociations'].each do |pps_assoc_json|
           next if pps_assoc_json.nil?
 
+          if pps_assoc_json['adminDeptCode'].nil? || pps_assoc_json['adminDeptCode'].length.zero?
+            puts "\tDW gave us a blank admin department. Skipping ..."
+            next
+          elsif pps_assoc_json['apptDeptCode'].nil? || pps_assoc_json['apptDeptCode'].length.zero?
+            puts "\tDW gave us a blank appt department. Skipping ..."
+            next
+          end
+
           department = Department.find_by(code: pps_assoc_json['deptCode'])
           if department.nil?
             puts "\tCould not find department referenced by DW deptCode. Skipping ..."
@@ -99,6 +100,16 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
           title = Title.find_by(code: pps_assoc_json['titleCode'])
           if title.nil?
             puts "\tCould not find title referenced by DW. Skipping ..."
+            next
+          end
+          admin_department = Department.find_by(code: pps_assoc_json['adminDeptCode'])
+          if admin_department.nil?
+            puts "\tCould not find admin department referenced by DW adminDeptCode '#{pps_assoc_json['adminDeptCode']}'. Skipping ..."
+            next
+          end
+          appt_department = Department.find_by(code: pps_assoc_json['apptDeptCode'])
+          if appt_department.nil?
+            puts "\tCould not find appt department referenced by DW apptDeptCode '#{pps_assoc_json['apptDeptCode']}'. Skipping ..."
             next
           end
 
@@ -110,8 +121,8 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
           )
 
           if existing_assoc
-            existing_assoc.admin_department = Department.find_by(code: pps_assoc_json['adminDeptCode'])
-            existing_assoc.appt_department = Department.find_by(code: pps_assoc_json['apptDeptCode'])
+            existing_assoc.admin_department = admin_department
+            existing_assoc.appt_department = appt_department
             existing_assoc.save!
             puts "\tSuccessfully augmented PPS association with DW data"
           else
