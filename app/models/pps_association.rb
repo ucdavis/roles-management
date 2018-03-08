@@ -1,9 +1,11 @@
 class PpsAssociation < ApplicationRecord
-  include Immutable
+  #include Immutable
 
   belongs_to :person
   belongs_to :title
   belongs_to :department
+  belongs_to :admin_department, class_name: 'Department'
+  belongs_to :appt_department, class_name: 'Department'
 
   validates_presence_of :association_rank
   validates_presence_of :position_type_code
@@ -14,6 +16,8 @@ class PpsAssociation < ApplicationRecord
     GroupRuleResultSet.update_results_for(:title, person_id)
     GroupRuleResultSet.update_results_for(:business_office_unit, person_id)
     GroupRuleResultSet.update_results_for(:department, person_id)
+    GroupRuleResultSet.update_results_for(:admin_department, person_id)
+    GroupRuleResultSet.update_results_for(:appt_department, person_id)
     ActivityLog.info!("Added title #{title.name} for department #{department.displayName}", ["person_#{person.id}"])
   end
   after_destroy do
@@ -22,6 +26,8 @@ class PpsAssociation < ApplicationRecord
     GroupRuleResultSet.update_results_for(:title, person_id)
     GroupRuleResultSet.update_results_for(:business_office_unit, person_id)
     GroupRuleResultSet.update_results_for(:department, person_id)
+    GroupRuleResultSet.update_results_for(:admin_department, person_id)
+    GroupRuleResultSet.update_results_for(:appt_department, person_id)
     ActivityLog.info!("Removed title #{title.name} for department #{department.displayName}", ["person_#{person.id}"])
   end
 

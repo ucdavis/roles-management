@@ -13,3 +13,11 @@ evil_dssit:
   displayName: DSS IT UNSHARED SERVICE CENTER
   abbreviation: DSS IT USSC
   bou_org_oid: F80B657C9EE823A0E0340003BA8A560D
+
+asucd:
+  id: 3
+  code: 410041
+  officialName: ASUCD
+  displayName: ASUCD
+  abbreviation: ASUCD
+  bou_org_oid: B80B657C6EE823A0E0340003BA8A560D

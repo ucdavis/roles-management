@@ -95,6 +95,22 @@ class GroupRuleResultSet < ApplicationRecord
           touched_rule_set_ids << rule_set.id
         end
       end
+    when :admin_department
+      entity.pps_associations.map { |assoc| assoc.admin_department.officialName }.uniq.each do |dept_name|
+        GroupRuleResultSet.where(column: 'admin_department', value: dept_name).each do |rule_set|
+          Rails.logger.debug "Matched 'admin_department' rule. Recording result."
+          rule_set.results << GroupRuleResult.new(entity_id: person_id)
+          touched_rule_set_ids << rule_set.id
+        end
+      end
+    when :appt_department
+      entity.pps_associations.map { |assoc| assoc.appt_department.officialName }.uniq.each do |dept_name|
+        GroupRuleResultSet.where(column: 'appt_department', value: dept_name).each do |rule_set|
+          Rails.logger.debug "Matched 'appt_department' rule. Recording result."
+          rule_set.results << GroupRuleResult.new(entity_id: person_id)
+          touched_rule_set_ids << rule_set.id
+        end
+      end
     when :business_office_unit
       entity.pps_associations.map { |assoc| assoc.department.business_office_unit&.dept_official_name }.uniq.each do |bou_name|
         GroupRuleResultSet.where(column: 'business_office_unit', value: bou_name).each do |rule_set|
@@ -222,6 +238,24 @@ class GroupRuleResultSet < ApplicationRecord
       else
         ps = department.people.select(:id)
         Rails.logger.debug "Adding #{ps.length} people to a 'Department' GroupRule"
+        p += ps
+      end
+    when 'admin_department'
+      admin_department = Department.find_by(officialName: value)
+      if admin_department.nil?
+        logger.warn 'Admin department not found'
+      else
+        ps = PpsAssociation.where(admin_department_id: admin_department.id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+        Rails.logger.debug "Adding #{ps.length} people to an 'Admin Department' GroupRule"
+        p += ps
+      end
+    when 'appt_department'
+      appt_department = Department.find_by(officialName: value)
+      if appt_department.nil?
+        logger.warn 'Appt department not found'
+      else
+        ps = PpsAssociation.where(appt_department_id: appt_department.id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+        Rails.logger.debug "Adding #{ps.length} people to an 'Appt Department' GroupRule"
         p += ps
       end
     when 'business_office_unit'
