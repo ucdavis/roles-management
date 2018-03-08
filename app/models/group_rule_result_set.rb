@@ -96,7 +96,7 @@ class GroupRuleResultSet < ApplicationRecord
         end
       end
     when :admin_department
-      entity.pps_associations.map { |assoc| assoc.admin_department.officialName }.uniq.each do |dept_name|
+      entity.pps_associations.reject{ |assoc| assoc.admin_department_id == nil }.map { |assoc| assoc.admin_department.officialName }.uniq.each do |dept_name|
         GroupRuleResultSet.where(column: 'admin_department', value: dept_name).each do |rule_set|
           Rails.logger.debug "Matched 'admin_department' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
@@ -104,7 +104,7 @@ class GroupRuleResultSet < ApplicationRecord
         end
       end
     when :appt_department
-      entity.pps_associations.map { |assoc| assoc.appt_department.officialName }.uniq.each do |dept_name|
+      entity.pps_associations.reject{ |assoc| assoc.appt_department_id == nil }.map { |assoc| assoc.appt_department.officialName }.uniq.each do |dept_name|
         GroupRuleResultSet.where(column: 'appt_department', value: dept_name).each do |rule_set|
           Rails.logger.debug "Matched 'appt_department' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
