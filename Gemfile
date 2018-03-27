@@ -98,7 +98,4 @@ gem 'yaml_db'
 
 gem 'rack-timeout'
 
-# Force old ffi version. 1.9.21 appears to have a build issue
-gem 'ffi', '1.9.18'
-
 gem 'colorize'
