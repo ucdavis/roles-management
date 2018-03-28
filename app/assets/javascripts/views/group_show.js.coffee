@@ -242,6 +242,10 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val DssRm.Views.GroupShow.pps_position_types[_value]
+      when 'iam_affiliation' # iam_affiliation is a newly created iam_affiliation rule not yet set
+        $rule.find("td:nth-child(1) select").val 'iam_affiliation'
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val ''
       else
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
@@ -316,38 +320,25 @@ DssRm.Views.GroupShow = Backbone.View.extend(
 
     switch _column
       when "iam_affiliation"
-        # do something
+        column_val = "iam_affiliation"
         switch _value
           when "Employee"
-            rule.set
-              column: 'is_employee'
-              condition: _condition
-              value: 't'
+            column_val = 'is_employee'
           when "Faculty"
-            rule.set
-              column: 'is_faculty'
-              condition: _condition
-              value: 't'
+            column_val = 'is_faculty'
           when "Staff"
-            rule.set
-              column: 'is_staff'
-              condition: _condition
-              value: 't'
+            column_val = 'is_staff'
           when "Student"
-            rule.set
-              column: 'is_student'
-              condition: _condition
-              value: 't'
+            column_val = 'is_student'
           when "HS Employee"
-            rule.set
-              column: 'is_hs_employee'
-              condition: _condition
-              value: 't'
+            column_val = 'is_hs_employee'
           when "External"
-            rule.set
-              column: 'is_external'
-              condition: _condition
-              value: 't'
+            column_val = 'is_external'
+
+        rule.set
+          column: column_val
+          condition: _condition
+          value: 't'
       when "pps_position_type"
         rule.set
           column: _column
