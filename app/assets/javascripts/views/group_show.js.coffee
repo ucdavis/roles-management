@@ -11,6 +11,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     "click button#remove_group_rule" : "removeRule"
     "hidden"                         : "cleanUpModal"
     "click #delete"                  : "deleteGroup"
+    "change table#rules tbody"       : "ruleChanged"
 
   initialize: ->
     @$el.html JST["templates/entities/show_group"](model: @model)
@@ -293,55 +294,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     # Update @model.rules with any changes made in the UI
     _.each $('table#rules>tbody>tr'), (el, i) =>
       cid = $(el).data('rule_cid')
-      rule = @model.rules.get(cid)
-      _column = $(el).find("#column").val()
-      _condition = $(el).find("#condition").val()
-      _value = $(el).find("#value").val()
-
-      switch _column
-        when "iam_affiliation"
-          # do something
-          switch _value
-            when "Employee"
-              rule.set
-                column: 'is_employee'
-                condition: _condition
-                value: 't'
-            when "Faculty"
-              rule.set
-                column: 'is_faculty'
-                condition: _condition
-                value: 't'
-            when "Staff"
-              rule.set
-                column: 'is_staff'
-                condition: _condition
-                value: 't'
-            when "Student"
-              rule.set
-                column: 'is_student'
-                condition: _condition
-                value: 't'
-            when "HS Employee"
-              rule.set
-                column: 'is_hs_employee'
-                condition: _condition
-                value: 't'
-            when "External"
-              rule.set
-                column: 'is_external'
-                condition: _condition
-                value: 't'
-        when "pps_position_type"
-          rule.set
-            column: _column
-            condition: _condition
-            value: _.findKey DssRm.Views.GroupShow.pps_position_types, (val) -> val == _value
-        else
-          rule.set
-            column: _column
-            condition: _condition
-            value: _value
+      @syncRuleModelWithDOM(cid, $(el))
 
     # Note: the _.filter() on rules is to avoid saving empty rules (rules with no value set)
     @model.save
@@ -353,6 +306,58 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         @$('#apply').removeAttr('disabled').html('Apply Changes')
       error: ->
         @$('#apply').addClass('btn-danger').html('Error')
+
+  syncRuleModelWithDOM: (cid, $tr) ->
+    rule = @model.rules.get(cid)
+
+    _column = $tr.find("#column").val()
+    _condition = $tr.find("#condition").val()
+    _value = $tr.find("#value").val()
+
+    switch _column
+      when "iam_affiliation"
+        # do something
+        switch _value
+          when "Employee"
+            rule.set
+              column: 'is_employee'
+              condition: _condition
+              value: 't'
+          when "Faculty"
+            rule.set
+              column: 'is_faculty'
+              condition: _condition
+              value: 't'
+          when "Staff"
+            rule.set
+              column: 'is_staff'
+              condition: _condition
+              value: 't'
+          when "Student"
+            rule.set
+              column: 'is_student'
+              condition: _condition
+              value: 't'
+          when "HS Employee"
+            rule.set
+              column: 'is_hs_employee'
+              condition: _condition
+              value: 't'
+          when "External"
+            rule.set
+              column: 'is_external'
+              condition: _condition
+              value: 't'
+      when "pps_position_type"
+        rule.set
+          column: _column
+          condition: _condition
+          value: _.findKey DssRm.Views.GroupShow.pps_position_types, (val) -> val == _value
+      else
+        rule.set
+          column: _column
+          condition: _condition
+          value: _value
 
   deleteGroup: ->
     @$el.fadeOut()
@@ -381,7 +386,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
   # Renders a new rule and returns jQuery object
   addRule: (e) ->
     @model.rules.add {}
-      #id: 'new_' + (new Date).getTime()
     @renderRules()
 
   removeRule: (e) ->
@@ -459,6 +463,12 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     id = parseInt(parts[0])
     label = parts[1]
     label
+  
+  ruleChanged: (e) ->
+    $el = $(e.target).closest("tr")
+    cid = $el.data('rule_cid')
+    @syncRuleModelWithDOM(cid, $el)
+
 ,
   pps_position_types:
     1: 'Contract'
