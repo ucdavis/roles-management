@@ -56,4 +56,6 @@ Rails.application.configure do
   #   ActiveRecord::Base.logger = Logger.new('/dev/null')
   #   config.log_level = :debug
   # end
+
+  Rack::Timeout::Logger.level  = Logger::WARN
 end
