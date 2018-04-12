@@ -1,14 +1,13 @@
 source 'https://rubygems.org'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
-end
+#ruby '2.4.1'
+ruby '>= 2.3'
 
-gem 'rails', '~> 5.1'
+gem 'rails', '~> 5.2'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.7'
+gem 'puma', '~> 3.11'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
@@ -28,6 +27,11 @@ gem 'pg', '0.20.0', group: [:production, :development]
 # bundle exec rake doc:rails generates the API under doc/api.
 # gem 'sdoc', '~> 0.4.2', group: :doc
 
+# Reduces boot times through caching; required in config/boot.rb
+#gem 'bootsnap', '>= 1.1.0', require: false
+
+gem 'delayed_job', '>= 4.1.4', git: 'https://github.com/dssit/delayed_job.git', branch: 'allow-rails-5-2'
+
 group :production do
   gem 'dalli'
   # For New Relic monitoring integration
@@ -35,9 +39,8 @@ group :production do
 end
 
 group :development do
-  gem 'capistrano', '= 3.7.2', require: false
-  gem 'capistrano-bundler', '~> 1.1', require: false
-  gem 'capistrano-rails',   '~> 1.1', require: false
+  gem 'capistrano', '~> 3.10', require: false
+  gem 'capistrano-rails',   '~> 1.3', require: false
   gem 'capistrano-passenger', require: false
   # We use our fork of capistrano3-delayed-job due to a bug in 'daemons' where delayed_job
   # will not stop correctly if not passed the number of workers in the 'stop' command
@@ -51,15 +54,18 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console', '>= 3.3.0'
+  gem 'byebug', platform: :mri
 end
 
-group :development, :test do
-  gem 'byebug', platform: :mri
-  gem 'capybara'      # for JS integration testing
-  gem 'jasmine-rails' # for JS unit testing
-  gem 'poltergeist'   # for PhantomJS-based testing with capybara
+group :test do
+  gem 'capybara', '>= 2.15', '< 4.0' # for JS integration testing
+  gem 'jasmine-rails'                # for JS unit testing
+  gem 'poltergeist'                  # for PhantomJS-based testing with capybara
   gem 'sqlite3'
   gem 'test-unit', '~> 3.2'
+  gem 'selenium-webdriver'
+  # Easy installation and use of chromedriver to run system tests with Chrome
+  gem 'chromedriver-helper'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -85,17 +91,12 @@ gem 'whenever', require: false
 
 # For background processing
 gem 'daemons'
-gem 'delayed_job_active_record'
 
 # Sync script dependencies
 gem 'roles-management-api', '>= 0.1.2', git: 'https://github.com/dssit/roles-management-api.git'
 
 # For Slack notifications
-gem 'json'
-gem 'slack-notifier'
-
-gem 'yaml_db'
+# gem 'json'
+# gem 'slack-notifier'
 
 gem 'rack-timeout'
-
-gem 'colorize'

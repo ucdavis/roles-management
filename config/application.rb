@@ -1,4 +1,4 @@
-require File.expand_path('../boot', __FILE__)
+require_relative 'boot'
 
 require 'rails/all'
 
@@ -36,6 +36,8 @@ module DSSRM
     config.assets.enabled = true
 
     # config.active_record.schema_format = :sql
+
+    config.active_job.queue_adapter = :delayed_job
 
     config.assets.paths << Rails.root.join("app", "assets", "javascripts", "controllers")
     config.assets.paths << Rails.root.join("app", "assets", "templates")
