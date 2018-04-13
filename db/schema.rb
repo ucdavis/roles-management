@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(version: 20180308005801) do
     t.index ["application_id", "entity_id", "parent_id"], name: "idx_app_operatorships_on_app_id_and_entity_id_and_parent_id"
   end
 
-  create_table "application_ownerships", id: :serial, force: :cascade do |t|
+  create_table "application_ownerships", id: :integer, force: :cascade do |t|
     t.integer "entity_id"
     t.integer "application_id"
     t.datetime "created_at", null: false
@@ -137,7 +137,7 @@ ActiveRecord::Schema.define(version: 20180308005801) do
     t.integer "entity_id"
   end
 
-  create_table "group_ownerships", id: :serial, force: :cascade do |t|
+  create_table "group_ownerships", id: :integer, force: :cascade do |t|
     t.integer "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
