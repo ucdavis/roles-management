@@ -44,7 +44,7 @@ module Authentication
   # Differs from self.current_user, this method is 'include'd in the
   # ApplicationController and made available to CanCanCan
   def current_user
-    case session[:auth_via]
+    case session[:auth_via].to_sym
     when :whitelisted_ip
       return Authentication.actual_user
     when :api_key
@@ -75,7 +75,7 @@ module Authentication
     end
 
     if authenticated?
-      case session[:auth_via]
+      case session[:auth_via].to_sym
       when :whitelisted_ip
         Authentication.actual_user = ApiWhitelistedIpUser.find_by_address(session[:user_id])
         logger.info "Authentication passed with existing session (whitelisted IP): IP: #{session[:user_id]}"
@@ -89,6 +89,8 @@ module Authentication
           Authentication.effective_user = Person.includes(:role_assignments).includes(:roles).find_by_id(session[:impersonate_id])
           logger.info "Authentication is impersonating: ID: #{session[:impersonate_id]}, login ID: #{Authentication.effective_user.loginid}"
         end
+      else
+        logger.warn 'session[:auth_via] not understood'
       end
 
       return
