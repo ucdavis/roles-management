@@ -115,7 +115,7 @@ namespace :db do
     CSV.open(filename, 'w') do |csv|
       csv << attributes
 
-      Application.order(:name).all.each do |p|
+      Application.order(:id).all.each do |p|
         csv << attributes.map { |attr| p.send(attr) }
       end
     end
@@ -128,7 +128,7 @@ namespace :db do
     CSV.open(filename, 'w') do |csv|
       csv << [attributes, 'member_count'].flatten
 
-      Group.order(:name).all.each do |p|
+      Group.order(:id).all.each do |p|
         csv << [attributes.map { |attr| p.send(attr) }, p.members.count].flatten
       end
     end
@@ -139,7 +139,7 @@ namespace :db do
     CSV.open(filename, 'w') do |csv|
       csv << ['id', 'application_name', 'token', 'entity_count']
 
-      Role.order(:application_id).all.each do |p|
+      Role.order(:application_id).order(:id).all.each do |p|
         csv << [p.id, p.application.name, p.token, p.entities.count]
       end
     end
@@ -151,7 +151,7 @@ namespace :db do
       CSV.open(filename, 'w') do |csv|
         csv << ['entity_id', 'loginid']
 
-        r.entities.each do |e|
+        r.entities.order(:id).each do |e|
           csv << [e.id, e.loginid]
         end
       end
@@ -177,7 +177,7 @@ namespace :db do
       CSV.open(filename, 'w') do |csv|
         csv << ['role_id', 'role_token', 'application_name']
 
-        p.roles.each do |r|
+        p.roles.order(:id).each do |r|
           csv << [r.id, r.token, r.application.name]
         end
       end
