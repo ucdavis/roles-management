@@ -1,12 +1,4 @@
 GIT
-  remote: https://github.com/collectiveidea/delayed_job_active_record.git
-  revision: 73bd36f9c8b652f99fcf1061e245a78b5a088f50
-  specs:
-    delayed_job_active_record (4.1.2)
-      activerecord (>= 3.0, < 6.0)
-      delayed_job (>= 3.0, < 5)
-
-GIT
   remote: https://github.com/cthielen/capistrano3-delayed-job.git
   revision: 073365f9f9d30fa2acee482403537b697d4f1db0
   specs:
@@ -120,6 +112,9 @@ GEM
     dalli (2.7.8)
     delayed_job (4.1.5)
       activesupport (>= 3.0, < 5.3)
+    delayed_job_active_record (4.1.3)
+      activerecord (>= 3.0, < 5.3)
+      delayed_job (>= 3.0, < 5)
     ejs (1.1.1)
     erubi (1.7.1)
     exception_notification (4.2.2)
@@ -285,7 +280,7 @@ DEPENDENCIES
   daemons
   dalli
   delayed_job
-  delayed_job_active_record!
+  delayed_job_active_record
   ejs
   exception_notification
   jasmine-rails
