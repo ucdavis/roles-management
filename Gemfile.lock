@@ -1,17 +1,17 @@
 GIT
+  remote: https://github.com/collectiveidea/delayed_job_active_record.git
+  revision: 73bd36f9c8b652f99fcf1061e245a78b5a088f50
+  specs:
+    delayed_job_active_record (4.1.2)
+      activerecord (>= 3.0, < 6.0)
+      delayed_job (>= 3.0, < 5)
+
+GIT
   remote: https://github.com/cthielen/capistrano3-delayed-job.git
   revision: 073365f9f9d30fa2acee482403537b697d4f1db0
   specs:
     capistrano3-delayed-job (1.4.0)
       capistrano (>= 3.0.0)
-
-GIT
-  remote: https://github.com/dssit/delayed_job.git
-  revision: b987d52f292a90fa7d3a4186c96b818bb97be533
-  branch: allow-rails-5-2
-  specs:
-    delayed_job (4.1.4)
-      activesupport (>= 3.0, < 6.0)
 
 GIT
   remote: https://github.com/dssit/roles-management-api.git
@@ -118,6 +118,8 @@ GEM
     crass (1.0.4)
     daemons (1.2.6)
     dalli (2.7.8)
+    delayed_job (4.1.5)
+      activesupport (>= 3.0, < 5.3)
     ejs (1.1.1)
     erubi (1.7.1)
     exception_notification (4.2.2)
@@ -282,7 +284,8 @@ DEPENDENCIES
   coffee-rails (~> 4.2)
   daemons
   dalli
-  delayed_job (>= 4.1.4)!
+  delayed_job
+  delayed_job_active_record!
   ejs
   exception_notification
   jasmine-rails

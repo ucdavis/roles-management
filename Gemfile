@@ -30,7 +30,10 @@ gem 'pg', '0.20.0', group: [:production, :development]
 # Reduces boot times through caching; required in config/boot.rb
 #gem 'bootsnap', '>= 1.1.0', require: false
 
-gem 'delayed_job', '>= 4.1.4', git: 'https://github.com/dssit/delayed_job.git', branch: 'allow-rails-5-2'
+gem 'delayed_job'
+# The 'git' parameter can probably be removed a few days after April 13, 2018, just waiting
+# on support for delayed_job 4.1.5
+gem 'delayed_job_active_record', git: 'https://github.com/collectiveidea/delayed_job_active_record.git'
 
 group :production do
   gem 'dalli'
