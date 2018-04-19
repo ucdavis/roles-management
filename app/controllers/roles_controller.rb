@@ -58,7 +58,7 @@ class RolesController < ApplicationController
   private
 
   def load_role
-    @role = Role.find_by_id!(params[:id])
+    @role = Role.includes(:role_assignments).includes(:entities).find_by_id!(params[:id])
   end
 
   def load_roles
