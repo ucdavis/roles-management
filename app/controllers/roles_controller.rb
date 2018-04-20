@@ -29,7 +29,7 @@ class RolesController < ApplicationController
       if @role.update_attributes(role_params)
         @role.touch
         # Reload the group in case the after_save callback destroyed role assignments.
-        @role.reload
+        @role = Role.includes(:role_assignments).includes(:entities).find_by_id!(@role.id)
 
         @cache_key = 'role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
