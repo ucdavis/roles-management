@@ -31,10 +31,6 @@ DSSRM::Application.configure do
 
   config.cache_store = :memory_store, { size: 64.megabytes } #:dalli_store #:mem_cache_store, "localhost"
 
-  # Use the lowest log level to ensure availability of diagnostic information
-  # when problems arise.
-  config.log_level = :debug
-
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 
