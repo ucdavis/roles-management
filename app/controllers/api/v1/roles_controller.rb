@@ -7,9 +7,9 @@ module Api
         if @role
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded role view (show) for #{@role.id}." }
 
-          @cache_key = "api/role/" + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = 'api/role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
-          render "api/v1/roles/show"
+          render 'api/v1/roles/show'
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load role view (show) for invalid ID #{@role_id}." }
           render plain: "Invalid role ID '#{@role_id}'.", status: 404
@@ -25,7 +25,7 @@ module Api
 
             render json: {}, status: 200
           else
-            logger.debug "Bad api/roles UPDATE request. Errors:"
+            logger.debug 'Bad api/roles UPDATE request. Errors:'
             logger.debug @role.errors.full_messages
             render plain: "Found role but could not update for ID '#{@role_id}'.", status: 500
           end
@@ -39,7 +39,7 @@ module Api
 
       def load_role
         @role_id = params[:id].to_i # sanitize
-        @role = Role.find_by_id(@role_id)
+        @role = Role.includes(:role_assignments).includes(:entities).find_by_id(@role_id)
       end
 
       def role_params
