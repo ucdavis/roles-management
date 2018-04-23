@@ -1,5 +1,5 @@
 # config valid only for current version of Capistrano
-lock '3.10.1'
+lock '3.10.2'
 
 set :application, 'roles-management'
 set :repo_url, 'https://github.com/dssit/roles-management.git'
