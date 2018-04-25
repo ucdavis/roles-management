@@ -169,7 +169,6 @@ GEM
     nio4r (2.3.0)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
-    pg (0.20.0)
     phantomjs (2.1.1.0)
     poltergeist (1.17.0)
       capybara (~> 2.1)
@@ -180,7 +179,7 @@ GEM
     puma (3.11.4)
     pundit (1.1.0)
       activesupport (>= 3.0.0)
-    rack (2.0.4)
+    rack (2.0.5)
     rack-test (1.0.0)
       rack (>= 1.0, < 3)
     rack-timeout (0.4.2)
@@ -293,7 +292,6 @@ DEPENDENCIES
   mysql2
   net-ldap
   newrelic_rpm
-  pg (= 0.20.0)
   poltergeist
   puma (~> 3.11)
   pundit

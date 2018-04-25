@@ -22,7 +22,6 @@ gem 'coffee-rails', '~> 4.2'
 gem 'jbuilder', '~> 2.5'
 
 gem 'mysql2', group: [:production, :development]
-gem 'pg', '0.20.0', group: [:production, :development]
 
 # bundle exec rake doc:rails generates the API under doc/api.
 # gem 'sdoc', '~> 0.4.2', group: :doc
