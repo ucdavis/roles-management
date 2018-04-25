@@ -399,6 +399,10 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     group.reload
     assert group.members.length == 1, 'group should have 1 member(s)'
 
+    # Subtract a second from the 'updated_at' flag to ensure it is a reliable
+    # indicator of a group being touched
+    group.updated_at -= 1
+    group.save!
     group_last_updated_at = group.updated_at
 
     # Remove matching characteristic

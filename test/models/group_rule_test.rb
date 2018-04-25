@@ -232,7 +232,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'is_faculty' works" do
-    group_rule = GroupRule.new( column: 'is_faculty', condition: 'is', value: true)
+    group_rule = GroupRule.new(column: 'is_faculty', condition: 'is', value: true)
 
     setup_match = lambda {
       @person.is_faculty = true
@@ -248,7 +248,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'is_student' works" do
-    group_rule = GroupRule.new( column: 'is_student', condition: 'is', value: true)
+    group_rule = GroupRule.new(column: 'is_student', condition: 'is', value: true)
 
     setup_match = lambda {
       @person.is_student = true
@@ -636,6 +636,10 @@ class GroupRuleTest < ActiveSupport::TestCase
       group.rules << group_rule
 
       group.reload
+      # Subtract a second from the 'updated_at' flag to ensure it is a reliable
+      # indicator of a group being touched
+      group.updated_at -= 1
+      group.save!
       group_last_updated_at = group.updated_at
 
       assert group.members.length == expected_member_count, "group should have #{expected_member_count} member(s) but has #{group.members.length} member(s)"
@@ -646,6 +650,11 @@ class GroupRuleTest < ActiveSupport::TestCase
       Rails.logger.debug 'Checking that group has no members ...'
       group.reload
       assert group.updated_at > group_last_updated_at, 'group should have been touched'
+
+      # Subtract a second from the 'updated_at' flag to ensure it is a reliable
+      # indicator of a group being touched
+      group.updated_at -= 1
+      group.save!
       group_last_updated_at = group.updated_at
       assert group.members.empty?, "group should have no members but has #{group.members.count}"
 

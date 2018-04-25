@@ -14,8 +14,8 @@ class GroupRuleResultSet < ApplicationRecord
         grs.column == 'is_student' ||
         grs.column == 'is_employee' ||
         grs.column == 'is_hs_employee' ||
-        grs.column == 'is_external') && grs.value != 't'
-      grs.errors[grs.column] << "Must use true value ('t'). Use 'is not' for false values."
+        grs.column == 'is_external') && (grs.value != 't' && grs.value != '1')
+      grs.errors[grs.column] << "Must use true value ('t' or '1'). Use 'is not' for false values."
     end
   end
 
