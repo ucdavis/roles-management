@@ -49,8 +49,8 @@ module Api
 
       def load_person
         @params_id = CGI::escapeHTML(params[:id])
-        @person = Person.find_by_loginid(@params_id)
-        @person ||= Person.find_by_id(@params_id)
+        @person = Person.includes(:role_assignments).includes(:roles).find_by_loginid(@params_id)
+        @person ||= Person.includes(:role_assignments).includes(:roles).find_by_id(@params_id)
       rescue ActiveRecord::RecordNotFound
         # This exception is acceptable. We catch it to avoid triggering the
         # uncaught exceptions handler in ApplicationController.
