@@ -1,32 +1,9 @@
-# FROM ruby:2.4
-
-# RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs libmagickwand-dev apt-transport-https
-
-# # Install yarn (https://yarnpkg.com/lang/en/docs/install/#linux-tab)
-# RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-# RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-# RUN apt-get update && apt-get install -y yarn
-
-# WORKDIR /app
-
-# COPY Gemfile* ./
-
-# RUN bundle install
-
-# COPY . .
-
-# RUN rake assets:precompile
-
-# ENV PORT 3000
-
-# CMD [ "bundle", "exec", "rails", "s", "-b", "0.0.0.0" ]
-
 FROM ruby:2.4-alpine
 
 ENV PATH /root/.yarn/bin:$PATH
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh build-base nodejs tzdata postgresql-dev mysql-dev
+    apk add --no-cache bash git openssh build-base nodejs tzdata mysql-dev
 
 RUN apk update \
   && apk add curl bash binutils tar gnupg \
