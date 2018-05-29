@@ -107,7 +107,8 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     @$("h3").html @model.escape("name")
     @$("input[name=name]").val @model.get("name")
     @$("textarea[name=description]").val @model.get("description")
-    @$("span#group_member_count").html (@model.memberships.filter( (m) -> m.get('active') ).length + @model.rule_members.filter( (m) -> m.get('active') ).length)
+    member_count = @model.memberships.filter( (m) -> m.get('active') ).length + @model.rule_members.filter( (m) -> m.get('active') ).length
+    @$("span#group_member_count").html member_count
 
     owners_tokeninput = @$("input[name=owners]")
     owners_tokeninput.tokenInput "clear"
@@ -127,23 +128,33 @@ DssRm.Views.GroupShow = Backbone.View.extend(
 
     members_tokeninput = @$("input[name=memberships]")
     members_tokeninput.tokenInput "clear"
-    @model.memberships.each (membership) ->
-      unless membership.get('_destroy') || (membership.get('active') == false)
-        members_tokeninput.tokenInput "add",
-          id: membership.id
-          entity_id: membership.get('entity_id')
-          name: membership.get('name')
-          loginid: membership.get('loginid')
-          calculated: false
-          class: ""
-    @model.rule_members.each (rule_member) ->
-      unless (rule_member.get('active') == false)
-        members_tokeninput.tokenInput "add",
-          entity_id: rule_member.get('person_id')
-          name: rule_member.get('name')
-          loginid: rule_member.get('loginid')
-          calculated: true
-          class: "calculated"
+
+    if member_count < 1000
+      @model.memberships.each (membership) ->
+        unless membership.get('_destroy') || (membership.get('active') == false)
+          members_tokeninput.tokenInput "add",
+            id: membership.id
+            entity_id: membership.get('entity_id')
+            name: membership.get('name')
+            loginid: membership.get('loginid')
+            calculated: false
+            class: ""
+      @model.rule_members.each (rule_member) ->
+        unless (rule_member.get('active') == false)
+          members_tokeninput.tokenInput "add",
+            entity_id: rule_member.get('person_id')
+            name: rule_member.get('name')
+            loginid: rule_member.get('loginid')
+            calculated: true
+            class: "calculated"
+    else
+      members_tokeninput.tokenInput "add",
+        id: -1
+        entity_id: -1
+        name: "Too many group members (" + member_count + ") to display"
+        loginid: ""
+        calculated: true
+        class: "calculated"
 
     @$("a#csv-download").attr "href", Routes.entity_path(@model.id, {format: 'csv'})
 
