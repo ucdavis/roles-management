@@ -22,6 +22,16 @@ class DepartmentsController < ApplicationController
     end
   end
 
+  def show_by_code
+    @department = Department.find_by!(code: params[:code])
+
+    authorize @department
+
+    respond_to do |format|
+      format.json { render json: @department }
+    end
+  end
+
   private
 
   def load_department

@@ -42,6 +42,7 @@ DSSRM::Application.routes.draw do
   resources :titles
   resources :business_office_units
   resources :departments
+  get 'departments/code/:code' => 'departments#show_by_code'
 
   namespace 'admin' do
     get 'dialogs/impersonate'
