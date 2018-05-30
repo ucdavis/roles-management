@@ -27,7 +27,7 @@ gem 'mysql2', group: [:production, :development]
 # gem 'sdoc', '~> 0.4.2', group: :doc
 
 # Reduces boot times through caching; required in config/boot.rb
-#gem 'bootsnap', '>= 1.1.0', require: false
+# gem 'bootsnap', '>= 1.1.0', require: false
 
 gem 'delayed_job'
 gem 'delayed_job_active_record'
@@ -40,13 +40,11 @@ end
 
 group :development do
   gem 'capistrano', '~> 3.10', require: false
-  gem 'capistrano-rails',   '~> 1.3', require: false
+  gem 'capistrano-rails', '~> 1.3', require: false
   gem 'capistrano-passenger', require: false
   # We use our fork of capistrano3-delayed-job due to a bug in 'daemons' where delayed_job
   # will not stop correctly if not passed the number of workers in the 'stop' command
   gem 'capistrano3-delayed-job', git: 'https://github.com/cthielen/capistrano3-delayed-job.git'
-
-  gem 'letter_opener'
 end
 
 group :development do
@@ -96,11 +94,4 @@ gem 'daemons'
 # Sync script dependencies
 gem 'roles-management-api', '>= 0.1.2', git: 'https://github.com/dssit/roles-management-api.git'
 
-# For Slack notifications
-# gem 'json'
-# gem 'slack-notifier'
-
 gem 'rack-timeout'
-
-gem 'yaml_db'
-
