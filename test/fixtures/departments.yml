@@ -1,6 +1,6 @@
 dssit:
   id: 1
-  code: 040014
+  code: '040014'
   officialName: DSS IT SHARED SERVICE CENTER
   displayName: DSS IT SHARED SERVICE CENTER
   abbreviation: DSS IT SSC
@@ -8,7 +8,7 @@ dssit:
 
 evil_dssit:
   id: 2
-  code: 410040
+  code: '410040'
   officialName: DSS IT UNSHARED SERVICE CENTER
   displayName: DSS IT UNSHARED SERVICE CENTER
   abbreviation: DSS IT USSC
@@ -16,7 +16,7 @@ evil_dssit:
 
 asucd:
   id: 3
-  code: 410041
+  code: '410041'
   officialName: ASUCD
   displayName: ASUCD
   abbreviation: ASUCD

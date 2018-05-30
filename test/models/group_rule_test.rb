@@ -151,11 +151,14 @@ class GroupRuleTest < ActiveSupport::TestCase
     pps_association.position_type_code = 2
     assert pps_association.valid?
     @person.pps_associations << pps_association
+    assert @person.pps_associations.length == 1
+    assert @person.pps_associations[0].department.present?
+    assert @person.pps_associations[0].department.code == '040014', 'Expected dept code to be 040014'
 
     # Test login ID rules
     assert group.members.empty?, 'group should have no members'
 
-    group_rule = GroupRule.new(column: 'department', condition: 'is', value: 'DSS IT SHARED SERVICE CENTER')
+    group_rule = GroupRule.new(column: 'department', condition: 'is', value: '040014')
     group.rules << group_rule
 
     group.reload
@@ -506,7 +509,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'department' works" do
-    group_rule = GroupRule.new(column: 'department', condition: 'is', value: 'DSS IT SHARED SERVICE CENTER')
+    group_rule = GroupRule.new(column: 'department', condition: 'is', value: '040014')
 
     setup_match = lambda {
       # Put two people in two different depamrtnets under the same BOU
@@ -538,7 +541,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'admin department' works" do
-    group_rule = GroupRule.new(column: 'admin_department', condition: 'is', value: 'ASUCD')
+    group_rule = GroupRule.new(column: 'admin_department', condition: 'is', value: '410041')
 
     setup_match = lambda {
       # Put two people in two different depamrtnets under the same BOU
@@ -571,7 +574,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'appt department' works" do
-    group_rule = GroupRule.new(column: 'appt_department', condition: 'is', value: 'ASUCD')
+    group_rule = GroupRule.new(column: 'appt_department', condition: 'is', value: '410041')
 
     setup_match = lambda {
       # Put two people in two different depamrtnets under the same BOU
