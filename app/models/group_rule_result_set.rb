@@ -88,24 +88,24 @@ class GroupRuleResultSet < ApplicationRecord
         end
       end
     when :department
-      entity.pps_associations.map { |assoc| assoc.department.officialName }.uniq.each do |dept_name|
-        GroupRuleResultSet.where(column: 'department', value: dept_name).each do |rule_set|
+      entity.pps_associations.map { |assoc| assoc.department.code }.uniq.each do |dept_code|
+        GroupRuleResultSet.where(column: 'department', value: dept_code).each do |rule_set|
           Rails.logger.debug "Matched 'department' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
       end
     when :admin_department
-      entity.pps_associations.reject{ |assoc| assoc.admin_department_id == nil }.map { |assoc| assoc.admin_department.officialName }.uniq.each do |dept_name|
-        GroupRuleResultSet.where(column: 'admin_department', value: dept_name).each do |rule_set|
+      entity.pps_associations.reject{ |assoc| assoc.admin_department_id == nil }.map { |assoc| assoc.admin_department.code }.uniq.each do |dept_code|
+        GroupRuleResultSet.where(column: 'admin_department', value: dept_code).each do |rule_set|
           Rails.logger.debug "Matched 'admin_department' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
         end
       end
     when :appt_department
-      entity.pps_associations.reject{ |assoc| assoc.appt_department_id == nil }.map { |assoc| assoc.appt_department.officialName }.uniq.each do |dept_name|
-        GroupRuleResultSet.where(column: 'appt_department', value: dept_name).each do |rule_set|
+      entity.pps_associations.reject{ |assoc| assoc.appt_department_id == nil }.map { |assoc| assoc.appt_department.code }.uniq.each do |dept_code|
+        GroupRuleResultSet.where(column: 'appt_department', value: dept_code).each do |rule_set|
           Rails.logger.debug "Matched 'appt_department' rule. Recording result."
           rule_set.results << GroupRuleResult.new(entity_id: person_id)
           touched_rule_set_ids << rule_set.id
@@ -232,7 +232,7 @@ class GroupRuleResultSet < ApplicationRecord
         p += major.people.select(:id)
       end
     when 'department'
-      department = Department.find_by(officialName: value)
+      department = Department.find_by(code: value)
       if department.nil?
         logger.warn 'Department not found'
       else
@@ -241,7 +241,7 @@ class GroupRuleResultSet < ApplicationRecord
         p += ps
       end
     when 'admin_department'
-      admin_department = Department.find_by(officialName: value)
+      admin_department = Department.find_by(code: value)
       if admin_department.nil?
         logger.warn 'Admin department not found'
       else
@@ -250,7 +250,7 @@ class GroupRuleResultSet < ApplicationRecord
         p += ps
       end
     when 'appt_department'
-      appt_department = Department.find_by(officialName: value)
+      appt_department = Department.find_by(code: value)
       if appt_department.nil?
         logger.warn 'Appt department not found'
       else

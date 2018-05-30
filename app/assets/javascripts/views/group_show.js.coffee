@@ -17,6 +17,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     @$el.html JST["templates/entities/show_group"](model: @model)
     @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
+    @listenTo @model.rules, "change:officialName", @renderRules
     readonly = @model.isReadOnly()
 
     @$("input[name=owners]").tokenInput Routes.people_path(),
@@ -257,6 +258,10 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         $rule.find("td:nth-child(1) select").val 'iam_affiliation'
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val ''
+      when 'department', 'appt_department', 'admin_department'
+        $rule.find("td:nth-child(1) select").val _column
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val "#{rule.get('officialName')} (#{_value})"
       else
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
@@ -268,14 +273,25 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         items
 
       highlighter: (item) ->
-        item = item.split("####")[1] # See: https://gist.github.com/3694758 (FIXME when typeahead supports passing objects)
+        label = JSON.parse(item).label
         query = @query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&")
-        item.replace new RegExp("(" + query + ")", "ig"), ($1, match) ->
+        label.replace new RegExp("(" + query + ")", "ig"), ($1, match) ->
           "<strong>" + match + "</strong>"
 
       source: @ruleSearch
       updater: (item) =>
-        @ruleSearchResultSelected item, @
+        data = JSON.parse(item)
+
+        switch data.lookahead_type
+          when "department", "admin_department", "appt_department"
+            rule.set
+              'code': data.code
+              'value': data.label
+          else
+            rule.set
+              'value': result_label
+
+        return data.label
 
     return $rule
 
@@ -355,6 +371,11 @@ DssRm.Views.GroupShow = Backbone.View.extend(
           column: _column
           condition: _condition
           value: _.findKey DssRm.Views.GroupShow.pps_position_types, (val) -> val == _value
+      when "department", "admin_department", "appt_department"
+        rule.set
+          column: _column
+          condition: _condition
+          value: rule.get 'code'
       else
         rule.set
           column: _column
@@ -406,14 +427,11 @@ DssRm.Views.GroupShow = Backbone.View.extend(
   ruleSearch: (query, process, e) ->
     lookahead_type = @$element.parents("tr").find("td:first select").val()
     lookahead_url = ""
+
     switch lookahead_type
       when "major"
         lookahead_url = Routes.majors_path()
-      when "department"
-        lookahead_url = Routes.departments_path()
-      when "admin_department"
-        lookahead_url = Routes.departments_path()
-      when "appt_department"
+      when "department", "admin_department", "appt_department"
         lookahead_url = Routes.departments_path()
       when "loginid"
         lookahead_url = Routes.people_path()
@@ -422,50 +440,53 @@ DssRm.Views.GroupShow = Backbone.View.extend(
       when "business_office_unit"
         lookahead_url = Routes.business_office_units_path()
       when "iam_affiliation"
-        entities = ['0####Employee', '1####Faculty', '2####Staff', '3####Student', '4####HS Employee', '5####External']
-        process entities
+        entities = [
+          JSON.stringify({lookahead_type: lookahead_type, id: '0', label: 'Employee'}),
+          JSON.stringify({lookahead_type: lookahead_type, id: '1', label: 'Faculty'}),
+          JSON.stringify({lookahead_type: lookahead_type, id: '2', label: 'Staff'}),
+          JSON.stringify({lookahead_type: lookahead_type, id: '3', label: 'Student'}),
+          JSON.stringify({lookahead_type: lookahead_type, id: '4', label: 'HS Employee'}),
+          JSON.stringify({lookahead_type: lookahead_type, id: '5', label: 'External'})
+        ]
+        process(entities)
         return
       when "pps_position_type"
         entities = []
         _.each DssRm.Views.GroupShow.pps_position_types, (position_type, i) ->
-          entities.push "#{i}#####{position_type}"
-        process entities
+          entities.push JSON.stringify({lookahead_type: lookahead_type, id: i, label: position_type})
+        process(entities)
         return
       when "pps_unit"
         entities = []
         _.each DssRm.Views.GroupShow.pps_units, (unit, i) ->
-          entities.push "#{i}#####{unit}"
-        process entities
+          entities.push JSON.stringify({lookahead_type: lookahead_type, id: i, label: unit})
+        process(entities)
         return
       when "sis_level_code"
         entities = []
         _.each DssRm.Views.GroupShow.sis_level_codes, (code, i) ->
-          entities.push "#{i}#####{code}"
-        process entities
+          entities.push JSON.stringify({lookahead_type: lookahead_type, id: i, label: code})
+        process(entities)
         return
 
     $.ajax(
       url: lookahead_url
       data:
         q: query
-
       type: "GET"
     ).always (data) ->
-      entities = []
-      _.each data, (entity) ->
-        if lookahead_type is "loginid"
-          entities.push entity.id + "####" + entity.loginid
-        else
-          entities.push entity.id + "####" + entity.name
+      results = []
+      _.each data, (result) ->
+        switch lookahead_type
+          when "loginid"
+            results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: result.loginid})
+          when "department", "admin_department", "appt_department"
+            results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.officialName} (#{result.code})", code: result.code })
+          else
+            results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: result.name})
 
-      process entities
+      process(results)
 
-  ruleSearchResultSelected: (item) ->
-    parts = item.split("####")
-    id = parseInt(parts[0])
-    label = parts[1]
-    label
-  
   ruleChanged: (e) ->
     $el = $(e.target).closest("tr")
     cid = $el.data('rule_cid')
