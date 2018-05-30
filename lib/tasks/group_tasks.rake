@@ -4,6 +4,16 @@ namespace :group do
   require 'authentication'
   include Authentication
 
+  desc 'Generates a summary CSV about groups.'
+  task :summary_csv => :environment do
+    require 'csv'
+
+    puts ["group_id","group_name","group_member_count"].to_csv
+    Group.all.each do |g|
+      puts [g.id,g.name,g.members.length].to_csv
+    end
+  end
+
   desc 'Recalculate all rule-based groups.'
   task :recalculate_all do
     Rake::Task['environment'].invoke
