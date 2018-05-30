@@ -69,6 +69,17 @@ GEM
     archive-zip (0.11.0)
       io-like (~> 0.3.0)
     arel (9.0.0)
+    aws-eventstream (1.0.0)
+    aws-partitions (1.88.0)
+    aws-sdk-core (3.21.2)
+      aws-eventstream (~> 1.0)
+      aws-partitions (~> 1.0)
+      aws-sigv4 (~> 1.0)
+      jmespath (~> 1.0)
+    aws-sdk-dynamodb (1.6.0)
+      aws-sdk-core (~> 3)
+      aws-sigv4 (~> 1.0)
+    aws-sigv4 (1.0.2)
     bindex (0.5.0)
     builder (3.2.3)
     byebug (10.0.2)
@@ -136,6 +147,7 @@ GEM
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
+    jmespath (1.4.0)
     js-routes (1.4.4)
       railties (>= 3.2)
       sprockets-rails
@@ -265,6 +277,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  aws-sdk-core (~> 3.0)
+  aws-sdk-dynamodb (~> 1.6)
   byebug
   capistrano (~> 3.10)
   capistrano-passenger

@@ -1,7 +1,7 @@
 class ActivityLog
   LOG_LEVELS = { info: 0, warn: 1, err: 2 }.freeze
 
-  def self.record!(message = nil, tags = [], level = :info)
+  def self.record!(message, tags, level = :info)
     return if Rails.env.test?
     return if message.nil?
 
@@ -11,32 +11,49 @@ class ActivityLog
         "#{msg}\n"
       end
 
-      case level
-      when :info
-        log_level_str = 'INFO'
-      when :warn
-        log_level_str = 'WARN'
-      when :err
-        log_level_str = 'ERROR'
-      else
-        log_level_str = "UNKNOWN (#{level.to_s})"
-      end
+      log_level_str = case level
+                      when :info
+                        'INFO'
+                      when :warn
+                        'WARN'
+                      when :err
+                        'ERROR'
+                      else
+                        "UNKNOWN (#{level})"
+                      end
 
       activity_logger.info "#{Time.now} - #{log_level_str} - #{message}"
       Rails.logger.info "#{tag}: #{Time.now} - #{log_level_str} - #{message}"
       activity_logger.close
+
+      begin
+        DynamoDbClient.put_item(
+          table_name: DynamoDbTable,
+          item: {
+            LogEntityId: tag,
+            LoggedAt: Time.now.to_f,
+            entry: {
+              level: log_level_str,
+              message: message
+            }
+          }
+        )
+      rescue Aws::DynamoDB::Errors::ServiceError => error
+        Rails.logger.error 'Unable to write to DynamoDB activity log:'
+        Rails.logger.error error.message.to_s
+      end
     end
   end
 
-  def self.info!(message = nil, tags = [])
+  def self.info!(message, tags)
     ActivityLog.record!(message, tags, :info)
   end
 
-  def self.warn!(message = nil, tags = [])
+  def self.warn!(message, tags)
     ActivityLog.record!(message, tags, :warn)
   end
 
-  def self.err!(message = nil, tags = [])
+  def self.err!(message, tags)
     ActivityLog.record!(message, tags, :err)
   end
 end

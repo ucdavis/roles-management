@@ -64,7 +64,6 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
-  gem 'byebug', platform: :mri
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
@@ -95,3 +94,7 @@ gem 'daemons'
 gem 'roles-management-api', '>= 0.1.2', git: 'https://github.com/dssit/roles-management-api.git'
 
 gem 'rack-timeout'
+
+# For AWS DynamoDB support, used in activity logs
+gem 'aws-sdk-dynamodb', '~> 1.6'
+gem 'aws-sdk-core', '~> 3.0'

@@ -19,31 +19,36 @@ class Entity < ApplicationRecord
 
   # Retrieve ActivityLog for this entity order by most recent. nil if none
   def activity
-    if person?
-      filename = "person_#{id}"
-    elsif group?
-      filename = "group_#{id}"
-    else
-      raise SecurityError, 'Unknown entity type. Refusing to open file for activity.', caller
-    end
+    tag = person? ? "person_#{id}" : "group_#{id}"
 
-    begin
-      lines = File.readlines(Rails.root.join('log', 'activity', filename))
-    rescue Errno::ENOENT
-      return []
-    end
+    params = {
+      table_name: DynamoDbTable,
+      key_condition_expression: "#LogEntityId = :id",
+      expression_attribute_names: {
+        "#LogEntityId" => "LogEntityId"
+      },
+      expression_attribute_values: {
+        ":id" => tag
+      }
+    }
 
     activity = []
 
-    lines.each do |line|
-      next if line.start_with? '#'
-      parts = line.split(' - ')
-      performed_at = DateTime.parse(parts[0]) # rubocop:disable Style/DateTime
-      message = parts[2]
-      next if message.strip == 'Logged in.'
-      activity.push OpenStruct.new(performed_at: performed_at, message: message)
+    begin
+      result = DynamoDbClient.query(params)
+
+      result.items.each do |item|
+        activity.push OpenStruct.new(
+          performed_at: Time.at(item["LoggedAt"].to_f).to_datetime,
+          message: item["entry"]["message"]
+        )
+      end
+    rescue Aws::DynamoDB::Errors::ServiceError => error
+      Rails.logger.error "Unable to fetch activity log from DynamoDB for #{tag}. Error:"
+      Rails.logger.error error.message.to_s
     end
 
-    return activity.reverse
+    # Return sorted with most recent first
+    return activity.sort { |x, y| x[:performed_at] <=> y[:performed_at] }.reverse
   end
 end
