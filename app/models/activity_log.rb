@@ -1,4 +1,6 @@
 class ActivityLog
+  require 'securerandom'
+
   LOG_LEVELS = { info: 0, warn: 1, err: 2 }.freeze
 
   def self.record!(message, tags, level = :info)
@@ -31,8 +33,9 @@ class ActivityLog
           table_name: DynamoDbTable,
           item: {
             LogEntityId: tag,
-            LoggedAt: Time.now.to_f,
+            UUID: SecureRandom.uuid,
             entry: {
+              logged_at: Time.now.to_f,
               level: log_level_str,
               message: message
             }

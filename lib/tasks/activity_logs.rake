@@ -3,6 +3,8 @@ require 'rake'
 namespace :activity_logs do
   desc 'Upload plain-text activity logs to AWS DynamoDB'
   task :upload_from_files => :environment do
+    require 'securerandom'
+
     entries_found = 0
 
     # Read existing log files
@@ -12,8 +14,9 @@ namespace :activity_logs do
       next if item == '.' || item == '..' # skip current and parent directory entries
       filename = Rails.root.join('log', 'activity', item)
       files_read += 1
-      puts "#{files_read} / #{total_files} (#{(files_read.to_f / total_files.to_f).round(2)}) - #{filename}"
+      puts "#{files_read} / #{total_files} (#{((files_read.to_f / total_files.to_f) * 100.0).round(2)} %) - #{filename}"
       File.open(filename, 'r') do |f|
+        found_timestamps = {}
         f.each_line do |line|
           next if line[0] == '#' # skip comments
           timestamp = Time.parse(line[0..24]).to_f
@@ -31,8 +34,9 @@ namespace :activity_logs do
               table_name: DynamoDbTable,
               item: {
                 LogEntityId: tag,
-                LoggedAt: timestamp,
+                UUID: SecureRandom.uuid,
                 entry: {
+                  logged_at: timestamp,
                   level: log_level_str,
                   message: message
                 }

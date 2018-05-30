@@ -39,7 +39,7 @@ class Entity < ApplicationRecord
 
       result.items.each do |item|
         activity.push OpenStruct.new(
-          performed_at: Time.at(item["LoggedAt"].to_f).to_datetime,
+          performed_at: Time.at(item["entry"]["logged_at"].to_f).to_datetime,
           message: item["entry"]["message"]
         )
       end
