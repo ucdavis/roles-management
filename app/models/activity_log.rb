@@ -23,7 +23,7 @@ class ActivityLog
       end
 
       activity_logger.info "#{Time.now} - #{log_level_str} - #{message}"
-      Rails.logger.info "#{Time.now} - #{log_level_str} - #{message}"
+      Rails.logger.info "#{tag}: #{Time.now} - #{log_level_str} - #{message}"
       activity_logger.close
     end
   end
