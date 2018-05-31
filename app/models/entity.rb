@@ -23,12 +23,12 @@ class Entity < ApplicationRecord
 
     params = {
       table_name: DynamoDbTable,
-      key_condition_expression: "#LogEntityId = :id",
+      key_condition_expression: '#LogEntityId = :id',
       expression_attribute_names: {
-        "#LogEntityId" => "LogEntityId"
+        '#LogEntityId' => 'LogEntityId'
       },
       expression_attribute_values: {
-        ":id" => tag
+        ':id' => tag
       }
     }
 
@@ -38,9 +38,10 @@ class Entity < ApplicationRecord
       result = DynamoDbClient.query(params)
 
       result.items.each do |item|
+        next if item['entry']['message'] == 'Logged in.'
         activity.push OpenStruct.new(
-          performed_at: Time.at(item["entry"]["logged_at"].to_f).to_datetime,
-          message: item["entry"]["message"]
+          performed_at: Time.at(item['entry']['logged_at'].to_f).to_datetime,
+          message: item['entry']['message']
         )
       end
     rescue Aws::DynamoDB::Errors::ServiceError => error
