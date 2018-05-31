@@ -3,5 +3,7 @@ Aws.config.update({
   credentials: Aws::Credentials.new(ENV['DYNAMODB_AWS_ACCESS_KEY'], ENV['DYNAMODB_AWS_SECRET_KEY'])
 })
 
-::DynamoDbClient = Aws::DynamoDB::Client.new
-::DynamoDbTable = ENV['DYNAMODB_ACTIVITY_LOG_TABLE'] || Rails.application.secrets[:dynamodb_activity_log_table]
+if (ENV['DYNAMODB_REGION'] || Rails.application.secrets[:dynamodb_region]) && ENV['DYNAMODB_AWS_ACCESS_KEY'] && ENV['DYNAMODB_AWS_SECRET_KEY']
+  ::DynamoDbClient = Aws::DynamoDB::Client.new
+  ::DynamoDbTable = ENV['DYNAMODB_ACTIVITY_LOG_TABLE'] || Rails.application.secrets[:dynamodb_activity_log_table]
+end
