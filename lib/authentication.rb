@@ -9,20 +9,20 @@ module Authentication
 
   # This will be set if and only if somebody is impersonating
   def self.effective_user
-    Thread.current["_auth_effective_user"] || nil
+    Thread.current['_auth_effective_user'] || nil
   end
 
   def self.effective_user=(user)
-    Thread.current["_auth_effective_user"] = user
+    Thread.current['_auth_effective_user'] = user
   end
 
   # Set this to the actual user
   def self.actual_user
-    Thread.current["_auth_actual_user"] || nil
+    Thread.current['_auth_actual_user'] || nil
   end
 
   def self.actual_user=(user)
-    Thread.current["_auth_actual_user"] = user
+    Thread.current['_auth_actual_user'] = user
   end
 
   # To be called from the outside in order to impersonate someone
