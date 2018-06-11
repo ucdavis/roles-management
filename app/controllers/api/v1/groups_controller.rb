@@ -21,12 +21,20 @@ module Api
         if @group
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updating group for #{@group.id}." }
 
+          affected_role_ids = @group.roles.map(&:id)
+
           if @group.update_attributes(group_params)
             @group.touch
 
+            affected_role_ids = (affected_role_ids + @group.roles.map(&:id)).flatten.uniq
+            Role.where(id: affected_role_ids).each do |role|
+              Rails.logger.debug "Api/Group#update will cause role_audit for role #{role.id} / #{role.token}"
+              Sync.role_audit(Sync.encode(role, true))
+            end
+
             render json: {}, status: 200
           else
-            logger.debug "Bad api/group UPDATE request. Errors:"
+            logger.debug 'Bad Api/Group#update request. Errors:'
             logger.debug @group.errors.full_messages
             render plain: "Found group but could not update for ID '#{@group_id}'.", status: 500
           end
