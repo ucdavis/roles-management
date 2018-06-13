@@ -137,8 +137,8 @@ module Authentication
 
     # If the environment variable _RM_DEV_LOGINID is set, force it as a CAS
     # login and bypass CAS. Useful for offline development.
-    if ENV["_RM_DEV_LOGINID"]
-      session[:cas_user] = ENV["_RM_DEV_LOGINID"]
+    if ENV['_RM_DEV_LOGINID']
+      session[:cas_user] = ENV['_RM_DEV_LOGINID']
     else
       # It's important we do this before checking session[:cas_user] as it
       # sets that variable. Note that the way before_actions work, this call

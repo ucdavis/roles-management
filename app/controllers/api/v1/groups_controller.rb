@@ -7,9 +7,9 @@ module Api
         if @group
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded group view (show) for #{@group.id}." }
 
-          @cache_key = "api/groups/" + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = 'api/groups/' + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
 
-          render "api/v1/groups/show"
+          render 'api/v1/groups/show'
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load group view (show) for invalid ID #{@group_id}." }
 
@@ -50,7 +50,7 @@ module Api
         begin
           @group_id = params[:id].to_i
           @group = Group.find_by_id(@group_id)
-          @group = Group.find_by_name(params[:id].to_s) unless @group
+          @group ||= Group.find_by_name(params[:id].to_s)
         rescue ActiveRecord::RecordNotFound
           # This exception is acceptable. We catch it to avoid triggering the
           # uncaught exceptions handler in ApplicationController.
@@ -58,7 +58,8 @@ module Api
       end
 
       def group_params
-        params.require(:group_attributes).permit(:name)
+        params.permit(:name, rules_attributes: [:id, :column, :condition, :value, :_destroy],
+                      group_ownerships_attributes: [:id, :group_id, :entity_id, :_destroy])
       end
     end
   end

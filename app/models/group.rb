@@ -31,6 +31,7 @@ class Group < Entity
     "(Group:#{id},#{name})"
   end
 
+  # Return both explicitly-assigned and calculated (rule-based) members
   def members
     Person.where(id: (memberships.pluck(:entity_id) + rule_member_ids).uniq)
   end
