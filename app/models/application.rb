@@ -40,9 +40,6 @@ class Application < ApplicationRecord
 
   # Retrieve ActivityLog for this application order by most recent. nil if none
   def activity
-    return []
-    # tag = ActivityLogTag.find_by_tag("application_#{id}")
-    # return [] unless tag
-    # return tag.activity_logs.order('performed_at DESC')
+    ActivityLog.fetch("application_#{id}")
   end
 end

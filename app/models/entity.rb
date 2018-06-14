@@ -19,37 +19,6 @@ class Entity < ApplicationRecord
 
   # Retrieve ActivityLog for this entity order by most recent. nil if none
   def activity
-    tag = person? ? "person_#{id}" : "group_#{id}"
-
-    params = {
-      table_name: DynamoDbTable,
-      key_condition_expression: '#LogEntityId = :id',
-      expression_attribute_names: {
-        '#LogEntityId' => 'LogEntityId'
-      },
-      expression_attribute_values: {
-        ':id' => tag
-      }
-    }
-
-    activity = []
-
-    begin
-      result = DynamoDbClient.query(params)
-
-      result.items.each do |item|
-        next if item['entry']['message'] == 'Logged in.'
-        activity.push OpenStruct.new(
-          performed_at: Time.at(item['entry']['logged_at'].to_f).to_datetime,
-          message: item['entry']['message']
-        )
-      end
-    rescue Aws::DynamoDB::Errors::ServiceError => error
-      Rails.logger.error "Unable to fetch activity log from DynamoDB for #{tag}. Error:"
-      Rails.logger.error error.message.to_s
-    end
-
-    # Return sorted with most recent first
-    return activity.sort { |x, y| x[:performed_at] <=> y[:performed_at] }.reverse
+    ActivityLog.fetch(person? ? "person_#{id}" : "group_#{id}")
   end
 end
