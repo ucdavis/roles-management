@@ -71,7 +71,7 @@ DSSRM::Application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
 
   # Force SSL in production
-  config.force_ssl = false
+  config.force_ssl = true
 
   # Configure SMTP
   config.action_mailer.delivery_method = :smtp
