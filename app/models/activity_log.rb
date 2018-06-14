@@ -4,7 +4,6 @@ class ActivityLog
   LOG_LEVELS = { info: 'INFO', warn: 'WARN', err: 'ERROR' }.freeze
 
   def self.record!(message, tags, level = :info)
-    return if Rails.env.test?
     return if message.nil?
     return if tags.nil?
 
@@ -17,24 +16,24 @@ class ActivityLog
       # Only write to DynamoDB if in production.
       # If you want to write in development, ensure development is using
       # production database, else logs could be written concerning the wrong entity IDs!
-      if Rails.env.production?
-        begin
-          DynamoDbClient.put_item(
-            table_name: DynamoDbTable,
-            item: {
-              LogEntityId: tag,
-              UUID: SecureRandom.uuid,
-              entry: {
-                logged_at: Time.now.to_f,
-                level: log_level_str,
-                message: message
-              }
+      next unless Rails.env.production?
+
+      begin
+        DynamoDbClient.put_item(
+          table_name: DynamoDbTable,
+          item: {
+            LogEntityId: tag,
+            UUID: SecureRandom.uuid,
+            entry: {
+              logged_at: Time.now.to_f,
+              level: log_level_str,
+              message: message
             }
-          )
-        rescue Aws::DynamoDB::Errors::ServiceError => error
-          Rails.logger.error 'Unable to write to DynamoDB activity log:'
-          Rails.logger.error error.message.to_s
-        end
+          }
+        )
+      rescue Aws::DynamoDB::Errors::ServiceError => error
+        Rails.logger.error 'Unable to write to DynamoDB activity log:'
+        Rails.logger.error error.message.to_s
       end
     end
   end
