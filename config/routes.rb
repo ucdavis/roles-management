@@ -38,6 +38,7 @@ DSSRM::Application.routes.draw do
   resources :groups
   resources :group_rules
   resources :roles
+  resources :role_assignments
   resources :majors
   resources :titles
   resources :business_office_units

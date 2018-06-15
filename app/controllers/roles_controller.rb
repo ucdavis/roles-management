@@ -70,7 +70,6 @@ class RolesController < ApplicationController
   end
 
   def role_params
-    params.require(:role).permit(:name, :token, :description, :ad_path,
-                                 role_assignments_attributes: [:id, :entity_id, :role_id, :_destroy])
+    params.require(:role).permit(:name, :token, :description, :ad_path)
   end
 end

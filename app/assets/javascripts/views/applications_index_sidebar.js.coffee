@@ -107,7 +107,6 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         q: query
       type: 'GET'
     ).done( (data) ->
-      console.dir(data)
       entities = []
       exact_match_found = false
 

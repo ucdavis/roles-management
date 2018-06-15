@@ -12,7 +12,7 @@ DssRm.Views.ConfirmDialog = Backbone.View.extend(
 
   render: ->
     application = DssRm.view_state.getSelectedApplication()
-    @$("span#entity_name").html @options.entity.get('name')
+    @$("span#entity_name").html @options.assignment.get('name')
     @$("span#role_name").html @options.role.get('name')
     @$("span#application_name").html application.get('name')
     @

@@ -15,6 +15,7 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @faded = options.faded
 
   render: ->
+    console.debug('rendering sidepar pin')
     @$("span").html @model.escape('name')
 
     # Highlight this entity?
@@ -108,47 +109,57 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     selected_role = DssRm.view_state.getSelectedRole()
 
     if selected_role
-      # toggle on or off?
+      # assign or unassign role?
       matched = selected_role.assignments.filter((a) ->
         (a.get('entity_id') is id) and (a.get('calculated') == false)
       )
 
       if matched.length > 0
-        # toggling off
+        # unassigning ...
         new (DssRm.Views.ConfirmDialog)(
-          entity: matched[0],
+          assignment: matched[0],
           role: selected_role,
           confirm: ->
-            matched[0].set('_destroy', true)
-            toastr["info"]("Saving ...")
-            selected_role.save {},
+            toastr["info"]("Unassigning role ...")
+            matched[0].destroy(
               success: =>
                 toastr.remove()
-                toastr["success"]("#{matched[0].get('name')} removed from role.")
+                toastr["success"]("Successfully unassigned role.")
+                DssRm.view_state.trigger 'change'
               error: =>
                 toastr.remove()
-                toastr["error"]("Error while removing #{matched[0].get('name')} from role.")
+                toastr["error"]("Error while unassigning role.")
+            )
+            # debugger
+            # matched[0].set('_destroy', true)
+            # toastr["info"]("Saving ...")
+            # selected_role.save {},
+            #   success: =>
+            #     toastr.remove()
+            #     toastr["success"]("#{matched[0].get('name')} removed from role.")
+            #   error: =>
+            #     toastr.remove()
+            #     toastr["error"]("Error while removing #{matched[0].get('name')} from role.")
         ).render().$el.modal()
       else
-        # toggling on
-        new_entity = new DssRm.Models.Entity(id: id)
-
-        toastr["info"]("Updating ...")
-        new_entity.fetch
+        # assigning ...
+        toastr["info"]("Assigning role ...")
+        assignment = new DssRm.Models.RoleAssignment(
+          role_id: selected_role.get('id'),
+          entity_id: id,
+          name: @model.get('name'),
+          type: @model.get('type'),
+          calculated: false
+        )
+        assignment.save {},
           success: =>
+            # cool
             toastr.remove()
-            selected_role.assignments.add
-              entity_id: new_entity.id
-              calculated: false
-            toastr["info"]("Saving ...")
-            selected_role.save {},
-              success: =>
-                toastr.remove()
-                toastr["success"]("#{new_entity.get('name')} assigned to role successfully.")
-              error: =>
-                toastr.remove()
-                toastr["error"]("Error while assigning #{new_entity.get('name')} to role.")
-          error: ->
+            selected_role.assignments.add(assignment)
+            toastr["success"]("Role assigned successfully.")
+            DssRm.view_state.trigger('change')
+          error: =>
+            # uh oh
             toastr.remove()
-            toastr["error"]("Error while updating #{new_entity.get('name')}. Role not assigned.")
+            toastr["error"]("Error while assigning role.")
 )

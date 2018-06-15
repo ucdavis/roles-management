@@ -7,7 +7,7 @@ DssRm.Models.Role = Backbone.Model.extend(
 
   resetNestedCollections: ->
     if @assignments is `undefined`
-      @assignments = new Backbone.Collection
+      @assignments = new DssRm.Collections.RoleAssignments
       @assignments.comparator = (assignment) -> assignment.get('type') + assignment.get('name')
 
     # Reset nested collection data

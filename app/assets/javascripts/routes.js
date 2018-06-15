@@ -634,6 +634,9 @@ Based on Rails routes of DSSRM::Application
 // edit_role => /roles/:id/edit(.:format)
   // function(id, options)
   edit_role_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"roles",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
+// edit_role_assignment => /role_assignments/:id/edit(.:format)
+  // function(id, options)
+  edit_role_assignment_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"role_assignments",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
 // edit_title => /titles/:id/edit(.:format)
   // function(id, options)
   edit_title_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"titles",false],[2,[7,"/",false],[2,[3,"id",false],[2,[7,"/",false],[2,[6,"edit",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
@@ -721,6 +724,9 @@ Based on Rails routes of DSSRM::Application
 // new_role => /roles/new(.:format)
   // function(options)
   new_role_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"roles",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
+// new_role_assignment => /role_assignments/new(.:format)
+  // function(options)
+  new_role_assignment_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"role_assignments",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
 // new_title => /titles/new(.:format)
   // function(options)
   new_title_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"titles",false],[2,[7,"/",false],[2,[6,"new",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
@@ -763,6 +769,12 @@ Based on Rails routes of DSSRM::Application
 // role => /roles/:id(.:format)
   // function(id, options)
   role_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"roles",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
+// role_assignment => /role_assignments/:id(.:format)
+  // function(id, options)
+  role_assignment_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"role_assignments",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
+// role_assignments => /role_assignments(.:format)
+  // function(options)
+  role_assignments_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"role_assignments",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
 // roles => /roles(.:format)
   // function(options)
   roles_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"roles",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
