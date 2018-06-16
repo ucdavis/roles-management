@@ -76,9 +76,6 @@ ENV SMTP_USERNAME $SMTP_USERNAME
 ARG SMTP_PASSWORD
 ENV SMTP_PASSWORD $SMTP_PASSWORD
 
-# Ensure activity directory exists
-RUN mkdir -p ./log/activity
-
 # Copy the main application.
 COPY . ./
 
