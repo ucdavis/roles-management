@@ -36,7 +36,6 @@ DssRm.Models.ViewState = Backbone.Model.extend(
 
   # Constructs list of current user's ownerships, operatorships, and favorites
   buildBookmarks: ->
-    console.debug 'building bookmarks'
     # Bookmarks are the union of favorites, group ownerships and operatorships.
     # Use .uniq() in case these overlap, _.union won't catch the overlap due to the
     # unique ID being .get('entity_id').

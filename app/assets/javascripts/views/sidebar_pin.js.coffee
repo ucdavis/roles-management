@@ -15,7 +15,6 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
     @faded = options.faded
 
   render: ->
-    console.debug('rendering sidepar pin')
     @$("span").html @model.escape('name')
 
     # Highlight this entity?
@@ -130,16 +129,6 @@ DssRm.Views.SidebarPin = Backbone.View.extend(
                 toastr.remove()
                 toastr["error"]("Error while unassigning role.")
             )
-            # debugger
-            # matched[0].set('_destroy', true)
-            # toastr["info"]("Saving ...")
-            # selected_role.save {},
-            #   success: =>
-            #     toastr.remove()
-            #     toastr["success"]("#{matched[0].get('name')} removed from role.")
-            #   error: =>
-            #     toastr.remove()
-            #     toastr["error"]("Error while removing #{matched[0].get('name')} from role.")
         ).render().$el.modal()
       else
         # assigning ...
