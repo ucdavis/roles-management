@@ -107,10 +107,10 @@ class EntitiesController < ApplicationController
 
     @activity = @entity.activity
     if @activity
-      if @activity.empty?
-        @cache_key = nil
+      @cache_key = if @activity.empty?
+        nil
       else
-        @cache_key = 'entity/' + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
+        'entity/' + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
       end
     else
       @activity = nil
