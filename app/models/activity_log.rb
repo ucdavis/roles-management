@@ -53,6 +53,8 @@ class ActivityLog
   # Fetch activity for the given tag, e.g. "person_132", "group_312", "application_1"
   # Order by most recent or [] if none.
   def self.fetch(tag)
+    return [] unless Rails.env.production?
+
     params = {
       table_name: DynamoDbTable,
       key_condition_expression: '#LogEntityId = :id',
