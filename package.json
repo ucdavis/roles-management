@@ -1,5 +1,20 @@
 {
   "name": "roles-management",
   "private": true,
-  "dependencies": {}
+  "dependencies": {},
+  "description": "Roles Management (RM) is a web-based management interface for people, roles, and applications, developed by the UC Davis Division of Social Science.",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dssit/roles-management.git"
+  },
+  "author": "",
+  "license": "Propritary",
+  "bugs": {
+    "url": "https://github.com/dssit/roles-management/issues"
+  },
+  "homepage": "https://github.com/dssit/roles-management#readme",
+  "devDependencies": {
+    "cypress": "^3.0.1"
+  }
 }
