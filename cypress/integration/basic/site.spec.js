@@ -15,8 +15,8 @@ it('Should go to /welcome and return HTTP 200',() => {
 })
 
 it('Test that /applications redirects to CAS ',() => {
-  const username = 'dssapps'
-  const password = 'Medusiform13Preelectronic!Seelyville11'
+  const username = Cypress.env('userName')
+  const password = Cypress.env('password')
 
   cy.request({
     method: 'POST',

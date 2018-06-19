@@ -31,3 +31,4 @@ log/activity
 .rbenv-vars
 db/data.yml
 package-lock.json
+cypress.env.json
