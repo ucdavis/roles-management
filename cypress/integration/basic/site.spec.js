@@ -1,39 +1,28 @@
-describe('Homepage and login', () => {
+describe('Homepage and modal window', () => {
 
   beforeEach(() => {
-     cy.visit('http://localhost:3000')
-  })
-
-it('Should go to /welcome and return HTTP 200',() => {
-  cy.request({
-    url: 'http://localhost:3000/welcome',
-    followRedirect: false  // turns off redirects
-  })
-  .then((response) => {
-     cy.expect(response.status).to.eq(200)
-  })
-})
-
-it('Test that /applications redirects to CAS ',() => {
-  const username = Cypress.env('userName')
-  const password = Cypress.env('password')
-
-  cy.request({
-    method: 'POST',
-    url: 'https://ssodev.ucdavis.edu/cas',
-    form: true,
-    body: {
-      username,
-      password,
-      _eventId: 'submit',
-      submit: 'LOGIN',
-    }
+     cy.visit('');
   });
+
+  it('Should go to /welcome and return HTTP 200',() => {
+    cy.request({
+      url: '/welcome',
+      followRedirect: false  // turns off redirects
+    })
+    .then(($response) => {
+      cy.expect($response.status).to.eq(200)
+    });
+  });
+
+  it('Applications shows modal icon',() => {
+    cy.visit('/applications');
+
+    cy.get('div#cards h4#application-name:first').then(($name) => {
+      const first_application_name =  $name.text();
+
+      cy.get('div#cards a.application-link:first').click({force: true});
+      cy.get('div.modal-header h3').should('contain', first_application_name);
+    });
+  });
+
 });
-
-it('Applications shows modal icion',() => {
-  cy.visit('http://localhost:3000/applications')
-  cy.get('title').contains('Roles Management')
-})
-
-})

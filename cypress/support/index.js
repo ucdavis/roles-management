@@ -18,3 +18,7 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Load in baseUrl config from env var
+const baseUrl = Cypress.env('baseUrl');
+Cypress.config('baseUrl', baseUrl);
