@@ -7,5 +7,5 @@ require 'delayed_rake'
 Rails.application.initialize!
 
 CASClient::Frameworks::Rails::Filter.configure(
-  :cas_base_url => $DSS_RM_CONFIG["cas"]["base_url"]
+  cas_base_url: ENV['CAS_URL']
 )
