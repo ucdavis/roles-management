@@ -137,7 +137,8 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
 
     switch id
       when DssRm.Views.ApplicationsIndexSidebar.FID_ADD_PERSON
-        DssRm.router.navigate "import/" + label.slice(14), {trigger: true} # slice(14) is removing the "Import Person " prefix
+        # slice(14) is removing the "Import Person " prefix
+        DssRm.router.navigate "import/" + label.slice(14), {trigger: true}
 
       when DssRm.Views.ApplicationsIndexSidebar.FID_CREATE_GROUP
         toastr["info"]("Creating group ...")
@@ -163,24 +164,33 @@ DssRm.Views.ApplicationsIndexSidebar = Backbone.View.extend(
         selected_role = DssRm.view_state.getSelectedRole()
         if selected_role and not selected_role.has_assigned(id)
           entity_to_assign = new DssRm.Models.Entity(id: id)
-          toastr["info"]("Updating person or group ...")
+          toastr["info"]("Please wait ...")
           entity_to_assign.fetch
             success: =>
               toastr.remove()
-              selected_role.assignments.add
-                entity_id: entity_to_assign.id
+
+              toastr["info"]("Assigning role ...")
+              assignment = new DssRm.Models.RoleAssignment(
+                role_id: selected_role.get('id'),
+                entity_id: entity_to_assign.id,
+                name: entity_to_assign.get('name'),
+                type: entity_to_assign.get('type'),
                 calculated: false
-              selected_role.save {},
+              )
+              assignment.save {},
                 success: =>
+                  # cool
                   toastr.remove()
-                  toastr["success"]("#{entity_to_assign.get('name')} added to role.")
+                  selected_role.assignments.add(assignment)
+                  toastr["success"]("Role assigned successfully.")
                   DssRm.view_state.trigger('change')
                 error: =>
+                  # uh oh
                   toastr.remove()
-                  toastr["error"]("Error while assigning #{entity_to_assign.get('name')} to role.")
+                  toastr["error"]("Error while assigning role.")
             error: =>
               toastr.remove()
-              toastr["error"]("Error while updating person or group. Role assignment failed.")
+              toastr["error"]("Error while fetching information about person or group. Role was not assigned.")
         else
           # No role selected, either add entity to their favorites (default behavior)
           # or highlight the result if they're already a favorite.
