@@ -23,7 +23,7 @@ i.loading {
   width: 16px;
   height: 16px;
   display: inline-block;
-  background: 3px 2px url('/assets/loading.gif') no-repeat;
+  background: 3px 2px image-url("loading.gif") no-repeat;
   opacity: 0.4;
   filter: alpha(opacity = 40); /* IE8 and earlier */
   float: right;
