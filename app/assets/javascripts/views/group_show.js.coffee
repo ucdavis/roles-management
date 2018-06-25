@@ -289,7 +289,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
               'value': data.label
           else
             rule.set
-              'value': result_label
+              'value': data.label
 
         return data.label
 
