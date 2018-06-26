@@ -25,23 +25,25 @@ class ApplicationsController < ApplicationController
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Downloaded CSV of application, #{params[:application]}."
 
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
-        csv_data = CSV.generate do |csv|
-          # Add the header
-          csv << Application.csv_header
-          # Add members of each role
-          @application.roles.each do |r|
-            r.to_csv.each do |row|
-              csv << row
+        csv_data = Rails.cache.fetch("#{@cache_key}", expires_in: 12.hours) do
+          CSV.generate do |csv|
+            # Add the header
+            csv << Application.csv_header
+            # Add members of each role
+            @application.roles.each do |r|
+              r.to_csv.each do |row|
+                csv << row
+              end
             end
-          end
-          # Add the owners
-          @application.owners.each do |owner|
-            csv << ['owner', owner.to_csv].flatten
+            # Add the owners
+            @application.owners.each do |owner|
+              csv << ['owner', owner.to_csv].flatten
+            end
           end
         end
         send_data csv_data,
                   type: 'text/csv; charset=iso-8859-1; header=present',
-                  disposition: 'attachment; filename=' + unix_filename(@application.name.to_s)
+                  disposition: 'attachment; filename=' + unix_filename(@application.name.to_s) + '.csv'
       end
     end
   end
