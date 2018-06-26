@@ -158,6 +158,9 @@ namespace :group do
   task :audit_inherited_roles, [:loginid] => :environment do |_t, args|
     people = []
 
+    puts "Starting task ..."
+    Rails.logger.info "Starting task (logger) ..."
+
     total_ra_count = RoleAssignment.count
     total_incorrect = 0
     total_missing = 0
@@ -171,7 +174,9 @@ namespace :group do
     total_people = people.count
 
     people.each_with_index do |p, i|
-      puts "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
+      log_str = "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
+      puts log_str
+      Rails.logger.info log_str
 
       # Ensure a person doesn't have inherited roles they shouldn't have ...
       p.role_assignments.each do |ra|
