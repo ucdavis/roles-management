@@ -171,7 +171,7 @@ namespace :group do
     total_people = people.count
 
     people.each_with_index do |p, i|
-      # puts "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
+      puts "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
 
       # Ensure a person doesn't have inherited roles they shouldn't have ...
       p.role_assignments.each do |ra|
