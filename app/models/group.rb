@@ -1,3 +1,5 @@
+require 'benchmark'
+
 # Group shares many attributes with entity.
 class Group < Entity
   has_many :memberships, class_name: 'GroupMembership', dependent: :destroy
@@ -33,7 +35,16 @@ class Group < Entity
 
   # Return both explicitly-assigned and calculated (rule-based) members
   def members
-    Person.where(id: (memberships.pluck(:entity_id) + rule_member_ids).uniq)
+    _members = []
+    time = Benchmark.measure do
+      _members = Rails.cache.fetch("group/#{id}/members/#{updated_at}", expires_in: 6.hours) do
+        Person.where(id: (memberships.pluck(:entity_id) + rule_member_ids).uniq)
+      end
+    end
+
+    Rails.logger.warn "Group.members for group with ID #{id} took #{time.real}" if time.real > 0.50
+
+    return _members
   end
 
   def rule_members

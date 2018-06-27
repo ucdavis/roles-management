@@ -1,3 +1,4 @@
+require 'benchmark'
 require 'sync'
 
 # Person shares many attributes with entity.
@@ -89,9 +90,19 @@ class Person < Entity
   # or via group rules. Use only_via_rules = true to exclude
   # explicit memberships.
   def groups(only_via_rules = false)
-    group_ids = Group.rule_memberships_for_person(id)
-    group_ids += group_memberships.select(:group_id).pluck(:group_id) unless only_via_rules
-    Group.where(id: group_ids.uniq)
+    _groups = []
+
+    time = Benchmark.measure do
+      _groups = Rails.cache.fetch("person/#{id}/groups/#{updated_at}/#{only_via_rules}", expires_in: 6.hours) do
+        group_ids = Group.rule_memberships_for_person(id)
+        group_ids += group_memberships.select(:group_id).pluck(:group_id) unless only_via_rules
+        Group.where(id: group_ids.uniq)
+      end
+    end
+
+    Rails.logger.warn "Person.groups for person with ID #{id} took #{time.real}" if time.real > 0.50
+
+    return _groups
   end
 
   # Returns all applications visible to a user
