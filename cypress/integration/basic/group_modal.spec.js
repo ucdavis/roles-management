@@ -1,7 +1,7 @@
 describe('Test that the group show modal can be opened', () => {
-  const bookmarked_group = 'All DSS IT Developers';
+  const bookmarked_group = 'All DSS IT Staff';
 
-  it('Create a group', () => {
+  it('Bookmark a group', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
