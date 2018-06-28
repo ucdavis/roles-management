@@ -5,8 +5,9 @@ describe('Test that the group show modal can be opened', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
-    .type(bookmarked_group).wait(5)
-    .type('{enter}');
+      .type(bookmarked_group, {delay: 100})
+      .should('have.value', bookmarked_group)
+      .type('{enter}');
   });
 
   it('Clicking a group open icon shows the modal.',() => {
