@@ -135,17 +135,11 @@ module Sync
   # We have Sync encode the object even though it is called in the Person and
   # Role class because we would like to control the format of the data in Sync
   # where it matters most.
-  def Sync.encode(obj, detailed = false)
+  def Sync.encode(obj)
     case obj
     when Role
-      if detailed
-        return { id: obj.id, token: obj.token, role_name: obj.name, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
-                 application_id: obj.application.id, application_name: obj.application.name,
-                 members: obj.members.select { |m| m.active == true }.map(&:loginid) }
-      else
-        return { id: obj.id, token: obj.token, role_name: obj.name, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
-                 application_id: obj.application.id, application_name: obj.application.name }
-      end
+      return { id: obj.id, token: obj.token, role_name: obj.name, ad_path: obj.ad_path, ad_guid: obj.ad_guid,
+               application_id: obj.application.id, application_name: obj.application.name }
     when Person
       return { id: obj.id, name: obj.name, first: obj.first, last: obj.last, loginid: obj.loginid,
                email: obj.email, address: obj.address, phone: obj.phone }

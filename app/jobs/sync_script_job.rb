@@ -174,7 +174,8 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         if ad_path.blank?
           Sync.logger.warn 'Role has no AD path so audit request will be ignored ...'
         else
-          role_members = @sync_data['role']['members']
+          role_id = @sync_data['role']['id']
+          role_members = Role.find_by(id: role_id).members.select { |m| m.active == true }.map(&:loginid)
           application_name = @sync_data['role']['application_name']
           role_name = @sync_data['role']['role_name']
 

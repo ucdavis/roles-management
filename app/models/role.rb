@@ -74,7 +74,7 @@ class Role < ApplicationRecord
   def trigger_sync_if_changed
     return if (saved_changes.keys & SYNC_ROLE_ATTRS).empty?
 
-    Sync.role_changed(Sync.encode(self, true)
+    Sync.role_changed(Sync.encode(self)
         .merge(changes: saved_changes.select { |c, _v| SYNC_ROLE_ATTRS.include?(c) }))
   end
 end

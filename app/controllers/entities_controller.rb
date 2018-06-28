@@ -70,7 +70,7 @@ class EntitiesController < ApplicationController
           affected_role_ids = (affected_role_ids + @entity.roles.map(&:id)).flatten.uniq
           Role.where(id: affected_role_ids).each do |role|
             Rails.logger.debug "Entities(Group)#update will cause role_audit for role #{role.id} / #{role.token}"
-            Sync.role_audit(Sync.encode(role, true))
+            Sync.role_audit(Sync.encode(role))
           end
         end
 

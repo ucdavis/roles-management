@@ -35,23 +35,4 @@ namespace :sync do
       j.save
     end
   end
-
-  # desc 'Sync recently touched groups'
-  # task sync_recently_touched_groups: :environment do
-  #   Group.all.each do |g|
-  #     # synced_at is used by Person / people to record when the last IAM _import_
-  #     # occurred, while for groups it indicates when the last _export_ sync object
-  #     # was checked
-
-  #     # If group was updated after last sync, re-sync
-  #     next unless (g.synced_at && (g.synced_at < g.updated_at)) || (g.synced_at == nil)
-
-  #     g.roles.each do |role|
-  #       Sync.role_audit(Sync.encode(role, true))
-  #     end
-
-  #     g.synced_at = g.updated_at = Time.now
-  #     g.save!
-  #   end
-  # end
 end

@@ -29,7 +29,7 @@ module Api
             affected_role_ids = (affected_role_ids + @group.roles.map(&:id)).flatten.uniq
             Role.where(id: affected_role_ids).each do |role|
               Rails.logger.debug "Api/Group#update will cause role_audit for role #{role.id} / #{role.token}"
-              Sync.role_audit(Sync.encode(role, true))
+              Sync.role_audit(Sync.encode(role))
             end
 
             render json: {}, status: 200
