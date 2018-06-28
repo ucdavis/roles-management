@@ -44,7 +44,7 @@ namespace :ad do
         print "not fully synced:\n"
         print "\tMembers in AD but not RM ("
         if ad_members.length > 0
-          print((ad_members - role_members).length.to_f / ad_members.length.to_f) * 100.0
+          print ((ad_members - role_members).length.to_f / ad_members.length.to_f) * 100.0
         else
           print '100'
         end
