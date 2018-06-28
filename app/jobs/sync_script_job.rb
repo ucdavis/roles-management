@@ -19,7 +19,7 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         return
       end
 
-      if sync_script.include? 'active_directory.rb' == false
+      if sync_script.include?('active_directory.rb') == false
         Sync.logger.error "Unknown sync script requested: #{sync_script}"
         raise 'Unable to complete job'
       end
