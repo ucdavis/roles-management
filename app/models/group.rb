@@ -37,7 +37,7 @@ class Group < Entity
   def members
     _members = []
     time = Benchmark.measure do
-      _members = Rails.cache.fetch("group/#{id}/members/#{updated_at}", expires_in: 6.hours) do
+      _members = Rails.cache.fetch("group/#{id}/members/#{updated_at.to_f}") do
         Person.where(id: (memberships.pluck(:entity_id) + rule_member_ids).uniq)
       end
     end

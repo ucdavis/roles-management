@@ -25,7 +25,7 @@ class ApplicationsController < ApplicationController
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Downloaded CSV of application, #{params[:application]}."
 
         # Credit CSV code: http://www.funonrails.com/2012/01/csv-file-importexport-in-rails-3.html
-        csv_data = Rails.cache.fetch("#{@cache_key}", expires_in: 12.hours) do
+        csv_data = Rails.cache.fetch("#{@cache_key}") do
           CSV.generate do |csv|
             # Add the header
             csv << Application.csv_header

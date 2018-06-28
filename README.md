@@ -10,6 +10,8 @@ RM is designed to allow anyone with employees or  virtual appliances (file serve
 
 RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, PostgreSQL, and Linux. It should work fine with the Passenger web application server as well.
 
+MySQL 5.6.4 is required to support timestamp granularity greater than one second (used in caching).
+
 ## Installation / Deployment
 
 ### Step 1. (Set configuration values)

@@ -133,7 +133,7 @@ class GroupTest < ActiveSupport::TestCase
     assert g.members.include?(member) == true, "group should include casuser"
 
     GroupMembership.find_by(group: g, entity: member).destroy!
-
+    g.reload
     assert g.members.include?(member) == false, "group should not include casuser"
   end
 
@@ -239,6 +239,8 @@ class GroupTest < ActiveSupport::TestCase
     assert g.members.include?(member) == true, "group should include casuser"
 
     GroupMembership.find_by(group: g, entity: member).destroy!
+
+    g.reload
 
     assert g.members.include?(member) == false, "group should not include casuser"
   end
