@@ -9,21 +9,24 @@ describe('Test that role assignments can be made', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
-    .type(bookmarked_person).wait(15)
+    .type(bookmarked_person, {delay: 100})
+    .should('have.value', bookmarked_person)
     .type('{enter}');
   });
 
   it('Highlight a role', () => {
-    cy.visit('/applications');
     cy.get('div.role:first a').click({force: true});
   });
 
   it('Click on a favorite that is not assigned to the role',() => {
-    cy.get('ul#pins li.person:first').click().click();
+    cy.server()
+      .route("POST", "/role_assignments").as("roleAssignments")
+      .get('ul#pins li.person:first').click().click()
+      .wait('@roleAssignments');
   });
 
   it('Favorite is moved to that top assigned section', () => {
-    cy.wait(100).get('li.person.highlighted:last').contains(bookmarked_person);
+    cy.get('li.person.highlighted').contains(bookmarked_person);
   });
 
   it('De-highlight the role', () => {
