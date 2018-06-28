@@ -100,6 +100,11 @@ class ActiveDirectory
       raise InvalidParameter, 'Must pass valid group', caller
     end
 
+    unless Rails.env.production?
+      Rails.logger.warn 'ActiveDirectory.add_user_to_group() will no-op outside of production but return success.'
+      return true
+    end
+
     # TODO: This will only process against the first entry in @ldap[:groups]
     @ldap[:groups].each do |conn|
       result = conn.modify(dn: group[:distinguishedname][0], operations: [
@@ -132,6 +137,11 @@ class ActiveDirectory
       raise InvalidParameter, 'Must pass valid group', caller
     end
 
+    unless Rails.env.production?
+      Rails.logger.warn 'ActiveDirectory.remove_user_from_group() will no-op outside of production but return success.'
+      return true
+    end
+
     # TODO: This will only process against the first entry in @ldap[:groups]
     @ldap[:groups].each do |conn|
       result = conn.modify(dn: group[:distinguishedname][0], operations: [
@@ -157,6 +167,11 @@ class ActiveDirectory
   def ActiveDirectory.update_group_description(group, description)
     unless group.is_a? Net::LDAP::Entry
       raise InvalidParameter, 'Must pass valid group', caller
+    end
+
+    unless Rails.env.production?
+      Rails.logger.warn 'ActiveDirectory.update_group_description() will no-op outside of production but return success.'
+      return true
     end
 
     @ldap[:groups].each do |conn|

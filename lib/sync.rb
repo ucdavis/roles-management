@@ -159,8 +159,8 @@ module Sync
       logger = Logger.new(Rails.root.join('log', 'sync.log').to_s)
       logger.level = Logger::DEBUG
       logger.datetime_format = '%Y-%m-%d %H:%M:%S'
-      logger = ActiveSupport::TaggedLogging.new(logger)
       logger.formatter = Logger::Formatter.new
+      logger = ActiveSupport::TaggedLogging.new(logger)
     end
     @@sync_logger ||= logger
   end
@@ -171,7 +171,7 @@ module Sync
     require 'json'
 
     sync_json = {
-      config_path: Rails.root.join('sync', 'config').to_s,
+      #config_path: Rails.root.join('sync', 'config').to_s,
       mode: sync_mode,
       requested_at: DateTime.now # rubocop:disable Style/DateTime
     }.merge(opts)
@@ -192,12 +192,12 @@ module Sync
   end
 
   def sync_scripts
-    if Rails.env.development? && false
+    if Rails.env.development?
       # In development mode, only run the test script (simply prints job details to STDOUT).
-      # This is to avoid accidentally modifying Active Directory, SysAid, etc.
-      Dir[Rails.root.join('sync', 'test.rb')]
+      # This is to avoid accidentally modifying Active Directory, etc.
+      ['test.rb']
     else
-      Dir[Rails.root.join('sync', '*')].select { |f| File.file?(f) }
+      Dir[Rails.root.join('sync', '*')].select { |f| File.file?(f) }.map { |f| File.basename(f) }
     end
   end
 end

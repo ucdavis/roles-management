@@ -90,9 +90,6 @@ gem 'whenever', require: false
 # For background processing
 gem 'daemons'
 
-# Sync script dependencies
-gem 'roles-management-api', '>= 0.1.2', git: 'https://github.com/dssit/roles-management-api.git'
-
 gem 'rack-timeout'
 
 # For AWS DynamoDB support, used in activity logs

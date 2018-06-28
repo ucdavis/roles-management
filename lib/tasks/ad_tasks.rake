@@ -1,7 +1,6 @@
 require 'json'
 require 'yaml'
 require 'net-ldap'
-require 'roles-management-api'
 
 load "#{Rails.root.join('lib', 'active_directory')}.rb"
 load "#{Rails.root.join('lib', 'active_directory_helper')}.rb"
@@ -120,7 +119,12 @@ namespace :ad do
           # puts "\t\t#{missing} ..."
           begin
             retries ||= 0
-            ActiveDirectoryHelper.ensure_user_in_group(missing, ad_group)
+            p = Person.find_by(loginid: missing)
+            if p
+              ActiveDirectoryHelper.ensure_user_in_group(p, ad_group)
+            else
+              STDERR.puts "Expected Person object with login ID #{missing} to exist but did not. Ignoring ..."
+            end
           rescue ActiveDirectoryHelper::UserNotFound
             # STDERR.puts "User '#{missing}' not found in AD while merging role and AD group"
           rescue ActiveDirectoryHelper::GroupNotFound

@@ -1,5 +1,3 @@
-require 'roles-management-api'
-
 class ActiveDirectoryHelper
   class UserNotFound < StandardError; end
   class GroupNotFound < StandardError; end
@@ -79,61 +77,93 @@ class ActiveDirectoryHelper
     return false # rubocop:disable Style/RedundantReturn
   end
 
-  # +user+ may be a loginid (string) or Net::LDAP::Entry object
+  # +user+ must be a Person object
   # +group+ may be an AD path (string) or Net::LDAP::Entry object
-  # +ad_guid+ may be provided (optional) and will be preferred over AD Path if
-  # +group+ is a string (AD Path)
-  def ActiveDirectoryHelper.ensure_user_in_group(user, group, _ad_guid = nil)
-    unless user.is_a? Net::LDAP::Entry
-      loginid = user
-      user = ActiveDirectory.get_user(loginid)
-      raise UserNotFound, 'Could not find user', caller if user.nil?
+  def ActiveDirectoryHelper.ensure_user_in_group(user, group)
+    unless user.is_a? Person
+      raise ArgumentError, 'user parameter must be of type Person'
     end
-    unless group.is_a? Net::LDAP::Entry
-      group_name = group
-      group = ActiveDirectory.get_group(group_name)
-      raise GroupNotFound, 'Could not find group', caller if group.nil?
+    if group.is_a? Net::LDAP::Entry
+      ad_path = group[:cn]
+      ldap_group_object = group
+    elsif group.is_a? String
+      ad_path = group
+      ldap_group_object = ActiveDirectory.get_group(group)
+      raise GroupNotFound, 'Could not find group', caller if ldap_group_object.nil?
+    else
+      raise ArgumentError, 'group parameter must be of type Net::LDAP::Entry or String'
     end
 
+    ldap_user_object = ActiveDirectory.get_user(user.loginid)
+    raise UserNotFound, 'Could not find user', caller if ldap_user_object.nil?
+
     # returns true or false
-    ActiveDirectory.add_user_to_group(user, group)
+    ret = ActiveDirectory.add_user_to_group(ldap_user_object, ldap_group_object)
+
+    if ret == true
+      ActivityLog.info!("Added #{user.name} to AD group #{ad_path}.", ["person_#{user.id}", 'active_directory'])
+    else
+      ActivityLog.info!("Failed to add #{user.name} to AD group #{ad_path}.", ["person_#{user.id}", 'active_directory'])
+    end
+
+    return ret
   end
 
-  # User may be a loginid (string) or Net::LDAP::Entry object
-  # Group may be an AD path (string) or Net::LDAP::Entry object
-  # ad_guid may be provided (optional) and will be prefered over AD Path if
-  # 'group' is a string (AD Path)
-  def ActiveDirectoryHelper.ensure_user_not_in_group(user, group, _ad_guid = nil)
-    unless user.is_a? Net::LDAP::Entry
-      user = ActiveDirectory.get_user(user)
-      raise UserNotFound, 'No such user found', caller if user.nil?
+  # +user+ may a Person object or String
+  # +group+ may be an AD path (string) or Net::LDAP::Entry object
+  def ActiveDirectoryHelper.ensure_user_not_in_group(user, group)
+    if user.is_a? Person
+      ldap_user_object = ActiveDirectory.get_user(user.loginid)
+      raise UserNotFound, 'Could not find user', caller if ldap_user_object.nil?
+    elsif user.is_a? String
+      # Assume the string is a login ID
+      ldap_user_object = ActiveDirectory.get_user(user)
+      raise UserNotFound, 'Could not find user', caller if ldap_user_object.nil?
+    else
+      raise ArgumentError, 'user parameter must be of type Person or String'
     end
-    unless group.is_a? Net::LDAP::Entry
-      group = ActiveDirectory.get_group(group)
-      raise GroupNotFound, 'No such group found', caller if group.nil?
+    if group.is_a? Net::LDAP::Entry
+      ad_path = group[:cn]
+      ldap_group_object = group
+    elsif group.is_a? String
+      ad_path = group
+      ldap_group_object = ActiveDirectory.get_group(group)
+      raise GroupNotFound, 'Could not find group', caller if ldap_group_object.nil?
+    else
+      raise ArgumentError, 'group parameter must be of type Net::LDAP::Entry or String'
     end
 
     # returns true or false
-    ActiveDirectory.remove_user_from_group(user, group)
+    ret = ActiveDirectory.remove_user_from_group(ldap_user_object, ldap_group_object)
+
+    if ret == true
+      if user.is_a? Person
+        ActivityLog.info!("Removed #{user.name} from AD group #{ad_path}.", ["person_#{user.id}", 'active_directory'])
+      else
+        ActivityLog.info!("Removed login ID #{user} from AD group #{ad_path}.", ['active_directory'])
+      end
+    end
+
+    return ret
   end
 
   # Retrieves all members from both the role in RM and the AD group and ensures
   # both have the same members by adding any missing members from one to the other
   # (inclusively).
-  def ActiveDirectoryHelper.merge_role_and_ad_group(role_id, group_name, rm_client)
+  def ActiveDirectoryHelper.merge_role_and_ad_group(role_id, group_name)
     ad_group = ActiveDirectory.get_group(group_name)
 
     unless ad_group.is_a? Net::LDAP::Entry
       abort("Could not retrieve AD group '#{group_name}'")
     end
 
-    role = rm_client.find_role_by_id(role_id)
+    role = Role.find_by(id: role_id)
 
     # Add any role members to the AD group
     role.members.each do |member|
       STDOUT.puts "Ensuring #{member.loginid} is in AD group #{group_name} ..."
       begin
-        ActiveDirectoryHelper.ensure_user_in_group(member.loginid, ad_group)
+        ActiveDirectoryHelper.ensure_user_in_group(member, ad_group)
       rescue ActiveDirectoryHelper::UserNotFound
         STDERR.puts "User '#{member.loginid}' not found in AD while merging role and AD group"
       rescue ActiveDirectoryHelper::GroupNotFound
@@ -146,7 +176,7 @@ class ActiveDirectoryHelper
 
     # Add any AD group members to the role
     ActiveDirectory.list_group_members(ad_group).each do |ad_member|
-      p = rm_client.find_person_by_loginid(ad_member)
+      p = Person.find_by(loginid: ad_member)
       if p
         STDOUT.puts "Ensuring #{p.loginid} is in RM role #{role} ..."
         unless role.members.map(&:loginid).include? p.loginid
@@ -158,6 +188,6 @@ class ActiveDirectoryHelper
       end
     end
 
-    rm_client.save(role) if role_changed
+    role.save if role_changed
   end
 end

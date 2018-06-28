@@ -6,12 +6,6 @@ GIT
       capistrano (>= 3.0.0)
 
 GIT
-  remote: https://github.com/dssit/roles-management-api.git
-  revision: 86fdf832ecaeea4af4668def717e7b27dd61c11c
-  specs:
-    roles-management-api (0.2.0)
-
-GIT
   remote: https://github.com/rubycas/rubycas-client.git
   revision: 7b67c8f1b5515ee4e28479d640d2da0a5aadfbe0
   specs:
@@ -305,7 +299,6 @@ DEPENDENCIES
   pundit
   rack-timeout
   rails (~> 5.2)
-  roles-management-api (>= 0.1.2)!
   rubycas-client!
   sass-rails (~> 5.0)
   selenium-webdriver

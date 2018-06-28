@@ -1,4 +1,6 @@
 require 'sync'
+require 'active_directory'
+require 'active_directory_helper'
 
 # Emit a warning in the log if a script takes longer than this (in seconds)
 SLOW_SCRIPT_WARNING = 60
@@ -11,32 +13,220 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
   # end
 
   def perform
-    script_start_ts = Time.now
+    Sync.logger.tagged(job_uuid) do
+      if sync_script.include? 'test.rb'
+        Sync.logger.debug 'Test sync is a no-op.'
+        return
+      end
 
-    # Call the script, piping the JSON
-    ret = IO.popen(sync_script, 'r+', :err => [:child, :out]) do |pipe|
-      pipe.puts sync_json
-      pipe.close_write
-      pipe.gets(nil)
-    end
+      if sync_script.include? 'active_directory.rb' == false
+        Sync.logger.error "Unknown sync script requested: #{sync_script}"
+        raise 'Unable to complete job'
+      end
 
-    script_finish_ts = Time.now
+      job_start_ts = Time.now
 
-    # e.g. "638aa9a4-4ef9-4a21-b223-28adfba578a1: active_directory.rb:"
-    log_tag = "#{job_uuid}: #{sync_script.split(File::SEPARATOR)[-1]}:"
+      require 'json'
+      require 'yaml'
 
-    if script_finish_ts - script_start_ts > SLOW_SCRIPT_WARNING
-      Sync.logger.warn "#{log_tag} SLOW SCRIPT (#{script_finish_ts - script_start_ts}s)"
-    end
+      @sync_data = JSON.parse(sync_json)
 
-    if $?.exitstatus != 0
-      log_txt = "#{log_tag} ERROR (#{script_finish_ts - script_start_ts}s)\n"
-      log_txt += "#{log_tag} \t" + ret.gsub("\n", "\n#{log_tag} \t") if ret and ret.length > 0
-      Sync.logger.error(log_txt)
-      raise log_txt # this will allow our script output to appear in Delayed::Job.last_error
-    else
-      Sync.logger.info "#{log_tag} SUCCESS (#{script_finish_ts - script_start_ts}s)"
-      Sync.logger.info "#{log_tag} \t" + ret.gsub("\n", "\n#{log_tag} \t") if ret and ret.length > 0
+      def duration(dur)
+        secs  = dur.to_i
+        mins  = secs / 60
+        hours = mins / 60
+        days  = hours / 24
+
+        if days > 0
+          "#{days} days and #{hours % 24} hours"
+        elsif hours > 0
+          "#{hours} hours and #{mins % 60} minutes"
+        elsif mins > 0
+          "#{mins} minutes and #{secs % 60} seconds"
+        elsif secs >= 0
+          "#{secs} seconds"
+        end
+      end
+
+      if @sync_data['requested_at']
+        requested_at = DateTime.strptime(@sync_data['requested_at'])
+        Sync.logger.info "Beginning job requested #{duration(DateTime.now.to_f - requested_at.to_f)} ago"
+      end
+
+      @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
+
+      ActiveDirectory.configure(@config)
+
+      case @sync_data['mode']
+
+      when 'add_to_role'
+        loginid = @sync_data['person']['loginid']
+        ad_path = @sync_data['role']['ad_path']
+        application_name = @sync_data['role']['application_name']
+        role_name = @sync_data['role']['role_name']
+
+        p = Person.find_by(loginid: loginid)
+        if p.nil?
+          Sync.logger.error "Cannot add_to_role for login ID #{loginid} as no Person was found in RM database."
+          raise 'Unable to complete job'
+        end
+
+        if ad_path.nil? || ad_path.empty?
+          Sync.logger.debug 'Ignoring remove_from_role: no ad_path given. (This is normal for any role without an AD path.)'
+        else
+          # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
+          Sync.logger.info "Adding #{loginid} to role represented in #{ad_path} ..."
+          Sync.logger.info "Ensuring #{loginid} is in AD group #{ad_path} ..."
+
+          begin
+            if ActiveDirectoryHelper.ensure_user_in_group(p, ad_path) == false
+              Sync.logger.error "Error occurred while ensuring user '#{loginid}' was in group '#{ad_path}'"
+              raise 'Unable to complete job'
+            end
+          rescue ActiveDirectoryHelper::UserNotFound, ActiveDirectoryHelper::GroupNotFound
+            Sync.logger.error "User or group not found while ensuring user '#{loginid}' was in group '#{ad_path}'"
+            raise 'Unable to complete job'
+          end
+
+          if ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_path, application_name, role_name) == false
+            Sync.logger.error "Error occurred while updating AD group description for '#{ad_path}'"
+            raise 'Unable to complete job'
+          end
+
+          Sync.logger.info 'Success!'
+        end
+
+      when 'remove_from_role'
+        ad_path = @sync_data['role']['ad_path']
+        loginid = @sync_data['person']['loginid']
+        application_name = @sync_data['role']['application_name']
+        role_name = @sync_data['role']['role_name']
+
+        p = Person.find_by(loginid: loginid)
+        if p.nil?
+          Sync.logger.error "Cannot remove_from_role for login ID #{loginid} as no Person was found in RM database."
+          raise 'Unable to complete job'
+        end
+
+        if ad_path.nil? || ad_path.empty?
+          Sync.logger.info 'Ignoring remove_from_role: no ad_path given. (This is normal for any role without an AD path.)'
+        else
+          # If ad_path and ad_guid are nil, return success (we don't respond to non-AD roles)
+          Sync.logger.info "Removing #{loginid} from role represented in #{ad_path} ..."
+          Sync.logger.info "Ensuring #{loginid} is not in AD group #{ad_path} ..."
+
+          begin
+            if ActiveDirectoryHelper.ensure_user_not_in_group(p, ad_path) == false
+              Sync.logger.error "Error occurred while ensuring user '#{loginid}' was not in group '#{ad_path}'"
+              raise 'Unable to complete job'
+            end
+          rescue ActiveDirectoryHelper::UserNotFound
+            Sync.logger.warn "User '#{loginid}' not found in AD while answering a 'remove_from_role'. Ignoring."
+          rescue ActiveDirectoryHelper::GroupNotFound
+            Sync.logger.error "Group '#{ad_path}' not found in AD while answering a 'remove_from_role'. Please ensure group exists."
+            raise 'Unable to complete job'
+          end
+
+          if ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_path, application_name, role_name) == false
+            Sync.logger.error "Error occurred while updating AD group description for '#{ad_path}'"
+            raise 'Unable to complete job'
+          end
+
+          Sync.logger.info 'Success!'
+        end
+
+      when 'role_change'
+        @sync_data['role']['changes'].each do |field, values|
+          next unless field == 'ad_path'
+
+          old_value = values[0]
+          new_value = values[1]
+
+          # Clean up for a previous RM bug which erroneously created sync_jobs for
+          # ad_path values changing from nil to "".
+          old_value = nil if old_value && old_value.empty?
+          new_value = nil if new_value && new_value.empty?
+          if old_value.nil? && new_value.nil?
+            # Do nothing
+          else
+            if (old_value == nil) && (new_value != nil)
+              # AD path set for the first time. Merge role and AD group.
+              ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data['role']['id'], new_value)
+              ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(new_value, @sync_data['role']['application_name'], @sync_data['role']['role_name'])
+            elsif (old_value != nil) && (new_value == nil)
+              # AD path was set but is now unset. Leave all members but remove sentinel
+              ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(old_value)
+            else
+              # AD path went from one non-empty value to another non-empty value.
+              # Leave the users in the first group (removing the sentinel) but
+              # merge the second AD path with the role.
+              ActiveDirectoryHelper.ensure_sentinel_descriptor_absence(old_value)
+
+              ActiveDirectoryHelper.merge_role_and_ad_group(@sync_data['role']['id'], new_value)
+              ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(new_value, @sync_data['role']['application_name'], @sync_data['role']['role_name'])
+            end
+          end
+        end
+
+      when 'role_audit'
+        ad_path = @sync_data['role']['ad_path']
+
+        if ad_path.blank?
+          Sync.logger.warn 'Role has no AD path so audit request will be ignored ...'
+        else
+          role_members = @sync_data['role']['members']
+          application_name = @sync_data['role']['application_name']
+          role_name = @sync_data['role']['role_name']
+
+          ad_group = ActiveDirectory.get_group(ad_path)
+
+          unless ad_group.is_a? Net::LDAP::Entry
+            Sync.logger.error "Error syncing role. Could not retrieve '#{ad_path}' from AD."
+            raise 'Unable to complete job'
+          end
+
+          ActiveDirectoryHelper.ensure_sentinel_descriptor_presence(ad_group, application_name, role_name)
+
+          ad_members = ActiveDirectory.list_group_members(ad_group)
+
+          if ad_members.sort == role_members.sort
+            Sync.logger.info 'Role is already fully synced.'
+          else
+            Sync.logger.info 'Role is out-of-sync. Updating ...'
+
+            # Members in AD but not RM (will be removed from AD)
+            (ad_members - role_members).each do |missing|
+              Sync.logger.info "\tRemoving from AD: #{missing}"
+              ActiveDirectoryHelper.ensure_user_not_in_group(missing, ad_group)
+            end
+
+            # Members in RM but not AD (will be added to AD)
+            (role_members - ad_members).each do |missing|
+              Sync.logger.info "\tAdding to AD: #{missing}"
+              begin
+                p = Person.find_by(loginid: missing)
+                unless p
+                  Sync.logger.warn "Expected Person to exist with login ID #{missing} but did not. Ignoring ..."
+                else
+                  ActiveDirectoryHelper.ensure_user_in_group(p, ad_group)
+                end
+              rescue ActiveDirectoryHelper::UserNotFound
+                Sync.logger.warn "User '#{missing}' not found in AD while merging role and AD group"
+              rescue ActiveDirectoryHelper::GroupNotFound
+                Sync.logger.warn "Group '#{ad_path}' not found in AD while merging role and AD group"
+              end
+            end
+          end
+        end
+      end
+
+      job_finish_ts = Time.now
+
+      Sync.logger.info "Sync job finished in #{job_finish_ts - job_start_ts} seconds"
+
+      if job_finish_ts - job_start_ts > SLOW_SCRIPT_WARNING
+        Sync.logger.warn 'SLOW SCRIPT WARNING'
+      end
     end
   end
 
