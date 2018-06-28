@@ -7,5 +7,5 @@ require 'delayed_rake'
 Rails.application.initialize!
 
 CASClient::Frameworks::Rails::Filter.configure(
-  cas_base_url: ENV['CAS_URL']
+  cas_base_url: ENV['CAS_URL'] || Rails.application.secrets[:cas_url]
 )
