@@ -5,7 +5,8 @@ describe('Test that the person show modal can be opened', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
-    .type(bookmarked_person).wait(10)
+    .type(bookmarked_person, {delay: 100})
+    .should('have.value', bookmarked_person)
     .type('{enter}');
   });
 
