@@ -192,12 +192,13 @@ module Sync
   end
 
   def sync_scripts
-    if Rails.env.development?
-      # In development mode, only run the test script (simply prints job details to STDOUT).
-      # This is to avoid accidentally modifying Active Directory, etc.
-      ['test.rb']
-    else
-      Dir[Rails.root.join('sync', '*')].select { |f| File.file?(f) }.map { |f| File.basename(f) }
-    end
+    # if Rails.env.development?
+    #   # In development mode, only run the test script (simply prints job details to STDOUT).
+    #   # This is to avoid accidentally modifying Active Directory, etc.
+    #   ['test.rb']
+    # else
+    #   Dir[Rails.root.join('sync', '*')].select { |f| File.file?(f) }.map { |f| File.basename(f) }
+    # end
+    ['active_directory.rb']
   end
 end
