@@ -1,12 +1,12 @@
 describe('Test that the person show modal can be opened', () => {
-  const bookmarked_person = 'Sadaf Arshad';
+  const BOOKMARKED_PERSON = 'Sadaf Arshad';
 
   it('Bookmark a person', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
-    .type(bookmarked_person, {delay: 100})
-    .should('have.value', bookmarked_person)
+    .type(BOOKMARKED_PERSON, {delay: 100})
+    .should('have.value', BOOKMARKED_PERSON)
     .type('{enter}');
   });
 
@@ -15,7 +15,7 @@ describe('Test that the person show modal can be opened', () => {
   });
 
   it('The modal should have the person\'s name.', () => {
-    cy.get('div.modal-header h3').should('contain', bookmarked_person);
+    cy.get('div.modal-header h3').should('contain', BOOKMARKED_PERSON);
   });
 
   it('The modal should have four tabs.', () => {
