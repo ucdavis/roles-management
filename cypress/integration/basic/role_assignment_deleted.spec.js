@@ -1,4 +1,4 @@
-const bookmarked_person = 'Sadaf Arshad';
+const BOOKMARKED_PERSON = 'Sadaf Arshad';
 
 beforeEach(() => {
   Cypress.Cookies.preserveOnce('_DSS-RM_session');
@@ -9,8 +9,8 @@ describe('Test that role assignments can be made', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
-    .type(bookmarked_person, {delay: 100})
-    .should('have.value', bookmarked_person)
+    .type(BOOKMARKED_PERSON, {delay: 100})
+    .should('have.value', BOOKMARKED_PERSON)
     .type('{enter}');
   });
 
@@ -26,7 +26,7 @@ describe('Test that role assignments can be made', () => {
   });
 
   it('Favorite is moved to that top assigned section', () => {
-    cy.get('li.person.highlighted').contains(bookmarked_person);
+    cy.get('li.person.highlighted').contains(BOOKMARKED_PERSON);
   });
 
   it('De-highlight the role', () => {
@@ -35,7 +35,7 @@ describe('Test that role assignments can be made', () => {
 
   it('Highlight again and ensure the newly assigned favorite is still there',() => {
     cy.get('div.role:first a').click({force: true});
-    cy.get('li.person.highlighted:last').contains(bookmarked_person);
+    cy.get('li.person.highlighted:last').contains(BOOKMARKED_PERSON);
   });
 
 });
@@ -51,7 +51,7 @@ describe('Test that role assignments can be destroyed', () => {
     cy.get('li.person.highlighted:last').click().click();
 
     cy.get('div.modal-header h3').should('contain', 'Are you sure?')
-      .get('div.modal-body').contains(bookmarked_person)
+      .get('div.modal-body').contains(BOOKMARKED_PERSON)
       .get('div#cards h4#application-name:first').then(($application_name) => {
         const first_application_name =  $application_name.text();
         cy.get('div.modal-body').contains(first_application_name);
@@ -67,7 +67,7 @@ describe('Test that role assignments can be destroyed', () => {
 
   it('Highlight role again and ensure the newly assigned role is deleted',() => {
     cy.get('div.role:first a').click({force: true});
-    cy.get('li.person.highlighted:last').should('not.contain', bookmarked_person);
+    cy.get('li.person.highlighted:last').should('not.contain', BOOKMARKED_PERSON);
   });
 
 });
