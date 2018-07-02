@@ -1,8 +1,8 @@
 describe('Test that group rules can be created', () => {
-  const bookmarked_group = 'All DSS IT Staff';
-  const column = 'loginid';
-  const condition = 'is';
-  const value = 'jeremy';
+  const BOOKMARKED_GROUP = 'All DSS IT Staff';
+  const COLUMN = 'loginid';
+  const CONDITION = 'is';
+  const VALUE = 'jeremy';
 
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('_DSS-RM_session');
@@ -12,8 +12,8 @@ describe('Test that group rules can be created', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
-      .type(bookmarked_group, {delay: 100})
-      .should('have.value', bookmarked_group)
+      .type(BOOKMARKED_GROUP, {delay: 100})
+      .should('have.value', BOOKMARKED_GROUP)
       .type('{enter}');
 
     cy.get('div#sidebar-area a.entity-details-link:first').click({force: true});
@@ -26,14 +26,14 @@ describe('Test that group rules can be created', () => {
   it('Click Add Rule "Login ID is jeremy"', () => {
     cy.get('p button.btn').click();
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(1) select')
-      .select(column)
+      .select(COLUMN)
 
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(2) select')
-      .select(condition)
+      .select(CONDITION)
 
       cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(3) input')
-        .type(value)
-        .should('have.value', value)
+        .type(VALUE)
+        .should('have.value', VALUE)
         .type('{enter}')
         .click()
   });
@@ -45,17 +45,17 @@ describe('Test that group rules can be created', () => {
   it('Ensure that the rule exists after the save',() => {
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(1) select').then(($column) => {
         const rule_column = $column.val();
-        cy.expect(rule_column).contains(column);
+        cy.expect(rule_column).contains(COLUMN);
     });
 
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(2) select').then(($condition) => {
         const rule_condition = $condition.val();
-        cy.expect(rule_condition).contains(condition);
+        cy.expect(rule_condition).contains(CONDITION);
     });
 
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(3) input').then(($value) => {
       const rule_value = $value.val();
-      cy.expect(rule_value).contains(value);
+      cy.expect(rule_value).contains(VALUE);
     });
   });
 
@@ -69,17 +69,17 @@ describe('Test that group rules can be created', () => {
 
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(1) select').then(($column) => {
         const rule_column = $column.val();
-        cy.expect(rule_column).contains(column);
+        cy.expect(rule_column).contains(COLUMN);
     });
 
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(2) select').then(($condition) => {
         const rule_condition = $condition.val();
-        cy.expect(rule_condition).contains(condition);
+        cy.expect(rule_condition).contains(CONDITION);
     });
 
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(3) input').then(($value) => {
       const rule_value = $value.val();
-      cy.expect(rule_value).contains(value);
+      cy.expect(rule_value).contains(VALUE);
     });
   });
 
