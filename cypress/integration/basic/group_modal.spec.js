@@ -1,12 +1,12 @@
 describe('Test that the group show modal can be opened', () => {
-  const bookmarked_group = 'All DSS IT Staff';
+  const BOOKMARKED_GROUP = 'All DSS IT Staff';
 
   it('Bookmark a group', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
-      .type(bookmarked_group, {delay: 100})
-      .should('have.value', bookmarked_group)
+      .type(BOOKMARKED_GROUP, {delay: 100})
+      .should('have.value', BOOKMARKED_GROUP)
       .type('{enter}');
   });
 
@@ -15,7 +15,7 @@ describe('Test that the group show modal can be opened', () => {
   });
 
   it('The modal has a header which matches the group name.', () => {
-    cy.get('div.modal-header h3').should('contain', bookmarked_group);
+    cy.get('div.modal-header h3').should('contain', BOOKMARKED_GROUP);
   });
 
   it('The modal has five tabs.', () => {
