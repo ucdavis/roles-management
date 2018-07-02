@@ -1,6 +1,6 @@
 describe('Test that group membership can be edited', () => {
-  const bookmarked_group = 'All DSS IT Staff';
-  const new_member = 'Sadaf Arshad';
+  const BOOKMARKED_GROUP = 'All DSS IT Staff';
+  const NEW_MEMBER = 'Sadaf Arshad';
 
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('_DSS-RM_session');
@@ -10,8 +10,8 @@ describe('Test that group membership can be edited', () => {
     cy.visit('/applications');
 
     cy.get('input#search_sidebar.input-large.search-query')
-    .type(bookmarked_group,{delay: 100})
-    .should('have.value', bookmarked_group)
+    .type(BOOKMARKED_GROUP,{delay: 100})
+    .should('have.value', BOOKMARKED_GROUP)
     .type('{enter}');
 
     cy.get('div#sidebar-area a.entity-details-link:first').click({force: true});
@@ -23,8 +23,8 @@ describe('Test that group membership can be edited', () => {
 
   it('Add a member', () => {
     cy.get('p#members ul.token-input-list-facebook li:last input').click()
-     .type(new_member, {delay: 500})
-     .should('have.value', new_member)
+     .type(NEW_MEMBER, {delay: 500})
+     .should('have.value', NEW_MEMBER)
      .type('{enter}');
   });
 
@@ -33,7 +33,7 @@ describe('Test that group membership can be edited', () => {
   });
 
   it('Ensure the member is still there',() => {
-    cy.get('p#members').contains(new_member);
+    cy.get('p#members').contains(NEW_MEMBER);
   });
 
   it('Close the modal and re-open it',() => {
@@ -43,7 +43,7 @@ describe('Test that group membership can be edited', () => {
 
   it('Ensure the member is still there',() => {
     cy.get('div.modal-body ul.nav.nav-tabs li:nth-child(2) a').click()
-      .get('p#members').contains(new_member);
+      .get('p#members').contains(NEW_MEMBER);
   });
 
 });
