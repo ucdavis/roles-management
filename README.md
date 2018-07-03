@@ -10,8 +10,6 @@ RM is designed to allow anyone with employees or  virtual appliances (file serve
 
 RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, PostgreSQL, and Linux. It should work fine with the Passenger web application server as well.
 
-MySQL 5.6.4 is required to support timestamp granularity greater than one second (used in caching).
-
 ## Installation / Deployment
 
 ### Step 1. (Set configuration values)
@@ -65,6 +63,22 @@ access:
 Run the application:
 
  * bundle exec rails server (visit localhost:3000 to view)
+
+## Running Tests
+
+Roles Management has two forms of tests: Rails-based unit tests and Cypress
+end-to-end tests.
+
+### Running Rails tests
+
+1. `rails test`
+
+### Running Cypress tests
+
+1. Ensure Cypress is installed: `npm install`
+2. Ensure Roles management is running with CAS override: `_RM_DEV_LOGINID=dssapps rails s`
+3. Ensure CAS override user is in RM database
+4. Run Cypress: `npx cypress open`
 
 ## Screenshots
 ![Group rule editor](http://169.237.101.195/image2.png "Group rule editor")
