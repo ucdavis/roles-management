@@ -14,7 +14,7 @@ end
 # Sync with external systems
 every 12.hours do
   rake 'dw:import'
-  rake 'group:audit_inherited_roles' # temporary fix until role assignments propagate correctly
+  # rake 'group:audit_inherited_roles' # temporary fix until role assignments propagate correctly
   rake 'person:update_active_flag'
   rake 'person:remove_inactive'
 end
