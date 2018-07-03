@@ -1,41 +1,36 @@
-describe('Test that role assignments can be made', () => {
-  const BOOKMARKED_PERSON = 'Sadaf Arshad';
+describe('Within application cards', () => {
+  const RAILS_COOKIES_NAME = '_DSS-RM_session';
 
   beforeEach(() => {
-    Cypress.Cookies.preserveOnce('_DSS-RM_session');
+    Cypress.Cookies.preserveOnce(RAILS_COOKIES_NAME);
   });
 
-  it('Bookmark a person', () => {
+  it('can highlight a role', () => {
     cy.visit('/applications');
 
-    cy.get('input#search_sidebar.input-large.search-query')
-    .type(BOOKMARKED_PERSON, {delay: 100})
-    .should('have.value', BOOKMARKED_PERSON)
-    .type('{enter}');
-  });
+    beforeEach(function () {
+      cy.get('div#sidebar ul#pins li:first span#name').invoke('text').as('bookmarked_person')
+    });
 
-  it('Highlight a role', () => {
     cy.get('div.role:first a').click({force: true});
   });
 
-  it('Click on a favorite that is not assigned to the role',() => {
+  it('can assign favorite a role', function (){
     cy.server()
       .route("POST", "/role_assignments").as("roleAssignments")
       .get('ul#pins li.person:first').click().click()
       .wait('@roleAssignments');
+
+    cy.get('li.person.highlighted').contains(this.bookmarked_person);
   });
 
-  it('Favorite is moved to that top assigned section', () => {
-    cy.get('li.person.highlighted').contains(BOOKMARKED_PERSON);
-  });
-
-  it('De-highlight the role', () => {
+  it('can de-highlight the role', () => {
     cy.get('div.role:first a').click({force: true});
   });
 
-  it('Highlight again and ensure the newly assigned favorite is still there',() => {
+  it('can re-highlight and ensure new assignment made', function (){
     cy.get('div.role:first a').click({force: true});
-    cy.get('li.person.highlighted:last').contains(BOOKMARKED_PERSON);
+    cy.get('li.person.highlighted').contains(this.bookmarked_person);
   });
 
 });
