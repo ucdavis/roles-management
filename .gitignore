@@ -32,3 +32,4 @@ log/activity
 db/data.yml
 package-lock.json
 cypress.env.json
+cypress/videos
