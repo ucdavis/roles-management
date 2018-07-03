@@ -1,29 +1,28 @@
-describe('Test that the group show modal can be opened', () => {
-  const BOOKMARKED_GROUP = 'All DSS IT Staff';
+  describe('Group show modal', () => {
+    const BOOKMARKED_GROUP = 'All DSS IT Staff';
+    const KEYBOARD_TYPE_DELAY = 100;
 
-  it('Bookmark a group', () => {
-    cy.visit('/applications');
+    it('can be opened',() => {
+      cy.visit('/applications');
 
-    cy.get('input#search_sidebar.input-large.search-query')
-      .type(BOOKMARKED_GROUP, {delay: 100})
-      .should('have.value', BOOKMARKED_GROUP)
-      .type('{enter}');
+      cy.get('input#search_sidebar.input-large.search-query')
+        .type(BOOKMARKED_GROUP, {delay: KEYBOARD_TYPE_DELAY})
+        .should('have.value', BOOKMARKED_GROUP)
+        .type('{enter}');
+
+      cy.get('div#sidebar-area a.entity-details-link:first').click({force: true});
+    });
+
+    it('has a header group name', () => {
+      cy.get('div.modal-header h3').should('contain', BOOKMARKED_GROUP);
+    });
+
+    it('has five tabs', () => {
+      cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(1)').should('contain', 'Summary');
+      cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(2)').should('contain', 'Relations');
+      cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(3)').should('contain', 'Roles');
+      cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(4)').should('contain', 'Rules');
+      cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(5)').should('contain', 'Activity');
+    });
+
   });
-
-  it('Clicking a group open icon shows the modal.',() => {
-    cy.get('div#sidebar-area a.entity-details-link:first').click({force: true});
-  });
-
-  it('The modal has a header which matches the group name.', () => {
-    cy.get('div.modal-header h3').should('contain', BOOKMARKED_GROUP);
-  });
-
-  it('The modal has five tabs.', () => {
-    cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(1)').should('contain', 'Summary');
-    cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(2)').should('contain', 'Relations');
-    cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(3)').should('contain', 'Roles');
-    cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(4)').should('contain', 'Rules');
-    cy.get('div.tabbable.tabs-left ul.nav.nav-tabs li:nth-child(5)').should('contain', 'Activity');
-  });
-
-});
