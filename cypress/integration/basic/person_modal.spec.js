@@ -1,13 +1,13 @@
 describe('Person show modal', () => {
-  
+
   it('can be opened', () => {
     cy.visit('/applications');
 
     beforeEach(function () {
-      cy.get('div#sidebar ul#pins li:first span#name').invoke('text').as('bookmarked_person')
+      cy.get('div#sidebar-area li.person:first span#name').invoke('text').as('bookmarked_person');
     });
 
-    cy.get('div#sidebar-area a.entity-details-link:first').click({force: true});
+    cy.get('div#sidebar-area li.person:first a.entity-details-link:first').click({force: true});
   });
 
   it('has a header group name.', function (){
