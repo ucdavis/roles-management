@@ -1,3 +1,5 @@
+// FIXME: test assumes a person is already bookmarked.
+
 describe('Role assignment can be made by', () => {
   const RAILS_COOKIES_NAME = '_DSS-RM_session';
 
@@ -9,7 +11,7 @@ describe('Role assignment can be made by', () => {
     cy.visit('/applications');
 
     beforeEach(function () {
-      cy.get('div#sidebar ul#pins li:first span#name').invoke('text').as('bookmarked_person')
+      cy.get('div#sidebar-area li.person:first span#name').invoke('text').as('bookmarked_person');
     });
 
     cy.get('div.role:first a').click({force: true});
@@ -32,5 +34,4 @@ describe('Role assignment can be made by', () => {
     cy.get('div.role:first a').click({force: true});
     cy.get('li.person.highlighted').contains(this.bookmarked_person);
   });
-
 });
