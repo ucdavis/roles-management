@@ -3,10 +3,9 @@ describe('Group show modal', () => {
     cy.visit('/applications');
 
     beforeEach(function () {
-      cy.get('div#sidebar ul#pins li:first span#name').invoke('text').as('bookmarked_group')
+       cy.get('div#sidebar-area li.group:first span#name').invoke('text').as('bookmarked_group');
     });
-
-    cy.get('div#sidebar-area a.entity-details-link:first').click({force: true});
+    cy.get('div#sidebar-area li.group:first a.entity-details-link:first').click({force: true});
   });
 
   it('has a header group name.', function (){
