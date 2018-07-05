@@ -1,3 +1,5 @@
+// FIXME: test assumes a person is already bookmarked.
+
 context('Application cards', () => {
   const RAILS_COOKIES_NAME = '_DSS-RM_session';
 
@@ -6,16 +8,15 @@ context('Application cards', () => {
   });
 
   describe('Role assignment can be made by', () => {
-
     it('highlighting a role', () => {
       cy.visit('/applications');
 
       beforeEach(function () {
-        cy.get('div#sidebar ul#pins li:first span#name').invoke('text').as('bookmarked_person');
+        cy.get('div#sidebar-area li.person:first span#name').invoke('text').as('bookmarked_person');
         cy.get('div.card:first div.role:first a').invoke('text').as('card_name');
         cy.get('div#cards h4#application-name:first').invoke('text').as('application_name');
       });
-      
+
       cy.get('div.role:first a').click({force: true});
     });
 
@@ -39,7 +40,6 @@ context('Application cards', () => {
   });
 
   describe('Role assignment can be destroyed by', () => {
-
     it('highlighting a role', () => {
       cy.visit('/applications');
       cy.get('div.role:first a').click({force: true});
