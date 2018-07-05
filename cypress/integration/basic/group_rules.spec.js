@@ -1,48 +1,46 @@
-describe('Test that group rules can be created', () => {
-  const BOOKMARKED_GROUP = 'All DSS IT Staff';
+// FIXME: test assumes a group is already bookmarked.
+
+describe('Group rules tab', () => {
+  const RAILS_COOKIES_NAME = '_DSS-RM_session';
   const COLUMN = 'loginid';
   const CONDITION = 'is';
   const VALUE = 'jeremy';
 
   beforeEach(() => {
-    Cypress.Cookies.preserveOnce('_DSS-RM_session');
+    Cypress.Cookies.preserveOnce(RAILS_COOKIES_NAME);
   });
 
-  it('Open a group modal', () => {
+  it('can be opened', () => {
     cy.visit('/applications');
 
-    cy.get('input#search_sidebar.input-large.search-query')
-      .type(BOOKMARKED_GROUP, {delay: 100})
-      .should('have.value', BOOKMARKED_GROUP)
-      .type('{enter}');
+    beforeEach(function () {
+        cy.get('div#sidebar-area li.group:first span#name').invoke('text').as('bookmarked_group');
+    });
 
-    cy.get('div#sidebar-area a.entity-details-link:first').click({force: true});
-  });
-
-  it('Click the "Rules" tab',() => {
+    cy.get('div#sidebar-area li.group:first a.entity-details-link:first').click({force: true});
     cy.get('div.modal-body ul.nav.nav-tabs li:nth-child(4) a').click();
   });
 
-  it('Click Add Rule "Login ID is jeremy"', () => {
+  it("can add a rule = 'Login ID is jeremy' ", function (){
+    cy.get('div.modal-header h3').contains(this.bookmarked_group);
+
     cy.get('p button.btn').click();
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(1) select')
-      .select(COLUMN)
+      .select(COLUMN);
 
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(2) select')
-      .select(CONDITION)
+      .select(CONDITION);
 
       cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(3) input')
         .type(VALUE)
         .should('have.value', VALUE)
         .type('{enter}')
-        .click()
+        .click();
+
+      cy.get('div.modal-footer button#apply').click();
   });
 
-  it('Click "Apply Changes"',() => {
-    cy.get('div.modal-footer button#apply').click();
-  });
-
-  it('Ensure that the rule exists after the save',() => {
+  it('can ensure that the rule exists',() => {
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(1) select').then(($column) => {
         const rule_column = $column.val();
         cy.expect(rule_column).contains(COLUMN);
@@ -59,13 +57,15 @@ describe('Test that group rules can be created', () => {
     });
   });
 
-  it('Close the group modal',() => {
+  it('can be closed',() => {
     cy.get('div.modal-header a.close').click();
   });
 
-  it('Open it again and confirm that the group rule is still there',() => {
-    cy.get('div#sidebar-area a.entity-details-link:first').click({force: true});
+  it('can be opened again and new rule exists', function (){
+    cy.get('div#sidebar-area li.group:first a.entity-details-link:first').click({force: true});
     cy.get('div.modal-body ul.nav.nav-tabs li:nth-child(4) a').click();
+
+    cy.get('div.modal-header h3').contains(this.bookmarked_group);
 
     cy.get('div#rules.tab-pane.fade.active.in table#rules tr.fields:last td:nth-child(1) select').then(($column) => {
         const rule_column = $column.val();
@@ -82,5 +82,4 @@ describe('Test that group rules can be created', () => {
       cy.expect(rule_value).contains(VALUE);
     });
   });
-
 });
