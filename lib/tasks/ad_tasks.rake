@@ -2,8 +2,8 @@ require 'json'
 require 'yaml'
 require 'net-ldap'
 
-load "#{Rails.root.join('lib', 'active_directory')}.rb"
-load "#{Rails.root.join('lib', 'active_directory_helper')}.rb"
+require Rails.root.join('lib', 'active_directory.rb')
+require Rails.root.join('lib', 'active_directory_helper.rb')
 
 namespace :ad do
   desc 'Audit AD for membership differences in AD-enabled roles (or role)'
