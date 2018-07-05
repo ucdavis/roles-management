@@ -1,73 +1,65 @@
-const BOOKMARKED_PERSON = 'Sadaf Arshad';
+context('Application cards', () => {
+  const RAILS_COOKIES_NAME = '_DSS-RM_session';
 
-beforeEach(() => {
-  Cypress.Cookies.preserveOnce('_DSS-RM_session');
-});
-
-describe('Test that role assignments can be made', () => {
-  it('Bookmark a person', () => {
-    cy.visit('/applications');
-
-    cy.get('input#search_sidebar.input-large.search-query')
-    .type(BOOKMARKED_PERSON, {delay: 100})
-    .should('have.value', BOOKMARKED_PERSON)
-    .type('{enter}');
+  beforeEach(() => {
+    Cypress.Cookies.preserveOnce(RAILS_COOKIES_NAME);
   });
 
-  it('Highlight a role', () => {
-    cy.get('div.role:first a').click({force: true});
-  });
+  describe('Role assignment can be made by', () => {
 
-  it('Click on a favorite that is not assigned to the role',() => {
-    cy.server()
-      .route("POST", "/role_assignments").as("roleAssignments")
-      .get('ul#pins li.person:first').click().click()
-      .wait('@roleAssignments');
-  });
+    it('highlighting a role', () => {
+      cy.visit('/applications');
 
-  it('Favorite is moved to that top assigned section', () => {
-    cy.get('li.person.highlighted').contains(BOOKMARKED_PERSON);
-  });
-
-  it('De-highlight the role', () => {
-    cy.get('div.role:first a').click({force: true});
-  });
-
-  it('Highlight again and ensure the newly assigned favorite is still there',() => {
-    cy.get('div.role:first a').click({force: true});
-    cy.get('li.person.highlighted:last').contains(BOOKMARKED_PERSON);
-  });
-
-});
-
-describe('Test that role assignments can be destroyed', () => {
-
-  it('Highlight a role', () => {
-    cy.visit('/applications');
-    cy.get('div.role:first a').click({force: true});
-  });
-
-  it('Click on a role and delete',() => {
-    cy.get('li.person.highlighted:last').click().click();
-
-    cy.get('div.modal-header h3').should('contain', 'Are you sure?')
-      .get('div.modal-body').contains(BOOKMARKED_PERSON)
-      .get('div#cards h4#application-name:first').then(($application_name) => {
-        const first_application_name =  $application_name.text();
-        cy.get('div.modal-body').contains(first_application_name);
+      beforeEach(function () {
+        cy.get('div#sidebar ul#pins li:first span#name').invoke('text').as('bookmarked_person');
+        cy.get('div.card:first div.role:first a').invoke('text').as('card_name');
+        cy.get('div#cards h4#application-name:first').invoke('text').as('application_name');
+      });
+      
+      cy.get('div.role:first a').click({force: true});
     });
 
-    cy.get('div.role:first').then(($role_name) => {
-      const first_role_name = $role_name.text();
-      cy.get('div.modal-body').contains(first_role_name);
+    it('assigning role to favorite', function (){
+      cy.server()
+        .route("POST", "/role_assignments").as("roleAssignments")
+        .get('ul#pins li.person:first').click().click()
+        .wait('@roleAssignments');
+
+      cy.get('li.person.highlighted').contains(this.bookmarked_person);
     });
 
-    cy.get('div.modal-footer a#confirm.btn.btn-danger').click();
+    it('de-highlighting the role', () => {
+      cy.get('div.role:first a').click({force: true});
+    });
+
+    it('re-highlighting to ensure new assignment was made', function (){
+      cy.get('div.role:first a').click({force: true});
+      cy.get('li.person.highlighted').contains(this.bookmarked_person);
+    });
   });
 
-  it('Highlight role again and ensure the newly assigned role is deleted',() => {
-    cy.get('div.role:first a').click({force: true});
-    cy.get('li.person.highlighted:last').should('not.contain', BOOKMARKED_PERSON);
-  });
+  describe('Role assignment can be destroyed by', () => {
 
+    it('highlighting a role', () => {
+      cy.visit('/applications');
+      cy.get('div.role:first a').click({force: true});
+    });
+
+    it('Click on a role and delete', function (){
+      cy.get('ul#highlighted_pins.pins.disable-text-select')
+        .contains(this.bookmarked_person).click().click()
+
+      cy.get('div.modal-header h3').should('contain', 'Are you sure?');
+      cy.get('div.modal-body').contains(this.bookmarked_person);
+      cy.get('div.modal-body').contains(this.card_name);
+      cy.get('div.modal-body').contains(this.application_name);
+
+      cy.get('div.modal-footer a#confirm.btn.btn-danger').click();
+    });
+
+    it('Highlight role again and ensure the newly assigned role is deleted', function (){
+      cy.get('div.role:first a').click({force: true});
+      cy.get('li.person.highlighted').should('not.contain', this.bookmarked_person);
+    });
+  });
 });
