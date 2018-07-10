@@ -14,7 +14,7 @@ describe('Application cards', () => {
           const id = ($element).attr('id');
           const name = ($element).find('h4#application-name').text();
 
-          for(var i=0; i <= cards_obj.length; i++) {
+          for(var i=0; i < cards_obj.length; i++) {
               var application_i = cards_obj[i];
               if(application_i["name"] == name){
                   cy.expect(id).to.contain(application_i["id"]);
@@ -48,12 +48,11 @@ describe('Application cards', () => {
     .then((response) => {
       expect(response.status).to.eq(200);
       const cards_obj = response.body;
-      var count = 0;
 
      cy.get('div.card').each(($element, index, $list) => {
          const name = ($element).find('h4#application-name').text();
 
-         for(var i=0; i <= cards_obj.length; i++) {
+         for(var i=0; i < cards_obj.length; i++) {
              var application_i = cards_obj[i];
              if(application_i["name"] == name) {
                  cy.expect(name).to.contain(application_i["name"]);
