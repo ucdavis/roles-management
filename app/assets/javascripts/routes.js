@@ -733,9 +733,9 @@ Based on Rails routes of DSSRM::Application
 // people => /people(.:format)
   // function(options)
   people_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"people",false],[1,[2,[8,".",false],[3,"format",false]],false]]]),
-// people_search => /people/search/:term(.:format)
-  // function(term, options)
-  people_search_path: Utils.route([["term",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"people",false],[2,[7,"/",false],[2,[6,"search",false],[2,[7,"/",false],[2,[3,"term",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]]]),
+// people_search => /people/search(.:format)
+  // function(options)
+  people_search_path: Utils.route([["format",false]], {}, [2,[7,"/",false],[2,[6,"people",false],[2,[7,"/",false],[2,[6,"search",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),
 // person => /people/:id(.:format)
   // function(id, options)
   person_path: Utils.route([["id",true],["format",false]], {}, [2,[7,"/",false],[2,[6,"people",false],[2,[7,"/",false],[2,[3,"id",false],[1,[2,[8,".",false],[3,"format",false]],false]]]]]),

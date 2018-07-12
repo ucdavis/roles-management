@@ -46,7 +46,7 @@ DssRm.Views.ImportPersonDialog = Backbone.View.extend(
 
     $.ajax
       type: "GET"
-      url: Routes.people_search_path(@term)
+      url: Routes.people_search_path() + "?term=" + @term
       success: (data) =>
         @results.reset data
       error: (data) =>
