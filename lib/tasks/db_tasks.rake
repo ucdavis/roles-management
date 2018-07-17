@@ -90,95 +90,159 @@ namespace :db do
     end
   end
 
-  desc 'Dump certain models to CSV'
-  task dump_csv: :environment do
+  desc 'Export models to CSV'
+  task export_csv: :environment do
     require 'csv'
 
-    # Dump people list
-    filename = Rails.root.join('people.csv')
+    models = %w[ApiKeyUser ApiWhitelistedIpUser ApplicationOperatorship ApplicationOwnership Application BusinessOfficeUnit Department GroupMembership GroupOperatorship GroupOwnership GroupRule Group Major PersonFavoriteAssignment Person PpsAssociation RoleAssignment Role SisAssociation Title]
 
-    attributes = %w[id loginid name]
+    models.each do |model|
+      attributes = model.constantize.column_names
 
-    CSV.open(filename, 'w') do |csv|
-      csv << attributes
+      filename = Rails.root.join(model.downcase.pluralize + '.csv')
 
-      Person.order(:loginid).all.each do |p|
-        csv << attributes.map { |attr| p.send(attr) }
-      end
-    end
-
-    # Dump application list
-    filename = Rails.root.join('applications.csv')
-
-    attributes = %w[id name]
-
-    CSV.open(filename, 'w') do |csv|
-      csv << attributes
-
-      Application.order(:id).all.each do |p|
-        csv << attributes.map { |attr| p.send(attr) }
-      end
-    end
-
-    # Dump group list
-    filename = Rails.root.join('groups.csv')
-
-    attributes = %w[id name]
-
-    CSV.open(filename, 'w') do |csv|
-      csv << [attributes, 'member_count'].flatten
-
-      Group.order(:id).all.each do |p|
-        csv << [attributes.map { |attr| p.send(attr) }, p.members.count].flatten
-      end
-    end
-
-    # Dump roles list
-    filename = Rails.root.join('roles.csv')
-
-    CSV.open(filename, 'w') do |csv|
-      csv << ['id', 'application_name', 'token', 'entity_count']
-
-      Role.order(:application_id).order(:id).all.each do |p|
-        csv << [p.id, p.application.name, p.token, p.entities.count]
-      end
-    end
-
-    # Dump individual role membership lists
-    Role.all.each do |r|
-      filename = Rails.root.join("role_#{r.id}.csv")
-
+      puts "Exporting #{model} ..."
       CSV.open(filename, 'w') do |csv|
-        csv << ['entity_id', 'loginid']
+        csv << attributes
 
-        r.entities.order(:id).each do |e|
-          csv << [e.id, e.loginid]
+        model.constantize.order(:id).all.each do |p|
+          csv << attributes.map { |attr| p.send(attr) }
         end
       end
     end
 
-    # Dump individual group membership lists
-    Group.all.each do |g|
-      filename = Rails.root.join("group_#{g.id}.csv")
+    # Special exports (produces redundant but filtered data)
+    # Role Assignments (of people)
+    attributes = RoleAssignment.column_names
+    filename = Rails.root.join('role_assignments_people.csv')
 
-      CSV.open(filename, 'w') do |csv|
-        csv << ['entity_id', 'name']
+    puts "Exporting #{filename} ..."
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
 
-        g.members.order(:loginid).each do |m|
-          csv << [m.id, m.name]
-        end
+      RoleAssignment.joins(:entity).where(entities: {type: 'Person'}).order(:id).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
       end
     end
 
-    # Dump individual people's roles
-    Person.all.each do |p|
-      filename = Rails.root.join("person_#{p.id}.csv")
+    # Role Assignments (of groups)
+    attributes = RoleAssignment.column_names
+    filename = Rails.root.join('role_assignments_groups.csv')
 
+    puts "Exporting #{filename} ..."
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      RoleAssignment.joins(:entity).where(entities: {type: 'Group'}).order(:id).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Person favorites (of people)
+    attributes = PersonFavoriteAssignment.column_names
+    filename = Rails.root.join('person_favorite_people.csv')
+
+    puts "Exporting #{filename} ..."
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      PersonFavoriteAssignment.joins(:entity).where(entities: {type: 'Person'}).order(:id).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Person favorites (of groups)
+    attributes = PersonFavoriteAssignment.column_names
+    filename = Rails.root.join('person_favorite_groups.csv')
+
+    puts "Exporting #{filename} ..."
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      PersonFavoriteAssignment.joins(:entity).where(entities: {type: 'Group'}).order(:id).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Application ownerships (of people)
+    attributes = ApplicationOwnership.column_names
+    filename = Rails.root.join('application_ownerships_people.csv')
+
+    puts "Exporting #{filename} ..."
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      ApplicationOwnership.joins(:entity).where(entities: {type: 'Person'}).order(:id).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Application ownerships (of groups)
+    attributes = ApplicationOwnership.column_names
+    filename = Rails.root.join('application_ownerships_groups.csv')
+
+    puts "Exporting #{filename} ..."
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      ApplicationOwnership.joins(:entity).where(entities: {type: 'Group'}).order(:id).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Application operatorships (of people)
+    attributes = ApplicationOperatorship.column_names
+    filename = Rails.root.join('application_operatorships_people.csv')
+
+    puts "Exporting #{filename} ..."
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      ApplicationOperatorship.joins(:entity).where(entities: {type: 'Person'}).order(:id).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Application operatorships (of groups)
+    attributes = ApplicationOperatorship.column_names
+    filename = Rails.root.join('application_operatorships_groups.csv')
+
+    puts "Exporting #{filename} ..."
+    CSV.open(filename, 'w') do |csv|
+      csv << attributes
+
+      ApplicationOperatorship.joins(:entity).where(entities: {type: 'Group'}).order(:id).all.each do |p|
+        csv << attributes.map { |attr| p.send(attr) }
+      end
+    end
+
+    # Group rules (by is/is not, and type)
+    # Application operatorships (of groups)
+    attributes = GroupRule.column_names
+    rule_types = %w[title major loginid department is_staff is_faculty is_student is_employee
+                    is_external is_hs_employee sis_level_code pps_unit pps_position_type
+                    business_office_unit admin_department appt_department]
+
+    rule_types.each do |rule_type|
+      filename = Rails.root.join("group_rules_is_#{rule_type}.csv")
+
+      puts "Exporting #{filename} ..."
       CSV.open(filename, 'w') do |csv|
-        csv << ['role_id', 'role_token', 'application_name']
+        csv << attributes
 
-        p.roles.order(:id).each do |r|
-          csv << [r.id, r.token, r.application.name]
+        GroupRule.where(condition: 'is', column: rule_type).order(:id).all.each do |p|
+          csv << attributes.map { |attr| p.send(attr) }
+        end
+      end
+
+      filename = Rails.root.join("group_rules_is_not_#{rule_type}.csv")
+
+      puts "Exporting #{filename} ..."
+      CSV.open(filename, 'w') do |csv|
+        csv << attributes
+
+        GroupRule.where(condition: 'is not', column: rule_type).order(:id).all.each do |p|
+          csv << attributes.map { |attr| p.send(attr) }
         end
       end
     end
