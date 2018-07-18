@@ -177,7 +177,7 @@ namespace :group do
 
       person_role_ids = p.roles.map(&:id)
 
-      # Ensure a person has the inherited roles they shouuld have ...
+      # Ensure a person has the inherited roles they should have ...
       p.groups.each do |group|
         group.role_assignments.each do |ra|
           unless person_role_ids.include?(ra.role_id)
