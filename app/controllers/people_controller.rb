@@ -77,7 +77,7 @@ class PeopleController < ApplicationController
     else
       logger.error "Could not import person #{params[:loginid]}, no results from DW or error while saving."
 
-      raise ActionController::RoutingError.new('Not Found')
+      render plain: "Could not import person #{params[:loginid]}, no results from DW or error while saving.", status: 404
     end
   end
 
