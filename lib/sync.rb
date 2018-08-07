@@ -165,7 +165,6 @@ module Sync
     require 'json'
 
     sync_json = {
-      #config_path: Rails.root.join('sync', 'config').to_s,
       mode: sync_mode,
       requested_at: DateTime.now # rubocop:disable Style/DateTime
     }.merge(opts)
@@ -186,13 +185,6 @@ module Sync
   end
 
   def sync_scripts
-    # if Rails.env.development?
-    #   # In development mode, only run the test script (simply prints job details to STDOUT).
-    #   # This is to avoid accidentally modifying Active Directory, etc.
-    #   ['test.rb']
-    # else
-    #   Dir[Rails.root.join('sync', '*')].select { |f| File.file?(f) }.map { |f| File.basename(f) }
-    # end
     ['active_directory.rb']
   end
 end
