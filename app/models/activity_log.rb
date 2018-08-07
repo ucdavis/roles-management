@@ -13,11 +13,6 @@ class ActivityLog
 
       Rails.logger.info "ActivityLog: #{tag}: #{Time.now} - #{log_level_str} - #{message}"
 
-      # Only write to DynamoDB if in production.
-      # If you want to write in development, ensure development is using
-      # production database, else logs could be written concerning the wrong entity IDs!
-      next unless Rails.env.production?
-
       begin
         DynamoDbClient.put_item(
           table_name: DynamoDbTable,
@@ -53,8 +48,6 @@ class ActivityLog
   # Fetch activity for the given tag, e.g. "person_132", "group_312", "application_1"
   # Order by most recent or [] if none.
   def self.fetch(tag)
-    return [] unless Rails.env.production?
-
     params = {
       table_name: DynamoDbTable,
       key_condition_expression: '#LogEntityId = :id',
