@@ -82,10 +82,8 @@ namespace :teem do
               teem_update_group_assign(token, group_ids, user_id)
             end
           end
-
         end
       end
     end
-
   end
 end
