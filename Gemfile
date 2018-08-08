@@ -95,6 +95,8 @@ gem 'roles-management-api', '>= 0.1.2', git: 'https://github.com/dssit/roles-man
 
 gem 'rack-timeout'
 
+gem 'mechanize'
+
 # For AWS DynamoDB support, used in activity logs
 gem 'aws-sdk-dynamodb', '~> 1.6'
 gem 'aws-sdk-core', '~> 3.0'

@@ -132,7 +132,7 @@ module Teem
     return response["user"]
   end
 
-  def self.teem_create_group(access_token, organization_id, name, description)
+  def self.teem_create_group(access_token, organization_id, name, description = nil)
     url = "https://app.teem.com/api/v4/accounts/groups/"
 
     json_obj = {'group' => { 'organization_id' => organization_id,
@@ -163,45 +163,17 @@ module Teem
     request(:delete, access_token, url)
   end
 
-  #json = teem_authorize()
-  #access_token = json["access_token"]
-  #puts "access_token: #{access_token}"
-  #access_token = "hmVJ8JNF17al28n2pKDCZCww0eK2i6"
+  def self.teem_get_user(access_token, user_id)
+    url = "https://app.teem.com/api/v4/accounts/users/#{user_id}/"
 
-  #users = teem_get_users(access_token)
+    response = request(:get, access_token, url)
+    return response["user"]
+  end
 
-  #users.each do |user|
-  # pp user
-  #end
+  def self.teem_id_lookup(access_token)
+    url = "https://app.teem.com/api/v4/accounts/users/id_lookup/"
 
-  #organization_id = 13856
-  #email = "cwjwong@ucdavis.edu"
-  #first_name = "Jarold"
-  #last_name = "Wong"
-  #created_user = teem_create_user(access_token, organization_id, email, first_name, last_name)
-  #puts created_user['email']
-
-  #organization_id = 13856
-  ##name = "Young 102A"
-  #description = "Can book Young 102A"
-  #created_group = teem_create_group(access_token, organization_id, name, description)
-  #puts created_group['name']
-
-  #groups = teem_get_groups(access_token)
-  # groups.each do |group|
-  # puts group["name"]
-  #end
-
-  #users = teem_get_API_user_info(access_token)
-  #puts users["email"]
-
-  #group_ids = [318304, 655258]
-  #user_id = 1023460
-  #group = teem_update_group_assign(access_token, group_ids, user_id)
-
-  #user_id = 2146837
-  #teem_delete_user(access_token, user_id)
-
-  #group_id = 684125
-  #teem_delete_group(access_token, group_id)
+    request = request(:get, access_token, url)
+    return request["users"]
+  end
 end
