@@ -170,7 +170,7 @@ module Teem
     return response["user"]
   end
 
-  def self.teem_id_lookup(access_token)
+  def self.teem_user_ids(access_token)
     url = "https://app.teem.com/api/v4/accounts/users/id_lookup/"
 
     request = request(:get, access_token, url)
