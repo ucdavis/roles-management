@@ -143,7 +143,7 @@ module Teem
     return response["group"]
   end
 
-  def self.teem_update_group_assign(access_token, group_ids, user_id)
+  def self.teem_update_user_groups(access_token, group_ids, user_id)
     url = "https://app.teem.com/api/v4/accounts/users/#{user_id}/"
 
     json_obj = {'user' => {'group_ids' => group_ids}}.to_json
