@@ -23,7 +23,7 @@ WORKDIR /usr/src/app
 # will be cached unless changes to one of those two files
 # are made.
 COPY Gemfile Gemfile.lock ./
-RUN gem install bundler && bundle install -j "$(getconf _NPROCESSORS_ONLN)" --retry 5 --without development test
+RUN gem install bundler && bundle install -j "$(getconf _NPROCESSORS_ONLN)" --retry 5 --without test
 
 # Copy dependencies for Node.js and instance the packages.
 # Again, being separate means this will cache.
@@ -31,9 +31,12 @@ COPY package.json yarn.lock ./
 RUN yarn install
 RUN npm rebuild node-sass --force
 
-# Set Rails to run in production
-ENV RAILS_ENV production 
-ENV RACK_ENV production
+ARG RAILS_ENV=production
+ENV RAILS_ENV $RAILS_ENV
+
+ARG RACK_ENV=production
+ENV RACK_ENV $RACK_ENV
+
 ENV RAILS_ROOT /usr/src/app
 
 # Use Rails for static files in public
@@ -45,8 +48,7 @@ ENV RACK_TIMEOUT_SERVICE_TIMEOUT 120
 # Log to STDOUT
 ENV RAILS_LOG_TO_STDOUT 1
 
-# You must pass environment variable SECRET_KEY_BASE
-ARG SECRET_KEY_BASE
+ARG SECRET_KEY_BASE=changeme
 ENV SECRET_KEY_BASE $SECRET_KEY_BASE
 
 ARG DW_URL
