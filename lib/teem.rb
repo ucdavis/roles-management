@@ -43,7 +43,7 @@ module Teem
 
   # Authorizes against the Teem API. Required before any API actions.
   # Returns the Teem API JSON object containing the access token.
-  def self.teem_authorize
+  def self.authorize
     # Enable this for Mechanize debugging
     #Mechanize.log = Logger.new $stderr
 
@@ -99,14 +99,14 @@ module Teem
     return response["access_token"]
   end
 
-  def self.teem_get_users(access_token)
+  def self.get_users(access_token)
     url = "https://app.teem.com/api/v4/accounts/users/"
 
     response = request(:get, access_token, url)
     return response["users"]
   end
 
-  def self.teem_create_user(access_token, organization_id, email, first_name, last_name)
+  def self.create_user(access_token, organization_id, email, first_name, last_name)
     url = "https://app.teem.com/api/v4/accounts/users/"
 
     json_obj = {'user' => { 'organization_id' => organization_id,
@@ -118,21 +118,21 @@ module Teem
     return response["user"]
   end
 
-  def self.teem_get_groups(access_token)
+  def self.get_groups(access_token)
     url = "https://app.teem.com/api/v4/accounts/groups/"
 
     response = request(:get, access_token, url)
     return response["groups"]
   end
 
-  def self.teem_get_API_user_info(access_token)
+  def self.get_API_user_info(access_token)
     url = "https://app.teem.com/api/v4/accounts/users/me/"
 
     response = request(:get, access_token, url)
     return response["user"]
   end
 
-  def self.teem_create_group(access_token, organization_id, name, description = nil)
+  def self.create_group(access_token, organization_id, name, description = nil)
     url = "https://app.teem.com/api/v4/accounts/groups/"
 
     json_obj = {'group' => { 'organization_id' => organization_id,
@@ -143,7 +143,7 @@ module Teem
     return response["group"]
   end
 
-  def self.teem_update_user_groups(access_token, group_ids, user_id)
+  def self.update_user_groups(access_token, group_ids, user_id)
     url = "https://app.teem.com/api/v4/accounts/users/#{user_id}/"
 
     json_obj = {'user' => {'group_ids' => group_ids}}.to_json
@@ -151,26 +151,26 @@ module Teem
     request(:patch, access_token, url, json_obj)
   end
 
-  def self.teem_delete_user(access_token, user_id)
+  def self.delete_user(access_token, user_id)
     url = "https://app.teem.com/api/v4/accounts/users/#{user_id}/"
 
     request(:delete, access_token, url)
   end
 
-  def self.teem_delete_group(access_token, group_id)
+  def self.delete_group(access_token, group_id)
     url = "https://app.teem.com/api/v4/accounts/groups/#{group_id}/"
 
     request(:delete, access_token, url)
   end
 
-  def self.teem_get_user(access_token, user_id)
+  def self.get_user(access_token, user_id)
     url = "https://app.teem.com/api/v4/accounts/users/#{user_id}/"
 
     response = request(:get, access_token, url)
     return response["user"]
   end
 
-  def self.teem_user_ids(access_token)
+  def self.user_ids(access_token)
     url = "https://app.teem.com/api/v4/accounts/users/id_lookup/"
 
     request = request(:get, access_token, url)
