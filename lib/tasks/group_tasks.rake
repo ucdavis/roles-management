@@ -21,7 +21,8 @@ namespace :group do
     total_count = GroupRuleResultSet.count
 
     GroupRuleResultSet.all.each_with_index do |grrs, i|
-      puts "Recalculating for #{i} of #{total_count} ..."
+      puts "Recalculating for #{i + 1} of #{total_count} ..."
+      puts "\t#{grrs.column} #{grrs.condition ? 'is' : 'is not'} #{grrs.value}, #{grrs.results.count} results"
       grrs.update_results
     end
   end
