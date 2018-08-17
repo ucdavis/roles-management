@@ -2,14 +2,14 @@ module Teem
   require 'net/http'
   require 'json'
 
-  CLIENT_ID=ENV["TEEM_CLIENT_ID"]
-  CLIENT_SECRET=ENV["TEEM_CLIENT_SECRET"]
-  REDIRECT_URI=ENV["TEEM_REDIRECT_URI"]
+  CLIENT_ID = ENV['TEEM_CLIENT_ID']
+  CLIENT_SECRET = ENV['TEEM_CLIENT_SECRET']
+  REDIRECT_URI = ENV['TEEM_REDIRECT_URI']
 
-  USERNAME=ENV["TEEM_USERNAME"]
-  PASSWORD=ENV["TEEM_PASSWORD"]
+  USERNAME = ENV['TEEM_USERNAME']
+  PASSWORD = ENV['TEEM_PASSWORD']
 
-  ORG_NAME=ENV["TEEM_ORG_NAME"]
+  ORG_NAME = ENV['TEEM_ORG_NAME']
 
   def self.request(methods, access_token, url, json_obj = nil)
     uri = URI.parse(url)
@@ -28,7 +28,7 @@ module Teem
     end
 
     if access_token
-      request.add_field("Authorization", "Bearer #{access_token}")
+      request.add_field('Authorization', "Bearer #{access_token}")
     end
 
     if json_obj
@@ -47,9 +47,9 @@ module Teem
     # Enable this for Mechanize debugging
     #Mechanize.log = Logger.new $stderr
 
-    browser = Mechanize.new { |agent|
+    browser = Mechanize.new do |agent|
       agent.user_agent_alias = 'Mac Safari'
-    }
+    end
 
     # Load the sign-in page
     page = browser.get("https://app.teem.com/oauth/authorize/?client_id=#{CLIENT_ID}&redirect_uri=#{REDIRECT_URI}&response_type=code&scope=users")
@@ -69,8 +69,8 @@ module Teem
 
     # We should be on the SSO login page now. Fill it out.
     f = page.forms[0]
-    f.field_with(:name => "UserName").value = USERNAME
-    f.field_with(:name => "Password").value = PASSWORD
+    f.field_with(name: 'UserName').value = USERNAME
+    f.field_with(name: 'Password').value = PASSWORD
     page = f.submit
 
     # We are now at a weird, no-where-place page that we just need to submit (SAML stuff?)
@@ -79,7 +79,7 @@ module Teem
 
     # We should now be at teem.com being asked to Authorize
     f = page.forms.first
-    authorize_btn = f.button_with(:value => 'Authorize')
+    authorize_btn = f.button_with(value: 'Authorize')
 
     the_code = nil
 
@@ -96,57 +96,58 @@ module Teem
 
     response = request(:post, nil, url)
 
-    return response["access_token"]
+    return response['access_token']
   end
 
   def self.get_users(access_token)
     url = "https://app.teem.com/api/v4/accounts/users/"
 
     response = request(:get, access_token, url)
-    return response["users"]
+    return response['users']
   end
 
   def self.create_user(access_token, organization_id, email, first_name, last_name)
-    url = "https://app.teem.com/api/v4/accounts/users/"
+    url = 'https://app.teem.com/api/v4/accounts/users/'
 
-    json_obj = {'user' => { 'organization_id' => organization_id,
-                            'email' => "#{email}",
-                            'first_name' => "#{first_name}",
-                            'last_name' => "#{last_name}"}}.to_json
+    json_obj = { 'user' => { 'organization_id' => organization_id,
+                             'email' => email.to_s,
+                             'first_name' => first_name.to_s,
+                             'last_name' => last_name.to_s } }.to_json
 
     response = request(:post, access_token, url, json_obj)
-    return response["user"]
+    return response['user']
   end
 
   def self.get_groups(access_token)
     url = "https://app.teem.com/api/v4/accounts/groups/"
 
     response = request(:get, access_token, url)
-    return response["groups"]
+    return response['groups']
   end
 
   def self.get_API_user_info(access_token)
     url = "https://app.teem.com/api/v4/accounts/users/me/"
 
     response = request(:get, access_token, url)
-    return response["user"]
+    return response['user']
   end
 
   def self.create_group(access_token, organization_id, name, description = nil)
     url = "https://app.teem.com/api/v4/accounts/groups/"
 
-    json_obj = {'group' => { 'organization_id' => organization_id,
-                             'name' => "#{name}",
-                             'description' => "#{description}"}}.to_json
+    json_obj = { 'group' => { 'organization_id' => organization_id,
+                              'name' => name.to_s,
+                              'description' => description.to_s } }.to_json
 
     response = request(:post, access_token, url, json_obj)
-    return response["group"]
+    return response['group']
   end
 
+  # Updates a Teem user to their list of groups is group_ids
   def self.update_user_groups(access_token, group_ids, user_id)
     url = "https://app.teem.com/api/v4/accounts/users/#{user_id}/"
 
-    json_obj = {'user' => {'group_ids' => group_ids}}.to_json
+    json_obj = { 'user' => { 'group_ids' => group_ids } }.to_json
 
     request(:patch, access_token, url, json_obj)
   end
@@ -167,13 +168,13 @@ module Teem
     url = "https://app.teem.com/api/v4/accounts/users/#{user_id}/"
 
     response = request(:get, access_token, url)
-    return response["user"]
+    return response['user']
   end
 
   def self.user_ids(access_token)
     url = "https://app.teem.com/api/v4/accounts/users/id_lookup/"
 
     request = request(:get, access_token, url)
-    return request["users"]
+    return request['users']
   end
 end

@@ -8,14 +8,21 @@ namespace :teem do
     require 'teem.rb'
 
     token = Teem.authorize
+
+    unless token
+      STDERR.puts 'Unable to acquire token. Aborting!'
+      exit(-1)
+    end
+
     teem_groups = Teem.get_groups(token)
-    all_teem_user_ids = Teem.user_ids(token)
+    teem_users = Teem.user_ids(token).map { |email, teem_id| OpenStruct.new(teem_id: teem_id, email: email.downcase) }
 
     # Adding new groups to Teem from RM
-    teem_application = Application.find_by(name: "Teem Calendars")
+    teem_application = Application.find_by(name: 'Teem Calendars')
     if teem_application
       teem_application.roles.each do |role|
-        unless teem_groups.find_index { |group| group["name"] == role.name }
+        unless teem_groups.find_index { |group| group['name'] == role.name }
+          STDOUT.puts "Need to create Teem group '#{role.name}'"
           Teem.create_group(token, ORGANIZATION_ID, role.name, role.description)
         end
       end
@@ -27,55 +34,77 @@ namespace :teem do
     # Deleting groups from Teem not found in RM
     teem_groups.each do |group|
       roles = teem_application.roles
-      unless roles.find_index { |role| role.name == group["name"] }
-        STDOUT.puts "Teem group with ID #{group["id"]} no longer exists in RM. Removing from Teem..."
-        Teem.delete_group(token, group["id"])
+      unless roles.find_index { |role| role.name == group['name'] }
+        STDOUT.puts "Teem group (ID #{group['id']}, name #{group['name']}) no longer exists in RM. Removing from Teem ..."
+        Teem.delete_group(token, group['id'])
+        teem_groups.delete(group)
       end
     end
 
-    # Evaluating groups for updating members
+    # Update membership within each Teem group
     teem_groups.each do |group|
-      teem_application.roles.each do |role|
-        if role.name == group["name"]
-          rm_emails = []
+      STDOUT.puts "Syncing Teem group #{group['name']} (#{group['id']}) ..."
 
-          rm_emails = role.members.map(&:email)
+      role = teem_application.roles.find_by(name: group['name'])
 
-          user_ids = group["user_ids"]
-          user_ids.each do |id|
-            user = Teem.get_user(token, id)
+      if role
+        STDOUT.puts "\tFound matching RM role."
+      else
+        STDERR.puts "\tCould not find role #{group['name']} to match Teem group. Skipping ..."
+        next
+      end
 
-            if rm_emails.include?(user["email"])
-              user_ids.delete(id)
-              rm_emails.delete(user["email"])
-            end
-          end
+      rm_users = role.members.map { |m| OpenStruct.new(rm_id: m.id, email: m.email.downcase) }
+      puts "\tIn RM:"
+      rm_users.each do |user|
+        puts "\t\t#{user.email}"
+      end
+      teem_group_users = group['user_ids'].map { |teem_user_id| teem_users.find { |u| u.teem_id == teem_user_id } }
+      puts "\tIn Teem:"
+      teem_group_users.each do |user|
+        puts "\t\t#{user.email}"
+      end
 
-          user_ids.each do |id|
-            user = Teem.get_user(token, id)
-            user_groups = user["group_ids"]
-            user_groups.delete(group["id"])
+      puts "\n\tUsers to remove from Teem group:"
+      (teem_group_users.map(&:email) - rm_users.map(&:email)).each do |teem_user_to_remove|
+        teem_id = teem_users.find { |u| u.email == teem_user_to_remove }.teem_id
+        puts "\t\t#{teem_user_to_remove} (#{teem_id})"
 
-            Teem.update_user_groups(token, user_groups, id)
-          end
+        user = Teem.get_user(token, teem_id)
+        user_groups = user['group_ids']
+        user_groups.delete(group['id'])
 
-          rm_emails.each do |email|
-            user_id = all_teem_user_ids[email]
+        Teem.update_user_groups(token, user_groups, teem_id)
+      end
 
-            if user_id
-              user = Teem.get_user(token, user_id)
-              user_groups = user["group_ids"]
-              user_groups.push(group["id"])
+      puts "\tUsers to add to Teem group from RM role:"
+      (rm_users.map(&:email) - teem_group_users.map(&:email)).each do |rm_user_to_add|
+        teem_user = teem_users.find { |u| u.email == rm_user_to_add }
+        teem_id = teem_user&.teem_id
+        puts "\t\t#{rm_user_to_add} (#{teem_id || 'No Teem ID yet'})"
 
-              Teem.update_user_groups(token, user_groups, user_id)
-            else
-              role.members.each do |member|
-                if member["email"].downcase == email.downcase
-                  Teem.create_user(token, ORGANIZATION_ID, email, member["first"], member["last"])
-                end
-              end
-              Teem.update_user_groups(token, group_id, user_id)
-            end
+        if teem_id
+          user = Teem.get_user(token, teem_id)
+          user_groups = user['group_ids']
+          user_groups.push(group['id'])
+
+          Teem.update_user_groups(token, user_groups, teem_id)
+        else
+          puts "\t\tCreating user in Teem ..."
+          rm_user = Person.find_by(email: rm_user_to_add)
+          if rm_user
+            response = Teem.create_user(token, ORGANIZATION_ID, rm_user_to_add, rm_user.first, rm_user.last)
+            teem_id = response['id']
+
+            puts "\t\tCreated user with email #{rm_user_to_add} (Teem ID #{teem_id}). Adding to Teem group ..."
+
+            user_groups = []
+            user_groups.push(group['id'])
+
+            Teem.update_user_groups(token, user_groups, teem_id)
+          else
+            STDERR.puts "Error: Need to add RM user to Teem but cannot find RM user with email #{rm_user_to_add}. Skipping ..."
+            next
           end
         end
       end
