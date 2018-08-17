@@ -6,6 +6,7 @@ class ActivityLog
   def self.record!(message, tags, level = :info)
     return if message.nil?
     return if tags.nil?
+    return if Rails.env.test?
 
     tags.each do |tag|
       log_level_str = LOG_LEVELS[level]
