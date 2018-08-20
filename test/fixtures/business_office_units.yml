@@ -5,3 +5,11 @@ ls_soc_sci:
   dept_display_name: 'LS: SOC SCI'
   dept_abbrev: 'LS:SOC SCI'
   is_ucdhs: false
+
+asucd:
+  org_oid: B80B657C6EE823A0E0340003BA8A560D
+  dept_code: '18'
+  dept_official_name: 'ASSOCIATED STUDENT UNION'
+  dept_display_name: 'ASUCD'
+  dept_abbrev: 'ASUCD'
+  is_ucdhs: false

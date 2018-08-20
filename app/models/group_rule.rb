@@ -1,9 +1,10 @@
 # GroupRule stores the results of its rule in a cache using GroupRuleResult.
 # Results are automatically recalculated in after_save if condition, column, or value has changed.
 class GroupRule < ApplicationRecord
-  VALID_COLUMNS = %w[title major loginid department is_staff is_faculty is_student is_employee
+  VALID_COLUMNS = %w[title major loginid is_staff is_faculty is_student is_employee
                      is_external is_hs_employee sis_level_code pps_unit pps_position_type
-                     business_office_unit admin_department appt_department].freeze
+                     department admin_department appt_department business_office_unit
+                     admin_business_office_unit appt_business_office_unit].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]

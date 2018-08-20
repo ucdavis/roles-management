@@ -109,6 +109,20 @@ class GroupRuleResultSet < ApplicationRecord
           new_results << GroupRuleResult.new(entity_id: person_id, group_rule_result_set_id: rule_set.id)
         end
       end
+    when :admin_business_office_unit
+      entity.pps_associations.map { |assoc| assoc.admin_department.business_office_unit&.dept_official_name }.uniq.each do |bou_name|
+        GroupRuleResultSet.where(column: 'admin_business_office_unit', value: bou_name).each do |rule_set|
+          Rails.logger.debug "Matched 'admin_business_office_unit' rule. Recording result."
+          new_results << GroupRuleResult.new(entity_id: person_id, group_rule_result_set_id: rule_set.id)
+        end
+      end
+    when :appt_business_office_unit
+      entity.pps_associations.map { |assoc| assoc.appt_department.business_office_unit&.dept_official_name }.uniq.each do |bou_name|
+        GroupRuleResultSet.where(column: 'appt_business_office_unit', value: bou_name).each do |rule_set|
+          Rails.logger.debug "Matched 'appt_business_office_unit' rule. Recording result."
+          new_results << GroupRuleResult.new(entity_id: person_id, group_rule_result_set_id: rule_set.id)
+        end
+      end
     when :loginid
       GroupRuleResultSet.where(column: 'loginid', value: entity.loginid).each do |rule_set|
         Rails.logger.debug "Matched 'loginid' rule. Recording result."
@@ -260,8 +274,26 @@ class GroupRuleResultSet < ApplicationRecord
       if bou.nil?
         Rails.logger.warn 'Business Office Unit not found'
       else
-        ps = bou.departments.map{ |d| d.people.select(:id) }.flatten
+        ps = bou.departments.map { |d| d.people.select(:id) }.flatten
         Rails.logger.debug "Adding #{ps.length} people to a 'Business Office Unit' GroupRule"
+        p += ps
+      end
+    when 'admin_business_office_unit'
+      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      if bou.nil?
+        Rails.logger.warn 'Admin Business Office Unit not found'
+      else
+        ps = bou.departments.map { |d| d.admin_people.select(:id) }.flatten
+        Rails.logger.debug "Adding #{ps.length} people to an 'Admin Business Office Unit' GroupRule"
+        p += ps
+      end
+    when 'appt_business_office_unit'
+      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      if bou.nil?
+        Rails.logger.warn 'Appt Business Office Unit not found'
+      else
+        ps = bou.departments.map { |d| d.appt_people.select(:id) }.flatten
+        Rails.logger.debug "Adding #{ps.length} people to an 'Appt Business Office Unit' GroupRule"
         p += ps
       end
     when 'loginid'

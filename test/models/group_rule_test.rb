@@ -508,6 +508,116 @@ class GroupRuleTest < ActiveSupport::TestCase
     test_group_rule(group_rule, setup_match, remove_match, 2)
   end
 
+  test "Rule 'admin_business_office_unit' works" do
+    group_rule = GroupRule.new(column: 'admin_business_office_unit', condition: 'is', value: 'ASSOCIATED STUDENT UNION')
+
+    evil_person = entities(:evil_casuser)
+
+    setup_match = lambda {
+      # Put two people in the same department with different admin department BOUs
+      title = titles(:programmer)
+      department = departments(:dssit)
+      admin_department = departments(:asucd)
+
+      @person.pps_associations.destroy_all
+      assert @person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = @person.id
+      pps_association.title = title
+      pps_association.department = department
+      pps_association.admin_department = department
+      pps_association.appt_department = department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      @person.pps_associations << pps_association
+
+      evil_title = titles(:evil_programmer)
+
+      evil_person.pps_associations.destroy_all
+      assert evil_person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = evil_person.id
+      pps_association.title = evil_title
+      pps_association.department = department
+      pps_association.admin_department = admin_department
+      pps_association.appt_department = department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      evil_person.pps_associations << pps_association
+    }
+
+    remove_match = lambda {
+      assert @person.pps_associations.length == 1
+      @person.pps_associations.destroy(@person.pps_associations[0])
+      @person.save!
+      assert @person.pps_associations.count.zero?
+
+      assert evil_person.pps_associations.length == 1
+      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
+      evil_person.save!
+      assert evil_person.pps_associations.count.zero?
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+
+  test "Rule 'appt_business_office_unit' works" do
+    group_rule = GroupRule.new(column: 'appt_business_office_unit', condition: 'is', value: 'ASSOCIATED STUDENT UNION')
+
+    evil_person = entities(:evil_casuser)
+
+    setup_match = lambda {
+      # Put two people in the same department with different admin department BOUs
+      title = titles(:programmer)
+      department = departments(:dssit)
+      appt_department = departments(:asucd)
+
+      @person.pps_associations.destroy_all
+      assert @person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = @person.id
+      pps_association.title = title
+      pps_association.department = department
+      pps_association.admin_department = department
+      pps_association.appt_department = appt_department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      @person.pps_associations << pps_association
+
+      evil_title = titles(:evil_programmer)
+
+      evil_person.pps_associations.destroy_all
+      assert evil_person.pps_associations.count.zero?
+      pps_association = PpsAssociation.new
+      pps_association.person_id = evil_person.id
+      pps_association.title = evil_title
+      pps_association.department = department
+      pps_association.admin_department = department
+      pps_association.appt_department = department
+      pps_association.association_rank = 1
+      pps_association.position_type_code = 2
+      assert pps_association.valid?
+      evil_person.pps_associations << pps_association
+    }
+
+    remove_match = lambda {
+      assert @person.pps_associations.length == 1
+      @person.pps_associations.destroy(@person.pps_associations[0])
+      @person.save!
+      assert @person.pps_associations.count.zero?
+
+      assert evil_person.pps_associations.length == 1
+      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
+      evil_person.save!
+      assert evil_person.pps_associations.count.zero?
+    }
+
+    test_group_rule(group_rule, setup_match, remove_match)
+  end
+
   test "Rule 'department' works" do
     group_rule = GroupRule.new(column: 'department', condition: 'is', value: '040014')
 
