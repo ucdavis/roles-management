@@ -75,17 +75,12 @@ class Group < Entity
                                 .joins(:group_rule_result_set)
                                 .where(group_rule_result_set_id: rule_set_ids)
                                 .map(&:entity_id)
-      byebug
       results << rule_set_results
     end
-
-    byebug
 
     # Step Two: AND all groups from step one together
     results = results.inject(results.first) { |sum, n| sum &= n }
     results ||= [] # reduce/inject may return nil
-
-    byebug
 
     # Step Three: Pass over the result from step two and
     # remove anybody who violates an 'is not' rule
@@ -100,8 +95,6 @@ class Group < Entity
                                          .where(group_rule_result_set_id: rule_set_ids)
                                          .map(&:entity_id)
     end
-
-    byebug
 
     results -= negative_results.flatten.uniq
 
