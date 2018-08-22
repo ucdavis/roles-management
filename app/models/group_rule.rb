@@ -38,16 +38,125 @@ class GroupRule < ApplicationRecord
     Person.where(id: result_set.results.pluck(:entity_id))
   end
 
+  # Returns true if 'entity' matches this GroupRule
+  def matches?(entity)
+    case column.to_sym
+    when :title
+      return Title.where(id: entity.pps_associations.map(&:title_id)).map(&:name).include?(value)
+    when :major
+      return entity.majors.map(&:name).include?(value)
+    when :department
+      return entity.pps_associations.map { |assoc| assoc.department.code }.uniq.include?(value)
+    when :admin_department
+      return entity.pps_associations.reject{ |assoc| assoc.admin_department_id == nil }.map { |assoc| assoc.admin_department.code }.uniq.include?(value)
+    when :appt_department
+      return entity.pps_associations.reject{ |assoc| assoc.appt_department_id == nil }.map { |assoc| assoc.appt_department.code }.uniq.include?(value)
+    when :business_office_unit
+      return entity.pps_associations.map { |assoc| assoc.department.business_office_unit&.dept_official_name }.uniq.include?(value)
+    when :admin_business_office_unit
+      return entity.pps_associations.map { |assoc| assoc.admin_department.business_office_unit&.dept_official_name }.uniq.include?(value)
+    when :appt_business_office_unit
+      return entity.pps_associations.map { |assoc| assoc.appt_department.business_office_unit&.dept_official_name }.uniq.include?(value)
+    when :loginid
+      return entity.loginid == value
+    when :is_staff
+      return entity.is_staff
+    when :is_faculty
+      return entity.is_faculty
+    when :is_student
+      return entity.is_student
+    when :is_employee
+      return entity.is_employee
+    when :is_hs_employee
+      return entity.is_hs_employee
+    when :is_external
+      return entity.is_external
+    when :sis_level_code
+      return entity.sis_associations.map(&:level_code).include?(value)
+    when :pps_unit
+      relevent_title_ids = Title.where(unit: value).pluck(:id)
+      return entity.pps_associations.where(title_id: relevent_title_ids).count.positive?
+    when :pps_position_type
+      return entity.pps_associations.where(position_type_code: value).count.positive?
+    else
+      Rails.logger.warn "Unhandled GroupRule.matches? logic for column type #{column}"
+    end
+
+    return false
+  end
+
+  # Finds all people (as IDs) matching this GroupRule column and value, ignoring condition
+  def self.find_matches(column, value)
+    case column.to_sym
+    when :title
+      title_id = Title.where(name: value).pluck('id').first
+      return [] if title_id.nil?
+      return PpsAssociation.where(title_id: title_id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+    when :major
+      major = Major.find_by_name(value)
+      return [] if major.nil?
+      return major.people.select(:id)
+    when :department
+      department = Department.find_by(code: value)
+      return [] if department.nil?
+      return department.people.select(:id)
+    when :admin_department
+      admin_department = Department.find_by(code: value)
+      return [] if admin_department.nil?
+      return PpsAssociation.where(admin_department_id: admin_department.id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+    when :appt_department
+      appt_department = Department.find_by(code: value)
+      return [] if appt_department.nil?
+      return PpsAssociation.where(appt_department_id: appt_department.id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+    when :business_office_unit
+      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      return [] if bou.nil?
+      return bou.departments.map { |d| d.people.select(:id) }.flatten
+    when :admin_business_office_unit
+      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      return [] if bou.nil?
+      return bou.departments.map { |d| d.admin_people.select(:id) }.flatten
+    when :appt_business_office_unit
+      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      return [] if bou.nil?
+      return bou.departments.map { |d| d.appt_people.select(:id) }.flatten
+    when :loginid
+      return Person.where(loginid: value).select(:id)
+    when :is_staff
+      return Person.where(is_staff: true).select(:id)
+    when :is_faculty
+      return Person.where(is_faculty: true).select(:id)
+    when :is_student
+      return Person.where(is_student: true).select(:id)
+    when :is_employee
+      return Person.where(is_employee: true).select(:id)
+    when :is_hs_employee
+      return Person.where(is_hs_employee: true).select(:id)
+    when :is_external
+      return Person.where(is_external: true).select(:id)
+    when :sis_level_code
+      return SisAssociation.where(level_code: value).pluck(:entity_id).map { |e_id| OpenStruct.new(id: e_id) }
+    when :pps_unit
+      title_ids = Title.where(unit: value).pluck(:id)
+      return PpsAssociation.where(title_id: title_ids).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+    when :pps_position_type
+      return PpsAssociation.where(position_type_code: value).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+    else
+      Rails.logger.warn "Unhandled GroupRule.find_matches logic for column type #{column}"
+    end
+
+    return []
+  end
+
   private
 
-  # Recalculates group members if anything changed. Called after_save.
+  # Recalculates rule results if column or value changed. Called after_save.
   def link_result_set # rubocop:disable Metrics/CyclomaticComplexity
-    return unless column_changed? || condition_changed? || value_changed?
-    return unless column.present? && condition.present? && value.present?
+    return unless column_changed? || value_changed?
+    return unless column.present? && value.present?
 
     grs = GroupRuleResultSet.find_or_create_by(
       column: column,
-      condition: condition == 'is',
       value: value
     )
 

@@ -2,10 +2,8 @@
 
 one:
   column: MyString
-  condition: false
   value: MyString
 
 two:
   column: MyString
-  condition: false
   value: MyString

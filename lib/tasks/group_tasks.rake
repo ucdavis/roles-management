@@ -19,12 +19,24 @@ namespace :group do
     Rake::Task['environment'].invoke
 
     total_count = GroupRuleResultSet.count
+    count_diff_found = 0
 
     GroupRuleResultSet.all.each_with_index do |grrs, i|
       puts "Recalculating for #{i + 1} of #{total_count} ..."
       puts "\t#{grrs.column} #{grrs.condition ? 'is' : 'is not'} #{grrs.value}, #{grrs.results.count} results"
+      old_count = grrs.results.count
       grrs.update_results
+      new_count = grrs.results.count
+
+      if old_count == new_count
+        puts "\t\tNo result count difference"
+      else
+        puts "\t\tResult count difference found (#{old_count} to #{new_count})"
+        count_diff_found += 1
+      end
     end
+
+    puts "Total outdated GroupRuleResultSets: #{count_diff_found}"
   end
 
   desc 'Recalculate inherited application operatorships from groups.'

@@ -70,16 +70,22 @@ class Group < Entity
              .where(condition: 'is')
              .where.not(column: 'loginid')
              .group_by(&:column)
-             .map { |set| set[1].map(&:group_rule_result_set_id) }.each do |rule_set_id|
-      results << GroupRuleResult.select(:entity_id)
+             .map { |set| set[1].map(&:group_rule_result_set_id) }.each do |rule_set_ids|
+      rule_set_results = GroupRuleResult.select(:entity_id)
                                 .joins(:group_rule_result_set)
-                                .where(group_rule_result_set_id: rule_set_id)
+                                .where(group_rule_result_set_id: rule_set_ids)
                                 .map(&:entity_id)
+      byebug
+      results << rule_set_results
     end
+
+    byebug
 
     # Step Two: AND all groups from step one together
     results = results.inject(results.first) { |sum, n| sum &= n }
     results ||= [] # reduce/inject may return nil
+
+    byebug
 
     # Step Three: Pass over the result from step two and
     # remove anybody who violates an 'is not' rule
@@ -88,12 +94,14 @@ class Group < Entity
              .where(group_id: id)
              .where(condition: 'is not')
              .group_by(&:column)
-             .map { |set| set[1].map(&:group_rule_result_set_id) }.each do |rule_set_id|
+             .map { |set| set[1].map(&:group_rule_result_set_id) }.each do |rule_set_ids|
       negative_results << GroupRuleResult.select(:entity_id)
                                          .joins(:group_rule_result_set)
-                                         .where(group_rule_result_set_id: rule_set_id)
+                                         .where(group_rule_result_set_id: rule_set_ids)
                                          .map(&:entity_id)
     end
+
+    byebug
 
     results -= negative_results.flatten.uniq
 
