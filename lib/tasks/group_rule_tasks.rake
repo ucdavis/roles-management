@@ -47,5 +47,6 @@ namespace :rules do
     end
 
     puts "According to check, specified person (#{p.id},#{p.loginid}) " + (matches_all_groups ? 'should be' : 'should not be') + " in the group"
+    puts "NOTE: This test does not currently account for filter ('does not match') rules, which may change results."
   end
 end
