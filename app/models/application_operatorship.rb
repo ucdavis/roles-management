@@ -29,7 +29,7 @@ class ApplicationOperatorship < ApplicationRecord
           logger.error "log_changes called for existing ApplicationOperatorship. This shouldn't happen. Operatorship is between #{entity.log_identifier} and #{application.log_identifier}."
         end
       when :destroy
-        logger.info "Removed application operatorship between #{entity.log_identifier} and #{application.log_identifier}."
+        logger.info "Removed application operatorship between entity (ID #{entity_id}, #{entity&.log_identifier}) and application (ID: #{application_id}, #{application&.log_identifier})."
       else
         logger.warn "Unknown action in log_changes #{action}."
       end
