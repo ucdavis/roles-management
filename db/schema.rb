@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_22_184937) do
+ActiveRecord::Schema.define(version: 2018_09_25_001100) do
 
   create_table "api_key_users", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "secret"
@@ -173,6 +173,13 @@ ActiveRecord::Schema.define(version: 2018_08_22_184937) do
     t.integer "group_id"
     t.integer "group_rule_result_set_id"
     t.index ["id"], name: "id", unique: true
+  end
+
+  create_table "integration_metadata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "key"
+    t.text "value"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "majors", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

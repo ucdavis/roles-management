@@ -1,6 +1,6 @@
 require 'rake'
 
-ORGANIZATION_ID = 13856
+ORGANIZATION_ID = ENV['TEEM_ORGANIZATION_ID']
 
 namespace :teem do
   desc 'Sync RM users to Teem'
@@ -94,14 +94,18 @@ namespace :teem do
           rm_user = Person.find_by(email: rm_user_to_add)
           if rm_user
             response = Teem.create_user(token, ORGANIZATION_ID, rm_user_to_add, rm_user.first, rm_user.last)
-            teem_id = response['id']
+            if response
+              teem_id = response['id']
 
-            puts "\t\tCreated user with email #{rm_user_to_add} (Teem ID #{teem_id}). Adding to Teem group ..."
+              puts "\t\tCreated user with email #{rm_user_to_add} (Teem ID #{teem_id}). Adding to Teem group ..."
 
-            user_groups = []
-            user_groups.push(group['id'])
+              user_groups = []
+              user_groups.push(group['id'])
 
-            Teem.update_user_groups(token, user_groups, teem_id)
+              Teem.update_user_groups(token, user_groups, teem_id)
+            else
+              STDERR.puts "Invalid response from Teem API while creating user #{rm_user_to_add}, skipping ..."
+            end
           else
             STDERR.puts "Error: Need to add RM user to Teem but cannot find RM user with email #{rm_user_to_add}. Skipping ..."
             next
