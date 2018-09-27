@@ -27,24 +27,32 @@ namespace :teem do
       exit(-1)
     end
 
+    STDOUT.puts "'Teem Calendars' RM application exists but has no roles." if teem_application.roles.empty?
+
+    teem_groups_refresh_needed = false
+
+    # Create groups from RM not found in Teem
     teem_application.roles.each do |role|
       unless teem_groups.find_index { |group| group['name'] == role.name }
         STDOUT.puts "Need to create Teem group '#{role.name}'"
         Teem.create_group(token, ORGANIZATION_ID, role.name, role.description)
+        teem_groups_refresh_needed = true
       end
     end
 
-    STDOUT.puts "'Teem Calendars' RM application exists but has no roles." if teem_application.roles.empty?
-
-    # Deleting groups from Teem not found in RM
+    # Delete groups from Teem not found in RM
     teem_groups.each do |group|
       roles = teem_application.roles
       unless roles.find_index { |role| role.name == group['name'] }
         STDOUT.puts "Teem group (ID #{group['id']}, name #{group['name']}) no longer exists in RM. Removing from Teem ..."
         Teem.delete_group(token, group['id'])
         teem_groups.delete(group)
+        teem_groups_refresh_needed = true
       end
     end
+
+    # If any create/delete action happened above, refresh our list before syncing users
+    teem_groups = Teem.get_groups(token) if teem_groups_refresh_needed
 
     # Update membership within each Teem group
     teem_groups.each do |group|
