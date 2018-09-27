@@ -67,7 +67,7 @@ namespace :teem do
         next
       end
 
-      rm_users = role.members.map { |m| OpenStruct.new(rm_id: m.id, email: m.email.downcase) }
+      rm_users = role.members(only_active: true).map { |m| OpenStruct.new(rm_id: m.id, email: m.email.downcase) }
       puts "\tIn RM:"
       rm_users.each do |user|
         puts "\t\t#{user.email}"

@@ -43,14 +43,14 @@ class Role < ApplicationRecord
   end
 
   def to_csv
-    members.select(&:active).map { |m| [token, m.id, m.loginid, m.email, m.first, m.last] }
+    members(only_active: true).map { |m| [token, m.id, m.loginid, m.email, m.first, m.last] }
   end
 
   # Different from entities, 'members' takes all people and all people from groups
   # (flattens the group) and returns them as a list. It also only returns unique results,
   # so e.g. if a person has this role via two different groups, they will only appear once
   # in the members output, but at least twice in the 'entities' output.
-  def members
+  def members(only_active: false)
     all = []
 
     # Add all people
@@ -60,6 +60,8 @@ class Role < ApplicationRecord
     entities.where(type: 'Group').to_a.each do |group|
       all += group.members
     end
+
+    return all.uniq(&:id).select(&:active) if only_active
 
     # Return a unique list
     all.uniq(&:id)
