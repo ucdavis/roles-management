@@ -7,10 +7,12 @@ namespace :teem do
   task sync_users: :environment do
     require 'teem.rb'
 
+    STDOUT.puts "Running Teem user sync at #{Time.now} ..."
+
     token = Teem.authorize
 
     unless token
-      STDERR.puts 'Unable to acquire token. Aborting!'
+      STDERR.puts 'Unable to acquire Teem API access token. Check refresh token validity. Aborting!'
       exit(-1)
     end
 
@@ -19,17 +21,20 @@ namespace :teem do
 
     # Adding new groups to Teem from RM
     teem_application = Application.find_by(name: 'Teem Calendars')
-    if teem_application
-      teem_application.roles.each do |role|
-        unless teem_groups.find_index { |group| group['name'] == role.name }
-          STDOUT.puts "Need to create Teem group '#{role.name}'"
-          Teem.create_group(token, ORGANIZATION_ID, role.name, role.description)
-        end
-      end
-    else
+
+    unless teem_application
       STDERR.puts "Cannot proceed, required application 'Teem Calendars' not found."
       exit(-1)
     end
+
+    teem_application.roles.each do |role|
+      unless teem_groups.find_index { |group| group['name'] == role.name }
+        STDOUT.puts "Need to create Teem group '#{role.name}'"
+        Teem.create_group(token, ORGANIZATION_ID, role.name, role.description)
+      end
+    end
+
+    STDOUT.puts "'Teem Calendars' RM application exists but has no roles." if teem_application.roles.empty?
 
     # Deleting groups from Teem not found in RM
     teem_groups.each do |group|
@@ -66,7 +71,8 @@ namespace :teem do
       end
 
       puts "\n\tUsers to remove from Teem group:"
-      (teem_group_users.map(&:email) - rm_users.map(&:email)).each do |teem_user_to_remove|
+      users_to_remove = teem_group_users.map(&:email) - rm_users.map(&:email)
+      users_to_remove.each do |teem_user_to_remove|
         teem_id = teem_users.find { |u| u.email == teem_user_to_remove }.teem_id
         puts "\t\t#{teem_user_to_remove} (#{teem_id})"
 
@@ -77,8 +83,11 @@ namespace :teem do
         Teem.update_user_groups(token, user_groups, teem_id)
       end
 
+      puts "\t\tNone" if users_to_remove.empty?
+
       puts "\tUsers to add to Teem group from RM role:"
-      (rm_users.map(&:email) - teem_group_users.map(&:email)).each do |rm_user_to_add|
+      users_to_add = rm_users.map(&:email) - teem_group_users.map(&:email)
+      users_to_add.each do |rm_user_to_add|
         teem_user = teem_users.find { |u| u.email == rm_user_to_add }
         teem_id = teem_user&.teem_id
         puts "\t\t#{rm_user_to_add} (#{teem_id || 'No Teem ID yet'})"
@@ -112,6 +121,10 @@ namespace :teem do
           end
         end
       end
+
+      puts "\t\tNone" if users_to_add.empty?
     end
+
+    STDOUT.puts "Finished Teem user sync at #{Time.now} ..."
   end
 end
