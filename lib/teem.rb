@@ -4,13 +4,7 @@ module Teem
 
   CLIENT_ID = ENV['TEEM_CLIENT_ID']
   CLIENT_SECRET = ENV['TEEM_CLIENT_SECRET']
-  REDIRECT_URI = ENV['TEEM_REDIRECT_URI']
   REFRESH_TOKEN = ENV['TEEM_REFRESH_TOKEN']
-
-  USERNAME = ENV['TEEM_USERNAME']
-  PASSWORD = ENV['TEEM_PASSWORD']
-
-  ORG_NAME = ENV['TEEM_ORG_NAME']
 
   def self.request(methods, access_token, url, json_obj = nil)
     uri = URI.parse(url)
