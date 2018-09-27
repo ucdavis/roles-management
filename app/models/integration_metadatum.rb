@@ -2,7 +2,7 @@ class IntegrationMetadatum < ApplicationRecord
   validates :key, uniqueness: true
 
   def self.get(key)
-    find_by_key(key)
+    find_by_key(key)&.value
   end
 
   def self.put(key, value)
