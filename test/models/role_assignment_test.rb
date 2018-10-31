@@ -71,4 +71,62 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     # person should also lose those roles
     # assert false
   end
+
+  # # TODO: This test should pass once the audit_inherited_roles issue is taken care of.
+  # test "group changes which cause group removal also cause role assignment removal" do
+  #   # Ensure a group has a rule
+  #   group = entities(:groupWithNothing)
+
+  #   assert group.roles.empty?, 'looks like groupWithNothing has a role'
+  #   assert group.rules.empty?, 'looks like groupWithNothing has a rule'
+  #   assert group.owners.empty?, 'looks like groupWithNothing has an owner'
+  #   assert group.operators.empty?, 'looks like groupWithNothing has an operator'
+
+  #   # Give group a role
+  #   role = roles(:boring_role)
+  #   group.roles << role
+
+  #   assert group.roles.include?(role), 'looks like groupWithNothing does not have its role'
+  #   assert @person.roles.include?(role) == false, 'looks like person has the role'
+
+  #   # Give person a PPS association so we can match them, then ensure 'login is not' works
+  #   title = titles(:programmer)
+  #   department = departments(:dssit)
+
+  #   @person.pps_associations.destroy_all
+  #   assert @person.pps_associations.count.zero?
+  #   pps_association = PpsAssociation.new
+  #   pps_association.person_id = @person.id
+  #   pps_association.title = title
+  #   pps_association.department = department
+  #   pps_association.admin_department = department
+  #   pps_association.appt_department = department
+  #   pps_association.association_rank = 1
+  #   pps_association.position_type_code = 2
+  #   assert pps_association.valid?
+  #   @person.pps_associations << pps_association
+  #   assert @person.pps_associations.length == 1
+
+  #   # Test login ID rules
+  #   assert group.members.empty?, 'group should have no members'
+
+  #   Rails.logger.debug 'Group is about to gain role'
+
+  #   group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).name, group_id: group.id)
+  #   group.rules << group_rule
+
+  #   group.reload
+
+  #   assert group.members.length == 1, 'group should have a member'
+
+  #   @person.reload
+  #   assert @person.roles.include?(role), 'looks like person does not have the role'
+
+  #   group_rule = GroupRule.new(column: 'loginid', condition: 'is not', value: @person.loginid, group_id: group.id)
+  #   group.rules << group_rule
+
+  #   group.reload
+
+  #   assert group.members.empty?, 'group should have no members'
+  # end
 end
