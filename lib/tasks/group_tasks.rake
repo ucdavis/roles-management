@@ -39,9 +39,15 @@ namespace :group do
     puts "Total outdated GroupRuleResultSets: #{count_diff_found}"
   end
 
-  desc 'Recalculate inherited application operatorships from groups.'
+  desc 'Recalculate inherited application operatorships from groups (destructive).'
   task :recalculate_inherited_application_operatorships do
     Rake::Task['environment'].invoke
+
+    stale_calculated_ao_ids = ApplicationOperatorship.where.not(parent_id: nil).map(&:id)
+
+    found_correct = 0
+    found_missing = 0
+    found_incorrect = 0
 
     # For every group ...
     Group.all.each do |g|
@@ -50,20 +56,75 @@ namespace :group do
         # For each member of the group ...
         g.members.each do |m|
           # If they don't already have an _inherited_ application operatorship for this group, grant them one
-          ao = ApplicationOperatorship.find_by_parent_id_and_entity_id_and_application_id(g.id, m.id, gao.application_id)
+          ao = ApplicationOperatorship.find_by(parent_id: gao.id, entity_id: m.id, application_id: gao.application_id)
           if ao
             puts "Group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) already had inherited application operatorship for application (#{gao.application_id}, #{gao.application.name})"
+            found_correct += 1
+            stale_calculated_ao_ids.delete(ao.id)
           else
             iao = ApplicationOperatorship.new
-            iao.parent_id = g.id
+            iao.parent_id = gao.id
             iao.entity_id = m.id
             iao.application_id = gao.application_id
             iao.save!
+            found_missing += 1
             puts "Inheriting new application operatorship for group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) for application (#{gao.application_id}, #{gao.application.name})"
           end
         end
       end
     end
+
+    found_incorrect = stale_calculated_ao_ids.length
+    ApplicationOperatorship.where(id: stale_calculated_ao_ids).destroy_all
+
+    puts "Operation complete. Results:\n"
+    puts "\tFound correct   (fine)   : #{found_correct}"
+    puts "\tFound incorrect (removed): #{found_incorrect}"
+    puts "\tFound missing   (added)  : #{found_missing}"
+  end
+
+  desc 'Recalculate inherited application ownerships from groups (destructive).'
+  task :recalculate_inherited_application_ownerships do
+    Rake::Task['environment'].invoke
+
+    stale_calculated_ao_ids = ApplicationOwnership.where.not(parent_id: nil).map(&:id)
+
+    found_correct = 0
+    found_missing = 0
+    found_incorrect = 0
+
+    # For every group ...
+    Group.all.each do |g|
+      # For that group's every application ownership ...
+      g.application_ownerships.all.each do |gao|
+        # For each member of the group ...
+        g.members.each do |m|
+          # If they don't already have an _inherited_ application ownership for this group, grant them one
+          ao = ApplicationOwnership.find_by(parent_id: gao.id, entity_id: m.id, application_id: gao.application_id)
+          if ao
+            puts "Group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) already had inherited application ownership for application (#{gao.application_id}, #{gao.application.name})"
+            found_correct += 1
+            stale_calculated_ao_ids.delete(ao.id)
+          else
+            iao = ApplicationOwnership.new
+            iao.parent_id = gao.id
+            iao.entity_id = m.id
+            iao.application_id = gao.application_id
+            iao.save!
+            found_missing += 1
+            puts "Inheriting new application ownership for group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) for application (#{gao.application_id}, #{gao.application.name})"
+          end
+        end
+      end
+    end
+
+    found_incorrect = stale_calculated_ao_ids.length
+    ApplicationOwnership.where(id: stale_calculated_ao_ids).destroy_all
+
+    puts "Operation complete. Results:\n"
+    puts "\tFound correct   (fine)   : #{found_correct}"
+    puts "\tFound incorrect (removed): #{found_incorrect}"
+    puts "\tFound missing   (added)  : #{found_missing}"
   end
 
   desc 'Recalculate inherited roles from groups for a given person.'
