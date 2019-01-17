@@ -220,7 +220,6 @@ class ActiveDirectory
     match          = nil
     loop do
       entry = nil
-      #entry = _search(group_name, "member;range=#{start}-*")
 
       @ldap[:groups].each do |conn|
         result = conn.search(
@@ -234,6 +233,8 @@ class ActiveDirectory
           break
         end
       end
+
+      return nil if entry.nil?
 
       range = entry.attribute_names.map(&:to_s).find { |attr| match = attr.match range_regex }
       break unless range
