@@ -78,7 +78,7 @@ class EntitiesController < ApplicationController
 
         format.json { render 'entities/show', status: :ok }
       else
-        logger.error "Entity#update failed. Reason(s): #{@entity.errors.join(', ')}"
+        logger.error "Entity#update failed. Reason(s): #{@entity.errors.full_messages.join(', ')}"
         format.json { render json: @entity.errors, status: :unprocessable_entity }
       end
     end
