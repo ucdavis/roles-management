@@ -234,7 +234,7 @@ class ActiveDirectory
         end
       end
 
-      return nil if entry.nil?
+      return [] if entry.nil?
 
       range = entry.attribute_names.map(&:to_s).find { |attr| match = attr.match range_regex }
       break unless range
