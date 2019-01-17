@@ -200,18 +200,56 @@ class ActiveDirectory
   # @param group String or Net::LDAP::Entry representing the desired group
   # @return [Array] the login IDs of the members in +group+
   def ActiveDirectory.list_group_members(group)
-    unless group.is_a? Net::LDAP::Entry
-      group = get_group(group)
+    group_name = nil
+
+    if group.is_a? Net::LDAP::Entry
+      group_name = group['cn'][0]
+    else
+      group_name = group
     end
 
-    if group.nil?
+    if group_name.nil? || group_name.length == 0
       raise OperationFailed, 'Group not found', caller
       return nil
     end
 
+    # Credit: https://github.com/ruby-ldap/ruby-net-ldap/issues/208
+    range_regex    = /member;range=\d+-(\d+|\*)/ # member;range=0-1499, member;range=1500-*
+    remote_members = []
+    start          = 0
+    match          = nil
+    loop do
+      entry = nil
+      #entry = _search(group_name, "member;range=#{start}-*")
+
+      @ldap[:groups].each do |conn|
+        result = conn.search(
+          filter:     Net::LDAP::Filter.eq('sAMAccountName', group_name),
+          attributes: "member;range=#{start}-*"
+        )
+        raise LdapError, "Error while fetching group #{group_name}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
+
+        if result.length > 0
+          entry = result[0]
+          break
+        end
+      end
+
+      range = entry.attribute_names.map(&:to_s).find { |attr| match = attr.match range_regex }
+      break unless range
+      #puts "Found range: #{range}"
+      remote_members.concat entry[range]
+      #puts "Added #{entry[range].size}"
+      #puts "Duplicates: #{remote_members.size - remote_members.uniq.size}"
+      stop = match[1]
+      break if stop == '*' # Halt if we're at the end of the records: member;range=1500-*
+      start = stop.to_i + 1
+    end
+
     members = []
 
-    group[:member].each do |member|
+    # Map remote_members LDAP names to simple login IDs
+    remote_members.each do |member|
       # Ignore DC=ou members
       if member.scan(/DC=ou/i).length == 0
         members << member.match(/CN=([^,]+),/).captures[0]
