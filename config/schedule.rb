@@ -9,12 +9,13 @@ every 24.hours do
   rake 'dw:import_pps_departments'
   rake 'iam:import_sis_majors'
   rake 'iam:import_bous'
+  rake 'group:recalculate_inherited_application_operatorships'
+  rake 'group:recalculate_inherited_application_ownerships'
 end
 
 # Sync with external systems
 every 12.hours do
   rake 'dw:import'
-  # rake 'group:audit_inherited_roles' # temporary fix until role assignments propagate correctly
   rake 'person:update_active_flag'
   rake 'person:remove_inactive'
 end
