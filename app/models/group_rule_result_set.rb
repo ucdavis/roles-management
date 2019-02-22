@@ -66,7 +66,7 @@ class GroupRuleResultSet < ApplicationRecord
     case column
     when :title
       Title.where(id: entity.pps_associations.map(&:title_id)).each do |title|
-        GroupRuleResultSet.where(column: 'title', value: title.name).each do |rule_set|
+        GroupRuleResultSet.where(column: 'title', value: title.code).each do |rule_set|
           Rails.logger.debug "Matched 'title' result set"
           new_results << GroupRuleResult.new(entity_id: person_id, group_rule_result_set_id: rule_set.id)
         end

@@ -13,6 +13,15 @@ DssRm.Models.GroupRule = Backbone.Model.extend(
         @set
           'officialName': data.department.officialName
           'code': data.department.code
+    else if @get('column') == 'title'
+      $.ajax(
+        url: Routes.titles_path() + "/code/" + @get('value') # value is title code
+        type: "GET"
+      ).success (data) =>
+        @set
+          'name': data.name
+          'code': data.code
+
 )
 
 DssRm.Collections.GroupRules = Backbone.Collection.extend(

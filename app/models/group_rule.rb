@@ -42,7 +42,7 @@ class GroupRule < ApplicationRecord
   def matches?(entity)
     case column.to_sym
     when :title
-      return Title.where(id: entity.pps_associations.map(&:title_id)).map(&:name).include?(value)
+      return Title.where(id: entity.pps_associations.map(&:title_id)).map(&:code).include?(value)
     when :major
       return entity.majors.map(&:name).include?(value)
     when :department
@@ -89,7 +89,7 @@ class GroupRule < ApplicationRecord
   def self.find_matches(column, value)
     case column.to_sym
     when :title
-      title_id = Title.where(name: value).pluck('id').first
+      title_id = Title.where(code: value).pluck('id').first
       return [] if title_id.nil?
       return PpsAssociation.where(title_id: title_id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
     when :major

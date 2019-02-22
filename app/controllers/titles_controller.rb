@@ -9,6 +9,16 @@ class TitlesController < ApplicationController
     end
   end
 
+  def show_by_code
+    @title = Title.find_by!(code: params[:code])
+
+    authorize @title
+
+    respond_to do |format|
+      format.json { render json: @title }
+    end
+  end
+
   private
 
   def load_titles
