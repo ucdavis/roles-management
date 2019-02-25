@@ -203,7 +203,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     # Test login ID rules
     assert group.members.empty?, 'group should have no members'
 
-    group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).name, group_id: group.id)
+    group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).code, group_id: group.id)
     group.rules << group_rule
 
     group.reload
@@ -315,7 +315,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'title is' works" do
-    group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).name)
+    group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).code)
 
     setup_match = lambda {
       # Give a person an association involving a title with a 99-unit
