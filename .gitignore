@@ -28,7 +28,7 @@ vendor/cache/
 node_modules/
 .env
 log/activity
-.rbenv-vars
+.rbenv-vars*
 db/data.yml
 package-lock.json
 cypress.env.json
