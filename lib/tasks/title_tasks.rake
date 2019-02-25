@@ -161,9 +161,9 @@ namespace :title do
     end
 
     puts "People issues: #{people_issues.length}"
-    puts "loginid,issue"
+    puts "loginid,issue,code,title name"
     people_issues.each do |t|
-      puts "#{t[0]},#{t[1]}"
+      puts "#{t[0]},#{t[1]},#{t[2]},#{t[3]}"
     end
   end
 end
