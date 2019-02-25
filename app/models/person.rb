@@ -7,6 +7,9 @@ require 'sync'
 class Person < Entity
   include RmBuiltinRoles
 
+  scope :active, -> { where active: true }
+  scope :inactive, -> { where active: false }
+
   has_many :group_memberships, foreign_key: 'entity_id', dependent: :destroy
   has_many :role_assignments, foreign_key: 'entity_id', dependent: :destroy
   has_many :roles, through: :role_assignments, source: :role, dependent: :destroy

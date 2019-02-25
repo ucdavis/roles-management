@@ -95,4 +95,75 @@ namespace :title do
     puts "Left #{titles_untouched} existing titles alone (already up-to-date)."
     puts "Deleted #{existing_title_ids.length} old titles (not mentioned by CSV)."
   end
+
+  desc 'Find missing PPSassociations Import title codes from CSV (override any conflicting codes, remove codes not found in CSV).'
+  task :fill_missing_titles_via_http => :environment do |t, args|
+    include ArmappsSalaryScales
+
+    titles_to_create = []
+    people_whose_titles_we_have = []
+    titles_not_queryable = []
+    people_issues = []
+
+    total_records = Person.active.where('id NOT IN (select distinct(person_id) from pps_associations)').count
+
+    Person.active.where('id NOT IN (select distinct(person_id) from pps_associations)').each_with_index do |p, i|
+      puts "Parsing #{p.loginid} (#{i + 1} / #{total_records}) ..."
+      dw_person = DssDw.fetch_person_by_loginid(p.loginid)
+
+      next if dw_person.nil?
+
+      dw_person['ppsAssociations'].uniq.each do |pps_assoc_json|
+        next if pps_assoc_json.nil?
+
+        dw_title_code = pps_assoc_json['titleCode']
+
+        t = Title.find_by(code: dw_title_code)
+        if t
+          puts "\tWe have this title (code: #{dw_title_code}). Some other title creation error perhaps?"
+          people_whose_titles_we_have << p.loginid
+          people_issues << [p.loginid, 'RM has title. Unknown error.', dw_title_code, t.name]
+        else
+          puts "\tTitle not found locally (code: #{dw_title_code}), trying HTTP ..."
+
+          begin
+            ret = ArmappsSalaryScales.fetch_title_by_code(dw_title_code)
+            puts "\tRet: #{ret}"
+            titles_to_create << ret
+            people_issues << [p.loginid, 'RM missing title. Available for import from armapps server.', dw_title_code, ret[:official_name]]
+          rescue ArmAppsSalaryScalesCannotInterpretPageError
+            puts "\tError while HTTP fetching title code. Either title does not exist or page layout / server has changed."
+            titles_not_queryable << dw_title_code
+            people_issues << [p.loginid, 'RM missing title. Error while querying armapps server.', dw_title_code, '']
+          end
+        end
+      end
+    end
+
+    puts "\n\n"
+
+    puts "People whose titles we have: #{people_whose_titles_we_have.length}"
+    puts "loginid"
+    people_whose_titles_we_have.uniq.each do |t|
+      puts t
+    end
+
+    puts "Titles not queryable: #{titles_not_queryable.length}"
+    puts "code"
+    titles_not_queryable.uniq.each do |t|
+      puts t
+    end
+
+    puts "Titles to create: #{titles_to_create.length}"
+    puts "official_name,code,unit"
+    titles_to_create.uniq.each do |t|
+      puts "#{t[:official_name]},#{t[:code]},#{t[:unit]}"
+    end
+
+    puts "People issues: #{people_issues.length}"
+    puts "loginid,issue"
+    people_issues.each do |t|
+      puts "#{t[0]},#{t[1]}"
+    end
+  end
 end
