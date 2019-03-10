@@ -7,16 +7,16 @@ module RmBuiltinRoles
 
   # Returns the ID of the internal admin role
   def rm_admin_role_id
-    @rm_admin_role_id ||= Role.where(token: 'admin', application_id: Application.find_by(name: 'DSS Roles Management').id).select(:id).map(&:id)
+    @rm_admin_role_id ||= Role.where(token: 'admin', application_id: Application.find_by(name: 'DSS Roles Management').id).select(:id).map(&:id).first
   end
 
   # Returns the ID of the internal access role
   def rm_access_role_id
-    @rm_access_role_id ||= Role.where(token: 'access', application_id: Application.find_by(name: 'DSS Roles Management').id).select(:id).map(&:id)
+    @rm_access_role_id ||= Role.where(token: 'access', application_id: Application.find_by(name: 'DSS Roles Management').id).select(:id).map(&:id).first
   end
 
   # Returns the ID of the internal operate role
   def rm_operate_role_id
-    @rm_operate_role_id ||= Role.where(token: 'operate', application_id: Application.find_by(name: 'DSS Roles Management').id).select(:id).map(&:id)
+    @rm_operate_role_id ||= Role.where(token: 'operate', application_id: Application.find_by(name: 'DSS Roles Management').id).select(:id).map(&:id).first
   end
 end
