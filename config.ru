@@ -12,4 +12,4 @@ if defined? Unicorn
 end
 
 require ::File.expand_path('../config/environment',  __FILE__)
-run DSSRM::Application
+run Rails.application
