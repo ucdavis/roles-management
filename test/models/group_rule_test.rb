@@ -139,18 +139,13 @@ class GroupRuleTest < ActiveSupport::TestCase
     title = titles(:programmer)
     department = departments(:dssit)
 
-    @person.pps_associations.destroy_all
+    PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+    @person.reload
     assert @person.pps_associations.count.zero?
-    pps_association = PpsAssociation.new
-    pps_association.person_id = @person.id
-    pps_association.title = title
-    pps_association.department = department
-    pps_association.admin_department = department
-    pps_association.appt_department = department
-    pps_association.association_rank = 1
-    pps_association.position_type_code = 2
-    assert pps_association.valid?
-    @person.pps_associations << pps_association
+
+    PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+    
+    @person.reload
     assert @person.pps_associations.length == 1
     assert @person.pps_associations[0].department.present?
     assert @person.pps_associations[0].department.code == '040014', 'Expected dept code to be 040014'
@@ -186,18 +181,11 @@ class GroupRuleTest < ActiveSupport::TestCase
     title = titles(:programmer)
     department = departments(:dssit)
 
-    @person.pps_associations.destroy_all
+    PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+    @person.reload
     assert @person.pps_associations.count.zero?
-    pps_association = PpsAssociation.new
-    pps_association.person_id = @person.id
-    pps_association.title = title
-    pps_association.department = department
-    pps_association.admin_department = department
-    pps_association.appt_department = department
-    pps_association.association_rank = 1
-    pps_association.position_type_code = 2
-    assert pps_association.valid?
-    @person.pps_associations << pps_association
+    PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+    @person.reload
     assert @person.pps_associations.length == 1
 
     # Test login ID rules
@@ -322,25 +310,18 @@ class GroupRuleTest < ActiveSupport::TestCase
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      @person.reload
       assert @person.pps_associations.length == 1
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
@@ -397,24 +378,17 @@ class GroupRuleTest < ActiveSupport::TestCase
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
@@ -429,24 +403,16 @@ class GroupRuleTest < ActiveSupport::TestCase
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
@@ -463,45 +429,31 @@ class GroupRuleTest < ActiveSupport::TestCase
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      @person.reload
 
       evil_title = titles(:evil_programmer)
       evil_department = departments(:evil_dssit)
 
-      evil_person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = evil_person.id
-      pps_association.title = evil_title
-      pps_association.department = evil_department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      evil_person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, evil_department, department, department, 1, 2)
+      evil_person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
 
       assert evil_person.pps_associations.length == 1
-      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
-      evil_person.save!
+      PpsAssociationsService.remove_pps_association_from_person(evil_person, evil_person.pps_associations[0])
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
     }
 
@@ -519,44 +471,30 @@ class GroupRuleTest < ActiveSupport::TestCase
       department = departments(:dssit)
       admin_department = departments(:asucd)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      @person.reload
 
       evil_title = titles(:evil_programmer)
 
-      evil_person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = evil_person.id
-      pps_association.title = evil_title
-      pps_association.department = department
-      pps_association.admin_department = admin_department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      evil_person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, department, admin_department, department, 1, 2)
+      evil_person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
 
       assert evil_person.pps_associations.length == 1
-      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
-      evil_person.save!
+      PpsAssociationsService.remove_pps_association_from_person(evil_person, evil_person.pps_associations[0])
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
     }
 
@@ -574,44 +512,30 @@ class GroupRuleTest < ActiveSupport::TestCase
       department = departments(:dssit)
       appt_department = departments(:asucd)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = appt_department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, appt_department, 1, 2)
+      @person.reload
 
       evil_title = titles(:evil_programmer)
 
-      evil_person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = evil_person.id
-      pps_association.title = evil_title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      evil_person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, department, department, department, 1, 2)
+      evil_person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
 
       assert evil_person.pps_associations.length == 1
-      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
-      evil_person.save!
+      PpsAssociationsService.remove_pps_association_from_person(evil_person, evil_person.pps_associations[0])
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
     }
 
@@ -626,24 +550,17 @@ class GroupRuleTest < ActiveSupport::TestCase
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
@@ -659,24 +576,17 @@ class GroupRuleTest < ActiveSupport::TestCase
       department = departments(:dssit)
       asucd_department = departments(:asucd)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = asucd_department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, asucd_department, department, 1, 2)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
@@ -692,24 +602,17 @@ class GroupRuleTest < ActiveSupport::TestCase
       department = departments(:dssit)
       asucd_department = departments(:asucd)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = asucd_department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, asucd_department, 1, 2)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 

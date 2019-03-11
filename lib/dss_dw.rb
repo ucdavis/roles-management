@@ -164,7 +164,7 @@ module DssDw
 
         # Create new SIS association
         SisAssociation.create!(entity_id: p.id,
-                               major: Major.find_by(name: sis_assoc_json['majorName']),
+                               major: Major.find_or_create_by(name: sis_assoc_json['majorName']),
                                association_rank: sis_assoc_json['assocRank'].to_i,
                                level_code: sis_assoc_json['levelCode'])
       end
@@ -203,25 +203,18 @@ module DssDw
         end.nil?
 
         # New PPS association found
-        begin
-          PpsAssociation.create!(person_id: p.id,
-                                 title: Title.find_by(code: pps_assoc_json['titleCode']),
-                                 department: Department.find_by(code: pps_assoc_json['deptCode']),
-                                 admin_department: Department.find_by(code: pps_assoc_json['adminDeptCode']),
-                                 appt_department: Department.find_by(code: pps_assoc_json['apptDeptCode']),
-                                 association_rank: pps_assoc_json['assocRank'].to_i,
-                                 position_type_code: pps_assoc_json['positionTypeCode'].to_i)
-        rescue ActiveRecord::RecordInvalid => e
-          Rails.logger.error 'Could not create a PpsAssociation for person, skipping ...'
-          Rails.logger.error "\tPerson        : #{p.id}, #{p.loginid}"
-          Rails.logger.error "\tPPS Assocation: #{pps_assoc_json.inspect}"
-          Rails.logger.error "\tError         : #{e.inspect}"
-        end
+        PpsAssociationsService.add_pps_association_to_person(p,
+                                                              Title.find_by(code: pps_assoc_json['titleCode']),
+                                                              Department.find_by(code: pps_assoc_json['deptCode']),
+                                                              Department.find_by(code: pps_assoc_json['adminDeptCode']),
+                                                              Department.find_by(code: pps_assoc_json['apptDeptCode']),
+                                                              pps_assoc_json['assocRank'].to_i,
+                                                              pps_assoc_json['positionTypeCode'].to_i)
       end
 
       existing_pps_assocs.each do |assoc|
         # Destroy old PPS associations
-        p.pps_associations.destroy(PpsAssociation.find_by(id: assoc[:id]))
+        PpsAssociationsService.remove_pps_association_from_person(p, PpsAssociation.find_by(id: assoc[:id]))
       end
     rescue ActiveRecord::RecordNotSaved => e
       Rails.logger.error "Could not save PPS associations for #{p.loginid}. Ensure PPS departments are imported."
