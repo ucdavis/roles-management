@@ -17,15 +17,17 @@ class PpsAssociationsService
                             association_rank: association_rank,
                             position_type_code: position_type_code)
 
-    GroupRuleResultSet.update_results_for(:pps_unit, person.id)
-    GroupRuleResultSet.update_results_for(:pps_position_type, person.id)
-    GroupRuleResultSet.update_results_for(:title, person.id)
-    GroupRuleResultSet.update_results_for(:business_office_unit, person.id)
-    GroupRuleResultSet.update_results_for(:admin_business_office_unit, person.id)
-    GroupRuleResultSet.update_results_for(:appt_business_office_unit, person.id)
-    GroupRuleResultSet.update_results_for(:department, person.id)
-    GroupRuleResultSet.update_results_for(:admin_department, person.id)
-    GroupRuleResultSet.update_results_for(:appt_department, person.id)
+    GroupRulesService.update_results_for(:pps_unit, person.id)
+    GroupRulesService.update_results_for(:pps_position_type, person.id)
+    GroupRulesService.update_results_for(:title, person.id)
+    GroupRulesService.update_results_for(:business_office_unit, person.id)
+    GroupRulesService.update_results_for(:admin_business_office_unit, person.id)
+    GroupRulesService.update_results_for(:appt_business_office_unit, person.id)
+    GroupRulesService.update_results_for(:department, person.id)
+    GroupRulesService.update_results_for(:admin_department, person.id)
+    GroupRulesService.update_results_for(:appt_department, person.id)
+
+    
 
     ActivityLog.info!("Added title #{title.name} for department #{department.displayName}", ["person_#{person.id}"])
   end
@@ -39,15 +41,15 @@ class PpsAssociationsService
     old_department_display_name = pps_association.department.displayName
     pps_association.destroy!
 
-    GroupRuleResultSet.update_results_for(:pps_unit, person.id)
-    GroupRuleResultSet.update_results_for(:pps_position_type, person.id)
-    GroupRuleResultSet.update_results_for(:title, person.id)
-    GroupRuleResultSet.update_results_for(:business_office_unit, person.id)
-    GroupRuleResultSet.update_results_for(:admin_business_office_unit, person.id)
-    GroupRuleResultSet.update_results_for(:appt_business_office_unit, person.id)
-    GroupRuleResultSet.update_results_for(:department, person.id)
-    GroupRuleResultSet.update_results_for(:admin_department, person.id)
-    GroupRuleResultSet.update_results_for(:appt_department, person.id)
+    GroupRulesService.update_results_for(:pps_unit, person.id)
+    GroupRulesService.update_results_for(:pps_position_type, person.id)
+    GroupRulesService.update_results_for(:title, person.id)
+    GroupRulesService.update_results_for(:business_office_unit, person.id)
+    GroupRulesService.update_results_for(:admin_business_office_unit, person.id)
+    GroupRulesService.update_results_for(:appt_business_office_unit, person.id)
+    GroupRulesService.update_results_for(:department, person.id)
+    GroupRulesService.update_results_for(:admin_department, person.id)
+    GroupRulesService.update_results_for(:appt_department, person.id)
 
     ActivityLog.info!("Removed title #{old_title_name} for department #{old_department_display_name}", ["person_#{person.id}"])
   end
