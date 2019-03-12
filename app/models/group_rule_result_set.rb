@@ -44,7 +44,7 @@ class GroupRuleResultSet < ApplicationRecord
   def update_results
     Rails.logger.debug "GroupRuleResultSet #{id}: Updating results for group rule set ##{id}"
 
-    p = GroupRule.find_matches(column, value)
+    p = GroupRulesService.find_matches(column, value)
 
     # Compare new and existing results to selectively destroy/create GroupRuleResult records as needed
     existing_results = results.to_a
