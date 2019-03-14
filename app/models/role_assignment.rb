@@ -13,8 +13,8 @@ class RoleAssignment < ApplicationRecord
   # as role assignments can be created by e.g. saving an application with roles_attributes
   # and modifying a role's entity_ids, meaning these callbacks would work but
   # the Group being assigned would never have its callbacks used
-  after_create :grant_role_assignments_to_group_members_if_needed
-  before_destroy :remove_role_assignments_from_group_members_if_needed
+  after_create :grant_role_assignment_to_group_members_if_needed
+  before_destroy :remove_role_assignment_from_group_members_if_needed
 
   # Trigger role syncs when role membership (assignment) changes.
   # Note: For a group which has a role and gains a new member, that group
@@ -65,7 +65,7 @@ class RoleAssignment < ApplicationRecord
 
   # Grant this role assignment to all members of the group
   # (only if this role assignment really is with a group)
-  def grant_role_assignments_to_group_members_if_needed
+  def grant_role_assignment_to_group_members_if_needed
     return unless entity.type == 'Group'
 
     Rails.logger.tagged "RoleAssignment #{id}" do
@@ -82,7 +82,7 @@ class RoleAssignment < ApplicationRecord
 
   # Remove this role assignment from all members of the group
   # (only if this role assignment really was with a group)
-  def remove_role_assignments_from_group_members_if_needed
+  def remove_role_assignment_from_group_members_if_needed
     return unless entity.type == 'Group'
 
     Rails.logger.tagged "RoleAssignment #{id}" do

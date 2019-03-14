@@ -333,17 +333,11 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     setup_match = lambda {
       # Give a person a SIS association with level code 'GR'
-      sis_association = SisAssociation.new
-      sis_association.entity_id = @person.id
-      sis_association.major = Major.first
-      sis_association.level_code = 'GR'
-      sis_association.association_rank = 1
-      @person.sis_associations << sis_association
+      SisAssociationsService.add_sis_association_to_person(@person, Major.first, 1, 'GR')
     }
 
     remove_match = lambda {
-      @person.sis_associations.destroy(@person.sis_associations[0])
-      @person.save!
+      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
     }
 
     test_group_rule(group_rule, setup_match, remove_match)
@@ -354,17 +348,11 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     setup_match = lambda {
       # Give a person a SIS association with level code 'GR'
-      sis_association = SisAssociation.new
-      sis_association.entity_id = @person.id
-      sis_association.major = Major.find_by(name: 'History')
-      sis_association.level_code = 'GR'
-      sis_association.association_rank = 1
-      @person.sis_associations = [sis_association]
+      SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
     }
 
     remove_match = lambda {
-      @person.sis_associations.destroy(@person.sis_associations[0])
-      @person.save!
+      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
     }
 
     test_group_rule(group_rule, setup_match, remove_match)
@@ -607,6 +595,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert @person.pps_associations.count.zero?
       PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, asucd_department, 1, 2)
       @person.reload
+      assert @person.pps_associations.count == 1
     }
 
     remove_match = lambda {

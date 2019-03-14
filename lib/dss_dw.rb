@@ -163,15 +163,15 @@ module DssDw
         end.nil?
 
         # Create new SIS association
-        SisAssociation.create!(entity_id: p.id,
-                               major: Major.find_or_create_by(name: sis_assoc_json['majorName']),
-                               association_rank: sis_assoc_json['assocRank'].to_i,
-                               level_code: sis_assoc_json['levelCode'])
+        SisAssociationsService.add_sis_association_to_person(p,
+                                                             Major.find_or_create_by(name: sis_assoc_json['majorName']),
+                                                             sis_assoc_json['assocRank'].to_i,
+                                                             sis_assoc_json['levelCode'])
       end
 
       existing_sis_assocs.each do |assoc|
         # Destroy old SIS associations
-        p.sis_associations.destroy(SisAssociation.find_by(id: assoc[:id]))
+        SisAssociationsService.remove_sis_association_from_person(p, SisAssociation.find_by(id: assoc[:id]))
       end
     rescue ActiveRecord::RecordNotSaved => e
       Rails.logger.error "Could not save SIS associations for #{p.loginid}. Exception trace:"
@@ -204,12 +204,12 @@ module DssDw
 
         # New PPS association found
         PpsAssociationsService.add_pps_association_to_person(p,
-                                                              Title.find_by(code: pps_assoc_json['titleCode']),
-                                                              Department.find_by(code: pps_assoc_json['deptCode']),
-                                                              Department.find_by(code: pps_assoc_json['adminDeptCode']),
-                                                              Department.find_by(code: pps_assoc_json['apptDeptCode']),
-                                                              pps_assoc_json['assocRank'].to_i,
-                                                              pps_assoc_json['positionTypeCode'].to_i)
+                                                             Title.find_by(code: pps_assoc_json['titleCode']),
+                                                             Department.find_by(code: pps_assoc_json['deptCode']),
+                                                             Department.find_by(code: pps_assoc_json['adminDeptCode']),
+                                                             Department.find_by(code: pps_assoc_json['apptDeptCode']),
+                                                             pps_assoc_json['assocRank'].to_i,
+                                                             pps_assoc_json['positionTypeCode'].to_i)
       end
 
       existing_pps_assocs.each do |assoc|

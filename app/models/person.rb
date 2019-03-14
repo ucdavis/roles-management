@@ -143,13 +143,13 @@ class Person < Entity
   end
 
   def recalculate_group_rule_membership
-    GroupRulesService.update_results_for(:loginid, id) if saved_change_to_attribute?(:loginid)
-    GroupRulesService.update_results_for(:is_staff, id) if saved_change_to_attribute?(:is_staff)
-    GroupRulesService.update_results_for(:is_student, id) if saved_change_to_attribute?(:is_student)
-    GroupRulesService.update_results_for(:is_employee, id) if saved_change_to_attribute?(:is_employee)
-    GroupRulesService.update_results_for(:is_faculty, id) if saved_change_to_attribute?(:is_faculty)
-    GroupRulesService.update_results_for(:is_hs_employee, id) if saved_change_to_attribute?(:is_hs_employee)
-    GroupRulesService.update_results_for(:is_external, id) if saved_change_to_attribute?(:is_external)
+    GroupRulesService.update_results_for(:loginid, self) if saved_change_to_attribute?(:loginid)
+    GroupRulesService.update_results_for(:is_staff, self) if saved_change_to_attribute?(:is_staff)
+    GroupRulesService.update_results_for(:is_student, self) if saved_change_to_attribute?(:is_student)
+    GroupRulesService.update_results_for(:is_employee, self) if saved_change_to_attribute?(:is_employee)
+    GroupRulesService.update_results_for(:is_faculty, self) if saved_change_to_attribute?(:is_faculty)
+    GroupRulesService.update_results_for(:is_hs_employee, self) if saved_change_to_attribute?(:is_hs_employee)
+    GroupRulesService.update_results_for(:is_external, self) if saved_change_to_attribute?(:is_external)
   end
 
   private
