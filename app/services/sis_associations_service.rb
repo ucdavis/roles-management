@@ -38,6 +38,7 @@ class SisAssociationsService
     sis_association.destroy!
 
     person.reload
+
     expired_group_ids, current_group_ids = GroupRulesService.update_results_for_columns([:sis_level_code, :major], person)
 
     # Unassign inherited roles from old groups

@@ -245,16 +245,16 @@ class GroupRulesService
     raise 'Expected Array object' unless columns.is_a?(Array)
     raise 'Expected Person object' unless person.is_a?(Person)
 
-    affected_group_ids = []
+    expired_group_ids = []
+    current_group_ids = []
 
     columns.each do |column|
       raise 'Expected symbol' unless column.is_a?(Symbol)
-      affected_group_ids << GroupRulesService.update_results_for(column, person)
+      affected_group_ids = GroupRulesService.update_results_for(column, person)
+      expired_group_ids << affected_group_ids[0]
+      current_group_ids << affected_group_ids[1]
     end
 
-    expired_group_ids = affected_group_ids.select.with_index{ |_, i| i % 2 == 0}.flatten.uniq # odd elements
-    current_group_ids = affected_group_ids.select.with_index{ |_, i| i % 2 == 1}.flatten.uniq # even elements
-
-    return [expired_group_ids, current_group_ids]
+    return [expired_group_ids.flatten, current_group_ids.flatten]
   end
 end

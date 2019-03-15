@@ -64,7 +64,7 @@ class ApplicationsControllerTest < ActionController::TestCase
     active_p = entities(:personWithARole)
     a = applications(:regular_app)
 
-    assert a.roles.length == 1, "application should have one role"
+    assert a.roles.length >= 1, "application should have at least one role"
     r = a.roles[0]
 
     assert r.members.include?(inactive_p), "role should include the inactive person"

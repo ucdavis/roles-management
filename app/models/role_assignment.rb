@@ -68,16 +68,7 @@ class RoleAssignment < ApplicationRecord
   def grant_role_assignment_to_group_members_if_needed
     return unless entity.type == 'Group'
 
-    Rails.logger.tagged "RoleAssignment #{id}" do
-      entity.members.each do |m|
-        logger.info "Granting role (#{role.id}, #{role.token}, #{role.application.name}) just granted to group (#{entity.id}/#{entity.name}) to its member (#{m.id}/#{m.name})"
-        ra = RoleAssignment.new
-        ra.role_id = role.id
-        ra.entity_id = m.id
-        ra.parent_id = id
-        ra.save!
-      end
-    end
+    RoleAssignmentsService.assign_group_role_assignment_to_members(entity, self)
   end
 
   # Remove this role assignment from all members of the group
@@ -85,17 +76,7 @@ class RoleAssignment < ApplicationRecord
   def remove_role_assignment_from_group_members_if_needed
     return unless entity.type == 'Group'
 
-    Rails.logger.tagged "RoleAssignment #{id}" do
-      entity.members.each do |m|
-        logger.info "Removing role (#{role.id}, #{role.token}, #{role.application.name}) about to be removed from group (#{entity.id}/#{entity.name} from its member #{m.id}/#{m.name})"
-        ra = RoleAssignment.find_by_role_id_and_entity_id_and_parent_id(role.id, m.id, self.id)
-        if ra
-          ra.destroy!
-        else
-          logger.warn "Failed to remove role (#{role.id}, #{role.token}, #{role.application.name}) assigned to group member (#{m.id}/#{m.name}) which needs to be removed as the group (#{entity.id}/#{entity.name}) is losing that role."
-        end
-      end
-    end
+    RoleAssignmentsService.unassign_group_role_assignment_from_members(entity, self)
   end
 
   def parent_must_exist_if_set

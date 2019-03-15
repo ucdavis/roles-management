@@ -367,6 +367,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   test 'person attribute modification resulting in removal from automatic group triggers sync' do
     @person = entities(:casuser)
     group = entities(:groupWithNothing)
+    role = roles(:really_boring_role)
 
     assert group.roles.empty?, 'looks like groupWithNothing has a role'
     assert group.rules.empty?, 'looks like groupWithNothing has a rule'
@@ -377,17 +378,12 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     setup_match = lambda {
       # Give a person a SIS association with level code 'GR'
-      sis_association = SisAssociation.new
-      sis_association.entity_id = @person.id
-      sis_association.major = Major.find_by(name: 'History')
-      sis_association.level_code = 'GR'
-      sis_association.association_rank = 1
-      @person.sis_associations = [sis_association]
+      SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
     }
 
     remove_match = lambda {
-      @person.sis_associations.destroy(@person.sis_associations[0])
-      @person.save!
+      Rails.logger.info "removing sis assoc ..."
+      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
     }
 
     setup_match.call
@@ -399,6 +395,15 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     group.reload
     assert group.members.length == 1, 'group should have 1 member(s)'
 
+    assert group.roles.length == 0, 'group should have no roles'
+    assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+
+    RoleAssignmentsService.assign_role_to_group(group, role)
+
+    assert group.roles.length == 1, 'group should have a role'
+    @person.reload
+    assert @person.roles.include?(role), 'person should have really_boring_role'
+
     # Subtract a second from the 'updated_at' flag to ensure it is a reliable
     # indicator of a group being touched
     group.updated_at -= 1
@@ -409,14 +414,17 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
     Rails.logger.debug 'Calling remove match ...'
     remove_match.call
+    Rails.logger.info 'sis_assoc is gone, role should be too'
     group.reload
     assert group.members.empty?, 'group should have no members'
     assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
-    # assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role should have been triggered'
+    @person.reload
+    assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+    assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role should have been triggered'
   end
 
   test 'person attribute modification resulting in addition to automatic group triggers sync' do
-    # assert false
+    assert false
   end
 
   test 'changing attributes of a group rule triggers sync' do
