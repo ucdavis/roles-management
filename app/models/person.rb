@@ -34,7 +34,6 @@ class Person < Entity
 
   before_save  :set_name_if_blank
   after_save   :recalculate_group_rule_membership
-  after_save   :trigger_sync_if_active_toggled
   after_save   :log_changes
 
   after_create do |person|
@@ -153,34 +152,6 @@ class Person < Entity
   end
 
   private
-
-  # If a person goes from inactive to active, we need to ensure
-  # any role_assignment or group views are touched correctly.
-  def trigger_sync_if_active_toggled # rubocop:disable Metrics/AbcSize
-    return unless saved_change_to_attribute?(:active)
-
-    role_assignments.each(&:touch)
-    group_memberships.each(&:touch)
-
-    # Activating/de-activating a person emulates them losing all their roles
-    if active
-      ActivityLog.info!('Marking as active', ["person_#{id}"])
-
-      roles.each do |role|
-        Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
-      end
-
-      Sync.person_added_to_system(Sync.encode(self))
-    else
-      ActivityLog.info!('Marking as inactive', ["person_#{id}"])
-
-      roles.each do |role|
-        Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
-      end
-
-      Sync.person_removed_from_system(Sync.encode(self))
-    end
-  end
 
   # If name is unset, construct it from first + last.
   # If that fails, use loginid.

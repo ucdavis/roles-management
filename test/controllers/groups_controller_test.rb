@@ -55,8 +55,7 @@ class GroupsControllerTest < ActionController::TestCase
     group_mtime = assignedGroup.updated_at
 
     # Switch the 'active' status on the entity and ensure the group was updated
-    inactiveEntity.active = true
-    inactiveEntity.save!
+    PeopleService.set_active_status(inactiveEntity, true)
 
     assert inactiveEntity.group_memberships.first.updated_at > groupMembership_mtime, 'group membership should have been touched due to active/inactive change'
     assert inactiveEntity.group_memberships.first.group.updated_at > group_mtime, 'group should have been touched due to active/inactive change'

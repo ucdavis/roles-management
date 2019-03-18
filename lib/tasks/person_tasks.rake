@@ -11,7 +11,7 @@ namespace :person do
                    .where(active: true)
 
     people.each do |p|
-      p.active = false
+      PeopleService.set_active_status(p, false)
       p.save!
     end
 
@@ -23,7 +23,7 @@ namespace :person do
     .where(active: false)
 
     people.each do |p|
-      p.active = true
+      PeopleService.set_active_status(p, true)
       p.save!
     end
 

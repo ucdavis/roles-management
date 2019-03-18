@@ -1,20 +1,30 @@
 class RoleAssignmentsService
-  def self.assign_role_to_group(group, role)
-    raise 'Expected Group object' unless group.is_a?(Group)
+  def self.assign_role_to_entity(entity, role)
+    raise 'Expected Entity object' unless entity.is_a?(Entity)
     raise 'Expected Role object' unless role.is_a?(Role)
 
     # Assign role to group
     ra = RoleAssignment.new
     ra.role_id = role.id
-    ra.entity_id = group.id
+    ra.entity_id = entity.id
     ra.parent_id = nil
     ra.save!
 
-    # Ensure group members inherit role
-    group.reload
-    group.members.each do |member|
-      self._inherit_role_assignment(ra, member)
+    if entity.is_a?(Group)
+      # Ensure group members inherit role
+      entity.reload
+      entity.members.each do |member|
+        self._inherit_role_assignment(ra, member)
+      end
     end
+
+    return ra
+  end
+
+  def self.unassign_role_from_entity(role_assignment)
+    raise 'Expected RoleAssignment object' unless role_assignment.is_a?(RoleAssignment)
+
+    role_assignment.destroy
   end
 
   # Assign group roles to all members of a group

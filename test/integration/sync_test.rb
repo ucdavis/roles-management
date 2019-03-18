@@ -35,13 +35,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
   test 'deactivating person triggers remove_from_system' do
     p = entities(:casuser)
-    p.active = true
-    p.save!
+    PeopleService.set_active_status(p, true)
 
     Sync.reset_trigger_test_counts
 
-    p.active = false
-    p.save!
+    PeopleService.set_active_status(p, false)
 
     assert Sync.trigger_test_count(:remove_from_system) == 1, 'remove_from_system should have been triggered'
   end
@@ -51,13 +49,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert p.roles.count == 2, "casuser should have exactly two roles but has #{p.roles.count}"
 
-    p.active = true
-    p.save!
+    PeopleService.set_active_status(p, true)
 
     Sync.reset_trigger_test_counts
 
-    p.active = false
-    p.save!
+    PeopleService.set_active_status(p, false)
 
     assert Sync.trigger_test_count(:remove_from_role) == 2, 'remove_from_role should have been triggered twice'
   end
@@ -65,13 +61,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   test 'activating person triggers add_to_system' do
     p = entities(:casuser)
 
-    p.active = false
-    p.save!
+    PeopleService.set_active_status(p, false)
 
     Sync.reset_trigger_test_counts
 
-    p.active = true
-    p.save!
+    PeopleService.set_active_status(p, true)
 
     assert Sync.trigger_test_count(:add_to_system) == 1, 'add_to_system should have been triggered'
   end
@@ -81,13 +75,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert p.roles.count == 2, "casuser should have exactly two roles but has #{p.roles.count}"
 
-    p.active = false
-    p.save!
+    PeopleService.set_active_status(p, false)
 
     Sync.reset_trigger_test_counts
 
-    p.active = true
-    p.save!
+    PeopleService.set_active_status(p, true)
 
     assert Sync.trigger_test_count(:add_to_role) == 2, 'add_to_role should have been triggered twice'
   end
@@ -216,8 +208,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
 
-    @person.active = false
-    @person.save
+    PeopleService.set_active_status(@person, false)
     @person.reload
 
     # Give the group a role and check that the user gets it
@@ -387,7 +378,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
 
     test_sync_trigger(:add_to_role) do
-      RoleAssignmentsService.assign_role_to_group(group, role)
+      RoleAssignmentsService.assign_role_to_entity(group, role)
       assert group.roles.length == 1, 'group should have a role'
       @person.reload
       assert @person.roles.include?(role), 'person should have really_boring_role'
@@ -431,7 +422,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
 
     test_sync_trigger(:add_to_role, 0) do
-      RoleAssignmentsService.assign_role_to_group(group, role)
+      RoleAssignmentsService.assign_role_to_entity(group, role)
       assert group.roles.length == 1, 'group should have a role'
       @person.reload
       assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
@@ -477,7 +468,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
 
     test_sync_trigger(:add_to_role) do
-      RoleAssignmentsService.assign_role_to_group(group, role)
+      RoleAssignmentsService.assign_role_to_entity(group, role)
       assert group.roles.length == 1, 'group should have a role'
       @person.reload
       assert @person.roles.include?(role), 'person should have really_boring_role'
