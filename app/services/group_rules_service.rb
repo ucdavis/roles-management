@@ -259,9 +259,35 @@ class GroupRulesService
     [expired_group_ids.flatten, current_group_ids.flatten]
   end
 
+  # Main method to add a group rule to a group.
+  # Ensures group members added due to group rule creation also gain their roles, if applicable.
+  def self.add_group_rule(group, column, condition, value)
+    raise 'Expected Group object' unless group.is_a?(Group)
+    raise 'Expected String object' unless column.is_a?(String)
+    raise 'Expected String object' unless condition.is_a?(String)
+    raise 'Expected String object' unless value.is_a?(String)
+
+    pre_removal_members = group.members
+    gr = GroupRule.new
+    gr.group = group
+    gr.column = column
+    gr.condition = condition
+    gr.value = value
+    gr.save!
+    post_removal_members = group.members
+
+    (post_removal_members - pre_removal_members).each do |added_member|
+      RoleAssignmentsService.assign_group_roles_to_member(group, added_member)
+    end
+
+    return gr
+  end
+
   # Main method to remove a group rule from a group.
   # Ensures group members lost due to group rule removal also lose their roles, if applicable.
   def self.remove_group_rule(group_rule)
+    raise 'Expected GroupRule object' unless group_rule.is_a?(GroupRule)
+
     group = group_rule.group
     pre_removal_members = group.members
     group_rule.destroy

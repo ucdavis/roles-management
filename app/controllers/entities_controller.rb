@@ -57,10 +57,46 @@ class EntitiesController < ApplicationController
   def update
     authorize @entity
 
+    # TODO: Will affected_role_ids be needed after service layer work?
     affected_role_ids = @entity.roles.map(&:id) if @entity.group?
 
     respond_to do |format|
-      if @entity.update_attributes(entity_params)
+      ep = entity_params
+      # Special handler for group rules until we can un-permit "rules_attributes"
+      # (frontend needs work to allow this)
+      if ep['rules_attributes']
+        rules_changed = false
+        ep['rules_attributes'].each do |rule_attribute|
+          if rule_attribute['id'] && rule_attribute['_destroy']
+            # Destroy an existing rule
+            group_rule = GroupRule.find_by(id: rule_attribute['id'])
+            GroupRulesService.remove_group_rule(group_rule)
+            rules_changed = true
+          elsif rule_attribute['id']
+            # Updating an existing rule
+            group_rule = GroupRule.find_by(id: rule_attribute['id'])
+            group_rule.column = rule_attribute['column']
+            group_rule.condition = rule_attribute['condition']
+            group_rule.value = rule_attribute['value']
+            if group_rule.changed?
+              rules_changed = true
+              group_rule.save!
+            end
+          else
+            # Creating a new rule
+            GroupRulesService.add_group_rule(@entity, rule_attribute['column'], rule_attribute['condition'], rule_attribute['value'])
+            rules_changed = true
+          end
+        end
+
+        ep.delete(:rules_attributes)
+
+        if rules_changed
+          @entity.reload
+          @entity.touch
+        end
+      end
+      if @entity.update_attributes(ep)
         # The update may have only touched associations and not @entity directly,
         # so we'll touch the timestamp ourselves to make sure our caches are
         # invlidated correctly.
