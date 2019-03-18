@@ -373,15 +373,13 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.owners.empty?, 'looks like groupWithNothing has an owner'
     assert group.operators.empty?, 'looks like groupWithNothing has an operator'
 
-    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
-
     @person = entities(:casuser)
 
     SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
 
     # Test basic rule creation matches existing people
     assert group.members.empty?, 'group should have no members'
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'major', 'is', 'History')
     group.reload
     assert group.members.length == 1, 'group should have 1 member(s)'
 
@@ -421,13 +419,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.owners.empty?, 'looks like groupWithNothing has an owner'
     assert group.operators.empty?, 'looks like groupWithNothing has an operator'
 
-    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
-
     @person = entities(:casuser)
 
     # Test basic rule creation matches existing people
     assert group.members.empty?, 'group should have no members'
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'major', 'is', 'History')
     group.reload
     assert group.members.empty?, 'group should have no members'
 
@@ -467,15 +463,13 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.owners.empty?, 'looks like groupWithNothing has an owner'
     assert group.operators.empty?, 'looks like groupWithNothing has an operator'
 
-    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
-
     @person = entities(:casuser)
 
     SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
 
     # Test basic rule creation matches existing people
     assert group.members.empty?, 'group should have no members'
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'major', 'is', 'History')
     group.reload
     assert group.members.length == 1, 'group should have 1 member(s)'
 

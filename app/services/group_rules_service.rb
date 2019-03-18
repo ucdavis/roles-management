@@ -265,7 +265,7 @@ class GroupRulesService
     raise 'Expected Group object' unless group.is_a?(Group)
     raise 'Expected String object' unless column.is_a?(String)
     raise 'Expected String object' unless condition.is_a?(String)
-    raise 'Expected String object' unless value.is_a?(String)
+    raise 'Expected value' if value == nil
 
     pre_removal_members = group.members
     gr = GroupRule.new
