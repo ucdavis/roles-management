@@ -250,11 +250,25 @@ class GroupRulesService
 
     columns.each do |column|
       raise 'Expected symbol' unless column.is_a?(Symbol)
+
       affected_group_ids = GroupRulesService.update_results_for(column, person)
       expired_group_ids << affected_group_ids[0]
       current_group_ids << affected_group_ids[1]
     end
 
-    return [expired_group_ids.flatten, current_group_ids.flatten]
+    [expired_group_ids.flatten, current_group_ids.flatten]
+  end
+
+  # Main method to remove a group rule from a group.
+  # Ensures group members lost due to group rule removal also lose their roles, if applicable.
+  def self.remove_group_rule(group_rule)
+    group = group_rule.group
+    pre_removal_members = group.members
+    group_rule.destroy
+    post_removal_members = group.members
+
+    (pre_removal_members - post_removal_members).each do |removed_member|
+      RoleAssignmentsService.unassign_group_roles_from_member(group, removed_member)
+    end
   end
 end

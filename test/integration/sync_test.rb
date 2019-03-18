@@ -365,7 +365,6 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   end
 
   test 'person attribute modification resulting in removal from automatic group triggers sync' do
-    @person = entities(:casuser)
     group = entities(:groupWithNothing)
     role = roles(:really_boring_role)
 
@@ -376,21 +375,12 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
 
-    setup_match = lambda {
-      # Give a person a SIS association with level code 'GR'
-      SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
-    }
+    @person = entities(:casuser)
 
-    remove_match = lambda {
-      Rails.logger.info "removing sis assoc ..."
-      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
-    }
-
-    setup_match.call
+    SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
 
     # Test basic rule creation matches existing people
     assert group.members.empty?, 'group should have no members'
-
     group.rules << group_rule
     group.reload
     assert group.members.length == 1, 'group should have 1 member(s)'
@@ -398,11 +388,12 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.length == 0, 'group should have no roles'
     assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
 
-    RoleAssignmentsService.assign_role_to_group(group, role)
-
-    assert group.roles.length == 1, 'group should have a role'
-    @person.reload
-    assert @person.roles.include?(role), 'person should have really_boring_role'
+    test_sync_trigger(:add_to_role) do
+      RoleAssignmentsService.assign_role_to_group(group, role)
+      assert group.roles.length == 1, 'group should have a role'
+      @person.reload
+      assert @person.roles.include?(role), 'person should have really_boring_role'
+    end
 
     # Subtract a second from the 'updated_at' flag to ensure it is a reliable
     # indicator of a group being touched
@@ -411,31 +402,119 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     group_last_updated_at = group.updated_at
 
     # Remove matching characteristic
-    Sync.reset_trigger_test_counts
-    Rails.logger.debug 'Calling remove match ...'
-    remove_match.call
-    Rails.logger.info 'sis_assoc is gone, role should be too'
-    group.reload
-    assert group.members.empty?, 'group should have no members'
-    assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
-    @person.reload
-    assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
-    assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role should have been triggered'
+    test_sync_trigger(:remove_from_role) do
+      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
+      group.reload
+      assert group.members.empty?, 'group should have no members'
+      assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
+      @person.reload
+      assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+    end
   end
 
   test 'person attribute modification resulting in addition to automatic group triggers sync' do
-    assert false
+    group = entities(:groupWithNothing)
+    role = roles(:really_boring_role)
+
+    assert group.roles.empty?, 'looks like groupWithNothing has a role'
+    assert group.rules.empty?, 'looks like groupWithNothing has a rule'
+    assert group.owners.empty?, 'looks like groupWithNothing has an owner'
+    assert group.operators.empty?, 'looks like groupWithNothing has an operator'
+
+    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
+
+    @person = entities(:casuser)
+
+    # Test basic rule creation matches existing people
+    assert group.members.empty?, 'group should have no members'
+    group.rules << group_rule
+    group.reload
+    assert group.members.empty?, 'group should have no members'
+
+    assert group.roles.length == 0, 'group should have no roles'
+    assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+
+    test_sync_trigger(:add_to_role, 0) do
+      RoleAssignmentsService.assign_role_to_group(group, role)
+      assert group.roles.length == 1, 'group should have a role'
+      @person.reload
+      assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+    end
+
+    # Subtract a second from the 'updated_at' flag to ensure it is a reliable
+    # indicator of a group being touched
+    group.updated_at -= 1
+    group.save!
+    group_last_updated_at = group.updated_at
+
+    # Add matching characteristic
+    test_sync_trigger(:add_to_role) do
+      SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
+      group.reload
+      assert group.members.length == 1, 'group should have a member'
+      assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
+      @person.reload
+      assert @person.roles.include?(role), 'person should have really_boring_role'
+    end
   end
 
-  test 'changing attributes of a group rule triggers sync' do
-    # assert false
+  test 'removing a group rule causing member loss triggers sync' do
+    group = entities(:groupWithNothing)
+    role = roles(:really_boring_role)
+
+    assert group.roles.empty?, 'looks like groupWithNothing has a role'
+    assert group.rules.empty?, 'looks like groupWithNothing has a rule'
+    assert group.owners.empty?, 'looks like groupWithNothing has an owner'
+    assert group.operators.empty?, 'looks like groupWithNothing has an operator'
+
+    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
+
+    @person = entities(:casuser)
+
+    SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
+
+    # Test basic rule creation matches existing people
+    assert group.members.empty?, 'group should have no members'
+    group.rules << group_rule
+    group.reload
+    assert group.members.length == 1, 'group should have 1 member(s)'
+
+    assert group.roles.length == 0, 'group should have no roles'
+    assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+
+    test_sync_trigger(:add_to_role) do
+      RoleAssignmentsService.assign_role_to_group(group, role)
+      assert group.roles.length == 1, 'group should have a role'
+      @person.reload
+      assert @person.roles.include?(role), 'person should have really_boring_role'
+    end
+
+    # Subtract a second from the 'updated_at' flag to ensure it is a reliable
+    # indicator of a group being touched
+    group.updated_at -= 1
+    group.save!
+    group_last_updated_at = group.updated_at
+
+    # Remove matching characteristic
+    test_sync_trigger(:remove_from_role) do
+      Rails.logger.debug "CALLING IT"
+      GroupRulesService.remove_group_rule(group.rules.first)
+      Rails.logger.debug "DONE CALLING IT"
+      group.reload
+      assert group.members.empty?, 'group should have no members'
+      assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
+      assert group.rules.empty?, 'group should have no rules'
+      @person.reload
+      assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+    end
   end
 
-  test 'adding group rule via HTTP triggers role_audit' do
-    # assert false
-  end
+  private
 
-  test 'removing group rule via HTTP triggers role_audit' do
-    # assert false
+  # Generic function for testing a sync trigger.
+  def test_sync_trigger(sync_type, expected_sync_count = 1)
+    Sync.reset_trigger_test_counts
+    yield
+    assert Sync.trigger_test_count(sync_type) == expected_sync_count, "#{sync_type} should have been triggered #{expected_sync_count} time(s) but was triggered #{Sync.trigger_test_count(sync_type)} time(s)"
   end
 end
