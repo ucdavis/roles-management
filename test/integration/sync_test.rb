@@ -174,7 +174,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert @person.roles.empty?, 'removing person from group should have removed inherited role'
 
-    assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role trigger count is incorrect'
+    assert Sync.trigger_test_count(:remove_from_role) == 1, "remove_from_role trigger count is incorrect (should be 1 but is #{Sync.trigger_test_count(:remove_from_role)})"
   end
 
   test 'assigning/unassigning role to group should not fire add/remove_to_role for inactive group member' do
@@ -350,9 +350,9 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert p.roles[0].members.length == 2, 'role should have 2 members'
 
     Sync.reset_trigger_test_counts
-    p.roles[0].destroy
+    RolesService.destroy_role(p.roles[0])
 
-    assert Sync.trigger_test_count(:remove_from_role) == 2, 'remove_from_role should have been triggered twice'
+    assert Sync.trigger_test_count(:remove_from_role) == 2, "remove_from_role should have been triggered twice but was triggered #{Sync.trigger_test_count(:remove_from_role)}"
   end
 
   test 'person attribute modification resulting in removal from automatic group triggers sync' do

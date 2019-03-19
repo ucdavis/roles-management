@@ -78,7 +78,9 @@ class ApplicationsController < ApplicationController
     authorize @application
 
     respond_to do |format|
-      if @application.update_attributes(application_params)
+      ap = application_params
+      update_application_attributes(@application, ap)
+      if @application.update_attributes(ap)
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
         @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
@@ -96,6 +98,9 @@ class ApplicationsController < ApplicationController
 
     authorize @application
 
+    @application.roles.each do |role|
+      RolesService.destroy_role(role)
+    end
     @application.destroy
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted application, #{params[:application]}."
@@ -156,5 +161,43 @@ class ApplicationsController < ApplicationController
     params.require(:application).permit(:name, :description, :url,
                                       { roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []},
                                       { operatorships_attributes: [:id, :entity_id, :application_id, :_destroy]} )
+  end
+
+  def update_application_attributes(application, params)
+    # Special handler for roles until we can un-permit "roles_attributes"
+    # (frontend needs work to allow this)
+    if params['roles_attributes']
+      roles_changed = false
+      params['roles_attributes'].each do |role_attribute|
+        if role_attribute['id'] && role_attribute['_destroy']
+          # Destroy an existing role
+          role = Role.find_by(id: role_attribute['id'])
+          RolesService.destroy_role(role)
+          roles_changed = true
+        elsif role_attribute['id']
+          # Updating an existing role
+          role = Role.find_by(id: role_attribute['id'])
+          role.token = role_attribute['token']
+          role.name = role_attribute['name']
+          role.description = role_attribute['description']
+          role.ad_path = role_attribute['ad_path']
+          if role.changed?
+            roles_changed = true
+            role.save!
+          end
+        else
+          # Creating a new role
+          RolesService.create_role(application.id, role_attribute['name'], role_attribute['token'], role_attribute['description'], role_attribute['ad_path'])
+          roles_changed = true
+        end
+      end
+
+      params.delete(:roles_attributes)
+
+      if roles_changed
+        application.reload
+        application.touch
+      end
+    end
   end
 end
