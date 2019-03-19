@@ -155,16 +155,9 @@ namespace :group do
 
     puts "\n#{p.loginid} has #{calculated_ras.length} inherited roles out of #{p.role_assignments.length} total roles."
 
-    # First remove the calculated role assignments
-    #Thread.current[:role_assignment_destroying_calculated_flag] = true
-    #calculated_ras.each(&:destroy)
-    #Thread.current[:role_assignment_destroying_calculated_flag] = nil
-
-    #puts "All calculated role assignments destroyed.\n\n"
-
     recalculated_role_ids = []
 
-    # Now re-create them based on each group's role assignment
+    # Re-create calculated role assignments them based on each group's role assignment
     p.groups.each do |group|
       puts "Group (ID: #{group.id} / #{group.name}) has #{group.roles.length} roles ..."
       group.role_assignments.each do |group_ra|
