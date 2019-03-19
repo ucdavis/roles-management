@@ -96,7 +96,7 @@ class Person < Entity
 
     time = Benchmark.measure do
       _groups = Rails.cache.fetch("person/#{id}/groups/#{updated_at.to_f}/#{only_via_rules}") do
-        group_ids = Group.rule_memberships_for_person(id)
+        group_ids = GroupsService.rule_memberships_for_person(id)
         group_ids += group_memberships.select(:group_id).pluck(:group_id) unless only_via_rules
         Group.where(id: group_ids.uniq)
       end
