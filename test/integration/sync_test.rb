@@ -103,7 +103,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Give the group a role
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
@@ -153,7 +153,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -212,7 +212,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     @person.reload
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -230,7 +230,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert p.roles.include?(r) == false, 'casuser should not have boring_role at the start of the test'
 
     Sync.reset_trigger_test_counts
-    p.roles << r
+    RoleAssignmentsService.assign_role_to_entity(p, r)
 
     assert Sync.trigger_test_count(:add_to_role) == 1, 'add_to_role should have been triggered'
   end
@@ -240,11 +240,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     r = roles(:boring_role)
 
     assert p.roles.include?(r) == false, 'casuser should not have boring_role at the start of the test'
-    p.roles << r
+    ra = RoleAssignmentsService.assign_role_to_entity(p, r)
 
     Sync.reset_trigger_test_counts
 
-    p.roles.delete(r)
+    RoleAssignmentsService.unassign_role_from_entity(ra)
 
     assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role should have been triggered'
   end
@@ -281,7 +281,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -321,7 +321,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -332,7 +332,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Now remove that role from the group and ensure the user loses it
-    group.roles.delete(role)
+    RoleAssignmentsService.unassign_role_from_entity(group.role_assignments[0])
     group.reload
 
     assert group.roles.empty?, 'role removal on group failed'

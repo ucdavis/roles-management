@@ -28,10 +28,7 @@ class ApplicationTest < ActiveSupport::TestCase
     a.save!
     app_last_updated = a.updated_at
 
-    ra = RoleAssignment.new
-    ra.role_id = r.id
-    ra.entity_id = 1
-    ra.save!
+    RoleAssignmentsService.assign_role_to_entity(Entity.find_by(id: 1), r)
 
     a.reload
     assert a.updated_at > app_last_updated, 'application should have been touched'

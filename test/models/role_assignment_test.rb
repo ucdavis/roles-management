@@ -30,7 +30,7 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -39,7 +39,7 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     assert @person.roles.length == 1, 'role assigned to group should have been assigned to group member'
 
     # Now remove that role from the group and ensure the user loses it
-    group.roles.delete(role)
+    RoleAssignmentsService.unassign_role_from_entity(group.role_assignments[0])
     group.reload
 
     assert group.roles.empty?, 'role removal on group failed'
@@ -49,10 +49,7 @@ class RoleAssignmentTest < ActiveSupport::TestCase
   end
 
   test 'role assignments are immutable' do
-    ra = RoleAssignment.new
-    ra.entity_id = @person.id
-    ra.role_id = roles(:boring_role).id
-    ra.save!
+    ra = RoleAssignmentsService.assign_role_to_entity(@person, roles(:boring_role))
 
     ra.role_id = 123
     assert ra.valid? == false
@@ -84,7 +81,7 @@ class RoleAssignmentTest < ActiveSupport::TestCase
 
   #   # Give group a role
   #   role = roles(:boring_role)
-  #   group.roles << role
+  #   RoleAssignmentsService.assign_role_to_entity(group, role)
 
   #   assert group.roles.include?(role), 'looks like groupWithNothing does not have its role'
   #   assert @person.roles.include?(role) == false, 'looks like person has the role'

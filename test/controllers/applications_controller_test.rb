@@ -8,7 +8,10 @@ class ApplicationsControllerTest < ActionController::TestCase
   end
 
   test 'valid cas user with no roles should get denied' do
-    @casuser.roles.delete_all # ensure they have no roles
+    # Ensure they have no roles
+    @casuser.role_assignments.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @casuser.role_symbols.empty?, 'current_user should not have had any roles for this test'
     get :index
     assert_redirected_to(controller: 'site', action: 'access_denied')

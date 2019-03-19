@@ -16,10 +16,7 @@ namespace :user do
           puts "#{arg[1]} already has access"
           next
         else
-          ra = RoleAssignment.new
-          ra.role_id = rm_access_role_id
-          ra.entity_id = p.id
-          ra.save!
+          RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_access_role_id))
         end
       else
         puts "No such user '#{arg[1]}'"
@@ -71,10 +68,7 @@ namespace :user do
           puts "#{arg[1]} already has operate"
           next
         else
-          ra = RoleAssignment.new
-          ra.role_id = rm_operate_role_id
-          ra.entity_id = p.id
-          ra.save!
+          RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_operate_role_id))
 
           puts "Granted operate to #{arg[1]}"
           next
@@ -130,17 +124,11 @@ namespace :user do
           puts "#{arg[1]} already has admin access"
         else
           puts "Granting admin to #{arg[1]}..."
-          ra = RoleAssignment.new
-          ra.role_id = rm_admin_role_id
-          ra.entity_id = p.id
-          ra.save!
+          RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_admin_role_id))
 
           # Ensure they have the 'access' role as well
-          if p.roles.where(:application_id => ra.role.application_id).where(:token => "access").length == 0
-            ra = RoleAssignment.new
-            ra.role_id = rm_access_role_id
-            ra.entity_id = p.id
-            ra.save!
+          if p.roles.where(application_id: ra.role.application_id).where(token: 'access').length == 0
+            RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_access_role_id))
           end
         end
       else

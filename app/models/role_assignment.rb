@@ -9,13 +9,6 @@ class RoleAssignment < ApplicationRecord
   validates :role, :entity, presence: true
   validate :parent_must_exist_if_set
 
-  # Though this seems like 'group' logic, it must be done in this 'join table' class
-  # as role assignments can be created by e.g. saving an application with roles_attributes
-  # and modifying a role's entity_ids, meaning these callbacks would work but
-  # the Group being assigned would never have its callbacks used
-  after_create :grant_role_assignment_to_group_members_if_needed
-  before_destroy :remove_role_assignment_from_group_members_if_needed
-
   # Trigger role syncs when role membership (assignment) changes.
   # Note: For a group which has a role and gains a new member, that group
   #       membership code will give them their own calculated RoleAssignment (parent_id),
@@ -62,22 +55,6 @@ class RoleAssignment < ApplicationRecord
   end
 
   private
-
-  # Grant this role assignment to all members of the group
-  # (only if this role assignment really is with a group)
-  def grant_role_assignment_to_group_members_if_needed
-    return unless entity.type == 'Group'
-
-    RoleAssignmentsService.assign_group_role_assignment_to_members(entity, self)
-  end
-
-  # Remove this role assignment from all members of the group
-  # (only if this role assignment really was with a group)
-  def remove_role_assignment_from_group_members_if_needed
-    return unless entity.type == 'Group'
-
-    RoleAssignmentsService.unassign_group_role_assignment_from_members(entity, self)
-  end
 
   def parent_must_exist_if_set
     if parent_id && RoleAssignment.find_by_id(parent_id).nil?
