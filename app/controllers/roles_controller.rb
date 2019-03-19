@@ -1,5 +1,5 @@
 class RolesController < ApplicationController
-  before_action :load_role, only: [:show, :update]
+  before_action :load_role, only: :show
   before_action :load_roles, only: :index
 
   # Optionally takes application_id parameter to filter index to only roles from that application
@@ -22,39 +22,6 @@ class RolesController < ApplicationController
     end
   end
 
-  def update
-    authorize @role
-
-    if params[:id] && params[:role]
-      if @role.update_attributes(role_params)
-        @role.touch
-        # Reload the group in case the after_save callback destroyed role assignments.
-        @role = Role.includes(:role_assignments).includes(:entities).find_by_id!(@role.id)
-
-        @cache_key = 'role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
-
-        logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated role #{@role.id} (#{@role.token})."
-
-        respond_to do |format|
-          format.json { render 'roles/update', status: :ok }
-        end
-      else
-        log_message = "#{current_user.log_identifier}@#{request.remote_ip}: Failed to update role #{@role.id}. Reason(s): #{@role.errors.full_messages.join(", ")}"
-        logger.error log_message
-
-        AdminMailer.application_error_occurred('dssit-devs-exceptions@ucdavis.edu', log_message).deliver!
-
-        respond_to do |format|
-          format.json { render json: @role.errors, status: :unprocessable_entity }
-        end
-      end
-    else
-      respond_to do |format|
-        format.json { render json: nil, status: 422 }
-      end
-    end
-  end
-
   private
 
   def load_role
@@ -67,9 +34,5 @@ class RolesController < ApplicationController
              else
                Role.all
              end
-  end
-
-  def role_params
-    params.require(:role).permit(:name, :token, :description, :ad_path)
   end
 end

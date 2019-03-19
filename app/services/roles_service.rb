@@ -3,15 +3,40 @@ class RolesService
     raise 'Expected String object' unless name.is_a?(String)
     raise 'Expected String object' unless token.is_a?(String)
 
-    r = Role.new
-    r.application_id = application_id
-    r.name = name
-    r.token = token
-    r.description = description
-    r.ad_path = ad_path
-    r.save!
+    role = Role.new
+    role.application_id = application_id
+    role.name = name
+    role.token = token
+    role.description = description
+    role.ad_path = ad_path
+    role.save!
 
-    return r
+    ActivityLog.info!("Created role #{role.name} (#{role.token}).", ["application_#{role.application_id}"])
+
+    return role
+  end
+
+  # Updates a role with the given parameters, returning true only if the role changed.
+  def self.update_role(role, name, token, description, ad_path)
+    raise 'Expected Role object' unless role.is_a?(Role)
+    raise 'Expected String object' unless name.is_a?(String)
+    raise 'Expected String object' unless token.is_a?(String)
+
+    role.name = name
+    role.token = token
+    role.description = description
+    role.ad_path = ad_path
+
+    if role.changed?
+      role.save!
+
+      # Notify sync about changes to the role
+      Sync.role_changed(Sync.encode(role).merge(changes: role.saved_changes.select { |c, _v| %w[ad_path token name description].include?(c) }))
+
+      return true
+    else
+      return false
+    end
   end
 
   def self.destroy_role(role)
@@ -23,5 +48,7 @@ class RolesService
     end
 
     role.destroy!
+
+    ActivityLog.info!("Deleted role #{role.token}.", ["application_#{role.application_id}"])
   end
 end

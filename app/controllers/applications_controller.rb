@@ -176,15 +176,7 @@ class ApplicationsController < ApplicationController
           roles_changed = true
         elsif role_attribute['id']
           # Updating an existing role
-          role = Role.find_by(id: role_attribute['id'])
-          role.token = role_attribute['token']
-          role.name = role_attribute['name']
-          role.description = role_attribute['description']
-          role.ad_path = role_attribute['ad_path']
-          if role.changed?
-            roles_changed = true
-            role.save!
-          end
+          roles_changed ||= RolesService.update_role(Role.find_by(id: role_attribute['id']), role_attribute['name'], role_attribute['token'], role_attribute['description'], role_attribute['ad_path'])
         else
           # Creating a new role
           RolesService.create_role(application.id, role_attribute['name'], role_attribute['token'], role_attribute['description'], role_attribute['ad_path'])
