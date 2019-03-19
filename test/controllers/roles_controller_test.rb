@@ -53,16 +53,4 @@ class RolesControllerTest < ActionController::TestCase
     assert response.body.include?(inactive_p.email) == false, '.txt should not include inactive individual'
     assert response.body.include?(active_p.email), '.txt should include an active individual'
   end
-
-  test 'Role#update should function correctly' do
-    revoke_access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
-    grant_test_user_admin_access
-
-    @role = roles(:boring_role)
-
-    put :update, params: { id: @role, role: { token: 'not boring' } }, as: :json
-
-    assert_response :success
-  end
 end
