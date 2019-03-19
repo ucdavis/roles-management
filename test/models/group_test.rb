@@ -92,10 +92,11 @@ class GroupTest < ActiveSupport::TestCase
     assert g.members.include?(member) == false, "group should not include casuser"
 
     begin
-      GroupMembership.create!(group: g, entity: member)
+      GroupMembershipsService.assign_member_to_group(member, g)
     rescue Authorization::NotAuthorized
       assert false, "authorization should not have failed"
     end
+    g.reload
 
     assert g.members.include?(member) == true, "group should include casuser"
   end
@@ -128,7 +129,8 @@ class GroupTest < ActiveSupport::TestCase
 
     assert g.members.include?(member) == false, "group should not include casuser"
 
-    GroupMembership.create!(group: g, entity: member)
+    GroupMembershipsService.assign_member_to_group(member, g)
+    g.reload
 
     assert g.members.include?(member) == true, "group should include casuser"
 
@@ -198,10 +200,11 @@ class GroupTest < ActiveSupport::TestCase
     assert g.members.include?(member) == false, "group should not include casuser"
 
     begin
-      GroupMembership.create!(group: g, entity: member)
+      GroupMembershipsService.assign_member_to_group(member, g)
     rescue Authorization::NotAuthorized
       assert false, "authorization should not have failed"
     end
+    g.reload
 
     assert g.members.include?(member) == true, "group should include casuser"
   end
@@ -234,7 +237,8 @@ class GroupTest < ActiveSupport::TestCase
 
     assert g.members.include?(member) == false, "group should not include casuser"
 
-    GroupMembership.create!(group: g, entity: member)
+    GroupMembershipsService.assign_member_to_group(member, g)
+    g.reload
 
     assert g.members.include?(member) == true, "group should include casuser"
 

@@ -21,7 +21,7 @@ class RoleAssignmentTest < ActiveSupport::TestCase
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 

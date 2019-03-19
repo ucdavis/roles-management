@@ -39,7 +39,7 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
     assert @person.group_memberships.length == 0, "'casuser' should not have group memberships yet"
 
     # Assign the test user to this group with no application ownerships
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -79,20 +79,27 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
 
     @person.application_operatorships.destroy_all
     assert @person.application_operatorships.empty?, "test user 'casuser' should not have any application operatorships yet"
-    @person.group_memberships.destroy_all
+    @person.group_memberships.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
+    @person.reload
     assert @person.group_memberships.empty?, "'casuser' should not have group memberships yet"
 
     # Add the user to the group and ensure they gain the group's application operatorship
-    GroupMembership.create!(group: group, entity: @person)
+    GroupMembershipsService.assign_member_to_group(@person, group)
+    group.reload
 
-    assert group.members.length == 1, "group should now have one member"
+    assert group.members.length == 1, 'group should now have one member'
 
     @person.reload
 
     assert @person.application_operatorships.length == 1, "test user should now have one application operatorship inherited from the group but instead has #{@person.application_operatorships.length}"
 
     # Now remove the user from the group and ensure the inherited application operatorship goes away
-    @person.group_memberships.destroy_all
+    @person.group_memberships.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
+    @person.reload
     assert @person.group_memberships.empty?, "'casuser' should not have group memberships now"
 
     @person.reload

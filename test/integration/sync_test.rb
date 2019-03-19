@@ -111,7 +111,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -140,7 +140,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    gm = GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    gm = GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -164,8 +164,8 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Now remove that member from the group and ensure the user loses role
+    GroupMembershipsService.remove_member_from_group(@person, group)
     group.reload
-    group.memberships.destroy(gm.id)
 
     assert group.members.empty?, 'group should have no members'
     assert group.roles.length == 1, 'group should still have one role'
@@ -196,7 +196,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -266,7 +266,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -308,7 +308,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 

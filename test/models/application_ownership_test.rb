@@ -39,7 +39,7 @@ class ApplicationOwnershipTest < ActiveSupport::TestCase
     assert @person.group_memberships.length == 0, "'casuser' should not have group memberships yet"
 
     # Assign the test user to this group with no application ownerships
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 

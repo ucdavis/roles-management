@@ -33,7 +33,8 @@ class GroupOperatorshipTest < ActiveSupport::TestCase
 
     assert group.members.empty?, "group should not have any members"
 
-    GroupMembership.create!(group: group, entity: @person)
+    GroupMembershipsService.assign_member_to_group(@person, group)
+    group.reload
 
     assert group.members.length == 1, "group should have one member"
   end
@@ -54,6 +55,6 @@ class GroupOperatorshipTest < ActiveSupport::TestCase
 
     random_person = entities(:personWithNothing)
 
-    GroupMembership.create!(group: a_group, entity: random_person)
+    GroupMembershipsService.assign_member_to_group(random_person, a_group)
   end
 end
