@@ -62,40 +62,7 @@ class EntitiesController < ApplicationController
 
     respond_to do |format|
       ep = entity_params
-      # Special handler for group rules until we can un-permit "rules_attributes"
-      # (frontend needs work to allow this)
-      if ep['rules_attributes']
-        rules_changed = false
-        ep['rules_attributes'].each do |rule_attribute|
-          if rule_attribute['id'] && rule_attribute['_destroy']
-            # Destroy an existing rule
-            group_rule = GroupRule.find_by(id: rule_attribute['id'])
-            GroupRulesService.remove_group_rule(group_rule)
-            rules_changed = true
-          elsif rule_attribute['id']
-            # Updating an existing rule
-            group_rule = GroupRule.find_by(id: rule_attribute['id'])
-            group_rule.column = rule_attribute['column']
-            group_rule.condition = rule_attribute['condition']
-            group_rule.value = rule_attribute['value']
-            if group_rule.changed?
-              rules_changed = true
-              group_rule.save!
-            end
-          else
-            # Creating a new rule
-            GroupRulesService.add_group_rule(@entity, rule_attribute['column'], rule_attribute['condition'], rule_attribute['value'])
-            rules_changed = true
-          end
-        end
-
-        ep.delete(:rules_attributes)
-
-        if rules_changed
-          @entity.reload
-          @entity.touch
-        end
-      end
+      update_group_rules_attributes(@entity, ep)
       if @entity.update_attributes(ep)
         # The update may have only touched associations and not @entity directly,
         # so we'll touch the timestamp ourselves to make sure our caches are
@@ -160,6 +127,43 @@ class EntitiesController < ApplicationController
 
   protected
 
+  def update_group_rules_attributes(entity, params)
+    # Special handler for group rules until we can un-permit "rules_attributes"
+    # (frontend needs work to allow this)
+    if params['rules_attributes']
+      rules_changed = false
+      params['rules_attributes'].each do |rule_attribute|
+        if rule_attribute['id'] && rule_attribute['_destroy']
+          # Destroy an existing rule
+          group_rule = GroupRule.find_by(id: rule_attribute['id'])
+          GroupRulesService.remove_group_rule(group_rule)
+          rules_changed = true
+        elsif rule_attribute['id']
+          # Updating an existing rule
+          group_rule = GroupRule.find_by(id: rule_attribute['id'])
+          group_rule.column = rule_attribute['column']
+          group_rule.condition = rule_attribute['condition']
+          group_rule.value = rule_attribute['value']
+          if group_rule.changed?
+            rules_changed = true
+            group_rule.save!
+          end
+        else
+          # Creating a new rule
+          GroupRulesService.add_group_rule(entity, rule_attribute['column'], rule_attribute['condition'], rule_attribute['value'])
+          rules_changed = true
+        end
+      end
+
+      params.delete(:rules_attributes)
+
+      if rules_changed
+        entity.reload
+        entity.touch
+      end
+    end
+  end
+
   def new_entity_from_params
     # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
     if params[:entity][:type] == 'Group'
@@ -215,7 +219,6 @@ class EntitiesController < ApplicationController
                                    { memberships_attributes: [:id, :calculated, :entity_id, :_destroy] },
                                    { group_memberships_attributes: [:id, :calculated, :group_id, :_destroy] },
                                    { group_ownerships_attributes: [:id, :entity_id, :group_id, :_destroy] },
-                                   { role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy] },
                                    { group_operatorships_attributes: [:id, :group_id, :entity_id, :_destroy] })
   end
 end
