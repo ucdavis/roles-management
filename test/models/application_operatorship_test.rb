@@ -10,9 +10,13 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
   test "application associated with operatorship appears in user's accessible_apps" do
     p = entities(:casuser)
 
-    p.application_ownerships.destroy_all
+    p.application_ownerships.all.each do |ao|
+      ApplicationsService.revoke_application_ownership(ao)
+    end
     p.application_operatorships.destroy_all
-    p.role_assignments.destroy_all
+    p.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
 
     grant_test_user_basic_access
 
