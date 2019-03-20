@@ -79,7 +79,8 @@ class ApplicationsController < ApplicationController
 
     respond_to do |format|
       ap = application_params
-      update_application_attributes(@application, ap)
+      update_roles_attributes(@application, ap)
+      update_owners_attributes(@application, ap)
       if @application.update_attributes(ap)
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
@@ -163,7 +164,7 @@ class ApplicationsController < ApplicationController
                                       { operatorships_attributes: [:id, :entity_id, :application_id, :_destroy]} )
   end
 
-  def update_application_attributes(application, params)
+  def update_roles_attributes(application, params)
     # Special handler for roles until we can un-permit "roles_attributes"
     # (frontend needs work to allow this)
     if params['roles_attributes']
@@ -190,6 +191,32 @@ class ApplicationsController < ApplicationController
         application.reload
         application.touch
       end
+    end
+  end
+
+  def update_owners_attributes(application, params)
+    return unless params['owner_ids']
+
+    # Special handler for roles until we can un-permit "owner_ids"
+    # (frontend needs work to allow this)
+    existing_owner_ids = application.owners.map(&:id)
+
+    owner_ids_to_add = params['owner_ids'] - existing_owner_ids
+    owner_ids_to_remove = existing_owner_ids - params['owner_ids']
+
+    owner_ids_to_add.each do |owner_id|
+      ApplicationsService.grant_application_ownership(application, Entity.find_by(id: owner_id))
+    end
+    owner_ids_to_remove.each do |owner_id|
+      ao = ApplicationOwnership.find_by(application_id: application.id, entity_id: owner_id, parent_id: nil)
+      ApplicationsService.revoke_application_ownership(ao)
+    end
+
+    params.delete(:owner_ids)
+
+    if (owner_ids_to_add.length > 0) || (owner_ids_to_remove.length > 0)
+      application.reload
+      application.touch
     end
   end
 end
