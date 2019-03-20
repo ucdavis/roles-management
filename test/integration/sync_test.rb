@@ -94,10 +94,14 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should not have roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     Sync.reset_trigger_test_counts
@@ -133,10 +137,14 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should not have roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
@@ -187,10 +195,14 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should have no roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, 'casuser should have no group memberships'
 
     Sync.reset_trigger_test_counts
@@ -259,10 +271,14 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should not have roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
@@ -301,10 +317,14 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should not have roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles

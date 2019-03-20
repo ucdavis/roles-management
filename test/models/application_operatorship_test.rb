@@ -13,7 +13,9 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
     p.application_ownerships.all.each do |ao|
       ApplicationsService.revoke_application_ownership(ao)
     end
-    p.application_operatorships.destroy_all
+    p.application_operatorships.all.each do |ao|
+      ApplicationsService.revoke_application_operatorship(ao)
+    end
     p.role_assignments.all.each do |ra|
       RoleAssignmentsService.unassign_role_from_entity(ra)
     end
@@ -22,10 +24,7 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
 
     assert p.accessible_applications.include?(applications(:regular_app)) == false, "user should not be able to access applications(:regular_app) at this point"
 
-    ao = ApplicationOperatorship.new
-    ao.entity = p
-    ao.application = applications(:regular_app)
-    p.application_operatorships << ao
+    ApplicationsService.grant_application_operatorship(applications(:regular_app), p)
 
     assert p.accessible_applications.include?(applications(:regular_app)), "user should have access to application just granted via operatorship"
   end
@@ -34,38 +33,44 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
     # Set up data and ensure it looks correct
     group = entities(:groupWithoutARole)
 
-    group.application_operatorships.destroy_all
-    assert group.application_operatorships.length == 0, "group should not have any operatorships"
+    group.application_operatorships.all.each do |ao|
+      ApplicationsService.revoke_application_operatorship(ao)
+    end
+    assert group.application_operatorships.length == 0, 'group should not have any operatorships'
 
-    @person.application_operatorships.destroy_all
+    @person.application_operatorships.all.each do |ao|
+      ApplicationsService.revoke_application_operatorship(ao)
+    end
     assert @person.application_operatorships.length == 0, "test user 'casuser' should not have any application operatorships yet"
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.length == 0, "'casuser' should not have group memberships yet"
+    @person.reload
+    assert @person.groups.length == 0, "'casuser' should not have groups yet"
 
     # Assign the test user to this group with no application ownerships
     GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
+    group.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
-
-    @person.reload
-
+    assert @person.groups.length == 1, 'unable to add test user to group'
     assert @person.application_operatorships.length == 0, "no operatorships should have been given to the user as the group had no ownerships"
 
+    assert group.application_operatorships.length == 0, 'group should not have any operatorships'
+
     # Give the group an operatorship and check that the user gets it
-    ao = ApplicationOperatorship.new
-    ao.entity_id = group.id
-    ao.application_id = applications(:regular_app).id
-    ao.save!
+    ApplicationsService.grant_application_operatorship(applications(:regular_app), group)
     group.reload
 
-    assert group.application_operatorships.length == 1, "application operatorship on group failed"
+    assert group.application_operatorships.length == 1, 'application operatorship on group failed'
 
     @person.reload
 
     assert @person.application_operatorships.length == 1, "application operatorship assigned to group should have been assigned to group member"
 
     # Now remove that application ownership from the group and ensure the user loses it
-    group.application_operatorships[0].destroy
+    ApplicationsService.revoke_application_operatorship(group.application_operatorships[0])
     group.reload
 
     assert group.application_operatorships.length == 0, "application operatorship removal on group failed"
@@ -74,14 +79,16 @@ class ApplicationOperatorshipTest < ActiveSupport::TestCase
     assert @person.application_operatorships.length == 0, "application operatorship removed from group should have been removed from group member"
   end
 
-  test "adding/removing a user to a group with an operatorship should grant that user the operatorship" do
+  test 'adding/removing a user to a group with an operatorship should grant that user the operatorship' do
     # Set up data and ensure it looks correct
     group = entities(:groupWithAnApplicationOperatorship)
 
     assert group.application_operatorships.length == 1, "group should have one operatorship"
     assert group.members.length == 0, "group should have no members"
 
-    @person.application_operatorships.destroy_all
+    @person.application_operatorships.all.each do |ao|
+      ApplicationsService.revoke_application_operatorship(ao)
+    end
     assert @person.application_operatorships.empty?, "test user 'casuser' should not have any application operatorships yet"
     @person.group_memberships.each do |gm|
       GroupMembershipsService.remove_member_from_group(@person, gm.group)

@@ -14,10 +14,14 @@ class RoleAssignmentTest < ActiveSupport::TestCase
 
     assert group.roles.empty?, 'looks like groupWithoutARole actually has some roles - somebody messed with the fixtures'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, "Looks like our test user 'casuser' has roles already - somebody messed with the fixtures"
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles

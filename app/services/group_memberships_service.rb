@@ -64,9 +64,7 @@ class GroupMembershipsService
       Rails.logger.info "Removing application operatorship (#{ao.id}, application ID #{ao.application_id}) from group member (#{member.id}/#{member.name} of group #{group.id}/#{group.name})"
       inherited_ao = ApplicationOperatorship.find_by_application_id_and_entity_id_and_parent_id(ao.application_id, member.id, ao.id)
       if inherited_ao
-        destroying_calculated_application_operatorship do
-          inherited_ao.destroy!
-        end
+        inherited_ao.destroy!
       else
         Rails.logger.warn "Failed to remove application operatorship (#{ao.id}, App ID #{ao.application_id}) from group member (#{member.id}/#{member.name}: could not find in database"
       end

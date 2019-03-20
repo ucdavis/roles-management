@@ -13,7 +13,9 @@ class ApplicationOwnershipTest < ActiveSupport::TestCase
     p.application_ownerships.all.each do |ao|
       ApplicationsService.revoke_application_ownership(ao)
     end
-    p.application_operatorships.destroy_all
+    p.application_operatorships.all.each do |ao|
+      ApplicationsService.revoke_application_operatorship(ao)
+    end
     p.role_assignments.all.each do |ra|
       RoleAssignmentsService.unassign_role_from_entity(ra)
     end
@@ -40,15 +42,16 @@ class ApplicationOwnershipTest < ActiveSupport::TestCase
       ApplicationsService.revoke_application_ownership(ao)
     end
     assert @person.application_ownerships.length == 0, "test user 'casuser' should not have any application ownerships yet"
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.length == 0, "'casuser' should not have group memberships yet"
 
     # Assign the test user to this group with no application ownerships
     GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
+    group.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
-
-    @person.reload
 
     assert @person.application_ownerships.length == 0, "no ownerships should have been given to the user as the group had no ownerships"
 
