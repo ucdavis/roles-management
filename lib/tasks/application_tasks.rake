@@ -68,11 +68,9 @@ namespace :application do
     puts "#{p.loginid} has #{calculated_aos.length} inherited application operatorship(s) out of #{p.application_operatorships.length} total application operatorship(s)."
 
     # First remove the calculated application operatorships
-    Thread.current[:application_operatorship_destroy_flag] = true
     calculated_aos.each do |ao|
       ao.destroy
     end
-    Thread.current[:application_operatorship_destroy_flag] = nil
 
     puts "All calculated application operatorship(s) destroyed."
 
