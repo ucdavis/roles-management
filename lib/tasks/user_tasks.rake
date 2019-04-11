@@ -124,10 +124,11 @@ namespace :user do
           puts "#{arg[1]} already has admin access"
         else
           puts "Granting admin to #{arg[1]}..."
+          rm_application_id = Role.find_by(id: rm_admin_role_id).application_id
           RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_admin_role_id))
 
           # Ensure they have the 'access' role as well
-          if p.roles.where(application_id: ra.role.application_id).where(token: 'access').length == 0
+          if p.roles.where(application_id: rm_application_id).where(token: 'access').length == 0
             RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_access_role_id))
           end
         end
