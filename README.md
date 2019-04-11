@@ -10,59 +10,28 @@ RM is designed to allow anyone with employees or  virtual appliances (file serve
 
 RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, PostgreSQL, and Linux. It should work fine with the Passenger web application server as well.
 
-## Installation / Deployment
+## Installation
 
-### Step 1. (Set configuration values)
+### Step 1. Set up secrets file
 
-RM is designed to be re-deployable in any workgroup, though there
-are a few matters of configuration that need to be attended to:
+ * Copy docker-web-secrets.env.sample to docker-web-secrets.env and fill in values.
 
-config/database.example.yml
-	Move this file to config/database.yml and set the appropriate values.
+### Step 2. Run the services
 
-config/active_directory.example.yml
-  Move this file to config/active_directory.yml and set the appropriate values.
+ * docker-compose up
 
-config/secrets.example.yml
-	Move this file to config/secrets.yml and set the value. It is recommended
-	you use 'rake secret' to obtain a high quality secret.
+### Setp 3. Set up the database
 
-config/environment.rb
-	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If
-  you decide to remove CAS, also remove the before_filter in
-	app/controllers/application_controller.rb.
+ * docker exec <container-id> rails db:setup
 
-config/deploy.rb
-	You'll likely want to set this to your own Capistrano setup or delete it
-	if you do not use Capistrano.
+### Step 4. Add the first user
 
-config/schedule.rb
-  This file controls when cron jobs run to sync databases. It is currently
-  set up to do so at night, but you should change the time in this file if
-  you'd like anything else.
+ * docker exec <container-id> rails dw:import[username]
+ * docker exec <container-id> rails user:grant_admin[username]
 
-You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
-in case this README neglects any configuration details.
+### Step 5. Visit the service
 
-### Step 2. (Standard Rails procedures)
-
-Run the follow commands in order and ensure they complete successfully:
-
- * bundle install
- * bundle exec rake db:schema:load
-
-### Step 3. (Add a user)
-
-The follow steps obtain a user from a configured LDAP server and grant admin
-access:
-
- * bundle exec rake user:grant_admin[the_username]
-
-### Step 4. (Done!)
-
-Run the application:
-
- * bundle exec rails server (visit localhost:3000 to view)
+Open your browser to localhost:3000
 
 ## Running Tests
 
@@ -93,6 +62,14 @@ application applies to both groups and applications:
                any attributes.
   - Group Operators: Similar to Application Operators but with the added ability to add or remove explicit
                membersbut cannot edit the group rules.
+
+## Misc. Setup
+### Import titles from CSV in Docker container
+ 1. docker cp titles.csv <container-id>:/usr/src/app
+ 2. docker exec <container-id> rails title:replace_titles_with_csv[titles.csv]
+
+### Import departments
+ * docker exec <container-id> rails dw:import_pps_departments
 
 ## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
