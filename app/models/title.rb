@@ -1,6 +1,4 @@
 class Title < ApplicationRecord
-  has_many :people
-
   validates :name, presence: true
   validates :code, presence: true, uniqueness: true
   validates :unit, presence: true, uniqueness: false
