@@ -58,7 +58,7 @@ namespace :group do
           # If they don't already have an _inherited_ application operatorship for this group, grant them one
           ao = ApplicationOperatorship.find_by(parent_id: gao.id, entity_id: m.id, application_id: gao.application_id)
           if ao
-            puts "Group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) already had inherited application operatorship for application (#{gao.application_id}, #{gao.application.name})"
+            #puts "Group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) already had inherited application operatorship for application (#{gao.application_id}, #{gao.application.name})"
             found_correct += 1
             stale_calculated_ao_ids.delete(ao.id)
           else
@@ -68,7 +68,7 @@ namespace :group do
             iao.application_id = gao.application_id
             iao.save!
             found_missing += 1
-            puts "Inheriting new application operatorship for group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) for application (#{gao.application_id}, #{gao.application.name})"
+            #puts "Inheriting new application operatorship for group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) for application (#{gao.application_id}, #{gao.application.name})"
           end
         end
       end
@@ -77,10 +77,12 @@ namespace :group do
     found_incorrect = stale_calculated_ao_ids.length
     ApplicationOperatorship.where(id: stale_calculated_ao_ids).destroy_all
 
-    puts "Operation complete. Results:\n"
-    puts "\tFound correct   (fine)   : #{found_correct}"
-    puts "\tFound incorrect (removed): #{found_incorrect}"
-    puts "\tFound missing   (added)  : #{found_missing}"
+    if (found_incorrect > 0) || (found_missing > 0)
+      puts "Operation complete. Results:\n"
+      puts "\tFound correct   (fine)   : #{found_correct}"
+      puts "\tFound incorrect (removed): #{found_incorrect}"
+      puts "\tFound missing   (added)  : #{found_missing}"
+    end
   end
 
   desc 'Recalculate inherited application ownerships from groups (destructive).'
@@ -102,7 +104,7 @@ namespace :group do
           # If they don't already have an _inherited_ application ownership for this group, grant them one
           ao = ApplicationOwnership.find_by(parent_id: gao.id, entity_id: m.id, application_id: gao.application_id)
           if ao
-            puts "Group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) already had inherited application ownership for application (#{gao.application_id}, #{gao.application.name})"
+            #puts "Group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) already had inherited application ownership for application (#{gao.application_id}, #{gao.application.name})"
             found_correct += 1
             stale_calculated_ao_ids.delete(ao.id)
           else
@@ -112,7 +114,7 @@ namespace :group do
             iao.application_id = gao.application_id
             iao.save!
             found_missing += 1
-            puts "Inheriting new application ownership for group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) for application (#{gao.application_id}, #{gao.application.name})"
+            #puts "Inheriting new application ownership for group member (#{m.id}, #{m.name}) of group (#{g.id}, #{g.name}) for application (#{gao.application_id}, #{gao.application.name})"
           end
         end
       end
@@ -121,10 +123,12 @@ namespace :group do
     found_incorrect = stale_calculated_ao_ids.length
     ApplicationOwnership.where(id: stale_calculated_ao_ids).destroy_all
 
-    puts "Operation complete. Results:\n"
-    puts "\tFound correct   (fine)   : #{found_correct}"
-    puts "\tFound incorrect (removed): #{found_incorrect}"
-    puts "\tFound missing   (added)  : #{found_missing}"
+    if (found_incorrect > 0) || (found_missing > 0)
+      puts "Operation complete. Results:\n"
+      puts "\tFound correct   (fine)   : #{found_correct}"
+      puts "\tFound incorrect (removed): #{found_incorrect}"
+      puts "\tFound missing   (added)  : #{found_missing}"
+    end
   end
 
   desc 'Recalculate inherited roles from groups for a given person.'
