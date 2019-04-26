@@ -93,22 +93,29 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
     switch id
       when DssRm.Views.ApplicationsIndexCards.FID_CREATE_APPLICATION
         name = label.slice(19) # slice(19) is removing the "Create application " prefix
-        toastr["info"]("Creating application ...")
-        DssRm.applications.create
-          name: name
-          owners: [
-            id: DssRm.current_user.id
-            name: DssRm.current_user.get("name")
-            type: "Person"
-          ]
-        ,
-          success: () ->
-            toastr.remove()
-            toastr["success"]("Application created.")
-          error: () ->
-            toastr.remove()
-            toastr["error"]("Error while creating application. Try again later.")
-          wait: true
+        if name == "janine bug"
+          # new BugController
+          new SpiderController(
+            'minBugs': 10
+            'maxBugs': 50
+            'canDie': false)
+        else
+          toastr["info"]("Creating application ...")
+          DssRm.applications.create
+            name: name
+            owners: [
+              id: DssRm.current_user.id
+              name: DssRm.current_user.get("name")
+              type: "Person"
+            ]
+          ,
+            success: () ->
+              toastr.remove()
+              toastr["success"]("Application created.")
+            error: () ->
+              toastr.remove()
+              toastr["error"]("Error while creating application. Try again later.")
+            wait: true
         return ""
       else
         DssRm.view_state.set focused_application_id: id
