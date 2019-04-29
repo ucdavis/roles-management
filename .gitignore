@@ -4,7 +4,6 @@ log/
 tmp/
 .DS_Store
 public/.DS_Store
-config/database.yml
 config/api_keys.yml
 config/general.yml
 config/newrelic.yml
