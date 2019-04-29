@@ -24,6 +24,8 @@
 
 <%= content_for :javascript do -%>
   <script type="text/javascript">
+    window.janine_bug_asset = '<%= asset_path('spider-sprite.png') %>';
+
     $(function () {
       var div = $('<div></div>');
       div.html($('#bootstrap').text());

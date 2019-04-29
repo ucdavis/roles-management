@@ -12,6 +12,7 @@
 //= require jquery.tokeninput-modified
 //= require routes
 //= require jquery.timeago
+//= require bug-min
 //
 //= require dss-rm
 //
