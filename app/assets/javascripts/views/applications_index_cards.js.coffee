@@ -98,6 +98,7 @@ DssRm.Views.ApplicationsIndexCards = Backbone.View.extend(
           new SpiderController(
             'minBugs': 10
             'maxBugs': 50
+            'imageSprite': window.janine_bug_asset
             'canDie': false)
         else
           toastr["info"]("Creating application ...")
