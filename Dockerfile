@@ -97,6 +97,8 @@ ENV DYNAMODB_AWS_SECRET_KEY $DYNAMODB_AWS_SECRET_KEY
 # Copy the main application.
 COPY . ./
 
+RUN mkdir log && touch log/delayed_job.log
+
 # Precompile Rails assets (plus Webpack)
 RUN bundle exec rake assets:precompile
 
