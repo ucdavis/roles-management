@@ -143,6 +143,8 @@ module DssDw
     end
     p.synced_at = dw_person['person']['lastSeen'] || p.synced_at
 
+    p.save!
+
     # Process any majors (SIS associations)
     begin
       existing_sis_assocs = p.sis_associations.map do |assoc|
@@ -221,8 +223,6 @@ module DssDw
       Rails.logger.error 'Exception trace:'
       Rails.logger.error e
     end
-
-    p.save!
 
     return p # rubocop:disable Style/RedundantReturn
   end
