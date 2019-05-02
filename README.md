@@ -20,9 +20,10 @@ RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, Post
 
  * docker-compose up
 
-### Setp 3. Set up the database
+### Step 3. Set up the database
 
  * docker exec <container-id> rails db:setup
+ * docker exec <container-id> rails activitylog:create_table
 
 ### Step 4. Add the first user
  * docker exec <container-id> rails title:replace_titles_with_csv[file.csv]
