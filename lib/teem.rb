@@ -54,7 +54,6 @@ module Teem
   # Returns the Teem API JSON object containing the access token.
   def self.authorize
     refresh_token = IntegrationMetadatum.get('teem_refresh_token') || REFRESH_TOKEN
-
     url = "https://app.teem.com/oauth/token/?client_id=#{CLIENT_ID}&client_secret=#{CLIENT_SECRET}&grant_type=refresh_token&refresh_token=#{refresh_token}"
 
     response = request(:post, nil, url)
@@ -85,10 +84,30 @@ module Teem
   end
 
   def self.get_groups(access_token)
-    url = "https://app.teem.com/api/v4/accounts/groups/"
+    per_page = 100
+    url = "https://app.teem.com/api/v4/accounts/groups/?per_page=#{per_page}"
 
     response = request(:get, access_token, url)
-    return response['groups']
+    groups = response['groups']
+
+    # total = response['meta']['total']
+    # current_page = response['meta']['page']
+
+    # while total > (per_page * current_page) do
+    #   next_page = current_page + 1
+    #   url = "https://app.teem.com/api/v4/accounts/groups/?per_page=#{per_page}&page=#{next_page}"
+    #   response = request(:get, access_token, url)
+
+    #   response['groups'].each do |group|
+    #     unless group.nil?
+    #       groups.push(group)
+    #     end
+    #   end
+
+    #   current_page = next_page
+    # end
+
+    return groups
   end
 
   def self.get_API_user_info(access_token)
