@@ -200,7 +200,7 @@ GEM
       websocket-driver (>= 0.2.0)
     power_assert (1.1.4)
     public_suffix (3.0.3)
-    puma (3.12.1)
+    puma (3.12.2)
     pundit (2.0.1)
       activesupport (>= 3.0.0)
     rack (2.0.7)
@@ -323,7 +323,7 @@ DEPENDENCIES
   net-ldap
   newrelic_rpm
   poltergeist
-  puma (~> 3.11)
+  puma (~> 3.12)
   pundit
   rack-timeout
   rails (~> 5.2)
