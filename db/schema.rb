@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_20_190540) do
+ActiveRecord::Schema.define(version: 2019_12_20_221633) do
 
   create_table "api_key_users", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "secret"
@@ -90,7 +90,7 @@ ActiveRecord::Schema.define(version: 2019_02_20_190540) do
   create_table "departments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "code", null: false
     t.string "officialName", null: false
-    t.string "displayName", null: false
+    t.string "displayName"
     t.string "abbreviation", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
