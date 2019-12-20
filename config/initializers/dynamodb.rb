@@ -10,7 +10,7 @@ Aws.config.update(
 
 if access_key.present?
   if endpoint.present?
-    ::DynamoDbClient = Aws::DynamoDB::Client.new(endpoint: endpoint)
+    ::DynamoDbClient = Aws::DynamoDB::Client.new(endpoint: endpoint, region: region)
   else
     ::DynamoDbClient = Aws::DynamoDB::Client.new
   end
