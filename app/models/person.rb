@@ -164,7 +164,10 @@ class Person < Entity
     saved_changes.each do |field, changes|
       next if field == 'updated_at'
       next if field == 'synced_at'
+      next if field == 'created_at'
       next if field == 'logged_in_at'
+      next if field == 'type'
+      next if field == 'id'
       next if changes[0].blank? && changes[1].blank?
       Rails.logger&.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
       case field
@@ -174,6 +177,12 @@ class Person < Entity
         ActivityLog.info!("Last name changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
       when 'phone'
         ActivityLog.info!("Phone number changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      when 'name'
+        ActivityLog.info!("Name changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      when 'loginid'
+        ActivityLog.info!("Login ID changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      when 'email'
+        ActivityLog.info!("E-mail changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
       else
         ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{id}"])
       end
