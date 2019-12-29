@@ -1,6 +1,6 @@
 class PpsAssociationsService
   # Adds a PPS association to a person, including all associated concerns (e.g. group rules, inherited roles, sync actions)
-  def self.add_pps_association_to_person(person, title, department, admin_department, appt_department, association_rank, position_type_code)
+  def self.add_pps_association_to_person(person, title, department, admin_department, appt_department, association_rank, position_type_code, employee_class)
     raise 'Expected Person object' unless person.is_a?(Person)
     raise 'Expected Title object' unless title.is_a?(Title)
     raise 'Expected Department object' unless department.is_a?(Department)
@@ -8,6 +8,7 @@ class PpsAssociationsService
     raise 'Expected Department object' unless appt_department.is_a?(Department)
     raise 'Expected Integer object' unless association_rank.is_a?(Integer)
     raise 'Expected Integer object' unless position_type_code.is_a?(Integer)
+    raise 'Expected Integer object' unless employee_class.is_a?(Integer)
 
     PpsAssociation.create!(person_id: person.id,
                             title: title,
@@ -15,10 +16,11 @@ class PpsAssociationsService
                             admin_department: admin_department,
                             appt_department: appt_department,
                             association_rank: association_rank,
-                            position_type_code: position_type_code)
+                            position_type_code: position_type_code,
+                            employee_class: employee_class)
 
     person.reload
-    expired_group_ids, current_group_ids = GroupRulesService.update_results_for_columns([:pps_unit, :pps_position_type, :title, :business_office_unit, :admin_business_office_unit, :appt_business_office_unit, :department, :admin_department, :appt_department], person)
+    expired_group_ids, current_group_ids = GroupRulesService.update_results_for_columns([:pps_unit, :pps_position_type, :title, :business_office_unit, :admin_business_office_unit, :appt_business_office_unit, :department, :admin_department, :appt_department, :employee_class], person)
 
     # Unassign inherited roles from old groups
     expired_group_ids.each do |group_id|

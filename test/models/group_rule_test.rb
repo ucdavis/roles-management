@@ -138,7 +138,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     @person.reload
     assert @person.pps_associations.count.zero?
 
-    PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+    PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
 
     @person.reload
     assert @person.pps_associations.length == 1
@@ -177,7 +177,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     PpsAssociationsService.remove_all_pps_associations_from_person(@person)
     @person.reload
     assert @person.pps_associations.count.zero?
-    PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+    PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
     @person.reload
     assert @person.pps_associations.length == 1
 
@@ -290,7 +290,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       @person.reload
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
       @person.reload
       assert @person.pps_associations.length == 1
     }
@@ -340,7 +340,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       @person.reload
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
       @person.reload
     }
 
@@ -362,7 +362,7 @@ class GroupRuleTest < ActiveSupport::TestCase
 
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
       @person.reload
     }
 
@@ -387,7 +387,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       @person.reload
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
       @person.reload
 
       evil_title = titles(:evil_programmer)
@@ -396,7 +396,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
       evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, evil_department, department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, evil_department, department, department, 1, 2, 1)
       evil_person.reload
     }
 
@@ -427,7 +427,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       @person.reload
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
       @person.reload
 
       evil_title = titles(:evil_programmer)
@@ -435,7 +435,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
       evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, department, admin_department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, department, admin_department, department, 1, 2, 1)
       evil_person.reload
     }
 
@@ -466,7 +466,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       @person.reload
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, appt_department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, appt_department, 1, 2, 1)
       @person.reload
 
       evil_title = titles(:evil_programmer)
@@ -474,7 +474,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
       evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, department, department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, department, department, department, 1, 2, 1)
       evil_person.reload
     }
 
@@ -502,7 +502,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       @person.reload
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
       @person.reload
     }
 
@@ -526,7 +526,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       @person.reload
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, asucd_department, department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, asucd_department, department, 1, 2, 1)
       @person.reload
     }
 
@@ -550,7 +550,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       @person.reload
       assert @person.pps_associations.count.zero?
-      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, asucd_department, 1, 2)
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, asucd_department, 1, 2, 1)
       @person.reload
       assert @person.pps_associations.count == 1
     }

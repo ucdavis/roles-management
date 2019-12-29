@@ -4,7 +4,7 @@ class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w[title major loginid is_staff is_faculty is_student is_employee
                      is_external is_hs_employee sis_level_code pps_unit pps_position_type
                      department admin_department appt_department business_office_unit
-                     admin_business_office_unit appt_business_office_unit].freeze
+                     admin_business_office_unit appt_business_office_unit employee_class].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]

@@ -190,9 +190,11 @@ module DssDw
           admin_department: assoc.admin_department&.code,
           appt_department: assoc.appt_department&.code,
           association_rank: assoc.association_rank,
-          position_type_code: assoc.position_type_code
+          position_type_code: assoc.position_type_code,
+          employee_class: assoc.employee_class
         }
       end
+
       dw_person['ppsAssociations'].uniq.each do |pps_assoc_json|
         next if pps_assoc_json.nil?
         next unless existing_pps_assocs.reject! do |assoc|
@@ -201,21 +203,25 @@ module DssDw
           assoc[:admin_department] == pps_assoc_json['adminDeptCode'] &&
           assoc[:appt_department] == pps_assoc_json['apptDeptCode'] &&
           assoc[:association_rank] == pps_assoc_json['assocRank'].to_i &&
-          assoc[:position_type_code] == pps_assoc_json['positionTypeCode'].to_i
+          assoc[:position_type_code] == pps_assoc_json['positionTypeCode'].to_i &&
+          assoc[:employee_class] == pps_assoc_json['emplClass'].to_i
         end.nil?
 
         # New PPS association found
+        Rails.logger.debug "Adding PPS association to '#{loginid}' ..."
         PpsAssociationsService.add_pps_association_to_person(p,
                                                              Title.find_by(code: pps_assoc_json['titleCode']),
                                                              Department.find_by(code: pps_assoc_json['deptCode']),
                                                              Department.find_by(code: pps_assoc_json['adminDeptCode']),
                                                              Department.find_by(code: pps_assoc_json['apptDeptCode']),
                                                              pps_assoc_json['assocRank'].to_i,
-                                                             pps_assoc_json['positionTypeCode'].to_i)
+                                                             pps_assoc_json['positionTypeCode'].to_i,
+                                                             pps_assoc_json['emplClass'].to_i)
       end
 
       existing_pps_assocs.each do |assoc|
         # Destroy old PPS associations
+        Rails.logger.debug "Removing PPS association from '#{loginid}' ..."
         PpsAssociationsService.remove_pps_association_from_person(p, PpsAssociation.find_by(id: assoc[:id]))
       end
     rescue ActiveRecord::RecordNotSaved => e
