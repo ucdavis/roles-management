@@ -4,11 +4,12 @@ services:
     image: mysql:5.6
     volumes:
       - ./tmp/mysql-roles-docker:/var/lib/mysql
+      - ./docker-mysql-init.sql:/docker-entrypoint-initdb.d/docker-mysql-init.sql
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=yes
-      - MYSQL_USER=roles
-      - MYSQL_PASSWORD=roles
-      - MYSQL_DATABASE=roles
+    #   - MYSQL_USER=roles
+    #   - MYSQL_PASSWORD=roles
+    #   - MYSQL_DATABASE=roles
   dynamodb:
     image: amazon/dynamodb-local
     command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data/
@@ -29,6 +30,10 @@ services:
       - DB_USER=roles
       - DB_PASSWORD=roles
       - DB_NAME=roles
+      - DB_TEST_HOST=db
+      - DB_TEST_NAME=roles_test
+      - DB_TEST_USER=roles
+      - DB_TEST_PASSWORD=roles
       - RACK_ENV=development
       - RAILS_ENV=development
       - DYNAMODB_ENDPOINT=http://dynamodb:8000

@@ -26,7 +26,7 @@ RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, Post
  * docker exec <container-id> rails activitylog:create_table
 
 ### Step 4. Add the first user
- * docker exec <container-id> rails title:replace_titles_with_csv[file.csv]
+ * docker exec <container-id> rails title:import_titles_with_ucpath_csv[file.csv]
  * docker exec <container-id> rails dw:import_pps_departments
  * docker exec <container-id> rails dw:import[username]
  * docker exec <container-id> rails user:grant_admin[username]
