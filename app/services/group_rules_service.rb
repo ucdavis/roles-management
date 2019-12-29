@@ -150,7 +150,7 @@ class GroupRulesService
       end
     when :employee_class
       GroupRuleResultSet.where(column: 'employee_class').each do |rule_set|
-        next unless entity.pps_associations.where(employee_class: rule_set.value).count.positive?
+        next unless entity.pps_associations.where(employee_class: rule_set.value.to_i).count.positive?
 
         Rails.logger.debug "Matched 'employee_class' result set"
         new_results << GroupRuleResult.new(entity_id: entity.id, group_rule_result_set_id: rule_set.id)
@@ -241,7 +241,7 @@ class GroupRulesService
     when :pps_position_type
       return PpsAssociation.where(position_type_code: value).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
     when :employee_class
-      return PpsAssociation.where(employee_class: value).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
+      return PpsAssociation.where(employee_class: value.to_i).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
     else
       Rails.logger.warn "Unhandled GroupRulesService.find_matches logic for column type #{column}"
     end

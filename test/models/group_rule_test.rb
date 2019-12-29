@@ -565,6 +565,28 @@ class GroupRuleTest < ActiveSupport::TestCase
     test_group_rule('appt_department', 'is', '410041', setup_match, remove_match)
   end
 
+  test "Rule 'employee_class' works" do
+    setup_match = lambda {
+      # Give a person an association involving an employee class of 1
+      title = titles(:programmer)
+      department = departments(:dssit)
+
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      assert @person.pps_associations.count.zero?
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+      @person.reload
+    }
+
+    remove_match = lambda {
+      assert @person.pps_associations.length == 1
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
+      assert @person.pps_associations.count.zero?
+    }
+
+    test_group_rule('employee_class', 'is', 1, setup_match, remove_match)
+  end
+
   private
 
   # Generic function for testing a group rule. Tests:

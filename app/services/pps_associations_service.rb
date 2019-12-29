@@ -47,7 +47,7 @@ class PpsAssociationsService
     pps_association.destroy!
 
     person.reload
-    expired_group_ids, current_group_ids = GroupRulesService.update_results_for_columns([:pps_unit, :pps_position_type, :title, :business_office_unit, :admin_business_office_unit, :appt_business_office_unit, :department, :admin_department, :appt_department], person)
+    expired_group_ids, current_group_ids = GroupRulesService.update_results_for_columns([:pps_unit, :pps_position_type, :title, :business_office_unit, :admin_business_office_unit, :appt_business_office_unit, :department, :admin_department, :appt_department, :employee_class], person)
 
     # Unassign inherited roles from old groups
     expired_group_ids.each do |group_id|
