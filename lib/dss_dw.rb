@@ -81,7 +81,10 @@ module DssDw
 
     url = "#{dw_url}#{path}"
 
-    # Determine if 'url' contains parameters
+    Rails.logger.debug "DW request: #{url} (auth excluded)"
+
+    # Add authentication token
+    # (Determine if 'url' contains parameters)
     url += if url.include?('?')
       "&token=#{dw_token}"
     else
