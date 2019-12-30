@@ -1,39 +1,37 @@
 # DSS Roles Management
 
-Roles Management (RM) is a web-based management interface for people, roles, and applications, developed by the UC Davis Division of Social Science.
-
-![Main screen with role selected](http://169.237.101.195/image1.png "Main screen with role selected")
+Roles Management (RM) is a web-based management interface for people, roles, and applications, developed by the UC Davis Social Sciences IT Service Center.
 
 RM is designed to allow anyone with employees or  virtual appliances (file servers, mailing lists, web applications) to manage and assign people and groups whatever permissions they wish without requiring the help of IT.
 
 ## Requirements
 
-RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, PostgreSQL, and Linux. It should work fine with the Passenger web application server as well.
+* Ruby 2.x (tested with 2.6.5)
+* MySQL (tested with 5.6)
+* Docker (optional, tested with engine 19.03.5)
 
 ## Installation
 
 ### Step 1. Set up secrets file
-
  * Copy docker-web-secrets.env.sample to docker-web-secrets.env and fill in values.
 
 ### Step 2. Run the services
-
  * docker-compose up
 
 ### Step 3. Set up the database
-
  * docker exec <container-id> rails db:setup
  * docker exec <container-id> rails activitylog:create_table
 
-### Step 4. Add the first user
+### Step 4. Seed initial data
  * docker exec <container-id> rails title:import_titles_with_ucpath_csv[file.csv]
  * docker exec <container-id> rails dw:import_pps_departments
+
+### Step 5. Add the first user and grant admin rights
  * docker exec <container-id> rails dw:import[username]
  * docker exec <container-id> rails user:grant_admin[username]
 
-### Step 5. Visit the service
-
-Open your browser to localhost:3000
+### Step 6. Visit the service
+ * Open your browser to localhost:3000
 
 ## Running Tests
 
