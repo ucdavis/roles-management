@@ -73,5 +73,13 @@ application applies to both groups and applications:
 ### Import departments
  * docker exec <container-id> rails dw:import_pps_departments
 
+### Tracking departments
+By default, Roles Management only imports people who are manually specified, and only updates
+those already in the system.
+
+If you wish to start automatically importing people based on their department, enable the department
+to be "tracked" in the UI under "Administrate" in the upper-right, then "Tracking ...". Turn on
+the appropriate department. Changes will take effect the next time the "dw:import" task is run.
+
 ## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
