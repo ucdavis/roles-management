@@ -70,6 +70,6 @@ class GroupRuleResultSet < ApplicationRecord
   end
 
   def destroy_if_unused
-    destroy if rules.empty?
+    destroy if rules.empty? && (self.new_record? == false)
   end
 end

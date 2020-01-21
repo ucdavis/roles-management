@@ -207,6 +207,10 @@ namespace :group do
 
     if args[:loginid]
       people << Person.find_by_loginid(args[:loginid])
+      if people[0] == nil
+        STDERR.puts "No person with login ID found: #{args[:loginid]}"
+        exit(-1)
+      end
     else
       people = Person.all
     end
@@ -237,7 +241,7 @@ namespace :group do
         unless group.members.map(&:loginid).include?(p.loginid)
           Rails.logger.info "#{p.loginid}: Group #{group.id} #{group.name} (excluded) ..."
           Rails.logger.info "#{p.loginid}: -- Has inherited role #{parent_ra.role_id} / #{parent_ra.role.application.name}, #{parent_ra.role.token} but should not ..."
-          ra.destroy
+          RoleAssignmentsService.unassign_role_from_entity(ra)
           total_incorrect += 1
         end
       end

@@ -7,26 +7,14 @@ class SisAssociationsService
     raise 'Expected String object' unless level_code.is_a?(String)
 
     SisAssociation.create!(entity_id: person.id,
-                           major: major,
-                           association_rank: association_rank,
-                           level_code: level_code)
-
-    person.reload
-    expired_group_ids, current_group_ids = GroupRulesService.update_results_for_columns([:sis_level_code, :major], person)
-
-    # Unassign inherited roles from old groups
-    expired_group_ids.each do |group_id|
-      group = Group.find_by(id: group_id)
-      RoleAssignmentsService.unassign_group_roles_from_member(group, person)
-    end
-
-    # Assign inherited roles to new groups
-    current_group_ids.each do |group_id|
-      group = Group.find_by(id: group_id)
-      RoleAssignmentsService.assign_group_roles_to_member(group, person)
-    end
+                          major: major,
+                          association_rank: association_rank,
+                          level_code: level_code)
 
     ActivityLog.info!("Added major #{major.name}", ["person_#{person.id}"])
+
+    person.reload
+    GroupRulesService.update_results_for_columns([:sis_level_code, :major], person)
   end
 
   # Removes a SIS association from a person, including all associated concerns (e.g. group rules, inherited roles, sync actions)
@@ -36,24 +24,11 @@ class SisAssociationsService
 
     old_major_name = sis_association.major.name
     sis_association.destroy!
+    ActivityLog.info!("Removed major #{old_major_name}", ["person_#{person.id}"])
 
     person.reload
 
-    expired_group_ids, current_group_ids = GroupRulesService.update_results_for_columns([:sis_level_code, :major], person)
-
-    # Unassign inherited roles from old groups
-    expired_group_ids.each do |group_id|
-      group = Group.find_by(id: group_id)
-      RoleAssignmentsService.unassign_group_roles_from_member(group, person)
-    end
-
-    # Assign inherited roles to new groups
-    current_group_ids.each do |group_id|
-      group = Group.find_by(id: group_id)
-      RoleAssignmentsService.assign_group_roles_to_member(group, person)
-    end
-
-    ActivityLog.info!("Removed major #{old_major_name}", ["person_#{person.id}"])
+    GroupRulesService.update_results_for_columns([:sis_level_code, :major], person)
   end
 
   def self.remove_all_sis_associations_from_person(person)

@@ -2,8 +2,6 @@ class GroupRulesService
   # Recalculates all rules related to column and entity.
   # Similar to GroupRule.update_results() but only involves removing/adding results for a specific person
   # Note: Function assumes GroupRule is an 'is' rule as 'is not' are generally unsupported.
-  #
-  # @return [Array, Array] of outdated and current group IDs
   def self.update_results_for(column, entity)
     raise 'Expected Person object' unless entity.is_a?(Person)
     raise "Cannot update_results_for() for unknown column: #{column}" unless GroupRule.valid_columns.include? column.to_s
@@ -249,23 +247,16 @@ class GroupRulesService
     return []
   end
 
-  # Call GroupRuleService.update_results_for() a single individual over multiple columns
+  # Call GroupRulesService.update_results_for() a single individual over multiple columns
   def self.update_results_for_columns(columns, person)
     raise 'Expected Array object' unless columns.is_a?(Array)
     raise 'Expected Person object' unless person.is_a?(Person)
 
-    expired_group_ids = []
-    current_group_ids = []
-
     columns.each do |column|
       raise 'Expected symbol' unless column.is_a?(Symbol)
 
-      affected_group_ids = GroupRulesService.update_results_for(column, person)
-      expired_group_ids << affected_group_ids[0]
-      current_group_ids << affected_group_ids[1]
+      GroupRulesService.update_results_for(column, person)
     end
-
-    [expired_group_ids.flatten, current_group_ids.flatten]
   end
 
   # Main method to add a group rule to a group.
@@ -304,6 +295,35 @@ class GroupRulesService
 
     (pre_removal_members - post_removal_members).each do |removed_member|
       RoleAssignmentsService.unassign_group_roles_from_member(group, removed_member)
+    end
+  end
+
+  # Ensure a person's inherited roles are correctly handled by recording
+  # memberships before and after the given block
+  #
+  # Requires a block to be given
+  def self.while_managing_calculated_memberships_for(person)
+    return unless block_given?
+
+    # Record current calculated group members as they may change ...
+    pre_calculated_group_ids = GroupsService.rule_memberships_for_person(person.id)
+
+    yield 
+
+    # Check current calculated group memberships as they may have changed ...
+    post_calculated_group_ids = GroupsService.rule_memberships_for_person(person.id)
+    Group.where(id: pre_calculated_group_ids + post_calculated_group_ids).each(&:touch)
+
+    # Unassign inherited roles from old groups
+    (pre_calculated_group_ids - post_calculated_group_ids).each do |group_id|
+      group = Group.find_by(id: group_id)
+      RoleAssignmentsService.unassign_group_roles_from_member(group, person)
+    end
+
+    # Assign inherited roles to new groups
+    (post_calculated_group_ids - pre_calculated_group_ids).each do |group_id|
+      group = Group.find_by(id: group_id)
+      RoleAssignmentsService.assign_group_roles_to_member(group, person)
     end
   end
 end

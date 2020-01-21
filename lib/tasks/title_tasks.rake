@@ -23,8 +23,6 @@ namespace :title do
 
     # Check header expectations
     if titles_csv[0][0] != 'Job Code'
-      require 'byebug'
-      byebug
       puts "Expected first column of header row to be 'Job Code' (representing the numeric code) but was '#{titles_csv[0][0]}'."
       exit(-1)
     end
@@ -59,6 +57,9 @@ namespace :title do
       puts "\tCode: #{code}"
       puts "\tName: #{name}"
       puts "\tUnit: #{unit}"
+
+      # UC Path units include the variable character '%' which is set to 3 for UC Davis
+      unit&.gsub!('%', '3')
 
       t = Title.find_by_code(code)
       if t

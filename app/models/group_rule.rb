@@ -21,12 +21,10 @@ class GroupRule < ApplicationRecord
   end
 
   belongs_to :group, touch: true
-  # result_set isn't optional but we don't want to create result_sets during validation in case
-  # validation fails and we end up creating a dangling result set.
-  belongs_to :result_set, class_name: 'GroupRuleResultSet', foreign_key: 'group_rule_result_set_id', optional: true
+  belongs_to :result_set, class_name: 'GroupRuleResultSet', foreign_key: 'group_rule_result_set_id', optional: false
 
-  before_save   :link_result_set
-  after_destroy :destroy_ruleset_if_empty
+  before_validation :link_result_set
+  after_destroy     :destroy_ruleset_if_empty
 
   # Needed by 'Group' when calculating rules
   def self.valid_columns
@@ -85,14 +83,16 @@ class GroupRule < ApplicationRecord
     return false
   end
 
-  private
+  def to_s
+    "GroupRule(id: #{id}, column: #{column}, condition: #{condition}, value: #{value}"
+  end
 
   # Recalculates rule results if column or value changed. Called after_save.
   def link_result_set
-    return unless column_changed? || value_changed?
-    return unless column.present? && value.present?
+    # Avoid linking a result set if it already exists and is correct
+    return if (self.result_set != nil) && (self.column == self.result_set.column) && (self.value == self.result_set.value)
 
-    grs = GroupRuleResultSet.find_or_create_by(
+    grs = GroupRuleResultSet.find_or_initialize_by(
       column: column,
       value: value
     )
@@ -103,6 +103,8 @@ class GroupRule < ApplicationRecord
 
     self.result_set = grs
   end
+
+  private
 
   # Alert the GroupRuleResultSet in case it needs to destroy itself
   def destroy_ruleset_if_empty

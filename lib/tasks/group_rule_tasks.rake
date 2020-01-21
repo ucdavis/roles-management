@@ -49,4 +49,34 @@ namespace :rules do
     puts "According to check, specified person (#{p.id},#{p.loginid}) " + (matches_all_groups ? 'should be' : 'should not be') + " in the group"
     puts "NOTE: This test does not currently account for filter ('does not match') rules, which may change results."
   end
+
+  desc 'Validate GroupRuleResultSets exist for every GroupRule.'
+  task validate_group_rule_result_sets: :environment do
+    invalid_count = 0
+
+    GroupRule.all.each do |gr|
+      # Ensure their properties match
+      if gr.column != gr.result_set.column
+        puts "GroupRule ID #{gr.id}: Mismatched column (#{gr.column}) against linked result set (#{gr.result_set.column})"
+        # Unlink result set
+        rs = gr.result_set
+        rs.destroy_if_unused
+        gr.result_set = nil
+      end
+      if gr.value != gr.result_set&.value
+        puts "GroupRule ID #{gr.id}: Mismatched value (#{gr.value}) against linked result set (#{gr.result_set.value})"
+        rs = gr.result_set
+        rs.destroy_if_unused
+        gr.result_set = nil
+      end
+
+      # Ensure result sets exist
+      unless gr.result_set
+        invalid_count += 1
+        gr.save!
+      end
+    end
+
+    puts "Corrected #{invalid_count} missing results out of #{GroupRule.count} total group rules"
+  end
 end

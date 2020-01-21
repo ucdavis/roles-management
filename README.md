@@ -79,5 +79,26 @@ If you wish to start automatically importing people based on their department, e
 to be "tracked" in the UI under "Administrate" in the upper-right, then "Tracking ...". Turn on
 the appropriate department. Changes will take effect the next time the "dw:import" task is run.
 
+## Background Tasks
+The following is a list of background tasks that should be configured for proper RM behavior:
+
+ * Continuously (recommended):
+   * Ensure delayed_job is running (for on-demand syncing)
+ * Every 24 hours (recommended):
+   * rake 'dw:import_pps_departments'
+   * rake 'iam:import_sis_majors'
+   * rake 'iam:import_bous'
+   * rake 'group:recalculate_inherited_application_operatorships'
+   * rake 'group:recalculate_inherited_application_ownerships'
+ * Every 12 hours (recommended):
+   * rake 'dw:import'
+   * rake 'person:update_active_flag'
+   * rake 'person:remove_inactive'
+ * Every 6 hours (recommended):
+   * rake 'ad:resync_roles'
+ * Unknown
+   * rake 'group:audit_inherited_roles' (was found disabled in AWS)
+   * rake 'teem:sync_users'
+
 ## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)

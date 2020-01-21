@@ -6,8 +6,12 @@ require Rails.root.join('lib', 'active_directory.rb')
 require Rails.root.join('lib', 'active_directory_helper.rb')
 
 namespace :ad do
-  desc 'Audit AD for membership differences in AD-enabled roles (or role)'
+  # This task only audits (i.e. reads) AD and RM. It does not alter any data.
+  desc 'Audit AD for membership differences in AD-enabled role(s)'
   task :audit_roles, [:role_id] => :environment do |t, args|
+    old_logger = ActiveRecord::Base.logger
+    ActiveRecord::Base.logger = nil
+
     @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
 
     ActiveDirectory.configure(@config)
@@ -63,6 +67,9 @@ namespace :ad do
           puts "\t\t#{missing}"
         end
       end
+
+      print "\tAD member count: #{ad_members.length}\n"
+      print "\tRM member count: #{role_members.length}\n"
     end
 
     puts "Found #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s) in need of syncing."

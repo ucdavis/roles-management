@@ -19,15 +19,15 @@ class GroupOwnership < ApplicationRecord
       case action
       when :save
         if saved_change_to_attribute?(:created_at)
-          logger.info "Created group ownership between #{entity.log_identifier} and #{group.log_identifier}."
+          Rails.logger.info "Created group ownership between #{entity.log_identifier} and #{group.log_identifier}."
         else
           # GroupOwnerships should really only be created or destroyed, not updated.
-          logger.error "log_changes called for existing GroupOwnership. This shouldn't happen. Ownership is between #{entity.log_identifier} and #{group.log_identifier}."
+          Rails.logger.error "log_changes called for existing GroupOwnership. This shouldn't happen. Ownership is between #{entity.log_identifier} and #{group.log_identifier}."
         end
       when :destroy
-        logger.info "Removed group ownership between #{entity.log_identifier} and #{group.log_identifier}."
+        Rails.logger.info "Removed group ownership between #{entity.log_identifier} and #{group.log_identifier}."
       else
-        logger.warn "Unknown action in log_changes #{action}."
+        Rails.logger.warn "Unknown action in log_changes #{action}."
       end
     end
   end

@@ -1,7 +1,7 @@
 class Title < ApplicationRecord
   validates :name, presence: true
   validates :code, presence: true, uniqueness: true
-  validates :unit, presence: true, uniqueness: false
+  validates :unit, presence: false, uniqueness: false
 
   # Title code must have leading zeroes to ensure a length of four
   before_save { |title| title.code = title.code.rjust(4, '0') }

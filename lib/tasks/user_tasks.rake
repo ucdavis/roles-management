@@ -184,4 +184,18 @@ namespace :user do
       end
     end
   end
+
+  desc 'Delete user(s).'
+  task :delete, :arg1 do |t, args|
+    Rake::Task['environment'].invoke
+
+    args.each do |arg|
+      p = Person.find_by_loginid(arg[1])
+      if p
+        p.destroy
+      else
+        puts "No such user '#{arg[1]}'"
+      end
+    end
+  end
 end
