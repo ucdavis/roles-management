@@ -375,6 +375,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert Sync.trigger_test_count(:remove_from_role) == 2, "remove_from_role should have been triggered twice but was triggered #{Sync.trigger_test_count(:remove_from_role)}"
   end
 
+  # FIXME: This test needs to account for the while_managing_calculated_memberships_for() changes
   test 'person attribute modification resulting in removal from automatic group triggers sync' do
     group = entities(:groupWithNothing)
     role = roles(:really_boring_role)
@@ -412,7 +413,10 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     # Remove matching characteristic
     test_sync_trigger(:remove_from_role) do
-      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
+      assert @person.roles.include?(role), 'person should have really_boring_role'
+      GroupRulesService.while_managing_calculated_memberships_for(@person) do
+        SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
+      end
       group.reload
       assert group.members.empty?, 'group should have no members'
       assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
@@ -456,7 +460,9 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     # Add matching characteristic
     test_sync_trigger(:add_to_role) do
-      SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
+      GroupRulesService.while_managing_calculated_memberships_for(@person) do
+        SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
+      end
       group.reload
       assert group.members.length == 1, 'group should have a member'
       assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
