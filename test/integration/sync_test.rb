@@ -35,13 +35,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
   test 'deactivating person triggers remove_from_system' do
     p = entities(:casuser)
-    p.active = true
-    p.save!
+    PeopleService.set_active_status(p, true)
 
     Sync.reset_trigger_test_counts
 
-    p.active = false
-    p.save!
+    PeopleService.set_active_status(p, false)
 
     assert Sync.trigger_test_count(:remove_from_system) == 1, 'remove_from_system should have been triggered'
   end
@@ -51,13 +49,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert p.roles.count == 2, "casuser should have exactly two roles but has #{p.roles.count}"
 
-    p.active = true
-    p.save!
+    PeopleService.set_active_status(p, true)
 
     Sync.reset_trigger_test_counts
 
-    p.active = false
-    p.save!
+    PeopleService.set_active_status(p, false)
 
     assert Sync.trigger_test_count(:remove_from_role) == 2, 'remove_from_role should have been triggered twice'
   end
@@ -65,13 +61,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
   test 'activating person triggers add_to_system' do
     p = entities(:casuser)
 
-    p.active = false
-    p.save!
+    PeopleService.set_active_status(p, false)
 
     Sync.reset_trigger_test_counts
 
-    p.active = true
-    p.save!
+    PeopleService.set_active_status(p, true)
 
     assert Sync.trigger_test_count(:add_to_system) == 1, 'add_to_system should have been triggered'
   end
@@ -81,13 +75,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert p.roles.count == 2, "casuser should have exactly two roles but has #{p.roles.count}"
 
-    p.active = false
-    p.save!
+    PeopleService.set_active_status(p, false)
 
     Sync.reset_trigger_test_counts
 
-    p.active = true
-    p.save!
+    PeopleService.set_active_status(p, true)
 
     assert Sync.trigger_test_count(:add_to_role) == 2, 'add_to_role should have been triggered twice'
   end
@@ -102,16 +94,20 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should not have roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     Sync.reset_trigger_test_counts
 
     # Give the group a role
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
@@ -119,7 +115,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -141,14 +137,18 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should not have roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    gm = GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    gm = GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -161,7 +161,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -172,8 +172,8 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Now remove that member from the group and ensure the user loses role
+    GroupMembershipsService.remove_member_from_group(@person, group)
     group.reload
-    group.memberships.destroy(gm.id)
 
     assert group.members.empty?, 'group should have no members'
     assert group.roles.length == 1, 'group should still have one role'
@@ -182,7 +182,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert @person.roles.empty?, 'removing person from group should have removed inherited role'
 
-    assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role trigger count is incorrect'
+    assert Sync.trigger_test_count(:remove_from_role) == 1, "remove_from_role trigger count is incorrect (should be 1 but is #{Sync.trigger_test_count(:remove_from_role)})"
   end
 
   test 'assigning/unassigning role to group should not fire add/remove_to_role for inactive group member' do
@@ -195,16 +195,20 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should have no roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, 'casuser should have no group memberships'
 
     Sync.reset_trigger_test_counts
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -216,12 +220,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
 
-    @person.active = false
-    @person.save
+    PeopleService.set_active_status(@person, false)
     @person.reload
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -239,7 +242,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert p.roles.include?(r) == false, 'casuser should not have boring_role at the start of the test'
 
     Sync.reset_trigger_test_counts
-    p.roles << r
+    RoleAssignmentsService.assign_role_to_entity(p, r)
 
     assert Sync.trigger_test_count(:add_to_role) == 1, 'add_to_role should have been triggered'
   end
@@ -249,11 +252,11 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     r = roles(:boring_role)
 
     assert p.roles.include?(r) == false, 'casuser should not have boring_role at the start of the test'
-    p.roles << r
+    ra = RoleAssignmentsService.assign_role_to_entity(p, r)
 
     Sync.reset_trigger_test_counts
 
-    p.roles.delete(r)
+    RoleAssignmentsService.unassign_role_from_entity(ra)
 
     assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role should have been triggered'
   end
@@ -268,14 +271,18 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should not have roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -290,7 +297,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -310,14 +317,18 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert group.roles.empty?, 'groupWithoutARole should not have roles'
     assert group.members.empty?, 'groupWithoutARole should have no members'
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, 'casuser should have no roles'
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign the test user to this group with no roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -330,7 +341,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert @person.roles.empty?, 'no roles should have been given to the user as the group had no roles'
 
     # Give the group a role and check that the user gets it
-    group.roles << role
+    RoleAssignmentsService.assign_role_to_entity(group, role)
 
     assert group.roles.length == 1, 'role assignment on group failed'
 
@@ -341,7 +352,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     Sync.reset_trigger_test_counts
 
     # Now remove that role from the group and ensure the user loses it
-    group.roles.delete(role)
+    RoleAssignmentsService.unassign_role_from_entity(group.role_assignments[0])
     group.reload
 
     assert group.roles.empty?, 'role removal on group failed'
@@ -359,45 +370,39 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     assert p.roles[0].members.length == 2, 'role should have 2 members'
 
     Sync.reset_trigger_test_counts
-    p.roles[0].destroy
+    RolesService.destroy_role(p.roles[0])
 
-    assert Sync.trigger_test_count(:remove_from_role) == 2, 'remove_from_role should have been triggered twice'
+    assert Sync.trigger_test_count(:remove_from_role) == 2, "remove_from_role should have been triggered twice but was triggered #{Sync.trigger_test_count(:remove_from_role)}"
   end
 
   test 'person attribute modification resulting in removal from automatic group triggers sync' do
-    @person = entities(:casuser)
     group = entities(:groupWithNothing)
+    role = roles(:really_boring_role)
 
     assert group.roles.empty?, 'looks like groupWithNothing has a role'
     assert group.rules.empty?, 'looks like groupWithNothing has a rule'
     assert group.owners.empty?, 'looks like groupWithNothing has an owner'
     assert group.operators.empty?, 'looks like groupWithNothing has an operator'
 
-    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
+    @person = entities(:casuser)
 
-    setup_match = lambda {
-      # Give a person a SIS association with level code 'GR'
-      sis_association = SisAssociation.new
-      sis_association.entity_id = @person.id
-      sis_association.major = Major.find_by(name: 'History')
-      sis_association.level_code = 'GR'
-      sis_association.association_rank = 1
-      @person.sis_associations = [sis_association]
-    }
-
-    remove_match = lambda {
-      @person.sis_associations.destroy(@person.sis_associations[0])
-      @person.save!
-    }
-
-    setup_match.call
+    SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
 
     # Test basic rule creation matches existing people
     assert group.members.empty?, 'group should have no members'
-
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'major', 'is', 'History')
     group.reload
     assert group.members.length == 1, 'group should have 1 member(s)'
+
+    assert group.roles.length == 0, 'group should have no roles'
+    assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+
+    test_sync_trigger(:add_to_role) do
+      RoleAssignmentsService.assign_role_to_entity(group, role)
+      assert group.roles.length == 1, 'group should have a role'
+      @person.reload
+      assert @person.roles.include?(role), 'person should have really_boring_role'
+    end
 
     # Subtract a second from the 'updated_at' flag to ensure it is a reliable
     # indicator of a group being touched
@@ -406,28 +411,115 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     group_last_updated_at = group.updated_at
 
     # Remove matching characteristic
-    Sync.reset_trigger_test_counts
-    Rails.logger.debug 'Calling remove match ...'
-    remove_match.call
-    group.reload
-    assert group.members.empty?, 'group should have no members'
-    assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
-    # assert Sync.trigger_test_count(:remove_from_role) == 1, 'remove_from_role should have been triggered'
+    test_sync_trigger(:remove_from_role) do
+      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
+      group.reload
+      assert group.members.empty?, 'group should have no members'
+      assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
+      @person.reload
+      assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+    end
   end
 
   test 'person attribute modification resulting in addition to automatic group triggers sync' do
-    # assert false
+    group = entities(:groupWithNothing)
+    role = roles(:really_boring_role)
+
+    assert group.roles.empty?, 'looks like groupWithNothing has a role'
+    assert group.rules.empty?, 'looks like groupWithNothing has a rule'
+    assert group.owners.empty?, 'looks like groupWithNothing has an owner'
+    assert group.operators.empty?, 'looks like groupWithNothing has an operator'
+
+    @person = entities(:casuser)
+
+    # Test basic rule creation matches existing people
+    assert group.members.empty?, 'group should have no members'
+    GroupRulesService.add_group_rule(group, 'major', 'is', 'History')
+    group.reload
+    assert group.members.empty?, 'group should have no members'
+
+    assert group.roles.length == 0, 'group should have no roles'
+    assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+
+    test_sync_trigger(:add_to_role, 0) do
+      RoleAssignmentsService.assign_role_to_entity(group, role)
+      assert group.roles.length == 1, 'group should have a role'
+      @person.reload
+      assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+    end
+
+    # Subtract a second from the 'updated_at' flag to ensure it is a reliable
+    # indicator of a group being touched
+    group.updated_at -= 1
+    group.save!
+    group_last_updated_at = group.updated_at
+
+    # Add matching characteristic
+    test_sync_trigger(:add_to_role) do
+      SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
+      group.reload
+      assert group.members.length == 1, 'group should have a member'
+      assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
+      @person.reload
+      assert @person.roles.include?(role), 'person should have really_boring_role'
+    end
   end
 
-  test 'changing attributes of a group rule triggers sync' do
-    # assert false
+  test 'removing a group rule causing member loss triggers sync' do
+    group = entities(:groupWithNothing)
+    role = roles(:really_boring_role)
+
+    assert group.roles.empty?, 'looks like groupWithNothing has a role'
+    assert group.rules.empty?, 'looks like groupWithNothing has a rule'
+    assert group.owners.empty?, 'looks like groupWithNothing has an owner'
+    assert group.operators.empty?, 'looks like groupWithNothing has an operator'
+
+    @person = entities(:casuser)
+
+    SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
+
+    # Test basic rule creation matches existing people
+    assert group.members.empty?, 'group should have no members'
+    GroupRulesService.add_group_rule(group, 'major', 'is', 'History')
+    group.reload
+    assert group.members.length == 1, 'group should have 1 member(s)'
+
+    assert group.roles.length == 0, 'group should have no roles'
+    assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+
+    test_sync_trigger(:add_to_role) do
+      RoleAssignmentsService.assign_role_to_entity(group, role)
+      assert group.roles.length == 1, 'group should have a role'
+      @person.reload
+      assert @person.roles.include?(role), 'person should have really_boring_role'
+    end
+
+    # Subtract a second from the 'updated_at' flag to ensure it is a reliable
+    # indicator of a group being touched
+    group.updated_at -= 1
+    group.save!
+    group_last_updated_at = group.updated_at
+
+    # Remove matching characteristic
+    test_sync_trigger(:remove_from_role) do
+      Rails.logger.debug "CALLING IT"
+      GroupRulesService.remove_group_rule(group.rules.first)
+      Rails.logger.debug "DONE CALLING IT"
+      group.reload
+      assert group.members.empty?, 'group should have no members'
+      assert group.updated_at > group_last_updated_at, 'affected group should have been touched'
+      assert group.rules.empty?, 'group should have no rules'
+      @person.reload
+      assert @person.roles.include?(role) == false, 'person should not have really_boring_role'
+    end
   end
 
-  test 'adding group rule via HTTP triggers role_audit' do
-    # assert false
-  end
+  private
 
-  test 'removing group rule via HTTP triggers role_audit' do
-    # assert false
+  # Generic function for testing a sync trigger.
+  def test_sync_trigger(sync_type, expected_sync_count = 1)
+    Sync.reset_trigger_test_counts
+    yield
+    assert Sync.trigger_test_count(sync_type) == expected_sync_count, "#{sync_type} should have been triggered #{expected_sync_count} time(s) but was triggered #{Sync.trigger_test_count(sync_type)} time(s)"
   end
 end

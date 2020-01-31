@@ -1,4 +1,4 @@
-FROM ruby:2.4-alpine
+FROM ruby:2.6-alpine
 
 ENV PATH /root/.yarn/bin:$PATH
 
@@ -29,7 +29,7 @@ RUN gem install bundler && bundle install -j "$(getconf _NPROCESSORS_ONLN)" --re
 # Again, being separate means this will cache.
 COPY package.json yarn.lock ./
 RUN yarn install
-RUN npm rebuild node-sass --force
+# RUN npm rebuild node-sass --force
 
 ARG RAILS_ENV=production
 ENV RAILS_ENV $RAILS_ENV
@@ -78,8 +78,23 @@ ENV SMTP_USERNAME $SMTP_USERNAME
 ARG SMTP_PASSWORD
 ENV SMTP_PASSWORD $SMTP_PASSWORD
 
+# CAS settings
 ARG CAS_URL
 ENV CAS_URL $CAS_URL
+
+# DynamoDB settings
+ARG DYNAMODB_REGION
+ENV DYNAMODB_REGION $DYNAMODB_REGION
+ARG DYNAMODB_ENDPOINT
+ENV DYNAMODB_ENDPOINT $DYNAMODB_ENDPOINT
+ARG DYNAMODB_ACTIVITY_LOG_TABLE
+ENV DYNAMODB_ACTIVITY_LOG_TABLE $DYNAMODB_ACTIVITY_LOG_TABLE
+ARG DYNAMODB_AWS_ACCESS_KEY
+ENV DYNAMODB_AWS_ACCESS_KEY $DYNAMODB_AWS_ACCESS_KEY
+ARG DYNAMODB_AWS_SECRET_KEY
+ENV DYNAMODB_AWS_SECRET_KEY $DYNAMODB_AWS_SECRET_KEY
+
+RUN mkdir log && touch log/delayed_job.log
 
 # Copy the main application.
 COPY . ./

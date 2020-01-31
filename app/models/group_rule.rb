@@ -4,7 +4,7 @@ class GroupRule < ApplicationRecord
   VALID_COLUMNS = %w[title major loginid is_staff is_faculty is_student is_employee
                      is_external is_hs_employee sis_level_code pps_unit pps_position_type
                      department admin_department appt_department business_office_unit
-                     admin_business_office_unit appt_business_office_unit].freeze
+                     admin_business_office_unit appt_business_office_unit employee_class].freeze
 
   validates_presence_of :condition, :column, :value, :group_id
   validates_inclusion_of :condition, in: %w[is is\ not]
@@ -21,12 +21,10 @@ class GroupRule < ApplicationRecord
   end
 
   belongs_to :group, touch: true
-  # result_set isn't optional but we don't want to create result_sets during validation in case
-  # validation fails and we end up creating a dangling result set.
-  belongs_to :result_set, class_name: 'GroupRuleResultSet', foreign_key: 'group_rule_result_set_id', optional: true
+  belongs_to :result_set, class_name: 'GroupRuleResultSet', foreign_key: 'group_rule_result_set_id', optional: false
 
-  before_save   :link_result_set
-  after_destroy :destroy_ruleset_if_empty
+  before_validation :link_result_set
+  after_destroy     :destroy_ruleset_if_empty
 
   # Needed by 'Group' when calculating rules
   def self.valid_columns
@@ -85,77 +83,16 @@ class GroupRule < ApplicationRecord
     return false
   end
 
-  # Finds all people (as IDs) matching this GroupRule column and value, ignoring condition
-  def self.find_matches(column, value)
-    case column.to_sym
-    when :title
-      title_id = Title.where(code: value).pluck('id').first
-      return [] if title_id.nil?
-      return PpsAssociation.where(title_id: title_id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
-    when :major
-      major = Major.find_by_name(value)
-      return [] if major.nil?
-      return major.people.select(:id)
-    when :department
-      department = Department.find_by(code: value)
-      return [] if department.nil?
-      return department.people.select(:id)
-    when :admin_department
-      admin_department = Department.find_by(code: value)
-      return [] if admin_department.nil?
-      return PpsAssociation.where(admin_department_id: admin_department.id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
-    when :appt_department
-      appt_department = Department.find_by(code: value)
-      return [] if appt_department.nil?
-      return PpsAssociation.where(appt_department_id: appt_department.id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
-    when :business_office_unit
-      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
-      return [] if bou.nil?
-      return bou.departments.map { |d| d.people.select(:id) }.flatten
-    when :admin_business_office_unit
-      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
-      return [] if bou.nil?
-      return bou.departments.map { |d| d.admin_people.select(:id) }.flatten
-    when :appt_business_office_unit
-      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
-      return [] if bou.nil?
-      return bou.departments.map { |d| d.appt_people.select(:id) }.flatten
-    when :loginid
-      return Person.where(loginid: value).select(:id)
-    when :is_staff
-      return Person.where(is_staff: true).select(:id)
-    when :is_faculty
-      return Person.where(is_faculty: true).select(:id)
-    when :is_student
-      return Person.where(is_student: true).select(:id)
-    when :is_employee
-      return Person.where(is_employee: true).select(:id)
-    when :is_hs_employee
-      return Person.where(is_hs_employee: true).select(:id)
-    when :is_external
-      return Person.where(is_external: true).select(:id)
-    when :sis_level_code
-      return SisAssociation.where(level_code: value).pluck(:entity_id).map { |e_id| OpenStruct.new(id: e_id) }
-    when :pps_unit
-      title_ids = Title.where(unit: value).pluck(:id)
-      return PpsAssociation.where(title_id: title_ids).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
-    when :pps_position_type
-      return PpsAssociation.where(position_type_code: value).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
-    else
-      Rails.logger.warn "Unhandled GroupRule.find_matches logic for column type #{column}"
-    end
-
-    return []
+  def to_s
+    "GroupRule(id: #{id}, column: #{column}, condition: #{condition}, value: #{value}"
   end
 
-  private
-
   # Recalculates rule results if column or value changed. Called after_save.
-  def link_result_set # rubocop:disable Metrics/CyclomaticComplexity
-    return unless column_changed? || value_changed?
-    return unless column.present? && value.present?
+  def link_result_set
+    # Avoid linking a result set if it already exists and is correct
+    return if (self.result_set != nil) && (self.column == self.result_set.column) && (self.value == self.result_set.value)
 
-    grs = GroupRuleResultSet.find_or_create_by(
+    grs = GroupRuleResultSet.find_or_initialize_by(
       column: column,
       value: value
     )
@@ -166,6 +103,8 @@ class GroupRule < ApplicationRecord
 
     self.result_set = grs
   end
+
+  private
 
   # Alert the GroupRuleResultSet in case it needs to destroy itself
   def destroy_ruleset_if_empty

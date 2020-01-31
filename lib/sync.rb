@@ -179,8 +179,13 @@ module Sync
 
     Sync.logger.info "#{job_uuid}: Queueing sync scripts at #{Time.now}."
 
-    sync_scripts.each do |sync_script|
-      Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), queue: 'sync'
+    if Rails.env.development? || Rails.env.test?
+      Rails.logger.warn "Sync: Only queueing test.rb sync script due to running in development or test mode"
+      Delayed::Job.enqueue SyncScriptJob.new(job_uuid, 'test.rb', sync_json), queue: 'sync'
+    elsif Rails.env.production?
+      sync_scripts.each do |sync_script|
+        Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), queue: 'sync'
+      end
     end
   end
 

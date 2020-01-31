@@ -16,10 +16,7 @@ namespace :user do
           puts "#{arg[1]} already has access"
           next
         else
-          ra = RoleAssignment.new
-          ra.role_id = rm_access_role_id
-          ra.entity_id = p.id
-          ra.save!
+          RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_access_role_id))
         end
       else
         puts "No such user '#{arg[1]}'"
@@ -71,10 +68,7 @@ namespace :user do
           puts "#{arg[1]} already has operate"
           next
         else
-          ra = RoleAssignment.new
-          ra.role_id = rm_operate_role_id
-          ra.entity_id = p.id
-          ra.save!
+          RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_operate_role_id))
 
           puts "Granted operate to #{arg[1]}"
           next
@@ -130,17 +124,12 @@ namespace :user do
           puts "#{arg[1]} already has admin access"
         else
           puts "Granting admin to #{arg[1]}..."
-          ra = RoleAssignment.new
-          ra.role_id = rm_admin_role_id
-          ra.entity_id = p.id
-          ra.save!
+          rm_application_id = Role.find_by(id: rm_admin_role_id).application_id
+          RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_admin_role_id))
 
           # Ensure they have the 'access' role as well
-          if p.roles.where(:application_id => ra.role.application_id).where(:token => "access").length == 0
-            ra = RoleAssignment.new
-            ra.role_id = rm_access_role_id
-            ra.entity_id = p.id
-            ra.save!
+          if p.roles.where(application_id: rm_application_id).where(token: 'access').length == 0
+            RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: rm_access_role_id))
           end
         end
       else
@@ -190,6 +179,20 @@ namespace :user do
         p.role_assignments.each do |ra|
           printf "\t%-32s / %-16s %s\n", ra.role.application.name, ra.role.token, ra.created_at.strftime("%b %d, %Y %H:%M")
         end
+      else
+        puts "No such user '#{arg[1]}'"
+      end
+    end
+  end
+
+  desc 'Delete user(s).'
+  task :delete, :arg1 do |t, args|
+    Rake::Task['environment'].invoke
+
+    args.each do |arg|
+      p = Person.find_by_loginid(arg[1])
+      if p
+        p.destroy
       else
         puts "No such user '#{arg[1]}'"
       end

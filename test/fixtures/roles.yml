@@ -25,3 +25,10 @@ dssrm_operate:
   description: Provides operate (reduced super user / root) access
   token: operate
   application_id: 1
+
+really_boring_role:
+  id: 5
+  name: Really boring role
+  description: I'm a really plain ol' boring role
+  token: really_boring
+  application_id: 2

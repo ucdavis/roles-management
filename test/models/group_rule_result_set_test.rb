@@ -7,8 +7,7 @@ class GroupRuleResultSetTest < ActiveSupport::TestCase
 
     assert group.rules.empty?, 'looks like groupWithNothing has a rule'
 
-    group_rule = GroupRule.new(column: 'loginid', condition: 'is', value: 'casuser2', group_id: group.id)
-    group.rules << group_rule
+    group_rule = GroupRulesService.add_group_rule(group, 'loginid', 'is', 'casuser2')
 
     group.reload
     group_rule.reload

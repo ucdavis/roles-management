@@ -159,28 +159,17 @@ namespace :group do
 
     puts "\n#{p.loginid} has #{calculated_ras.length} inherited roles out of #{p.role_assignments.length} total roles."
 
-    # First remove the calculated role assignments
-    Thread.current[:role_assignment_destroying_calculated_flag] = true
-    calculated_ras.each(&:destroy)
-    Thread.current[:role_assignment_destroying_calculated_flag] = nil
-
-    puts "All calculated role assignments destroyed.\n\n"
-
     recalculated_role_ids = []
 
-    # Now re-create them based on each group's role assignment
-    p.group_memberships.each do |gm|
-      puts "Group (ID: #{gm.group_id} / #{gm.group.name}) has #{gm.group.roles.length} roles ..."
-      gm.group.role_assignments.each do |group_ra|
+    # Re-create calculated role assignments them based on each group's role assignment
+    p.groups.each do |group|
+      puts "Group (ID: #{group.id} / #{group.name}) has #{group.roles.length} roles ..."
+      group.role_assignments.each do |group_ra|
         if RoleAssignment.find_by(entity_id: p.id, role_id: group_ra.role_id, parent_id: group_ra.id).nil?
-          ra = RoleAssignment.new
-          ra.entity_id = p.id
-          ra.role_id = group_ra.role_id
-          ra.parent_id = group_ra.id
+          # TODO: Refactor this as part of service layer work?
+          RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: group_ra.role_id), group_ra.id)
 
           puts "\tGranting role (ID: #{group_ra.role_id} / #{group_ra.role.application.name}, #{group_ra.role.token}) with parent assignment #{group_ra.id} ..."
-
-          ra.save!
 
           recalculated_role_ids << ra.role_id
         else
@@ -218,6 +207,10 @@ namespace :group do
 
     if args[:loginid]
       people << Person.find_by_loginid(args[:loginid])
+      if people[0] == nil
+        STDERR.puts "No person with login ID found: #{args[:loginid]}"
+        exit(-1)
+      end
     else
       people = Person.all
     end
@@ -248,7 +241,7 @@ namespace :group do
         unless group.members.map(&:loginid).include?(p.loginid)
           Rails.logger.info "#{p.loginid}: Group #{group.id} #{group.name} (excluded) ..."
           Rails.logger.info "#{p.loginid}: -- Has inherited role #{parent_ra.role_id} / #{parent_ra.role.application.name}, #{parent_ra.role.token} but should not ..."
-          ra.destroy
+          RoleAssignmentsService.unassign_role_from_entity(ra)
           total_incorrect += 1
         end
       end
@@ -262,11 +255,7 @@ namespace :group do
             Rails.logger.info "#{p.loginid}: Group #{group.id} #{group.name} (included) ..."
             Rails.logger.info "#{p.loginid}: -- Should have inherited role #{ra.role_id} / #{ra.role.application.name}, #{ra.role.token} but has not yet ..."
 
-            new_ra = RoleAssignment.new
-            new_ra.role_id = ra.role_id
-            new_ra.entity_id = p.id
-            new_ra.parent_id = ra.id
-            new_ra.save!
+            RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: ra.role_id), ra.id)
 
             total_missing += 1
           end

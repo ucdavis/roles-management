@@ -255,6 +255,10 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val DssRm.Views.GroupShow.pps_position_types[_value]
+      when 'employee_class'
+        $rule.find("td:nth-child(1) select").val _column
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val DssRm.Views.GroupShow.employee_class_types[_value]
       when 'iam_affiliation' # iam_affiliation is a newly created iam_affiliation rule not yet set
         $rule.find("td:nth-child(1) select").val 'iam_affiliation'
         $rule.find("td:nth-child(2) select").val _condition
@@ -383,6 +387,11 @@ DssRm.Views.GroupShow = Backbone.View.extend(
           column: _column
           condition: _condition
           value: _.findKey DssRm.Views.GroupShow.pps_position_types, (val) -> val == _value
+      when "employee_class"
+        rule.set
+          column: _column
+          condition: _condition
+          value: _.findKey DssRm.Views.GroupShow.employee_class_types, (val) -> val == _value
       when "department", "admin_department", "appt_department"
         rule.set
           column: _column
@@ -473,6 +482,12 @@ DssRm.Views.GroupShow = Backbone.View.extend(
           entities.push JSON.stringify({lookahead_type: lookahead_type, id: i, label: position_type})
         process(entities)
         return
+      when "employee_class"
+        entities = []
+        _.each DssRm.Views.GroupShow.employee_class_types, (employee_class_type, i) ->
+          entities.push JSON.stringify({lookahead_type: lookahead_type, id: i, label: employee_class_type})
+        process(entities)
+        return
       when "pps_unit"
         entities = []
         _.each DssRm.Views.GroupShow.pps_units, (unit, i) ->
@@ -525,4 +540,25 @@ DssRm.Views.GroupShow = Backbone.View.extend(
   pps_units: ['PA','EX','HX','RX','NX','K3','F3','87','99','LX','M3','DX','PX','IX','CX','BX','A3','GS','PSS','FX','SX','TX']
 
   sis_level_codes: ['GR','UG','LW','MD']
+
+  employee_class_types:
+    1: 'Staff: Contract'
+    2: 'Staff: Career'
+    3: 'Academic: Recall'
+    4: 'Staff: Limited'
+    5: 'Student: Casual/Restricted'
+    6: 'Staff: Per Diem'
+    7: 'Staff: Partial Year Career'
+    8: 'Staff: Floater'
+    9: 'Academic: Faculty'
+    10: 'Academic: Non Faculty'
+    11: 'Academic: Academic Student'
+    13: 'Staff: Contingent Worker'
+    14: 'Academic: Contingent Worker'
+    15: 'Staff: Rehired Retiree'
+    20: 'Academic: Conversion'
+    21: 'Academic: Emeriti'
+    22: 'Academic: Deans/Faculty Admin'
+    23: 'Academic: Post Docs'
+    24: 'Academic: Medical Residents'
 )

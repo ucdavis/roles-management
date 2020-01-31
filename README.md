@@ -1,68 +1,37 @@
 # DSS Roles Management
 
-Roles Management (RM) is a web-based management interface for people, roles, and applications, developed by the UC Davis Division of Social Science.
-
-![Main screen with role selected](http://169.237.101.195/image1.png "Main screen with role selected")
+Roles Management (RM) is a web-based management interface for people, roles, and applications, developed by the UC Davis Social Sciences IT Service Center.
 
 RM is designed to allow anyone with employees or  virtual appliances (file servers, mailing lists, web applications) to manage and assign people and groups whatever permissions they wish without requiring the help of IT.
 
 ## Requirements
 
-RM was written for Ruby 2.1 and Rails 4.2 and has been tested with Unicorn, PostgreSQL, and Linux. It should work fine with the Passenger web application server as well.
+* Ruby 2.x (tested with 2.6.5)
+* MySQL (tested with 5.6)
+* Docker (optional, tested with engine 19.03.5)
 
-## Installation / Deployment
+## Installation
 
-### Step 1. (Set configuration values)
+### Step 1. Set up secrets file
+ * Copy docker-web-secrets.env.sample to docker-web-secrets.env and fill in values.
 
-RM is designed to be re-deployable in any workgroup, though there
-are a few matters of configuration that need to be attended to:
+### Step 2. Run the services
+ * docker-compose up
 
-config/database.example.yml
-	Move this file to config/database.yml and set the appropriate values.
+### Step 3. Set up the database
+ * docker exec <container-id> rails db:setup
+ * docker exec <container-id> rails activitylog:create_table
 
-config/active_directory.example.yml
-  Move this file to config/active_directory.yml and set the appropriate values.
+### Step 4. Seed initial data
+ * docker exec <container-id> rails title:import_titles_with_ucpath_csv[file.csv]
+ * docker exec <container-id> rails dw:import_pps_departments
 
-config/secrets.example.yml
-	Move this file to config/secrets.yml and set the value. It is recommended
-	you use 'rake secret' to obtain a high quality secret.
+### Step 5. Add the first user and grant admin rights
+ * docker exec <container-id> rails dw:import[username]
+ * docker exec <container-id> rails user:grant_admin[username]
 
-config/environment.rb
-	Recode the cas.ucdavis.edu URL to your CAS server, or remove CAS entirely. If
-  you decide to remove CAS, also remove the before_filter in
-	app/controllers/application_controller.rb.
-
-config/deploy.rb
-	You'll likely want to set this to your own Capistrano setup or delete it
-	if you do not use Capistrano.
-
-config/schedule.rb
-  This file controls when cron jobs run to sync databases. It is currently
-  set up to do so at night, but you should change the time in this file if
-  you'd like anything else.
-
-You can also search the code for "INSTALLME" (case-sensitive) or "CHANGEME"
-in case this README neglects any configuration details.
-
-### Step 2. (Standard Rails procedures)
-
-Run the follow commands in order and ensure they complete successfully:
-
- * bundle install
- * bundle exec rake db:schema:load
-
-### Step 3. (Add a user)
-
-The follow steps obtain a user from a configured LDAP server and grant admin
-access:
-
- * bundle exec rake user:grant_admin[the_username]
-
-### Step 4. (Done!)
-
-Run the application:
-
- * bundle exec rails server (visit localhost:3000 to view)
+### Step 6. Visit the service
+ * Open your browser to localhost:3000
 
 ## Running Tests
 
@@ -93,6 +62,43 @@ application applies to both groups and applications:
                any attributes.
   - Group Operators: Similar to Application Operators but with the added ability to add or remove explicit
                membersbut cannot edit the group rules.
+
+## Misc. Setup
+### Import titles from CSV in Docker container
+ 1. docker cp titles.csv <container-id>:/usr/src/app
+ 2. docker exec <container-id> rails title:replace_titles_with_csv[titles.csv]
+
+### Import departments
+ * docker exec <container-id> rails dw:import_pps_departments
+
+### Tracking departments
+By default, Roles Management only imports people who are manually specified, and only updates
+those already in the system.
+
+If you wish to start automatically importing people based on their department, enable the department
+to be "tracked" in the UI under "Administrate" in the upper-right, then "Tracking ...". Turn on
+the appropriate department. Changes will take effect the next time the "dw:import" task is run.
+
+## Background Tasks
+The following is a list of background tasks that should be configured for proper RM behavior:
+
+ * Continuously (recommended):
+   * Ensure delayed_job is running (for on-demand syncing)
+ * Every 24 hours (recommended):
+   * rake 'dw:import_pps_departments'
+   * rake 'iam:import_sis_majors'
+   * rake 'iam:import_bous'
+   * rake 'group:recalculate_inherited_application_operatorships'
+   * rake 'group:recalculate_inherited_application_ownerships'
+ * Every 12 hours (recommended):
+   * rake 'dw:import'
+   * rake 'person:update_active_flag'
+   * rake 'person:remove_inactive'
+ * Every 6 hours (recommended):
+   * rake 'ad:resync_roles'
+ * Unknown
+   * rake 'group:audit_inherited_roles' (was found disabled in AWS)
+   * rake 'teem:sync_users'
 
 ## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)

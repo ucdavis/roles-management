@@ -78,7 +78,10 @@ class ApplicationsController < ApplicationController
     authorize @application
 
     respond_to do |format|
-      if @application.update_attributes(application_params)
+      ap = application_params
+      update_roles_attributes(@application, ap)
+      update_owners_attributes(@application, ap)
+      if @application.update_attributes(ap)
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
         @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
@@ -96,6 +99,9 @@ class ApplicationsController < ApplicationController
 
     authorize @application
 
+    @application.roles.each do |role|
+      RolesService.destroy_role(role)
+    end
     @application.destroy
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted application, #{params[:application]}."
@@ -156,5 +162,61 @@ class ApplicationsController < ApplicationController
     params.require(:application).permit(:name, :description, :url,
                                       { roles_attributes: [:id, :token, :name, :description, :ad_path, :_destroy]}, {owner_ids: []},
                                       { operatorships_attributes: [:id, :entity_id, :application_id, :_destroy]} )
+  end
+
+  def update_roles_attributes(application, params)
+    # Special handler for roles until we can un-permit "roles_attributes"
+    # (frontend needs work to allow this)
+    if params['roles_attributes']
+      roles_changed = false
+      params['roles_attributes'].each do |role_attribute|
+        if role_attribute['id'] && role_attribute['_destroy']
+          # Destroy an existing role
+          role = Role.find_by(id: role_attribute['id'])
+          RolesService.destroy_role(role)
+          roles_changed = true
+        elsif role_attribute['id']
+          # Updating an existing role
+          roles_changed ||= RolesService.update_role(Role.find_by(id: role_attribute['id']), role_attribute['name'], role_attribute['token'], role_attribute['description'], role_attribute['ad_path'])
+        else
+          # Creating a new role
+          RolesService.create_role(application.id, role_attribute['name'], role_attribute['token'], role_attribute['description'], role_attribute['ad_path'])
+          roles_changed = true
+        end
+      end
+
+      params.delete(:roles_attributes)
+
+      if roles_changed
+        application.reload
+        application.touch
+      end
+    end
+  end
+
+  def update_owners_attributes(application, params)
+    return unless params['owner_ids']
+
+    # Special handler for roles until we can un-permit "owner_ids"
+    # (frontend needs work to allow this)
+    existing_owner_ids = application.owners.map(&:id)
+
+    owner_ids_to_add = params['owner_ids'] - existing_owner_ids
+    owner_ids_to_remove = existing_owner_ids - params['owner_ids']
+
+    owner_ids_to_add.each do |owner_id|
+      ApplicationsService.grant_application_ownership(application, Entity.find_by(id: owner_id))
+    end
+    owner_ids_to_remove.each do |owner_id|
+      ao = ApplicationOwnership.find_by(application_id: application.id, entity_id: owner_id, parent_id: nil)
+      ApplicationsService.revoke_application_ownership(ao)
+    end
+
+    params.delete(:owner_ids)
+
+    if (owner_ids_to_add.length > 0) || (owner_ids_to_remove.length > 0)
+      application.reload
+      application.touch
+    end
   end
 end

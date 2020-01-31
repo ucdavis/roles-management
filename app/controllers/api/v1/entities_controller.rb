@@ -23,12 +23,12 @@ module Api
           @cache_key = "api/entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
 
           respond_to do |format|
-            format.json { render "api/v1/entities/show" }
+            format.json { render 'api/v1/entities/show' }
           end
         elsif @entity and @entity.active == false
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id} but entity is disabled. Returning 404." }
           respond_to do |format|
-            format.json { render :json => "", :status => 404 }
+            format.json { render json: '', status: 404 }
           end
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load entity view (show) for invalid ID #{@entity_id}." }

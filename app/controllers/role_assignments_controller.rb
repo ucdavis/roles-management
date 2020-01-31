@@ -4,12 +4,12 @@ class RoleAssignmentsController < ApplicationController
   def create
     authorize @role_assignment
 
-    if @role_assignment.save
-      logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new role assignment, #{params[:role_assignment]}."
-      @role_assignment.role.touch
-    else
-      logger.warn "#{current_user.log_identifier}@#{request.remote_ip}: Failed to create new role assignment, #{params[:role_assignment]}."
-    end
+    role = Role.find_by(id: role_assignment_params['role_id'])
+    entity = Entity.find_by(id: role_assignment_params['entity_id'])
+
+    @role_assignment = RoleAssignmentsService.assign_role_to_entity(entity, role)
+
+    logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new role assignment, #{params[:role_assignment]}."
 
     @cache_key = 'role_assignments/' + @role_assignment.id.to_s + '/' + @role_assignment.updated_at.try(:utc).try(:to_s, :number)
 
@@ -23,7 +23,7 @@ class RoleAssignmentsController < ApplicationController
 
     authorize @role_assignment
 
-    @role_assignment.destroy
+    RoleAssignmentsService.unassign_role_from_entity(@role_assignment)
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Deleted role assignment, #{params[:role_assignment]}."
 

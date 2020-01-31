@@ -57,10 +57,15 @@ class EntitiesController < ApplicationController
   def update
     authorize @entity
 
+    # TODO: Will affected_role_ids be needed after service layer work?
     affected_role_ids = @entity.roles.map(&:id) if @entity.group?
 
     respond_to do |format|
-      if @entity.update_attributes(entity_params)
+      ep = entity_params
+      update_rules_attributes(@entity, ep)
+      update_memberships_attributes(@entity, ep)
+      update_group_memberships_attributes(@entity, ep)
+      if @entity.update_attributes(ep)
         # The update may have only touched associations and not @entity directly,
         # so we'll touch the timestamp ourselves to make sure our caches are
         # invlidated correctly.
@@ -124,6 +129,105 @@ class EntitiesController < ApplicationController
 
   protected
 
+  def update_rules_attributes(entity, params)
+    # Special handler for group rules until we can un-permit "rules_attributes"
+    # (frontend needs work to allow this)
+    if params['rules_attributes']
+      rules_changed = false
+      params['rules_attributes'].each do |rule_attribute|
+        if rule_attribute['id'] && rule_attribute['_destroy']
+          # Destroy an existing rule
+          group_rule = GroupRule.find_by(id: rule_attribute['id'])
+          GroupRulesService.remove_group_rule(group_rule)
+          rules_changed = true
+        elsif rule_attribute['id']
+          # Updating an existing rule
+          group_rule = GroupRule.find_by(id: rule_attribute['id'])
+          group_rule.column = rule_attribute['column']
+          group_rule.condition = rule_attribute['condition']
+          group_rule.value = rule_attribute['value']
+          if group_rule.changed?
+            rules_changed = true
+            group_rule.save!
+          end
+        else
+          # Creating a new rule
+          GroupRulesService.add_group_rule(entity, rule_attribute['column'], rule_attribute['condition'], rule_attribute['value'])
+          rules_changed = true
+        end
+      end
+
+      params.delete(:rules_attributes)
+
+      if rules_changed
+        entity.reload
+        entity.touch
+      end
+    end
+  end
+
+  # Group entities POST a 'memberships_attributes', not to be confused with
+  # Person entities which POST a 'group_memberships_attributes'.
+  def update_memberships_attributes(entity, params)
+    return unless entity.group?
+
+    # Special handler until we can un-permit "memberships_attributes"
+    # (frontend needs work to allow this)
+    memberships_changed = false
+    if params['memberships_attributes']
+      params['memberships_attributes'].each do |membership_attribute|
+        if membership_attribute['entity_id'] && membership_attribute['_destroy']
+          # Removing a group member
+          GroupMembershipsService.remove_member_from_group(Entity.find_by(id: membership_attribute['entity_id']), entity)
+          memberships_changed = true
+        elsif membership_attribute['entity_id']
+          # Adding a group member
+          GroupMembershipsService.assign_member_to_group(Entity.find_by(id: membership_attribute['entity_id']), entity)
+          memberships_changed = true
+        end
+      end
+    end
+
+    params.delete(:memberships_attributes)
+
+    if memberships_changed
+      entity.reload
+      entity.touch
+    end
+  end
+
+  # Person entities POST a 'group_memberships_attributes', not to be confused with
+  # Group entities which POST a 'memberships_attributes'.
+  def update_group_memberships_attributes(entity, params)
+    return unless entity.person?
+
+    # Special handler until we can un-permit "group_memberships_attributes"
+    # (frontend needs work to allow this)
+    group_memberships_changed = false
+    if params['group_memberships_attributes']
+      params['group_memberships_attributes'].each do |group_membership_attributes|
+        next if group_membership_attributes['calculated']
+
+        if group_membership_attributes['group_id'] && group_membership_attributes['_destroy']
+          # Removing a group member
+          GroupMembershipsService.remove_member_from_group(entity, Group.find_by(id: group_membership_attributes['group_id']))
+          group_memberships_changed = true
+        elsif group_membership_attributes['group_id'] && (group_membership_attributes['id'] == nil)
+          # Adding a group member
+          GroupMembershipsService.assign_member_to_group(entity, Group.find_by(id: group_membership_attributes['group_id']))
+          group_memberships_changed = true
+        end
+      end
+    end
+
+    params.delete(:group_memberships_attributes)
+
+    if group_memberships_changed
+      entity.reload
+      entity.touch
+    end
+  end
+
   def new_entity_from_params
     # Explicitly check for "Group" and "Person", avoid using 'constantize' (for security)
     if params[:entity][:type] == 'Group'
@@ -179,7 +283,6 @@ class EntitiesController < ApplicationController
                                    { memberships_attributes: [:id, :calculated, :entity_id, :_destroy] },
                                    { group_memberships_attributes: [:id, :calculated, :group_id, :_destroy] },
                                    { group_ownerships_attributes: [:id, :entity_id, :group_id, :_destroy] },
-                                   { role_assignments_attributes: [:id, :role_id, :entity_id, :_destroy] },
                                    { group_operatorships_attributes: [:id, :group_id, :entity_id, :_destroy] })
   end
 end

@@ -34,7 +34,6 @@ class Person < Entity
 
   before_save  :set_name_if_blank
   after_save   :recalculate_group_rule_membership
-  after_save   :trigger_sync_if_active_toggled
   after_save   :log_changes
 
   after_create do |person|
@@ -97,7 +96,7 @@ class Person < Entity
 
     time = Benchmark.measure do
       _groups = Rails.cache.fetch("person/#{id}/groups/#{updated_at.to_f}/#{only_via_rules}") do
-        group_ids = Group.rule_memberships_for_person(id)
+        group_ids = GroupsService.rule_memberships_for_person(id)
         group_ids += group_memberships.select(:group_id).pluck(:group_id) unless only_via_rules
         Group.where(id: group_ids.uniq)
       end
@@ -143,44 +142,16 @@ class Person < Entity
   end
 
   def recalculate_group_rule_membership
-    GroupRuleResultSet.update_results_for(:loginid, id) if saved_change_to_attribute?(:loginid)
-    GroupRuleResultSet.update_results_for(:is_staff, id) if saved_change_to_attribute?(:is_staff)
-    GroupRuleResultSet.update_results_for(:is_student, id) if saved_change_to_attribute?(:is_student)
-    GroupRuleResultSet.update_results_for(:is_employee, id) if saved_change_to_attribute?(:is_employee)
-    GroupRuleResultSet.update_results_for(:is_faculty, id) if saved_change_to_attribute?(:is_faculty)
-    GroupRuleResultSet.update_results_for(:is_hs_employee, id) if saved_change_to_attribute?(:is_hs_employee)
-    GroupRuleResultSet.update_results_for(:is_external, id) if saved_change_to_attribute?(:is_external)
+    GroupRulesService.update_results_for(:loginid, self) if saved_change_to_attribute?(:loginid)
+    GroupRulesService.update_results_for(:is_staff, self) if saved_change_to_attribute?(:is_staff)
+    GroupRulesService.update_results_for(:is_student, self) if saved_change_to_attribute?(:is_student)
+    GroupRulesService.update_results_for(:is_employee, self) if saved_change_to_attribute?(:is_employee)
+    GroupRulesService.update_results_for(:is_faculty, self) if saved_change_to_attribute?(:is_faculty)
+    GroupRulesService.update_results_for(:is_hs_employee, self) if saved_change_to_attribute?(:is_hs_employee)
+    GroupRulesService.update_results_for(:is_external, self) if saved_change_to_attribute?(:is_external)
   end
 
   private
-
-  # If a person goes from inactive to active, we need to ensure
-  # any role_assignment or group views are touched correctly.
-  def trigger_sync_if_active_toggled # rubocop:disable Metrics/AbcSize
-    return unless saved_change_to_attribute?(:active)
-
-    role_assignments.each(&:touch)
-    group_memberships.each(&:touch)
-
-    # Activating/de-activating a person emulates them losing all their roles
-    if active
-      ActivityLog.info!('Marking as active', ["person_#{id}"])
-
-      roles.each do |role|
-        Sync.person_added_to_role(Sync.encode(self), Sync.encode(role))
-      end
-
-      Sync.person_added_to_system(Sync.encode(self))
-    else
-      ActivityLog.info!('Marking as inactive', ["person_#{id}"])
-
-      roles.each do |role|
-        Sync.person_removed_from_role(Sync.encode(self), Sync.encode(role))
-      end
-
-      Sync.person_removed_from_system(Sync.encode(self))
-    end
-  end
 
   # If name is unset, construct it from first + last.
   # If that fails, use loginid.
@@ -193,7 +164,10 @@ class Person < Entity
     saved_changes.each do |field, changes|
       next if field == 'updated_at'
       next if field == 'synced_at'
+      next if field == 'created_at'
       next if field == 'logged_in_at'
+      next if field == 'type'
+      next if field == 'id'
       next if changes[0].blank? && changes[1].blank?
       Rails.logger&.debug "\t#{field}: '#{changes[0]}' -> '#{changes[1]}'"
       case field
@@ -203,6 +177,12 @@ class Person < Entity
         ActivityLog.info!("Last name changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
       when 'phone'
         ActivityLog.info!("Phone number changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      when 'name'
+        ActivityLog.info!("Name changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      when 'loginid'
+        ActivityLog.info!("Login ID changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
+      when 'email'
+        ActivityLog.info!("E-mail changed from '#{changes[0]}' to '#{changes[1]}'", ["person_#{id}"])
       else
         ActivityLog.info!("Attribute update: '#{field}': '#{changes[0]}' -> '#{changes[1]}'", ["person_#{id}"])
       end

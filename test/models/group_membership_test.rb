@@ -13,14 +13,18 @@ class GroupMembershipTest < ActiveSupport::TestCase
 
     assert group.roles.length == 1, "looks like groupWithARole doesn't have its one role"
 
-    @person.role_assignments.destroy_all
+    @person.role_assignments.all.each do |ra|
+      RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
     assert @person.roles.empty?, "Looks like our test user 'casuser' has roles already - somebody messed with the fixtures"
 
-    @person.group_memberships.destroy_all
+    @person.group_memberships.all.each do |gm|
+      GroupMembershipsService.remove_member_from_group(@person, gm.group)
+    end
     assert @person.group_memberships.empty?, "'casuser' must not have group memberships for this test"
 
     # Assign test user to group, confirm they gain group's roles
-    GroupMembership.create!(entity_id: @person.id, group_id: group.id)
+    GroupMembershipsService.assign_member_to_group(@person, group)
     @person.reload
     assert @person.group_memberships.length == 1, 'unable to add test user to group'
 
@@ -29,7 +33,7 @@ class GroupMembershipTest < ActiveSupport::TestCase
     assert @person.roles.length == 1, "assigning person to group should have given the person that group's role"
 
     # Remove the user from the group, ensure they lose group's roles
-    @person.groups[0].destroy
+    GroupMembershipsService.remove_member_from_group(@person, group)
     assert @person.group_memberships.empty?, 'unable to remove test user from group'
 
     @person.reload
@@ -46,7 +50,7 @@ class GroupMembershipTest < ActiveSupport::TestCase
     invalid_record_thrown = false
 
     begin
-      GroupMembership.create!(group: group, entity: another_group)
+      GroupMembershipsService.assign_member_to_group(another_group, group)
     rescue ActiveRecord::RecordInvalid
       # This is correct
       invalid_record_thrown = true

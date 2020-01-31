@@ -4,7 +4,6 @@ log/
 tmp/
 .DS_Store
 public/.DS_Store
-config/database.yml
 config/api_keys.yml
 config/general.yml
 config/newrelic.yml
@@ -13,6 +12,7 @@ config/secret_token.yml
 sync/config/active_directory.yml
 sync/config/sysaid.yml
 sync/config/slack.yml
+docker-web-secrets.env
 .sass-cache/
 public/assets/
 .rvmrc
@@ -34,3 +34,4 @@ package-lock.json
 cypress.env.json
 cypress/videos
 *.csv
+TODO

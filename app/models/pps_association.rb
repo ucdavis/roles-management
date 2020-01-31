@@ -10,31 +10,6 @@ class PpsAssociation < ApplicationRecord
   validates_presence_of :association_rank
   validates_presence_of :position_type_code
 
-  after_save do
-    GroupRuleResultSet.update_results_for(:pps_unit, person_id)
-    GroupRuleResultSet.update_results_for(:pps_position_type, person_id)
-    GroupRuleResultSet.update_results_for(:title, person_id)
-    GroupRuleResultSet.update_results_for(:business_office_unit, person_id)
-    GroupRuleResultSet.update_results_for(:admin_business_office_unit, person_id)
-    GroupRuleResultSet.update_results_for(:appt_business_office_unit, person_id)
-    GroupRuleResultSet.update_results_for(:department, person_id)
-    GroupRuleResultSet.update_results_for(:admin_department, person_id)
-    GroupRuleResultSet.update_results_for(:appt_department, person_id)
-    ActivityLog.info!("Added title #{title.name} for department #{department.displayName}", ["person_#{person.id}"])
-  end
-  after_destroy do
-    GroupRuleResultSet.update_results_for(:pps_unit, person_id)
-    GroupRuleResultSet.update_results_for(:pps_position_type, person_id)
-    GroupRuleResultSet.update_results_for(:title, person_id)
-    GroupRuleResultSet.update_results_for(:business_office_unit, person_id)
-    GroupRuleResultSet.update_results_for(:admin_business_office_unit, person_id)
-    GroupRuleResultSet.update_results_for(:appt_business_office_unit, person_id)
-    GroupRuleResultSet.update_results_for(:department, person_id)
-    GroupRuleResultSet.update_results_for(:admin_department, person_id)
-    GroupRuleResultSet.update_results_for(:appt_department, person_id)
-    ActivityLog.info!("Removed title #{title.name} for department #{department.displayName}", ["person_#{person.id}"])
-  end
-
   def position_type_label
     case position_type_code
     when 1
@@ -56,5 +31,10 @@ class PpsAssociation < ApplicationRecord
     else
       'Unknown'
     end
+  end
+
+  def employee_class_label
+    require 'ucd_ucpath_employee_classes'
+    UcdUcPathEmployeeClasses::EMPLOYEE_CLASS_LABELS[employee_class.to_s]
   end
 end

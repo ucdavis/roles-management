@@ -19,8 +19,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     # Test login ID rules
     assert group.members.empty?, 'group should have no members'
 
-    group_rule = GroupRule.new(column: 'loginid', condition: 'is', value: 'casuser2', group_id: group.id)
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'loginid', 'is', 'casuser2')
 
     group.reload
 
@@ -56,8 +55,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     assert group.members.empty?, 'group should have no members'
 
     # Test that setting a person's title fills in a group
-    group_rule = GroupRule.new(column: 'title', condition: 'is', value: 'Researcher', group_id: group.id)
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'title', 'is', 'Researcher')
 
     group.reload
 
@@ -65,8 +63,7 @@ class GroupRuleTest < ActiveSupport::TestCase
 
     # Test that setting a person's major fills in a group
     group.rules.destroy_all
-    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History', group_id: group.id)
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'major', 'is', 'History')
 
     group.reload
 
@@ -85,8 +82,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     # Test login ID rules
     assert group.members.empty?, 'group should have no members'
 
-    group_rule = GroupRule.new(column: 'loginid', condition: 'is', value: 'somebody_new', group_id: group.id)
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'loginid', 'is', 'somebody_new')
 
     group.reload
 
@@ -112,8 +108,7 @@ class GroupRuleTest < ActiveSupport::TestCase
     # Test login ID rules
     assert group.members.empty?, 'group should have no members'
 
-    group_rule = GroupRule.new( column: 'loginid', condition: 'is', value: 'cthielen', group_id: group.id )
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'loginid', 'is', 'cthielen')
 
     group.reload
 
@@ -139,18 +134,13 @@ class GroupRuleTest < ActiveSupport::TestCase
     title = titles(:programmer)
     department = departments(:dssit)
 
-    @person.pps_associations.destroy_all
+    PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+    @person.reload
     assert @person.pps_associations.count.zero?
-    pps_association = PpsAssociation.new
-    pps_association.person_id = @person.id
-    pps_association.title = title
-    pps_association.department = department
-    pps_association.admin_department = department
-    pps_association.appt_department = department
-    pps_association.association_rank = 1
-    pps_association.position_type_code = 2
-    assert pps_association.valid?
-    @person.pps_associations << pps_association
+
+    PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+
+    @person.reload
     assert @person.pps_associations.length == 1
     assert @person.pps_associations[0].department.present?
     assert @person.pps_associations[0].department.code == '040014', 'Expected dept code to be 040014'
@@ -158,15 +148,13 @@ class GroupRuleTest < ActiveSupport::TestCase
     # Test login ID rules
     assert group.members.empty?, 'group should have no members'
 
-    group_rule = GroupRule.new(column: 'department', condition: 'is', value: '040014')
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'department', 'is', '040014')
 
     group.reload
 
     assert group.members.length == 1, 'group should have a member'
 
-    group_rule = GroupRule.new(column: 'title', condition: 'is', value: 'something that does not exist', group_id: group.id)
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'title', 'is', 'something that does not exist')
 
     group.reload
 
@@ -186,32 +174,23 @@ class GroupRuleTest < ActiveSupport::TestCase
     title = titles(:programmer)
     department = departments(:dssit)
 
-    @person.pps_associations.destroy_all
+    PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+    @person.reload
     assert @person.pps_associations.count.zero?
-    pps_association = PpsAssociation.new
-    pps_association.person_id = @person.id
-    pps_association.title = title
-    pps_association.department = department
-    pps_association.admin_department = department
-    pps_association.appt_department = department
-    pps_association.association_rank = 1
-    pps_association.position_type_code = 2
-    assert pps_association.valid?
-    @person.pps_associations << pps_association
+    PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+    @person.reload
     assert @person.pps_associations.length == 1
 
     # Test login ID rules
     assert group.members.empty?, 'group should have no members'
 
-    group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).code, group_id: group.id)
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'title', 'is', titles(:programmer).code)
 
     group.reload
 
     assert group.members.length == 1, 'group should have a member'
 
-    group_rule = GroupRule.new(column: 'loginid', condition: 'is not', value: @person.loginid, group_id: group.id)
-    group.rules << group_rule
+    GroupRulesService.add_group_rule(group, 'loginid', 'is not', @person.loginid)
 
     group.reload
 
@@ -219,8 +198,6 @@ class GroupRuleTest < ActiveSupport::TestCase
   end
 
   test "Rule 'is_staff' works" do
-    group_rule = GroupRule.new( column: 'is_staff', condition: 'is', value: true)
-
     setup_match = lambda {
       @person.is_staff = true
       @person.save!
@@ -231,12 +208,10 @@ class GroupRuleTest < ActiveSupport::TestCase
       @person.save!
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('is_staff', 'is', true, setup_match, remove_match)
   end
 
   test "Rule 'is_faculty' works" do
-    group_rule = GroupRule.new(column: 'is_faculty', condition: 'is', value: true)
-
     setup_match = lambda {
       @person.is_faculty = true
       @person.save!
@@ -247,12 +222,10 @@ class GroupRuleTest < ActiveSupport::TestCase
       @person.save!
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('is_faculty', 'is', true, setup_match, remove_match)
   end
 
   test "Rule 'is_student' works" do
-    group_rule = GroupRule.new(column: 'is_student', condition: 'is', value: true)
-
     setup_match = lambda {
       @person.is_student = true
       @person.save!
@@ -263,12 +236,10 @@ class GroupRuleTest < ActiveSupport::TestCase
       @person.save!
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('is_student', 'is', true, setup_match, remove_match)
   end
 
   test "Rule 'is_employee' works" do
-    group_rule = GroupRule.new(column: 'is_employee', condition: 'is', value: true)
-
     setup_match = lambda {
       @person.is_employee = true
       @person.save!
@@ -279,12 +250,10 @@ class GroupRuleTest < ActiveSupport::TestCase
       @person.save!
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('is_employee', 'is', true, setup_match, remove_match)
   end
 
   test "Rule 'is_hs_employee' works" do
-    group_rule = GroupRule.new(column: 'is_hs_employee', condition: 'is', value: true)
-
     setup_match = lambda {
       @person.is_hs_employee = true
       @person.save!
@@ -295,12 +264,10 @@ class GroupRuleTest < ActiveSupport::TestCase
       @person.save!
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('is_hs_employee', 'is', true, setup_match, remove_match)
   end
 
   test "Rule 'is_external' works" do
-    group_rule = GroupRule.new(column: 'is_external', condition: 'is', value: true)
-
     setup_match = lambda {
       @person.is_external = true
       @person.save!
@@ -311,151 +278,105 @@ class GroupRuleTest < ActiveSupport::TestCase
       @person.save!
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('is_external', 'is', true, setup_match, remove_match)
   end
 
   test "Rule 'title is' works" do
-    group_rule = GroupRule.new(column: 'title', condition: 'is', value: titles(:programmer).code)
-
     setup_match = lambda {
       # Give a person an association involving a title with a 99-unit
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+      @person.reload
       assert @person.pps_associations.length == 1
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('title', 'is', titles(:programmer).code, setup_match, remove_match)
   end
 
   test "Rule 'sis_level_code' works" do
-    group_rule = GroupRule.new(column: 'sis_level_code', condition: 'is', value: 'GR')
-
     setup_match = lambda {
       # Give a person a SIS association with level code 'GR'
-      sis_association = SisAssociation.new
-      sis_association.entity_id = @person.id
-      sis_association.major = Major.first
-      sis_association.level_code = 'GR'
-      sis_association.association_rank = 1
-      @person.sis_associations << sis_association
+      SisAssociationsService.add_sis_association_to_person(@person, Major.first, 1, 'GR')
     }
 
     remove_match = lambda {
-      @person.sis_associations.destroy(@person.sis_associations[0])
-      @person.save!
+      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('sis_level_code', 'is', 'GR', setup_match, remove_match)
   end
 
   test "Rule 'major' works" do
-    group_rule = GroupRule.new(column: 'major', condition: 'is', value: 'History')
-
     setup_match = lambda {
       # Give a person a SIS association with level code 'GR'
-      sis_association = SisAssociation.new
-      sis_association.entity_id = @person.id
-      sis_association.major = Major.find_by(name: 'History')
-      sis_association.level_code = 'GR'
-      sis_association.association_rank = 1
-      @person.sis_associations = [sis_association]
+      SisAssociationsService.add_sis_association_to_person(@person, Major.find_by(name: 'History'), 1, 'GR')
     }
 
     remove_match = lambda {
-      @person.sis_associations.destroy(@person.sis_associations[0])
-      @person.save!
+      SisAssociationsService.remove_sis_association_from_person(@person, @person.sis_associations[0])
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('major', 'is', 'History', setup_match, remove_match)
   end
 
   test "Rule 'pps_unit' works" do
-    group_rule = GroupRule.new(column: 'pps_unit', condition: 'is', value: '99')
-
     setup_match = lambda {
       # Give a person an association involving a title with a 99-unit
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('pps_unit', 'is', '99', setup_match, remove_match)
   end
 
   test "Rule 'pps_position_type' works" do
-    group_rule = GroupRule.new(column: 'pps_position_type', condition: 'is', value: 2)
-
     setup_match = lambda {
       # Give a person an association involving a title with a 99-unit
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('pps_position_type', 'is', 2, setup_match, remove_match)
   end
 
   test "Rule 'business_office_unit' works" do
-    group_rule = GroupRule.new(column: 'business_office_unit', condition: 'is', value: 'LETTERS AND SCIENCE: SOCIAL SCIENCES')
-
     evil_person = entities(:evil_casuser)
 
     setup_match = lambda {
@@ -463,54 +384,38 @@ class GroupRuleTest < ActiveSupport::TestCase
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+      @person.reload
 
       evil_title = titles(:evil_programmer)
       evil_department = departments(:evil_dssit)
 
-      evil_person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = evil_person.id
-      pps_association.title = evil_title
-      pps_association.department = evil_department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      evil_person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, evil_department, department, department, 1, 2, 1)
+      evil_person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
 
       assert evil_person.pps_associations.length == 1
-      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
-      evil_person.save!
+      PpsAssociationsService.remove_pps_association_from_person(evil_person, evil_person.pps_associations[0])
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match, 2)
+    test_group_rule('business_office_unit', 'is', 'LETTERS AND SCIENCE: SOCIAL SCIENCES', setup_match, remove_match, 2)
   end
 
   test "Rule 'admin_business_office_unit' works" do
-    group_rule = GroupRule.new(column: 'admin_business_office_unit', condition: 'is', value: 'ASSOCIATED STUDENT UNION')
-
     evil_person = entities(:evil_casuser)
 
     setup_match = lambda {
@@ -519,53 +424,37 @@ class GroupRuleTest < ActiveSupport::TestCase
       department = departments(:dssit)
       admin_department = departments(:asucd)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+      @person.reload
 
       evil_title = titles(:evil_programmer)
 
-      evil_person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = evil_person.id
-      pps_association.title = evil_title
-      pps_association.department = department
-      pps_association.admin_department = admin_department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      evil_person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, department, admin_department, department, 1, 2, 1)
+      evil_person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
 
       assert evil_person.pps_associations.length == 1
-      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
-      evil_person.save!
+      PpsAssociationsService.remove_pps_association_from_person(evil_person, evil_person.pps_associations[0])
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('admin_business_office_unit', 'is', 'ASSOCIATED STUDENT UNION', setup_match, remove_match)
   end
 
   test "Rule 'appt_business_office_unit' works" do
-    group_rule = GroupRule.new(column: 'appt_business_office_unit', condition: 'is', value: 'ASSOCIATED STUDENT UNION')
-
     evil_person = entities(:evil_casuser)
 
     setup_match = lambda {
@@ -574,146 +463,128 @@ class GroupRuleTest < ActiveSupport::TestCase
       department = departments(:dssit)
       appt_department = departments(:asucd)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = appt_department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, appt_department, 1, 2, 1)
+      @person.reload
 
       evil_title = titles(:evil_programmer)
 
-      evil_person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(evil_person)
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = evil_person.id
-      pps_association.title = evil_title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      evil_person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(evil_person, evil_title, department, department, department, 1, 2, 1)
+      evil_person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
 
       assert evil_person.pps_associations.length == 1
-      evil_person.pps_associations.destroy(evil_person.pps_associations[0])
-      evil_person.save!
+      PpsAssociationsService.remove_pps_association_from_person(evil_person, evil_person.pps_associations[0])
+      evil_person.reload
       assert evil_person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('appt_business_office_unit', 'is', 'ASSOCIATED STUDENT UNION', setup_match, remove_match)
   end
 
   test "Rule 'department' works" do
-    group_rule = GroupRule.new(column: 'department', condition: 'is', value: '040014')
-
     setup_match = lambda {
       # Put two people in two different depamrtnets under the same BOU
       title = titles(:programmer)
       department = departments(:dssit)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('department', 'is', '040014', setup_match, remove_match)
   end
 
   test "Rule 'admin department' works" do
-    group_rule = GroupRule.new(column: 'admin_department', condition: 'is', value: '410041')
-
     setup_match = lambda {
       # Put two people in two different depamrtnets under the same BOU
       title = titles(:programmer)
       department = departments(:dssit)
       asucd_department = departments(:asucd)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = asucd_department
-      pps_association.appt_department = department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, asucd_department, department, 1, 2, 1)
+      @person.reload
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('admin_department', 'is', '410041', setup_match, remove_match)
   end
 
   test "Rule 'appt department' works" do
-    group_rule = GroupRule.new(column: 'appt_department', condition: 'is', value: '410041')
-
     setup_match = lambda {
       # Put two people in two different depamrtnets under the same BOU
       title = titles(:programmer)
       department = departments(:dssit)
       asucd_department = departments(:asucd)
 
-      @person.pps_associations.destroy_all
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      @person.reload
       assert @person.pps_associations.count.zero?
-      pps_association = PpsAssociation.new
-      pps_association.person_id = @person.id
-      pps_association.title = title
-      pps_association.department = department
-      pps_association.admin_department = department
-      pps_association.appt_department = asucd_department
-      pps_association.association_rank = 1
-      pps_association.position_type_code = 2
-      assert pps_association.valid?
-      @person.pps_associations << pps_association
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, asucd_department, 1, 2, 1)
+      @person.reload
+      assert @person.pps_associations.count == 1
     }
 
     remove_match = lambda {
       assert @person.pps_associations.length == 1
-      @person.pps_associations.destroy(@person.pps_associations[0])
-      @person.save!
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
       assert @person.pps_associations.count.zero?
     }
 
-    test_group_rule(group_rule, setup_match, remove_match)
+    test_group_rule('appt_department', 'is', '410041', setup_match, remove_match)
+  end
+
+  test "Rule 'employee_class' works" do
+    setup_match = lambda {
+      # Give a person an association involving an employee class of 1
+      title = titles(:programmer)
+      department = departments(:dssit)
+
+      PpsAssociationsService.remove_all_pps_associations_from_person(@person)
+      assert @person.pps_associations.count.zero?
+      PpsAssociationsService.add_pps_association_to_person(@person, title, department, department, department, 1, 2, 1)
+      @person.reload
+    }
+
+    remove_match = lambda {
+      assert @person.pps_associations.length == 1
+      PpsAssociationsService.remove_pps_association_from_person(@person, @person.pps_associations[0])
+      @person.reload
+      assert @person.pps_associations.count.zero?
+    }
+
+    test_group_rule('employee_class', 'is', 1, setup_match, remove_match)
   end
 
   private
@@ -728,7 +599,7 @@ class GroupRuleTest < ActiveSupport::TestCase
   # remove_match - should alter data to ensure group_rule will not have a match
   #
   # Test assumes only one match will happen whenever a match is expected.
-  def test_group_rule(group_rule, setup_match, remove_match, expected_member_count = 1)
+  def test_group_rule(column, condition, value, setup_match, remove_match, expected_member_count = 1)
     # Ensure a group has a rule
     group = entities(:groupWithNothing)
 
@@ -746,7 +617,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert group.members.empty?, 'group should have no members'
 
       Rails.logger.debug 'Adding group rule ...'
-      group.rules << group_rule
+      GroupRulesService.add_group_rule(group, column, condition, value)
 
       group.reload
       # Subtract a second from the 'updated_at' flag to ensure it is a reliable
