@@ -70,6 +70,8 @@ namespace :ad do
 
       print "\tAD member count: #{ad_members.length}\n"
       print "\tRM member count: #{role_members.length}\n"
+
+      ActiveRecord::Base.logger = old_logger
     end
 
     puts "Found #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s) in need of syncing."

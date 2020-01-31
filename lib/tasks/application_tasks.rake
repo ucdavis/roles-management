@@ -93,4 +93,38 @@ namespace :application do
       end
     end
   end
+
+  desc 'Generates a directory tree for application owners containing role membership CSVs.'
+  task role_report: :environment do
+    require 'fileutils'
+    require 'csv'
+
+    def sanitize_filename(name)
+      name.gsub!(/\+/, "plus")
+      name.gsub!(/\//,"fs")
+
+      return name
+    end
+
+    report_path = "reports/people_by_role_for_owners"
+
+    ApplicationOwnership.all.each do |ao|
+      owner = ao.entity
+      application = ao.application
+
+      application_path = "#{report_path}/#{owner.loginid}-#{owner.email}/#{application.id}-#{sanitize_filename(application.name)}"
+
+      # Create directory if necessary
+      FileUtils.mkdir_p application_path
+
+      application.roles.each do |role|
+        CSV.open("#{application_path}/#{role.id}-#{sanitize_filename(role.name)}.csv", "wb") do |csv|  
+          csv << ["loginid", "last", "first"]
+          role.members.each do |member|
+            csv << [member.loginid, member.last, member.first]
+          end
+        end
+      end
+    end
+  end
 end

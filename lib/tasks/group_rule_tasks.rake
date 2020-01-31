@@ -16,6 +16,9 @@ namespace :rules do
 
   desc 'Diagnoses a person against a group\'s rules'
   task :diagnoses_rules, [:group_id, :loginid] => :environment do |t, args|
+    old_logger = ActiveRecord::Base.logger
+    ActiveRecord::Base.logger = nil
+
     g = Group.find_by(id: args[:group_id])
     unless g
       STDERR.puts "Could not find a group with ID #{args[:group_id]}"
@@ -48,6 +51,8 @@ namespace :rules do
 
     puts "According to check, specified person (#{p.id},#{p.loginid}) " + (matches_all_groups ? 'should be' : 'should not be') + " in the group"
     puts "NOTE: This test does not currently account for filter ('does not match') rules, which may change results."
+
+    ActiveRecord::Base.logger = old_logger
   end
 
   desc 'Validate GroupRuleResultSets exist for every GroupRule.'
@@ -78,5 +83,19 @@ namespace :rules do
     end
 
     puts "Corrected #{invalid_count} missing results out of #{GroupRule.count} total group rules"
+  end
+
+  desc 'Destroy unused GroupRuleResultSets.'
+  task destroy_unused_group_rule_result_sets: :environment do
+    unused_count = 0
+
+    GroupRuleResultSet.all.each do |grrs|
+      if grrs.rules.length == 0
+        unused_count += 1
+        grrs.destroy
+      end
+    end
+
+    puts "Destroyed #{unused_count} unused GroupRuleResultSets"
   end
 end
