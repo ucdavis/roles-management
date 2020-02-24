@@ -18,6 +18,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
     @listenTo @model.rules, "change:officialName", @renderRules
+    @listenTo @model.rules, "change:dept_official_name", @renderRules
     @listenTo @model.rules, "change:name", @renderRules
     readonly = @model.isReadOnly()
 
@@ -267,10 +268,11 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val "#{rule.get('officialName')} (#{_value})"
+      when 'business_office_unit', 'admin_business_office_unit', 'appt_business_office_unit'
+        $rule.find("td:nth-child(1) select").val _column
+        $rule.find("td:nth-child(2) select").val _condition
+        $rule.find("td:nth-child(3) input").val "#{rule.get('dept_official_name')}"
       when 'title'
-        console.log(rule)
-        console.log("hey")
-        console.log(rule.get('name'))
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val "#{rule.get('name')} (#{_value})"
@@ -296,6 +298,10 @@ DssRm.Views.GroupShow = Backbone.View.extend(
 
         switch data.lookahead_type
           when "department", "admin_department", "appt_department"
+            rule.set
+              'code': data.code
+              'value': data.label
+          when 'business_office_unit', 'admin_business_office_unit', 'appt_business_office_unit'
             rule.set
               'code': data.code
               'value': data.label
@@ -397,6 +403,11 @@ DssRm.Views.GroupShow = Backbone.View.extend(
           column: _column
           condition: _condition
           value: rule.get 'code'
+      when 'business_office_unit', 'admin_business_office_unit', 'appt_business_office_unit'
+        rule.set
+          column: _column
+          condition: _condition
+          value: rule.get 'code'
       when "title"
         rule.set
           column: _column
@@ -449,7 +460,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     # Need to change URL in case they want to open the same modal again
     Backbone.history.navigate "index"
 
-  # Populates the sidebar search with results via async call
+  # Populates the search with results via async call
   ruleSearch: (query, process, e) ->
     lookahead_type = @$element.parents("tr").find("td:first select").val()
     lookahead_url = ""
@@ -514,6 +525,8 @@ DssRm.Views.GroupShow = Backbone.View.extend(
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: result.loginid})
           when "department", "admin_department", "appt_department"
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.officialName} (#{result.code})", code: result.code })
+          when "business_office_unit", "admin_business_office_unit", "appt_business_office_unit"
+            results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.dept_official_name}", code: result.org_oid })
           when "title"
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.name} (#{result.code})", code: result.code })
           else
