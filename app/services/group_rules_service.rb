@@ -50,21 +50,21 @@ class GroupRulesService
         end
       end
     when :business_office_unit
-      entity.pps_associations.map { |assoc| assoc.department.business_office_unit&.dept_official_name }.uniq.each do |bou_name|
+      entity.pps_associations.map { |assoc| assoc.department.business_office_unit&.org_oid }.uniq.each do |bou_name|
         GroupRuleResultSet.where(column: 'business_office_unit', value: bou_name).each do |rule_set|
           Rails.logger.debug "Matched 'business_office_unit' result set"
           new_results << GroupRuleResult.new(entity_id: entity.id, group_rule_result_set_id: rule_set.id)
         end
       end
     when :admin_business_office_unit
-      entity.pps_associations.map { |assoc| assoc.admin_department.business_office_unit&.dept_official_name }.uniq.each do |bou_name|
+      entity.pps_associations.map { |assoc| assoc.admin_department.business_office_unit&.org_oid }.uniq.each do |bou_name|
         GroupRuleResultSet.where(column: 'admin_business_office_unit', value: bou_name).each do |rule_set|
           Rails.logger.debug "Matched 'admin_business_office_unit' result set"
           new_results << GroupRuleResult.new(entity_id: entity.id, group_rule_result_set_id: rule_set.id)
         end
       end
     when :appt_business_office_unit
-      entity.pps_associations.map { |assoc| assoc.appt_department.business_office_unit&.dept_official_name }.uniq.each do |bou_name|
+      entity.pps_associations.map { |assoc| assoc.appt_department.business_office_unit&.org_oid }.uniq.each do |bou_name|
         GroupRuleResultSet.where(column: 'appt_business_office_unit', value: bou_name).each do |rule_set|
           Rails.logger.debug "Matched 'appt_business_office_unit' result set"
           new_results << GroupRuleResult.new(entity_id: entity.id, group_rule_result_set_id: rule_set.id)
@@ -206,15 +206,15 @@ class GroupRulesService
       return [] if appt_department.nil?
       return PpsAssociation.where(appt_department_id: appt_department.id).pluck(:person_id).map { |e_id| OpenStruct.new(id: e_id) }
     when :business_office_unit
-      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      bou = BusinessOfficeUnit.find_by(org_oid: value)
       return [] if bou.nil?
       return bou.departments.map { |d| d.people.select(:id) }.flatten
     when :admin_business_office_unit
-      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      bou = BusinessOfficeUnit.find_by(org_oid: value)
       return [] if bou.nil?
       return bou.departments.map { |d| d.admin_people.select(:id) }.flatten
     when :appt_business_office_unit
-      bou = BusinessOfficeUnit.find_by(dept_official_name: value)
+      bou = BusinessOfficeUnit.find_by(org_oid: value)
       return [] if bou.nil?
       return bou.departments.map { |d| d.appt_people.select(:id) }.flatten
     when :loginid

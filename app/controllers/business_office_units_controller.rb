@@ -11,9 +11,20 @@ class BusinessOfficeUnitsController < ApplicationController
     end
   end
 
+  def show_by_code
+    @bou = BusinessOfficeUnit.find_by!(org_oid: params[:code])
+
+    authorize @bou
+
+    respond_to do |format|
+      format.json { render json: @bou }
+    end
+  end
+
   private
 
   def load_bous
+    # 'q' matches on dept_official_name
     if params[:q]
       bous_table = BusinessOfficeUnit.arel_table
       @bous = BusinessOfficeUnit.where(bous_table[:dept_official_name].matches("%#{params[:q]}%"))

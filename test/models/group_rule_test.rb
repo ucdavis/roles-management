@@ -412,7 +412,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert evil_person.pps_associations.count.zero?
     }
 
-    test_group_rule('business_office_unit', 'is', 'LETTERS AND SCIENCE: SOCIAL SCIENCES', setup_match, remove_match, 2)
+    test_group_rule('business_office_unit', 'is', 'F80B657C9EE823A0E0340003BA8A560D', setup_match, remove_match, 2)
   end
 
   test "Rule 'admin_business_office_unit' works" do
@@ -451,7 +451,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert evil_person.pps_associations.count.zero?
     }
 
-    test_group_rule('admin_business_office_unit', 'is', 'ASSOCIATED STUDENT UNION', setup_match, remove_match)
+    test_group_rule('admin_business_office_unit', 'is', 'B80B657C6EE823A0E0340003BA8A560D', setup_match, remove_match)
   end
 
   test "Rule 'appt_business_office_unit' works" do
@@ -490,7 +490,7 @@ class GroupRuleTest < ActiveSupport::TestCase
       assert evil_person.pps_associations.count.zero?
     }
 
-    test_group_rule('appt_business_office_unit', 'is', 'ASSOCIATED STUDENT UNION', setup_match, remove_match)
+    test_group_rule('appt_business_office_unit', 'is', 'B80B657C6EE823A0E0340003BA8A560D', setup_match, remove_match)
   end
 
   test "Rule 'department' works" do

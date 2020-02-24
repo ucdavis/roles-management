@@ -50,11 +50,11 @@ class GroupRule < ApplicationRecord
     when :appt_department
       return entity.pps_associations.reject{ |assoc| assoc.appt_department_id == nil }.map { |assoc| assoc.appt_department.code }.uniq.include?(value)
     when :business_office_unit
-      return entity.pps_associations.map { |assoc| assoc.department.business_office_unit&.dept_official_name }.uniq.include?(value)
+      return entity.pps_associations.map { |assoc| assoc.department.business_office_unit&.org_oid }.uniq.include?(value)
     when :admin_business_office_unit
-      return entity.pps_associations.map { |assoc| assoc.admin_department.business_office_unit&.dept_official_name }.uniq.include?(value)
+      return entity.pps_associations.map { |assoc| assoc.admin_department.business_office_unit&.org_oid }.uniq.include?(value)
     when :appt_business_office_unit
-      return entity.pps_associations.map { |assoc| assoc.appt_department.business_office_unit&.dept_official_name }.uniq.include?(value)
+      return entity.pps_associations.map { |assoc| assoc.appt_department.business_office_unit&.org_oid }.uniq.include?(value)
     when :loginid
       return entity.loginid == value
     when :is_staff
