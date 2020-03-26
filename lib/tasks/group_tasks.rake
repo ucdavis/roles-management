@@ -171,7 +171,7 @@ namespace :group do
 
           puts "\tGranting role (ID: #{group_ra.role_id} / #{group_ra.role.application.name}, #{group_ra.role.token}) with parent assignment #{group_ra.id} ..."
 
-          recalculated_role_ids << ra.role_id
+          recalculated_role_ids << group_ra.role_id
         else
           puts "\tSkipping role grant as it already exists: role (ID: #{group_ra.role_id} / #{group_ra.role.application.name}, #{group_ra.role.token}) with parent assignment #{group_ra.id}. "
         end
