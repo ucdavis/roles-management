@@ -35,3 +35,4 @@ cypress.env.json
 cypress/videos
 *.csv
 TODO
+*.pem

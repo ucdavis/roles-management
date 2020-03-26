@@ -30,3 +30,6 @@ production:
   host: <%= ENV['DB_HOST'] %>
   port: 3306
   pool: 15
+  reconnect: true
+  sslverify: true
+  sslca: <%= ENV['CA_CERT_PATH'] %>
