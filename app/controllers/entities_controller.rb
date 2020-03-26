@@ -180,6 +180,9 @@ class EntitiesController < ApplicationController
           # Removing a group member
           GroupMembershipsService.remove_member_from_group(Entity.find_by(id: membership_attribute['entity_id']), entity)
           memberships_changed = true
+        elsif membership_attribute['id'] && membership_attribute['entity_id']
+          # Existing group member
+          next 
         elsif membership_attribute['entity_id']
           # Adding a group member
           GroupMembershipsService.assign_member_to_group(Entity.find_by(id: membership_attribute['entity_id']), entity)

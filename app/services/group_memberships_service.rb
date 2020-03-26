@@ -28,7 +28,8 @@ class GroupMembershipsService
     gm = GroupMembership.find_by(group_id: group.id, entity_id: entity.id)
     gm.destroy! if gm
 
-    RoleAssignmentsService.unassign_group_roles_from_member(group, entity)
+    # Do not unassign roles if member exists in group via rules
+    RoleAssignmentsService.unassign_group_roles_from_member(group, entity) unless group.rule_members.include?(entity)
 
     self.remove_group_application_operatorships_from_member(group, entity)
 
