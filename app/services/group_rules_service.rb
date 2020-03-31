@@ -276,8 +276,14 @@ class GroupRulesService
     gr.save!
     post_removal_members = group.members
 
-    (post_removal_members - pre_removal_members).each do |added_member|
-      RoleAssignmentsService.assign_group_roles_to_member(group, added_member)
+    if gr.condition == "is not"
+      (pre_removal_members - post_removal_members).each do |removed_member|
+        RoleAssignmentsService.unassign_group_roles_from_member(group, removed_member)
+      end
+    else
+      (post_removal_members - pre_removal_members).each do |added_member|
+        RoleAssignmentsService.assign_group_roles_to_member(group, added_member)
+      end
     end
 
     return gr
@@ -293,8 +299,14 @@ class GroupRulesService
     group_rule.destroy
     post_removal_members = group.members
 
-    (pre_removal_members - post_removal_members).each do |removed_member|
-      RoleAssignmentsService.unassign_group_roles_from_member(group, removed_member)
+    if group_rule.condition == "is not"
+      (post_removal_members - pre_removal_members).each do |added_member|
+        RoleAssignmentsService.assign_group_roles_to_member(group, added_member)
+      end
+    else
+      (pre_removal_members - post_removal_members).each do |removed_member|
+        RoleAssignmentsService.unassign_group_roles_from_member(group, removed_member)
+      end
     end
   end
 
