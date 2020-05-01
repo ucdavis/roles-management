@@ -55,7 +55,7 @@ module Teem
   end
 
   # Authorizes against the Teem API. Required before any API actions.
-  # A valid refresh token returns an access token (temporary) and new refresh token (long lived, single use) without the user auth flow.
+  # A request with valid refresh token returns an access token (temporary) and new refresh token (long lived, single use) without the user auth flow.
   # If the refresh token is not valid, we'll need to reauthorize with the user auth flow to get new tokens.
   # Returns the Teem API access token.
   def self.authorize
@@ -74,6 +74,61 @@ module Teem
     end
 
     return access_token
+  end
+
+  def self.reauthorize
+    require 'mechanize'
+    # Enable this for Mechanize debugging
+    # Mechanize.log = Logger.new $stderr
+
+    browser = Mechanize.new do |agent|
+      agent.user_agent_alias = 'Mac Safari'
+    end
+
+    # Load the sign-in page
+    page = browser.get("https://app.teem.com/oauth/authorize/?client_id=#{CLIENT_ID}&redirect_uri=#{REDIRECT_URI}&response_type=code&scope=users")
+
+    # Find the link to sign in via SSO
+    sign_in_link = page.links.find { |link| link.text.include? 'Sign In with Company SSO' }
+
+    # Click that link
+    page = sign_in_link.click
+
+    # We will be prompted for our organization
+    org_ask_form = page.forms[0]
+    org_ask_form.fields[0].value = ORG_NAME
+
+    # Submit that form
+    page = browser.submit(page.forms.first)
+
+    # We should be on the SSO login page now. Fill it out.
+    f = page.forms[0]
+    f.field_with(name: 'UserName').value = USERNAME
+    f.field_with(name: 'Password').value = PASSWORD
+    page = f.submit
+
+    # We are now at a weird, no-where-place page that we just need to submit (SAML stuff?)
+    f = page.forms.first
+    page = f.submit
+
+    # We should now be at teem.com being asked to Authorize
+    f = page.forms.first
+    authorize_btn = f.button_with(value: 'Authorize')
+
+    the_code = nil
+
+    page = browser.submit(f, authorize_btn)
+    # After Auth, redirects to "redirect_uri/?code=string" then roles/welcome page, grab code from history
+    the_code = browser.history[-2].uri.query.split("=")[1];
+
+    url = "https://app.teem.com/oauth/token/?client_id=#{CLIENT_ID}&client_secret=#{CLIENT_SECRET}&grant_type=authorization_code&redirect_uri=#{REDIRECT_URI}&code=#{the_code}"
+
+    response = request(:post, nil, url)
+
+    # Save the refresh token for future use
+    IntegrationMetadatum.put('teem_refresh_token', response['refresh_token'])
+
+    return response['access_token']
   end
 
   def self.get_users(access_token)
@@ -173,60 +228,5 @@ module Teem
 
     request = request(:get, access_token, url)
     return request['users']
-  end
-
-  def self.reauthorize
-    require 'mechanize'
-    # Enable this for Mechanize debugging
-    # Mechanize.log = Logger.new $stderr
-
-    browser = Mechanize.new do |agent|
-      agent.user_agent_alias = 'Mac Safari'
-    end
-
-    # Load the sign-in page
-    page = browser.get("https://app.teem.com/oauth/authorize/?client_id=#{CLIENT_ID}&redirect_uri=#{REDIRECT_URI}&response_type=code&scope=users")
-
-    # Find the link to sign in via SSO
-    sign_in_link = page.links.find { |link| link.text.include? 'Sign In with Company SSO' }
-
-    # Click that link
-    page = sign_in_link.click
-
-    # We will be prompted for our organization
-    org_ask_form = page.forms[0]
-    org_ask_form.fields[0].value = ORG_NAME
-
-    # Submit that form
-    page = browser.submit(page.forms.first)
-
-    # We should be on the SSO login page now. Fill it out.
-    f = page.forms[0]
-    f.field_with(name: 'UserName').value = USERNAME
-    f.field_with(name: 'Password').value = PASSWORD
-    page = f.submit
-
-    # We are now at a weird, no-where-place page that we just need to submit (SAML stuff?)
-    f = page.forms.first
-    page = f.submit
-
-    # We should now be at teem.com being asked to Authorize
-    f = page.forms.first
-    authorize_btn = f.button_with(value: 'Authorize')
-
-    the_code = nil
-
-    page = browser.submit(f, authorize_btn)
-    # After Auth, redirects to "redirect_uri/?code=string" then roles/welcome page, grab code from history
-    the_code = browser.history[-2].uri.query.split("=")[1];
-
-    url = "https://app.teem.com/oauth/token/?client_id=#{CLIENT_ID}&client_secret=#{CLIENT_SECRET}&grant_type=authorization_code&redirect_uri=#{REDIRECT_URI}&code=#{the_code}"
-
-    response = request(:post, nil, url)
-
-    # Save the refresh token for future use
-    IntegrationMetadatum.put('teem_refresh_token', response['refresh_token'])
-
-    return response['access_token']
   end
 end
