@@ -27,6 +27,7 @@ vendor/cache/
 .idea
 node_modules/
 .env
+.envrc
 log/activity
 .rbenv-vars*
 db/data.yml
