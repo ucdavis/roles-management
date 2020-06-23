@@ -267,24 +267,16 @@ class GroupRulesService
     raise 'Expected String object' unless condition.is_a?(String)
     raise 'Expected value' if value == nil
 
-    pre_removal_members = group.members
+    pre_rule_change_members = group.members
     gr = GroupRule.new
     gr.group = group
     gr.column = column
     gr.condition = condition
     gr.value = value
     gr.save!
-    post_removal_members = group.members
+    post_rule_change_members = group.members
 
-    if gr.condition == "is not"
-      (pre_removal_members - post_removal_members).each do |removed_member|
-        RoleAssignmentsService.unassign_group_roles_from_member(group, removed_member)
-      end
-    else
-      (post_removal_members - pre_removal_members).each do |added_member|
-        RoleAssignmentsService.assign_group_roles_to_member(group, added_member)
-      end
-    end
+    update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
 
     return gr
   end
@@ -295,19 +287,11 @@ class GroupRulesService
     raise 'Expected GroupRule object' unless group_rule.is_a?(GroupRule)
 
     group = group_rule.group
-    pre_removal_members = group.members
+    pre_rule_change_members = group.members
     group_rule.destroy
-    post_removal_members = group.members
+    post_rule_change_members = group.members
 
-    if group_rule.condition == "is not"
-      (post_removal_members - pre_removal_members).each do |added_member|
-        RoleAssignmentsService.assign_group_roles_to_member(group, added_member)
-      end
-    else
-      (pre_removal_members - post_removal_members).each do |removed_member|
-        RoleAssignmentsService.unassign_group_roles_from_member(group, removed_member)
-      end
-    end
+    update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
   end
 
   # Ensure a person's inherited roles are correctly handled by recording
@@ -336,6 +320,25 @@ class GroupRulesService
     (post_calculated_group_ids - pre_calculated_group_ids).each do |group_id|
       group = Group.find_by(id: group_id)
       RoleAssignmentsService.assign_group_roles_to_member(group, person)
+    end
+  end
+
+  private
+
+  def self.update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
+    added_members = post_rule_change_members - pre_rule_change_members
+    removed_members = pre_rule_change_members - post_rule_change_members
+
+    if added_members.present?
+      added_members.each do |added_member|
+        RoleAssignmentsService.assign_group_roles_to_member(group, added_member)
+      end
+    end
+
+    if removed_members.present?
+      removed_members.each do |removed_member|
+        RoleAssignmentsService.unassign_group_roles_from_member(group, removed_member)
+      end
     end
   end
 end
