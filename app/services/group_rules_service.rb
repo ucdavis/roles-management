@@ -316,7 +316,7 @@ class GroupRulesService
     # Record current calculated group members as they may change ...
     pre_calculated_group_ids = GroupsService.rule_memberships_for_person(person.id)
 
-    yield 
+    yield
 
     # Check current calculated group memberships as they may have changed ...
     post_calculated_group_ids = GroupsService.rule_memberships_for_person(person.id)
