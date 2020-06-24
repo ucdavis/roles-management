@@ -316,7 +316,7 @@ class GroupRulesService
     # Record current calculated group members as they may change ...
     pre_calculated_group_ids = GroupsService.rule_memberships_for_person(person.id)
 
-    yield 
+    yield
 
     # Check current calculated group memberships as they may have changed ...
     post_calculated_group_ids = GroupsService.rule_memberships_for_person(person.id)
@@ -338,7 +338,6 @@ class GroupRulesService
   private
 
   def self.update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
-    byebug
     added_members = post_rule_change_members - pre_rule_change_members
     removed_members = pre_rule_change_members - post_rule_change_members
 
