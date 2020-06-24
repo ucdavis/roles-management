@@ -147,8 +147,8 @@ class EntitiesController < ApplicationController
           group_rule.condition = rule_attribute['condition']
           group_rule.value = rule_attribute['value']
           if group_rule.changed?
+            GroupRulesService.update_group_rule(entity, group_rule)
             rules_changed = true
-            group_rule.save!
           end
         else
           # Creating a new rule

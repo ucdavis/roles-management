@@ -281,6 +281,18 @@ class GroupRulesService
     return gr
   end
 
+  def self.update_group_rule(group, group_rule)
+    raise 'Expected Group object' unless group.is_a?(Group)
+    raise 'Expected GroupRule object' unless group_rule.is_a?(GroupRule)
+
+    pre_rule_change_members = group.members
+    group_rule.save!
+    group.reload
+    post_rule_change_members = group.members
+
+    update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
+  end
+
   # Main method to remove a group rule from a group.
   # Ensures group members lost due to group rule removal also lose their roles, if applicable.
   def self.remove_group_rule(group_rule)
