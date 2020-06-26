@@ -261,41 +261,43 @@ class GroupRulesService
 
   # Main method to add a group rule to a group.
   # Ensures group members added due to group rule creation also gain their roles, if applicable.
-  def self.add_group_rule(group, column, condition, value)
+  def self.add_group_rule(group, column, condition, value, multiple_updates = false)
     raise 'Expected Group object' unless group.is_a?(Group)
     raise 'Expected String object' unless column.is_a?(String)
     raise 'Expected String object' unless condition.is_a?(String)
     raise 'Expected value' if value == nil
 
-    pre_rule_change_members = group.members
+    pre_rule_members = group.members
     gr = GroupRule.new
     gr.group = group
     gr.column = column
     gr.condition = condition
     gr.value = value
     gr.save!
-    post_rule_change_members = group.members
+    post_rule_members = group.members
 
-    update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
+    update_group_rule_members_roles(pre_rule_members, post_rule_members, group) unless multiple_updates
 
     return gr
   end
 
-  def self.update_group_rule(group, group_rule)
+  def self.update_group_rule(group, group_rule, multiple_updates = false)
     raise 'Expected Group object' unless group.is_a?(Group)
     raise 'Expected GroupRule object' unless group_rule.is_a?(GroupRule)
 
-    pre_rule_change_members = group.members
+    pre_rule_members = group.members
     group_rule.save!
     group.reload
-    post_rule_change_members = group.members
+    post_rule_members = group.members
 
-    update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
+    update_group_rule_members_roles(pre_rule_members, post_rule_members, group) unless multiple_updates
+
+    return group_rule
   end
 
   # Main method to remove a group rule from a group.
   # Ensures group members lost due to group rule removal also lose their roles, if applicable.
-  def self.remove_group_rule(group_rule)
+  def self.remove_group_rule(group_rule, multiple_updates = false)
     raise 'Expected GroupRule object' unless group_rule.is_a?(GroupRule)
 
     group = group_rule.group
@@ -303,7 +305,7 @@ class GroupRulesService
     group_rule.destroy
     post_rule_change_members = group.members
 
-    update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
+    update_group_rule_members_roles(pre_rule_change_members, post_rule_change_members, group) unless multiple_updates
   end
 
   # Ensure a person's inherited roles are correctly handled by recording
@@ -335,11 +337,9 @@ class GroupRulesService
     end
   end
 
-  private
-
-  def self.update_members_group_roles(pre_rule_change_members, post_rule_change_members, group)
-    added_members = post_rule_change_members - pre_rule_change_members
-    removed_members = pre_rule_change_members - post_rule_change_members
+  def self.update_group_rule_members_roles(pre_rule_members, post_rule_members, group)
+    added_members = post_rule_members - pre_rule_members
+    removed_members = pre_rule_members - post_rule_members
 
     if added_members.present?
       added_members.each do |added_member|

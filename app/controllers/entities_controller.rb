@@ -134,11 +134,16 @@ class EntitiesController < ApplicationController
     # (frontend needs work to allow this)
     if params['rules_attributes']
       rules_changed = false
+
+      # if dealing with multiple rules, update rules first and then trigger role assignments to prevent creating unnecessary assignments
+      multiple_updates = params['rules_attributes'].length > 1
+      pre_update_members = entity.members
+
       params['rules_attributes'].each do |rule_attribute|
         if rule_attribute['id'] && rule_attribute['_destroy']
           # Destroy an existing rule
           group_rule = GroupRule.find_by(id: rule_attribute['id'])
-          GroupRulesService.remove_group_rule(group_rule)
+          GroupRulesService.remove_group_rule(group_rule, multiple_updates)
           rules_changed = true
         elsif rule_attribute['id']
           # Updating an existing rule
@@ -147,12 +152,12 @@ class EntitiesController < ApplicationController
           group_rule.condition = rule_attribute['condition']
           group_rule.value = rule_attribute['value']
           if group_rule.changed?
-            GroupRulesService.update_group_rule(entity, group_rule)
+            GroupRulesService.update_group_rule(entity, group_rule, multiple_updates)
             rules_changed = true
           end
         else
           # Creating a new rule
-          GroupRulesService.add_group_rule(entity, rule_attribute['column'], rule_attribute['condition'], rule_attribute['value'])
+          GroupRulesService.add_group_rule(entity, rule_attribute['column'], rule_attribute['condition'], rule_attribute['value'], multiple_updates)
           rules_changed = true
         end
       end
@@ -162,6 +167,10 @@ class EntitiesController < ApplicationController
       if rules_changed
         entity.reload
         entity.touch
+
+        post_update_members = entity.members
+
+        GroupRulesService.update_group_rule_members_roles(pre_update_members, post_update_members, entity)
       end
     end
   end
