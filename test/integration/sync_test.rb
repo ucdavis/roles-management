@@ -486,7 +486,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
 
     # Test basic rule creation matches existing people
     assert group.members.empty?, 'group should have no members'
-    GroupRulesService.add_group_rule(group, 'major', 'is', 'History')
+    GroupRulesService.add_group_rule_and_sync_members_roles(group, 'major', 'is', 'History')
     group.reload
     assert group.members.length == 1, 'group should have 1 member(s)'
 
@@ -509,7 +509,7 @@ class SyncTest < ActiveSupport::TestCase # rubocop:disable Metrics/ClassLength
     # Remove matching characteristic
     test_sync_trigger(:remove_from_role) do
       Rails.logger.debug "CALLING IT"
-      GroupRulesService.remove_group_rule(group.rules.first)
+      GroupRulesService.remove_group_rule_and_sync_members_roles(group.rules.first)
       Rails.logger.debug "DONE CALLING IT"
       group.reload
       assert group.members.empty?, 'group should have no members'
