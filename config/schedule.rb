@@ -23,3 +23,7 @@ end
 every 6.hours do
   rake 'ad:resync_roles'
 end
+
+every :saturday, at: '12pm' do
+  rake 'group:audit_inherited_roles'
+end
