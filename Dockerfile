@@ -11,7 +11,7 @@ RUN apk update \
   && /bin/bash \
   && touch ~/.bashrc \
   && curl -o- -L https://yarnpkg.com/install.sh | bash \
-  && apk del curl tar binutils
+  && apk del tar binutils
 
 # Configure the main working directory. This is the base
 # directory used in any further RUN, COPY, and ENTRYPOINT
@@ -98,6 +98,7 @@ RUN mkdir log && touch log/delayed_job.log
 
 # Copy the main application.
 COPY . ./
+RUN curl https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -o rds-combined-ca-bundle.pem -s
 
 # Precompile Rails assets (plus Webpack)
 RUN bundle exec rake assets:precompile
