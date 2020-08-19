@@ -267,7 +267,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
       when 'department', 'appt_department', 'admin_department'
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
-        $rule.find("td:nth-child(3) input").val "#{rule.get('officialName')} (#{_value})"
+        $rule.find("td:nth-child(3) input").val "#{rule.get('officialName')}"
       when 'business_office_unit', 'admin_business_office_unit', 'appt_business_office_unit'
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
@@ -275,7 +275,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
       when 'title'
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
-        $rule.find("td:nth-child(3) input").val "#{rule.get('name')} (#{_value})"
+        $rule.find("td:nth-child(3) input").val "#{rule.get('name')}"
       else
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
@@ -300,14 +300,17 @@ DssRm.Views.GroupShow = Backbone.View.extend(
           when "department", "admin_department", "appt_department"
             rule.set
               'code': data.code
+              'officialName': data.label
               'value': data.label
           when 'business_office_unit', 'admin_business_office_unit', 'appt_business_office_unit'
             rule.set
               'code': data.code
+              'dept_official_name': data.label
               'value': data.label
           when "title"
             rule.set
               'code': data.code
+              'name': data.label
               'value': data.label
           else
             rule.set

@@ -26,8 +26,8 @@ class BusinessOfficeUnitsController < ApplicationController
   def load_bous
     # 'q' matches on dept_official_name
     if params[:q]
-      bous_table = BusinessOfficeUnit.arel_table
-      @bous = BusinessOfficeUnit.where(bous_table[:dept_official_name].matches("%#{params[:q]}%"))
+      dept_official_name = BusinessOfficeUnit.arel_table[:dept_official_name]
+      @bous = BusinessOfficeUnit.joins(:departments).distinct.where(dept_official_name.matches("%#{params[:q]}%"))
     else
       @bous = BusinessOfficeUnit.all
     end
