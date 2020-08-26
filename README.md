@@ -98,7 +98,6 @@ The following is a list of background tasks that should be configured for proper
    * rake 'ad:resync_roles'
  * Unknown
    * rake 'group:audit_inherited_roles' (was found disabled in AWS)
-   * rake 'teem:sync_users'
 
 ## Authors
 Christopher Thielen (cmthielen@ucdavis.edu)
