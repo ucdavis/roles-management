@@ -203,7 +203,7 @@ class ActiveDirectory
     group_name = nil
 
     if group.is_a? Net::LDAP::Entry
-      group_name = group['cn'][0]
+      group_name = group[:samaccountname][0]
     else
       group_name = group
     end
