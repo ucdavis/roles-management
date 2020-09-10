@@ -1,7 +1,7 @@
 require 'json'
 require 'yaml'
 require 'net-ldap'
-
+require 'byebug'
 require Rails.root.join('lib', 'active_directory.rb')
 require Rails.root.join('lib', 'active_directory_helper.rb')
 
@@ -12,9 +12,7 @@ namespace :ad do
     old_logger = ActiveRecord::Base.logger
     ActiveRecord::Base.logger = nil
 
-    @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
-
-    ActiveDirectory.configure(@config)
+    ActiveDirectory.configure
 
     if args[:role_id].nil?
       # Audit every AD-enabled role
@@ -80,9 +78,8 @@ namespace :ad do
   desc 'Re-sync role(s) to AD groups (destructive; optionally takes a single role ID)'
   task :resync_roles, [:role_id] => :environment do |_t, args|
     start_ts = Time.now
-    @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
 
-    ActiveDirectory.configure(@config)
+    ActiveDirectory.configure
 
     if args[:role_id].nil?
       # Audit every AD-enabled role
@@ -167,9 +164,7 @@ namespace :ad do
     STDERR.puts 'Must supply a group ID' if args[:group_id].nil?
     STDERR.puts 'Must supply an AD path' if args[:ad_path].nil?
 
-    @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
-
-    ActiveDirectory.configure(@config)
+    ActiveDirectory.configure
 
     group = Group.find_by(id: args[:group_id])
     if group.nil?

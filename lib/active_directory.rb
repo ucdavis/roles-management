@@ -10,7 +10,10 @@ class ActiveDirectory
 
   @ldap = {}
 
-  def ActiveDirectory.configure(settings)
+  def ActiveDirectory.configure
+    # Credit: https://urgetopunt.com/2009/09/12/yaml-config-with-erb.html
+    settings = YAML.load(ERB.new(File.read(Rails.root.join('config', 'ldap.yml'))).result)
+
     @ldap[:people] = []
     @ldap[:groups] = []
 
