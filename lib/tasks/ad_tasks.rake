@@ -79,6 +79,7 @@ namespace :ad do
 
   desc 'Re-sync role(s) to AD groups (destructive; optionally takes a single role ID)'
   task :resync_roles, [:role_id] => :environment do |_t, args|
+    start_ts = Time.now
     @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
 
     ActiveDirectory.configure(@config)
@@ -123,16 +124,23 @@ namespace :ad do
           ActiveDirectoryHelper.ensure_user_not_in_group(missing, ad_group)
         end
 
+        missing_ad_users = []
+
         # puts "\tMembers in RM but not AD (will be added to AD)"
         (role_members - ad_members).each do |missing|
           # puts "\t\t#{missing} ..."
           begin
             retries ||= 0
             p = Person.find_by(loginid: missing)
-            if p
-              ActiveDirectoryHelper.ensure_user_in_group(p, ad_group)
+            ad_user = ActiveDirectory.get_user(missing)
+            if p && ad_user
+              ActiveDirectoryHelper.ensure_user_in_group(p, ad_group, ad_user)
             else
-              STDERR.puts "Expected Person object with login ID #{missing} to exist but did not. Ignoring ..."
+              if ad_user.nil?
+                missing_ad_users << missing
+              else
+                STDERR.puts "Expected Person object with login ID #{missing} to exist but did not. Ignoring ..."
+              end
             end
           rescue ActiveDirectoryHelper::UserNotFound
             # STDERR.puts "User '#{missing}' not found in AD while merging role and AD group"
@@ -143,10 +151,15 @@ namespace :ad do
             retry if (retries += 1) < 3
           end
         end
+
+        puts "Error syncing #{role.application.name} / ##{role.id} #{role.name}. Could not retrieve user(s) #{missing_ad_users} from AD. Skipping ..."
       end
     end
 
-    # puts "Re-synced #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s)."
+    # puts "Re-sync #{num_out_of_sync_roles} / #{ad_enabled_roles.count} AD-enabled role(s)."
+
+    stop_ts = Time.now
+    puts "Finished task ad:resync_roles in #{stop_ts - start_ts}s"
   end
 
   desc 'Audit AD for differences between a group and an AD path'
