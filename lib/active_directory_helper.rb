@@ -81,7 +81,6 @@ class ActiveDirectoryHelper
   # +group+ may be an AD path (string) or Net::LDAP::Entry object
   # optional ad_user
   def ActiveDirectoryHelper.ensure_user_in_group(user, group, ad_user = nil)
-    byebug
     unless user.is_a? Person
       raise ArgumentError, 'user parameter must be of type Person'
     end

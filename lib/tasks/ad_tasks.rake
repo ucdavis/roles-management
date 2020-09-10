@@ -1,7 +1,7 @@
 require 'json'
 require 'yaml'
 require 'net-ldap'
-require 'byebug'
+
 require Rails.root.join('lib', 'active_directory.rb')
 require Rails.root.join('lib', 'active_directory_helper.rb')
 
