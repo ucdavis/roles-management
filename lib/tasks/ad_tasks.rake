@@ -149,7 +149,7 @@ namespace :ad do
           end
         end
 
-        puts "Error syncing #{role.application.name} / ##{role.id} #{role.name}. Could not retrieve user(s) #{missing_ad_users} from AD. Skipping ..."
+        puts "Error syncing #{role.application.name} / #{role.name}. Could not retrieve user(s) #{missing_ad_users} from AD. Skipping ..."
       end
     end
 
