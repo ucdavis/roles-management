@@ -9,7 +9,6 @@ config/general.yml
 config/newrelic.yml
 config/secrets.yml
 config/secret_token.yml
-sync/config/active_directory.yml
 sync/config/sysaid.yml
 sync/config/slack.yml
 docker-web-secrets.env

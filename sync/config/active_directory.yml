@@ -1,0 +1,17 @@
+people:
+   - host: <%= ENV['AD_PEOPLE_HOST'] %>
+     user: <%= ENV['AD_USER'] %>
+     pass: <%= ENV['AD_PASS'] %>
+     base: <%= ENV['AD_PEOPLE_BASE'] %>
+
+groups:
+   - host: <%= ENV['AD_GROUPS_HOST'] %>
+     user: <%= ENV['AD_USER'] %>
+     pass: <%= ENV['AD_PASS'] %>
+     base: <%= ENV['AD_GROUPS_BASE'] %>
+     port: <%= ENV['AD_GROUPS_PORT'] %>
+
+rm_endpoint:
+  host: <%= ENV['RM_ENDPOINT_HOST'] %>
+  user: <%= ENV['RM_ENDPOINT_USER'] %>
+  pass: <%= ENV['RM_ENDPOINT_PASS'] %>
