@@ -53,9 +53,7 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         Sync.logger.info "Beginning job requested #{duration(DateTime.now.to_f - requested_at.to_f)} ago"
       end
 
-      @config = YAML.load_file(Rails.root.join('sync', 'config', 'active_directory.yml'))
-
-      ActiveDirectory.configure(@config)
+      ActiveDirectory.configure
 
       case @sync_data['mode']
 

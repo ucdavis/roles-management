@@ -10,7 +10,10 @@ class ActiveDirectory
 
   @ldap = {}
 
-  def ActiveDirectory.configure(settings)
+  def ActiveDirectory.configure
+    # Credit: https://urgetopunt.com/2009/09/12/yaml-config-with-erb.html
+    settings = YAML.load(ERB.new(File.read(Rails.root.join('sync', 'config', 'active_directory.yml'))).result)
+
     @ldap[:people] = []
     @ldap[:groups] = []
 
@@ -203,7 +206,7 @@ class ActiveDirectory
     group_name = nil
 
     if group.is_a? Net::LDAP::Entry
-      group_name = group['cn'][0]
+      group_name = group[:samaccountname][0]
     else
       group_name = group
     end
