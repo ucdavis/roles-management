@@ -16,8 +16,8 @@ end
 # Sync with external systems
 every 12.hours do
   #rake 'dw:import' on AWS
-  rake 'person:update_active_flag'
-  rake 'person:remove_inactive'
+  #rake 'person:update_active_flag' on AWS(LS IT Legacy)
+  #rake 'person:remove_inactive' on AWS(LS IT Legacy)
 end
 
 every 6.hours do
