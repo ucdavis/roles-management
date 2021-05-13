@@ -6,7 +6,7 @@ namespace :person do
 
   desc 'Mark active/inactive based on account sync recency'
   task update_active_flag: :environment do
-    puts "Running update_active_flag"
+    Rails.logger.info "Running task person:update_active_flag"
     # Find people who are _active_ but have not been synced in 'DAYS_INDICATING_INACTIVE' days
     people = Person.where('(synced_at < ?) or (synced_at is null)', (Time.now - DAYS_INDICATING_INACTIVE.days))
                    .where(active: true)
@@ -34,7 +34,7 @@ namespace :person do
 
   desc 'Remove long-inactive people'
   task remove_inactive: :environment do
-    puts "Running remove_inactive"
+    Rails.logger.info "Running task person:remove_inactive"
     # Find people who are inactive for at least 'DAYS_INDICATING_REMOVAL' days
     people = Person.where('(synced_at < ?) or (synced_at is null)', (Time.now - DAYS_INDICATING_REMOVAL.days))
                    .where(active: false)

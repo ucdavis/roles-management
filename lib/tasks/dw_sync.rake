@@ -20,7 +20,7 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
 
   desc 'Import PPS departments using DW'
   task import_pps_departments: :environment do
-    puts 'Running dw:import_pps_departments'
+    Rails.logger.info "Running task dw:import_pps_departments"
     departments = DssDw.fetch_pps_departments
 
     departments.each do |department|
@@ -35,7 +35,7 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
 
   desc 'Import/augment user(s) with IAM data'
   task :import, [:loginid] => :environment do |_t, args|
-    puts 'Running dw:import'
+    Rails.logger.info "Running task dw:import"
     loginids = []
 
     # TODO: What about disabling individuals not seen in a while?
