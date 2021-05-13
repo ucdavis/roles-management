@@ -6,7 +6,7 @@ every :reboot do
 end
 
 every 24.hours do
-  rake 'dw:import_pps_departments'
+  #rake 'dw:import_pps_departments' on AWS(LS IT Legacy)
   #rake 'iam:import_sis_majors' on AWS
   #rake 'iam:import_bous' on AWS
   rake 'group:recalculate_inherited_application_operatorships'
