@@ -9,6 +9,7 @@ module UcdIam
   def self.fetch_sis_majors
     raise UcdIamError, 'IAM_URL and/or IAM_API_KEY environment variable(s) missing' if iam_url.blank? || iam_api_key.blank?
 
+    puts "Running fetch_sis_majors"
     url = "#{iam_url}/api/iam/orginfo/sis/majors?key=#{iam_api_key}&v=1.0"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
@@ -31,6 +32,7 @@ module UcdIam
   def self.fetch_bous
     raise UcdIamError, 'IAM_URL and/or IAM_API_KEY environment variable(s) missing' if iam_url.blank? || iam_api_key.blank?
 
+    puts "Running fetch_bous"
     url = "#{iam_url}/api/iam/orginfo/pps/divisions?key=#{iam_api_key}&v=1.0"
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)

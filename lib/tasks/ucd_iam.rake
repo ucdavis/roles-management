@@ -4,6 +4,7 @@ namespace :iam do # rubocop:disable Metrics/BlockLength
 
   desc 'Import SIS majors using IAM'
   task import_sis_majors: :environment do
+    puts "Running task import_sis_majors"
     majors = UcdIam.fetch_sis_majors
 
     majors.each do |major|
@@ -13,6 +14,7 @@ namespace :iam do # rubocop:disable Metrics/BlockLength
 
   desc 'Import BOUs using IAM'
   task import_bous: :environment do
+    puts "Running task import_bous"
     bous = UcdIam.fetch_bous
 
     bous.each do |bou|
