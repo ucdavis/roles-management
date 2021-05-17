@@ -42,6 +42,7 @@ namespace :group do
   desc 'Recalculate inherited application operatorships from groups (destructive).'
   task :recalculate_inherited_application_operatorships do
     Rake::Task['environment'].invoke
+    Rails.logger.info "Running task group:recalculate_inherited_application_operatorships"
 
     stale_calculated_ao_ids = ApplicationOperatorship.where.not(parent_id: nil).map(&:id)
 
@@ -89,6 +90,7 @@ namespace :group do
   task :recalculate_inherited_application_ownerships do
     Rake::Task['environment'].invoke
 
+    Rails.logger.info "Running task group:recalculate_inherited_application_ownerships"
     stale_calculated_ao_ids = ApplicationOwnership.where.not(parent_id: nil).map(&:id)
 
     found_correct = 0
