@@ -77,6 +77,7 @@ namespace :ad do
 
   desc 'Re-sync role(s) to AD groups (destructive; optionally takes a single role ID)'
   task :resync_roles, [:role_id] => :environment do |_t, args|
+    Rails.logger.info "Running task ad:resync_roles"
     start_ts = Time.now
 
     ActiveDirectory.configure
