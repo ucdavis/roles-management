@@ -57,3 +57,13 @@ jobs:
           ecr-repository: 'roles-management-prod'
           ecs-cluster: 'legacy'
           ecs-service: 'roles-management-prod'
+
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          author_name: ${{ github.workflow }}
+          fields: repo,message,commit,author,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
