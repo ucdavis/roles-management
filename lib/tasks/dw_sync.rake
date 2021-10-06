@@ -56,6 +56,15 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
         loginids << dw_people_by_dept.map { |p| p['userId'] }
       end
 
+      # Scan tracked majors and grab grad student login IDs
+      Major.where(id: TrackedItem.where(kind: 'major').pluck(:item_id)).pluck(:code).each do |major_code|
+        dw_people_by_major = DssDw.fetch_people_by_major_code(major_code)
+
+        next unless dw_people_by_major.present?
+
+        loginids << dw_people_by_major.map { |p| p['userId'] }
+      end
+
       loginids = loginids.flatten.uniq
     end
 
