@@ -78,7 +78,7 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
 
     pps_loginids = pps_loginids.flatten.uniq
 
-    Major.where(id: TrackedItem.where(kind: 'major').pluck(:item_id)).pluck(:code).each do |major_code|
+    Major.where(id: TrackedItem.where(kind: 'gr_major').pluck(:item_id)).pluck(:gr_code).each do |major_code|
       dw_people_by_major = DssDw.fetch_people_by_major_code(major_code)
 
       next unless dw_people_by_major.present?
