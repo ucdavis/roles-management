@@ -56,18 +56,45 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
         loginids << dw_people_by_dept.map { |p| p['userId'] }
       end
 
-      # Scan tracked majors and grab grad student login IDs
-      Major.where(id: TrackedItem.where(kind: 'major').pluck(:item_id)).pluck(:code).each do |major_code|
-        dw_people_by_major = DssDw.fetch_people_by_major_code(major_code)
-
-        next unless dw_people_by_major.present?
-
-        loginids << dw_people_by_major.map { |p| p['userId'] }
-      end
-
       loginids = loginids.flatten.uniq
     end
 
     loginids.each { |loginid| DssDw.create_or_update_using_dw(loginid) }
+  end
+
+  desc 'Import grad students by major using IAM data'
+  task import_grads: :environment do
+    Rails.logger.info "Running task dw:import_grads"
+    sis_loginids = []
+    pps_loginids = []
+
+    Department.where(id: TrackedItem.where(kind: 'department').pluck(:item_id)).pluck(:code).each do |dept_code|
+      dw_people_by_pps = DssDw.fetch_people_by_pps_department(dept_code)
+
+      next unless dw_people_by_pps.present?
+
+      pps_loginids << dw_people_by_pps.map { |p| p['userId'] }
+    end
+
+    pps_loginids = pps_loginids.flatten.uniq
+
+    Major.where(id: TrackedItem.where(kind: 'major').pluck(:item_id)).pluck(:code).each do |major_code|
+      dw_people_by_major = DssDw.fetch_people_by_major_code(major_code)
+
+      next unless dw_people_by_major.present?
+
+      sis_loginids << dw_people_by_major.map { |p| p['userId'] }
+    end
+
+    sis_loginids = sis_loginids.flatten.uniq
+
+    # remove students that are already imported through PPS associations
+    loginids = sis_loginids - pps_loginids
+
+    Rails.logger.info "Starting import for #{loginids.size} logins"
+    start_time = Time.now
+    loginids.each { |loginid| DssDw.create_or_update_using_dw(loginid) }
+    end_time = Time.now
+    Rails.logger.info "Completed import for #{loginids.size} in #{end_time - start_time}s"
   end
 end
