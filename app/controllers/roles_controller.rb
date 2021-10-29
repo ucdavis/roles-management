@@ -16,6 +16,8 @@ class RolesController < ApplicationController
 
     @cache_key = 'role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
+    @role.update_column(:last_accessed, Time.now)
+
     respond_to do |format|
       format.json { render 'roles/show', status: :ok }
       format.text

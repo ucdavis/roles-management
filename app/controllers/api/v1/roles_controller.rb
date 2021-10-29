@@ -9,6 +9,8 @@ module Api
 
           @cache_key = 'api/role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
 
+          @role.update_column(:last_accessed, Time.now)
+
           render 'api/v1/roles/show'
         else
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Attempted to load role view (show) for invalid ID #{@role_id}." }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_06_180219) do
+ActiveRecord::Schema.define(version: 2021_10_29_224616) do
 
   create_table "api_key_users", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "secret"
@@ -233,6 +233,7 @@ ActiveRecord::Schema.define(version: 2021_10_06_180219) do
     t.string "ad_path"
     t.datetime "last_ad_sync", precision: 6
     t.string "ad_guid"
+    t.datetime "last_accessed", precision: 6
     t.index ["id"], name: "id", unique: true
     t.index ["id"], name: "index_roles_on_id"
   end
