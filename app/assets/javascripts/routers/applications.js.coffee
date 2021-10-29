@@ -4,17 +4,18 @@ DssRm.Routers.Applications = Backbone.Router.extend(
     $("#applications").replaceWith @indexView.el
 
   routes:
-    ""                 : "index"
-    "applications/:id" : "showApplication"
-    "entities/:uid"    : "showEntity"
-    "import/:term"     : "importPersonDialog"
-    "impersonate"      : "impersonateDialog"
-    "unimpersonate"    : "unimpersonate"
-    "api-keys"         : "apiKeysDialog"
-    "whitelist"        : "whitelistDialog"
-    "queued-jobs"      : "queuedJobsDialog"
-    "tracking"         : "trackingDialog"
-    "about"            : "aboutDialog"
+    ""                    : "index"
+    "applications/:id"    : "showApplication"
+    "entities/:uid"       : "showEntity"
+    "import/:term"        : "importPersonDialog"
+    "impersonate"         : "impersonateDialog"
+    "unimpersonate"       : "unimpersonate"
+    "api-keys"            : "apiKeysDialog"
+    "whitelist"           : "whitelistDialog"
+    "queued-jobs"         : "queuedJobsDialog"
+    "tracked-departments" : "trackedDepartmentsDialog"
+    "tracked-gr-majors"   : "trackedGrMajorsDialog"
+    "about"               : "aboutDialog"
 
   index: ->
 
@@ -79,13 +80,21 @@ DssRm.Routers.Applications = Backbone.Router.extend(
       queued_jobs = new DssRm.Collections.QueuedJobs(jobs)
       new DssRm.Views.QueuedJobsDialog(queued_jobs: queued_jobs).render().$el.modal()
 
-  trackingDialog: ->
+  trackedDepartmentsDialog: ->
     toastr["info"]("Loading tracking ...")
 
     $.get Routes.admin_tracked_items_path(), (items) =>
       toastr.remove()
       tracked_items = new DssRm.Collections.TrackedItems(items.tracked_items)
       new DssRm.Views.TrackingDialog(tracked_items: tracked_items, departments: items.departments).render().$el.modal()
+
+  trackedGrMajorsDialog: ->
+    toastr["info"]("Loading tracking ...")
+
+    $.get Routes.admin_tracked_items_path(), (items) =>
+      toastr.remove()
+      tracked_items = new DssRm.Collections.TrackedItems(items.tracked_items)
+      new DssRm.Views.TrackedGrMajorsDialog(tracked_items: tracked_items, majors: items.majors).render().$el.modal()
 
   aboutDialog: ->
     new DssRm.Views.AboutDialog().render().$el.modal()

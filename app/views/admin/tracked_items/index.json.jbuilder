@@ -13,4 +13,10 @@ json.cache! ['admin_tracked_items_index', @cache_key] do
       json.name department.officialName
     end
   end
+
+  json.majors do
+    json.array!(@majors) do |major|
+      json.extract! major, :id, :name, :gr_code
+    end
+  end
 end

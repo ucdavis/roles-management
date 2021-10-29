@@ -48,6 +48,7 @@ class Admin::TrackedItemsController < Admin::BaseController
   def load_tracked_items
     @tracked_items = TrackedItem.all
     @departments = Department.all
+    @majors = Major.all
   end
 
   def tracked_item_params
