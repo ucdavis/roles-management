@@ -1,4 +1,4 @@
-FROM ruby:2.6-alpine
+FROM ruby:2.7-alpine
 
 ENV PATH /root/.yarn/bin:$PATH
 

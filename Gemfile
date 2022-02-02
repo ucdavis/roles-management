@@ -1,13 +1,12 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-#ruby '2.4.1'
-ruby '>= 2.3'
+ruby '>= 2.7'
 
 gem 'rails', '~> 5.2'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 5.6'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
