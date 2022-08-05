@@ -32,7 +32,7 @@ class EntitiesController < ApplicationController
         end
         send_data csv_data,
                   type: 'text/csv; charset=iso-8859-1; header=present',
-                  disposition: 'attachment; filename=' + unix_filename(@entity.name.to_s)
+                  disposition: 'attachment; filename=' + unix_filename(@entity.name.to_s) + '.csv'
       end
     end
   end
