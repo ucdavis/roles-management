@@ -36,8 +36,7 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
   desc 'Import/augment user(s) with IAM data'
   task :import, [:loginid] => :environment do |_t, args|
     Rails.logger.info "Running task dw:import"
-    puts "Starting dw:import"
-    start_time = Time.now
+    start_import_time = Time.now
     loginids = []
 
     # TODO: What about disabling individuals not seen in a while?
@@ -63,14 +62,17 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
 
     puts "Importing #{loginids.size} loginids"
 
-    loginids.each { |loginid| 
+    loginids.each { |loginid|
       start_time = Time.now
-      puts "Updating #{loginid}"
-      DssDw.create_or_update_using_dw(loginid) 
-      puts "Updated #{loginid} in #{Time.now - start_time}"
+      begin
+        DssDw.create_or_update_using_dw(loginid)
+      rescue => exception
+        puts "Error importing/updating #{loginid}. Skipping..."
+        puts exception
+      end
     }
 
-    puts "Completed dw:import in #{Time.now - start_time}"
+    Rails.logger.info "Completed dw:import in #{Time.now - start_import_time}"
   end
 
   desc 'Import grad students by major using IAM data'
