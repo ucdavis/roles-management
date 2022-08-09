@@ -164,15 +164,15 @@ class Person < Entity
   # current mysql db uses 3-byte unicode encoding, strip any overflowing characters
   def ensure_utf8
     if self.name
-      self.name = self.name.each_char.select { |c| c.byte.size < 4 }.join('')
+      self.name = self.name.each_char.select { |c| c.bytes.size < 4 }.join('')
     end
 
     if self.first
-      self.first = self.first.each_char.select { |c| c.byte.size < 4 }.join('')
+      self.first = self.first.each_char.select { |c| c.bytes.size < 4 }.join('')
     end
 
     if self.last
-      self.last = self.last.each_char.select { |c| c.byte.size < 4 }.join('')
+      self.last = self.last.each_char.select { |c| c.bytes.size < 4 }.join('')
     end
   end
 
