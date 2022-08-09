@@ -33,6 +33,7 @@ class Person < Entity
   validates :loginid, presence: true, uniqueness: true
 
   before_save  :set_name_if_blank
+  before_save  :ensure_utf8
   after_save   :recalculate_group_rule_membership
   after_save   :log_changes
 
@@ -158,6 +159,21 @@ class Person < Entity
   def set_name_if_blank
     return unless name.blank?
     self.name = first.blank? ? loginid : "#{first} #{last}".strip
+  end
+
+  # current mysql db uses 3-byte unicode encoding, strip any overflowing characters
+  def ensure_utf8
+    if self.name
+      self.name = self.name.each_char.select { |c| c.byte.size < 4 }.join('')
+    end
+
+    if self.first
+      self.first = self.first.each_char.select { |c| c.byte.size < 4 }.join('')
+    end
+
+    if self.last
+      self.last = self.last.each_char.select { |c| c.byte.size < 4 }.join('')
+    end
   end
 
   def log_changes # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
