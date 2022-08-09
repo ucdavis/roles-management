@@ -60,10 +60,7 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
       loginids = loginids.flatten.uniq
     end
 
-    puts "Importing #{loginids.size} loginids"
-
     loginids.each { |loginid|
-      start_time = Time.now
       begin
         DssDw.create_or_update_using_dw(loginid)
       rescue => exception
