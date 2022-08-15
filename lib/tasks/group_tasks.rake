@@ -84,6 +84,8 @@ namespace :group do
       puts "\tFound incorrect (removed): #{found_incorrect}"
       puts "\tFound missing   (added)  : #{found_missing}"
     end
+
+    Rails.logger.info "Finished task group:recalculate_inherited_application_operatorships"
   end
 
   desc 'Recalculate inherited application ownerships from groups (destructive).'
@@ -131,6 +133,8 @@ namespace :group do
       puts "\tFound incorrect (removed): #{found_incorrect}"
       puts "\tFound missing   (added)  : #{found_missing}"
     end
+
+    Rails.logger.info "Finished task group:recalculate_inherited_application_ownerships"
   end
 
   desc 'Recalculate inherited roles from groups for a given person.'

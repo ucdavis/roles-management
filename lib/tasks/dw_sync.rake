@@ -31,6 +31,8 @@ namespace :dw do # rubocop:disable Metrics/BlockLength
       d.bou_org_oid = department['bouOrgOId']
       d.save!
     end
+
+    Rails.logger.info "Finished task dw:import_pps_departments"
   end
 
   desc 'Import/augment user(s) with IAM data'

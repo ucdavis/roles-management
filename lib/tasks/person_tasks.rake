@@ -30,6 +30,8 @@ namespace :person do
 
     # Only output if more than 5% of the user database is affected
     puts "Found and marked active #{people.length} people." if people.length.to_f / Person.count.to_f >= 0.05
+
+    Rails.logger.info "Finished task person:update_active_flag"
   end
 
   desc 'Remove long-inactive people'
@@ -43,5 +45,7 @@ namespace :person do
 
     # Only output if more than 5% of the user database is affected
     puts "Found and removed inactive #{people.length} people." if people.length.to_f / Person.count.to_f >= 0.05
+
+    Rails.logger.info "Finished task person:remove_inactive"
   end
 end

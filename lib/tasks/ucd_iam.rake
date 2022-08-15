@@ -10,6 +10,8 @@ namespace :iam do # rubocop:disable Metrics/BlockLength
     majors.each do |major|
       Major.find_or_create_by(name: major['majorName'])
     end
+
+    Rails.logger.info "Finished task iam:import_sis_majors"
   end
 
   desc 'Import BOUs using IAM'
@@ -27,5 +29,7 @@ namespace :iam do # rubocop:disable Metrics/BlockLength
 
       b.save! if b.changed?
     end
+
+    Rails.logger.info "Finished task iam:import_bous"
   end
 end
