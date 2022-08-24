@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_29_224616) do
+ActiveRecord::Schema.define(version: 2022_08_24_135313) do
 
   create_table "api_key_users", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "secret"
@@ -71,11 +71,11 @@ ActiveRecord::Schema.define(version: 2021_10_29_224616) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "delayed_jobs", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "delayed_jobs", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "priority", default: 0
     t.integer "attempts", default: 0
-    t.text "handler"
-    t.text "last_error"
+    t.text "handler", limit: 16777215
+    t.text "last_error", limit: 16777215
     t.datetime "run_at", precision: 6
     t.datetime "locked_at", precision: 6
     t.datetime "failed_at", precision: 6
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2021_10_29_224616) do
   create_table "entities", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "type"
     t.string "name"
-    t.string "first"
+    t.string "first", collation: "utf32_general_ci"
     t.string "last"
     t.string "email"
     t.string "loginid"
