@@ -223,50 +223,54 @@ namespace :group do
 
     total_people = people.count
 
-    people.each_with_index do |p, i|
-      # Only log out every LOG_PROGRESS_INTERVAL rows
-      if (i % LOG_PROGRESS_INTERVAL) == 0
-        log_str = "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
-        Rails.logger.info log_str
-      end
-
-      # Ensure a person doesn't have inherited roles they shouldn't have ...
-      p.role_assignments.each do |ra|
-        next if ra.parent_id.nil?
-
-        # Role is inherited
-        parent_ra = RoleAssignment.find_by_id(ra.parent_id)
-
-        if parent_ra.nil?
-          Rails.logger.info "#{p.loginid}: Role assignment #{ra.id} is inherited from #{ra.parent_id} but parent doesn't exist. Skipping ..."
-          next
+    begin
+      people.each_with_index do |p, i|
+        # Only log out every LOG_PROGRESS_INTERVAL rows
+        if (i % LOG_PROGRESS_INTERVAL) == 0
+          log_str = "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
+          Rails.logger.info log_str
         end
 
-        # Role is inherited from a group ...
-        group = parent_ra.entity
-        unless group.members.map(&:loginid).include?(p.loginid)
-          Rails.logger.info "#{p.loginid}: Group #{group.id} #{group.name} (excluded) ..."
-          Rails.logger.info "#{p.loginid}: -- Has inherited role #{parent_ra.role_id} / #{parent_ra.role.application.name}, #{parent_ra.role.token} but should not ..."
-          RoleAssignmentsService.unassign_role_from_entity(ra)
-          total_incorrect += 1
+        # Ensure a person doesn't have inherited roles they shouldn't have ...
+        p.role_assignments.each do |ra|
+          next if ra.parent_id.nil?
+
+          # Role is inherited
+          parent_ra = RoleAssignment.find_by_id(ra.parent_id)
+
+          if parent_ra.nil?
+            Rails.logger.info "#{p.loginid}: Role assignment #{ra.id} is inherited from #{ra.parent_id} but parent doesn't exist. Skipping ..."
+            next
+          end
+
+          # Role is inherited from a group ...
+          group = parent_ra.entity
+          unless group.members.map(&:loginid).include?(p.loginid)
+            Rails.logger.info "#{p.loginid}: Group #{group.id} #{group.name} (excluded) ..."
+            Rails.logger.info "#{p.loginid}: -- Has inherited role #{parent_ra.role_id} / #{parent_ra.role.application.name}, #{parent_ra.role.token} but should not ..."
+            RoleAssignmentsService.unassign_role_from_entity(ra)
+            total_incorrect += 1
+          end
         end
-      end
 
-      person_role_ids = p.roles.map(&:id)
+        person_role_ids = p.roles.map(&:id)
 
-      # Ensure a person has the inherited roles they should have ...
-      p.groups.each do |group|
-        group.role_assignments.each do |ra|
-          unless person_role_ids.include?(ra.role_id)
-            Rails.logger.info "#{p.loginid}: Group #{group.id} #{group.name} (included) ..."
-            Rails.logger.info "#{p.loginid}: -- Should have inherited role #{ra.role_id} / #{ra.role.application.name}, #{ra.role.token} but has not yet ..."
+        # Ensure a person has the inherited roles they should have ...
+        p.groups.each do |group|
+          group.role_assignments.each do |ra|
+            unless person_role_ids.include?(ra.role_id)
+              Rails.logger.info "#{p.loginid}: Group #{group.id} #{group.name} (included) ..."
+              Rails.logger.info "#{p.loginid}: -- Should have inherited role #{ra.role_id} / #{ra.role.application.name}, #{ra.role.token} but has not yet ..."
 
-            RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: ra.role_id), ra.id)
+              RoleAssignmentsService.assign_role_to_entity(p, Role.find_by(id: ra.role_id), ra.id)
 
-            total_missing += 1
+              total_missing += 1
+            end
           end
         end
       end
+    rescue => e
+      Rails.logger.error e
     end
 
     Rails.logger.info "Total role assignments (at start)  : #{total_ra_count}"
