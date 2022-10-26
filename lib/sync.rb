@@ -190,6 +190,6 @@ module Sync
   end
 
   def sync_scripts
-    ['active_directory.rb']
+    ['active_directory.rb', 'docusign.rb']
   end
 end
