@@ -53,7 +53,7 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         Sync.logger.info "Beginning job requested #{duration(DateTime.now.to_f - requested_at.to_f)} ago"
       end
 
-      # ActiveDirectory.configure
+      ActiveDirectory.configure if sync_script.include?('active_directory.rb')
 
       case @sync_data['mode']
 
@@ -70,7 +70,8 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         end
 
         if application_name == "DocuSign"
-          require 'DocuSign'
+          require "docusign"
+          Docusign.configure
           Docusign.add_person_to_group(p, role_name)
         end
 
@@ -112,7 +113,8 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         end
 
         if application_name == "DocuSign"
-          require 'DocuSign'
+          require "docusign"
+          Docusign.configure
           Docusign.remove_person_from_group(p, role_name)
         end
 

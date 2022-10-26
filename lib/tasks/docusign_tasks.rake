@@ -15,6 +15,7 @@ namespace :docusign do
       ds_application = Application.create(name: "DocuSign", description: "A DocuSign group maps to an Application Role with the same name")
     end
 
+    Docusign.configure
     # Pull in any missing groups
     ds_groups = Docusign.get_groups
     rm_roles = ds_application.roles
@@ -133,6 +134,8 @@ namespace :docusign do
       STDOUT.puts "'DocuSign' application exists but has no roles."
       exit(0)
     end
+
+    Docusign.configure
 
     ds_groups = Docusign.get_groups
     rm_roles = ds_application.roles

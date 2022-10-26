@@ -3,19 +3,12 @@
 # https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature%20impersonation&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}
 
 require "docusign_esign"
-require "Base64"
+require "base64"
 
 module Docusign
-  HOST_NAME = ENV["DS_HOST_NAME"]
-  CLIENT_ID = ENV["DS_CLIENT_ID"] # Integration Key
-  USER_ID = ENV["DS_USER_ID"]
-  PRIVATE_KEY = Base64.decode64(ENV["DS_PRIVATE_KEY_64"])
-  EXPIRES_IN = 3600
-
-  API_ACCOUNT_ID = ENV["DS_API_ACCOUNT_ID"]
-
   # NEW USER DEFAULTS
-  DEFAULT_PERMISSION_PROFILE = 13769603 # "UC Davis Power User"
+  # DEFAULT_PERMISSION_PROFILE = 16927505 # PROD UC Davis Power User
+  DEFAULT_PERMISSION_PROFILE = 13769603 # SANDBOX UC Davis Power User
   DEFAULT_ADDRESS = {
     address1: "One Shields Ave",
     city: "Davis",
@@ -31,29 +24,35 @@ module Docusign
     end
   end
 
-  @configuration = DocuSign_eSign::Configuration.new
-  @configuration.host = HOST_NAME
+  def self.configure
+    @api_account_id = ENV["DS_API_ACCOUNT_ID"]
+    client_id = ENV["DS_CLIENT_ID"] # Integration Key
+    user_id = ENV["DS_USER_ID"]
+    private_key = Base64.decode64(ENV["DS_PRIVATE_KEY_64"])
+    expires_in = 3600
 
-  @api_client = DocuSign_eSign::ApiClient.new(@configuration)
+    @configuration = DocuSign_eSign::Configuration.new
+    @configuration.host = ENV["DS_HOST_NAME"]
 
-  # override default for demo account, not required for prod?
-  @api_client.set_oauth_base_path ENV["DS_OAUTH_BASE_PATH"]
+    @api_client = DocuSign_eSign::ApiClient.new(@configuration)
+    @api_client.set_oauth_base_path ENV["DS_OAUTH_BASE_PATH"]
 
-  @token = @api_client.request_jwt_user_token(CLIENT_ID, USER_ID, PRIVATE_KEY, EXPIRES_IN)
-  # token = api_client.request_jwt_application_token(CLIENT_ID, PRIVATE_KEY, EXPIRES_IN)
+    @token = @api_client.request_jwt_user_token(client_id, user_id, private_key, expires_in)
 
-  @api_client.set_default_header("Authorization", "Bearer #{@token.access_token}")
+    @api_client.set_default_header("Authorization", "Bearer #{@token.access_token}")
 
-  #   byebug
+    @users_api = DocuSign_eSign::UsersApi.new(@api_client)
+    @groups_api = DocuSign_eSign::GroupsApi.new(@api_client)
+    @signing_groups_api = DocuSign_eSign::SigningGroupsApi.new(@api_client)
+    @accounts_api = DocuSign_eSign::AccountsApi.new(@api_client) # for permission profiles
+
+    @token.nil? ? false : true
+  end
+
   # query for base path from UserInfo
   #   user_info = @api_client.get_user_info(@token.access_token)
   #   base_uri = user_info.accounts.first.base_uri
   #   @api_client.set_base_path(base_uri)
-
-  @users_api = DocuSign_eSign::UsersApi.new(@api_client)
-  @groups_api = DocuSign_eSign::GroupsApi.new(@api_client)
-  @signing_groups_api = DocuSign_eSign::SigningGroupsApi.new(@api_client)
-  @accounts_api = DocuSign_eSign::AccountsApi.new(@api_client) # for permission profiles
 
   def self.find_user_by_email(email)
     # API only returns active users by default (not pending/activationSent)
@@ -61,7 +60,7 @@ module Docusign
     begin
       list_options = DocuSign_eSign::ListOptions.new
       list_options.email = email
-      users_list = @users_api.list(API_ACCOUNT_ID, list_options)
+      users_list = @users_api.list(@api_account_id, list_options)
     rescue DocuSign_eSign::ApiError => e
       puts e.detailed_message
 
@@ -71,7 +70,7 @@ module Docusign
     if users_list.nil?
       list_options.status = "ActivationSent"
       begin
-        users_list = @users_api.list(API_ACCOUNT_ID, list_options)
+        users_list = @users_api.list(@api_account_id, list_options)
       rescue => exception
         puts "User #{email} not found"
         return nil
@@ -92,7 +91,7 @@ module Docusign
     })
 
     # limits to 500 users at a time
-    @users_api.create(API_ACCOUNT_ID, new_users_definition).new_users.first
+    @users_api.create(@api_account_id, new_users_definition).new_users.first
   end
 
   def self.find_or_create_user(user)
@@ -107,21 +106,21 @@ module Docusign
 
   def self.delete_user(email)
     user_id = self.find_user_id_by_email(email)
-    user_info_list = DocuSign_eSign::UserInfoList.new({ users: [{ accountId: API_ACCOUNT_ID, userId: user_id }] })
+    user_info_list = DocuSign_eSign::UserInfoList.new({ users: [{ accountId: @api_account_id, userId: user_id }] })
 
-    @users_api.delete(API_ACCOUNT_ID, user_info_list)
+    @users_api.delete(@api_account_id, user_info_list)
   end
 
   # Groups (Anthro, Art, Chemistry, etc...), ignore "Everyone" for our purposes
   def self.get_groups
-    @groups_api.list_groups(API_ACCOUNT_ID).groups.filter { |g| g.group_name != "Everyone" }
+    @groups_api.list_groups(@api_account_id).groups.filter { |g| g.group_name != "Everyone" }
   end
 
   def self.find_group_by_name(group_name)
     list_groups_options = DocuSign_eSign::ListGroupsOptions.new
     list_groups_options.search_text = group_name
 
-    @groups_api.list_groups(API_ACCOUNT_ID, list_groups_options).groups.first
+    @groups_api.list_groups(@api_account_id, list_groups_options).groups.first
   end
 
   # @params [Array<String>] group_names
@@ -129,36 +128,36 @@ module Docusign
     ds_groups = group_names.map { |name| DocuSign_eSign::Group.new({ groupName: name }) }
     group_information = DocuSign_eSign::GroupInformation.new({ groups: ds_groups })
 
-    @groups_api.create_groups(API_ACCOUNT_ID, group_information)
+    @groups_api.create_groups(@api_account_id, group_information)
   end
 
   def self.delete_group
   end
 
   def self.get_group_users(ds_group)
-    @groups_api.list_group_users(API_ACCOUNT_ID, ds_group.group_id).users
+    @groups_api.list_group_users(@api_account_id, ds_group.group_id).users
   end
 
   def self.add_users_to_group(users, group)
     user_info_list = DocuSign_eSign::UserInfoList.new({ users: users })
 
-    @groups_api.update_group_users(API_ACCOUNT_ID, group.group_id, user_info_list)
+    @groups_api.update_group_users(@api_account_id, group.group_id, user_info_list)
   end
 
   def self.remove_users_from_group(users, group)
     user_info_list = DocuSign_eSign::UserInfoList.new({ users: users })
 
-    @groups_api.delete_group_users(API_ACCOUNT_ID, group.group_id, user_info_list)
+    @groups_api.delete_group_users(@api_account_id, group.group_id, user_info_list)
   end
 
   # Signing Groups (LS VRA Team, Lab, etc...)
   def self.get_signing_groups
-    @signing_groups_api.list(API_ACCOUNT_ID)
+    @signing_groups_api.list(@api_account_id)
   end
 
   # Permission Profiles (Sender, Power User, Admin, etc...)
   def self.get_permission_profiles
-    @accounts_api.list_permissions(API_ACCOUNT_ID).permission_profiles
+    @accounts_api.list_permissions(@api_account_id).permission_profiles
   end
 
   # Single sync script jobs
