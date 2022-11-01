@@ -189,7 +189,7 @@ GEM
     net-ssh (6.1.0)
     newrelic_rpm (8.4.0)
     nio4r (2.5.8)
-    nokogiri (1.13.7)
+    nokogiri (1.13.9)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     phantomjs (2.1.1.0)
