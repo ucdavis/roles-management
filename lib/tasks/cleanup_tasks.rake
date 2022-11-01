@@ -1,7 +1,7 @@
-require 'rake'
+require "rake"
 
 namespace :clean do
-  desc 'Remove duplicate SIS associations'
+  desc "Remove duplicate SIS associations"
   task :remove_duplicate_sis_assocs => :environment do |t, args|
     Person.all.each do |p|
       if p.sis_associations.length > 1
@@ -51,8 +51,8 @@ namespace :clean do
         if group_membership
           dupe_member.push(rule_member)
 
-          # puts "Deleting #{rule_member.name} from #{g.name}"
-          # group_membership.destroy!
+          puts "Deleting #{rule_member.name} from #{g.name}"
+          group_membership.destroy!
         end
       end
 
@@ -77,7 +77,7 @@ namespace :clean do
 
     roles_modified = 0
     ra_removed = 0
- 
+
     Role.all.each do |role|
       ra = role.role_assignments
 
@@ -91,9 +91,9 @@ namespace :clean do
 
           if manual_ra
             duplicate_assignments.push(manual_ra.entity)
-            # puts "Deleting role assignment #{manual_ra.id} for #{person.name} from #{role.application.name}:#{role.name}"
 
-            # manual_ra.destroy!
+            puts "Deleting role assignment for #{manual_ra.entity.name} from #{role.application.name}:#{role.name}"
+            manual_ra.destroy!
           end
         end
       end
@@ -103,14 +103,12 @@ namespace :clean do
         ra_removed += duplicate_assignments.size
       end
 
-    puts "#{role.application.name}:#{role.name},#{duplicate_assignments.map(&:name).join(",")}" unless duplicate_assignments.empty?
-  end
-  
-  
-  stop_time = Time.now
-  puts "Completed clean:dedupe_role_assignments in #{stop_time - start_time} seconds"
-  puts "Removed #{ra_removed} role assignsments from #{roles_modified} roles"
-  
+      puts "#{role.application.name}:#{role.name},#{duplicate_assignments.map(&:name).join(",")}" unless duplicate_assignments.empty?
+    end
+
+    stop_time = Time.now
+    puts "Completed clean:dedupe_role_assignments in #{stop_time - start_time} seconds"
+    puts "Removed #{ra_removed} role assignsments from #{roles_modified} roles"
   end
 
   desc "Find duplicate Role Assignments"
