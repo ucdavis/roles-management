@@ -5,3 +5,6 @@ log/*
 tmp/*
 Dockerfile
 README.rdoc
+*.env
+*.envrc
+*.pem
