@@ -4,7 +4,7 @@ namespace :docusign do
   require "docusign"
   require "dss_dw"
 
-  desc "Pulls DocuSign groups into RM roles (overwrites existing RM members)"
+  desc "Pulls DocuSign groups into RM roles (overwrites existing RM roles)"
   task import: :environment do
     Rails.logger.info "Running task docusign:import"
     job_start_ts = Time.now
@@ -16,6 +16,7 @@ namespace :docusign do
     end
 
     Docusign.configure
+
     # Pull in any missing groups
     ds_groups = Docusign.get_groups
     rm_roles = ds_application.roles
@@ -24,13 +25,13 @@ namespace :docusign do
     rm_role_names = rm_roles.map(&:name)
 
     group_names_to_add = ds_group_names - rm_role_names
-    groups_to_add = ds_groups.select { |group| group_names_to_add.include? group.group_name }
+    ds_groups_to_add = ds_groups.select { |group| group_names_to_add.include? group.group_name }
 
-    groups_to_add.each do |group|
-      token = Docusign.tokenize(group.group_name)
-      new_role = RolesService.create_role(ds_application.id, group.group_name, token, nil, nil)
+    ds_groups_to_add.each do |ds_group|
+      token = Docusign.tokenize(ds_group.group_name)
+      new_role = RolesService.create_role(ds_application.id, ds_group.group_name, token, nil, nil)
 
-      ds_group_users = Docusign.get_group_users(group)
+      ds_group_users = Docusign.get_group_users(ds_group)
 
       ds_group_users.each do |ds_user|
         # because some users use login@ucdavis.edu, also search by first and last
@@ -50,8 +51,7 @@ namespace :docusign do
           end
         end
 
-        # Don't use RoleAssignmentsService here, or trigger Sync system unnecessarily
-        # RoleAssignmentsService.assign_role_to_entity(p, new_role)
+        # Don't use RoleAssignmentsService here, it triggers the Sync subsystem
         ra = RoleAssignment.new(role_id: new_role.id, entity_id: p.id)
         ra.save!
       end
@@ -59,20 +59,18 @@ namespace :docusign do
 
     # Delete roles that no longer exists
     role_names_to_remove = rm_role_names - ds_group_names
-    deleted_roles = []
 
     role_names_to_remove.each do |role_name|
-      rm_role = rm_roles.select { |r| r.name == role_name }
+      rm_role = rm_roles.find { |r| r.name == role_name }
       RolesService.destroy_role(rm_role)
-      deleted_roles.push(rm_role)
     end
 
     # Sync members of existing groups, skip the ones we just added
-    groups_to_sync = ds_groups - groups_to_add
+    ds_groups_to_sync = ds_groups - ds_groups_to_add
 
-    groups_to_sync.each do |group|
-      ds_users = Docusign.get_group_users(group)
-      rm_role = rm_roles.find { |role| role.name == group.group_name && role.token == Docusign.tokenize(group.group_name) }
+    ds_groups_to_sync.each do |ds_group|
+      ds_users = Docusign.get_group_users(ds_group)
+      rm_role = rm_roles.find { |role| role.name == ds_group.group_name && role.token == Docusign.tokenize(ds_group.group_name) }
 
       next if rm_role.nil?
       role_members = rm_role.members
@@ -92,12 +90,11 @@ namespace :docusign do
 
           # user not in RM or IAM, give up
           if p.nil?
-            puts "Could not find #{ds_user.email} (#{ds_user.user_name}) for #{new_role.name}. Skipping..."
+            puts "Could not find #{ds_user.email} (#{ds_user.user_name}) for #{rm_role.name}. Skipping..."
             next
           end
         end
 
-        # RoleAssignmentsService.assign_role_to_entity(p, rm_role) unless p.roles.include?(rm_role)
         unless p.roles.include?(rm_role)
           ra = RoleAssignment.new(role_id: rm_role.id, entity_id: p.id)
           ra.save!
@@ -117,8 +114,7 @@ namespace :docusign do
     Rails.logger.info "Finished task docusign:import"
   end
 
-  # overwrites DocuSign group members
-  desc "Pushes Role members to DocuSign groups"
+  desc "Pushes Role members to DocuSign groups (overwrite existing DocuSign groups)"
   task sync: :environment do
     Rails.logger.info "Running task docusign:sync"
 
