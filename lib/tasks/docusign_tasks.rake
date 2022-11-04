@@ -78,7 +78,7 @@ namespace :docusign do
       next if rm_role.nil?
       role_members = rm_role.members
 
-      users_to_add = Docusign.diff(ds_users, role_members)
+      users_to_add = Docusign.diff_users(ds_users, role_members)
 
       users_to_add.each do |ds_user|
         name = ds_user.user_name.split
@@ -105,7 +105,7 @@ namespace :docusign do
         end
       end
 
-      people_to_remove = Docusign.diff(role_members, ds_users)
+      people_to_remove = Docusign.diff_users(role_members, ds_users)
 
       people_to_remove.each do |person|
         ra = RoleAssignment.find_by(entity_id: person.id, role_id: rm_role.id)
@@ -156,24 +156,13 @@ namespace :docusign do
       ds_group_users = Docusign.get_group_users(ds_group)
       role_members = role.members
 
-      ds_group_user_emails = ds_group_users.map(&:email)
-      role_member_emails = role.members.map(&:email)
-      member_emails_to_add = role_member_emails - ds_group_user_emails
-
-      ds_users_to_add = member_emails_to_add.map do |email|
-        role_member = role_members.find { |member| member.email == email }
-
-        Docusign.find_or_create_user({ name: role_member.name, email: email })
+      role_members_to_add = Docusign.diff_users(role_members, ds_group_users)
+      ds_users_to_add = role_members_to_add.map do |role_member|
+        Docusign.find_or_create_user({ name: "#{role_member.first} #{role_member.last}", email: role_member.email })
       end
-
       Docusign.add_users_to_group(ds_users_to_add, ds_group) if ds_users_to_add.size > 0
 
-      member_emails_to_remove = ds_group_user_emails - role_member_emails
-
-      ds_users_to_remove = member_emails_to_remove.map do |email|
-        Docusign.find_user_by_email(email)
-      end
-
+      ds_users_to_remove = Docusign.diff_users(ds_group_users, role_members)
       Docusign.remove_users_from_group(ds_users_to_remove, ds_group) if ds_users_to_remove.size > 0
     end
 

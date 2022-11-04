@@ -181,9 +181,9 @@ module Docusign
     "ds-" + group_name.gsub(/\s/, "-").downcase
   end
 
-  # Compares DocuSign users and Roles People by email or first+last
+  # Compares DocuSign users and Roles People by email OR first and last
   # returns array of first argument type
-  def self.diff(arr1, arr2)
+  def self.diff_users(arr1, arr2)
     ds_users_first = arr1.first.respond_to? "user_name"
 
     if ds_users_first
