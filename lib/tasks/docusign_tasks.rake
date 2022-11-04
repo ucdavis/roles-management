@@ -71,7 +71,6 @@ namespace :docusign do
     groups_to_sync = ds_groups - groups_to_add
 
     groups_to_sync.each do |group|
-      byebug
       ds_users = Docusign.get_group_users(group)
       rm_role = rm_roles.find { |role| role.name == group.group_name && role.token == Docusign.tokenize(group.group_name) }
 
@@ -145,11 +144,13 @@ namespace :docusign do
 
     # ensure RM roles exists as DS groups
     group_names_to_add = rm_role_names - ds_group_names
-    new_ds_groups = Docusign.create_groups(group_names_to_add) unless group_names_to_add.empty?
+
+    if group_names_to_add.length > 0
+      new_ds_groups = Docusign.create_groups(group_names_to_add)
+      ds_groups += new_ds_groups.groups
+    end
 
     # Update membership within each DocuSign group
-    ds_groups += new_ds_groups.groups unless new_ds_groups.nil?
-
     rm_roles.each do |role|
       ds_group = ds_groups.find { |dsg| dsg.group_name == role.name }
 
