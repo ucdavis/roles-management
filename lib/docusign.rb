@@ -46,7 +46,7 @@ module Docusign
     @signing_groups_api = DocuSign_eSign::SigningGroupsApi.new(@api_client)
     @accounts_api = DocuSign_eSign::AccountsApi.new(@api_client) # for permission profiles
 
-    @token.nil? ? false : true
+    @token.present?
   end
 
   # query for base path from UserInfo
@@ -62,9 +62,7 @@ module Docusign
       list_options.email = email
       users_list = @users_api.list(@api_account_id, list_options)
     rescue DocuSign_eSign::ApiError => e
-      puts e.detailed_message
-
-      puts "User not found found. Retrying for pending users"
+      puts "Could not find #{email} among Active users. Retrying for pending users"
     end
 
     if users_list.nil?
