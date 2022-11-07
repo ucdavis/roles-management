@@ -13,7 +13,7 @@ module Docusign
     address1: "One Shields Ave",
     city: "Davis",
     stateOrProvince: "CA",
-    postalCode: "95776",
+    postalCode: "95616",
     country: "United States",
   }
 
