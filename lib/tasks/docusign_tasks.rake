@@ -19,6 +19,7 @@ namespace :docusign do
 
     # Pull in any missing groups
     ds_groups = Docusign.get_groups
+    byebug
     rm_roles = ds_application.roles
 
     ds_group_names = ds_groups.map(&:group_name)
@@ -154,13 +155,17 @@ namespace :docusign do
       role_members = role.members
 
       role_members_to_add = Docusign.diff_users(role_members, ds_group_users)
-      ds_users_to_add = role_members_to_add.map do |role_member|
-        Docusign.find_or_create_user({ name: "#{role_member.first} #{role_member.last}", email: role_member.email })
-      end
-      Docusign.add_users_to_group(ds_users_to_add, ds_group) if ds_users_to_add.size > 0
+      # ds_users_to_add = role_members_to_add.map do |role_member|
+      #   Docusign.find_or_create_user({ name: "#{role_member.first} #{role_member.last}", email: role_member.email })
+      # end
+
+      puts "adding #{role_members_to_add.map(&:name).join(', ')} to #{ds_group.group_name}"
+      # Docusign.add_users_to_group(ds_users_to_add, ds_group) if ds_users_to_add.size > 0
 
       ds_users_to_remove = Docusign.diff_users(ds_group_users, role_members)
-      Docusign.remove_users_from_group(ds_users_to_remove, ds_group) if ds_users_to_remove.size > 0
+      puts "removing #{ds_users_to_remove.map(&:user_name).join(', ')} from #{ds_group.group_name}"
+
+      # Docusign.remove_users_from_group(ds_users_to_remove, ds_group) if ds_users_to_remove.size > 0
     end
 
     Rails.logger.info "Finished task docusign:sync"

@@ -109,9 +109,10 @@ module Docusign
     @users_api.delete(@api_account_id, user_info_list)
   end
 
-  # Groups (Anthro, Art, Chemistry, etc...), ignore "Everyone" for our purposes
+  # Groups (Anthro, Art, Chemistry, etc...), ignore "Administrators", "Everyone" which are handled via Permission Profiles
   def self.get_groups
-    @groups_api.list_groups(@api_account_id).groups.filter { |g| g.group_name != "Everyone" }
+    ignored_groups = ["Administrators", "Everyone"]
+    @groups_api.list_groups(@api_account_id).groups.filter { |g| ignored_groups.exclude? g.group_name }
   end
 
   def self.find_group_by_name(group_name)
