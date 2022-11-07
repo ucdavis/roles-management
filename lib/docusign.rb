@@ -103,8 +103,8 @@ module Docusign
   end
 
   def self.delete_user(email)
-    user_id = self.find_user_id_by_email(email)
-    user_info_list = DocuSign_eSign::UserInfoList.new({ users: [{ accountId: @api_account_id, userId: user_id }] })
+    user = self.find_user_by_email(email)
+    user_info_list = DocuSign_eSign::UserInfoList.new({ users: [{ accountId: @api_account_id, userId: user.user_id }] })
 
     @users_api.delete(@api_account_id, user_info_list)
   end
