@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_24_135313) do
+ActiveRecord::Schema.define(version: 2022_11_15_234732) do
 
   create_table "api_key_users", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "secret"
@@ -100,10 +100,11 @@ ActiveRecord::Schema.define(version: 2022_08_24_135313) do
   create_table "entities", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "type"
     t.string "name"
-    t.string "first", collation: "utf32_general_ci"
+    t.string "first"
     t.string "last"
     t.string "email"
     t.string "loginid"
+    t.string "upn"
     t.boolean "active", default: true
     t.string "phone"
     t.string "address"
