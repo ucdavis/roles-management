@@ -17,7 +17,7 @@ module Uinform
     def self.create_signature(method, timestamp)
         raw_signature = "#{method}:#{timestamp}:#{@public_key}"
         bytes = OpenSSL::HMAC.digest('sha1', @private_key, raw_signature)
-        signature = Base64.strict_encode64(hmac)
+        signature = Base64.strict_encode64(bytes)
     end
 
     def self.http_get(url)
