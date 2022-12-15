@@ -72,6 +72,9 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         if application_name == "DocuSign"
           require "docusign"
           Docusign.configure
+
+          # update UPN if necessary
+          p = ActiveDirectory.create_or_update_person(p.email)
           Docusign.add_person_to_group(p, role_name)
         end
 

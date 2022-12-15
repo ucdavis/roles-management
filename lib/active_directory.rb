@@ -77,6 +77,63 @@ class ActiveDirectory
     return nil
   end
 
+  def ActiveDirectory.get_user_by_upn(upn)
+    @ldap[:people].each do |conn|
+      result = conn.search(filter: Net::LDAP::Filter.eq('userprincipalname', upn))
+      raise LdapError, "Error while fetching user #{upn}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
+
+      if result.length > 0
+        return result[0]
+      end
+    end
+
+    # in the event that user has an updated UPN, attempt to look up by proxy addresses
+    @ldap[:people].each do |conn|
+      result = conn.search(filter: Net::LDAP::Filter.eq('proxyaddresses', "smtp:#{upn}"))
+      raise LdapError, "Error while fetching user #{upn}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
+
+      if result.length > 0
+        return result[0]
+      end
+    end
+
+    return nil
+  end
+
+  # Creates or updates a person from ActiveDirectory using UPN/email
+  def ActiveDirectory.create_or_update_person(upn)
+    ad_user = ActiveDirectory.get_user_by_upn(upn)
+
+    if ad_user.nil?
+      puts "Could not find #{upn} in Active Directory. Skipping..."
+      return nil
+    elsif ad_user[:extensionattribute8].empty?
+      # ignore if no UCD Affiliations (extensionattribute8), likely separated
+      puts "Found #{upn} in Active Directory with no affiliations. Skipping..."
+      return nil
+    else
+      loginid = ad_user.samaccountname.first
+      p = Person.find_by(loginid: loginid)
+
+      if p.nil?
+        p = Person.create(
+          name: ad_user.displayname.first,
+          first: ad_user.givenname.first,
+          last: ad_user.sn.first,
+          email: ad_user.mail.first,
+          loginid: ad_user.cn.first,
+          synced_at: Time.now,
+        )
+
+        puts "Created user #{p.name} from Active Directory"
+      end
+
+      p.upn = ad_user.userprincipalname.first
+      p.save! if p.changed?
+      return p
+    end
+  end
+
   def ActiveDirectory.get_group(group_name)
     @ldap[:groups].each do |conn|
       result = conn.search(filter: Net::LDAP::Filter.eq('cn', group_name))

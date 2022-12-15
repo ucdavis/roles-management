@@ -16,10 +16,10 @@ namespace :docusign do
     end
 
     Docusign.configure
+    ActiveDirectory.configure # DocuSign uses ADFS and DS_User::email maps to AD::UPN
 
     # Pull in any missing groups
     ds_groups = Docusign.get_groups
-    byebug
     rm_roles = ds_application.roles
 
     ds_group_names = ds_groups.map(&:group_name)
@@ -33,23 +33,12 @@ namespace :docusign do
       new_role = RolesService.create_role(ds_application.id, ds_group.group_name, token, nil, nil)
 
       ds_group_users = Docusign.get_group_users(ds_group)
-
       ds_group_users.each do |ds_user|
-        # because some users use login@ucdavis.edu, also search by first and last
-        name = ds_user.user_name.split
-        p = Person.where(email: ds_user.email).or(Person.where(first: name[0], last: name[1])).first
+        p = ActiveDirectory.create_or_update_person(ds_user.email)
 
         if p.nil?
-          # check if user exists in IAM and import
-          result = DssDw.search_people(ds_user.email)
-          p = DssDw.create_or_update_using_dw(result[0]["userId"]) if result.size == 1
-          STDOUT.puts "Imported user #{p.loginid} from DW" if p
-
-          # user not in RM or IAM, give up
-          if p.nil?
-            puts "Could not find #{ds_user.email} (#{ds_user.user_name}) for #{new_role.name}. Skipping..."
-            next
-          end
+          puts "Could not find #{ds_user.user_name} / #{ds_user.email}. Skipping"
+          next
         end
 
         # Don't use RoleAssignmentsService here, it triggers the Sync subsystem
@@ -79,21 +68,11 @@ namespace :docusign do
       users_to_add = Docusign.diff_users(ds_users, role_members)
 
       users_to_add.each do |ds_user|
-        name = ds_user.user_name.split
-        p = Person.where(email: ds_user.email).or(Person.where(first: name[0], last: name[1])).first
+        p = ActiveDirectory.create_or_update_person(ds_user.email)
 
         if p.nil?
-          # check if user exists in IAM and import
-          # this won't work if user has login@ucdavis.edu for email
-          result = DssDw.search_people(ds_user.email)
-          p = DssDw.create_or_update_using_dw(result[0]["userId"]) if result.size == 1
-          STDOUT.puts "Imported user #{p.loginid} from DW" if p
-
-          # user not in RM or IAM, give up
-          if p.nil?
-            puts "Could not find #{ds_user.email} (#{ds_user.user_name}) for #{rm_role.name}. Skipping..."
-            next
-          end
+          puts "Could not find #{ds_user.user_name} / #{ds_user.email} in ActiveDirectory. Skipping"
+          next
         end
 
         unless p.roles.include?(rm_role)
@@ -132,6 +111,7 @@ namespace :docusign do
     end
 
     Docusign.configure
+    ActiveDirectory.configure
 
     ds_groups = Docusign.get_groups
     rm_roles = ds_application.roles
@@ -147,6 +127,18 @@ namespace :docusign do
       ds_groups += new_ds_groups.groups
     end
 
+    # remove DS groups that no longer exists as RM roles
+    group_names_to_remove = ds_group_names - rm_role_names
+
+    if group_names_to_remove.length > 0
+      ds_groups_to_delete = group_names_to_remove.map { |group_name| ds_groups.find { |dsg| dsg.group_name == group_name } }
+      
+      # remove groups that were deleted
+      response = Docusign.delete_groups(ds_groups_to_delete)
+      group_ids = response.groups.map(&:group_id)
+      ds_groups = ds_groups.select { |g| group_ids.exclude? g.group_id }
+    end
+
     # Update membership within each DocuSign group
     rm_roles.each do |role|
       ds_group = ds_groups.find { |dsg| dsg.group_name == role.name }
@@ -155,17 +147,18 @@ namespace :docusign do
       role_members = role.members
 
       role_members_to_add = Docusign.diff_users(role_members, ds_group_users)
-      # ds_users_to_add = role_members_to_add.map do |role_member|
-      #   Docusign.find_or_create_user({ name: "#{role_member.first} #{role_member.last}", email: role_member.email })
-      # end
+      ds_users_to_add = role_members_to_add.map do |role_member|
+        ad_user = ActiveDirectory.create_or_update_person(role_member.email)
+        user = Docusign.find_or_create_user({ name: "#{role_member.first} #{role_member.last}", email: ad_user.upn })
+      end
 
-      puts "adding #{role_members_to_add.map(&:name).join(', ')} to #{ds_group.group_name}"
-      # Docusign.add_users_to_group(ds_users_to_add, ds_group) if ds_users_to_add.size > 0
+      puts "adding to #{ds_group.group_name}, #{role_members_to_add.map(&:name).join(", ")}" if role_members_to_add.size > 0
+      Docusign.add_users_to_group(ds_users_to_add, ds_group) if ds_users_to_add.size > 0
 
       ds_users_to_remove = Docusign.diff_users(ds_group_users, role_members)
-      puts "removing #{ds_users_to_remove.map(&:user_name).join(', ')} from #{ds_group.group_name}"
+      puts "removing from #{ds_group.group_name}, #{ds_users_to_remove.map{ |u| "#{u.user_name} (#{u.email})" }.join(", ")}" if ds_users_to_remove.size > 0
 
-      # Docusign.remove_users_from_group(ds_users_to_remove, ds_group) if ds_users_to_remove.size > 0
+      Docusign.remove_users_from_group(ds_users_to_remove, ds_group) if ds_users_to_remove.size > 0
     end
 
     Rails.logger.info "Finished task docusign:sync"
