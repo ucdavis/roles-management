@@ -98,4 +98,4 @@ gem 'aws-sdk-core', '~> 3.0'
 gem 'mechanize', require: false
 
 # DocuSign user management
-gem 'docusign_esign', '~> 3.19'
+gem 'docusign_esign', '~> 3.20'
