@@ -11,12 +11,6 @@ class RolesService
     role.ad_path = ad_path
     role.save!
 
-    if role.application.name == "DocuSign"
-      require "docusign"
-      Docusign.configure
-      Docusign.create_groups(Array(role.name))
-    end
-
     ActivityLog.info!("Created role #{role.name} (#{role.token}).", ["application_#{role.application_id}"])
 
     return role
@@ -30,8 +24,8 @@ class RolesService
 
     role.name = name
     role.token = token
-    role.description = description.presence && description
-    role.ad_path = ad_path.presence && ad_path
+    role.description = description
+    role.ad_path = ad_path
 
     if role.changed?
       role.save!
@@ -51,12 +45,6 @@ class RolesService
     # Before destroying a role, destroy any role assignments associated with it
     role.role_assignments.each do |ra|
       RoleAssignmentsService.unassign_role_from_entity(ra)
-    end
-
-    if role.application.name == "DocuSign"
-      require "docusign"
-      Docusign.configure
-      Docusign.delete_group(role.name)
     end
 
     role.destroy!
