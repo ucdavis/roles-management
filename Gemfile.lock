@@ -122,7 +122,7 @@ GEM
     delayed_job_active_record (4.1.7)
       activerecord (>= 3.0, < 8.0)
       delayed_job (>= 3.0, < 5)
-    docusign_esign (3.19.0)
+    docusign_esign (3.20.0)
       addressable (~> 2.7, >= 2.7.0)
       json (~> 2.1, >= 2.1.0)
       jwt (~> 2.2, >= 2.2.1)
@@ -327,7 +327,7 @@ DEPENDENCIES
   dalli
   delayed_job
   delayed_job_active_record
-  docusign_esign (~> 3.19)
+  docusign_esign (~> 3.20)
   ejs
   exception_notification
   jasmine-rails
