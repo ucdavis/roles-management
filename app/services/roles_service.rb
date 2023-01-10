@@ -24,8 +24,8 @@ class RolesService
 
     role.name = name
     role.token = token
-    role.description = description
-    role.ad_path = ad_path
+    role.description = description.presence && description
+    role.ad_path = ad_path.presence && ad_path
 
     if role.changed?
       role.save!
