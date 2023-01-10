@@ -72,7 +72,7 @@ module DssDw
   def self.search_people(query)
     return nil unless query
 
-    response = perform_dw_request("/people/search?q=#{URI.escape(query)}")
+    response = perform_dw_request("/people/search?q=#{URI.encode_www_form_component(query)}")
 
     return nil if response.nil?
     return nil if response.code.to_i == 404
