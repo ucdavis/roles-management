@@ -230,19 +230,18 @@ module Docusign
     "ds-" + group_name.gsub(/\s/, "-").downcase
   end
 
-  # Compares DocuSign users and Roles People by email OR first and last
+  # Compares DocuSign users and Roles entities using proxy addresses due to possible UPN update
   # returns array of first argument type
   def self.diff_users(arr1, arr2)
     ds_users_first = arr1.first.is_a? DocuSign_eSign::UserInfo
 
     if ds_users_first
       arr1.select.each { |ds_user|
-        # arr2.none? { |role_member| ds_user.user_id == role_member.docusign_id || ds_user.email == role_member.email || "#{role_member.first} #{role_member.last}" == ds_user.user_name.split[0..1].join(" ") }
-        arr2.none? { |role_member| role_member.upn == ds_user.email }
+        arr2.none? { |role_member| role_member.ad_proxy_addresses.include? ds_user.email.downcase }
       }
     else
       arr1.select.each { |role_member|
-        arr2.none? { |ds_user| ds_user.email == role_member.upn }
+        arr2.none? { |ds_user| role_member.ad_proxy_addresses.include? ds_user.email.downcase }
       }
     end
   end

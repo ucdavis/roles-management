@@ -104,7 +104,6 @@ ActiveRecord::Schema.define(version: 2022_11_15_234732) do
     t.string "last"
     t.string "email"
     t.string "loginid"
-    t.string "upn"
     t.boolean "active", default: true
     t.string "phone"
     t.string "address"
@@ -119,6 +118,8 @@ ActiveRecord::Schema.define(version: 2022_11_15_234732) do
     t.boolean "is_staff"
     t.boolean "is_external"
     t.integer "iam_id"
+    t.string "ad_upn"
+    t.string "ad_proxy_addresses"
     t.datetime "synced_at", precision: 6
     t.index ["id"], name: "id", unique: true
     t.index ["id"], name: "index_entities_on_id"

@@ -128,7 +128,10 @@ class ActiveDirectory
         puts "Created user #{p.name} from Active Directory"
       end
 
-      p.upn = ad_user.userprincipalname.first
+      # track proxy addresses in case UPN was updated
+      p.ad_upn = ad_user.userprincipalname.first
+      p.ad_proxy_addresses = ad_user.proxyaddresses.select { |a| a.match(/^smtp:\S+@ucdavis.edu/i) }.map { |a| a.sub(/^smtp:/i, "").downcase }.join(",")
+
       p.save! if p.changed?
       return p
     end
