@@ -30,7 +30,7 @@ namespace :docusign do
 
     ds_groups_to_add.each do |ds_group|
       token = Docusign.tokenize(ds_group.group_name)
-      new_role = RolesService.create_role(ds_application.id, ds_group.group_name, token, nil, nil)
+      new_role = RolesService.create_role(ds_application.id, ds_group.group_name, token, ds_group.group_name, nil)
 
       ds_group_users = Docusign.get_group_users(ds_group)
       ds_group_users.each do |ds_user|
