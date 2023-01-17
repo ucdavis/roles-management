@@ -143,12 +143,13 @@ namespace :docusign do
       ds_group = ds_groups.find { |dsg| dsg.group_name == role.name }
 
       ds_group_users = Docusign.get_group_users(ds_group)
-      role_members = role.members
+
+      # make sure role members are up-to-date with UPN info
+      role_members = role.members.map { |role_member| ActiveDirectory.create_or_update_person(role_member.email) }
 
       role_members_to_add = Docusign.diff_users(role_members, ds_group_users)
       ds_users_to_add = role_members_to_add.map do |role_member|
-        ad_user = ActiveDirectory.create_or_update_person(role_member.email)
-        user = Docusign.find_or_create_user({ name: "#{role_member.first} #{role_member.last}", email: ad_user.upn })
+        Docusign.find_or_create_user({ name: "#{role_member.first} #{role_member.last}", email: role_member.ad_upn })
       end
 
       puts "adding to #{ds_group.group_name}, #{role_members_to_add.map(&:name).join(", ")}" if role_members_to_add.size > 0
