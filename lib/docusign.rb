@@ -132,6 +132,12 @@ module Docusign
     @groups_api.list_groups(@api_account_id).groups.filter { |g| ignored_groups.exclude? g.group_name }
   end
 
+  def self.find_group_by_id(group_id)
+    list_groups_options = DocuSign_eSign::ListGroupsOptions.new
+    response = @groups_api.list_groups(@api_account_id, list_groups_options)
+    response.groups.filter { |g| g.group_id == group_id.to_s }.first
+  end
+
   def self.find_group_by_name(group_name)
     list_groups_options = DocuSign_eSign::ListGroupsOptions.new
     list_groups_options.search_text = group_name
@@ -147,8 +153,21 @@ module Docusign
     @groups_api.create_groups(@api_account_id, group_information)
   end
 
+  def self.update_group(group_id, new_name)
+    ds_group = self.find_group_by_id(group_id)
+    ds_group.group_name = new_name
+    group_information = DocuSign_eSign::GroupInformation.new({ groups: Array(ds_group) })
+    @groups_api.update_groups(@api_account_id, group_information)
+  end
+
   def self.delete_group(group_name)
     ds_group = self.find_group_by_name(group_name)
+    group_information = DocuSign_eSign::GroupInformation.new({ groups: Array(ds_group) })
+    @groups_api.delete_groups(@api_account_id, group_information)
+  end
+
+  def self.delete_group_by_id(group_id)
+    ds_group = self.find_group_by_id(group_id)
     group_information = DocuSign_eSign::GroupInformation.new({ groups: Array(ds_group) })
     @groups_api.delete_groups(@api_account_id, group_information)
   end

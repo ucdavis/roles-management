@@ -11,6 +11,14 @@ class RolesService
     role.ad_path = ad_path
     role.save!
 
+    if role.application.name == "DocuSign" && !(Integer(token) rescue false)
+      Docusign.configure
+      response = Docusign.create_groups(Array(role.name))
+      
+      role.token = response.groups.first.group_id
+      role.save!
+    end
+
     ActivityLog.info!("Created role #{role.name} (#{role.token}).", ["application_#{role.application_id}"])
 
     return role
@@ -28,6 +36,11 @@ class RolesService
     role.ad_path = ad_path.presence && ad_path
 
     if role.changed?
+      if role.application.name == "DocuSign"
+        Docusign.configure
+        Docusign.update_group(role.token, role.name)
+      end
+
       role.save!
 
       # Notify sync about changes to the role
@@ -45,6 +58,11 @@ class RolesService
     # Before destroying a role, destroy any role assignments associated with it
     role.role_assignments.each do |ra|
       RoleAssignmentsService.unassign_role_from_entity(ra)
+    end
+
+    if role.application.name == "DocuSign"
+      Docusign.configure
+      Docusign.delete_group_by_id(role.token)
     end
 
     role.destroy!
