@@ -121,7 +121,7 @@ class ActiveDirectory
           first: ad_user.givenname.first,
           last: ad_user.sn.first,
           email: ad_user.mail.first,
-          loginid: ad_user.cn.first,
+          loginid: loginid,
           synced_at: Time.now,
         )
 

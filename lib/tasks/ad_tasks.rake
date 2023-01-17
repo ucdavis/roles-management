@@ -221,15 +221,9 @@ namespace :ad do
     people = Person.all
     
     people.each do |p|
-      ad_user = ActiveDirectory.get_user(p.loginid)
+      ad_user = ActiveDirectory.create_or_update_person(p.email)
 
-      if ad_user
-        p.upn = ad_user[:userprincipalname].first
-        p.synced_at = Time.now
-        p.save! if p.changed?
-      else
-        puts "Could not find #{p.name} in ActiveDirectory"
-      end
+      puts "Could not find #{p.name} in ActiveDirectory" if ad_user.nil?
     end
 
     end_ts = Time.now
