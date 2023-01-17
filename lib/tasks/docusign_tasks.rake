@@ -12,7 +12,7 @@ namespace :docusign do
     ds_application = Application.find_by(name: "DocuSign")
 
     unless ds_application
-      ds_application = Application.create(name: "DocuSign", description: "A DocuSign group maps to an Application Role with the same name")
+      ds_application = Application.create(name: "DocuSign", description: "DocuSign group users management. Role name is the DS group name and token is the DS group id.")
     end
 
     Docusign.configure
@@ -36,7 +36,7 @@ namespace :docusign do
         p = ActiveDirectory.create_or_update_person(ds_user.email)
 
         if p.nil?
-          puts "Could not find #{ds_user.user_name} / #{ds_user.email}. Skipping"
+          puts "[docusign:import] Could not find #{ds_user.user_name} / #{ds_user.email} in AD. Skipping"
           next
         end
 
@@ -70,7 +70,7 @@ namespace :docusign do
         p = ActiveDirectory.create_or_update_person(ds_user.email)
 
         if p.nil?
-          puts "Could not find #{ds_user.user_name} / #{ds_user.email} in ActiveDirectory. Skipping"
+          puts "[docusign:import] Could not find #{ds_user.user_name} / #{ds_user.email} in AD. Skipping"
           next
         end
 
@@ -153,11 +153,13 @@ namespace :docusign do
 
       puts "adding to #{ds_group.group_name}, #{role_members_to_add.map(&:name).join(", ")}" if role_members_to_add.size > 0
       Docusign.add_users_to_group(ds_users_to_add, ds_group) if ds_users_to_add.size > 0
+      puts "Adding to #{ds_group.group_name}, #{role_members_to_add.map{ |u| "#{u.name} (#{u.ad_upn})" }.join(", ")}" if role_members_to_add.size > 0
 
       ds_users_to_remove = Docusign.diff_users(ds_group_users, role_members)
       puts "removing from #{ds_group.group_name}, #{ds_users_to_remove.map{ |u| "#{u.user_name} (#{u.email})" }.join(", ")}" if ds_users_to_remove.size > 0
 
       Docusign.remove_users_from_group(ds_users_to_remove, ds_group) if ds_users_to_remove.size > 0
+      puts "Removing from #{ds_group.group_name}, #{ds_users_to_remove.map{ |u| "#{u.user_name} (#{u.email})" }.join(", ")}" if ds_users_to_remove.size > 0
     end
 
     Rails.logger.info "Finished task docusign:sync"
