@@ -7,13 +7,8 @@ require "base64"
 
 module Docusign
   # NEW USER DEFAULTS
-  # PROD "UC Davis Power User"
-  # DEFAULT_PERMISSION_PROFILE = 16927505
-
-  # SANDBOX "UC Davis Power User"
-  DEFAULT_PERMISSION_PROFILE = 13769603
+  DEFAULT_PERMISSION_PROFILE = ENV["DS_DEFAULT_PERMISSION_PROFILE"] # "UC Davis Power User"
   ADMIN_PROFILE_NAME = "Account Administrator"
-
   DEFAULT_ADDRESS = {
     address1: "One Shields Ave",
     city: "Davis",
