@@ -208,7 +208,7 @@ module Docusign
 
   # used by sync_script_job.rb
   def self.add_person_to_group(person, group_name)
-    ds_user = self.find_or_create_user({ name: person.name, email: person.upn })
+    ds_user = self.find_or_create_user({ name: person.name, email: person.ad_upn })
     # person.docusign_id = ds_user.user_id
     # person.save! if person.changed?
     ds_group = self.find_group_by_name(group_name)
@@ -219,7 +219,7 @@ module Docusign
   # used by sync_script_job.rb
   def self.remove_person_from_group(person, group_name)
     # byebug
-    ds_user = self.find_or_create_user({ name: person.name, email: person.upn })
+    ds_user = self.find_or_create_user({ name: person.name, email: person.ad_upn })
     ds_group = self.find_group_by_name(group_name)
 
     self.remove_users_from_group(Array(ds_user), ds_group)
