@@ -41,8 +41,7 @@ namespace :docusign do
         end
 
         # Don't use RoleAssignmentsService here, it triggers the Sync subsystem
-        ra = RoleAssignment.new(role_id: new_role.id, entity_id: p.id)
-        ra.save!
+        ra = RoleAssignment.find_or_create_by(role_id: new_role.id, entity_id: p.id)
       end
     end
 
@@ -75,8 +74,7 @@ namespace :docusign do
         end
 
         unless p.roles.include?(rm_role)
-          ra = RoleAssignment.new(role_id: rm_role.id, entity_id: p.id)
-          ra.save!
+          ra = RoleAssignment.find_or_create_by(role_id: rm_role.id, entity_id: p.id)
         end
       end
 
