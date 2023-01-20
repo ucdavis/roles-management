@@ -221,7 +221,7 @@ namespace :ad do
     people = Person.all
     
     people.each do |p|
-      ad_user = ActiveDirectory.create_or_update_person(p.email)
+      ad_user = ActiveDirectory.create_or_update_person(p.loginid)
 
       puts "Could not find #{p.name} in ActiveDirectory" if ad_user.nil?
     end

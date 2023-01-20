@@ -101,15 +101,15 @@ class ActiveDirectory
   end
 
   # Creates or updates a person from ActiveDirectory using UPN/email
-  def ActiveDirectory.create_or_update_person(upn)
-    ad_user = ActiveDirectory.get_user_by_upn(upn)
+  def ActiveDirectory.create_or_update_person(query)
+    ad_user = ActiveDirectory.get_user(query) || ActiveDirectory.get_user_by_upn(query)
 
     if ad_user.nil?
-      puts "Could not find #{upn} in Active Directory. Skipping..."
+      puts "Could not find #{query} in Active Directory. Skipping..."
       return nil
     elsif ad_user[:extensionattribute8].empty?
       # ignore if no UCD Affiliations (extensionattribute8), likely separated
-      puts "Found #{upn} in Active Directory with no affiliations. Skipping..."
+      puts "Found #{query} in Active Directory with no affiliations. Skipping..."
       return nil
     else
       loginid = ad_user.samaccountname.first
@@ -120,7 +120,7 @@ class ActiveDirectory
           name: ad_user.displayname.first,
           first: ad_user.givenname.first,
           last: ad_user.sn.first,
-          email: ad_user.mail.first,
+          email: ad_user.mail.first.downcase,
           loginid: loginid,
           synced_at: Time.now,
         )

@@ -94,6 +94,7 @@ namespace :docusign do
   desc "Pushes Role members to DocuSign groups (overwrite existing DocuSign groups)"
   task sync: :environment do
     Rails.logger.info "Running task docusign:sync"
+    job_start_ts = Time.now
 
     ds_application = Application.find_by(name: "DocuSign")
 
@@ -143,7 +144,7 @@ namespace :docusign do
       ds_group_users = Docusign.get_group_users(ds_group)
 
       # make sure role members are up-to-date with UPN info
-      role_members = role.members.map { |role_member| ActiveDirectory.create_or_update_person(role_member.email) }
+      role_members = role.members.map { |role_member| ActiveDirectory.create_or_update_person(role_member.loginid) }
 
       role_members_to_add = Docusign.diff_users(role_members, ds_group_users)
       ds_users_to_add = role_members_to_add.map do |role_member|
@@ -161,6 +162,8 @@ namespace :docusign do
       puts "Removing from #{ds_group.group_name}, #{ds_users_to_remove.map{ |u| "#{u.user_name} (#{u.email})" }.join(", ")}" if ds_users_to_remove.size > 0
     end
 
+    job_finish_ts = Time.now
+    puts "docusign:sync finished in #{job_finish_ts - job_start_ts} seconds"
     Rails.logger.info "Finished task docusign:sync"
   end
 end
