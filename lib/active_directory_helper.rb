@@ -181,7 +181,7 @@ class ActiveDirectoryHelper
       if p
         STDOUT.puts "Ensuring #{p.loginid} is in RM role #{role} ..."
         unless role.members.map(&:loginid).include? p.loginid
-          role.assignments << p
+          RoleAssignment.find_or_create_by(role_id: role.id, entity_id: p.id)
           role_changed = true
         end
       else
