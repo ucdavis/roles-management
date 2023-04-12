@@ -211,4 +211,23 @@ namespace :ad do
       end
     end
   end
+
+  desc 'Sync user UPNs'
+  task sync_upn: :environment do
+    ActiveDirectory.configure
+
+    start_ts = Time.now
+
+    people = Person.all
+    
+    people.each do |p|
+      ad_user = ActiveDirectory.create_or_update_person(p.loginid)
+
+      puts "Could not find #{p.name} in ActiveDirectory" if ad_user.nil?
+    end
+
+    end_ts = Time.now
+
+    puts "Completed ad:sync_upn in #{end_ts - start_ts}"
+  end
 end

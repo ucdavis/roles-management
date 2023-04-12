@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_24_135313) do
+ActiveRecord::Schema.define(version: 2022_11_15_234732) do
 
   create_table "api_key_users", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "secret"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2022_08_24_135313) do
   create_table "entities", id: :bigint, unsigned: true, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "type"
     t.string "name"
-    t.string "first", collation: "utf32_general_ci"
+    t.string "first"
     t.string "last"
     t.string "email"
     t.string "loginid"
@@ -118,6 +118,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_135313) do
     t.boolean "is_staff"
     t.boolean "is_external"
     t.integer "iam_id"
+    t.string "ad_upn"
+    t.string "ad_proxy_addresses"
     t.datetime "synced_at", precision: 6
     t.index ["id"], name: "id", unique: true
     t.index ["id"], name: "index_entities_on_id"

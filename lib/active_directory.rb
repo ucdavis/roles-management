@@ -77,6 +77,66 @@ class ActiveDirectory
     return nil
   end
 
+  def ActiveDirectory.get_user_by_upn(upn)
+    @ldap[:people].each do |conn|
+      result = conn.search(filter: Net::LDAP::Filter.eq('userprincipalname', upn))
+      raise LdapError, "Error while fetching user #{upn}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
+
+      if result.length > 0
+        return result[0]
+      end
+    end
+
+    # in the event that user has an updated UPN, attempt to look up by proxy addresses
+    @ldap[:people].each do |conn|
+      result = conn.search(filter: Net::LDAP::Filter.eq('proxyaddresses', "smtp:#{upn}"))
+      raise LdapError, "Error while fetching user #{upn}. Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
+
+      if result.length > 0
+        return result[0]
+      end
+    end
+
+    return nil
+  end
+
+  # Creates or updates a person from ActiveDirectory using UPN/email
+  def ActiveDirectory.create_or_update_person(query)
+    ad_user = ActiveDirectory.get_user(query) || ActiveDirectory.get_user_by_upn(query)
+
+    if ad_user.nil?
+      puts "Could not find #{query} in Active Directory. Skipping..."
+      return nil
+    elsif ad_user[:extensionattribute8].empty?
+      # ignore if no UCD Affiliations (extensionattribute8), likely separated
+      puts "Found #{query} in Active Directory with no affiliations. Skipping..."
+      return nil
+    else
+      loginid = ad_user.samaccountname.first
+      p = Person.find_by(loginid: loginid)
+
+      if p.nil?
+        p = Person.create(
+          name: ad_user.displayname.first,
+          first: ad_user.givenname.first,
+          last: ad_user.sn.first,
+          email: ad_user.mail.first.downcase,
+          loginid: loginid,
+          synced_at: Time.now,
+        )
+
+        puts "Created user #{p.name} from Active Directory"
+      end
+
+      # track proxy addresses in case UPN was updated
+      p.ad_upn = ad_user.userprincipalname.first
+      p.ad_proxy_addresses = ad_user.proxyaddresses.select { |a| a.match(/^smtp:\S+@ucdavis.edu/i) }.map { |a| a.sub(/^smtp:/i, "").downcase }.join(",")
+
+      p.save! if p.changed?
+      return p
+    end
+  end
+
   def ActiveDirectory.get_group(group_name)
     @ldap[:groups].each do |conn|
       result = conn.search(filter: Net::LDAP::Filter.eq('cn', group_name))

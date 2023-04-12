@@ -19,7 +19,7 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         return
       end
 
-      if sync_script.include?('active_directory.rb') == false
+      if sync_script.include?('active_directory.rb') == false && sync_script.include?('docusign.rb') == false
         Sync.logger.error "Unknown sync script requested: #{sync_script}"
         raise 'Unable to complete job'
       end
@@ -53,7 +53,7 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         Sync.logger.info "Beginning job requested #{duration(DateTime.now.to_f - requested_at.to_f)} ago"
       end
 
-      ActiveDirectory.configure
+      ActiveDirectory.configure if sync_script.include?('active_directory.rb')
 
       case @sync_data['mode']
 
@@ -67,6 +67,15 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         if p.nil?
           Sync.logger.error "Cannot add_to_role for login ID #{loginid} as no Person was found in RM database."
           raise 'Unable to complete job'
+        end
+
+        if application_name == "DocuSign"
+          require "docusign"
+          Docusign.configure
+
+           # ad hoc update to ensure we have the UPN
+          p = ActiveDirectory.create_or_update_person(p.loginid)
+          Docusign.add_person_to_group(p, role_name)
         end
 
         if ad_path.nil? || ad_path.empty?
@@ -104,6 +113,12 @@ SyncScriptJob = Struct.new(:job_uuid, :sync_script, :sync_json) do
         if p.nil?
           Sync.logger.error "Cannot remove_from_role for login ID #{loginid} as no Person was found in RM database."
           raise 'Unable to complete job'
+        end
+
+        if application_name == "DocuSign"
+          require "docusign"
+          Docusign.configure
+          Docusign.remove_person_from_group(p, role_name)
         end
 
         if ad_path.nil? || ad_path.empty?
