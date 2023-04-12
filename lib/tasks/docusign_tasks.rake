@@ -4,6 +4,7 @@ namespace :docusign do
   require "docusign"
   require "dss_dw"
 
+  # This task is not scheduled to run
   desc "Pulls DocuSign groups into RM roles (overwrites existing RM roles)"
   task import: :environment do
     Rails.logger.info "Running task docusign:import"
@@ -91,6 +92,7 @@ namespace :docusign do
     Rails.logger.info "Finished task docusign:import"
   end
 
+  # This task is not scheduled to run
   desc "Pushes Role members to DocuSign groups (overwrite existing DocuSign groups)"
   task sync: :environment do
     Rails.logger.info "Running task docusign:sync"
