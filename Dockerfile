@@ -23,7 +23,7 @@ WORKDIR /usr/src/app
 # will be cached unless changes to one of those two files
 # are made.
 COPY Gemfile Gemfile.lock ./
-RUN gem install bundler && bundle install -j "$(getconf _NPROCESSORS_ONLN)" --retry 5 --without test
+RUN gem install bundler && bundle install -j "$(getconf _NPROCESSORS_ONLN)" --retry 5 --without development test
 
 # Copy dependencies for Node.js and instance the packages.
 # Again, being separate means this will cache.
