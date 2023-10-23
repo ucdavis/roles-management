@@ -137,6 +137,18 @@ module DssDw
   def self.create_or_update_using_dw(loginid)
     Rails.logger.debug "Create/update '#{loginid}' from DW ..."
 
+    # update synced_at for ad3\admin-* accounts to maintain Active status
+    if loginid.include? "admin-"
+      dw_person = DssDw.fetch_person_by_loginid(loginid.sub(/^admin-/, ""))
+      return nil unless dw_person
+
+      p = Person.find_or_create_by(loginid: loginid)
+      p.synced_at = dw_person['person']['lastSeen'] || p.synced_at
+      p.save!
+
+      return p
+    end
+
     dw_person = DssDw.fetch_person_by_loginid(loginid)
 
     return nil unless dw_person
