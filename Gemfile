@@ -38,15 +38,6 @@ group :production do
 end
 
 group :development do
-  gem 'capistrano', '~> 3.10', require: false
-  gem 'capistrano-rails', '~> 1.3', require: false
-  gem 'capistrano-passenger', require: false
-  # We use our fork of capistrano3-delayed-job due to a bug in 'daemons' where delayed_job
-  # will not stop correctly if not passed the number of workers in the 'stop' command
-  gem 'capistrano3-delayed-job', require: false, git: 'https://github.com/cthielen/capistrano3-delayed-job.git'
-end
-
-group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
