@@ -128,5 +128,9 @@ RUN bundle exec rake assets:precompile
 
 # Will run on port 3000 by default
 EXPOSE 3000
+
+# create directory needed for puma pid file
+RUN mkdir -p tmp/pids
+
 # Start puma
 CMD bundle exec puma -C config/puma.rb
