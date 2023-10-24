@@ -23,7 +23,7 @@ module Api
 
           affected_role_ids = @group.roles.map(&:id)
 
-          if @group.update_attributes(group_params)
+          if @group.update(group_params)
             @group.touch
 
             affected_role_ids = (affected_role_ids + @group.roles.map(&:id)).flatten.uniq

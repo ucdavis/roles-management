@@ -22,7 +22,7 @@ module Api
         if @role
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updating role for #{@role.id}." }
 
-          if @role.update_attributes(role_params)
+          if @role.update(role_params)
             @role.touch
 
             render json: {}, status: 200

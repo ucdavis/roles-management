@@ -1,9 +1,10 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '>= 2.7'
+ruby '>= 3.1'
+gem 'rexml' # no longer bundled with Ruby 3.0+
 
-gem 'rails', '~> 5.2'
+gem 'rails', '~> 6.1'
 
 # Use Puma as the app server
 gem 'puma', '~> 5.6'
@@ -38,7 +39,7 @@ group :production do
 end
 
 group :development do
-  gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'listen', '~> 3.0'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'web-console', '>= 3.3.0'
