@@ -81,7 +81,7 @@ class ApplicationsController < ApplicationController
       ap = application_params
       update_roles_attributes(@application, ap)
       update_owners_attributes(@application, ap)
-      if @application.update_attributes(ap)
+      if @application.update(ap)
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
         @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)

@@ -65,7 +65,7 @@ class EntitiesController < ApplicationController
       update_rules_attributes(@entity, ep)
       update_memberships_attributes(@entity, ep)
       update_group_memberships_attributes(@entity, ep)
-      if @entity.update_attributes(ep)
+      if @entity.update(ep)
         # The update may have only touched associations and not @entity directly,
         # so we'll touch the timestamp ourselves to make sure our caches are
         # invlidated correctly.
