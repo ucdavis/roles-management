@@ -121,7 +121,7 @@ RUN mkdir log && touch log/delayed_job.log
 
 # Copy the main application.
 COPY . ./
-RUN curl https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem -o rds-combined-ca-bundle.pem -s
+RUN curl https://truststore.pki.rds.amazonaws.com/us-west-2/us-west-2-bundle.pem -o us-west-2-bundle.pem -s
 
 # Precompile Rails assets (plus Webpack)
 RUN bundle exec rake assets:precompile
