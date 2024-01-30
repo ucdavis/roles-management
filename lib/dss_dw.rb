@@ -10,7 +10,7 @@ module DssDw
   def self.fetch_person_by_loginid(loginid)
     return nil unless loginid
 
-    response = perform_dw_request("/people/#{loginid}.json")
+    response = perform_dw_request("/people/#{loginid}")
 
     return nil if response.nil?
     return nil if response.code.to_i == 404
@@ -25,7 +25,7 @@ module DssDw
   end
 
   def self.fetch_pps_departments
-    response = perform_dw_request('/departments/pps.json')
+    response = perform_dw_request('/departments/pps')
 
     return nil if response.nil?
     return nil if response.code.to_i == 404
