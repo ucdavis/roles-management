@@ -138,7 +138,7 @@ module DssDw
     Rails.logger.debug "Create/update '#{loginid}' from DW ..."
 
     # update synced_at for ad3\admin-* accounts to maintain Active status
-    if loginid.include? "admin-"
+    if loginid&.include? "admin-"
       dw_person = DssDw.fetch_person_by_loginid(loginid.sub(/^admin-/, ""))
       return nil unless dw_person
 
