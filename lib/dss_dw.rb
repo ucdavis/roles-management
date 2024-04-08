@@ -155,6 +155,11 @@ module DssDw
 
     p = Person.find_or_create_by(loginid: loginid)
 
+    if p.synced_at&.time == DateTime.parse(dw_person['person']['updatedAt']).to_time
+      Rails.logger.info "No change since last sync for " + p.loginid + ". Skipping..."
+      return p
+    end
+
     GroupRulesService.while_managing_calculated_memberships_for(p) do
       # Process the isStaff, isFaculty, etc. flags
       p.is_employee = dw_person['person']['isEmployee']
