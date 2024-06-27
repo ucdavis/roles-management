@@ -183,9 +183,16 @@ module Sync
       Rails.logger.warn "Sync: Only queueing test.rb sync script due to running in development or test mode"
       Delayed::Job.enqueue SyncScriptJob.new(job_uuid, 'test.rb', sync_json), queue: 'sync'
     elsif Rails.env.production?
-      sync_scripts.each do |sync_script|
-        Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), queue: 'sync'
-      end
+      sync_script = get_sync_script(opts)
+      Delayed::Job.enqueue SyncScriptJob.new(job_uuid, sync_script, sync_json), queue: 'sync'
+    end
+  end
+
+  def get_sync_script(opts)
+    if opts.dig(:role, :application_name)&.casecmp?("docusign")
+      'docusign.rb'
+    else
+      'active_directory.rb'
     end
   end
 
