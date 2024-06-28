@@ -107,10 +107,11 @@ class ActiveDirectory
     if ad_user.nil?
       puts "Could not find #{query} in Active Directory. Skipping..."
       return nil
-    elsif ad_user[:extensionattribute8].empty?
-      # ignore if no UCD Affiliations (extensionattribute8), likely separated
-      puts "Found #{query} in Active Directory with no affiliations. Skipping..."
-      return nil
+    # may not be needed after initial DocuSign import
+    # elsif ad_user[:extensionattribute8].empty?
+    #   # ignore if no UCD Affiliations (extensionattribute8), likely separated
+    #   puts "Found #{query} in Active Directory with no affiliations. Skipping..."
+    #   return nil
     else
       loginid = ad_user.samaccountname.first
       p = Person.find_by(loginid: loginid)
