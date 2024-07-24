@@ -256,8 +256,8 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     regexp_parser (2.2.0)
-    rexml (3.2.8)
-      strscan (>= 3.0.9)
+    rexml (3.3.2)
+      strscan
     rubyntlm (0.6.3)
     rubyzip (2.3.2)
     sass (3.7.4)
