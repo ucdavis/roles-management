@@ -149,7 +149,7 @@ module DssDw
       return p
     end
 
-    dw_person = DssDw.fetch_person_by_loginid(loginid)
+    dw_person = DssDw.fetch_person_by_loginid(loginid) || UcdIam.fetch_person_by_loginid(loginid)
 
     return nil unless dw_person
 

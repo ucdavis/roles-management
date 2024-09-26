@@ -36,19 +36,7 @@ class PeopleController < ApplicationController
   def search
     authorize Person
 
-    require 'dss_dw'
-
-    @results = DssDw.search_people(params[:term])&.map do |entry|
-
-      # look up email/login in case DW missed teh latest update
-      if !entry['email']
-        entry['email'] = UcdIam.get_email_by_iam_id(entry['iamId'])
-      end
-
-      if !entry['userId']
-        entry['userId'] = UcdIam.get_login_by_iam_id(entry['iamId'])
-      end
-
+    @results = UcdIam.search_people(params[:term])&.map do |entry|
       OpenStruct.new(
         loginid: entry['userId'],
         email: entry['email'],
