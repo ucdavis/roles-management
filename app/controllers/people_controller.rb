@@ -36,6 +36,8 @@ class PeopleController < ApplicationController
   def search
     authorize Person
 
+    require "ucd_iam"
+
     @results = UcdIam.search_people(params[:term])&.map do |entry|
       OpenStruct.new(
         loginid: entry['userId'],
