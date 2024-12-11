@@ -155,7 +155,7 @@ module DssDw
 
     p = Person.find_or_create_by(loginid: loginid)
 
-    if p.synced_at&.time == DateTime.parse(dw_person['person']['updatedAt']).to_time
+    if dw_person.dig('person', 'updatedAt') && p.synced_at&.time == DateTime.parse(dw_person['person']['updatedAt']).to_time
       Rails.logger.info "No change since last sync for " + p.loginid + ". Skipping..."
       return p
     end
@@ -177,7 +177,7 @@ module DssDw
         p.phone = dw_person['contactInfo']['workPhone']
         p.address = dw_person['contactInfo']['postalAddress']
       end
-      p.synced_at = dw_person['person']['lastSeen'] || p.synced_at
+      p.synced_at = dw_person['person']['lastSeen'] || p.synced_at || Time.now
 
       p.save!
 
