@@ -3,7 +3,7 @@ FROM ruby:3.1-alpine
 ENV PATH /root/.yarn/bin:$PATH
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh build-base nodejs tzdata mysql-dev
+    apk add --no-cache bash git openssh build-base nodejs tzdata mysql-dev libffi-dev
 
 RUN apk update \
   && apk add curl bash binutils tar gnupg \
