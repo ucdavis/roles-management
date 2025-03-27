@@ -109,12 +109,12 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    concurrent-ruby (1.3.3)
+    concurrent-ruby (1.3.5)
     connection_pool (2.2.5)
     crass (1.0.6)
     daemons (1.4.1)
     dalli (3.2.4)
-    date (3.3.4)
+    date (3.4.1)
     delayed_job (4.1.10)
       activesupport (>= 3.0, < 8.0)
     delayed_job_active_record (4.1.7)
@@ -128,7 +128,7 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     ejs (1.1.1)
-    erubi (1.12.0)
+    erubi (1.13.1)
     ethon (0.15.0)
       ffi (>= 1.15.0)
     exception_notification (4.5.0)
@@ -140,7 +140,7 @@ GEM
       activesupport (>= 6.1)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
-    i18n (1.14.5)
+    i18n (1.14.7)
       concurrent-ruby (~> 1.0)
     io-like (0.3.1)
     jasmine-core (3.99.0)
@@ -160,7 +160,7 @@ GEM
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    loofah (2.22.0)
+    loofah (2.24.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
     mail (2.8.1)
@@ -187,12 +187,12 @@ GEM
     mime-types-data (3.2022.0105)
     mini_mime (1.1.5)
     mini_portile2 (2.8.8)
-    minitest (5.23.1)
+    minitest (5.25.5)
     mysql2 (0.5.5)
     net-http-digest_auth (1.4.1)
     net-http-persistent (4.0.1)
       connection_pool (~> 2.2)
-    net-imap (0.4.12)
+    net-imap (0.5.6)
       date
       net-protocol
     net-ldap (0.17.0)
@@ -200,7 +200,7 @@ GEM
       net-protocol
     net-protocol (0.2.2)
       timeout
-    net-smtp (0.5.0)
+    net-smtp (0.5.1)
       net-protocol
     newrelic_rpm (8.4.0)
     nio4r (2.7.3)
@@ -220,7 +220,7 @@ GEM
       activesupport (>= 3.0.0)
     racc (1.8.1)
     rack (2.2.13)
-    rack-test (2.1.0)
+    rack-test (2.2.0)
       rack (>= 1.3)
     rack-timeout (0.6.0)
     rails (6.1.7.8)
@@ -242,9 +242,9 @@ GEM
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.6.0)
+    rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
-      nokogiri (~> 1.14)
+      nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
     railties (6.1.7.8)
       actionpack (= 6.1.7.8)
       activesupport (= 6.1.7.8)
@@ -292,7 +292,7 @@ GEM
       power_assert
     thor (1.3.1)
     tilt (2.0.10)
-    timeout (0.4.1)
+    timeout (0.4.3)
     typhoeus (1.4.0)
       ethon (>= 0.9.0)
     tzinfo (2.0.6)
@@ -316,7 +316,7 @@ GEM
       chronic (>= 0.6.3)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.6.15)
+    zeitwerk (2.7.2)
 
 PLATFORMS
   ruby
