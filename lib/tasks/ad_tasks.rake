@@ -119,7 +119,11 @@ namespace :ad do
         # puts "\tMembers in AD but not RM (will be removed from AD)"
         (ad_members - role_members).each do |missing|
           # puts "\t\t#{missing} ..."
-          ActiveDirectoryHelper.ensure_user_not_in_group(missing, ad_group)
+            begin
+              ActiveDirectoryHelper.ensure_user_not_in_group(missing, ad_group)
+            rescue ActiveDirectoryHelper::UserNotFound
+              STDERR.puts "User '#{missing}' not found in AD while removing from group #{ad_group}"
+            end
         end
 
         missing_ad_users = []
@@ -141,7 +145,8 @@ namespace :ad do
               end
             end
           rescue ActiveDirectoryHelper::UserNotFound
-            # STDERR.puts "User '#{missing}' not found in AD while merging role and AD group"
+            byebug
+            STDERR.puts "User '#{missing}' not found in AD while merging role and AD group"
           rescue ActiveDirectoryHelper::GroupNotFound
             # STDERR.puts "Group '#{ad_path}' not found in AD while merging role and AD group"
           rescue Net::LDAP::Error
