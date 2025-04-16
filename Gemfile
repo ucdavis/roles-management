@@ -5,6 +5,7 @@ ruby '>= 3.1'
 gem 'rexml' # no longer bundled with Ruby 3.0+
 
 gem 'rails', '~> 6.1'
+gem 'concurrent-ruby', '< 1.3.5' # https://github.com/rails/rails/pull/54264
 
 # Use Puma as the app server
 gem 'puma', '~> 5.6'
