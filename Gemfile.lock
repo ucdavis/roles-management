@@ -204,7 +204,7 @@ GEM
       net-protocol
     newrelic_rpm (8.4.0)
     nio4r (2.7.4)
-    nokogiri (1.18.7)
+    nokogiri (1.18.8)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     phantomjs (2.1.1.0)
@@ -364,7 +364,7 @@ DEPENDENCIES
   whenever
 
 RUBY VERSION
-   ruby 3.1.4p223
+   ruby 3.2.6p234
 
 BUNDLED WITH
    2.3.6
