@@ -9,7 +9,7 @@ class Admin::OpsControllerTest < ActionController::TestCase
     assert_response 401
 
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -19,7 +19,7 @@ class Admin::OpsControllerTest < ActionController::TestCase
   end
 
   test 'admins can impersonate' do
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     # Ensure authorized admin users have access
     grant_test_user_admin_access

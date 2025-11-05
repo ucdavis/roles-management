@@ -35,6 +35,6 @@ class SiteController < ApplicationController
     else
       logger.info "#{request.remote_ip}: Loaded log out page."
     end
-    CASClient::Frameworks::Rails::Filter.logout(self)
+    request.session.delete('cas')
   end
 end

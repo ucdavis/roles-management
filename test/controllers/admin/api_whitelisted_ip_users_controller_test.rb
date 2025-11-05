@@ -11,7 +11,7 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
 
   test 'authenticated but unauthorized users cannot access whitelisted IP users index' do
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -22,7 +22,7 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
 
   test 'authorized admin users can access whitelisted IP users index' do
     # Ensure authorized admin users have access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
     grant_test_user_admin_access
 
     get :index, as: :json
@@ -37,7 +37,7 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
     assert_response :unauthorized
 
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -62,7 +62,7 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
 
   test 'unauthorized but authenticated user cannot delete a whitelisted IP user' do
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -72,7 +72,7 @@ class Admin::ApiWhitelistedIpUsersControllerTest < ActionController::TestCase
   end
 
   test 'authorized users can delete a whitelisted IP user' do
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     # Ensure authorized admin users have access
     grant_test_user_admin_access

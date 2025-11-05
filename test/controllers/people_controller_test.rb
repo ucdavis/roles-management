@@ -3,7 +3,7 @@ require 'test_helper'
 # These tests are run using the fake CAS user 'casuser'
 class PeopleControllerTest < ActionController::TestCase
   setup do
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     @person = entities(:casuser)
   end

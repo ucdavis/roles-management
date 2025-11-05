@@ -1,3 +1,5 @@
+require 'rack/cas'
+
 module Authentication
   class Error < StandardError; end
 
@@ -138,18 +140,17 @@ module Authentication
     # If the environment variable _RM_DEV_LOGINID is set, force it as a CAS
     # login and bypass CAS. Useful for offline development.
     if ENV['_RM_DEV_LOGINID']
-      session[:cas_user] = ENV['_RM_DEV_LOGINID']
-    else
-      # It's important we do this before checking session[:cas_user] as it
-      # sets that variable. Note that the way before_actions work, this call
-      # will render or redirect but this function will still finish before
-      # the redirect is actually made.
-      CASClient::Frameworks::Rails::Filter.filter(self)
+      session['cas'] = { 'user' => ENV['_RM_DEV_LOGINID'] }
     end
 
-    if session[:cas_user]
+    unless cas_login
+      head :unauthorized
+      return
+    end
+
+    if cas_login
       # CAS session exists. Valid user account?
-      @user = Person.includes(:role_assignments, :roles).find_by_loginid(session[:cas_user])
+      @user = Person.includes(:role_assignments, :roles).find_by_loginid(cas_login)
       @user = nil if @user && @user.active == false # Don't allow disabled users to log in
 
       if @user
@@ -183,11 +184,17 @@ module Authentication
         session[:user_id] = nil
         session[:auth_via] = nil
 
-        logger.info "Valid CAS user (#{session[:cas_user]}) is not in our database. Fails authentication."
+        logger.info "Valid CAS user (#{cas_login}) is not in our database. Fails authentication."
         flash[:error] = 'You have authenticated but are not allowed access.'
 
         redirect_to controller: 'site', action: 'access_denied'
       end
     end
+  end
+
+  private
+  
+  def cas_login
+    session.dig('cas', 'user')
   end
 end

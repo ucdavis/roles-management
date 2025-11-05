@@ -9,7 +9,7 @@ class Admin::QueuedJobsControllerTest < ActionController::TestCase
     assert_response :unauthorized
 
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -22,7 +22,7 @@ class Admin::QueuedJobsControllerTest < ActionController::TestCase
     # Ensure authorized admin users have access
     grant_test_user_admin_access
 
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    fake_cas_login
 
     get :index, as: :json
     assert_response :success
@@ -38,7 +38,7 @@ class Admin::QueuedJobsControllerTest < ActionController::TestCase
 
   test "queued jobs index requires admin access (2/3)" do
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -48,7 +48,7 @@ class Admin::QueuedJobsControllerTest < ActionController::TestCase
   end
 
   test "queued jobs index requires admin access (3/3)" do
-    CASClient::Frameworks::Rails::Filter.fake("casuser")
+    fake_cas_login
 
     # Ensure authorized admin users have access
     grant_test_user_admin_access

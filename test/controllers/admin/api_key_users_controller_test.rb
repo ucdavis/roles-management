@@ -11,7 +11,7 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
 
   test 'API key users index requires admin access (2/3)' do
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -21,7 +21,7 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
   end
 
   test 'API key users index requires admin access (3/3)' do
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     # Ensure authorized admin users have access
     grant_test_user_admin_access
@@ -40,7 +40,7 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
 
   test 'creating an API key user requires admin access (2/3)' do
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -50,7 +50,7 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
   end
 
   test 'creating an API key user requires admin access (3/3)' do
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     # Ensure authorized admin users have access
     grant_test_user_admin_access
@@ -69,7 +69,7 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
 
   test 'deleting an API key requires admin access (2/3)' do
     # Ensure authorized non-admin user has no access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     grant_test_user_basic_access
     revoke_test_user_admin_access
@@ -79,7 +79,7 @@ class Admin::ApiKeyUsersControllerTest < ActionController::TestCase
   end
 
   test 'deleting an API key requires admin access (3/3)' do
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     # Ensure authorized admin users have access
     grant_test_user_admin_access

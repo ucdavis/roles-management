@@ -5,7 +5,7 @@ class RolesControllerTest < ActionController::TestCase
   # Used by RM UI when clicking on a role
   test 'JSON request should include certain attributes' do
     revoke_access
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
     grant_test_user_admin_access
 
     get :show, params: { id: 1 }, as: :json

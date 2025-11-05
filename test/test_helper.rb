@@ -10,6 +10,10 @@ class ActiveSupport::TestCase
   # -- they do not yet inherit this setting
   fixtures :all
 
+  def fake_cas_login
+    request.session['cas'] = { 'user' => 'casuser' }
+  end
+
   # Gives test user 'casuser' the basic access role for RM
   def grant_test_user_basic_access
     p = Person.find_by_loginid("casuser")
@@ -122,7 +126,7 @@ class ActiveSupport::TestCase
     request.env.delete('REMOTE_ADDR')
     request.session.delete(:auth_via)
     request.session.delete(:user_id)
-    CASClient::Frameworks::Rails::Filter.fake(nil)
+    request.session.delete('cas')
   end
 
   # Ensures 'casuser' has no valid permission tokens to RM

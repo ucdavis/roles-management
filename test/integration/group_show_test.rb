@@ -8,7 +8,7 @@
 #   include Capybara::DSL
 
 #   setup do
-#     CASClient::Frameworks::Rails::Filter.fake("casuser")
+#     fake_cas_login
 #   end
 
 # #   test "ensure non-admins can edit their groups using the UI" do

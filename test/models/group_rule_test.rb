@@ -2,7 +2,7 @@ require 'test_helper'
 
 class GroupRuleTest < ActiveSupport::TestCase
   setup do
-    CASClient::Frameworks::Rails::Filter.fake('casuser')
+    fake_cas_login
 
     @person = entities(:casuser)
   end

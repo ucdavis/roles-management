@@ -8,7 +8,7 @@
 #   include Capybara::DSL
 
 #   setup do
-#     CASClient::Frameworks::Rails::Filter.fake("casuser")
+#     fake_cas_login
 #   end
 
 #   test "shows application cards" do

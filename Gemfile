@@ -64,7 +64,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'exception_notification'
 
 # For CAS authentication
-gem 'rubycas-client', git: 'https://github.com/rubycas/rubycas-client.git'
+gem 'rack-cas'
 
 gem 'ejs'
 

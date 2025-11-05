@@ -6,7 +6,7 @@ class Admin::ActivityLogsControllerTest < ActionController::TestCase
   end
 
 #   test "should get index" do
-#     CASClient::Frameworks::Rails::Filter.fake("casuser")
+#     fake_cas_login
 #     grant_test_user_admin_access
     
 #     get :index, format: :json
