@@ -28,7 +28,7 @@ gem 'mysql2', group: [:production, :development]
 # gem 'sdoc', '~> 0.4.2', group: :doc
 
 # Reduces boot times through caching; required in config/boot.rb
-# gem 'bootsnap', '>= 1.1.0', require: false
+gem 'bootsnap', require: false
 
 gem 'delayed_job'
 gem 'delayed_job_active_record'

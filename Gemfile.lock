@@ -78,6 +78,8 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.2.0)
     bindex (0.8.1)
+    bootsnap (1.19.0)
+      msgpack (~> 1.2)
     builder (3.3.0)
     byebug (11.1.3)
     capybara (3.36.0)
@@ -181,6 +183,7 @@ GEM
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (5.25.5)
+    msgpack (1.8.0)
     mysql2 (0.5.5)
     net-http-digest_auth (1.4.1)
     net-http-persistent (4.0.1)
@@ -315,6 +318,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-core (~> 3.0)
   aws-sdk-dynamodb (~> 1.6)
+  bootsnap
   byebug
   capybara (>= 2.15, < 4.0)
   chromedriver-helper
