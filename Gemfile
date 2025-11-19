@@ -11,7 +11,7 @@ gem 'concurrent-ruby', '< 1.3.5' # https://github.com/rails/rails/pull/54264
 gem 'puma', '~> 5.6'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+gem 'sassc-rails', '~> 2.1'
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
