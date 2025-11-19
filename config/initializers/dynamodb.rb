@@ -1,7 +1,7 @@
-region = ENV['DYNAMODB_REGION'] || Rails.application.secrets[:dynamodb_region]
-access_key = ENV['DYNAMODB_AWS_ACCESS_KEY'] || Rails.application.secrets[:dynamodb_aws_access_key]
-secret_key = ENV['DYNAMODB_AWS_SECRET_KEY'] || Rails.application.secrets[:dynamodb_aws_secret_key]
-endpoint = ENV['DYNAMODB_ENDPOINT'] || Rails.application.secrets[:dynamodb_endpoint]
+region = ENV['DYNAMODB_REGION']
+access_key = ENV['DYNAMODB_AWS_ACCESS_KEY']
+secret_key = ENV['DYNAMODB_AWS_SECRET_KEY']
+endpoint = ENV['DYNAMODB_ENDPOINT']
 
 Aws.config.update(
   region: region,
@@ -14,5 +14,5 @@ if access_key.present?
   else
     ::DynamoDbClient = Aws::DynamoDB::Client.new
   end
-  ::DynamoDbTable = ENV['DYNAMODB_ACTIVITY_LOG_TABLE'] || Rails.application.secrets[:dynamodb_activity_log_table]
+  ::DynamoDbTable = ENV['DYNAMODB_ACTIVITY_LOG_TABLE']
 end

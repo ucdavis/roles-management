@@ -4,7 +4,7 @@ namespace :activitylog do
   desc 'Create required table in DynamoDB'
   task create_table: :environment do
     params = {
-      table_name: ENV['DYNAMODB_ACTIVITY_LOG_TABLE'] || Rails.application.secrets[:dynamodb_activity_log_table],
+      table_name: ENV['DYNAMODB_ACTIVITY_LOG_TABLE'],
       key_schema: [
         {
           attribute_name: 'LogEntityId',
