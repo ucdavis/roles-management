@@ -159,11 +159,9 @@ module UcdIam
 
   def self.iam_url
     @@IAM_URL ||= ENV['IAM_URL']
-    @@IAM_URL ||= Rails.application.secrets[:iam_url]
   end
 
   def self.iam_api_key
     @@IAM_API_KEY ||= ENV['IAM_API_KEY']
-    @@IAM_API_KEY ||= Rails.application.secrets[:iam_api_key]
   end
 end
