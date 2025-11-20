@@ -5,10 +5,9 @@ ruby '>= 3.2'
 gem 'rexml' # no longer bundled with Ruby 3.0+
 
 gem 'rails', '~> 6.1'
-gem 'concurrent-ruby', '< 1.3.5' # https://github.com/rails/rails/pull/54264
 
 # Use Puma as the app server
-gem 'puma', '~> 5.6'
+gem 'puma', '~> 6.6'
 
 # Use SCSS for stylesheets
 gem 'sassc-rails', '~> 2.1'
@@ -41,7 +40,7 @@ end
 
 group :development do
   gem 'listen', '~> 3.0'
-  gem 'web-console', '>= 3.3.0'
+  gem 'web-console', '~> 4.2'
   gem 'byebug', platform: :mri
 end
 
