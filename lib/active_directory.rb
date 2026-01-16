@@ -7,6 +7,7 @@ class ActiveDirectory
 
   LDAP_ALREADY_EXISTS = 68
   LDAP_UNWILLING_TO_PERFORM = 53
+  LDAP_INSUFFICIENT_ACCESS = 50
 
   @ldap = {}
 
@@ -214,6 +215,11 @@ class ActiveDirectory
 
       if conn.get_operation_result.code == LDAP_UNWILLING_TO_PERFORM
         return true # user was already not in the group
+      end
+
+      if conn.get_operation_result.code == LDAP_INSUFFICIENT_ACCESS
+        Rails.logger.error "Insufficient access to remove user (#{user[:distinguishedname][0]}) from group (#{group[:distinguishedname][0]})."
+        return false
       end
 
       raise LdapError, "Error while removing user (#{user[:distinguishedname][0]}) from group (#{group[:distinguishedname][0]}). Code: #{conn.get_operation_result.code }, Reason: #{conn.get_operation_result.message}", caller unless conn.get_operation_result.code == 0
