@@ -215,7 +215,7 @@ GEM
     pundit (2.1.1)
       activesupport (>= 3.0.0)
     racc (1.8.1)
-    rack (2.2.20)
+    rack (2.2.22)
     rack-cas (0.16.1)
       addressable (~> 2.3)
       nokogiri (~> 1.5)
