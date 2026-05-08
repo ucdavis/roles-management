@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_24_224358) do
+ActiveRecord::Schema[6.1].define(version: 2023_10_24_224358) do
 
   create_table "api_key_users", id: { type: :bigint, unsigned: true }, charset: "latin1", force: :cascade do |t|
     t.string "secret"
