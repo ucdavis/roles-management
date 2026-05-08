@@ -11,7 +11,7 @@ module Api
         # API users currently share access to all resources. If this changes, we will need to alter our
         # cache_key to avoid leaking data across accounts via stale caches.
         if @applications.length > 0
-          @cache_key = "api/application/" + (params[:q] ? params[:q] : '') + '/' + @applications.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+          @cache_key = "api/application/" + (params[:q] ? params[:q] : '') + '/' + @applications.max_by(&:updated_at).updated_at.try(:utc).try(:to_fs, :number).to_s
         end
 
         render "api/v1/applications/index"
@@ -22,7 +22,7 @@ module Api
         if @application
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded application view (show) for #{@application.id}." }
 
-          @cache_key = "api/application/" + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = "api/application/" + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_fs, :number)
 
           render "api/v1/applications/show"
         else

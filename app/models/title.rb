@@ -6,7 +6,7 @@ class Title < ApplicationRecord
   # Title code must have leading zeroes to ensure a length of four
   before_save { |title| title.code = title.code.rjust(4, '0') }
 
-  def as_json(_)
+  def as_json(options = {})
     { id: id, name: name, code: code, unit: unit }
   end
 end

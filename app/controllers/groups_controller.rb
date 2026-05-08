@@ -10,7 +10,7 @@ class GroupsController < ApplicationController
 
     if @groups.count.positive?
       @cache_key = 'groups/' + current_user.loginid + '/' + (params[:q] ? params[:q] : '') +
-                   '/' + @groups.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+                   '/' + @groups.max_by(&:updated_at).updated_at.try(:utc).try(:to_fs, :number).to_s
     end
 
     respond_to do |format|
@@ -21,7 +21,7 @@ class GroupsController < ApplicationController
   def show
     authorize @group
 
-    @cache_key = 'group/' + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = 'group/' + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_fs, :number)
 
     respond_to do |format|
       format.json { render 'groups/show' }

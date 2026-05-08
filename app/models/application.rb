@@ -20,7 +20,7 @@ class Application < ApplicationRecord
   # Note the nested 'role' JSON includes "members" and "entities."
   # 'members' are people only - flattened entities.
   # 'entities' are what actually exists in the database but includes groups.
-  def as_json(_)
+  def as_json(options = {})
     {
       id: id, name: name, description: description,
       roles: roles.map { |r| { id: r.id, description: r.description, name: r.name } },

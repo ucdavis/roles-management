@@ -7,7 +7,7 @@ module Api
         if @group
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded group view (show) for #{@group.id}." }
 
-          @cache_key = 'api/groups/' + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = 'api/groups/' + @group.id.to_s + '/' + @group.updated_at.try(:utc).try(:to_fs, :number)
 
           render 'api/v1/groups/show'
         else
