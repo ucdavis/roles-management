@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '>= 3.2'
 gem 'rexml' # no longer bundled with Ruby 3.0+
 
-gem 'rails', '~> 6.1'
+gem 'rails', '~> 7.0.0'
 
 # Use Puma as the app server
 gem 'puma', '~> 6.6'
@@ -39,7 +39,6 @@ group :production do
 end
 
 group :development do
-  gem 'listen', '~> 3.0'
   gem 'web-console', '~> 4.2'
   gem 'byebug', platform: :mri
 end
