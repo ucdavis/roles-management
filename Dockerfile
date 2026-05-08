@@ -1,9 +1,9 @@
-FROM ruby:3.2-alpine
+FROM ruby:3.4-alpine
 
 ENV PATH /root/.yarn/bin:$PATH
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh build-base nodejs tzdata mysql-dev libffi-dev
+    apk add --no-cache bash git openssh build-base nodejs tzdata mysql-dev libffi-dev yaml-dev
 
 RUN apk update \
   && apk add curl bash binutils tar gnupg \
