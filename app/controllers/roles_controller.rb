@@ -14,7 +14,7 @@ class RolesController < ApplicationController
   def show
     authorize @role
 
-    @cache_key = 'role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = 'role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_fs, :number)
 
     @role.update_column(:last_accessed, Time.now)
 

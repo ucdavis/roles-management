@@ -8,7 +8,7 @@ module Api
         logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded or searched entities index." }
 
         if @entities.length > 0
-          @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+          @cache_key = "api/entity/" + (params[:q] ? params[:q] : '') + '/' + @entities.max_by(&:updated_at).updated_at.try(:utc).try(:to_fs, :number).to_s
         end
 
         respond_to do |format|
@@ -20,7 +20,7 @@ module Api
         if @entity and @entity.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded entity view (show) for #{@entity.id}." }
 
-          @cache_key = "api/entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = "api/entity/" + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_fs, :number)
 
           respond_to do |format|
             format.json { render 'api/v1/entities/show' }

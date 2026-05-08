@@ -6,7 +6,7 @@ class EntitiesController < ApplicationController
   def index
     authorize Entity
 
-    @cache_key = "entities/index/#{@entities.maximum(:updated_at).try(:utc).try(:to_s, :number)}/#{params[:q]}"
+    @cache_key = "entities/index/#{@entities.maximum(:updated_at).try(:utc).try(:to_fs, :number)}/#{params[:q]}"
 
     respond_to do |format|
       format.json { render 'entities/index', status: :ok }
@@ -16,7 +16,7 @@ class EntitiesController < ApplicationController
   def show # rubocop:disable Metrics/AbcSize
     authorize @entity
 
-    @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_fs, :number)
 
     respond_to do |format|
       format.json { render 'entities/show', status: :ok }
@@ -79,7 +79,7 @@ class EntitiesController < ApplicationController
           end
         end
 
-        @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_s, :number)
+        @cache_key = 'entity/' + @entity.id.to_s + '/' + @entity.updated_at.try(:utc).try(:to_fs, :number)
 
         format.json { render 'entities/show', status: :ok }
       else
@@ -115,7 +115,7 @@ class EntitiesController < ApplicationController
       if @activity.empty?
         @cache_key = nil
       else
-        @cache_key = 'entity/' + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_s, :number)
+        @cache_key = 'entity/' + @entity.id.to_s + '/activity/' + @activity[0].performed_at.try(:utc).try(:to_fs, :number)
       end
     else
       @activity = nil

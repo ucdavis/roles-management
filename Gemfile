@@ -4,7 +4,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '>= 3.2'
 gem 'rexml' # no longer bundled with Ruby 3.0+
 
-gem 'rails', '~> 7.0.0'
+gem 'rails', '~> 7.1.0'
+gem 'sprockets-rails'
 
 # Use Puma as the app server
 gem 'puma', '~> 6.6'

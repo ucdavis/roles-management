@@ -11,7 +11,7 @@ class PeopleController < ApplicationController
 
     if @people.count.positive?
       @cache_key = 'people/' + (params[:q] ? params[:q] : '') +
-                   '/' + @people.max_by(&:updated_at).updated_at.try(:utc).try(:to_s, :number).to_s
+                   '/' + @people.max_by(&:updated_at).updated_at.try(:utc).try(:to_fs, :number).to_s
     end
 
     respond_to do |format|
@@ -22,7 +22,7 @@ class PeopleController < ApplicationController
   def show
     authorize @person
 
-    @cache_key = 'person/' + @person.id.to_s + '/' + @person.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = 'person/' + @person.id.to_s + '/' + @person.updated_at.try(:utc).try(:to_fs, :number)
 
     respond_to do |format|
       format.json { render 'people/show' }
@@ -69,7 +69,7 @@ class PeopleController < ApplicationController
     @person = DssDw.create_or_update_using_dw(params[:loginid])
 
     if @person
-      @cache_key = 'person/' + @person.id.to_s + '/' + @person.updated_at.try(:utc).try(:to_s, :number)
+      @cache_key = 'person/' + @person.id.to_s + '/' + @person.updated_at.try(:utc).try(:to_fs, :number)
 
       respond_to do |format|
         format.json { render 'people/show' }

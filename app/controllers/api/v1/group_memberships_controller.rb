@@ -8,7 +8,7 @@ module Api
 
         respond_to do |format|
           if @group_membership.save
-            @cache_key = "api/group_memberships/" + @group_membership.id.to_s + '/' + @group_membership.updated_at.try(:utc).try(:to_s, :number)
+            @cache_key = "api/group_memberships/" + @group_membership.id.to_s + '/' + @group_membership.updated_at.try(:utc).try(:to_fs, :number)
 
             format.json { render :show, status: :created }
           else

@@ -15,7 +15,7 @@ class ApplicationsController < ApplicationController
   def show
     authorize @application
 
-    @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_fs, :number)
 
     respond_to do |format|
       format.json { render 'applications/show', status: :ok }
@@ -84,7 +84,7 @@ class ApplicationsController < ApplicationController
       if @application.update(ap)
         logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Updated application with params #{params[:application]}."
 
-        @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_s, :number)
+        @cache_key = 'application/' + @application.id.to_s + '/' + @application.updated_at.try(:utc).try(:to_fs, :number)
 
         format.json { render 'applications/show', status: :ok }
       else
@@ -117,7 +117,7 @@ class ApplicationsController < ApplicationController
     @activity = @application.activity
     if @activity
       if @activity.empty? == false
-        @cache_key = "application/#{@application.id}/activity/#{@activity[0].performed_at.try(:utc).try(:to_s, :number)}"
+        @cache_key = "application/#{@application.id}/activity/#{@activity[0].performed_at.try(:utc).try(:to_fs, :number)}"
       else
         @cache_key = nil
       end

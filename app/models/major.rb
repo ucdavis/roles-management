@@ -3,7 +3,7 @@ class Major < ApplicationRecord
   has_many :people, through: :sis_associations, source: :entity
 
   # Needed by custom controller#majors, used in details modal
-  def as_json(_)
+  def as_json(options = {})
     { id: id, name: name }
   end
 end

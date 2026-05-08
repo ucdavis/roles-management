@@ -11,7 +11,7 @@ class RoleAssignmentsController < ApplicationController
 
     logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Created new role assignment, #{params[:role_assignment]}."
 
-    @cache_key = 'role_assignments/' + @role_assignment.id.to_s + '/' + @role_assignment.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = 'role_assignments/' + @role_assignment.id.to_s + '/' + @role_assignment.updated_at.try(:utc).try(:to_fs, :number)
 
     respond_to do |format|
       format.json { render 'role_assignments/show', status: :ok }
@@ -29,7 +29,7 @@ class RoleAssignmentsController < ApplicationController
 
     @role_assignment.role.touch
 
-    @cache_key = 'role_assignments/' + @role_assignment.id.to_s + '/' + @role_assignment.updated_at.try(:utc).try(:to_s, :number)
+    @cache_key = 'role_assignments/' + @role_assignment.id.to_s + '/' + @role_assignment.updated_at.try(:utc).try(:to_fs, :number)
 
     respond_to do |format|
       format.json { render 'role_assignments/show', status: :ok }

@@ -7,7 +7,7 @@ module Api
         if @person && @person.active
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded person view (show) for #{@person.loginid}." }
 
-          @cache_key = "api/person/#{@person.loginid}/#{@person.updated_at.try(:utc).try(:to_s, :number)}"
+          @cache_key = "api/person/#{@person.loginid}/#{@person.updated_at.try(:utc).try(:to_fs, :number)}"
 
           render 'api/v1/people/show'
         elsif @person and @person.active == false

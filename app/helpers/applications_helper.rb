@@ -3,13 +3,13 @@ module ApplicationsHelper
     # Admins share the same application list
     loginid        = 'access-' + current_user.loginid
     count          = Application.count
-    max_updated_at = Application.maximum(:updated_at).try(:utc).try(:to_s, :number)
+    max_updated_at = Application.maximum(:updated_at).try(:utc).try(:to_fs, :number)
     "#{loginid}/applications/all-#{count}-#{max_updated_at}"
   end
 
   def cache_key_for_current_user
     loginid        = current_user.loginid
-    max_updated_at = current_user.updated_at.try(:utc).try(:to_s, :number)
+    max_updated_at = current_user.updated_at.try(:utc).try(:to_fs, :number)
     "#{loginid}/current_user/#{max_updated_at}"
   end
 

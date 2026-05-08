@@ -7,7 +7,7 @@ module Api
         if @role
           logger.tagged('API') { logger.info "#{current_user.log_identifier}@#{request.remote_ip}: Loaded role view (show) for #{@role.id}." }
 
-          @cache_key = 'api/role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_s, :number)
+          @cache_key = 'api/role/' + @role.id.to_s + '/' + @role.updated_at.try(:utc).try(:to_fs, :number)
 
           @role.update_column(:last_accessed, Time.now)
 
