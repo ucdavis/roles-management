@@ -224,6 +224,7 @@ GEM
       net-protocol
     newrelic_rpm (8.4.0)
     nio4r (2.7.5)
+    nkf (0.2.0)
     nokogiri (1.19.3)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
@@ -384,6 +385,7 @@ DEPENDENCIES
   mysql2
   net-ldap
   newrelic_rpm
+  nkf
   poltergeist
   puma (~> 6.6)
   pundit
