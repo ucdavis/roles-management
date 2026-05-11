@@ -1,4 +1,4 @@
-module UcdUcPathEmployeeClasses
+module UcdUcpathEmployeeClasses
   EMPLOYEE_CLASS_LABELS = {
 	'1' => 'Staff: Contract',
 	'2' => 'Staff: Career',

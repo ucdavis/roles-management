@@ -35,6 +35,6 @@ class PpsAssociation < ApplicationRecord
 
   def employee_class_label
     require 'ucd_ucpath_employee_classes'
-    UcdUcPathEmployeeClasses::EMPLOYEE_CLASS_LABELS[employee_class.to_s]
+    UcdUcpathEmployeeClasses::EMPLOYEE_CLASS_LABELS[employee_class.to_s]
   end
 end
