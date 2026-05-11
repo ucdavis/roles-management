@@ -1,17 +1,12 @@
-FROM ruby:3.4-alpine
+FROM ruby:3.4-slim
 
 ENV PATH /root/.yarn/bin:$PATH
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh build-base nodejs tzdata mysql-dev libffi-dev yaml-dev
-
-RUN apk update \
-  && apk add curl bash binutils tar gnupg \
-  && rm -rf /var/cache/apk/* \
-  && /bin/bash \
-  && touch ~/.bashrc \
-  && curl -o- -L https://yarnpkg.com/install.sh | bash \
-  && apk del tar binutils
+RUN apt-get update -qq && apt-get install --no-install-recommends -y \
+  git curl build-essential pkg-config \
+  default-libmysqlclient-dev libyaml-dev libffi-dev nodejs \
+  && rm -rf /var/lib/apt/lists/* \
+  && curl -o- -L https://yarnpkg.com/install.sh | bash
 
 # Configure the main working directory. This is the base
 # directory used in any further RUN, COPY, and ENTRYPOINT
