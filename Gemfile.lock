@@ -212,7 +212,8 @@ GEM
     minitest (5.27.0)
     msgpack (1.8.0)
     mutex_m (0.3.0)
-    mysql2 (0.5.5)
+    mysql2 (0.5.7)
+      bigdecimal
     net-http-digest_auth (1.4.1)
     net-http-persistent (4.0.1)
       connection_pool (~> 2.2)
