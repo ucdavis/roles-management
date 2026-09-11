@@ -5,6 +5,7 @@ ruby '~> 3.4.0'
 gem 'rexml' # no longer bundled with Ruby 3.0+
 gem 'mutex_m' # no longer bundled with Ruby 3.4+
 gem 'nkf' # no longer bundled with Ruby 3.4+
+gem 'csv' # no longer bundled with Ruby 3.4+
 
 gem 'rails', '~> 7.2.0'
 gem 'sprockets-rails'
