@@ -212,8 +212,8 @@ namespace :group do
     total_missing = 0
 
     if args[:loginid]
-      people << Person.find_by_loginid(args[:loginid])
-      if people[0] == nil
+      people = Person.where(loginid: args[:loginid])
+      if people.empty?
         STDERR.puts "No person with login ID found: #{args[:loginid]}"
         exit(-1)
       end
@@ -224,7 +224,7 @@ namespace :group do
     total_people = people.count
 
     begin
-      people.each_with_index do |p, i|
+      people.find_each(batch_size: 500).with_index do |p, i|
         # Only log out every LOG_PROGRESS_INTERVAL rows
         if (i % LOG_PROGRESS_INTERVAL) == 0
           log_str = "Analyzing #{p.loginid} (#{i + 1} / #{total_people}) ..."
