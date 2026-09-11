@@ -252,10 +252,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         $rule.find("td:nth-child(1) select").val 'iam_affiliation'
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val 'External'
-      when 'pps_position_type'
-        $rule.find("td:nth-child(1) select").val _column
-        $rule.find("td:nth-child(2) select").val _condition
-        $rule.find("td:nth-child(3) input").val DssRm.Views.GroupShow.pps_position_types[_value]
       when 'employee_class'
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
@@ -391,11 +387,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
           column: column_val
           condition: _condition
           value: 't'
-      when "pps_position_type"
-        rule.set
-          column: _column
-          condition: _condition
-          value: _.findKey DssRm.Views.GroupShow.pps_position_types, (val) -> val == _value
       when "employee_class"
         rule.set
           column: _column
@@ -490,12 +481,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         ]
         process(entities)
         return
-      when "pps_position_type"
-        entities = []
-        _.each DssRm.Views.GroupShow.pps_position_types, (position_type, i) ->
-          entities.push JSON.stringify({lookahead_type: lookahead_type, id: i, label: position_type})
-        process(entities)
-        return
       when "employee_class"
         entities = []
         _.each DssRm.Views.GroupShow.employee_class_types, (employee_class_type, i) ->
@@ -543,16 +528,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     @syncRuleModelWithDOM(cid, $el)
 
 ,
-  pps_position_types:
-    1: 'Contract'
-    2: 'Regular/Career'
-    3: 'Limited, Formerly Casual'
-    4: 'Casual/RESTRICTED-Students'
-    5: 'Academic'
-    6: 'Per Diem'
-    7: 'Regular/Career Partial YEAR'
-    8: 'Floater'
-  
   pps_units: ['PA','EX','HX','RX','NX','K3','F3','87','99','LX','M3','DX','PX','IX','CX','BX','A3','GS','PSS','FX','SX','TX']
 
   sis_level_codes: ['GR','UG','LW','MD']
