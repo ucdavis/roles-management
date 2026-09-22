@@ -4,6 +4,132 @@ namespace :title do
   require 'authentication'
   include Authentication
 
+  desc 'Compare titles against a UCPath job-code CSV; WRITE=1 applies the changes.'
+  task :sync_titles_with_ucpath_csv, [:csv_file_path] => :environment do |_task, args|
+    abort 'Usage: bin/rails title:sync_titles_with_ucpath_csv[path/to/ucpath_job_codes.csv]' if args[:csv_file_path].blank?
+
+    require 'csv'
+
+    write = ENV['WRITE'] == '1'
+
+    csv = CSV.read(args[:csv_file_path], headers: true, encoding: 'bom|utf-8')
+    required_headers = %w[CODE NAME UNIT]
+    missing_headers = required_headers - csv.headers
+    abort "Missing required CSV headers: #{missing_headers.join(', ')}" if missing_headers.any?
+
+    puts "Target: #{ActiveRecord::Base.connection_db_config.configuration_hash[:database]}"
+    puts "Mode:   #{write ? 'WRITE' : 'DRY RUN'}"
+
+    source = {}
+    conflicts = {}
+    csv.each_with_index do |row, index|
+      line = index + 2
+      code = row['CODE'].to_s.strip
+      attrs = { name: row['NAME'].to_s.strip, unit: row['UNIT'].to_s.strip.presence }
+
+      if conflicts.key?(code)
+        conflicts[code] << attrs.merge(csv_row: line)
+      elsif source.key?(code) && source[code] != attrs
+        conflicts[code] = [source.delete(code), attrs.merge(csv_row: line)]
+      else
+        source[code] = attrs
+      end
+    end
+
+    missing_from_csv = []
+    to_apply = []
+
+    # Update only what we already have. Titles are created by the IAM import (lib/dss_dw.rb:250)
+    # and nothing is deleted here -- pps_associations reference titles by id with no foreign key,
+    # so destroying one silently orphans every association pointing at it.
+    Title.find_each do |title|
+      next if conflicts.key?(title.code)
+
+      attrs = source[title.code]
+      next missing_from_csv << title if attrs.nil?
+
+      changes = {}
+      changes['name'] = { 'from' => title.name, 'to' => attrs[:name] } if title.name != attrs[:name]
+      changes['unit'] = { 'from' => title.unit, 'to' => attrs[:unit] } if title.unit != attrs[:unit]
+      next if changes.empty?
+
+      to_apply << [title, changes]
+      message = "Title would change: #{{ title_id: title.id, code: title.code, changes: changes }.to_json}"
+      puts message
+      Rails.logger.info message
+    end
+
+    cleared = to_apply.select { |_, c| c['unit'] && c['unit']['to'].nil? }
+
+    summary = {
+      csv_rows: csv.length,
+      titles_in_rm: Title.count,
+      titles_to_change: to_apply.length,
+      units_filled: to_apply.count { |_, c| c['unit'] && c['unit']['from'].nil? },
+      units_changed: to_apply.count { |_, c| c['unit'] && c['unit']['from'] && c['unit']['to'] },
+      units_cleared: cleared.length,
+      names_changed: to_apply.count { |_, c| c['name'] },
+      codes_skipped_conflicting: conflicts.length,
+      rm_titles_not_in_csv: missing_from_csv.length,
+      csv_codes_not_in_rm: (source.keys - Title.pluck(:code)).length
+    }
+
+    puts JSON.pretty_generate(summary)
+    Rails.logger.info "UCPath title sync summary: #{summary.to_json}"
+
+    conflicts.each do |code, rows|
+      message = { code: code, rows: rows }.to_json
+      puts "Skipped, CSV rows disagree: #{message}"
+      Rails.logger.warn "UCPath title conflict: #{message}"
+    end
+
+    unless missing_from_csv.empty?
+      puts 'In RM, absent from the CSV (left alone):'
+      missing_from_csv.each { |t| puts "  #{t.code} #{t.name.inspect} (id #{t.id})" }
+    end
+
+    # Clearing a unit is the only change that can drop a title out of a pps_unit
+    # rule, so call those out rather than leaving them in the pile.
+    unless cleared.empty?
+      puts "\nUnits being cleared -- these lose their pps_unit rule matches:"
+      cleared.each { |t, c| puts "  #{t.code} #{t.name.inspect}: #{c['unit']['from'].inspect} -> null" }
+    end
+
+    unless write
+      puts "\nDry run -- nothing changed. Re-run with WRITE=1 to apply."
+      next
+    end
+
+    updated = 0
+    failed = []
+    ActiveRecord::Base.transaction do
+      to_apply.each do |title, changes|
+        title.name = changes['name']['to'] if changes['name']
+        title.unit = changes['unit']['to'] if changes['unit']
+
+        if title.save
+          updated += 1
+          Rails.logger.info "Title #{title.code} updated: #{changes.to_json}"
+        else
+          failed << "#{title.code}: #{title.errors.full_messages.join('; ')}"
+        end
+      end
+
+      if failed.any?
+        puts "\nFailures (#{failed.length}), rolling back:"
+        failed.first(20).each { |f| puts "  #{f}" }
+        raise ActiveRecord::Rollback
+      end
+    end
+
+    if failed.any?
+      puts "\nRolled back. No titles changed."
+      exit 1
+    end
+
+    puts "\nUpdated #{updated} title(s)."
+  end
+
   desc 'Import title codes from UC Path CSV (override any conflicting codes, remove codes not found in CSV).'
   task :import_titles_with_ucpath_csv, [:csv_file_path] => :environment do |t, args|
     if args[:csv_file_path].nil?
@@ -266,4 +392,5 @@ namespace :title do
       puts "#{t[0]},#{t[1]},#{t[2]},#{t[3]}"
     end
   end
+
 end
