@@ -18,7 +18,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     @listenTo @model, "sync", @resetRolesTab
     @listenTo @model, "sync", @render
     @listenTo @model.rules, "change:officialName", @renderRules
-    @listenTo @model.rules, "change:dept_official_name", @renderRules
     @listenTo @model.rules, "change:name", @renderRules
     readonly = @model.isReadOnly()
 
@@ -264,10 +263,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val "#{rule.get('officialName')}"
-      when 'business_office_unit', 'admin_business_office_unit', 'appt_business_office_unit'
-        $rule.find("td:nth-child(1) select").val _column
-        $rule.find("td:nth-child(2) select").val _condition
-        $rule.find("td:nth-child(3) input").val "#{rule.get('dept_official_name')}"
       when 'title'
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
@@ -297,11 +292,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
             rule.set
               'code': data.code
               'officialName': data.label
-              'value': data.label
-          when 'business_office_unit', 'admin_business_office_unit', 'appt_business_office_unit'
-            rule.set
-              'code': data.code
-              'dept_official_name': data.label
               'value': data.label
           when "title"
             rule.set
@@ -397,11 +387,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
           column: _column
           condition: _condition
           value: rule.get 'code'
-      when 'business_office_unit', 'admin_business_office_unit', 'appt_business_office_unit'
-        rule.set
-          column: _column
-          condition: _condition
-          value: rule.get 'code'
       when "title"
         rule.set
           column: _column
@@ -468,8 +453,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         lookahead_url = Routes.people_path()
       when "title"
         lookahead_url = Routes.titles_path()
-      when "business_office_unit", "admin_business_office_unit", "appt_business_office_unit"
-        lookahead_url = Routes.business_office_units_path()
       when "iam_affiliation"
         entities = [
           JSON.stringify({lookahead_type: lookahead_type, id: '0', label: 'Employee'}),
@@ -513,8 +496,6 @@ DssRm.Views.GroupShow = Backbone.View.extend(
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: result.loginid})
           when "department", "admin_department", "appt_department"
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.officialName} (#{result.code})", code: result.code })
-          when "business_office_unit", "admin_business_office_unit", "appt_business_office_unit"
-            results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.dept_official_name}", code: result.org_oid })
           when "title"
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.name} (#{result.code})", code: result.code })
           else
