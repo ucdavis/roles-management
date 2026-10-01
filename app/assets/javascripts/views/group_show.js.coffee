@@ -259,7 +259,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         $rule.find("td:nth-child(1) select").val 'iam_affiliation'
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val ''
-      when 'department', 'appt_department', 'admin_department'
+      when 'department'
         $rule.find("td:nth-child(1) select").val _column
         $rule.find("td:nth-child(2) select").val _condition
         $rule.find("td:nth-child(3) input").val "#{rule.get('officialName')}"
@@ -288,7 +288,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         data = JSON.parse(item)
 
         switch data.lookahead_type
-          when "department", "admin_department", "appt_department"
+          when "department"
             rule.set
               'code': data.code
               'officialName': data.label
@@ -382,7 +382,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
           column: _column
           condition: _condition
           value: _.findKey DssRm.Views.GroupShow.employee_class_types, (val) -> val == _value
-      when "department", "admin_department", "appt_department"
+      when "department"
         rule.set
           column: _column
           condition: _condition
@@ -447,7 +447,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
     switch lookahead_type
       when "major"
         lookahead_url = Routes.majors_path()
-      when "department", "admin_department", "appt_department"
+      when "department"
         lookahead_url = Routes.departments_path()
       when "loginid"
         lookahead_url = Routes.people_path()
@@ -494,7 +494,7 @@ DssRm.Views.GroupShow = Backbone.View.extend(
         switch lookahead_type
           when "loginid"
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: result.loginid})
-          when "department", "admin_department", "appt_department"
+          when "department"
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.officialName} (#{result.code})", code: result.code })
           when "title"
             results.push JSON.stringify({lookahead_type: lookahead_type, id: result.id, label: "#{result.name} (#{result.code})", code: result.code })

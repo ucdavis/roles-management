@@ -5,7 +5,7 @@ DssRm.Models.GroupRule = Backbone.Model.extend(
   # Fetch any needed metadata about this rule, e.g. 'department' rule values are department codes
   # but we often need their department display name as well (considered metadata).
   fetchRuleMetadata: ->
-    if @get('column') in ['department', 'appt_department', 'admin_department']
+    if @get('column') == 'department'
       $.ajax(
         url: Routes.departments_path() + "/code/" + @get('value') # value is dept_code
         type: "GET"
